@@ -1,0 +1,474 @@
+/*Aerolith 2.0: A web-based word game website
+Copyright (C) 2011 Cesar Del Solar
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+To contact the author, please email delsolar at gmail dot com*/
+
+body.canvasBg 
+{
+    background-image:url('../../pictures/wordwalls/canvas.png');    
+}
+
+div.tableBg
+{
+    background-image:url('../../pictures/wordwalls/table.png'); 
+    background-repeat:no-repeat;  
+}
+
+div#questions 
+{
+
+    width: 875px;
+    height: 375px;
+    padding-top: 15px;
+}
+
+textarea#messages
+{
+    font-family: sans-serif;
+    /*font-size: 100%;*/
+}
+
+textarea#people
+{
+    font-family: sans-serif;
+    /*font-size: 100%;*/
+}
+
+table#solutionsTable
+{
+    border-collapse: collapse;
+}
+
+table#solutionsTable td
+{
+    border: 1px dotted;
+}
+
+tr.header td
+{
+    font-weight: 500;
+    background-color: rgb(230, 200, 200);
+    text-align: center;
+}
+
+td.frontHooksCell
+{
+    text-align: right;
+}
+
+/*
+td.questionTableCell
+{
+    padding-left: 10px;
+    width: 215px;
+    height: 26px;
+    border: 1px dotted;
+}*/
+
+
+/*
+table#questionTable
+{
+    margin-left:10px;
+    border-collapse: collapse;
+    table-layout:fixed;
+}*/
+
+ul#questionList 
+{
+    width:868px;
+    text-align:left;
+    padding: 0; 
+    margin-top: 5px;
+    margin-left: 20px;
+    vertical-align: center;
+    list-style-type: none;  /* remove bullets*/
+}
+
+ul#questionList li 
+{ 
+    float:left;
+}
+
+li.noborders
+{
+    width: 207px;
+    height: 26px;
+}
+
+li.borders
+{
+    width:205px;
+    height: 24px;
+    border: 1px dotted;
+}
+
+ul#questionList:after {  
+  content    : ".";
+  display    : block;
+  height     : 0;
+  clear      : both;
+  visibility : hidden;
+}
+
+ul#questionList { display : inline-block; } /*IE 6/7 */
+ul#questionList { display : block; }    /* IE6/7 */
+
+
+span#gameTimer
+{
+    display: inline-block;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
+    background-color: rgb(0, 200, 200);
+    border-width: 2px;
+    margin: 1px;
+    font-family: monospace;
+    font-size: 180%;
+    color: rgb(0, 0, 0);
+    width: 70px;
+
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+}
+
+button.tableButton
+{
+    border-style: outset;
+    border-width: 2px;
+    border-radius: 10px;
+    font-size: 140%;
+    font-weight: 500;
+    padding: 6px;
+    height: 40px;
+    
+} 
+
+button#start
+{
+    background-color: rgb(0, 220, 0);
+    border-color: rgb(100, 100, 0);
+}
+
+button#start:hover
+{
+    background-color: rgb(0, 255, 0);
+    border-color: rgb(0, 0, 255);
+}
+
+button#start:active
+{
+    background-color: rgb(0, 180, 0);
+    border-color: rgb(0, 0, 0);
+}
+
+button#giveup
+{
+    background-color: rgb(220, 0, 0);
+    border-color: rgb(100, 100, 0);
+}
+
+button#giveup:hover
+{
+    background-color: rgb(255, 0, 0);
+    border-color: rgb(0, 0, 0);
+}
+
+button#giveup:active
+{
+    background-color: rgb(180, 0, 0);
+    border-color: rgb(100, 100, 0);
+}
+
+button#standsit
+{
+    background-color: rgb(220, 130, 0);
+    border-color: rgb(100, 100, 0);
+}
+
+button#standsit:hover
+{
+    background-color: rgb(255, 155, 0);
+    border-color: rgb(0, 0, 0);
+}
+
+button#standsit:active
+{
+    background-color: rgb(180, 100, 0);
+    border-color: rgb(100, 100, 0);
+}
+
+button#solutions
+{
+    background-color: rgb(0, 130, 220);
+    border-color: rgb(100, 100, 0);
+}
+
+button#solutions:hover
+{
+    background-color: rgb(0, 150, 250);
+    border-color: rgb(0, 0, 0);
+}
+
+button#solutions:active
+{
+    background-color: rgb(0, 100, 150);
+    border-color: rgb(100, 100, 0);
+}
+
+button#tablenum
+{
+    border-color: rgb(100, 100, 100);
+    background-color: rgb(200, 200, 200);
+}
+
+button#tablenum:hover
+{
+    border-color: rgb(120, 120, 120);
+    background-color: rgb(220, 230, 220);
+}
+
+button#tablenum:active
+{
+    border-color: rgb(150, 150, 150);
+    background-color: rgb(250, 250, 250);
+}
+
+button#save
+{
+    border-color: rgb(50, 130, 50);
+    background-color: rgb(230, 180, 100);
+}
+
+button#save:hover
+{
+    border-color: rgb(80, 80, 150);
+    background-color: rgb(200, 140, 60);
+}
+
+button#save:active
+{
+    border-color: rgb(80, 80, 150);
+    background-color: rgb(255, 200, 120);
+}
+
+button#exit
+{
+    border-color: rgb(200, 130, 50);
+    background-color: rgb(230, 50, 100);
+}
+
+button#exit:hover
+{
+    border-color: rgb(255, 100, 0);
+    background-color: rgb(230, 0, 0);
+}
+
+button#exit:active
+{
+    border-color: rgb(255, 100, 0);
+    background-color: rgb(255, 0, 0);
+}
+
+/* tiles and chips */
+
+span.tileon
+{
+
+    display: inline-block;
+    border-color: rgb(0, 0, 0);
+    border-style: none none solid solid;
+    border-width: 2px;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;  /* so it can align vertically as well */
+}
+
+span.tileoff
+{
+   /* display: inline-block;
+    height: 16px;
+    line-height: 16px;*/
+}
+
+/* different tile styles */
+span.tile2
+{
+    background-color: #ff9900;
+    color: #000000;
+    border-color: #aa3300;
+}
+
+span.tile1
+{
+    background-color: rgb(68, 0, 186);
+    color: rgb(255, 255, 255);
+}
+
+span.tile3
+{
+    background-color: #33ff33;
+    color: #000000;
+    border-color: #11dd11;
+}
+
+span.tile4
+{
+    background-color: #cc0000;
+    color: #ffffff;
+    border-color: #660000;
+}
+
+span.tile5
+{
+    background-color: #333333;
+    color: #ffffff;
+}
+
+span.tile6
+{
+    background-color: #ffff00;
+    color: #000000;
+    border-color: #dddd00;
+}
+
+span.tile7
+{
+    background-color: #dddddd;
+    color: #222222;
+    border-color: #bbbbbb;
+}
+span.tilemono
+{
+    font-size: 160%;
+    font-weight: lighter;
+    font-family: monospace;
+}
+
+span.tilesans
+{
+    font-size: 120%;
+    font-family: Verdana, sans-serif;
+}
+
+span.chip
+{
+    display: inline-block;
+    text-align: center;
+    line-height: 18px;
+    color: rgb(0, 0, 0);
+    background-repeat: no-repeat;
+    width: 18px;
+    height: 18px;
+}
+
+span.chip1 { background-image: url('../../pictures/wordwalls/chip1.png'); }
+span.chip2 { background-image: url('../../pictures/wordwalls/chip2.png');  color: rgb(255, 255, 255);}
+span.chip3 { background-image: url('../../pictures/wordwalls/chip3.png'); }
+span.chip4 { background-image: url('../../pictures/wordwalls/chip4.png'); }
+span.chip5 { background-image: url('../../pictures/wordwalls/chip5.png'); }
+span.chip6 { background-image: url('../../pictures/wordwalls/chip6.png'); }
+span.chip7 { background-image: url('../../pictures/wordwalls/chip7.png'); }
+span.chip8 { background-image: url('../../pictures/wordwalls/chip8.png'); }
+span.chip9 { background-image: url('../../pictures/wordwalls/chip9.png'); color: rgb(255, 255, 255);}
+span.chipBlack { background-image: url('../../pictures/wordwalls/chipBlack.png'); color: rgb(255, 255, 255); }
+span.chipNone {}
+    
+span#horSep1
+{
+    display: inline-block;
+   width: 50px;
+}
+
+span#horSep2
+{
+    display: inline-block;
+    width: 100px;
+}
+
+span#prefsInfo
+{
+    color: green;
+}
+
+/******** definitions popup **********/
+#fade {
+    /* this div covers the entire screen with absolute positioning */
+	display: none;
+	background: #000; 
+	position: fixed; left: 0; top: 0; 
+	z-index: 10;
+	width: 100%; height: 100%;
+	opacity: .80;
+	z-index: 9999;  /* for some reason this is needed for IE because it is stupid */
+	filter : alpha(opacity=80);
+}
+.popup_block{
+	display: none;
+	background: #fff;
+	padding: 20px; 	
+	border: 20px solid #ddd;
+	float: left;
+	position: fixed;
+	top: 50%; left: 50%;
+	z-index: 99999;
+	width: 800px;
+	-webkit-box-shadow: 0px 0px 20px #000;
+	-moz-box-shadow: 0px 0px 20px #000;
+	box-shadow: 0px 0px 20px #000;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+
+}
+.customize_popup_block{
+    top: 50%;
+}
+
+div#customize_popup_content
+{
+    height: 200px;
+}
+
+img.btn_close {
+	float: right; 
+	margin: -55px -55px 0 0;
+}
+
+div#defs_popup_content
+{
+    height: 450px;
+
+    overflow-y: auto;
+}
+
+/* for IE6 ? IE sucks */
+
+*html #fade {
+	position: absolute;
+}
+*html .popup_block {
+	position: absolute;
+}
+
+/******/
+span.configInput
+{
+    display: inline-block;
+    width: 200px;
+}

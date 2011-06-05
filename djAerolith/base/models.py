@@ -1,0 +1,97 @@
+# Aerolith 2.0: A web-based word game website
+# Copyright (C) 2011 Cesar Del Solar
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# To contact the author, please email delsolar at gmail dot com
+from django.db import models
+from django.contrib.auth.models import User, UserManager
+# Create your models here.
+
+import string
+
+def alphProbToProbPK(prob, lexId, length):
+    return prob + (lexId << 24) + (length << 26)
+
+def probPKToAlphProb(probPk):
+    return probPk & ( (1 << 24) - 1)
+
+def alphagrammize(word):
+    l = list(word)
+    l.sort()
+    return string.join(l, '').upper()
+    
+class Lexicon(models.Model):
+    lexiconName = models.CharField(max_length=12)
+    lexiconDescription = models.CharField(max_length=64)    # user-friendly description
+    lengthCounts = models.CharField(max_length=256) # alphagrams per word length
+    def __unicode__(self):
+        return self.lexiconName
+
+# see http://docs.djangoproject.com/en/1.2/topics/serialization/ for manager stuff:
+
+class AlphagramManager(models.Manager):
+    def get_by_natural_key(self, alphagram, lexicon):
+        return self.get(alphagram=alphagram, lexicon=lexicon)
+
+class Alphagram(models.Model):
+    objects = AlphagramManager()
+    
+    alphagram = models.CharField(max_length=15)
+    lexicon = models.ForeignKey(Lexicon)
+    probability = models.IntegerField()
+    probability_pk = models.IntegerField(primary_key = True)
+    length = models.IntegerField()
+    def __unicode__(self):
+        return self.alphagram
+    
+    def natural_key(self):
+        return (self.alphagram, self.lexicon)
+    
+    class Meta:
+        unique_together = (('alphagram', 'lexicon'), ('probability', 'length', 'lexicon'),)
+        
+
+class Word(models.Model):
+    word = models.CharField(max_length=15)
+    alphagram = models.ForeignKey(Alphagram)
+    lexicon = models.ForeignKey(Lexicon)
+    lexiconSymbols = models.CharField(max_length=5)
+    # A word can only have one lexicon, even though e.g. 'PAN' could be in multiple
+    # lexica (csw, owl2, fise, etc). This makes it much simpler to keep 
+    # the lexicon-specific definition, front hooks, back hooks, etc. in this table
+    # and it makes more sense (see notes below)
+    definition = models.CharField(max_length=256)
+    front_hooks = models.CharField(max_length=26)
+    back_hooks = models.CharField(max_length=26)
+    def __unicode__(self):
+        return self.word + ": " + self.definition
+    
+
+        
+# these models for words allow for separating words from alphagrams from lexica
+# however let's not make it too confusing -- we should stick to creating a new 
+# word for each lexicon even if it already exists in Word. This is because words
+# can mean different things (think Spanish lexicon, PAN for example)
+
+# a definitions model wouldn't be right, because although 'words' can have 
+# different definitions depending on lexica, they're not the same 'words'
+# i.e. PAN in spanish and english are spelled the same but they are pronounced
+# differently and mean different things, so they are not the same word; it makes
+# sense to repeat an entry for PAN in the Word database for the different lexica.
+
+############################
+
+
+    
