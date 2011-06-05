@@ -20,8 +20,9 @@ from django import forms
 from django.core import validators
 from base.models import Lexicon
 from tablegame.models import GenericTableGameModel
-from wordwalls.models import SavedList
+from wordwalls.models import SavedList, DailyChallengeName
 import re
+
 
 lexes = Lexicon.objects.all()
 lexList = tuple([(l.lexiconName, l.lexiconName) for l in lexes])
@@ -73,10 +74,8 @@ class FindWordsForm(forms.Form):
 class DailyChallengesForm(forms.Form):
 
     lexicon_dc = forms.ChoiceField(choices = lexList, label='Lexicon')
-    
-    listTemplateName = "Today's %ds"
-    challengeList = tuple([(listTemplateName % i, listTemplateName % i) for i in range(2, 16)])
-    challenge = forms.ChoiceField(choices = challengeList, label='Challenge')
+    challenge = forms.ModelChoiceField(queryset=DailyChallengeName.objects.all(), 
+                        label='Challenge', widget=forms.Select(attrs={'size':'16'}))
 
 class UserListForm(forms.Form):
 
@@ -115,7 +114,7 @@ class SavedListForm(forms.Form):
                     )
     
     lexicon_sl = forms.ModelChoiceField(queryset=Lexicon.objects.all(), label='Lexicon',
-            widget=forms.Select(attrs={'onchange':'savedListLexiconChanged();'}))
+            widget=forms.Select())
     quizTime_sl = forms.FloatField(max_value=100, min_value = 1, initial=4, label='Time (minutes)')
     listOption = forms.TypedChoiceField(choices=listOptions,label='Quiz options', widget=forms.Select(),coerce=int)
     

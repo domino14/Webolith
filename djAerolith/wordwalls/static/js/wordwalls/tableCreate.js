@@ -39,10 +39,19 @@ function changeMaxProb(lex, curLength)
 
 function challengeChangeEventHandler()
 {
-    var cName = $('#id_challenge option:selected').text();
-    var lexName = $('#id_lexicon_dc option:selected').text();
-    $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
-    $('#dcResultsDiv').text("To see results for this challenge, click 'See today's results'");
+    var cVal = $('#id_challenge option:selected').val();
+    if (cVal == "")
+    {
+        // this is the ----- text
+        $('#dcResultsLabel').text('Select a challenge to view leaderboard');
+    }
+    else
+    {
+        var cName = $('#id_challenge option:selected').text();
+        var lexName = $('#id_lexicon_dc option:selected').text();
+        $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
+        getDcResults();
+    }
 }
 
 function processLengthCounts(lStr, _url)
@@ -92,6 +101,8 @@ function processLengthCounts(lStr, _url)
     
     savedListOptionChangeHandler();
     savedListChangeHandler();
+    
+    $('#id_lexicon_sl').change(savedListLexiconChanged);
 }
 
 function savedListOptionChangeHandler()

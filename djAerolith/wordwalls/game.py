@@ -613,9 +613,9 @@ class WordwallsGame:
         
         return True     
         
-    def generateDailyChallengePks(self, name, lex):
+    def generateDailyChallengePks(self, challengeName, lex):
         # capture number. first try to match to today's lists
-        m = re.match("Today's (?P<length>[0-9]+)s", name)
+        m = re.match("Today's (?P<length>[0-9]+)s", challengeName.name)
         
         if m:
             wordLength = int(m.group('length'))

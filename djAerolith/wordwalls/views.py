@@ -28,7 +28,7 @@ from game import WordwallsGame
 from game import SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList
+from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName
 from datetime import date
 import sys
 
@@ -62,7 +62,8 @@ def homepage(request):
             if dcForm.is_valid():
                 wwg = WordwallsGame()
                 lex = Lexicon.objects.get(lexiconName=dcForm.cleaned_data['lexicon_dc'])
-                challengeName = dcForm.cleaned_data['challenge']
+                challengeName = DailyChallengeName.objects.get(name=dcForm.cleaned_data['challenge'])
+                print 'challenge:', challengeName, lex
                 tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
                 if tablenum == 0:
                     raise Http404
@@ -110,7 +111,7 @@ def homepage(request):
             if request.POST['action'] == 'getDcResults':
                 try:
                     lex = request.POST['lexicon']
-                    chName = request.POST['chName']
+                    chName = DailyChallengeName.objects.get(name=request.POST['chName'])
                     leaderboardData = getLeaderboardData(lex, chName)
                     response = HttpResponse(json.dumps(leaderboardData, ensure_ascii=False), 
                                             mimetype="application/javascript")
