@@ -563,10 +563,10 @@ class WordwallsGame:
         guessStr = guessStr.upper()
         t1 = time.time()
         wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        print "Time to get", time.time() - t1
+        #print "Time to get", time.time() - t1
         t1 = time.time()
         state = json.loads(wgm.currentGameState)
-        print "time to load state", time.time() - t1
+        #print "time to load state", time.time() - t1
         t1 = time.time()
         if self.didTimerRunOut(state):
             stateChanged = True
@@ -588,13 +588,13 @@ class WordwallsGame:
             stateChanged = True
         
         if stateChanged:
-            print "time to check", time.time() - t1
+            #print "time to check", time.time() - t1
             t1 = time.time()
             wgm.currentGameState = json.dumps(state)
-            print "time to dump", time.time() - t1
+            #print "time to dump", time.time() - t1
             t1 = time.time()
             wgm.save()
-            print "time to save", time.time() - t1            
+            #print "time to save", time.time() - t1            
 
         return state['quizGoing'], state['LastCorrect']
             
