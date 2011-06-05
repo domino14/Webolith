@@ -1,0 +1,76 @@
+{% comment %} Aerolith 2.0: A web-based word game website
+Copyright (C) 2011 Cesar Del Solar
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+To contact the author, please email delsolar at gmail dot com
+{% endcomment %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    {% block ss %}
+    <link href="{{ STATIC_URL }}css/aerolith/aerolithStyleSheet.css" rel="stylesheet"  type="text/css">
+    {% endblock %}
+    <title>{% block title %}Aerolith{% endblock %}</title>
+</head>
+
+
+<body>
+    {% block picture %}
+    <a href="/">
+    <img id="logo" src="{{ STATIC_URL }}pictures/aerolith/aerolith.png"></a>
+    {% endblock %}
+    
+    {% block navbar %}
+    <UL class="navbar">
+    {% if user.username == "" %}
+        <LI><a href="/accounts/login" class="navbarLink">Log in</a></LI>
+    {% else %}
+        <LI><a href="/accounts/logout" class="navbarLink">Log {{user}} out</a></LI>
+    {% endif %}
+        <LI><a href="/accounts/register" class="navbarLink">Register</a></LI>
+    {# if user.get_profile.member #}
+        {# do nothing, member #}
+    {# else #}
+        <LI><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
+    {# endif #}
+    <LI><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
+    {# <LI><a href="/blog" class="navbarLink">Blog</a></LI> #}
+    </UL><BR>
+    <UL class ="navbar">
+    <LI><a href="/wordwalls" class="navbarLink">Wordwalls</a></LI>    
+    </UL>
+    <BR>
+    {% endblock %}
+    <div id="content">
+        {% block content %}
+        {% if user.username == "" %}
+
+        {% else %}
+        Welcome back, {{user}}! Here are some things you can do: <BR><BR>
+        <a href="wordwalls">Play WordWalls</a><BR>
+        
+        {% endif %}
+        <BR><BR>
+        <P>
+            
+        <strong>Note: </strong>For users coming from the desktop versions of Aerolith -- these will be discontinued (taken offline) on or around July 1st of 2011. The code will still always be available, but I would like to transition people to this site. Version 0.9beta was used by a few people and also allowed users to save, load, etc lists. If it is essential for you to keep these lists please talk to me and I'll see what I can do. It's not easy migrating them over to this new architecture, but I will try if you really want these. Otherwise, please be sure to finish your lists by the migration date.
+        </P>
+        <P>Please register for Aerolith again on this website.</P>
+        {% endblock %}
+    </div>
+</body>
+</html>

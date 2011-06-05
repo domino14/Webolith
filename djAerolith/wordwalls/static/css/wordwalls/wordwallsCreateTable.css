@@ -1,0 +1,110 @@
+/*Aerolith 2.0: A web-based word game website
+Copyright (C) 2011 Cesar Del Solar
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+To contact the author, please email delsolar at gmail dot com*/
+
+label
+{
+    display: inline-block;
+}
+/*
+button#challenges
+{
+    background-color:rgb(200, 220, 200);
+}
+
+button#searchParams
+{
+    background-color:rgb(200, 220, 200);
+}
+
+button#userLists
+{
+    background-color:rgb(200, 220, 200);
+}*/
+
+td#dcFormCell
+{
+    width: 200px;
+    height: 300px;
+    vertical-align: top;
+}
+
+td#dcResultsButtonCell
+{
+    width: 100px;
+    height: 300px;
+    vertical-align: top;
+}
+
+td#dcResultsCell
+{
+    width: 300px;
+    height: 300px;
+}
+
+td.dcResultsTableCell
+{
+    text-align: center;
+}
+
+td.dcResultsTableHeader
+{
+    align: center;
+    background-color: rgb(220, 220, 220);
+    border-style: dotted;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+
+div#dcResultsDiv
+{
+    width: 280px;
+    height: 280px;
+    
+    border-top-width: 2px;
+    border-top-style: dotted;
+    border-top-color: rgb(0, 128, 255);
+
+    overflow-y: auto;
+}
+
+div.showHelp
+{
+    border-style: dotted;
+    border-width: 1px;
+    border-color: rgb(0, 0, 0);
+    text-align: center;
+    width:100px;
+}
+
+div.help
+{
+    color: rgb(80, 80, 120);
+    width: 800px;
+}
+
+select#id_wordList
+{
+    width: 450px;
+}
+
+span#savedListWarning
+{
+    color: red;
+}
