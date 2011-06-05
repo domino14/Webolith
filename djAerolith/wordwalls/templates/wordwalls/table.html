@@ -79,6 +79,8 @@ Guess: <input type="text" name="Guess" size="15" id="guessText">
 /* handle text box 'enter' press. We have to do this after defining the text apparently*/
 $("#guessText").keypress(textBoxKeyHandler);
 window.onbeforeunload = unloadEventHandler;
+disableSelection($('#shuffle')[0]);
+disableSelection($('#alphagram')[0]);
 </script>
 
 <div id="customize_popup" class="popup_block customize_popup_block">

@@ -40,6 +40,24 @@ var backgroundClass = null;
 
 var messageTextBoxLimit = 3000; // characters
 
+function disableSelection(target)
+{
+    if (typeof target.onselectstart!="undefined") //IE route
+    {
+	    target.onselectstart=function(){return false}
+    }
+    else if (typeof target.style.MozUserSelect!="undefined")
+    { //Firefox route
+	    target.style.MozUserSelect="none"
+    }
+    else //All other route (ie: Opera)
+    {
+	    target.onmousedown=function(){return false}
+    }
+    target.style.cursor = "default"
+}
+
+
 function updateMessages(message)
 {
     var newMessage = $('#messages').html() + message + '<BR>';
@@ -126,7 +144,7 @@ function processQuestionObj(questionObj)
     for (var i = 0; i < 50; i++)
     {
         var cellStr = "q" + i;
-        ulBuilder += '<li id="' + cellStr + '">';
+        ulBuilder += '<li id="' + cellStr + '" class="qle">';
         if (i < qObj.length)
         {
             var alphagram = qObj[i]['a'];
@@ -170,6 +188,9 @@ function processQuestionObj(questionObj)
     ulBuilder += '</ul>';
     solutionsTableBuilder += '</table>';
     $("#questions").html(ulBuilder);
+    var qlistLIs = $(".qle");
+    for (var i = 0; i < 50; i++)
+        disableSelection(qlistLIs[i]);
     $("#defs_popup_content").html(solutionsTableBuilder + "<BR>")
     $("#defs_popup_content").css({'visibility': 'hidden'});
     /* change tile sizes depending on length of alphagram */
@@ -643,6 +664,8 @@ ff (osx):
 safari (osx):       yes         yes             yes                 yes
 ie (win):                                                           yes 
 ff (linux):                                                         yes
+
+opera doesn't work for this event :(
 
 also use onbeforeunload:
 http://stackoverflow.com/questions/4376596/jquery-unload-or-beforeunload
