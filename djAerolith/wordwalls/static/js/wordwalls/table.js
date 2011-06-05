@@ -42,24 +42,24 @@ var messageTextBoxLimit = 3000; // characters
 
 function updateMessages(message)
 {
-    var newMessage = $('#messages').val() + message + '\r\n';
+    var newMessage = $('#messages').html() + message + '<BR>';
     if (newMessage.length > messageTextBoxLimit)
     {
         newMessage = newMessage.substr(newMessage.length - messageTextBoxLimit);
     }
-    $('#messages').val(newMessage); 
+    $('#messages').html(newMessage); 
     var m = $("#messages");
     m.scrollTop(m[0].scrollHeight - m.height());
 }
 
 function updateGuesses(guess)
 {
-    var newText = $('#guesses').val() + guess + '\r\n';
+    var newText = $('#guesses').html() + guess + '<BR>';
     if (newText.length > messageTextBoxLimit)
     {
         newText = newText.substr(newText.length - messageTextBoxLimit);
     }
-    $('#guesses').val(newText);
+    $('#guesses').html(newText);
     var m = $('#guesses');
     m.scrollTop(m[0].scrollHeight - m.height());
 }
@@ -280,6 +280,7 @@ function textBoxKeyHandler(event)
   if(event.keyCode == 13)
   {
     var guessText = $(this).val();
+    if (guessText.length < 2 || guessText.length > 15) return;   // ignore
     $(this).val("");
     /* should post */
     $.post(tableUrl, {action: "guess", guess: guessText},
@@ -411,10 +412,12 @@ function cellClickHandler(event)
         if (sel && sel.removeAllRanges)
             sel.removeAllRanges();
     }
+    $("#guessText").focus();
 }
 
 function shuffle()
 {
+    $("#guessText").focus();
     // cellIndex varies from 0 to 49 inclusive (maybe more in the future)
     for (var i = 0; i < 50; i++)
         shuffleSingleCell(i);
@@ -429,6 +432,7 @@ function shuffleSingleCell(cellIndex)
 
 function alphagram()
 {
+    $("#guessText").focus();
     for (var i = 0; i < 50; i++)
     {
         if (i < qObj.length)

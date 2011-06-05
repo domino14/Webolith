@@ -116,7 +116,7 @@ What type of list do you want?<BR>
   $(document).ready(function() {
     var lStr = "{{lengthCounts|escapejs}}"; 
     processLengthCounts(lStr, "{% url wordwalls_create_table %}");
-    hideAll();
+    showChallenges();
     
     $("label[for='id_wordLength']").width('175px');
     $("label[for='id_probabilityMin']").width('175px');
