@@ -50,6 +50,7 @@ div#messages
     border-width: 2px;
     margin-right: 25px;
     overflow-y: auto;
+    font-size: 80%;
 }
 
 div#guesses
@@ -60,6 +61,7 @@ div#guesses
     border-style: inset;
     border-width: 2px;
     overflow-y: auto;
+    font-size: 80%;
 }
 
 table#solutionsTable
