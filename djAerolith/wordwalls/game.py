@@ -125,6 +125,8 @@ class WordwallsGame:
     
     # function to save daily challenge alphagrams into DailyChallenge model, and tie this to the alphagrams generated above somehow.
     
+
+    
     def initializeBySearchParams(self, user, alphasSearchDescription, playerType, timeSecs):
         pkIndices = self.getPkIndices(alphasSearchDescription)
         
@@ -262,6 +264,16 @@ class WordwallsGame:
     # single player will start right away with no 'request' needed
     # multiplayer will have timed starts - every minute or so
     
+    def getDcId(self, tablenum):
+        try:
+            wgm = WordwallsGameModel.objects.get(pk=tablenum)
+        except:
+            return 0
+        state = json.loads(wgm.currentGameState)
+        try:
+            return state['challengeId']
+        except:
+            return 0
     def startRequest(self, user, tablenum):
         try:
             wgm = WordwallsGameModel.objects.get(pk=tablenum)

@@ -356,9 +356,14 @@ function processQuizEnded()
     $("#questions").html(""); // clear the table
     $("#gameTimer").text("0:00");   // set the timer display to 0
     window.clearInterval(gameTimerID);  // and stop the timer
-    if (challenge)
+    if (challenge)  // only when the challenge is done and not its missed lists.
     {
         updateMessages("The challenge has ended!");
+        $.post(tableUrl, {action: "getDcData"}, 
+            function(data){
+                processDcResults(data, "addlInfo_content");
+            }, 'json');
+        updateMessages('Click <a href="#" onClick="showAddlInfo()">here</a> to see current results for this challenge.');
     }
     if (autoSave)
     {
@@ -380,6 +385,26 @@ function processQuizEnded()
     
     $("#defs_popup_content").css({'visibility': 'visible'});
     gameGoing = false;
+}
+
+function showAddlInfo()
+{
+	$('#addlInfo_popup').fadeIn();
+	
+	//Define margin for center alignment (vertical + horizontal) - we add 80 to the height/width to accomodate for the padding + border width defined in the css
+	var popMargTop = ($('#addlInfo_popup').height() + 80) / 2;
+	var popMargLeft = ($('#addlInfo_popup').width() + 80) / 2;
+	
+	//Apply Margin to Popup
+	$('#addlInfo_popup').css({ 
+		'margin-top' : -popMargTop,
+		'margin-left' : -popMargLeft
+	});
+	
+	//Fade in Background
+	$('#fade').fadeIn(); //Fade in the fade layer 
+	
+//	return false;
 }
 
 function saveGame()

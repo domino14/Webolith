@@ -41,9 +41,10 @@ To contact the author, please email delsolar at gmail dot com
      src="{{ STATIC_URL }}js/aerolith/json2.js"></script>
 
 <script type="text/javascript"
- src="{{ STATIC_URL }}js/wordwalls/table.js"></script>
- 
+     src="{{ STATIC_URL }}js/wordwalls/challengeInfoProcess.js"></script>
 
+<script type="text/javascript"
+ src="{{ STATIC_URL }}js/wordwalls/table.js"></script>
  
 <script type="text/javascript">
   $(document).ready(function() {
@@ -121,6 +122,18 @@ disableSelection($('#alphagram')[0]);
     <p>You didn't say the magic word.</p>
     </div>
 </div>
+
+<div id="addlInfo_popup" class="popup_block">
+    <a href="#" class="close">
+        <img src="{{ STATIC_URL }}pictures/wordwalls/close_pop.png" class="btn_close" title="Close Window" alt="Close" />
+    </a>
+    <H3><center>Challenge results</center></H3>
+    <div id="addlInfo_content">
+    <h2>Nothing to see here</h2>
+    <p>You didn't say the magic word.</p>
+    </div>
+</div>
+
 
 <script type="text/javascript">
 $("#dontUseTiles").change(dontUseTilesChangeHandler);
