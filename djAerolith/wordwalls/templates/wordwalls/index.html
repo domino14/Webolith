@@ -20,6 +20,9 @@
   src="{{ STATIC_URL }}js/wordwalls/csrfAjax.js"></script>
 
 <script type="text/javascript"
+   src="{{ STATIC_URL }}js/wordwalls/challengeInfoProcess.js"></script>
+
+<script type="text/javascript"
  src="{{ STATIC_URL }}js/wordwalls/tableCreate.js"></script>
 <P></P>
 What type of list do you want?<BR>
@@ -44,10 +47,6 @@ What type of list do you want?<BR>
                 {{ dcForm.as_p}}
                 <input type="submit" name ="challengesSubmit" value="Play!"/>
             </form>
-        </td>
-        <td id="dcResultsButtonCell">
-            <BR><BR>
-            <button id="GetResults" onClick="getDcResults()">See today's results</button>
         </td>
         <td id="dcResultsCell">
             <span id="dcResultsLabel"></span><BR>
@@ -120,7 +119,7 @@ What type of list do you want?<BR>
   $(document).ready(function() {
     var lStr = "{{lengthCounts|escapejs}}"; 
     processLengthCounts(lStr, "{% url wordwalls_create_table %}");
-    hideAll();
+    showChallenges();
     
     $("label[for='id_wordLength']").width('175px');
     $("label[for='id_probabilityMin']").width('175px');
@@ -136,6 +135,7 @@ What type of list do you want?<BR>
 
     $("#id_lexicon_sl").val('0');   // always set the lexicon for saved list to 0 on load
     requestSavedListInfo();
+    $("#id_challenge > option[value='15']").attr('disabled','disabled');
  });
 </script>
 

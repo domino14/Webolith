@@ -41,9 +41,10 @@ To contact the author, please email delsolar at gmail dot com
      src="{{ STATIC_URL }}js/aerolith/json2.js"></script>
 
 <script type="text/javascript"
- src="{{ STATIC_URL }}js/wordwalls/table.js"></script>
- 
+     src="{{ STATIC_URL }}js/wordwalls/challengeInfoProcess.js"></script>
 
+<script type="text/javascript"
+ src="{{ STATIC_URL }}js/wordwalls/table.js"></script>
  
 <script type="text/javascript">
   $(document).ready(function() {
@@ -52,34 +53,35 @@ To contact the author, please email delsolar at gmail dot com
   });
 </script>
 <div id="topBar">
-<button id="start" onClick="requestStart()" class="tableButton">Start</button>
+<span id="start" onClick="requestStart()" class="tableButton">Start</span>
 <span id="gameTimer"> : </span>
-<button id="giveup" onClick="giveUp()" class="tableButton">Give up</button>
-<button id="solutions" onClick="showSolutions()" class="tableButton">Solutions</button>
+<span id="giveup" onClick="giveUp()" class="tableButton">Give up</span>
+<span id="solutions" onClick="showSolutions()" class="tableButton">Solutions</span>
 
-<button id="save" onClick="saveGame()" class="tableButton">Save</button>
+<span id="save" onClick="saveGame()" class="tableButton">Save</span>
 <input type="text" size="20" id="saveListName">
-<button id="customize" onClick="customize()" class="tableButton">Preferences</button>
+<span id="customize" onClick="customize()" class="tableButton">Preferences</span>
 <span id="horSep1"></span>
-<button id="exit" onClick="exit()" class="tableButton">Exit</button>
+<span id="exit" onClick="exit()" class="tableButton">Exit</span>
 </div>
 <div id="questions" class="{{questionsTableStyle}}">
 </div>
 
-
 Guess: <input type="text" name="Guess" size="15" id="guessText">
 <span id="horSep2"></span>
-<button id="shuffle" onClick="shuffle()" class="utilityButton">Shuffle</button>
-<button id="alphagram" onClick="alphagram()" class="utilityButton">Alphagram</button>
+<span id="shuffle" onClick="shuffle()" class="utilityButton">Shuffle</span>
+<span id="alphagram" onClick="alphagram()" class="utilityButton">Alphagram</span>
 
-<BR>
-<textarea cols="95" rows="6" id="messages" readonly></textarea>
-<textarea cols="20" rows="6" id="guesses" readonly></textarea>
-
+<div id="textBar">
+<div id="messages"></div>
+<div id="guesses"></div>
+</div>
 <script type="text/javascript">
 /* handle text box 'enter' press. We have to do this after defining the text apparently*/
 $("#guessText").keypress(textBoxKeyHandler);
 window.onbeforeunload = unloadEventHandler;
+disableSelection($('#shuffle')[0]);
+disableSelection($('#alphagram')[0]);
 </script>
 
 <div id="customize_popup" class="popup_block customize_popup_block">
@@ -120,6 +122,18 @@ window.onbeforeunload = unloadEventHandler;
     <p>You didn't say the magic word.</p>
     </div>
 </div>
+
+<div id="addlInfo_popup" class="popup_block">
+    <a href="#" class="close">
+        <img src="{{ STATIC_URL }}pictures/wordwalls/close_pop.png" class="btn_close" title="Close Window" alt="Close" />
+    </a>
+    <H3><center>Challenge results</center></H3>
+    <div id="addlInfo_content">
+    <h2>Nothing to see here</h2>
+    <p>You didn't say the magic word.</p>
+    </div>
+</div>
+
 
 <script type="text/javascript">
 $("#dontUseTiles").change(dontUseTilesChangeHandler);

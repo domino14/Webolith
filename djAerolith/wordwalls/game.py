@@ -125,6 +125,8 @@ class WordwallsGame:
     
     # function to save daily challenge alphagrams into DailyChallenge model, and tie this to the alphagrams generated above somehow.
     
+
+    
     def initializeBySearchParams(self, user, alphasSearchDescription, playerType, timeSecs):
         pkIndices = self.getPkIndices(alphasSearchDescription)
         
@@ -262,6 +264,16 @@ class WordwallsGame:
     # single player will start right away with no 'request' needed
     # multiplayer will have timed starts - every minute or so
     
+    def getDcId(self, tablenum):
+        try:
+            wgm = WordwallsGameModel.objects.get(pk=tablenum)
+        except:
+            return 0
+        state = json.loads(wgm.currentGameState)
+        try:
+            return state['challengeId']
+        except:
+            return 0
     def startRequest(self, user, tablenum):
         try:
             wgm = WordwallsGameModel.objects.get(pk=tablenum)
@@ -563,10 +575,10 @@ class WordwallsGame:
         guessStr = guessStr.upper()
         t1 = time.time()
         wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        print "Time to get", time.time() - t1
+        #print "Time to get", time.time() - t1
         t1 = time.time()
         state = json.loads(wgm.currentGameState)
-        print "time to load state", time.time() - t1
+        #print "time to load state", time.time() - t1
         t1 = time.time()
         if self.didTimerRunOut(state):
             stateChanged = True
@@ -588,13 +600,13 @@ class WordwallsGame:
             stateChanged = True
         
         if stateChanged:
-            print "time to check", time.time() - t1
+            #print "time to check", time.time() - t1
             t1 = time.time()
             wgm.currentGameState = json.dumps(state)
-            print "time to dump", time.time() - t1
+            #print "time to dump", time.time() - t1
             t1 = time.time()
             wgm.save()
-            print "time to save", time.time() - t1            
+            #print "time to save", time.time() - t1            
 
         return state['quizGoing'], state['LastCorrect']
             
@@ -613,9 +625,9 @@ class WordwallsGame:
         
         return True     
         
-    def generateDailyChallengePks(self, name, lex):
+    def generateDailyChallengePks(self, challengeName, lex):
         # capture number. first try to match to today's lists
-        m = re.match("Today's (?P<length>[0-9]+)s", name)
+        m = re.match("Today's (?P<length>[0-9]+)s", challengeName.name)
         
         if m:
             wordLength = int(m.group('length'))

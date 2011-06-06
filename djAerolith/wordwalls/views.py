@@ -28,7 +28,7 @@ from game import WordwallsGame
 from game import SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList
+from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName
 from datetime import date
 import sys
 
@@ -62,7 +62,8 @@ def homepage(request):
             if dcForm.is_valid():
                 wwg = WordwallsGame()
                 lex = Lexicon.objects.get(lexiconName=dcForm.cleaned_data['lexicon_dc'])
-                challengeName = dcForm.cleaned_data['challenge']
+                challengeName = DailyChallengeName.objects.get(name=dcForm.cleaned_data['challenge'])
+                print 'challenge:', challengeName, lex
                 tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
                 if tablenum == 0:
                     raise Http404
@@ -110,7 +111,7 @@ def homepage(request):
             if request.POST['action'] == 'getDcResults':
                 try:
                     lex = request.POST['lexicon']
-                    chName = request.POST['chName']
+                    chName = DailyChallengeName.objects.get(name=request.POST['chName'])
                     leaderboardData = getLeaderboardData(lex, chName)
                     response = HttpResponse(json.dumps(leaderboardData, ensure_ascii=False), 
                                             mimetype="application/javascript")
@@ -217,6 +218,15 @@ def table(request, id):
                             mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
             return response
+        elif action == "getDcData":
+            wwg = WordwallsGame()
+            dcId = wwg.getDcId(id)
+            if dcId > 0:
+                leaderboardData = getLeaderboardDataDcInstance(DailyChallenge.objects.get(pk=dcId))
+                response = HttpResponse(json.dumps(leaderboardData, ensure_ascii=False), 
+                                        mimetype="application/javascript")
+                response['Content-Type'] = 'text/plain; charset=utf-8'
+                return response
                 
     else:   # it's a GET
         wwg = WordwallsGame()
@@ -248,6 +258,21 @@ def searchForAlphagrams(data):
     maxP = alphProbToProbPK(data['probabilityMax'], lex.pk, length)
     return SearchDescription.probPkIndexRange(minP, maxP, lex)
 
+def getLeaderboardDataDcInstance(dc):
+    try:
+        lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
+    except:
+        return None
+    
+    lbes = DailyChallengeLeaderboardEntry.objects.filter(board=lb)
+    retData = {'maxScore': lb.maxScore, 'entries': []}
+    
+    for lbe in lbes:
+        entry = {'user': lbe.user.username, 'score': lbe.score, 'tr': lbe.timeRemaining}
+        retData['entries'].append(entry)
+    
+    return retData
+
 def getLeaderboardData(lex, chName):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
@@ -258,34 +283,10 @@ def getLeaderboardData(lex, chName):
         dc = DailyChallenge.objects.get(lexicon=lex_object, date=date.today(), name=chName)
     except:
         return None # daily challenge doesn't exist
+    
+    return getLeaderboardDataDcInstance(dc)
         
-    try:
-        lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
-    except:
-        return None
     
-    lbes = DailyChallengeLeaderboardEntry.objects.filter(board=lb)
-    retData = {'maxScore': lb.maxScore, 'entries': []}
-    
-    # retData['entries'].append({'user': 'mickey', 'score': 35, 'tr': 0})
-    # retData['entries'].append({'user': 'donald', 'score': 22, 'tr': 0})
-    # retData['entries'].append({'user': 'pluto', 'score': 48, 'tr': 0})
-    # retData['entries'].append({'user': 'goofy', 'score': 66, 'tr': 200})
-    # retData['entries'].append({'user': 'john', 'score': 12, 'tr': 0})
-    # retData['entries'].append({'user': 'doofus', 'score': 66, 'tr': 10})
-    # retData['entries'].append({'user': 'miguel', 'score': 1, 'tr': 0})
-    # retData['entries'].append({'user': 'guido', 'score': 66, 'tr': 1})
-    # retData['entries'].append({'user': 'tel', 'score': 66, 'tr': 0})
-    # retData['entries'].append({'user': 'sape', 'score': 55, 'tr': 0})
-    # retData['entries'].append({'user': 'joaquin', 'score': 44, 'tr': 0})
-    # retData['entries'].append({'user': 'rivers', 'score': 25, 'tr': 0})
-    # retData['entries'].append({'user': 'blah', 'score': 1, 'tr': 0})
-    
-    for lbe in lbes:
-        entry = {'user': lbe.user.username, 'score': lbe.score, 'tr': lbe.timeRemaining}
-        retData['entries'].append(entry)
-    
-    return retData
 
 def getSavedListList(lex, user):
     try:

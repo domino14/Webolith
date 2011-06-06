@@ -39,10 +39,19 @@ function changeMaxProb(lex, curLength)
 
 function challengeChangeEventHandler()
 {
-    var cName = $('#id_challenge option:selected').text();
-    var lexName = $('#id_lexicon_dc option:selected').text();
-    $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
-    $('#dcResultsDiv').text("To see results for this challenge, click 'See today's results'");
+    var cVal = $('#id_challenge option:selected').val();
+    if (cVal == "")
+    {
+        // this is the ----- text
+        $('#dcResultsLabel').text('Select a challenge to view leaderboard');
+    }
+    else
+    {
+        var cName = $('#id_challenge option:selected').text();
+        var lexName = $('#id_lexicon_dc option:selected').text();
+        $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
+        getDcResults();
+    }
 }
 
 function processLengthCounts(lStr, _url)
@@ -92,6 +101,8 @@ function processLengthCounts(lStr, _url)
     
     savedListOptionChangeHandler();
     savedListChangeHandler();
+    
+    $('#id_lexicon_sl').change(savedListLexiconChanged);
 }
 
 function savedListOptionChangeHandler()
@@ -205,47 +216,12 @@ function getDcResults()
     $.post(url, {action: 'getDcResults', 
                 lexicon: $('#id_lexicon_dc option:selected').text(),
                 chName: $('#id_challenge option:selected').text() }, 
-                processDcResults, 'json')
+                populateDcResults, 'json')
 }
 
-function sortEntry(e1, e2)
+function populateDcResults(data)
 {
-    if (e1['score'] == e2['score'])
-        return e2['tr'] - e1['tr'];
-    else
-        return e2['score'] - e1['score'];
-}
-
-function processDcResults(data)
-{
-    if (data == null)
-    {
-        $("#dcResultsDiv").text("No one has done this challenge today. Be the first!");
-    }
-    else
-    {
-        var tableBuilder = '<table id="dcResultsTable"><tr>'
-        var maxScore = data['maxScore'];
-        var entries = data['entries'];
-        
-        entries.sort(sortEntry);
-        tableBuilder += '<td class="dcResultsTableHeader">#</td><td class="dcResultsTableHeader">Name</td>' +
-                        '<td class="dcResultsTableHeader">Score</td><td class="dcResultsTableHeader">Remaining</td></tr>'
-        for (var i = 0; i < entries.length; i++)
-        {
-            var entry = entries[i];
-            var user = entry['user'];
-            var score = entry['score'];
-            var tr = entry['tr'];
-            tableBuilder += '<tr><td class="dcResultsTableCell">' + (i+1) + 
-                            '</td><td class="dcResultsTableCell">' + user + 
-                            '</td><td class="dcResultsTableCell">' + (score/maxScore * 100).toFixed(1) + '%' + 
-                            '</td><td class="dcResultsTableCell">' + tr + ' s.' + '</td></tr>'
-            
-        }
-        tableBuilder += '</table>'
-        $("#dcResultsDiv").html(tableBuilder);
-    }
+    processDcResults(data, "dcResultsDiv");
 }
 
 function savedListLexiconChanged()

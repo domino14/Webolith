@@ -31,20 +31,37 @@ div#questions
 {
 
     width: 875px;
-    height: 375px;
+    height: 355px;
     padding-top: 15px;
 }
 
-textarea#messages
+div#textBar
 {
-    font-family: sans-serif;
-    /*font-size: 100%;*/
+    margin-top: 10px;
+    width: 875px;
 }
 
-textarea#people
+div#messages
 {
-    font-family: sans-serif;
-    /*font-size: 100%;*/
+    float: left;
+    width: 675px;
+    height: 100px;
+    border-style: inset;
+    border-width: 2px;
+    margin-right: 25px;
+    overflow-y: auto;
+    font-size: 80%;
+}
+
+div#guesses
+{
+    float: left;
+    width: 150px;
+    height: 100px;
+    border-style: inset;
+    border-width: 2px;
+    overflow-y: auto;
+    font-size: 80%;
 }
 
 table#solutionsTable
@@ -68,24 +85,6 @@ td.frontHooksCell
 {
     text-align: right;
 }
-
-/*
-td.questionTableCell
-{
-    padding-left: 10px;
-    width: 215px;
-    height: 26px;
-    border: 1px dotted;
-}*/
-
-
-/*
-table#questionTable
-{
-    margin-left:10px;
-    border-collapse: collapse;
-    table-layout:fixed;
-}*/
 
 ul#questionList 
 {
@@ -144,145 +143,184 @@ span#gameTimer
     text-align: center;
     height: 40px;
     line-height: 40px;
+
 }
 
-button.tableButton
+.tableButton
 {
+    display: inline-block;
     border-style: outset;
     border-width: 2px;
     border-radius: 10px;
     font-size: 140%;
     font-weight: 500;
     padding: 6px;
-    height: 40px;
-    
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
 } 
 
-button#start
+.utilityButton
+{
+    display: inline-block;
+    border-style: outset;
+    border-width: 1px;
+    border-radius: 2px;
+    padding: 2px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.utilityButton:hover
+{
+    background-color: rgb(220, 220, 220);
+}
+
+#start
 {
     background-color: rgb(0, 220, 0);
     border-color: rgb(100, 100, 0);
 }
 
-button#start:hover
+#start:hover
 {
     background-color: rgb(0, 255, 0);
     border-color: rgb(0, 0, 255);
 }
 
-button#start:active
+#start:active
 {
     background-color: rgb(0, 180, 0);
     border-color: rgb(0, 0, 0);
 }
 
-button#giveup
+#giveup
 {
     background-color: rgb(220, 0, 0);
     border-color: rgb(100, 100, 0);
 }
 
-button#giveup:hover
+#giveup:hover
 {
     background-color: rgb(255, 0, 0);
     border-color: rgb(0, 0, 0);
 }
 
-button#giveup:active
+#giveup:active
 {
     background-color: rgb(180, 0, 0);
     border-color: rgb(100, 100, 0);
 }
 
-button#standsit
+#standsit
 {
     background-color: rgb(220, 130, 0);
     border-color: rgb(100, 100, 0);
 }
 
-button#standsit:hover
+#standsit:hover
 {
     background-color: rgb(255, 155, 0);
     border-color: rgb(0, 0, 0);
 }
 
-button#standsit:active
+#standsit:active
 {
     background-color: rgb(180, 100, 0);
     border-color: rgb(100, 100, 0);
 }
 
-button#solutions
+#solutions
 {
     background-color: rgb(0, 130, 220);
     border-color: rgb(100, 100, 0);
 }
 
-button#solutions:hover
+#solutions:hover
 {
     background-color: rgb(0, 150, 250);
     border-color: rgb(0, 0, 0);
 }
 
-button#solutions:active
+#solutions:active
 {
     background-color: rgb(0, 100, 150);
     border-color: rgb(100, 100, 0);
 }
 
-button#tablenum
+#tablenum
 {
     border-color: rgb(100, 100, 100);
     background-color: rgb(200, 200, 200);
 }
 
-button#tablenum:hover
+#tablenum:hover
 {
     border-color: rgb(120, 120, 120);
     background-color: rgb(220, 230, 220);
 }
 
-button#tablenum:active
+#tablenum:active
 {
     border-color: rgb(150, 150, 150);
     background-color: rgb(250, 250, 250);
 }
 
-button#save
+#save
 {
     border-color: rgb(50, 130, 50);
     background-color: rgb(230, 180, 100);
 }
 
-button#save:hover
+#save:hover
 {
     border-color: rgb(80, 80, 150);
     background-color: rgb(200, 140, 60);
 }
 
-button#save:active
+#save:active
 {
     border-color: rgb(80, 80, 150);
     background-color: rgb(255, 200, 120);
 }
 
-button#exit
+#exit
 {
     border-color: rgb(200, 130, 50);
     background-color: rgb(230, 50, 100);
 }
 
-button#exit:hover
+#exit:hover
 {
     border-color: rgb(255, 100, 0);
     background-color: rgb(230, 0, 0);
 }
 
-button#exit:active
+#exit:active
 {
     border-color: rgb(255, 100, 0);
     background-color: rgb(255, 0, 0);
 }
+
+#customize
+{
+    border-color: rgb(50, 50, 50);
+    background-color: rgb(200, 200, 200);
+}
+
+#customize:hover
+{
+    border-color: rgb(70, 70, 70);
+    background-color: rgb(225, 225, 225);
+}
+
+#customize:active
+{
+    border-color: rgb(70, 70, 70);
+    background-color: rgb(250, 250, 250); 
+}
+
 
 /* tiles and chips */
 
@@ -443,6 +481,13 @@ span#prefsInfo
 div#customize_popup_content
 {
     height: 200px;
+}
+
+div#addlInfo_content
+{
+    margin-left: 300px;
+    height: 300px;
+    overflow-y: auto;
 }
 
 img.btn_close {

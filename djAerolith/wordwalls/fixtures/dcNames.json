@@ -1,0 +1,107 @@
+[
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 1,
+    "fields": {
+      "name": "Today's 2s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 2,
+    "fields": {
+      "name": "Today's 3s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 3,
+    "fields": {
+      "name": "Today's 4s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 4,
+    "fields": {
+      "name": "Today's 5s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 5,
+    "fields": {
+      "name": "Today's 6s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 6,
+    "fields": {
+      "name": "Today's 7s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 7,
+    "fields": {
+      "name": "Today's 8s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 8,
+    "fields": {
+      "name": "Today's 9s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 9,
+    "fields": {
+      "name": "Today's 10s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 10,
+    "fields": {
+      "name": "Today's 11s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 11,
+    "fields": {
+      "name": "Today's 12s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 12,
+    "fields": {
+      "name": "Today's 13s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 13,
+    "fields": {
+      "name": "Today's 14s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 14,
+    "fields": {
+      "name": "Today's 15s"
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 15,
+    "fields": {
+      "name": "Week's Bingo Toughies"
+    }
+  }
+]

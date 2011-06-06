@@ -21,10 +21,15 @@ from django.contrib.auth.models import User
 from base.models import Lexicon, Alphagram
 from tablegame.models import GenericTableGameModel
 
+class DailyChallengeName(models.Model):
+    name = models.CharField(max_length=32)
+    def __unicode__(self):
+        return self.name
+
 class DailyChallenge(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     date = models.DateField(auto_now_add=True)  # set the date to now when an instance is created
-    name = models.CharField(max_length=32)   # the name of the daily challenge ie Today's 7s
+    name = models.ForeignKey(DailyChallengeName)
     alphagrams = models.TextField()
     seconds = models.IntegerField() # the number of seconds alloted for this challenge
     def __unicode__(self):

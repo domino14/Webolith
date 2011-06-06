@@ -40,26 +40,44 @@ var backgroundClass = null;
 
 var messageTextBoxLimit = 3000; // characters
 
+function disableSelection(target)
+{
+    if (typeof target.onselectstart!="undefined") //IE route
+    {
+	    target.onselectstart=function(){return false}
+    }
+    else if (typeof target.style.MozUserSelect!="undefined")
+    { //Firefox route
+	    target.style.MozUserSelect="none"
+    }
+    else //All other route (ie: Opera)
+    {
+	    target.onmousedown=function(){return false}
+    }
+    target.style.cursor = "default"
+}
+
+
 function updateMessages(message)
 {
-    var newMessage = $('#messages').val() + message + '\r\n';
+    var newMessage = $('#messages').html() + message + '<BR>';
     if (newMessage.length > messageTextBoxLimit)
     {
         newMessage = newMessage.substr(newMessage.length - messageTextBoxLimit);
     }
-    $('#messages').val(newMessage); 
+    $('#messages').html(newMessage); 
     var m = $("#messages");
     m.scrollTop(m[0].scrollHeight - m.height());
 }
 
 function updateGuesses(guess)
 {
-    var newText = $('#guesses').val() + guess + '\r\n';
+    var newText = $('#guesses').html() + guess + '<BR>';
     if (newText.length > messageTextBoxLimit)
     {
         newText = newText.substr(newText.length - messageTextBoxLimit);
     }
-    $('#guesses').val(newText);
+    $('#guesses').html(newText);
     var m = $('#guesses');
     m.scrollTop(m[0].scrollHeight - m.height());
 }
@@ -126,7 +144,7 @@ function processQuestionObj(questionObj)
     for (var i = 0; i < 50; i++)
     {
         var cellStr = "q" + i;
-        ulBuilder += '<li id="' + cellStr + '">';
+        ulBuilder += '<li id="' + cellStr + '" class="qle">';
         if (i < qObj.length)
         {
             var alphagram = qObj[i]['a'];
@@ -170,6 +188,9 @@ function processQuestionObj(questionObj)
     ulBuilder += '</ul>';
     solutionsTableBuilder += '</table>';
     $("#questions").html(ulBuilder);
+    var qlistLIs = $(".qle");
+    for (var i = 0; i < 50; i++)
+        disableSelection(qlistLIs[i]);
     $("#defs_popup_content").html(solutionsTableBuilder + "<BR>")
     $("#defs_popup_content").css({'visibility': 'hidden'});
     /* change tile sizes depending on length of alphagram */
@@ -280,6 +301,7 @@ function textBoxKeyHandler(event)
   if(event.keyCode == 13)
   {
     var guessText = $(this).val();
+    if (guessText.length < 2 || guessText.length > 15) return;   // ignore
     $(this).val("");
     /* should post */
     $.post(tableUrl, {action: "guess", guess: guessText},
@@ -334,9 +356,14 @@ function processQuizEnded()
     $("#questions").html(""); // clear the table
     $("#gameTimer").text("0:00");   // set the timer display to 0
     window.clearInterval(gameTimerID);  // and stop the timer
-    if (challenge)
+    if (challenge)  // only when the challenge is done and not its missed lists.
     {
         updateMessages("The challenge has ended!");
+        $.post(tableUrl, {action: "getDcData"}, 
+            function(data){
+                processDcResults(data, "addlInfo_content");
+            }, 'json');
+        updateMessages('Click <a href="#" onClick="showAddlInfo()">here</a> to see current results for this challenge.');
     }
     if (autoSave)
     {
@@ -358,6 +385,26 @@ function processQuizEnded()
     
     $("#defs_popup_content").css({'visibility': 'visible'});
     gameGoing = false;
+}
+
+function showAddlInfo()
+{
+	$('#addlInfo_popup').fadeIn();
+	
+	//Define margin for center alignment (vertical + horizontal) - we add 80 to the height/width to accomodate for the padding + border width defined in the css
+	var popMargTop = ($('#addlInfo_popup').height() + 80) / 2;
+	var popMargLeft = ($('#addlInfo_popup').width() + 80) / 2;
+	
+	//Apply Margin to Popup
+	$('#addlInfo_popup').css({ 
+		'margin-top' : -popMargTop,
+		'margin-left' : -popMargLeft
+	});
+	
+	//Fade in Background
+	$('#fade').fadeIn(); //Fade in the fade layer 
+	
+//	return false;
 }
 
 function saveGame()
@@ -411,10 +458,12 @@ function cellClickHandler(event)
         if (sel && sel.removeAllRanges)
             sel.removeAllRanges();
     }
+    $("#guessText").focus();
 }
 
 function shuffle()
 {
+    $("#guessText").focus();
     // cellIndex varies from 0 to 49 inclusive (maybe more in the future)
     for (var i = 0; i < 50; i++)
         shuffleSingleCell(i);
@@ -429,6 +478,7 @@ function shuffleSingleCell(cellIndex)
 
 function alphagram()
 {
+    $("#guessText").focus();
     for (var i = 0; i < 50; i++)
     {
         if (i < qObj.length)
@@ -639,6 +689,8 @@ ff (osx):
 safari (osx):       yes         yes             yes                 yes
 ie (win):                                                           yes 
 ff (linux):                                                         yes
+
+opera doesn't work for this event :(
 
 also use onbeforeunload:
 http://stackoverflow.com/questions/4376596/jquery-unload-or-beforeunload

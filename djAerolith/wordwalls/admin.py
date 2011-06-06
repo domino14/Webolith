@@ -16,7 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList
+from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName
 from wordwalls.models import WordwallsGameModel
 from django.contrib import admin
 
@@ -36,6 +36,7 @@ class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
 admin.site.register(DailyChallengeLeaderboard, DailyChallengeLeaderboardAdmin)
 admin.site.register(DailyChallengeLeaderboardEntry, DailyChallengeLeaderboardEntryAdmin)
 admin.site.register(DailyChallenge, DailyChallengeAdmin)
+admin.site.register(DailyChallengeName)
 
 class WordwallsGameAdmin(admin.ModelAdmin):
     fields = ['host', 'playing', 'inTable', 'lastActivity', 'currentGameState', 'gameType', 'playerType']
