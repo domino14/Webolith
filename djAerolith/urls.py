@@ -34,7 +34,8 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
+    (r'^blog/', include('basic.blog.urls')),
+    (r'^comments/', include('django.contrib.comments.urls')),
     (r'^$', 'views.homepage'),
     (r'^old/', 'views.oldhomepage'),
     (r'^about/', 'views.about'),

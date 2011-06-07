@@ -121,8 +121,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.comments',
+    'django.contrib.markup',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    'basic.blog',
+    'basic.inlines',
+    'tagging',
     'base',
     'tablegame',
     'wordwalls',
