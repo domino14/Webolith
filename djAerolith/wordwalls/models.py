@@ -33,7 +33,7 @@ class DailyChallenge(models.Model):
     alphagrams = models.TextField()
     seconds = models.IntegerField() # the number of seconds alloted for this challenge
     def __unicode__(self):
-        return str(self.date) + " " + self.name + "(" + self.lexicon.lexiconName + ")"
+        return str(self.date) + " " + self.name.name + "(" + self.lexicon.lexiconName + ")"
 
 
 class DailyChallengeLeaderboard(models.Model):
