@@ -330,7 +330,7 @@ function textBoxKeyHandler(event)
                         updateGuesses(guessText.toUpperCase());
                     }
                     else
-                        updateGuesses('(' + guessText.toUpperCase() + ')'); 
+                        updateGuesses('<span class="wrongGuess">(' + guessText.toUpperCase() + ')</span>'); 
 
                 }                    
                 if ('g' in data)

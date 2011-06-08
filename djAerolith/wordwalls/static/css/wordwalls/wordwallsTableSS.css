@@ -517,3 +517,13 @@ span.configInput
     display: inline-block;
     width: 200px;
 }
+
+span.wrongGuess
+{
+    color: red;
+}
+
+#guessText
+{
+    font-size: 125%;
+}
