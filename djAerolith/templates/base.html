@@ -36,25 +36,29 @@ To contact the author, please email delsolar at gmail dot com
     {% endblock %}
     
     {% block navbar %}
-    <UL class="navbar">
-    {% if user.username == "" %}
-        <LI><a href="/accounts/login" class="navbarLink">Log in</a></LI>
-    {% else %}
-        <LI><a href="/accounts/logout" class="navbarLink">Log {{user}} out</a></LI>
-    {% endif %}
-        <LI><a href="/accounts/register" class="navbarLink">Register</a></LI>
-    {# if user.get_profile.member #}
-        {# do nothing, member #}
-    {# else #}
-        <LI><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
-    {# endif #}
+    <div class="userbar">
+        <UL class="navbar">
+        {% if user.username == "" %}
+            <LI><a href="/accounts/login" class="navbarLink">Log in</a></LI>
+            <LI><a href="/accounts/register" class="navbarLink">Register</a></LI>
+        {% else %}
+            <LI><a href="/accounts/profile" class="navbarLink">{{user}}</a></LI>
+            {% if user.get_profile.member %}
+                {# do nothing, member #}
+            {% else %}
+                <LI><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
+            {% endif %}
+            <LI><a href="/accounts/logout" class="navbarLink">Log out</a></LI>
+        {% endif %}
+        </UL>
+    <div class="aerolithBar">
+        <UL class="navbar">
     <LI><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
     <LI><a href="/blog" class="navbarLink">Aerolith Blog/News</a></LI>
-    </UL><BR>
-    <UL class ="navbar">
     <LI><a href="/wordwalls" class="navbarLink">Wordwalls</a></LI>    
     </UL>
-    <BR>
+    </div>
+    <BR><BR>
     {% endblock %}
     <div id="content_title">
     {% block content_title %}
@@ -69,15 +73,6 @@ To contact the author, please email delsolar at gmail dot com
         <a href="wordwalls">Play WordWalls</a><BR>
         
         {% endif %}
-        <BR><BR>
-        <P>
-        
-        <strong>Note: </strong>This site will go down for maintenance for about 5 minutes at 11 PM PST on some days (I'll try to put up a schedule in the future). At this time I will push new code/features to the website and will eventually have a log/news of what has been done. If you are in the middle of a saved list your information will not be lost, but you may experience unresponsiveness during that time.
-        </P>
-        <P>
-        <strong>Note: </strong>For users coming from the desktop versions of Aerolith -- these will be discontinued (taken offline) on or around July 1st of 2011. The code will still always be available, but I would like to transition people to this site. Version 0.9beta was used by a few people and also allowed users to save, load, etc lists. If it is essential for you to keep these lists please talk to me and I'll see what I can do. It's not easy migrating them over to this new architecture, but I will try if you really want these. Otherwise, please be sure to finish your lists by the migration date. Please register for Aerolith again on this website.</P>
-        <P>
-        <strong>Tip: </strong>this site works on netbooks too! Press F11 to put your browser in full-screen mode, and again to return to regular mode. </P>
         
         <center><H2>Latest News</H2></center>
         {% if latestPost %}
@@ -95,6 +90,16 @@ To contact the author, please email delsolar at gmail dot com
                 </a>
         </div>
         {% endif %}
+        
+        <P>
+        
+        <strong>Note: </strong>This site will go down for maintenance for about 5 minutes at 11 PM PST on some days (I'll try to put up a schedule in the future). At this time I will push new code/features to the website and will eventually have a log/news of what has been done. If you are in the middle of a saved list your information will not be lost, but you may experience unresponsiveness during that time.
+        </P>
+        <P>
+        <strong>Note: </strong>For users coming from the desktop versions of Aerolith -- these will be discontinued (taken offline) on or around July 1st of 2011. The code will still always be available, but I would like to transition people to this site. Version 0.9beta was used by a few people and also allowed users to save, load, etc lists. If it is essential for you to keep these lists please talk to me and I'll see what I can do. It's not easy migrating them over to this new architecture, but I will try if you really want these. Otherwise, please be sure to finish your lists by the migration date. Please register for Aerolith again on this website.</P>
+        <P>
+        <strong>Tip: </strong>this site works on netbooks too! Press F11 to put your browser in full-screen mode, and again to return to regular mode. </P>
+        
         {% endblock %}
         
     </div>
