@@ -1,0 +1,21 @@
+{% load comments i18n %}
+{% if user.is_authenticated %}
+   <form action="{% comment_form_target %}" method="post">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{object.get_absolute_url}}" />
+        {% for field in form %}
+            {% if field.is_hidden %}
+                {{ field }}
+            {% else %}
+                {% if field.name != "name" and field.name != "email" and field.name != "url" %}
+                    {% if field.errors %}{{ field.errors }}{% endif %}
+                    {{ field }}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <BR>
+        <input class="submit-post" name="post" type="submit" value="Add comment" />
+   </form>
+{% else %}
+    I'm sorry, but you must be <a href="/accounts/login">logged in</a> to submit comments.
+{% endif %}

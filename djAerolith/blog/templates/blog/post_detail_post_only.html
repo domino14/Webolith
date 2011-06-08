@@ -1,0 +1,8 @@
+{% load blog inlines markup %}
+
+<p class="date">{{ object.publish|date:"F j, Y @ P" }}</p>
+
+<div class="body">
+  {{ object.body|render_inlines|safe|markdown }}
+</div>
+

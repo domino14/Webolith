@@ -1,0 +1,69 @@
+.item
+{
+    border: 1px dotted;
+    border-color: blue;
+    margin-left: 200px;
+    margin-bottom: 20px;
+    margin-right: 200px;
+}
+
+.date
+{
+    background-color: blue;
+    color: white;
+    font-style: italic;
+}
+
+.tease
+{
+    color: gray;
+    font-style: italic;
+}
+
+#content_title
+{
+    margin-top: 25px;
+    text-align: center;
+}
+
+.postdetail
+{
+    border: 1px dotted;
+    border-color: blue;
+    margin-left: 200px;
+    margin-bottom: 20px;
+    margin-right: 200px; 
+}
+
+.inline_tag_list
+{
+    font-style: italic;
+    color: gray;
+}
+
+.body
+{
+    border-bottom: 1px solid;
+    border-color: blue;
+}
+
+.plzLogin
+{
+    color: gray;
+}
+
+.comment
+{
+    border-bottom: 1px dashed;
+    margin-bottom: 10px;
+}
+
+.name
+{
+    background-color: orange;
+}
+
+#id_honeypot
+{
+    visibility: hidden;
+}

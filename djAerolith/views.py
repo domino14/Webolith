@@ -19,13 +19,16 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
+from basic.blog.models import Post, Category
 def homepage(request):
-    #user = ""
-    #if request.user.is_authenticated():
-    #    user = request.user.username
-        
-    #print "rendering to response with user", user
-    return render_to_response('base.html',context_instance=RequestContext(request))
+    # get latest blog post with the "news" category
+    
+    try:
+        latestPost = Post.objects.published().filter(categories=Category.objects.get(title="News")).order_by('-publish')[0]
+    except:
+        latestPost = None
+    
+    return render_to_response('base.html',{'latestPost': latestPost}, context_instance=RequestContext(request))
     
 def supporter(request):
     return render_to_response('support.html', context_instance=RequestContext(request))

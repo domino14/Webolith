@@ -113,6 +113,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_ROOT, "templates"),
+    os.path.join(PROJECT_ROOT, "blog/templates"),   # overriding some default templates for the blog app
 )
 
 INSTALLED_APPS = (
@@ -151,7 +152,9 @@ EMAIL_USE_TLS = True
 
 LOGIN_URL = "/accounts/login"
 
-STATICFILES_DIRS = settings_local.STATICFILES_DIRS
+STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, 'static'),
+                    os.path.join(PROJECT_ROOT, 'blog/static'),
+                    )
 
 IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt')

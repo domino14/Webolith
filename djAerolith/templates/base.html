@@ -22,8 +22,9 @@ To contact the author, please email delsolar at gmail dot com
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     {% block ss %}
-    <link href="{{ STATIC_URL }}css/aerolith/aerolithStyleSheet.css" rel="stylesheet"  type="text/css">
+    <link href="{{ STATIC_URL }}css/aerolith/aerolithStyleSheet.css" rel="stylesheet" type="text/css">
     {% endblock %}
+    <link href="{{ STATIC_URL }}css/blog/blogStyles.css" rel="stylesheet" type="text/css">
     <title>{% block title %}Aerolith{% endblock %}</title>
 </head>
 
@@ -48,13 +49,17 @@ To contact the author, please email delsolar at gmail dot com
         <LI><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
     {# endif #}
     <LI><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
-    <LI><a href="/blog" class="navbarLink">Aerolith Blog</a></LI>
+    <LI><a href="/blog" class="navbarLink">Aerolith Blog/News</a></LI>
     </UL><BR>
     <UL class ="navbar">
     <LI><a href="/wordwalls" class="navbarLink">Wordwalls</a></LI>    
     </UL>
     <BR>
     {% endblock %}
+    <div id="content_title">
+    {% block content_title %}
+    {% endblock %}
+    </div>
     <div id="content">
         {% block content %}
         {% if user.username == "" %}
@@ -74,7 +79,24 @@ To contact the author, please email delsolar at gmail dot com
         <P>
         <strong>Tip: </strong>this site works on netbooks too! Press F11 to put your browser in full-screen mode, and again to return to regular mode. </P>
         
+        <center><H2>Latest News</H2></center>
+        {% if latestPost %}
+        <div class="postdetail">
+            <H3>{{latestPost.title}}</H3>
+            {% include "blog/post_detail_post_only.html" with object=latestPost %}
+            {% load comments %}
+            {% get_comment_count for latestPost as comment_count %}
+            <a href="{{latestPost.get_absolute_url}}">
+                {% if comment_count > 0 %}
+                    {{comment_count}} comments
+                {% else %}
+                    Add a comment
+                {% endif %}
+                </a>
+        </div>
+        {% endif %}
         {% endblock %}
+        
     </div>
 </body>
 </html>
