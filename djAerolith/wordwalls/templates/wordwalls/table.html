@@ -92,6 +92,7 @@ disableSelection($('#alphagram')[0]);
         <h3>Tiles:</h3>
         <span class="configInput"><input type="checkbox" id="dontUseTiles">Don't use tiles</input></span>
         <span class="configInput"><input type="checkbox" id="useSans">Sans-serif font</input></span>
+        <span class="configInput"><input type="checkbox" id="tilesBold">Bold letters</input></span>
         <span class="configInput">Tile style:
         <select id="tileStyleSelect">
           <option value="1">Style 1</option>
@@ -139,6 +140,8 @@ disableSelection($('#alphagram')[0]);
 <script type="text/javascript">
 $("#dontUseTiles").change(dontUseTilesChangeHandler);
 $("#useSans").change(useSansHandler);
+$("#tilesBold").change(tilesBoldHandler);
+
 $("#tileStyleSelect").change(tileStyleSelectHandler);
 $("#dontShowTable").change(dontShowTableHandler);
 $("#dontShowCanvas").change(dontShowCanvasHandler);

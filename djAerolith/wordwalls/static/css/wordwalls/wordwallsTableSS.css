@@ -401,15 +401,18 @@ span.tile7
 span.tilemono
 {
     font-size: 160%;
-    font-weight: 600;
     font-family: monospace;
 }
 
 span.tilesans
 {
     font-size: 130%;
-    font-weight: 600;
     font-family: arial, geneva, helvetica, helv, sans-serif;
+}
+
+span.tilebold
+{
+    font-weight: 600;
 }
 
 #Test

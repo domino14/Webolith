@@ -33,7 +33,7 @@ var tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5}
 var unsavedChanges = false;
 var autoSave = false;
 var addParams = null;
-var defaultTileClass = {on: true, font: 'mono', selection: '1'}; //"tile tileon tilemono tile1";
+var defaultTileClass = {on: true, font: 'mono', selection: '1', bold: false}; //"tile tileon tilemono tile1";
 var defaultBackgroundClass = {showTable: true, showCanvas: true, showBorders: false};
 var tileClass = null;
 var backgroundClass = null;
@@ -124,9 +124,14 @@ function tileClassToText(tc)
         text += "tileoff ";
     }    
     if (tc.font == "mono")
-        text += "tilemono";
+        text += "tilemono ";
     else if (tc.font == "sans")
-        text += "tilesans";
+        text += "tilesans ";
+    
+    if (tc.bold)
+    {
+        text += "tilebold";
+    }
     
     return text;
 }
@@ -556,10 +561,12 @@ function dontUseTilesChangeHandler()
     {
         //alert('checked');
         tileClass.on = false;
+        $("#tileStyleSelect").attr("disabled", "disabled");
     }
     else
     {
         tileClass.on = true;       
+        $("#tileStyleSelect").attr("disabled", "");
     }
     $(".tile").removeClass().addClass(tileClassToText(tileClass));
 }
@@ -573,6 +580,19 @@ function useSansHandler()
     else
     {
         tileClass.font = 'mono';
+    }
+    $(".tile").removeClass().addClass(tileClassToText(tileClass));
+}
+
+function tilesBoldHandler()
+{
+    if ($("#tilesBold").attr("checked")==true)
+    {
+        tileClass.bold = true;
+    }
+    else
+    {
+        tileClass.bold = false;
     }
     $(".tile").removeClass().addClass(tileClassToText(tileClass));
 }
@@ -639,12 +659,15 @@ function setPrefSelections()
 {
     setIndividualCheckmark('#dontUseTiles', tileClass.on, false);
     setIndividualCheckmark('#useSans', tileClass.font, "sans");
+    setIndividualCheckmark('#tilesBold', tileClass.bold, true)
+    
     setIndividualCheckmark('#dontShowTable', backgroundClass.showTable, false);
     setIndividualCheckmark('#dontShowCanvas', backgroundClass.showCanvas, false);
     setIndividualCheckmark('#showBorders', backgroundClass.showBorders, true);
     
     $("#tileStyleSelect").val(tileClass.selection);
-    
+    if (!tileClass.on)
+        $("#tileStyleSelect").attr("disabled", "disabled");
 }
 
 function savePrefs()
