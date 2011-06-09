@@ -89,7 +89,7 @@ td.frontHooksCell
 ul#questionList 
 {
     width:868px;
-    text-align:left;
+    text-align:center;
     padding: 0; 
     margin-top: 5px;
     margin-left: 20px;
@@ -112,7 +112,7 @@ li.borders
 {
     width:205px;
     height: 24px;
-    border: 1px dotted;
+    border: 1px solid gray;
 }
 
 ul#questionList:after {  
@@ -324,6 +324,13 @@ span#gameTimer
 
 /* tiles and chips */
 
+span.tiles
+{
+    display: inline-block;
+    vertical-align: center;
+    line-height: 24px;
+}
+
 span.tileon
 {
 
@@ -406,12 +413,15 @@ span.tilesans
 
 span.chip
 {
+    float: left;
     display: inline-block;
     text-align: center;
+    vertical-align: center;
     line-height: 18px;
     color: rgb(0, 0, 0);
     background-repeat: no-repeat;
     width: 18px;
+    margin-top: 3px;
     height: 18px;
 }
 
@@ -443,6 +453,18 @@ span#prefsInfo
 {
     color: green;
 }
+
+#netbookBorders
+{
+    position: fixed; 
+    left: 0; top: 0;
+    width: 1024px; height: 600px;
+    border-color: black;
+    border: 1px dotted;
+    z-index: -10;
+    /*display: none;*/
+}
+
 
 /******** definitions popup **********/
 #fade {
