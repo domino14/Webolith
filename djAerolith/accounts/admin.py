@@ -18,4 +18,8 @@
 from django.contrib import admin
 from accounts.models import AerolithProfile
 
-admin.site.register(AerolithProfile)
+class AerolithProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'member', 'wordwallsSaveListSize']
+    search_fields = ['user', 'member']
+
+admin.site.register(AerolithProfile, AerolithProfileAdmin)
