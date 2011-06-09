@@ -16,25 +16,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
 
+
 label
 {
     display: inline-block;
 }
-/*
-button#challenges
-{
-    background-color:rgb(200, 220, 200);
-}
-
-button#searchParams
-{
-    background-color:rgb(200, 220, 200);
-}
-
-button#userLists
-{
-    background-color:rgb(200, 220, 200);
-}*/
 
 td#dcFormCell
 {
@@ -74,8 +60,8 @@ td.dcResultsTableHeader
 
 div#dcResultsDiv
 {
-    width: 280px;
-    height: 280px;
+    width: 330px;
+    height: 330px;
     
     border-top-width: 2px;
     border-top-style: dotted;
