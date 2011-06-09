@@ -29,7 +29,7 @@ var wrongWordsHash = {};
 var wrongAlphasHash = {};
 var gameTimerID;
 var challenge = false;
-var tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 10}
+var tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5}
 var unsavedChanges = false;
 var autoSave = false;
 var addParams = null;

@@ -401,14 +401,23 @@ span.tile7
 span.tilemono
 {
     font-size: 160%;
-    font-weight: lighter;
+    font-weight: 600;
     font-family: monospace;
 }
 
 span.tilesans
 {
-    font-size: 120%;
-    font-family: Verdana, sans-serif;
+    font-size: 130%;
+    font-weight: 600;
+    font-family: arial, geneva, helvetica, helv, sans-serif;
+}
+
+#Test
+{
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
 }
 
 span.chip
