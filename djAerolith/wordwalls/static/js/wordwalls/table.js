@@ -106,6 +106,13 @@ function initializeTable(tUrl, u, params)
 
     }
     setPrefSelections();
+    
+    dontUseTilesChangeHandler();
+    useSansHandler();
+    tilesBoldHandler();
+
+    tileStyleSelectHandler();
+    showBordersHandler();    
     dontShowTableHandler();
     dontShowCanvasHandler();
     
@@ -139,7 +146,7 @@ function tileClassToText(tc)
 function processQuestionObj(questionObj)
 {
     qObj = questionObj;
-    var ulBuilder = '<ul id="questionList"><tr>';
+    var ulBuilder = '<ul class="questionList"><tr>';
     questionLocationHash = {};
     wrongWordsHash = {};
     wrongAlphasHash = {};

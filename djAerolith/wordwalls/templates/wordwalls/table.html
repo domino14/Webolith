@@ -88,7 +88,17 @@ disableSelection($('#alphagram')[0]);
     <a href="#" class="close">
         <img src="{{ STATIC_URL }}pictures/wordwalls/close_pop.png" class="btn_close" title="Close Window" alt="Close" />
     </a>
-    <div id="customize_popup_content">
+    
+    <div id="customSample">
+        <ul class="questionList">
+        <li id="qt1" style="cursor: default; "><span class="chip chip1">1</span> <span class="tiles"><span class="tile">A</span><span class="tile">C</span><span class="tile">I</span><span class="tile">N</span><span class="tile">S</span><span class="tile">T</span><span class="tile">Y</span><span class="tile">Y</span></span></li>
+                
+    
+        
+        </ul>
+    </div>
+    <BR>
+    <div id="customize_popup_content" style="clear: both;">
         <h3>Tiles:</h3>
         <span class="configInput"><input type="checkbox" id="dontUseTiles">Don't use tiles</input></span>
         <span class="configInput"><input type="checkbox" id="useSans">Sans-serif font</input></span>
@@ -104,7 +114,7 @@ disableSelection($('#alphagram')[0]);
           <option value="7">Style 7</option>
         </select></span>
         <h3>Table:</h3>
-        <span class="configInput"><input type="checkbox" id="dontShowTable">Don't show table</input></span>
+        <span class="configInput"><input type="checkbox" id="dontShowTable">Don't show green table</input></span>
         <span class="configInput"><input type="checkbox" id="dontShowCanvas">Don't show canvas background</input></span>
         <span class="configInput"><input type="checkbox" id="showBorders">Show borders around questions</input></span>
         <div>

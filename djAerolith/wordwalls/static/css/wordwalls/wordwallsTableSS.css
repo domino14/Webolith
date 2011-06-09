@@ -86,7 +86,7 @@ td.frontHooksCell
     text-align: right;
 }
 
-ul#questionList 
+ul.questionList 
 {
     width:868px;
     text-align:center;
@@ -97,7 +97,7 @@ ul#questionList
     list-style-type: none;  /* remove bullets*/
 }
 
-ul#questionList li 
+ul.questionList li 
 { 
     float:left;
 }
@@ -514,7 +514,7 @@ span#prefsInfo
 
 div#customize_popup_content
 {
-    height: 200px;
+    height: 300px;
 }
 
 div#addlInfo_content
