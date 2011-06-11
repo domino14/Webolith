@@ -108,7 +108,7 @@ function processLengthCounts(lStr, _url)
 function savedListOptionChangeHandler()
 {
     var optionName = $('#id_listOption option:selected').text();
-    $('input[name="savedListsSubmit"]').attr('disabled', '').attr('value', 'Play!');
+    $('input[name="savedListsSubmit"]').prop('disabled', false).prop('value', 'Play!');
     if (optionName == "Continue list")
     {
         $('#savedListWarning').text("");
@@ -124,7 +124,7 @@ function savedListOptionChangeHandler()
     }
     else if (optionName == "Delete list")
     {
-        $('input[name="savedListsSubmit"]').attr('value', 'Delete selected list');
+        $('input[name="savedListsSubmit"]').prop('value', 'Delete selected list');
         $('#savedListWarning').text("This will delete the selected list! Make sure you want to do this!");
     }
 }
@@ -144,11 +144,11 @@ function dimSubmitIfListUnfinished()
     if (listName.charAt(listName.length-1) != '*')
     {
         /* list has NOT been gone thru at least once. so going thru first missed should not work! */
-        $('input[name="savedListsSubmit"]').attr('disabled', 'disabled');
+        $('input[name="savedListsSubmit"]').prop('disabled', true);
     }
     else
     {
-        $('input[name="savedListsSubmit"]').attr('disabled', '');
+        $('input[name="savedListsSubmit"]').prop('disabled', false);
     }
 }
 

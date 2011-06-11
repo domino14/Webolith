@@ -72,14 +72,14 @@ function updateMessages(message)
 
 function updateGuesses(guess)
 {
-    var newText = $('#guesses').html() + guess + '<BR>';
+    var gBox = $('#guesses');
+    var newText = gBox.html() + guess + '<BR>';
     if (newText.length > messageTextBoxLimit)
     {
         newText = newText.substr(newText.length - messageTextBoxLimit);
     }
-    $('#guesses').html(newText);
-    var m = $('#guesses');
-    m.scrollTop(m[0].scrollHeight - m.height());
+    gBox.html(newText);
+    gBox.scrollTop(gBox[0].scrollHeight - gBox.height());
 }
 
 function initializeTable(tUrl, u, params)
@@ -558,7 +558,7 @@ function setupPopupEvent()
 {
     // setup definition popup event
     //Close Popups and Fade Layer
-    $('a.close, #fade').live('click', function() 
+    $('img.btn_close, #fade').live('click', function() 
     { //When clicking on the close or fade layer...
       	$('#fade , .popup_block').fadeOut();
     	return false;
@@ -567,23 +567,23 @@ function setupPopupEvent()
 
 function dontUseTilesChangeHandler()
 {
-    if($("#dontUseTiles").attr("checked")==true)
+    if($("#dontUseTiles").prop("checked"))
     {
-        //alert('checked');
+      
         tileClass.on = false;
-        $("#tileStyleSelect").attr("disabled", "disabled");
+        $("#tileStyleSelect").prop("disabled", true);
     }
     else
     {
         tileClass.on = true;       
-        $("#tileStyleSelect").attr("disabled", "");
+        $("#tileStyleSelect").prop("disabled", false);
     }
     $(".tile").removeClass().addClass(tileClassToText(tileClass));
 }
 
 function useSansHandler()
 {
-    if ($("#useSans").attr("checked")==true)
+    if ($("#useSans").prop("checked"))
     {
         tileClass.font = 'sans';
     }
@@ -596,7 +596,7 @@ function useSansHandler()
 
 function tilesBoldHandler()
 {
-    if ($("#tilesBold").attr("checked")==true)
+    if ($("#tilesBold").prop("checked"))
     {
         tileClass.bold = true;
     }
@@ -615,7 +615,7 @@ function tileStyleSelectHandler()
 
 function dontShowTableHandler()
 {
-    if ($("#dontShowTable").attr("checked")==true)
+    if ($("#dontShowTable").prop("checked"))
     {
         backgroundClass.showTable = false;
         $("#questions").removeClass();
@@ -629,7 +629,7 @@ function dontShowTableHandler()
 
 function dontShowCanvasHandler()
 {
-    if ($("#dontShowCanvas").attr("checked")==true)
+    if ($("#dontShowCanvas").prop("checked"))
     {
         backgroundClass.showCanvas = false;
         $("body").removeClass();
@@ -643,7 +643,7 @@ function dontShowCanvasHandler()
 
 function showBordersHandler()
 {
-    if ($("#showBorders").attr("checked")==true)
+    if ($("#showBorders").prop("checked"))
     {
         backgroundClass.showBorders = true;
         $("li").removeClass().addClass("borders");
@@ -659,10 +659,10 @@ function setIndividualCheckmark(searchStr, value, checkedValue)
 {
     if (value == checkedValue)
     {
-        $(searchStr).attr('checked','checked');
+        $(searchStr).prop('checked', true);
     }
     else
-        $(searchStr).removeAttr('checked');
+        $(searchStr).prop('checked', false);
 }
 
 function setPrefSelections()
@@ -677,7 +677,7 @@ function setPrefSelections()
     
     $("#tileStyleSelect").val(tileClass.selection);
     if (!tileClass.on)
-        $("#tileStyleSelect").attr("disabled", "disabled");
+        $("#tileStyleSelect").prop("disabled", true);
 }
 
 function savePrefs()
