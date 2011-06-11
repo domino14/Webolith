@@ -141,8 +141,8 @@ span#gameTimer
     width: 70px;
 
     text-align: center;
-    height: 40px;
-    line-height: 40px;
+    height: 30px;
+    line-height: 30px;
 
 }
 
@@ -155,8 +155,8 @@ span#gameTimer
     font-size: 140%;
     font-weight: 500;
     padding: 6px;
-    height: 30px;
-    line-height: 30px;
+    height: 20px;
+    line-height: 20px;
     text-align: center;
 } 
 
@@ -494,7 +494,7 @@ span#prefsInfo
 	display: none;
 	background: #fff;
 	padding: 20px; 	
-	border: 20px solid #ddd;
+	border: 20px solid #bdf;
 	float: left;
 	position: fixed;
 	top: 50%; left: 50%;
@@ -526,7 +526,15 @@ div#addlInfo_content
 
 img.btn_close {
 	float: right; 
-	margin: -55px -55px 0 0;
+	margin: -45px -45px 0 0;
+	background-image:url('../../pictures/wordwalls/close_pop1.png'); 
+	background-repeat: no-repeat;  
+}
+
+img.btn_close:hover 
+{
+    background-image:url('../../pictures/wordwalls/close_pop2.png');    
+    /* this doesn't work */
 }
 
 div#defs_popup_content
