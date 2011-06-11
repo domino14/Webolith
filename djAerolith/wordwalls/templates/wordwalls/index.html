@@ -13,7 +13,7 @@
 {% endcomment %}
 
 <script type="text/javascript"
- src="{{ STATIC_URL }}js/aerolith/jquery-1.5.min.js"></script>
+ src="{{ STATIC_URL }}js/aerolith/jquery-1.6.1.js"></script>
 
 
 <script type="text/javascript"
@@ -135,7 +135,7 @@ What type of list do you want?<BR>
 
     $("#id_lexicon_sl").val('0');   // always set the lexicon for saved list to 0 on load
     requestSavedListInfo();
-    $("#id_challenge > option[value='15']").attr('disabled','disabled');
+    $("#id_challenge > option[value='15']").prop('disabled',true);
  });
 </script>
 

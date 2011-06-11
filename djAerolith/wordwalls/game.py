@@ -616,6 +616,7 @@ class WordwallsGame:
         return True     
         
     def generateDailyChallengePks(self, challengeName, lex):
+        t1 = time.time()
         # capture number. first try to match to today's lists
         m = re.match("Today's (?P<length>[0-9]+)s", challengeName.name)
         
@@ -631,7 +632,10 @@ class WordwallsGame:
             r = r[:50]  # just the first 50 elements for the daily challenge
             print r
             pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
+            
+            print "time to gen", time.time() - t1
             return pks, WordwallsGame.dcTimeMap[wordLength]
+            
         return None        
             
 class SearchDescription:
