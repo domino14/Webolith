@@ -31,5 +31,5 @@ class AlphagramAdmin(admin.ModelAdmin):
     list_display = ('alphagram', 'lexicon', 'probability', getWordsForAlphagram)
 
 admin.site.register(Lexicon)
-admin.site.register(Alphagram, AlphagramAdmin)
-admin.site.register(Word, WordAdmin)
+#admin.site.register(Alphagram, AlphagramAdmin)
+#admin.site.register(Word, WordAdmin)
