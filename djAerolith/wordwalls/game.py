@@ -37,8 +37,8 @@ class WordwallsQuestion:
 
 class WordwallsGame:
     # daily challenge seconds map (how many seconds per word length?)
-    dcTimeMap = {2: 60, 3: 90, 4: 150, 5: 180, 6: 240, 7: 270, 8: 270, 9: 270, 
-                    10: 270, 11: 270, 12: 270, 13: 300, 14: 300, 15: 300, 'bingos': 270, 'Last Week': 270}
+    dcTimeMap = {2: 60, 3: 90, 4: 150, 5: 180, 6: 240, 7: 270, 8: 270, 9: 300, 
+                    10: 330, 11: 330, 12: 330, 13: 360, 14: 360, 15: 360, 'bingos': 270, 'Last Week': 270}
     
     def createGameModelInstance(self, host, playerType, lex, 
                                 numOrigQuestions,
@@ -573,13 +573,8 @@ class WordwallsGame:
 
     def guess(self, guessStr, tablenum):
         guessStr = guessStr.upper()
-        t1 = time.time()
         wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        #print "Time to get", time.time() - t1
-        t1 = time.time()
         state = json.loads(wgm.currentGameState)
-        #print "time to load state", time.time() - t1
-        t1 = time.time()
         if self.didTimerRunOut(state):
             stateChanged = True
             state['timeRemaining'] = 0
@@ -600,13 +595,8 @@ class WordwallsGame:
             stateChanged = True
         
         if stateChanged:
-            #print "time to check", time.time() - t1
-            t1 = time.time()
             wgm.currentGameState = json.dumps(state)
-            #print "time to dump", time.time() - t1
-            t1 = time.time()
-            wgm.save()
-            #print "time to save", time.time() - t1            
+            wgm.save()        
 
         return state['quizGoing'], state['LastCorrect']
             
