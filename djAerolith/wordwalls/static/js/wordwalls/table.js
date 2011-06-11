@@ -244,25 +244,28 @@ function requestStart()
 
 function processStartData(data)
 {
-    if ('serverMsg' in data)
-        updateMessages(data['serverMsg']);
-    if ('error' in data)
-        updateMessages(data['error']);
-    if ('questions' in data)
+    if (!gameGoing)
     {
-        processQuestionObj(data['questions']);
-    }
-    if ('time' in data)
-    {
-        currentTimer = data['time'] + 1;   // +1 since we're about to call this function
-        gameTimerID = window.setInterval(updateTimer, 1000);
-        updateTimer();  // call it now too
-        gameGoing = true;
-    }
-    if ('gameType' in data)
-    {
-        if (data['gameType'] == 'challenge')    challenge = true;
-        else challenge = false;
+        if ('serverMsg' in data)
+            updateMessages(data['serverMsg']);
+        if ('error' in data)
+            updateMessages(data['error']);
+        if ('questions' in data)
+        {
+            processQuestionObj(data['questions']);
+        }
+        if ('time' in data)
+        {
+            currentTimer = data['time'] + 1;   // +1 since we're about to call this function
+            gameTimerID = window.setInterval(updateTimer, 1000);
+            updateTimer();  // call it now too
+            gameGoing = true;
+        }
+        if ('gameType' in data)
+        {
+            if (data['gameType'] == 'challenge')    challenge = true;
+            else challenge = false;
+        }
     }
 }
 
