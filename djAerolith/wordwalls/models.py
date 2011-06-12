@@ -35,12 +35,17 @@ class DailyChallenge(models.Model):
     def __unicode__(self):
         return str(self.date) + " " + self.name.name + "(" + self.lexicon.lexiconName + ")"
 
+    class Meta:
+        unique_together = ("name", "lexicon", "date")   
+        # there can only be ONE challenge with a specific name, lexicon, and date
+
 
 class DailyChallengeLeaderboard(models.Model):
-    challenge = models.ForeignKey(DailyChallenge) 
+    challenge = models.ForeignKey(DailyChallenge, unique=True) 
     maxScore = models.IntegerField()
     def __unicode__(self):
         return "Leaderboard: " + self.challenge.__unicode__()
+    
 
 class DailyChallengeLeaderboardEntry(models.Model):
     board = models.ForeignKey(DailyChallengeLeaderboard)
@@ -50,6 +55,11 @@ class DailyChallengeLeaderboardEntry(models.Model):
     def __unicode__(self):
         return (self.board.challenge.__unicode__() + ' --- ' + 
                         self.user.username + ' ' + str(self.score) + ' (' + str(self.timeRemaining) + 's.)')
+
+    class Meta:
+        unique_together = ("board", "user") 
+        # there is only one leaderboard per challenge, and only one user/leaderboard combination 
+        # allowed in the leaderboard entries
 
     # in Word
     # alphagram = models.ForeignKey(Alphagram)

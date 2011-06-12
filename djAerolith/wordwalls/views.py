@@ -169,8 +169,6 @@ def table(request, id):
             print request.POST['guess']
             wwg = WordwallsGame()
             state = wwg.guess(request.POST['guess'], id)
-            print state
-
             response = HttpResponse(json.dumps({'g': state[0], 'C': state[1]}, ensure_ascii=False), 
                         mimetype="application/javascript")
 
