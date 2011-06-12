@@ -569,3 +569,9 @@ span.wrongGuess
 {
     font-size: 125%;
 }
+
+.softLink
+{
+    text-decoration: underline;
+    color: #00f;
+}

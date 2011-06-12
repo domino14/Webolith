@@ -378,7 +378,7 @@ function processQuizEnded()
             function(data){
                 processDcResults(data, "addlInfo_content");
             }, 'json');
-        updateMessages('Click <a href="#" onClick="showAddlInfo()">here</a> to see current results for this challenge.');
+        updateMessages('Click <a onClick="showAddlInfo()" class="softLink">here</a> to see current results for this challenge.');
     }
     if (autoSave)
     {
