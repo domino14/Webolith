@@ -16,26 +16,23 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
 
-Replace these with more appropriate tests for your application.
-"""
-
+from django.utils import unittest
 from django.test import TestCase
-
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.failUnlessEqual(1 + 1, 2)
-
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
-
->>> 1 + 1 == 2
-True
-"""}
-
+from django.contrib.auth.models import User
+class TableTest(TestCase):
+    # blah this doesn't work.
+    def setup(self):
+        user = User.objects.create_user('testuser', 'testuser@aerolith.org', 'secret')
+        user.save()
+        self.client.login(username="testuser", password="secret")
+        
+    def test_create_table_searchparams(self):
+        response = self.client.post('/wordwalls', {'searchParamsSubmit': 'Play!',
+                                                    'wordLength': '7',
+                                                    'quizTime': '4',
+                                                    'lexicon': 'OWL2',
+                                                    'probabilityMin': '1001',
+                                                    'probabilityMax': '1500',
+                                                    'playerMode': 1}, follow=True)
+        print response
