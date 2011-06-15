@@ -37,6 +37,8 @@ var defaultTileClass = {on: true, font: 'mono', selection: '1', bold: false}; //
 var defaultBackgroundClass = {showTable: true, showCanvas: true, showBorders: false};
 var tileClass = null;
 var backgroundClass = null;
+var quizzingOnMissed = false;
+var quizOverForever = false;
 
 var messageTextBoxLimit = 3000; // characters
 
@@ -247,9 +249,21 @@ function processStartData(data)
     if (!gameGoing)
     {
         if ('serverMsg' in data)
+        {
             updateMessages(data['serverMsg']);
+            if (data['serverMsg'].indexOf('missed') != -1)
+                quizzingOnMissed = true;
+            else
+                quizzingOnMissed = false;
+            
+        }
         if ('error' in data)
+        {
             updateMessages(data['error']);
+            if (data['error'].indexOf('nice day') != -1)
+                quizOverForever = true;
+        }
+            
         if ('questions' in data)
         {
             processQuestionObj(data['questions']);
@@ -310,15 +324,8 @@ function updateTimer()
     }
 }
 
-function textBoxKeyHandler(event)
+function submitGuess(guessText)
 {
-     
-  if(event.keyCode == 13)
-  {
-    var guessText = $(this).val();
-    if (guessText.length < 2 || guessText.length > 15) return;   // ignore
-    $(this).val("");
-    /* should post */
     $.post(tableUrl, {action: "guess", guess: guessText},
             function(data)
             {
@@ -358,6 +365,18 @@ function textBoxKeyHandler(event)
                 } 
             },
             'json');
+}
+
+function textBoxKeyHandler(event)
+{
+     
+  if(event.keyCode == 13)
+  {
+      var guessText = $(this).val();
+      if (guessText.length < 2 || guessText.length > 15) return;   // ignore
+      $(this).val("");
+      /* should post */
+      submitGuess(guessText);
   }
 }
 
