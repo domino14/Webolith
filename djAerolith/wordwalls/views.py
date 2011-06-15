@@ -146,7 +146,8 @@ def homepage(request):
                             'dcForm' : dcForm, 
                             'ulForm' : ulForm,
                             'slForm' : slForm,
-                            'lengthCounts' : json.dumps(lengthCounts)}, 
+                            'lengthCounts' : json.dumps(lengthCounts),
+                            'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT }, 
                             context_instance=RequestContext(request))
 
 
@@ -157,8 +158,9 @@ def table(request, id):
     if request.method == 'POST':
         action = request.POST['action']
         print action
-        lonelock(WordwallsGameModel, id)
+        
         if action == "start":
+            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             gameReady = wwg.startRequest(request.user, id)
             if not gameReady:
@@ -170,6 +172,7 @@ def table(request, id):
             response['Content-Type'] = 'text/plain; charset=utf-8'
             return response
         elif action == "guess":
+            lonelock(WordwallsGameModel, id)
             print request.POST['guess']
             
             wwg = WordwallsGame()
@@ -185,6 +188,7 @@ def table(request, id):
 
             return response
         elif action == "gameEnded":
+            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.checkGameEnded(id)
             if ret:
@@ -193,6 +197,7 @@ def table(request, id):
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
         elif action == "giveUp":
+            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.giveUp(request.user, id)
             if ret:
@@ -201,6 +206,7 @@ def table(request, id):
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
         elif action == "save":
+            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.save(request.user, id, request.POST['listname'])
             print "save returned: ", ret
@@ -209,6 +215,7 @@ def table(request, id):
             response['Content-Type'] = 'text/plain; charset=utf-8'
             return response
         elif action == "giveUpAndSave":
+            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
             # this shouldn't return a response, because it's not going to be caught by the javascript
@@ -237,7 +244,6 @@ def table(request, id):
                 return response
                 
     else:   # it's a GET
-        print os.getpid(), "GET REQUEST"
         wwg = WordwallsGame()
         permitted = wwg.permit(request.user, id)
         if permitted:
