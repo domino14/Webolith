@@ -39,7 +39,6 @@ class GenericTableGameModel(models.Model):
             )
     lexicon = models.ForeignKey(Lexicon)
     host = models.ForeignKey(User, related_name="host")
-    playing = models.ManyToManyField(User, related_name="playing") # players that are 'sitting'
     inTable = models.ManyToManyField(User, related_name="inTable") # everyone in table including the host
     lastActivity = models.DateTimeField(auto_now=True)   # last activity, unix timestamp
     currentGameState = models.TextField()

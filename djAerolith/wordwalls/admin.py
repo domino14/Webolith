@@ -39,7 +39,7 @@ admin.site.register(DailyChallenge, DailyChallengeAdmin)
 admin.site.register(DailyChallengeName)
 
 class WordwallsGameAdmin(admin.ModelAdmin):
-    fields = ['host', 'playing', 'inTable', 'lastActivity', 'currentGameState', 'gameType', 'playerType']
+    fields = ['host', 'inTable', 'lastActivity', 'currentGameState', 'gameType', 'playerType']
     search_fields = ['host', 'lastActivity']
     readonly_fields = ('lastActivity', )
 

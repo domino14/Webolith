@@ -35,7 +35,7 @@ class FindWordsForm(forms.Form):
     wordLength = forms.ChoiceField(choices = wlList, label='Word Length')
     probabilityMin = forms.IntegerField(max_value=250000, min_value = 1, label='Min probability (at least 1)')
     probabilityMax = forms.IntegerField(max_value=250000, min_value = 1, label='Max probability')
-    quizTime = forms.FloatField(max_value=100, min_value = 1, initial=4, label='Time (minutes)')
+    quizTime = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
     PLAYERMODE_SINGLE = 1
     PLAYERMODE_MULTI = 2
     
@@ -80,7 +80,7 @@ class DailyChallengesForm(forms.Form):
 class UserListForm(forms.Form):
 
     lexicon_ul = forms.ChoiceField(choices = lexList, label='Lexicon')
-    quizTime_ul = forms.FloatField(max_value=100, min_value = 1, initial=4, label='Time (minutes)')
+    quizTime_ul = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
     
     file  = forms.FileField(label='File')
     
@@ -115,7 +115,7 @@ class SavedListForm(forms.Form):
     
     lexicon_sl = forms.ModelChoiceField(queryset=Lexicon.objects.all(), label='Lexicon',
             widget=forms.Select())
-    quizTime_sl = forms.FloatField(max_value=100, min_value = 1, initial=4, label='Time (minutes)')
+    quizTime_sl = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
     listOption = forms.TypedChoiceField(choices=listOptions,label='Quiz options', widget=forms.Select(),coerce=int)
     
     wordList = WordListChoiceField(label='List choice', 
