@@ -46,6 +46,9 @@ To contact the author, please email delsolar at gmail dot com
 <script type="text/javascript"
  src="{{ STATIC_URL }}js/wordwalls/table.js"></script>
  
+<script type="text/javascript"
+  src="{{ STATIC_URL }}js/wordwalls/tableTests.js"></script>
+ 
 <script type="text/javascript">
   $(document).ready(function() {
     initializeTable("{% url wordwalls_table tablenum %}", "{{username}}", "{{addParams|escapejs}}");
