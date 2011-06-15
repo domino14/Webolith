@@ -28,12 +28,14 @@ from game import WordwallsGame
 from game import SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName
+from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName, WordwallsGameModel
 from datetime import date
 import sys
+import time
 
 import wordwalls.settings
-
+import os
+from locks import lonelock, loneunlock
 
 @login_required
 def homepage(request):
@@ -151,28 +153,36 @@ def homepage(request):
 @login_required
 def table(request, id):        
     print "request:", request.method
+
     if request.method == 'POST':
         action = request.POST['action']
         print action
+        lonelock(WordwallsGameModel, id)
         if action == "start":
             wwg = WordwallsGame()
             gameReady = wwg.startRequest(request.user, id)
             if not gameReady:
                 response = HttpResponse(json.dumps({"serverMsg": request.user.username}), mimetype="application/javascript")
             else:
-                quizParams = wwg.startQuiz(id)
+                quizParams = wwg.startQuiz(id, request.user)
 
                 response = HttpResponse(json.dumps(quizParams, ensure_ascii=False), mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
             return response
         elif action == "guess":
             print request.POST['guess']
+            
             wwg = WordwallsGame()
-            state = wwg.guess(request.POST['guess'], id)
+            
+            state = wwg.guess(request.POST['guess'], id, request.user)
+            
+            wgm2 = WordwallsGameModel.objects.get(pk=id)
+            newState = json.loads(wgm2.currentGameState)
             response = HttpResponse(json.dumps({'g': state[0], 'C': state[1]}, ensure_ascii=False), 
                         mimetype="application/javascript")
-
             response['Content-Type'] = 'text/plain; charset=utf-8'
+            
+
             return response
         elif action == "gameEnded":
             wwg = WordwallsGame()
@@ -227,6 +237,7 @@ def table(request, id):
                 return response
                 
     else:   # it's a GET
+        print os.getpid(), "GET REQUEST"
         wwg = WordwallsGame()
         permitted = wwg.permit(request.user, id)
         if permitted:

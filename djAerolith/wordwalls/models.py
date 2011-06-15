@@ -20,6 +20,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from base.models import Lexicon, Alphagram
 from tablegame.models import GenericTableGameModel
+from locks import LockableObject, require_object_lock
 
 class DailyChallengeName(models.Model):
     name = models.CharField(max_length=32)
@@ -88,16 +89,18 @@ class SavedList(models.Model):
         return '(' + self.lexicon.lexiconName + ') ' + self.name + (' *' if self.goneThruOnce else ' ') + '(Saved ' + str(self.lastSaved) +')'
     # todo keep track of original alphagrams even in regular list, so it can be saved separately..
 
-class WordwallsGameModel(GenericTableGameModel):
+
+class WordwallsGameModel(GenericTableGameModel, LockableObject):
     # additional fields
     numOrigQuestions = models.IntegerField()
     origQuestions = models.TextField()
-    
+
     numCurQuestions = models.IntegerField()
     curQuestions = models.TextField()
-    
+
     numMissed = models.IntegerField()
     missed = models.TextField()
-    
+
     numFirstMissed = models.IntegerField()
     firstMissed = models.TextField()
+    

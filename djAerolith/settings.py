@@ -37,6 +37,8 @@ DATABASES = {
         'PASSWORD': settings_local.sqlPw,                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'OPTIONS': {"init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED" } ,
+        # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
     }
 }
 
@@ -102,6 +104,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'djAerolith.urls'
@@ -135,7 +139,9 @@ INSTALLED_APPS = (
     'registration', 
     'accounts',
     'django.contrib.staticfiles',
-    'gunicorn'
+    'gunicorn',
+    #'debug_toolbar',
+    #'locking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -160,3 +166,58 @@ IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt')
 
 SEND_BROKEN_LINK_EMAILS = False
+
+INTERNAL_IPS = ('127.0.0.1',)
+# 
+# DEBUG_TOOLBAR_PANELS = (
+# 
+#     'debug_toolbar.panels.version.VersionDebugPanel',
+#        'debug_toolbar.panels.timer.TimerDebugPanel',
+#        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+#        'debug_toolbar.panels.headers.HeaderDebugPanel',
+#        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+#        'debug_toolbar.panels.template.TemplateDebugPanel',
+#        'debug_toolbar.panels.sql.SQLDebugPanel',
+#        'debug_toolbar.panels.signals.SignalDebugPanel',
+#        'debug_toolbar.panels.logger.LoggingPanel',
+# 
+# )
+# 
+# DEBUG_TOOLBAR_CONFIG = {        
+#         'INTERCEPT_REDIRECTS': False,
+#    }
+# 
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': True,
+#     'formatters': {
+#         'verbose': {
+#             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+#         },
+#         'simple': {
+#             'format': '%(levelname)s %(message)s'
+#         },
+#     },
+#     'handlers': {
+#         'null': {
+#             'level':'DEBUG',
+#             'class':'django.utils.log.NullHandler',
+#         },
+#         'console':{
+#             'level':'DEBUG',
+#             'class':'logging.StreamHandler',
+#             'formatter': 'verbose'
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#         }
+#     }
+# }
+
+# import logging
+# l = logging.getLogger('django.db.backends')
+# l.setLevel(logging.DEBUG)
+# l.addHandler(logging.StreamHandler())
