@@ -194,3 +194,5 @@ INTERNAL_IPS = ('127.0.0.1',)
 # l.addHandler(logging.StreamHandler())
 
 ASSETS_DEBUG = settings_local.ASSETS_DEBUG
+RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
+RECAPTCHA_PRIVATE_KEY = settings_local.RECAPTCHA_PRIVATE_KEY

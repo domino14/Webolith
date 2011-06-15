@@ -74,3 +74,8 @@ div#content
 {
     margin-top: 50px;
 }
+
+ul.errorlist li
+{
+    color: red;
+}

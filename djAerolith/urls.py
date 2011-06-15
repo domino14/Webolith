@@ -20,7 +20,8 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from registration.forms import RegistrationFormUniqueEmail
+#from registration.forms import RegistrationFormUniqueEmail
+from registration_app.forms import RecaptchaRegistrationForm
 from registration.views import register
 
 admin.autodiscover()
@@ -42,7 +43,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     #(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login'),
     (r'^accounts/profile/$', 'accounts.views.profile'),
-    (r'^accounts/register/$', register, {'form_class':RegistrationFormUniqueEmail, 
+    (r'^accounts/register/$', register, {'form_class':RecaptchaRegistrationForm,
                                         'backend': 'registration.backends.default.DefaultBackend'}),
     (r'^accounts/', include('registration.backends.default.urls')),
     (r'^supporter/', 'views.supporter'),
@@ -50,7 +51,6 @@ urlpatterns = patterns('',
     #(r'^accounts/profile/$', 'accounts.views.profile'),
     url(r'^wordwalls/$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
     url(r'^wordwalls/table/(?P<id>\d+)/$', wordwalls.views.table, name='wordwalls_table'),
-
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
