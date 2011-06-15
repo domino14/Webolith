@@ -22,9 +22,16 @@ To contact the author, please email delsolar at gmail dot com
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     {% block ss %}
-    <link href="{{ STATIC_URL }}css/aerolith/aerolithStyleSheet.css" rel="stylesheet" type="text/css">
+     {% load assets %}
+     {% assets "aerolith_css" %}
+         <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+     {% endassets %}
+
     {% endblock %}
-    <link href="{{ STATIC_URL }}css/blog/blogStyles.css" rel="stylesheet" type="text/css">
+    {% assets "blog_css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+    {% endassets %}
+
     <title>{% block title %}Aerolith{% endblock %}</title>
 </head>
 

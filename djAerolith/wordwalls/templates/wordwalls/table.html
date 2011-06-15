@@ -21,33 +21,20 @@ To contact the author, please email delsolar at gmail dot com
 "http://www.w3.org/TR/html4/strict.dtd">
 <head>
 <title>WordWalls - table {{tablenum}}</title>
-<link href="{{ STATIC_URL }}css/wordwalls/wordwallsTableSS.css" rel="stylesheet"  type="text/css">
+
+{% load assets %}
+{% assets "css_table" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+{% endassets %}
+
+
 </head>
 <body>
 {% block content %}
-{% comment %}
-<script type="text/javascript"
- src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
-{% endcomment %}
 
-<script type="text/javascript"
- src="{{ STATIC_URL }}js/aerolith/jquery-1.6.1.js"></script>
-
- 
-<script type="text/javascript"
-   src="{{ STATIC_URL }}js/wordwalls/csrfAjax.js"></script>
-
-<script type="text/javascript"
-     src="{{ STATIC_URL }}js/aerolith/json2.js"></script>
-
-<script type="text/javascript"
-     src="{{ STATIC_URL }}js/wordwalls/challengeInfoProcess.js"></script>
-
-<script type="text/javascript"
- src="{{ STATIC_URL }}js/wordwalls/table.js"></script>
- 
-<script type="text/javascript"
-  src="{{ STATIC_URL }}js/wordwalls/tableTests.js"></script>
+{% assets "js_table" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
  
 <script type="text/javascript">
   $(document).ready(function() {

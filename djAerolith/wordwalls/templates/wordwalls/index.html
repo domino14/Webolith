@@ -1,29 +1,25 @@
 {% extends "base.html" %}
 
+{% load assets %}
+
 {% block ss %}
-<link href="{{ STATIC_URL }}css/aerolith/aerolithStyleSheet.css" rel="stylesheet"  type="text/css">
-<link href="{{ STATIC_URL }}css/wordwalls/wordwallsCreateTable.css" rel="stylesheet"  type="text/css">
+{% assets "css_table_create" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+{% endassets %}
+
+{% assets "aerolith_css" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+{% endassets %}
+
 {% endblock %}
 {% block title %}Wordwalls - select list{% endblock %}
 
 {% block content %}
-{% comment %}
-<script type="text/javascript"
- src="//ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
-{% endcomment %}
 
-<script type="text/javascript"
- src="{{ STATIC_URL }}js/aerolith/jquery-1.6.1.js"></script>
+{% assets "js_table_create" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
 
-
-<script type="text/javascript"
-  src="{{ STATIC_URL }}js/wordwalls/csrfAjax.js"></script>
-
-<script type="text/javascript"
-   src="{{ STATIC_URL }}js/wordwalls/challengeInfoProcess.js"></script>
-
-<script type="text/javascript"
- src="{{ STATIC_URL }}js/wordwalls/tableCreate.js"></script>
 <P></P>
 What type of list do you want?<BR>
 <button id = "challenges" onClick="showChallenges()">Today's challenges</button>
@@ -106,7 +102,7 @@ What type of list do you want?<BR>
     <div id="userListHelp" class ="help">
     <P>Please select a file containing a list of words, one word per line. This app will quiz you on alphagrams, so for example,
     if your list contains DIATRONS but not INTRADOS, the app will still expect both words when it quizzes you for ADINORST. Make sure to select the correct lexicon.</P>
-    <P>You can easily export a list from a program such as Zyzzyva; simply do a search, and right click on the search window, and click Save List. The list must contain no more than 1,000 words at this time, and the words must be between 2 and 15 letters long. This limit will probably be increased in the future once I figure out how to use Celery. </P>
+    <P>You can easily export a list from a program such as Zyzzyva; simply do a search, and right click on the search window, and click Save List. The list must contain no more than {{upload_list_limit}} words at this time, and the words must be between 2 and 15 letters long. This limit will probably be increased in the future once I figure out how to use Celery. </P>
     <P>Once you are in the table, you must click the Save button there if you wish to save the list. Then you can access the list later using the "Saved List" button at the top of this page.</P>
     </div>
     <form method="post" enctype="multipart/form-data">{% csrf_token %}

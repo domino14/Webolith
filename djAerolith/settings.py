@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'accounts',
     'django.contrib.staticfiles',
     'gunicorn',
+    'django_assets',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -186,38 +187,10 @@ INTERNAL_IPS = ('127.0.0.1',)
 # DEBUG_TOOLBAR_CONFIG = {        
 #         'INTERCEPT_REDIRECTS': False,
 #    }
-# 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': True,
-#     'formatters': {
-#         'verbose': {
-#             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-#         },
-#         'simple': {
-#             'format': '%(levelname)s %(message)s'
-#         },
-#     },
-#     'handlers': {
-#         'null': {
-#             'level':'DEBUG',
-#             'class':'django.utils.log.NullHandler',
-#         },
-#         'console':{
-#             'level':'DEBUG',
-#             'class':'logging.StreamHandler',
-#             'formatter': 'verbose'
-#         },
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'handlers': ['console'],
-#             'level': 'INFO',
-#         }
-#     }
-# }
 
 # import logging
 # l = logging.getLogger('django.db.backends')
 # l.setLevel(logging.DEBUG)
 # l.addHandler(logging.StreamHandler())
+
+ASSETS_DEBUG = settings_local.ASSETS_DEBUG
