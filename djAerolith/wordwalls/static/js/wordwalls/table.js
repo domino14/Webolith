@@ -22,7 +22,7 @@ var IntervalID = 0;
 var tableUrl = "";
 var username = "";
 var csrf_token = "";
-var gameGoing = false;
+var gameGoing = false;  
 var currentTimer = 0;
 var questionLocationHash = {};
 var wrongWordsHash = {};
@@ -387,38 +387,41 @@ function processTimerRanOut()
 
 function processQuizEnded()
 {
-    $("#questions").html(""); // clear the table
-    $("#gameTimer").text("0:00");   // set the timer display to 0
-    window.clearInterval(gameTimerID);  // and stop the timer
-    if (challenge)  // only when the challenge is done and not its missed lists.
+    if (gameGoing)
     {
-        updateMessages("The challenge has ended!");
-        $.post(tableUrl, {action: "getDcData"}, 
-            function(data){
-                processDcResults(data, "addlInfo_content");
-            }, 'json');
-        updateMessages('Click <a onClick="showAddlInfo()" class="softLink">here</a> to see current results for this challenge.');
-    }
-    if (autoSave)
-    {
-        // send save again
-        saveGame();
-    }
-    else
-        updateMessages("Autosave is NOT on. To save your progress, type in a name for this list next to the Save button, and click Save.");
-    /* highlight all the missed words */
-    for (var wrongWord in wrongWordsHash)
-    {
-        $('#s_' + wrongWord).css({'color': 'red'});
-    }
-    for (var wrongAlpha in wrongAlphasHash)
-    {
-        $('#a_' + wrongAlpha).css({'color': 'red'});
-    }
+        $("#questions").html(""); // clear the table
+        $("#gameTimer").text("0:00");   // set the timer display to 0
+        window.clearInterval(gameTimerID);  // and stop the timer
+        if (challenge)  // only when the challenge is done and not its missed lists.
+        {
+            updateMessages("The challenge has ended!");
+            $.post(tableUrl, {action: "getDcData"}, 
+                function(data){
+                    processDcResults(data, "addlInfo_content");
+                }, 'json');
+            updateMessages('Click <a onClick="showAddlInfo()" class="softLink">here</a> to see current results for this challenge.');
+        }
+        if (autoSave)
+        {
+            // send save again
+            saveGame();
+        }
+        else
+            updateMessages("Autosave is NOT on. To save your progress, type in a name for this list next to the Save button, and click Save.");
+        /* highlight all the missed words */
+        for (var wrongWord in wrongWordsHash)
+        {
+            $('#s_' + wrongWord).css({'color': 'red'});
+        }
+        for (var wrongAlpha in wrongAlphasHash)
+        {
+            $('#a_' + wrongAlpha).css({'color': 'red'});
+        }
     
     
-    $("#defs_popup_content").css({'visibility': 'visible'});
-    gameGoing = false;
+        $("#defs_popup_content").css({'visibility': 'visible'});
+        gameGoing = false;
+    }
 }
 
 function showAddlInfo()
