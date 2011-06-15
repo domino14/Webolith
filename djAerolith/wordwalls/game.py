@@ -28,7 +28,8 @@ from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyCha
 import re
 from forms import SavedListForm
 import wordwalls.settings
-
+import os
+from django.db import transaction
 
 class WordwallsQuestion:
     def __init__(self, alphObj):
@@ -119,7 +120,7 @@ class WordwallsGame:
         
         wgm.save()
         wgm.inTable.add(user)
-        wgm.playing.add(user)
+
               
         return wgm.pk   # the table number
     
@@ -142,7 +143,7 @@ class WordwallsGame:
                                             timerSecs=timeSecs)
         wgm.save()
         wgm.inTable.add(user)
-        wgm.playing.add(user)
+
         return wgm.pk   # this is a table number id!
     
     def initializeByUserList(self, file, lex, user, secs):
@@ -194,7 +195,7 @@ class WordwallsGame:
         
         wgm.save()
         wgm.inTable.add(user)
-        wgm.playing.add(user)
+
         return wgm.pk   # this is a table number id!
         
         #sl = SavedList(lexicon=lex, name=listName, user=user.username, state=json.dumps(saveObj), )
@@ -257,7 +258,7 @@ class WordwallsGame:
                                                     
         wgm.save()
         wgm.inTable.add(user)
-        wgm.playing.add(user)
+
         return wgm.pk   # this is a table number id!
         
     # startRequest may be not used at all until later. for now we only have two types of games:
@@ -291,12 +292,13 @@ class WordwallsGame:
     def createErrorMessage(self, message):
         return {'error':message} 
                     
-    def startQuiz(self, tablenum):
+
+    def startQuiz(self, tablenum, user):
         try:
             wgm = WordwallsGameModel.objects.get(pk=tablenum)
         except:
             return self.createErrorMessage("That table does not exist.")
-        
+                    
         state = json.loads(wgm.currentGameState)
         
         if state['quizGoing']:
@@ -313,7 +315,6 @@ class WordwallsGame:
             wgm.numCurQuestions = len(curQuestionsObj)
             wgm.missed = json.dumps([])
             wgm.numMissed = 0
-            updateCurQs = True
             
             state['questionIndex'] = 0
             state['quizGoing'] = False
@@ -322,13 +323,16 @@ class WordwallsGame:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return self.createErrorMessage("The quiz is done. Please exit the table and have a nice day!")
-        
         qs = curQuestionsObj[state['questionIndex']:state['questionIndex']+state['questionsToPull']]
 
         startMessage += "These are questions " + str(state['questionIndex'] + 1) + " thru "
         startMessage += str(len(qs) + state['questionIndex']) + " of " + str(wgm.numCurQuestions) + "."
         
         state['questionIndex'] += state['questionsToPull']
+        
+        qsSet = set(qs)
+        if len(qsSet) != len(qs):
+            print "Question set is not unique!!"
         
         questions = []
         answerHash = {}
@@ -385,6 +389,7 @@ class WordwallsGame:
         if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and user in wgm.inTable.all():
             state = json.loads(wgm.currentGameState)
             if state['quizGoing'] == False: 
+                print "the quiz isn't going. can't give up."
                 return False
             
             state['timeRemaining'] = 0
@@ -392,7 +397,6 @@ class WordwallsGame:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return True
-        
         return False
     
     def getAddParams(self, tablenum):
@@ -518,7 +522,13 @@ class WordwallsGame:
         wgm.missed = json.dumps(missed)
         wgm.numMissed = len(missed)
         
-        print len(missedPks), "missed this round"
+        # check if the list is unique
+        uniqueMissed = set(missed)
+        if len(uniqueMissed) != len(missed):
+            print "missed list is not unique!!"
+            #raise Exception('Missed list is not unique')
+        
+        print len(missedPks), "missed this round", ",", len(missed), "missed total"
         if state['gameType'] == 'challenge':
             state['gameType'] = 'challengeOver'
             self.createChallengeLeaderboardEntries(state, tablenum)
@@ -570,33 +580,30 @@ class WordwallsGame:
             return r
         elif searchDescription['condition'] == 'probPKList':
             pass
-
-    def guess(self, guessStr, tablenum):
+    
+    def guess(self, guessStr, tablenum, user):
         guessStr = guessStr.upper()
         wgm = WordwallsGameModel.objects.get(pk=tablenum)
         state = json.loads(wgm.currentGameState)
-        if self.didTimerRunOut(state):
-            stateChanged = True
-            state['timeRemaining'] = 0
-            self.doQuizEndActions(state, tablenum, wgm)
-
         if state['quizGoing']:
-            if guessStr not in state['answerHash']:
-                state['LastCorrect'] = ""
+            if self.didTimerRunOut(state):
+                state['timeRemaining'] = 0
+                self.doQuizEndActions(state, tablenum, wgm) # also sets state['LastCorrect'] to ''
             else:
-                alpha = state['answerHash'][guessStr]
-                del state['answerHash'][guessStr]
-                if len(state['answerHash']) == 0:
-                    timeRemaining = (state['quizStartTime'] + state['timerSecs']) - time.time()
-                    if timeRemaining < 0: timeRemaining = 0
-                    state['timeRemaining'] = timeRemaining
-                    self.doQuizEndActions(state, tablenum, wgm)
-                state['LastCorrect'] = alpha[0]    
-            stateChanged = True
-        
-        if stateChanged:
+                if guessStr not in state['answerHash']:
+                    state['LastCorrect'] = ""
+                else:
+                    alpha = state['answerHash'][guessStr]
+                    del state['answerHash'][guessStr]       # state['answerHash'] is modified here
+                    if len(state['answerHash']) == 0:
+                        timeRemaining = (state['quizStartTime'] + state['timerSecs']) - time.time()
+                        if timeRemaining < 0: timeRemaining = 0
+                        state['timeRemaining'] = timeRemaining
+                        self.doQuizEndActions(state, tablenum, wgm)
+                    state['LastCorrect'] = alpha[0]    
+
             wgm.currentGameState = json.dumps(state)
-            wgm.save()        
+            wgm.save()      
 
         return state['quizGoing'], state['LastCorrect']
             
@@ -642,37 +649,5 @@ class SearchDescription:
     @staticmethod
     def probPkIndexRange(minP, maxP, lex):
         return {"condition": "probPKRange", "min": minP, "max": maxP, "lexicon": lex}        
-        
-
-    
-    # now save the questions
-    
-    
-    # then create a saved list obj
-
-        #query = self.state['pickledQuery']
-        
-        #query = self.alphasQuery[self.minIndex:self.maxIndex]
-        #numQs = query.count()
-        
-        
-        #if numQs == 0:
-        #    self.thisRoundQuestions = self.missed
-        #else:
-        #    for a in query:
-        #        wwq = WordwallsQuestion(a)
-        #        self.thisRoundQuestions.append(wwq)
-        #        for w in a.word_set.all():
-        #            self.answerHash[w.word] = wwq
-        #    print "q len", len(self.thisRoundQuestions)
-
-        
-        
-        #    self.minIndex += 50
-        #    self.maxIndex += 50
-            
-        #return self.thisRoundQuestions
-    
-
     
         
