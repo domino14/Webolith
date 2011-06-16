@@ -54,13 +54,31 @@ To contact the author, please email delsolar at gmail dot com
 <span id="horSep1"></span>
 <span id="exit" onClick="exit()" class="tableButton">Exit</span>
 </div>
-<div id="questions" class="{{questionsTableStyle}}">
+
+<div id="encloser">
+    <div id="questions">
+    </div>
+
+    <div id="playerRanks">
+    </div>
+
+    <div id="userBox">
+        <span id="avatarLabel"></span>
+        <span id="usernameLabel">{{username}}</span>
+        <span id="pointsLabelPercent"></span>
+        <span id="pointsLabelFraction"></span>
+        <div id="correctAnswers"></div>
+    </div>
 </div>
 
-Guess: <input type="text" name="Guess" size="15" id="guessText">
+
+
+<div id="bottomBar">
+<span id="guessLabel">Guess: </span><input type="text" name="Guess" size="15" id="guessText">
 <span id="horSep2"></span>
-<span id="shuffle" onClick="shuffle()" class="utilityButton">Shuffle</span>
-<span id="alphagram" onClick="alphagram()" class="utilityButton">Alphagram</span>
+<span id="shuffle" onClick="shuffle()" class="utilityButton">Shuffle (1)</span>
+<span id="alphagram" onClick="alphagram()" class="utilityButton">Alphagram (2)</span>
+</div>
 
 <div id="textBar">
 <div id="messages"></div>

@@ -39,7 +39,8 @@ var tileClass = null;
 var backgroundClass = null;
 var quizzingOnMissed = false;
 var quizOverForever = false;
-
+var numTotalAnswersThisRound = 0;
+var numAnswersGottenThisRound = 0;
 var messageTextBoxLimit = 3000; // characters
 
 function disableSelection(target)
@@ -59,29 +60,32 @@ function disableSelection(target)
     target.style.cursor = "default"
 }
 
-
-function updateMessages(message)
+function updateTextBox(message, textBoxId)
 {
-    var newMessage = $('#messages').html() + message + '<BR>';
+    var box = $('#' + textBoxId);
+    var newMessage = box.html() + message + '<BR>';
     if (newMessage.length > messageTextBoxLimit)
     {
         newMessage = newMessage.substr(newMessage.length - messageTextBoxLimit);
     }
-    $('#messages').html(newMessage); 
-    var m = $("#messages");
-    m.scrollTop(m[0].scrollHeight - m.height());
+    box.html(newMessage);
+    box.scrollTop(box[0].scrollHeight - box.height());
+}
+
+
+function updateMessages(message)
+{
+    updateTextBox(message, 'messages');
 }
 
 function updateGuesses(guess)
 {
-    var gBox = $('#guesses');
-    var newText = gBox.html() + guess + '<BR>';
-    if (newText.length > messageTextBoxLimit)
-    {
-        newText = newText.substr(newText.length - messageTextBoxLimit);
-    }
-    gBox.html(newText);
-    gBox.scrollTop(gBox[0].scrollHeight - gBox.height());
+    updateTextBox(guess, 'guesses');
+}
+
+function updateCorrectAnswer(answer)
+{
+    updateTextBox(answer, 'correctAnswers');
 }
 
 function initializeTable(tUrl, u, params)
@@ -155,6 +159,8 @@ function processQuestionObj(questionObj)
     var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>\<</td>';
     solutionsTableBuilder += '<td>Word</td><td>\></td><td>Definition</td></tr>';
     var tcText = tileClassToText(tileClass);
+    numTotalAnswersThisRound = 0;
+    numAnswersGottenThisRound = 0;
     for (var i = 0; i < 50; i++)
     {
         var cellStr = "q" + i;
@@ -193,7 +199,8 @@ function processQuestionObj(questionObj)
                 solutionsTableBuilder += '</tr>'
                 
                 // let's also populate the correct words hash (for keeping track of missed questions for display purposes client-side)
-                wrongWordsHash[word] = true;       
+                wrongWordsHash[word] = true;     
+                numTotalAnswersThisRound++;  
             }
             wrongAlphasHash[alphagram] = true;     
         }
@@ -234,6 +241,9 @@ function processQuestionObj(questionObj)
     //IntervalID = setInterval(callServer, CallInterval);
 
     showBordersHandler();
+    $('#pointsLabelFraction').text('0/'+numTotalAnswersThisRound);
+    $('#pointsLabelPercent').text('0%');
+    $('#correctAnswers').html("");
 }
 
 function requestStart()
@@ -326,6 +336,7 @@ function updateTimer()
 
 function submitGuess(guessText)
 {
+    var ucGuess = guessText.toUpperCase();
     $.post(tableUrl, {action: "guess", guess: guessText},
             function(data)
             {
@@ -348,11 +359,15 @@ function submitGuess(guessText)
                         {
                             $(chipStr).replaceWith('<span class="chip chip' + Math.min(numRem, 9) + '">' + numRem + '</span>');
                         }
-                        delete wrongWordsHash[guessText.toUpperCase()];
-                        updateGuesses(guessText.toUpperCase());
-                    }
-                    else
-                        updateGuesses('<span class="wrongGuess">(' + guessText.toUpperCase() + ')</span>'); 
+                        delete wrongWordsHash[ucGuess];
+                        updateCorrectAnswer(ucGuess);
+                        numAnswersGottenThisRound++;
+                        $('#pointsLabelFraction').text(numAnswersGottenThisRound + '/' + numTotalAnswersThisRound);
+                        $('#pointsLabelPercent').text((numAnswersGottenThisRound / numTotalAnswersThisRound * 100).toFixed(1) 
+                                                        + '%');
+                    }                    
+                    updateGuesses(ucGuess);
+                    
 
                 }                    
                 if ('g' in data)

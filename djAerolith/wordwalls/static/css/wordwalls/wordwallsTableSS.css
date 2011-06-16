@@ -27,15 +27,89 @@ div.tableBg
     background-repeat:no-repeat;  
 }
 
-div#questions 
+#questions 
 {
-
-    width: 875px;
+    width: 860px;
     height: 355px;
     padding-top: 15px;
+    float: left;
 }
 
-div#textBar
+
+#playerRanks
+{
+    width:145px;
+    height:200px;
+    float: right;
+}
+
+#userBox
+{
+    width:155px;
+    height:160px;
+    margin-top: 10px;
+    float: right;
+}
+
+#avatarLabel
+{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+
+    float: left;
+}
+
+#usernameLabel
+{
+    display: inline-block;
+    width: 70px;
+    height: 20px;
+    margin-top: 20px;
+    overflow-x: hidden;
+    font-size: 80%;
+    float: left;
+}
+
+
+#pointsLabelPercent
+{
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    overflow-x: hidden;
+    font-size: 80%;
+    font-weight: 700;
+}
+#pointsLabelFraction
+{
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    overflow-x: hidden;
+    font-size: 80%;
+    font-weight: 700;
+    
+}
+
+#correctAnswers
+{
+    width: 150px;
+    height: 115px;
+    border-style: inset;
+    border-width: 1px;
+    overflow-y: auto;
+    font-size: 80%;
+    text-align: center;
+}
+
+#encloser
+{
+    width: 1015px;
+    height: 370px;
+}
+
+#textBar
 {
     margin-top: 10px;
     width: 875px;
@@ -44,10 +118,10 @@ div#textBar
 div#messages
 {
     float: left;
-    width: 675px;
+    width: 700px;
     height: 100px;
     border-style: inset;
-    border-width: 2px;
+    border-width: 1px;
     margin-right: 25px;
     overflow-y: auto;
     font-size: 80%;
@@ -56,12 +130,14 @@ div#messages
 div#guesses
 {
     float: left;
-    width: 150px;
-    height: 100px;
+    width: 120px;
+    height: 50px;
+    margin-top: 50px;
     border-style: inset;
-    border-width: 2px;
-    overflow-y: auto;
+    border-width: 1px;
+    overflow-y: hidden;
     font-size: 80%;
+    color: gray;
 }
 
 table#solutionsTable
@@ -474,7 +550,7 @@ span#prefsInfo
     border-color: black;
     border: 1px dotted;
     z-index: -10;
-    display: none;
+/*    display: none;*/
 }
 
 
@@ -565,6 +641,7 @@ span.wrongGuess
     color: red;
 }
 
+
 #guessText
 {
     font-size: 125%;
@@ -575,3 +652,9 @@ span.wrongGuess
     text-decoration: underline;
     color: #00f;
 }
+
+#bottomBar
+{
+    clear: both;
+}
+
