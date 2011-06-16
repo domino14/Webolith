@@ -550,7 +550,7 @@ span#prefsInfo
     border-color: black;
     border: 1px dotted;
     z-index: -10;
-/*    display: none;*/
+    display: none;
 }
 
 
