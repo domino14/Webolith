@@ -393,6 +393,17 @@ function textBoxKeyHandler(event)
       /* should post */
       submitGuess(guessText);
   }
+  if (event.keyCode == 49)  /* 1 */
+  {
+      shuffle();
+      event.preventDefault();   // doesn't work on firefox!
+  }
+  if (event.keyCode == 50)
+  {
+      alphagram();
+      event.preventDefault();   // this doesn't work on firefox!
+  }
+  
 }
 
 function processTimerRanOut()
