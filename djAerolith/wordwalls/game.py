@@ -25,6 +25,7 @@ import time
 from datetime import date
 import random
 from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList
+from wordwalls.models import DailyChallengeMissedBingos
 import re
 from forms import SavedListForm
 import wordwalls.settings
@@ -87,10 +88,9 @@ class WordwallsGame:
         try:
             dc = DailyChallenge.objects.get(date=datenow, lexicon=challengeLex, name=challengeName)
             # pull out its indices
-            pkIndices = []
-            alphaPks = json.loads(dc.alphagrams)
-            for alpha in alphaPks:
-                pkIndices.append(alpha)                
+
+            pkIndices = json.loads(dc.alphagrams)
+              
             secs = dc.seconds
             random.shuffle(pkIndices)
         except:
@@ -642,7 +642,10 @@ class WordwallsGame:
             
             print "time to gen", time.time() - t1
             return pks, WordwallsGame.dcTimeMap[wordLength]
-            
+        else:
+            if challengeName.name == "Week's Bingo Toughies":
+                # generate challenges from this week's missed bingos
+                pass
         return None        
             
 class SearchDescription:

@@ -103,4 +103,14 @@ class WordwallsGameModel(GenericTableGameModel, LockableObject):
 
     numFirstMissed = models.IntegerField()
     firstMissed = models.TextField()
+
+class DailyChallengeMissedBingos(models.Model): # only tracks missed 7&8 letter words from daily challenges
+    challenge = models.ForeignKey(DailyChallenge)
+    alphagram = models.ForeignKey(Alphagram)
+    numTimesMissed = models.IntegerField()
     
+    class Meta:
+        unique_together = ("challenge", "alphagram")
+    
+    def __unicode__(self):
+        return challenge.__unicode__ + ", " + alphagram.alphagram + ", " + numTimesMissed
