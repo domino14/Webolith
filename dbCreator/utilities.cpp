@@ -1,5 +1,5 @@
 #include "utilities.h"
-
+#include <QCoreApplication>
 QString Utilities::getRootDir()
 {
     // taken from Michael Thelen's Zyzzyva GPLed code, available at http://www.zyzzyva.net

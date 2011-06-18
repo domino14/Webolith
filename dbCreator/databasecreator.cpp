@@ -33,25 +33,10 @@ DatabaseCreator::DatabaseCreator(LexiconMap* lexiconMap)
 
 void DatabaseCreator::createLexiconDatabases(QStringList dbsToCreate)
 {
-    qDebug() << "Creating lexicon databases...";
-
-    QDir dir = QDir::home();
-    if (!dir.exists(".aerolith"))
-        dir.mkdir(".aerolith");
-    dir.cd(".aerolith");
-    if (!dir.exists("lexica"))
-        dir.mkdir("lexica");
-    dir.cd("lexica");
-
-    QSqlDatabase lexiconNamesDB = QSqlDatabase::addDatabase("QSQLITE", "lexicaDB");
-    lexiconNamesDB.setDatabaseName(dir.absolutePath() + "/lexica.db");
-    lexiconNamesDB.open();
-
-    QSqlQuery lexiconQuery(lexiconNamesDB);
-    lexiconQuery.exec("CREATE TABLE IF NOT EXISTS lexica(lexiconName VARCHAR(15))");
-    lexiconQuery.exec("CREATE UNIQUE INDEX lexicaIndex ON lexica(lexiconName)");
-    lexiconQuery.prepare("INSERT INTO lexica(lexiconName) VALUES(?)");
-
+    qDebug() << "Creating lexicon databases..." << dbsToCreate;
+    qDebug() << dbsToCreate.length();
+    foreach (QString key, dbsToCreate)
+        qDebug() << key;
     foreach (QString key, dbsToCreate)
     {
 
@@ -59,12 +44,8 @@ void DatabaseCreator::createLexiconDatabases(QStringList dbsToCreate)
         if (!lexiconMap->map.contains(key)) continue;
         createLexiconDatabase(key);
         emit createdDatabase(key);
-        lexiconQuery.bindValue(0, key);
-        lexiconQuery.exec();
-        QSqlDatabase::removeDatabase(key + "DB");
     }
-    lexiconNamesDB.close();
-    QSqlDatabase::removeDatabase("lexicaDB");
+
     qDebug() << "Done creating databases!";
 }
 
@@ -80,18 +61,6 @@ QString DatabaseCreator::reverse(QString word)
 
 void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 {
-
-    QDir dir = QDir::home();
-    if (!dir.exists(".aerolith"))
-        dir.mkdir(".aerolith");
-    dir.cd(".aerolith");
-    if (!dir.exists("lexica"))
-        dir.mkdir("lexica");
-    dir.cd("lexica");
-
-    if (dir.exists(lexiconName + ".db"))
-        dir.remove(lexiconName + ".db");
-
     qDebug() << lexiconName.toAscii().constData() << ": Loading word graphs...";
     QTime time;
     time.start();
@@ -109,7 +78,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     QFile file(Utilities::getRootDir() + "/words/" + lexInfo->wordsFilename);
     if (!file.open(QIODevice::ReadOnly)) return;
     QSqlDatabase db =  QSqlDatabase::addDatabase("QSQLITE", lexiconName + "DB");
-    db.setDatabaseName(dir.absolutePath() + "/" + lexiconName + ".db");
+    db.setDatabaseName(lexiconName + ".db");
     db.open();
     QSqlQuery wordQuery(db);
     wordQuery.exec("CREATE TABLE IF NOT EXISTS dbVersion(version INTEGER)");
@@ -127,9 +96,9 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     if (lexInfo->lexiconName == "FISE") lessThan = SPANISH_LESS_THAN;
     else lessThan = ENGLISH_LESS_THAN;
 
-    bool updateCSWPoundSigns = (lexiconName == "CSW");
+    bool updateCSWPoundSigns = (lexiconName == "CSW07");
     /* update lexicon symbols if this is CSW (compare to OWL2)*/
-    LexiconInfo* lexInfoAmerica = &(lexiconMap->map["OWL2+LWL"]);
+    LexiconInfo* lexInfoAmerica = &(lexiconMap->map["OWL2"]);
 
 
     QTextStream in(&file);
@@ -274,12 +243,12 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     for (int i = 4; i <= 8; i++)
         sqlListMaker(jqxzQueryString.arg(i), QString("JQXZ %1s").arg(i), i, db);
 
-    if (lexiconName == "CSW")
+    if (lexiconName == "CSW07")
     {
         QString newWordsQueryString = "SELECT alphagram from words where length(alphagram) = %1 and "
                                       "lexiconstrings like '%#%'";
         for (int i = 7; i <= 8; i++)
-            sqlListMaker(newWordsQueryString.arg(i), QString("CSW-only %1s").arg(i), i, db, ALPHAGRAM_QUERY);
+            sqlListMaker(newWordsQueryString.arg(i), QString("CSW07-only %1s").arg(i), i, db, ALPHAGRAM_QUERY);
     }
 
     wordQuery.exec("END TRANSACTION");

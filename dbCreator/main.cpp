@@ -21,8 +21,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    LexiconMap lexiconMap;
-    lexiconMap.createMap();
+
 
     if (argc < 2)
     {
@@ -30,6 +29,9 @@ int main(int argc, char *argv[])
         qDebug() << "\tdbCreator lexName1 [lexName2 ...]";
         return 0;
     }
+
+    LexiconMap lexiconMap;
+    lexiconMap.createMap();
 
     DatabaseCreator dbCreator(&lexiconMap);
     QStringList args;

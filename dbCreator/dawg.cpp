@@ -36,7 +36,7 @@ void Dawg::readDawg(QString filename)
         ints.append(integer);
     }
     file.close();
-    qDebug() << ints.size() << "nodes read.";
+    qDebug() << ints.size() << "nodes read from " << filename;
     bool endOfNext;
     QChar letter;
     bool endOfWord;
@@ -86,25 +86,25 @@ int Dawg::findPartialWord(QString wordToFind)
     {
 
         thisletter = wordToFind[a].toUpper();
-       // qDebug() << "This letter" << thisletter << nodes.size() << curindex;
+        //qDebug() << "This letter" << thisletter << nodes.size() << curindex;
         letterfound = false;
         if (nodes.at(curindex).letter != NULL_LETTER && nodes.at(curindex).letter == thisletter)
         {
-          //  qDebug() << "1";
+           // qDebug() << "1";
             letterfound = true;
 
         }
         while(!letterfound)
         {
             curindex = nodes.at(curindex).sibling;
-      //      qDebug() << "2" << curindex;
+        //    qDebug() << "2" << curindex;
             if (curindex == NULL_NODE) break;
             letterfound = (nodes.at(curindex).letter == thisletter);
         }
         if (!letterfound) return NULL_NODE;
         if (a != wordlength - 1)
         {
-      //      qDebug() << "3";
+        //    qDebug() << "3";
             curindex = nodes.at(curindex).child;
             if (curindex == NULL_NODE) break;
         }

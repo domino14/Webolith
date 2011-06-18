@@ -23,6 +23,8 @@ QHash <QChar, int> LexiconInfo::spanishTilesHash;
 
 void LexiconInfo::resetLetterDistributionVariables()
 {
+    /* this function is basically taken from Michael Thelen's CreateDatabaseThread.cpp, part of Zyzzyva, which is
+       GPLed software, source code available at http://www.zyzzyva.net, copyright Michael Thelen. */
     int maxFrequency = 15;
 
     int totalLetters = 0;
@@ -66,6 +68,8 @@ void LexiconInfo::resetLetterDistributionVariables()
 
 double LexiconInfo::combinations(QString alphagram)
 {
+    /* this function is basically taken from Michael Thelen's CreateDatabaseThread.cpp, part of Zyzzyva, which is
+       GPLed software, source code available at http://www.zyzzyva.net, copyright Michael Thelen. */
     // Build parallel arrays of letters with their counts, and the
     // precalculated combinations based on the letter frequency
     QList<unsigned char> letters;
@@ -226,7 +230,7 @@ void LexiconMap::createMap()
 
     map.insert("OWL2", LexiconInfo("OWL2", "OWL2.txt", englishLetterDist,
                                        "OWL2.trie", "OWL2_r.trie"));
-    map.insert("CSW07", LexiconInfo("CSW07", "CSW.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie"));
+    map.insert("CSW07", LexiconInfo("CSW07", "CSW07.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie"));
 
 
    /* map.insert("FISE", LexiconInfo("FISE", "fise.txt", spanishLetterDist, "fise.trie", "fise-r.trie"));
@@ -237,8 +241,9 @@ void LexiconMap::createMap()
         map[key].dawg.readDawg(Utilities::getRootDir() + "/words/" + map[key].dawgFilename);
         map[key].reverseDawg.readDawg(Utilities::getRootDir() + "/words/" + map[key].dawgRFilename);
     }
-    qDebug() << "fidning emicant" << map["OWL2+LWL"].dawg.findWord("EMICANT");
-    map["OWL2+LWL"].dawg.checkDawg(Utilities::getRootDir() + "/words/owl2-lwl.txt");
+    qDebug() << "find emicant";
+    qDebug() << "fidning emicant" << map["OWL2"].dawg.findWord("EMICANT");
+    map["OWL2"].dawg.checkDawg(Utilities::getRootDir() + "/words/OWL2.txt");
     //map["FISE"].dawg.checkDawg(Utilities::getRootDir() + "/words/fise.txt");
     // populate the spanish tiles hash here
     int counter = 0;
