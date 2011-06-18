@@ -66,10 +66,6 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     time.start();
     qDebug() << "Create" << lexiconName;
     LexiconInfo* lexInfo = &(lexiconMap->map[lexiconName]);
-    /*
-    lexInfo->dawg.readDawg(Utilities::getRootDir() + "/words/" + lexInfo->dawgFilename);
-    lexInfo->reverseDawg.readDawg(Utilities::getRootDir() + "/words/" + lexInfo->dawgRFilename);*/
-
     lexInfo->resetLetterDistributionVariables();
     qDebug() << lexiconName.toAscii().constData() << ": Reading in dictionary.";
 
@@ -194,7 +190,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
         if (wordLength <= 15)
             probs[wordLength]++;
 
-        wordQuery.bindValue(2, LexiconUtilities::encodeProbIndex(probs[wordLength], wordLength));
+        wordQuery.bindValue(2, LexiconUtilities::encodeProbIndex(probs[wordLength], wordLength, lexInfo->lexiconIndex));
         wordQuery.bindValue(3, wordLength);
         wordQuery.bindValue(4, alphs[i].alphagram.count(QChar('A')) +  alphs[i].alphagram.count(QChar('E')) +
                             alphs[i].alphagram.count(QChar('I')) +  alphs[i].alphagram.count(QChar('O')) +
@@ -232,6 +228,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
     qDebug() << lexiconName.toAscii().constData() << ": Creating special lists...";
 
+    /*
     wordQuery.exec("BEGIN TRANSACTION");
 
     QString vowelQueryString = "SELECT probability from alphagrams where length = %1 and num_vowels = %2";
@@ -252,7 +249,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     }
 
     wordQuery.exec("END TRANSACTION");
-
+    */
 
     qDebug() << lexiconName.toAscii().constData() << ": Database created!";
     emit setProgressValue(0);

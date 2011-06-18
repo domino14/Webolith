@@ -183,9 +183,9 @@ QString LexiconUtilities::alphagrammize(QString word, LessThans lessThan)
     return ret;
 }
 
-quint32 LexiconUtilities::encodeProbIndex(quint32 probIndex, quint32 wordLength)
+quint32 LexiconUtilities::encodeProbIndex(quint32 probIndex, quint32 wordLength, quint32 lexIndex)
 {
-    return probIndex + (wordLength << 24);
+    return probIndex + (lexIndex << 24) + (wordLength << 26);
 }
 
 QMap <unsigned char, int> getEnglishDist()
@@ -229,9 +229,10 @@ void LexiconMap::createMap()
     QMap <unsigned char, int> spanishLetterDist = getSpanishDist();
 
     map.insert("OWL2", LexiconInfo("OWL2", "OWL2.txt", englishLetterDist,
-                                       "OWL2.trie", "OWL2_r.trie"));
-    map.insert("CSW07", LexiconInfo("CSW07", "CSW07.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie"));
-
+                                       "OWL2.trie", "OWL2_r.trie", 4));
+    map.insert("CSW07", LexiconInfo("CSW07", "CSW07.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie", 5));
+    /* my lexicon indices are 4 and 5 because that's the way they first got made, and if I change them now
+       in production it'll screw everything up (saved lists) */
 
    /* map.insert("FISE", LexiconInfo("FISE", "fise.txt", spanishLetterDist, "fise.trie", "fise-r.trie"));
     map.insert("OSPD4+LWL", LexiconInfo("OSPD4+LWL", "ospd4-lwl.txt", englishLetterDist,

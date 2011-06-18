@@ -39,6 +39,11 @@
 # machine and do something like load data infile into the mysql database directly.
 # http://dev.mysql.com/doc/refman/5.1/en/load-data.html
 
+#load data infile '/Users/cesar/coding/webolith/djAerolith/populator/alphagrams.txt' into table base_alphagram fields terminated by ",";
+#load data infile '/Users/cesar/coding/webolith/djAerolith/populator/words.txt' into table base_word fields terminated by ',';
+#load data infile '/Users/cesar/coding/webolith/djAerolith/populator/lexica.txt' into table base_lexicon fields terminated by ",";
+
+
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
