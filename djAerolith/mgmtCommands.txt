@@ -1,0 +1,22 @@
+
+
+python manage.py shell (will put these into a manage.py command soon too)
+
+for deleting expired users:
+
+
+from registration.models import RegistrationProfile
+regPfs = RegistrationProfile.objects.exclude(activation_key = RegistrationProfile.ACTIVATED)
+>>> regPfsExpired = []
+>>> for i in regPfs:
+...     if i.activation_key_expired():
+...         regPfsExpired.append(i)
+
+for i in regPfsExpired:
+    i.user.delete()
+    
+for deleting expired tables:
+
+from wordwalls.models import WordwallsGameModel
+import datetime
+WordwallsGameModel.objects.filter(lastActivity__lt=datetime.date(2011, 6, 13)).delete() # make the date about two days ago
