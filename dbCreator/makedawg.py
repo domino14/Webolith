@@ -55,9 +55,17 @@ def addWord(d, word, offset):
         addWord(curNode.child, word, offset+1)
 
 def findWord(root, word):
+    node = findPartialWord(root, word)
+    if node:
+        return node.eow
+    else:
+        return False
+        
+def findPartialWord(root, partial):
+    # returns the node
     curNode = root
-    for i in range(len(word)):
-        letter = word[i]
+    for i in range(len(partial)):
+        letter = partial[i]
         #print "finding", letter
         if curNode and curNode.letter:
             letterfound = (curNode.letter == letter)
@@ -67,13 +75,19 @@ def findWord(root, word):
             if not curNode: break
             letterfound = (curNode.letter == letter)
             
-        if not letterfound: return False
-        if i != (len(word) - 1): curNode = curNode.child
+        if not letterfound: return None
+        if i != (len(partial) - 1): curNode = curNode.child
         
+    if curNode:
+        return curNode
+    else:
+        return None
     
-    if curNode: return curNode.eow # if it didn't return False it would eventually end up here.
-    else: return False
-
+    #if curNode: return curNode.eow # if it didn't return False it would eventually end up here.
+    #else: return False
+    
+    
+    
 def extractWords(infile):
     #f = open(infile, 'rb')
     f = codecs.open(infile, 'rb', 'utf-8') 
@@ -82,7 +96,7 @@ def extractWords(infile):
     for line in f:
         splitstr = line.split()
         if len(splitstr) >= 1 and len(splitstr[0]) > 1:
-            word = splitstr[0].lower()
+            word = splitstr[0].upper()
             words.append(word)
             
     
@@ -148,7 +162,26 @@ def testDawg():
     if verifyDawg(dawg, words): print "All ok!"
     else: print "Verify failed!"
     
-
+def findHooks(dawg, word):
+    hooks = ""
+    node = findPartialWord(dawg, word)
+    if node:
+        # dawg should now be pointing at the end node of the word
+        if node.child is None:
+            return hooks
+        else:
+            if node.child.eow:
+                hooks += node.child.letter
+                sibling = node.child.next
+                while sibling:
+                    if sibling.eow:
+                        hooks += sibling.letter
+                    sibling = sibling.next
+            
+    
+    return hooks        
+            
+             
 def assignDawgIndices(dawg):
     # traverse breadth first and assign indices
     index = 0
@@ -211,14 +244,14 @@ def decodeNode(index, number):
             + '\t' + repr(eow) + '\t' + repr(eon))
     
 def decodeLetter(number):
-    if number >= 0 and number <= 25: return unichr(ord('a') + number)
+    if number >= 0 and number <= 25: return unichr(ord('A') + number)
     elif number >= 26 and number <=28: return unichr(ord('1') + number - 26)
     elif number == 29: return u'\xf1'
     
 def letterMap(letter):
     # map to a 6-bit value (0 to 63)
-    if letter >= 'a' and letter <= 'z': 
-        return ord(letter) - ord('a')
+    if letter >= 'A' and letter <= 'Z': 
+        return ord(letter) - ord('A')
     elif letter >= '1' and letter <= '3': 
         return ord(letter) - ord('1') + 26
     else: return 29  # the enye value
