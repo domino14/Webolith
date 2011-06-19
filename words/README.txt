@@ -7,3 +7,9 @@ CSW07_r.trie
 OWL2.txt
 OWL2.trie
 OWL2_r.trie
+
+Once the dbCreator creates the words.txt, alphagrams.txt, etc files, they can be loaded into MySQL like this:
+
+load data infile '/Users/cesar/coding/webolith/dbCreator-build-desktop/words.txt' into table base_word fields terminated by ',';
+
+(for example)
