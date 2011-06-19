@@ -1,3 +1,5 @@
+# this file is 'deprecated' and will be removed soon. replaced by Qt/C++ text file creator at webolith/dbCreator
+
 # Aerolith 2.0: A web-based word game website
 # Copyright (C) 2011 Cesar Del Solar
 # 

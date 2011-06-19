@@ -19,7 +19,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QtSql>
+#include <QTextStream>
 #include "lexiconinfo.h"
 
 struct Alph
@@ -43,6 +43,7 @@ class DatabaseCreator : public QObject
 public:
     DatabaseCreator(LexiconMap* lexiconMap);
     void createLexiconDatabases(QStringList dbsToCreate);
+    ~DatabaseCreator();
 private:
 
     LexiconMap* lexiconMap;
@@ -53,11 +54,16 @@ private:
 
     QString reverse(QString word);
     void createLexiconDatabase(QString lexiconName);
-    void sqlListMaker(QString queryString, QString listName, quint8 wordLength,
-                      QSqlDatabase& db, SqlListMakerQueryTypes queryType = PROBABILITY_QUERY);
-    void updateDefinitions(QHash<QString, QString>& defHash, int progress, QSqlDatabase &db);
+    /*void sqlListMaker(QString queryString, QString listName, quint8 wordLength,
+                      QSqlDatabase& db, SqlListMakerQueryTypes queryType = PROBABILITY_QUERY);*/
+    void updateDefinitions(QHash<QString, QString>& defHash, int progress);
     QString followDefinitionLinks(QString definition, QHash<QString, QString>& defHash, bool useFollow, int maxDepth);
     QString getSubDefinition(const QString& word, const QString& pos, QHash<QString, QString>& defHash);
+
+    QTextStream alphStream, wordStream, lexStream;
+    QFile alphFile, wordFile, lexFile;
+    int wordIndex;
+    QString escapeDef(QString def);
 signals:
     void setProgressMessage(QString);
     void setProgressValue(int);

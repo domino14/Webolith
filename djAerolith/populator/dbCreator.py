@@ -1,3 +1,5 @@
+# this file is 'deprecated' and will be removed soon. replaced by Qt/C++ text file creator at webolith/dbCreator
+
 # should use no Django, just direct cursor functions
 from django.db import connection, transaction
 import makedawg

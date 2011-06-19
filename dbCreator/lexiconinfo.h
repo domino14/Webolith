@@ -19,7 +19,6 @@
 
 #include <QString>
 #include <QMap>
-#include <QtSql>
 #include <QList>
 #include "dawg.h"
 
@@ -44,7 +43,6 @@ public:
     {
         alphagramsPerLength.resize(16);
     }
-    QSqlDatabase dbConn;
     QVector <int> alphagramsPerLength;
     QString dawgFilename, dawgRFilename;
     Dawg dawg, reverseDawg;
