@@ -179,7 +179,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
                 lexSymbols = "#";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
                         << lexIndex << "," << lexSymbols << "," << escapeDef(definitionsHash[word]) << "," 
-                        << backHooks << "," << frontHooks << endl;    
+                        << frontHooks << "," << backHooks << endl;    
             wordIndex++;
         }
     }
