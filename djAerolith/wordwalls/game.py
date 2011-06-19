@@ -31,6 +31,7 @@ from forms import SavedListForm
 import wordwalls.settings
 import os
 from django.db import transaction
+from locks import lonelock
 
 class WordwallsQuestion:
     def __init__(self, alphObj):
@@ -531,7 +532,7 @@ class WordwallsGame:
         print len(missedPks), "missed this round", ",", len(missed), "missed total"
         if state['gameType'] == 'challenge':
             state['gameType'] = 'challengeOver'
-            self.createChallengeLeaderboardEntries(state, tablenum)
+            self.createChallengeLeaderboardEntries(state, tablenum, wgm)
             
         # check if we've gone thru the quiz once.
         if state['questionIndex'] > wgm.numCurQuestions - 1:
@@ -540,7 +541,7 @@ class WordwallsGame:
                 wgm.firstMissed = wgm.missed
                 wgm.numFirstMissed = wgm.numMissed
         
-    def createChallengeLeaderboardEntries(self, state, tablenum):
+    def createChallengeLeaderboardEntries(self, state, tablenum, wgm):
         # first create a leaderboard if one doesn't exist for this challenge
         try:
             dc = DailyChallenge.objects.get(pk=state['challengeId'])
@@ -557,8 +558,8 @@ class WordwallsGame:
         
         try:
             lbe = DailyChallengeLeaderboardEntry.objects.get(user=wgm.host, board=lb)
-            # if it exists, we're here
-            return  # TODO is there a cleaner way of doing this? this seems very ugly
+            # if it exists, we're here. don't update the leaderboard entry because we can only do the quiz once
+            return
             
         except DailyChallengeLeaderboardEntry.DoesNotExist:
             score = state['numAnswersThisRound'] - len(state['answerHash'])
@@ -570,7 +571,31 @@ class WordwallsGame:
             lbe = DailyChallengeLeaderboardEntry(user=wgm.host, score=score, board=lb, 
                                     timeRemaining=timeRemaining)
             lbe.save()
+            if len(state['answerHash']) > 0 and (dc.name.name == "Today's 7s" or dc.name.name == "Today's 8s"):
+                # if the user missed some 7s or 8s
+                self.addDCMissedBingos(state, dc, wgm)        
         
+    def addDCMissedBingos(self, state, dc, wgm):
+        origQsObj = json.loads(wgm.origQuestions)
+        missedAlphas = set()
+        for missed in state['answerHash']:
+            alphaPk = origQsObj[state['answerHash'][missed][1]]
+            missedAlphas.add(Alphagram.objects.get(pk=alphaPk))
+            
+        lonelock(DailyChallenge, dc.pk) # always lock the daily challenge missed bingos list here because of the += 1 below
+        # will be unlocked on db disconnect
+        
+        for alpha in missedAlphas:
+            try:
+                dcmb = DailyChallengeMissedBingos.objects.get(challenge=dc, alphagram=alpha)
+                dcmb.numTimesMissed += 1
+            except DailyChallengeMissedBingos.DoesNotExist:
+                # if it doesn't exist, we must create it
+                dcmb = DailyChallengeMissedBingos(challenge=dc, alphagram=alpha, numTimesMissed=1)
+            
+            dcmb.save()
+            
+                
     def getPkIndices(self, searchDescription):           
         if searchDescription['condition'] == 'probPKRange':
             minP = searchDescription['min']
