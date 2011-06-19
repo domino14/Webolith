@@ -72,7 +72,7 @@ class Word(models.Model):
     # lexica (csw, owl2, fise, etc). This makes it much simpler to keep 
     # the lexicon-specific definition, front hooks, back hooks, etc. in this table
     # and it makes more sense (see notes below)
-    definition = models.CharField(max_length=256)
+    definition = models.CharField(max_length=512)
     front_hooks = models.CharField(max_length=26)
     back_hooks = models.CharField(max_length=26)
     def __unicode__(self):

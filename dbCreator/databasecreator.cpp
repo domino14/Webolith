@@ -41,7 +41,7 @@ DatabaseCreator::DatabaseCreator(LexiconMap* lexiconMap)
 
     this->lexiconMap = lexiconMap;
     qDebug() << "In db creator";
-    wordIndex = 0;
+    wordIndex = 1;
 
 }
 
@@ -93,21 +93,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
     QFile file(Utilities::getRootDir() + "/words/" + lexInfo->wordsFilename);
     if (!file.open(QIODevice::ReadOnly)) return;
-/*    QSqlDatabase db =  QSqlDatabase::addDatabase("QSQLITE", lexiconName + "DB");
-    db.setDatabaseName(lexiconName + ".db");
-    db.open();
-    QSqlQuery wordQuery(db);
-    wordQuery.exec("CREATE TABLE IF NOT EXISTS dbVersion(version INTEGER)");
-    wordQuery.exec("INSERT INTO dbVersion(version) VALUES(1)"); // version 1
-    wordQuery.exec("CREATE TABLE IF NOT EXISTS words(alphagram VARCHAR(15), word VARCHAR(15), "
-                   "definition VARCHAR(256), lexiconstrings VARCHAR(5), front_hooks VARCHAR(26), "
-                   "back_hooks VARCHAR(26))");
-    wordQuery.exec("CREATE TABLE IF NOT EXISTS alphagrams(alphagram VARCHAR(15), words VARCHAR(255), "
-                   "probability INTEGER PRIMARY KEY, length INTEGER, num_vowels INTEGER)");
 
-    wordQuery.exec("CREATE TABLE IF NOT EXISTS wordlists(listname VARCHAR(40), numalphagrams INTEGER, probindices BLOB)");
-    wordQuery.exec("CREATE TABLE IF NOT EXISTS lengthcounts(length INTEGER, numalphagrams INTEGER)");*/
-    // TOO create index for wordlists?
     LessThans lessThan;
     if (lexInfo->lexiconName == "FISE") lessThan = SPANISH_LESS_THAN;
     else lessThan = ENGLISH_LESS_THAN;
@@ -118,10 +104,6 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
 
     QTextStream in(&file);
- /*   QString queryText = "INSERT INTO words(alphagram, word, definition, lexiconstrings, front_hooks, back_hooks) "
-                        "VALUES(?, ?, ?, ?, ?, ?) ";
-    wordQuery.exec("BEGIN TRANSACTION");
-    wordQuery.prepare(queryText);*/
     QHash <QString, QString> definitionsHash;
     QStringList dummy;
 
@@ -153,37 +135,10 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             if (!alphagramsHash.contains(alphagram))
                 alphagramsHash.insert(alphagram, Alph(dummy, lexInfo->combinations(alphagram), alphagram));
 
-           // qDebug() << word;
             alphagramsHash[alphagram].words << word;
-          // qDebug() << "1";
-        /*    QString backHooks = lexInfo->dawg.findHooks(word.toAscii());
-           // qDebug() << "2";
-            QString frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
-            QString lexSymbols = "";
-                              //   qDebug() << "here";
-            if (alphagram == "ACEIMNT")
-	      {
-                qDebug() << "ACEIMNT";
-                qDebug() << word.toAscii() << lexInfoAmerica->dawg.findWord(word.toAscii());
-
-	      }
-            if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
-                lexSymbols = "#";
-           // qDebug() << "and here";
-*/
-            //qDebug() << word << alphagram << definition << backHooks << frontHooks;
-            /*wordQuery.bindValue(0, alphagram);
-            wordQuery.bindValue(1, word);
-            wordQuery.bindValue(2, definition);
-            wordQuery.bindValue(3, lexSymbols);
-            wordQuery.bindValue(4, frontHooks);
-            wordQuery.bindValue(5, backHooks);
-            wordQuery.exec();*/
 
         }
     }
-   // wordQuery.exec("END TRANSACTION");
-    //file.close();
 
     /* now sort alphagramsHash by probability/length */
     qDebug() << lexiconName.toAscii().constData() << ": Sorting by probability...";
@@ -192,9 +147,6 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
     qDebug() << lexiconName.toAscii().constData() << ": Creating alphagrams...";
 
- //   queryText = "INSERT INTO alphagrams(alphagram, words, probability, length, num_vowels) VALUES(?, ?, ?, ?, ?)";
- //   wordQuery.exec("BEGIN TRANSACTION");
- //   wordQuery.prepare(queryText);
     updateDefinitions(definitionsHash, progress);
     int probs[16];
     for (int i = 0; i < 16; i++)
@@ -202,9 +154,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     int lexIndex = lexInfo->lexiconIndex;
     for (int i = 0; i < alphs.size(); i++)
     {
-     //   wordQuery.bindValue(0, alphs[i].alphagram);
         int wordLength = alphs[i].alphagram.length();
-      //  wordQuery.bindValue(1, alphs[i].words.join(" "));
 
         progress++;
         if (progress%1000 == 0)
@@ -232,68 +182,11 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
                         << backHooks << "," << frontHooks << endl;    
             wordIndex++;
         }
-       // wordQuery.bindValue(2, LexiconUtilities::encodeProbIndex(probs[wordLength], wordLength, lexInfo->lexiconIndex));
-       // wordQuery.bindValue(3, wordLength);
-       // wordQuery.bindValue(4, alphs[i].alphagram.count(QChar('A')) +  alphs[i].alphagram.count(QChar('E')) +
-        //                    alphs[i].alphagram.count(QChar('I')) +  alphs[i].alphagram.count(QChar('O')) +
-         //                   alphs[i].alphagram.count(QChar('U')));
-        //wordQuery.exec();
     }
 
-   // wordQuery.exec("END TRANSACTION");
-
-    qDebug() << "Created alphas in" << time.elapsed() << "for lexicon" << lexiconName;
-
-    qDebug() << lexiconName.toAscii().constData() << ": updating definitions...";
-  //  wordQuery.exec("CREATE UNIQUE INDEX word_index on words(word)");
-    /* update definitions */
+    qDebug() << "Created text files in" << time.elapsed() << "for lexicon" << lexiconName;
 
 
-
-
-
-
-    qDebug() << lexiconName.toAscii().constData() << ": Indexing database...";
-
-
-    // do this indexing at the end.
-    //    wordQuery.exec("CREATE UNIQUE INDEX probability_index on alphagrams(probability)");
-  //  wordQuery.exec("CREATE UNIQUE INDEX alphagram_index on alphagrams(alphagram)");
-
-   // wordQuery.prepare("INSERT INTO lengthcounts(length, numalphagrams) VALUES(?, ?)");
- /*   for (int i = 2; i <= 15; i++)
-    {
-        wordQuery.addBindValue(i);
-        wordQuery.addBindValue(probs[i]);
-        wordQuery.exec();
-    }
-
-    qDebug() << lexiconName.toAscii().constData() << ": Creating special lists...";
-*/
-    /*
-    wordQuery.exec("BEGIN TRANSACTION");
-
-    QString vowelQueryString = "SELECT probability from alphagrams where length = %1 and num_vowels = %2";
-    sqlListMaker(vowelQueryString.arg(8).arg(5), QString("Five-vowel-8s"), 8, db);
-    sqlListMaker(vowelQueryString.arg(7).arg(4), QString("Four-vowel-7s"), 7, db);
-    QString jqxzQueryString = "SELECT probability from alphagrams where length = %1 and "
-                              "(alphagram like '%Q%' or alphagram like '%J%' or alphagram like '%X%' or alphagram like '%Z%')";
-
-    for (int i = 4; i <= 8; i++)
-        sqlListMaker(jqxzQueryString.arg(i), QString("JQXZ %1s").arg(i), i, db);
-
-    if (lexiconName == "CSW07")
-    {
-        QString newWordsQueryString = "SELECT alphagram from words where length(alphagram) = %1 and "
-                                      "lexiconstrings like '%#%'";
-        for (int i = 7; i <= 8; i++)
-            sqlListMaker(newWordsQueryString.arg(i), QString("CSW07-only %1s").arg(i), i, db, ALPHAGRAM_QUERY);
-    }
-
-    wordQuery.exec("END TRANSACTION");
-    */
-
-    qDebug() << lexiconName.toAscii().constData() << ": Database created!";
     emit setProgressValue(0);
 
 }
@@ -370,10 +263,6 @@ void DatabaseCreator::sqlListMaker(QString queryString, QString listName, quint8
 
 void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, int progress)
 {
- /*   QSqlQuery wordQuery(db);
-    wordQuery.exec("BEGIN TRANSACTION");
-    wordQuery.prepare("UPDATE words SET definition = ? WHERE word = ?");*/
-
     QHashIterator<QString, QString> hashIterator(defHash);
     while (hashIterator.hasNext())
     {
@@ -394,16 +283,7 @@ void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, int pr
         }
         if (definition != newDefinition)
             defHash[word] = newDefinition;
-
-       /* if (definition != newDefinition)
-        {
-            wordQuery.bindValue(0, newDefinition);
-            wordQuery.bindValue(1, word);
-            wordQuery.exec();
-        }*/
-
     }
-   // wordQuery.exec("END TRANSACTION");
 
 }
 
