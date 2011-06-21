@@ -178,11 +178,14 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
                 lexSymbols = "#";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
-                        << lexIndex << "," << lexSymbols << "," << escapeDef(definitionsHash[word]) << "," 
+                        << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
                         << frontHooks << "," << backHooks << endl;    
             wordIndex++;
         }
     }
+
+    lexStream <<   lexIndex << "," <<   lexInfo->lexiconName << "," << escapeStr(lexInfo->descriptiveName)
+            << "," << escapeStr(stringifyArray(probs)) << endl;
 
     qDebug() << "Created text files in" << time.elapsed() << "for lexicon" << lexiconName;
 
@@ -191,12 +194,24 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
 }
 
-QString DatabaseCreator::escapeDef(QString def)
+QString DatabaseCreator::escapeStr(QString str)
 {
-    /* escapes definition suitable for loading into SQL database*/
-    def.replace(",", "\\,");
-    def.replace("\n", "\\\n");
-    return def;
+    /* escapes string suitable for loading into SQL database*/
+    str.replace(",", "\\,");
+    str.replace("\n", "\\\n");
+    return str;
+}
+
+QString DatabaseCreator::stringifyArray(int* probs)
+{
+    QString ret = "{";
+    for (int i = 2; i < 16; i++)
+    {
+        ret += "\"" + QString::number(i) + "\":" + QString::number(probs[i]);
+        if (i != 15) ret += ",";
+    }
+    ret+= "}";
+    return ret;
 }
 
 /*

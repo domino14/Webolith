@@ -63,7 +63,8 @@ private:
     QTextStream alphStream, wordStream, lexStream;
     QFile alphFile, wordFile, lexFile;
     int wordIndex;
-    QString escapeDef(QString def);
+    QString escapeStr(QString str);
+    QString stringifyArray(int*);
 signals:
     void setProgressMessage(QString);
     void setProgressValue(int);

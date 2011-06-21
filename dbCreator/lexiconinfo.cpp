@@ -229,8 +229,9 @@ void LexiconMap::createMap()
     QMap <unsigned char, int> spanishLetterDist = getSpanishDist();
 
     map.insert("OWL2", LexiconInfo("OWL2", "OWL2.txt", englishLetterDist,
-                                       "OWL2.trie", "OWL2_r.trie", 4));
-    map.insert("CSW07", LexiconInfo("CSW07", "CSW07.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie", 5));
+                                       "OWL2.trie", "OWL2_r.trie", 4, "North American 2006 Official Word List 2006"));
+    map.insert("CSW07", LexiconInfo("CSW07", "CSW07.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie", 5,
+                                    "Collins 2007 International English Word List"));
     /* my lexicon indices are 4 and 5 because that's the way they first got made, and if I change them now
        in production it'll screw everything up (saved lists) */
 
@@ -242,9 +243,9 @@ void LexiconMap::createMap()
         map[key].dawg.readDawg(Utilities::getRootDir() + "/words/" + map[key].dawgFilename);
         map[key].reverseDawg.readDawg(Utilities::getRootDir() + "/words/" + map[key].dawgRFilename);
     }
-    qDebug() << "find emicant";
-    qDebug() << "fidning emicant" << map["OWL2"].dawg.findWord("EMICANT");
-    map["OWL2"].dawg.checkDawg(Utilities::getRootDir() + "/words/OWL2.txt");
+   // qDebug() << "find emicant";
+    //qDebug() << "fidning emicant" << map["OWL2"].dawg.findWord("EMICANT");
+    //map["OWL2"].dawg.checkDawg(Utilities::getRootDir() + "/words/OWL2.txt");
     //map["FISE"].dawg.checkDawg(Utilities::getRootDir() + "/words/fise.txt");
     // populate the spanish tiles hash here
     int counter = 0;

@@ -30,7 +30,8 @@ enum LessThans
 class LexiconInfo
 {
 public:
-    LexiconInfo(QString name, QString filename, QMap <unsigned char, int> d, QString df, QString drf, int lexIndex)
+    LexiconInfo(QString name, QString filename, QMap <unsigned char, int> d, QString df, QString drf,
+                int lexIndex, QString dN)
     {
         lexiconName = name;
         wordsFilename = filename; letterDist = d;
@@ -38,6 +39,7 @@ public:
         dawgRFilename = drf;
         alphagramsPerLength.resize(16);  // 0-15 index
         lexiconIndex = lexIndex;
+        descriptiveName = dN;
     }
     LexiconInfo()
     {
@@ -52,6 +54,7 @@ public:
     double combinations(QString alphagram);
     static QHash <QChar, int> spanishTilesHash;
     int lexiconIndex;
+    QString descriptiveName;
 private:
 
     QMap<unsigned char, int> letterDist;
