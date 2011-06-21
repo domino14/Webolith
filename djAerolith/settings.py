@@ -141,6 +141,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'gunicorn',
     'django_assets',
+    'south',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
