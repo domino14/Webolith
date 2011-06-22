@@ -23,13 +23,15 @@ from tablegame.models import GenericTableGameModel
 from locks import LockableObject, require_object_lock
 
 class DailyChallengeName(models.Model):
+    WEEKS_BINGO_TOUGHIES = "Week's Bingo Toughies"
+    WEEKS_BINGO_TOUGHIES_ISOWEEKDAY = 2   # Tuesday's coming, did you bring a coat?
     name = models.CharField(max_length=32)
     def __unicode__(self):
         return self.name
 
 class DailyChallenge(models.Model):
     lexicon = models.ForeignKey(Lexicon)
-    date = models.DateField(auto_now_add=True)  # set the date to now when an instance is created
+    date = models.DateField()  # set the date to now when an instance is created
     name = models.ForeignKey(DailyChallengeName)
     alphagrams = models.TextField()
     seconds = models.IntegerField() # the number of seconds alloted for this challenge
@@ -113,4 +115,4 @@ class DailyChallengeMissedBingos(models.Model): # only tracks missed 7&8 letter 
         unique_together = ("challenge", "alphagram")
     
     def __unicode__(self):
-        return challenge.__unicode__ + ", " + alphagram.alphagram + ", " + numTimesMissed
+        return self.challenge.__unicode__() + ", " + self.alphagram.alphagram + ", " + str(self.numTimesMissed)
