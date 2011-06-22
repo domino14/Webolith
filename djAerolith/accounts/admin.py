@@ -20,6 +20,6 @@ from accounts.models import AerolithProfile
 
 class AerolithProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'member', 'wordwallsSaveListSize']
-    search_fields = ['user', 'member']
+    search_fields = ['user__username', 'member']
 
 admin.site.register(AerolithProfile, AerolithProfileAdmin)

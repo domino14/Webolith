@@ -17,7 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName
-from wordwalls.models import WordwallsGameModel
+from wordwalls.models import WordwallsGameModel, DailyChallengeMissedBingos
 from django.contrib import admin
 
 class DailyChallengeAdmin(admin.ModelAdmin):
@@ -50,4 +50,9 @@ class WordwallsSavedListAdmin(admin.ModelAdmin):
     
     readonly_fields = ('lastSaved', 'created')
 
+class DailyChallengeMissedBingosAdmin(admin.ModelAdmin):
+    fields = ['challenge', 'alphagram', 'numTimesMissed']
+    list_display = ('challenge', 'alphagram', 'numTimesMissed')
+    
 admin.site.register(SavedList, WordwallsSavedListAdmin)
+admin.site.register(DailyChallengeMissedBingos, DailyChallengeMissedBingosAdmin)
