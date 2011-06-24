@@ -35,6 +35,7 @@ What type of list do you want?<BR>
 
     <div id="challengesHelp" class="help">
     <P>Hooooooold. Challenge. A new set of challenges is generated once a day. To play the challenges, select the lexicon and challenge, and click Play! You can also see how other people did today on the display to the right of the challenge.</P>
+    <P>The "Week's Bingo Toughies" list gets updated every Tuesday at midnight PST (i.e. Tuesday 3AM EST). It will have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The toughest bingos are the ones most commonly missed that week. Data collection began June 21, 2011, so please wait until June 28, 2011 for the first "Toughie Bingos" list to be generated.</P>
     </div>
     <table id="challengesLayout"> 
     <tr>
@@ -131,7 +132,7 @@ What type of list do you want?<BR>
 
     $("#id_lexicon_sl").val('0');   // always set the lexicon for saved list to 0 on load
     requestSavedListInfo();
-    $("#id_challenge > option[value='15']").prop('disabled',true);
+    //$("#id_challenge > option[value='15']").prop('disabled',true);
  });
 </script>
 

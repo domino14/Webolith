@@ -22,10 +22,10 @@ from wordwalls.models import WordwallsGameModel
 import json
 import pickle
 import time
-from datetime import date
+from datetime import date, timedelta
 import random
 from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList
-from wordwalls.models import DailyChallengeMissedBingos
+from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
 import re
 from forms import SavedListForm
 import wordwalls.settings
@@ -33,15 +33,13 @@ import os
 from django.db import transaction
 from locks import lonelock
 
-class WordwallsQuestion:
-    def __init__(self, alphObj):
-        self.alphagram = alphObj    # a model instance
-        self.notYetSolved = set(alphObj.word_set.all())
+# daily challenge seconds map (how many seconds per word length?)
+dcTimeMap = {2: 60, 3: 90, 4: 150, 5: 180, 6: 240, 7: 270, 8: 270, 9: 300, 
+                        10: 330, 11: 330, 12: 330, 13: 360, 14: 360, 15: 360, DailyChallengeName.WEEKS_BINGO_TOUGHIES: 270}
 
 class WordwallsGame:
-    # daily challenge seconds map (how many seconds per word length?)
-    dcTimeMap = {2: 60, 3: 90, 4: 150, 5: 180, 6: 240, 7: 270, 8: 270, 9: 300, 
-                    10: 330, 11: 330, 12: 330, 13: 360, 14: 360, 15: 360, 'bingos': 270, 'Last Week': 270}
+
+
     
     def createGameModelInstance(self, host, playerType, lex, 
                                 numOrigQuestions,
@@ -86,20 +84,33 @@ class WordwallsGame:
     def initializeByDailyChallenge(self, user, challengeLex, challengeName):
         # does a daily challenge exist with this name and the current date? if not, create it.
         datenow = date.today()
+        if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+            # repeat on Tuesday at midnight local time (ie beginning of the day, 0:00)
+            # Tuesday is an isoweekday of 2. Find the nearest Tuesday back in time. isoweekday goes from 1 to 7
+            diff = datenow.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
+            if diff < 0:
+                diff = 7-diff
+            
+            chDate = datenow - timedelta(days=diff)
+    
+        # otherwise, it's not a 'bingo toughies', but a regular challenge.
+        else:
+            chDate = datenow
+            
         try:
-            dc = DailyChallenge.objects.get(date=datenow, lexicon=challengeLex, name=challengeName)
+            dc = DailyChallenge.objects.get(date=chDate, lexicon=challengeLex, name=challengeName)
             # pull out its indices
 
             pkIndices = json.loads(dc.alphagrams)
               
             secs = dc.seconds
             random.shuffle(pkIndices)
-        except:
+        except DailyChallenge.DoesNotExist:
             # does not exist!
-            ret = self.generateDailyChallengePks(challengeName, challengeLex)
+            ret = self.generateDailyChallengePks(challengeName, challengeLex, chDate)
             if ret:
                 pkIndices, secs = ret
-                dc = DailyChallenge(date=datenow, lexicon=challengeLex, name=challengeName, 
+                dc = DailyChallenge(date=chDate, lexicon=challengeLex, name=challengeName, 
                         seconds=secs, alphagrams=json.dumps(pkIndices))
                 
                 dc.save()
@@ -124,10 +135,6 @@ class WordwallsGame:
 
               
         return wgm.pk   # the table number
-    
-    # function to save daily challenge alphagrams into DailyChallenge model, and tie this to the alphagrams generated above somehow.
-    
-
     
     def initializeBySearchParams(self, user, alphasSearchDescription, playerType, timeSecs):
         pkIndices = self.getPkIndices(alphasSearchDescription)
@@ -647,12 +654,12 @@ class WordwallsGame:
         
         return True     
         
-    def generateDailyChallengePks(self, challengeName, lex):
+    def generateDailyChallengePks(self, challengeName, lex, chDate):
         t1 = time.time()
         # capture number. first try to match to today's lists
         m = re.match("Today's (?P<length>[0-9]+)s", challengeName.name)
         
-        if m:
+        if m:   # ignore the challenge date
             wordLength = int(m.group('length'))
             if wordLength < 2 or wordLength > 15: return None   # someone is trying to break my server >:(
             print 'Generating daily challenges', lex, wordLength
@@ -666,11 +673,29 @@ class WordwallsGame:
             pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
             
             print "time to gen", time.time() - t1
-            return pks, WordwallsGame.dcTimeMap[wordLength]
+            return pks, dcTimeMap[wordLength]
         else:
-            if challengeName.name == "Week's Bingo Toughies":
+            if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
                 # generate challenges from this week's missed bingos
-                pass
+                # first, find all the challenges that match. search back in time 7 days from chDate, not including chDate
+                minDate = chDate - timedelta(days=7)
+                maxDate = chDate - timedelta(days=1)
+                print "minDate", minDate, "maxDate", maxDate
+                dc7s = DailyChallengeName.objects.get(name="Today's 7s")
+                dc8s = DailyChallengeName.objects.get(name="Today's 8s")
+                
+                dc7sQSet = DailyChallenge.objects.filter(lexicon=lex).filter(date__range=(minDate, maxDate)).filter(name=dc7s)
+                dc8sQSet = DailyChallenge.objects.filter(lexicon=lex).filter(date__range=(minDate, maxDate)).filter(name=dc8s)
+                # now find all the missed alphagrams for these dcs and sort them by number of times missed                
+                mbingos7 = DailyChallengeMissedBingos.objects.filter(challenge__in=list(dc7sQSet)).order_by('-numTimesMissed')[:25]
+                mbingos8 = DailyChallengeMissedBingos.objects.filter(challenge__in=list(dc8sQSet)).order_by('-numTimesMissed')[:25]
+
+                pks = [a.alphagram.pk for a in mbingos7]
+                pks.extend([a.alphagram.pk for a in mbingos8])
+                random.shuffle(pks)
+                
+                print "time to gen", time.time() - t1
+                return pks, dcTimeMap[DailyChallengeName.WEEKS_BINGO_TOUGHIES]
         return None        
             
 class SearchDescription:
