@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from wordwalls.models import DailyChallenge, DailyChallengeName, DailyChallengeMissedBingos
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 from base.models import Lexicon
 import random
 import time
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         except:
             raise CommandError("That lexicon does not exist!")
         t1 = time.time()
-        datenow = datetime.now()
+        datenow = date.today()
         diff = datenow.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
         if diff < 0:
             diff = 7-diff
