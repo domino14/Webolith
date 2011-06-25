@@ -5,18 +5,21 @@ from base.models import Lexicon
 import random
 import time
 class Command(BaseCommand):
-    help = """Generates challenge pks with toughie bingos; this is more of a debug command and is not intended to be run in production
+    help = """Shows challenge alphas for toughie bingos; this is more of a debug command and is not intended to be run in production
                 needs a lexicon"""
 
     def handle(self, *args, **options):
-        if len(args)!= 1:
+        if len(args)<  1:
             raise CommandError("Must have a lexicon name argument")
         try:
             lex = Lexicon.objects.get(lexiconName=args[0])
         except:
             raise CommandError("That lexicon does not exist!")
+        if len(args) == 2 and args[1] == "thisweek": delta = 7
+
+        else: delta=0
         t1 = time.time()
-        datenow = date.today()
+        datenow = date.today() + timedelta(days=delta)
         diff = datenow.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
         if diff < 0:
             diff = 7-diff
@@ -34,9 +37,9 @@ class Command(BaseCommand):
         mbingos7 = DailyChallengeMissedBingos.objects.filter(challenge__in=list(dc7sQSet)).order_by('-numTimesMissed')[:25]
         mbingos8 = DailyChallengeMissedBingos.objects.filter(challenge__in=list(dc8sQSet)).order_by('-numTimesMissed')[:25]
 
-        pks = [a.alphagram.pk for a in mbingos7]
-        pks.extend([a.alphagram.pk for a in mbingos8])
-        random.shuffle(pks)
+        
+        pks = [(a.alphagram, a.numTimesMissed) for a in mbingos7]
+        pks.extend([(a.alphagram, a.numTimesMissed) for a in mbingos8])
         
         print "time to gen", time.time() - t1
         print pks
