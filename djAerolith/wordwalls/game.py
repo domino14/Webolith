@@ -692,7 +692,8 @@ class WordwallsGame:
 
                 pks = [a.alphagram.pk for a in mbingos7]
                 pks.extend([a.alphagram.pk for a in mbingos8])
-                random.shuffle(pks)
+                pks = list(set(pks))    # get rid of duplicates - should be very rare. if there are duplicates, we'll deal with having
+                random.shuffle(pks)     # less than 50 questions I guess
                 
                 print "time to gen", time.time() - t1
                 return pks, dcTimeMap[DailyChallengeName.WEEKS_BINGO_TOUGHIES]
