@@ -87,12 +87,8 @@ class WordwallsGame:
         if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
             # repeat on Tuesday at midnight local time (ie beginning of the day, 0:00)
             # Tuesday is an isoweekday of 2. Find the nearest Tuesday back in time. isoweekday goes from 1 to 7
-            diff = datenow.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
-            if diff < 0:
-                diff = 7-diff
-            
-            chDate = datenow - timedelta(days=diff)
-    
+            from wordwalls.management.commands.genMissedBingoChalls import challengeDate
+            chDate = challengeDate(delta=0)    
         # otherwise, it's not a 'bingo toughies', but a regular challenge.
         else:
             chDate = datenow
@@ -676,24 +672,13 @@ class WordwallsGame:
             return pks, dcTimeMap[wordLength]
         else:
             if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-                # generate challenges from this week's missed bingos
-                # first, find all the challenges that match. search back in time 7 days from chDate, not including chDate
-                minDate = chDate - timedelta(days=7)
-                maxDate = chDate - timedelta(days=1)
-                print "minDate", minDate, "maxDate", maxDate
-                dc7s = DailyChallengeName.objects.get(name="Today's 7s")
-                dc8s = DailyChallengeName.objects.get(name="Today's 8s")
-                
-                dc7sQSet = DailyChallenge.objects.filter(lexicon=lex).filter(date__range=(minDate, maxDate)).filter(name=dc7s)
-                dc8sQSet = DailyChallenge.objects.filter(lexicon=lex).filter(date__range=(minDate, maxDate)).filter(name=dc8s)
-                # now find all the missed alphagrams for these dcs and sort them by number of times missed                
-                mbingos7 = DailyChallengeMissedBingos.objects.filter(challenge__in=list(dc7sQSet)).order_by('-numTimesMissed')[:25]
-                mbingos8 = DailyChallengeMissedBingos.objects.filter(challenge__in=list(dc8sQSet)).order_by('-numTimesMissed')[:25]
-
-                pks = [a.alphagram.pk for a in mbingos7]
-                pks.extend([a.alphagram.pk for a in mbingos8])
-                pks = list(set(pks))    # get rid of duplicates - should be very rare. if there are duplicates, we'll deal with having
-                random.shuffle(pks)     # less than 50 questions I guess
+                from wordwalls.management.commands.genMissedBingoChalls import genPks
+                mbs = genPks(lex, 0)
+                print mbs
+                print "---"
+                pks = [m[0] for m in mbs]
+                print pks
+                random.shuffle(pks)
                 
                 print "time to gen", time.time() - t1
                 return pks, dcTimeMap[DailyChallengeName.WEEKS_BINGO_TOUGHIES]
