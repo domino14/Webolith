@@ -291,11 +291,19 @@ def getLeaderboardDataDcInstance(dc):
 def getLeaderboardData(lex, chName):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
+        print "lex", lex_object
     except:
         return None
-        
+    
+    if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+        from wordwalls.management.commands.genMissedBingoChalls import challengeDate
+        chdate = challengeDate(delta=0)
+    else:
+        chdate = date.today()
+    print chdate
     try:
-        dc = DailyChallenge.objects.get(lexicon=lex_object, date=date.today(), name=chName)
+        dc = DailyChallenge.objects.get(lexicon=lex_object, date=chdate, name=chName)
+        print "dc", dc
     except:
         return None # daily challenge doesn't exist
     
