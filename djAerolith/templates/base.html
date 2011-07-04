@@ -49,7 +49,7 @@ To contact the author, please email delsolar at gmail dot com
             <LI class="ui-state-default ui-corner-all"><a href="/accounts/register" class="navbarLink">Register</a></LI>
         {% else %}
             <LI class="ui-state-default ui-corner-all">
-                <span class="ui-icon ui-icon-wrench"></span><a href="/accounts/profile" class="navbarLink">{{user}}</a></LI>
+                <a href="/accounts/profile" class="navbarLink">{{user}}</a><span class="ui-icon ui-icon-wrench"></span></LI>
             {% if user.get_profile.member %}
                 {# do nothing, member #}
             {% else %}
@@ -58,6 +58,7 @@ To contact the author, please email delsolar at gmail dot com
             <LI class="ui-state-default ui-corner-all"><a href="/accounts/logout" class="navbarLink">Log out</a></LI>
         {% endif %}
         </UL>
+    </div>
     <div class="aerolithBar">
         <UL class="navbar">
     <LI class="ui-state-default ui-corner-all"><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
