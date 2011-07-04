@@ -43,30 +43,31 @@ To contact the author, please email delsolar at gmail dot com
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
     <div class="userbar">
-        <UL class="navbar">
         {% if user.username == "" %}
-            <LI class="ui-state-default ui-corner-all"><a href="/accounts/login" class="navbarLink">Log in</a></LI>
-            <LI class="ui-state-default ui-corner-all"><a href="/accounts/register" class="navbarLink">Register</a></LI>
+            <a href="/accounts/login" class="navbarLink">Log in</a>
+            <a href="/accounts/register" class="navbarLink">Register</a>
         {% else %}
-            <LI class="ui-state-default ui-corner-all">
-                <a href="/accounts/profile" class="navbarLink">{{user}}</a><span class="ui-icon ui-icon-wrench"></span></LI>
+            <a href="/accounts/profile" class="navbarLink"><span class="ui-icon ui-icon-wrench"></span>{{user}}</a>
             {% if user.get_profile.member %}
                 {# do nothing, member #}
             {% else %}
-                <LI class="ui-state-default ui-corner-all"><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
+                <a href="/supporter" class="navbarLink">Become a supporter</a>
             {% endif %}
-            <LI class="ui-state-default ui-corner-all"><a href="/accounts/logout" class="navbarLink">Log out</a></LI>
+            <a href="/accounts/logout" class="navbarLink">Log out</a>
         {% endif %}
-        </UL>
+        <a href="/about" class="navbarLink">About Aerolith 2.0</a>
     </div>
     <div class="aerolithBar">
-        <UL class="navbar">
-    <LI class="ui-state-default ui-corner-all"><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
-    <LI class="ui-state-default ui-corner-all"><a href="/blog" class="navbarLink">Aerolith Blog/News</a></LI>
-    <LI class="ui-state-default ui-corner-all"><a href="/wordwalls" class="navbarLink">Wordwalls</a></LI>    
-    </UL>
+        <a href="/blog" class="navbarLink">Aerolith Blog/News</a>
+        <a href="/wordwalls" class="navbarLink">Wordwalls</a>   
     </div>
-    <BR><BR>
+        <script type="text/javascript">
+          $(document).ready(function() {
+            $(".userbar").buttonset();
+            $(".aerolithBar").buttonset();
+         });
+        </script>
+
     {% endblock %}
     <div id="content_title">
     {% block content_title %}

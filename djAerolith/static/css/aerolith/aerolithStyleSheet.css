@@ -23,23 +23,6 @@ img#logo
     float: left;
 }
 
-ul.navbar
-{
-    text-align:center;
-    vertical-align: center;
-    list-style-type: none;  /* remove bullets*/
-}
-
-ul.navbar li
-{
-    float: left;
-    padding-left: 20px;
-    padding-right: 20px;
-    min-width: 120px;
-    margin-left: 10px;
-    margin-bottom: 5px;
-}
-
 div#content
 {
     margin-top: 50px;
@@ -50,4 +33,8 @@ div#content
 ul.errorlist li
 {
     color: red;
+}
+.ui-icon
+{
+    float: left;
 }
