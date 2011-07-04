@@ -19,7 +19,7 @@
 # Create your views here.
 from django.http import Http404
 from django.shortcuts import render_to_response
-from forms import FindWordsForm, DailyChallengesForm, UserListForm, SavedListForm
+from forms import FindWordsForm, DailyChallengesForm, UserListForm, SavedListForm, CommonForm
 from django.template import RequestContext
 from base.models import Lexicon, Alphagram, Word, alphProbToProbPK
 from django.contrib.auth.decorators import login_required
@@ -39,6 +39,7 @@ from locks import lonelock, loneunlock
 
 @login_required
 def homepage(request):
+    cfForm = CommonForm()
     fwForm = FindWordsForm() # unbound
     dcForm = DailyChallengesForm() #unbound
     ulForm = UserListForm() # unbound
@@ -140,12 +141,13 @@ def homepage(request):
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
                     
-    lengthCounts = dict([(l.lexiconName, l.lengthCounts) for l in Lexicon.objects.all()])                            
+    lengthCounts = dict([(l.lexiconName, l.lengthCounts) for l in Lexicon.objects.all()])                         
     return render_to_response('wordwalls/index.html', 
                             {'fwForm': fwForm, 
                             'dcForm' : dcForm, 
                             'ulForm' : ulForm,
                             'slForm' : slForm,
+                            'cfForm' : cfForm,
                             'lengthCounts' : json.dumps(lengthCounts),
                             'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT }, 
                             context_instance=RequestContext(request))

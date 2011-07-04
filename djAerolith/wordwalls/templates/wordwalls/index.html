@@ -21,13 +21,16 @@
 {% endassets %}
 
 <P></P>
+<div id="commonForm">
+    If the label wraps the input, calling .buttonset() on the group causes recursion and crashes browsers.
+{{ cfForm.as_p }}
 What type of list do you want?<BR>
 <button id = "challenges" onClick="showChallenges()">Today's challenges</button>
 <button id = "searchParams" onClick="showSearchParams()">Search by probability/other params</button>
 <button id = "savedLists" onClick="showSavedLists()">Saved list</button>
 <button id = "userLists" onClick="showUserLists()">Upload a list</button>
-
-<BR><BR>
+</div>
+<BR>
 <div id="challengesForm">
     <div id="showChallengesHelp" class="showHelp">
     Click for help
@@ -123,6 +126,7 @@ What type of list do you want?<BR>
     $("label[for='id_probabilityMax']").width('175px');
     $("label[for='id_quizTime']").width('175px');
     $("label[for='id_playerMode']").width('175px');
+    $("label[for='id_lexicon']").width('175px');
 
     $(".help").hide();
         $(".showHelp").click(function(){
@@ -132,7 +136,7 @@ What type of list do you want?<BR>
 
     $("#id_lexicon_sl").val('0');   // always set the lexicon for saved list to 0 on load
     requestSavedListInfo();
-    //$("#id_challenge > option[value='15']").prop('disabled',true);
+    $("#commonForm ul").buttonset();    // turn radio buttons for quiz selection into a button set
  });
 </script>
 

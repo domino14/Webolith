@@ -21,8 +21,10 @@ var maxProb = 999999;
 var url;
 
 
-function changeMaxProb(lex, curLength)
+function changeMaxProb()
 {
+    var lex = $('#id_lexicon option:selected').text();
+    var curLength = $('#id_wordLength').val();
     if (curLength < 2 || curLength > 15) 
     {
         return false;    /* don't change anything */
@@ -62,18 +64,15 @@ function processLengthCounts(lStr, _url)
     {
         lengthCounts[lex] = $.parseJSON(lengthCounts[lex]);
     }
+    
     /* set up event handlers */
     $('#id_lexicon').change(function() { 
-        var lex = $(this).val();
-        var curLength = $('#id_wordLength').val();
-        var success = changeMaxProb(lex, curLength);
+        var success = changeMaxProb();
         if (!success) $("#id_wordLength").val("");
     });
     
     $('#id_wordLength').change(function() {
-        var lex = $('#id_lexicon').val();
-        var curLength = $(this).val();
-        var success = changeMaxProb(lex, curLength);
+        var success = changeMaxProb();
         if (!success) $("#id_wordLength").val("");
     });
     
@@ -94,8 +93,7 @@ function processLengthCounts(lStr, _url)
     
     // show results label with selected challenge on load
     challengeChangeEventHandler();
-    
-    changeMaxProb($('#id_lexicon').val(), $('#id_wordLength').val());
+    changeMaxProb();
     $('#id_listOption').change(savedListOptionChangeHandler);
     $('#id_wordList').change(savedListChangeHandler);
     

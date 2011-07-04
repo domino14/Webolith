@@ -22,20 +22,41 @@ from base.models import Lexicon
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import SavedList, DailyChallengeName
 import re
+from django.forms.widgets import RadioSelect
 
 
 lexes = Lexicon.objects.all()
 lexList = tuple([(l.lexiconName, l.lexiconName) for l in lexes])
 
-class FindWordsForm(forms.Form):
-    lexicon = forms.ChoiceField(choices = lexList, label='Lexicon')
+class CommonForm(forms.Form):
+    lexicon = forms.ModelChoiceField(queryset=Lexicon.objects.all(), label='Lexicon',
+            widget=forms.Select(), empty_label=None)
+    quizTime = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
+
+    TYPE_DAILY_CHALLENGE = 1
+    TYPE_PROBABILITY_SEARCH = 2
+    TYPE_SAVED_LIST = 3
+    TYPE_NAMED_LIST = 4
     
+    quizTypes = (
+                (TYPE_DAILY_CHALLENGE, "Today's Challenges"),
+                (TYPE_PROBABILITY_SEARCH, "Search by probability"),
+                (TYPE_SAVED_LIST, "Saved List"),
+                (TYPE_NAMED_LIST, "Named List"),
+                )
+
+    quizType = forms.ChoiceField(choices=quizTypes, widget=RadioSelect, label="What type of quiz do you want?", 
+                initial=TYPE_DAILY_CHALLENGE)
+    
+    
+    
+class FindWordsForm(forms.Form):    
     wlList = tuple([(repr(l), repr(l)) for l in range(2, 16)])
     
     wordLength = forms.ChoiceField(choices = wlList, label='Word Length')
     probabilityMin = forms.IntegerField(max_value=250000, min_value = 1, label='Min probability (at least 1)')
     probabilityMax = forms.IntegerField(max_value=250000, min_value = 1, label='Max probability')
-    quizTime = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
+
     PLAYERMODE_SINGLE = 1
     PLAYERMODE_MULTI = 2
     
@@ -72,19 +93,11 @@ class FindWordsForm(forms.Form):
         return self.cleaned_data
         
 class DailyChallengesForm(forms.Form):
-
-    lexicon_dc = forms.ChoiceField(choices = lexList, label='Lexicon')
     challenge = forms.ModelChoiceField(queryset=DailyChallengeName.objects.all(), 
                         label='Challenge', widget=forms.Select(attrs={'size':'16'}))
 
-class UserListForm(forms.Form):
-
-    lexicon_ul = forms.ChoiceField(choices = lexList, label='Lexicon')
-    quizTime_ul = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
-    
+class UserListForm(forms.Form):    
     file  = forms.FileField(label='File')
-    
-    
     
 class WordListChoiceField(forms.ModelChoiceField):
     def to_python(self, value):
@@ -112,10 +125,7 @@ class SavedListForm(forms.Form):
                     (RESTART_LIST_CHOICE, 'Restart list'),
                     (DELETE_LIST_CHOICE, 'Delete list')
                     )
-    
-    lexicon_sl = forms.ModelChoiceField(queryset=Lexicon.objects.all(), label='Lexicon',
-            widget=forms.Select())
-    quizTime_sl = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
+                    
     listOption = forms.TypedChoiceField(choices=listOptions,label='Quiz options', widget=forms.Select(),coerce=int)
     
     wordList = WordListChoiceField(label='List choice', 
