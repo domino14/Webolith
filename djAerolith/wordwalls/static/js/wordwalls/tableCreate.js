@@ -150,64 +150,6 @@ function dimSubmitIfListUnfinished()
     }
 }
 
-var searchButtonInactiveCss = {'background-color':'rgb(200, 220, 200)'};
-var searchButtonActiveCss = {'background-color':'rgb(64, 224, 208)'};
-
-function showADiv(activeButtons, inactiveButtons, activeDivs, inactiveDivs)
-{
-    for (var buttonSel in activeButtons)
-    {
-        $(activeButtons[buttonSel]).css(searchButtonActiveCss);
-    }
-    for (var buttonSel in inactiveButtons)
-        $(inactiveButtons[buttonSel]).css(searchButtonInactiveCss);
-    
-    for (var divSel in activeDivs)
-        $(activeDivs[divSel]).show("slow");
-    for (var divSel in inactiveDivs)
-        $(inactiveDivs[divSel]).hide();
-}
-
-function hideAll()
-{
-    showADiv(new Array(),
-            new Array("button#challenges", "button#searchParams", "button#userLists", "button#savedLists"),
-            new Array(),
-            new Array("#challengesForm", "#searchParamsForm", "#userListsForm", "#savedListsForm"));
-}
-
-function showChallenges()
-{
-    showADiv(new Array("button#challenges"),
-            new Array("button#searchParams", "button#userLists", "button#savedLists"),
-            new Array("#challengesForm"),
-            new Array("#searchParamsForm", "#userListsForm", "#savedListsForm"));
-}
-
-function showSearchParams()
-{
-    showADiv(new Array("button#searchParams"),
-            new Array("button#challenges", "button#userLists", "button#savedLists"),
-            new Array("#searchParamsForm"),
-            new Array("#challengesForm", "#userListsForm", "#savedListsForm"));
-}
-
-function showUserLists()
-{
-    showADiv(new Array("button#userLists"),
-            new Array("button#searchParams", "button#challenges", "button#savedLists"),
-            new Array("#userListsForm"),
-            new Array("#searchParamsForm", "#challengesForm", "#savedListsForm"));
-}
-
-function showSavedLists()
-{
-    showADiv(new Array("button#savedLists"),
-            new Array("button#searchParams", "button#userLists", "button#challenges"),
-            new Array("#savedListsForm"),
-            new Array("#searchParamsForm", "#userListsForm", "#challengesForm"));    
-}
-
 function getDcResults()
 {
     // gets daily challenge results from server

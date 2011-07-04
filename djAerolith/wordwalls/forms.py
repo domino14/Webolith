@@ -24,7 +24,6 @@ from wordwalls.models import SavedList, DailyChallengeName
 import re
 from django.forms.widgets import RadioSelect
 
-
 lexes = Lexicon.objects.all()
 lexList = tuple([(l.lexiconName, l.lexiconName) for l in lexes])
 
@@ -32,23 +31,6 @@ class CommonForm(forms.Form):
     lexicon = forms.ModelChoiceField(queryset=Lexicon.objects.all(), label='Lexicon',
             widget=forms.Select(), empty_label=None)
     quizTime = forms.FloatField(max_value=100, min_value = 0.05, initial=4, label='Time (minutes)')
-
-    TYPE_DAILY_CHALLENGE = 1
-    TYPE_PROBABILITY_SEARCH = 2
-    TYPE_SAVED_LIST = 3
-    TYPE_NAMED_LIST = 4
-    
-    quizTypes = (
-                (TYPE_DAILY_CHALLENGE, "Today's Challenges"),
-                (TYPE_PROBABILITY_SEARCH, "Search by probability"),
-                (TYPE_SAVED_LIST, "Saved List"),
-                (TYPE_NAMED_LIST, "Named List"),
-                )
-
-    quizType = forms.ChoiceField(choices=quizTypes, widget=RadioSelect, label="What type of quiz do you want?", 
-                initial=TYPE_DAILY_CHALLENGE)
-    
-    
     
 class FindWordsForm(forms.Form):    
     wlList = tuple([(repr(l), repr(l)) for l in range(2, 16)])

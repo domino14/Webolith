@@ -22,111 +22,114 @@
 
 <P></P>
 <div id="commonForm">
-    If the label wraps the input, calling .buttonset() on the group causes recursion and crashes browsers.
-{{ cfForm.as_p }}
-What type of list do you want?<BR>
-<button id = "challenges" onClick="showChallenges()">Today's challenges</button>
-<button id = "searchParams" onClick="showSearchParams()">Search by probability/other params</button>
-<button id = "savedLists" onClick="showSavedLists()">Saved list</button>
-<button id = "userLists" onClick="showUserLists()">Upload a list</button>
+    {{cfForm.as_p}}
 </div>
-<BR>
-<div id="challengesForm">
-    <div id="showChallengesHelp" class="showHelp">
-    Click for help
+What type of list do you want?
+<div id="listTabs">
+    <ul>
+        <li><a href="#tabs-1">Today's Challenges</a></li>
+        <li><a href="#tabs-2">Search by probability</a></li>
+        <li><a href="#tabs-3">Saved List</a></li>
+        <li><a href="#tabs-4">Named List</a></li>
+    </ul>
+    <div id="tabs-1">
+        <div id="showChallengesHelp" class="showHelp">
+        Click for help
+        </div>
+
+        <div id="challengesHelp" class="help">
+        <P>Hooooooold. Challenge. A new set of challenges is generated once a day. To play the challenges, select the lexicon and challenge, and click Play! You can also see how other people did today on the display to the right of the challenge.</P>
+        <P>The "Week's Bingo Toughies" list gets updated every Tuesday at midnight PST (i.e. Tuesday 3AM EST). It will have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The toughest bingos are the ones most commonly missed that week.</P>
+        </div>
+        <table id="challengesLayout"> 
+        <tr>
+            <td id="dcFormCell">
+                <form method="post">{% csrf_token %}
+                    {{ dcForm.as_p}}
+                    <input type="submit" name ="challengesSubmit" value="Play!"/>
+                </form>
+            </td>
+            <td id="dcResultsCell">
+                <span id="dcResultsLabel"></span><BR>
+                <div id="dcResultsDiv"></div>
+            </td>
+        </tr>
+        </table>
     </div>
 
-    <div id="challengesHelp" class="help">
-    <P>Hooooooold. Challenge. A new set of challenges is generated once a day. To play the challenges, select the lexicon and challenge, and click Play! You can also see how other people did today on the display to the right of the challenge.</P>
-    <P>The "Week's Bingo Toughies" list gets updated every Tuesday at midnight PST (i.e. Tuesday 3AM EST). It will have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The toughest bingos are the ones most commonly missed that week.</P>
-    </div>
-    <table id="challengesLayout"> 
-    <tr>
-        <td id="dcFormCell">
-            <form method="post">{% csrf_token %}
-                {{ dcForm.as_p}}
-                <input type="submit" name ="challengesSubmit" value="Play!"/>
-            </form>
-        </td>
-        <td id="dcResultsCell">
-            <span id="dcResultsLabel"></span><BR>
-            <div id="dcResultsDiv"></div>
-        </td>
-    </tr>
-    </table>
-</div>
+    <div id="tabs-2">
+        <div id="showSearchParamsHelp" class="showHelp">
+        Click for help
+        </div>
 
-<div id="searchParamsForm">
-    <div id="showSearchParamsHelp" class="showHelp">
-    Click for help
+        <div id="searchParamsHelp" class="help">
+        <P>Here, you can search word lists by probability (and possibly other parameters in the future). Simply select a lexicon and a word length. The minimum probability must always be greater than or equal 1; the maximum probability must be less than or equal to the number of words with that word length -- this number will show up in the "Max probability" label below. In the future, you'll also be able to select multiplayer modes.</P>
+        <P>The probabilities are alphagram probabilities, and not word probabilities.</P>
+        </div>
+        <form method="post">{% csrf_token %}
+            {{ fwForm.as_p }}
+            <input type="submit" name = "searchParamsSubmit" value ="Play!"/>
+        </form>
     </div>
 
-    <div id="searchParamsHelp" class="help">
-    <P>Here, you can search word lists by probability (and possibly other parameters in the future). Simply select a lexicon and a word length. The minimum probability must always be greater than or equal 1; the maximum probability must be less than or equal to the number of words with that word length -- this number will show up in the "Max probability" label below. In the future, you'll also be able to select multiplayer modes.</P>
-    <P>The probabilities are alphagram probabilities, and not word probabilities.</P>
-    </div>
-    <form method="post">{% csrf_token %}
-        {{ fwForm.as_p }}
-        <input type="submit" name = "searchParamsSubmit" value ="Play!"/>
-    </form>
-</div>
+    <div id ="tabs-3">
+        <div id="showSavedListHelp" class="showHelp">
+        Click for help
+        </div>
 
-<div id ="savedListsForm">
-    <div id="showSavedListHelp" class="showHelp">
-    Click for help
-    </div>
-
-    <div id="savedListHelp" class="help">
-        <P>First, please select a lexicon to view the saved lists for that lexicon.</P>
-        <P>You can select a list that you have previously saved here. When you are playing a game, you have the option to save at the beginning or end of a round by clicking the Save button. Once you do this, the game will autosave after every round you play. When you save you will be prompted for a case-insensitive list name. These saved games show up in the list below. There are three options:</P>
-        <P><i>Continue list progress (default)</i></P>
-        <P>This will continue the list from where you last left off.</P>
+        <div id="savedListHelp" class="help">
+            <P>First, please select a lexicon to view the saved lists for that lexicon.</P>
+            <P>You can select a list that you have previously saved here. When you are playing a game, you have the option to save at the beginning or end of a round by clicking the Save button. Once you do this, the game will autosave after every round you play. When you save you will be prompted for a case-insensitive list name. These saved games show up in the list below. There are four options:</P>
+            <H4>Continue list progress (default)</H4>
+            <P>This will continue the list from where you last left off.</P>
  
-        <P><i>Quiz only on first missed</i></P>
-        <P>The very first time you go through a word list in its entirety, you will have a list of missed words. This quiz will consist only of those missed words. <i>If you select this option, and don't finish the 'first missed' list, if you want to finish it next time make sure to select 'continue list progress.'</i> You will get an error if you select this option before finishing a quiz once.</P>
+            <H4>Quiz only on first missed</H4>
+            <P>The very first time you go through a word list in its entirety, you will have a list of missed words. This quiz will consist only of those missed words. <em>If you select this option, and don't finish the 'first missed' list, if you want to finish it next time make sure to select 'continue list progress.'</em> You will get an error if you select this option before finishing a quiz once.</P>
         
-        <P><i>Restart list</i></P>
-        <P>In this option, you will restart the list from scratch. This eliminates progress on the list, so be careful! Your 'first' missed data will be lost.</P>
-        <P>The table below that shows your word lists will show the name of the word list, and the last time this list was saved. There will also be an asterisk (*) after the date if you have already gone through the entire word list at least once.</P>
-        <P><i>Delete list</i></P>
-        <P>This option completely deletes the list; this cannot be undone! Make sure you want to delete your saved list before you choose this!</P>
-    </div>
-    <div id="numAlphasInfo"></div>
-    <form method="post">{% csrf_token %}
-        {{ slForm.as_p }}
-        <input type="submit" name="savedListsSubmit" value="Play!"/><span id="savedListWarning"></span>
-    </form>
-</div>
-
-<div id ="userListsForm">
-    <div id="showUserListHelp" class="showHelp">
-    Click for help
+            <H4>Restart list</H4>
+            <P>In this option, you will restart the list from scratch. This eliminates progress on the list, so be careful! Your 'first' missed data will be lost.</P>
+            <P>The table below that shows your word lists will show the name of the word list, and the last time this list was saved. There will also be an asterisk (*) after the date if you have already gone through the entire word list at least once.</P>
+            <H4>Delete list</H4>
+            <P>This option completely deletes the list; this cannot be undone! Make sure you want to delete your saved list before you choose this!</P>
+        </div>
+        <div id="numAlphasInfo"></div>
+        <form method="post">{% csrf_token %}
+            {{ slForm.as_p }}
+            <input type="submit" name="savedListsSubmit" value="Play!"/><span id="savedListWarning"></span>
+        </form>
     </div>
 
-    <div id="userListHelp" class ="help">
-    <P>Please select a file containing a list of words, one word per line. This app will quiz you on alphagrams, so for example,
-    if your list contains DIATRONS but not INTRADOS, the app will still expect both words when it quizzes you for ADINORST. Make sure to select the correct lexicon.</P>
-    <P>You can easily export a list from a program such as Zyzzyva; simply do a search, and right click on the search window, and click Save List. The list must contain no more than {{upload_list_limit}} words at this time, and the words must be between 2 and 15 letters long. This limit will probably be increased in the future once I figure out how to use Celery. </P>
-    <P>Once you are in the table, you must click the Save button there if you wish to save the list. Then you can access the list later using the "Saved List" button at the top of this page.</P>
+    <div id ="tabs-4">
+        <div id="showUserListHelp" class="showHelp">
+        Click for help
+        </div>
+
+        <div id="userListHelp" class ="help">
+        <P>Please select a file containing a list of words, one word per line. This app will quiz you on alphagrams, so for example,
+        if your list contains DIATRONS but not INTRADOS, the app will still expect both words when it quizzes you for ADINORST. Make sure to select the correct lexicon.</P>
+        <P>You can easily export a list from a program such as Zyzzyva; simply do a search, and right click on the search window, and click Save List. The list must contain no more than {{upload_list_limit}} words at this time, and the words must be between 2 and 15 letters long. This limit will probably be increased in the future once I figure out how to use Celery. </P>
+        <P>Once you are in the table, you must click the Save button there if you wish to save the list. Then you can access the list later using the "Saved List" button at the top of this page.</P>
+        </div>
+        <form method="post" enctype="multipart/form-data">{% csrf_token %}
+            {{ ulForm.as_p }}
+            <input type="submit" name = "userListsSubmit" value ="Upload and play"/>
+        </form>
     </div>
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ ulForm.as_p }}
-        <input type="submit" name = "userListsSubmit" value ="Upload and play"/>
-    </form>
 </div>
+
 
 <script type="text/javascript">
   $(document).ready(function() {
     var lStr = "{{lengthCounts|escapejs}}"; 
     processLengthCounts(lStr, "{% url wordwalls_create_table %}");
     showChallenges();
-    
-    $("label[for='id_wordLength']").width('175px');
-    $("label[for='id_probabilityMin']").width('175px');
-    $("label[for='id_probabilityMax']").width('175px');
-    $("label[for='id_quizTime']").width('175px');
-    $("label[for='id_playerMode']").width('175px');
-    $("label[for='id_lexicon']").width('175px');
+    var labelSize = '130px';
+    $("label[for='id_wordLength']").width(labelSize);
+    $("label[for='id_probabilityMin']").width(labelSize);
+    $("label[for='id_probabilityMax']").width(labelSize);
+    $("label[for='id_quizTime']").width(labelSize);
+    $("label[for='id_playerMode']").width(labelSize);
+    $("label[for='id_lexicon']").width(labelSize);
 
     $(".help").hide();
         $(".showHelp").click(function(){
@@ -136,7 +139,8 @@ What type of list do you want?<BR>
 
     $("#id_lexicon_sl").val('0');   // always set the lexicon for saved list to 0 on load
     requestSavedListInfo();
-    $("#commonForm ul").buttonset();    // turn radio buttons for quiz selection into a button set
+    $("#listTabs").tabs();
+   // $("#radios").buttonset();    // turn radio buttons for quiz selection into a button set
  });
 </script>
 

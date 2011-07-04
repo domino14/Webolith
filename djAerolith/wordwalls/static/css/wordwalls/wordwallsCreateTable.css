@@ -82,7 +82,7 @@ div.showHelp
 div.help
 {
     color: rgb(80, 80, 120);
-    width: 800px;
+    width: 750px;
 }
 
 select#id_wordList
@@ -95,37 +95,7 @@ span#savedListWarning
     color: red;
 }
 
-/*
-#commonForm ul
+#listTabs
 {
-    width:800px;
-    text-align:center;
-    vertical-align: center;
-    list-style-type: none;  
-    margin-left: 5px;
+    width: 800px;
 }
-
-#commonForm ul li
-{
-    float:left;
-    width: 175px;
-    font-size: 80%;
-    font-family: arial, geneva, helvetica, helv, sans-serif;
-    background-color:rgb(200, 220, 200);
-}
-
-li input 
-{
-    display: none;
-}
-
-#commonForm ul:after {  
-  content    : ".";
-  display    : block;
-  height     : 0;
-  clear      : both;
-  visibility : hidden;
-}
-
-#commonForm ul { display : inline-block; } 
-#commonForm ul { display : block; }    */
