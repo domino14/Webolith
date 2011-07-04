@@ -23,15 +23,11 @@ To contact the author, please email delsolar at gmail dot com
 <head>
     {% block ss %}
      {% load assets %}
-     {% assets "aerolith_css" %}
+     {% assets "base_css" %}
          <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
      {% endassets %}
 
     {% endblock %}
-    {% assets "blog_css" %}
-        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-    {% endassets %}
-
     <title>{% block title %}Aerolith{% endblock %}</title>
 </head>
 
@@ -43,26 +39,30 @@ To contact the author, please email delsolar at gmail dot com
     {% endblock %}
     
     {% block navbar %}
+    {% assets "js_jquery" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
     <div class="userbar">
         <UL class="navbar">
         {% if user.username == "" %}
-            <LI><a href="/accounts/login" class="navbarLink">Log in</a></LI>
-            <LI><a href="/accounts/register" class="navbarLink">Register</a></LI>
+            <LI class="ui-state-default ui-corner-all"><a href="/accounts/login" class="navbarLink">Log in</a></LI>
+            <LI class="ui-state-default ui-corner-all"><a href="/accounts/register" class="navbarLink">Register</a></LI>
         {% else %}
-            <LI><a href="/accounts/profile" class="navbarLink">{{user}}</a></LI>
+            <LI class="ui-state-default ui-corner-all">
+                <span class="ui-icon ui-icon-wrench"></span><a href="/accounts/profile" class="navbarLink">{{user}}</a></LI>
             {% if user.get_profile.member %}
                 {# do nothing, member #}
             {% else %}
-                <LI><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
+                <LI class="ui-state-default ui-corner-all"><a href="/supporter" class="navbarLink">Become a supporter</a></LI>
             {% endif %}
-            <LI><a href="/accounts/logout" class="navbarLink">Log out</a></LI>
+            <LI class="ui-state-default ui-corner-all"><a href="/accounts/logout" class="navbarLink">Log out</a></LI>
         {% endif %}
         </UL>
     <div class="aerolithBar">
         <UL class="navbar">
-    <LI><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
-    <LI><a href="/blog" class="navbarLink">Aerolith Blog/News</a></LI>
-    <LI><a href="/wordwalls" class="navbarLink">Wordwalls</a></LI>    
+    <LI class="ui-state-default ui-corner-all"><a href="/about" class="navbarLink">About Aerolith 2.0</a></LI>
+    <LI class="ui-state-default ui-corner-all"><a href="/blog" class="navbarLink">Aerolith Blog/News</a></LI>
+    <LI class="ui-state-default ui-corner-all"><a href="/wordwalls" class="navbarLink">Wordwalls</a></LI>    
     </UL>
     </div>
     <BR><BR>

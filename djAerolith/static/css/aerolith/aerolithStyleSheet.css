@@ -30,13 +30,6 @@ ul.navbar
     list-style-type: none;  /* remove bullets*/
 }
 
-ul.navbar
-{
-    text-align:center;
-    vertical-align: center;
-    list-style-type: none;  /* remove bullets*/
-}
-
 ul.navbar li
 {
     float: left;
@@ -45,29 +38,6 @@ ul.navbar li
     min-width: 120px;
     margin-left: 10px;
     margin-bottom: 5px;
-    background-color: #3399cc;
-}
-
-ul.navbar li:hover
-{
-    background-color: #00ccdd;
-}
-
-.navbarLink:link
-{
-    color: #ffff00;
-    text-decoration: none; 
-}
-
-.navbarLink:visited
-{
-    color: #ffff00;
-    text-decoration: none; 
-}
-
-.navbarLink:hover 
-{
-    text-decoration: underline; 
 }
 
 div#content

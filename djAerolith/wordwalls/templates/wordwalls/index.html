@@ -7,7 +7,7 @@
     <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
 {% endassets %}
 
-{% assets "aerolith_css" %}
+{% assets "base_css" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
 {% endassets %}
 
@@ -31,6 +31,8 @@ What type of list do you want?
         <li><a href="#tabs-2">Search by probability</a></li>
         <li><a href="#tabs-3">Saved List</a></li>
         <li><a href="#tabs-4">Named List</a></li>
+        <li><a href="#tabs-5">Upload your own list</a></li>
+        
     </ul>
     <div id="tabs-1">
         <div id="showChallengesHelp" class="showHelp">
@@ -100,6 +102,16 @@ What type of list do you want?
     </div>
 
     <div id ="tabs-4">
+        <div id="showNamedListHelp" class="showHelp">
+        Click for help
+        </div>
+        <div id="namedListHelp" class="help">
+        <P>Help for named lists</P>
+        </div>
+        Form for named lists
+    </div>
+    
+    <div id="tabs-5">
         <div id="showUserListHelp" class="showHelp">
         Click for help
         </div>
@@ -122,7 +134,6 @@ What type of list do you want?
   $(document).ready(function() {
     var lStr = "{{lengthCounts|escapejs}}"; 
     processLengthCounts(lStr, "{% url wordwalls_create_table %}");
-    showChallenges();
     var labelSize = '130px';
     $("label[for='id_wordLength']").width(labelSize);
     $("label[for='id_probabilityMin']").width(labelSize);
@@ -132,15 +143,12 @@ What type of list do you want?
     $("label[for='id_lexicon']").width(labelSize);
 
     $(".help").hide();
-        $(".showHelp").click(function(){
-           $(this).next(".help").toggle("slow");
-        });
-//    $("input[name='userListsSubmit']").click(userListsSubmitEH);
+    $(".showHelp").click(function(){
+        $(this).next(".help").toggle("slow");
+    });
 
-    $("#id_lexicon_sl").val('0');   // always set the lexicon for saved list to 0 on load
     requestSavedListInfo();
     $("#listTabs").tabs();
-   // $("#radios").buttonset();    // turn radio buttons for quiz selection into a button set
  });
 </script>
 

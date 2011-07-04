@@ -1,12 +1,12 @@
 from django_assets import Bundle, register
 
-aerolithCss = Bundle('css/aerolith/aerolithStyleSheet.css', 
-       filters='cssmin',
-       output='css/aerolith/packedASS.css')
+baseCss = Bundle('css/aerolith/aerolithStyleSheet.css',
+                'css/blog/blogStyles.css',
+                'css/redmond/jquery-ui-1.8.14.custom.css',
+                filters='cssmin',
+                output='css/aerolith/packedBaseSS.css')        
 
-blogCss = Bundle('css/blog/blogStyles.css',
-        filters='cssmin',
-        output='css/blog/packedBS.css')
-        
-register('aerolith_css', aerolithCss)
-register('blog_css', blogCss)
+register('base_css', baseCss)
+
+register('js_jquery', 'js/aerolith/jquery-1.6.1.min.js', 
+                            'js/aerolith/jquery-ui-1.8.14.custom.min.js')
