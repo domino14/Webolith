@@ -50,7 +50,7 @@ function challengeChangeEventHandler()
     else
     {
         var cName = $('#id_challenge option:selected').text();
-        var lexName = $('#id_lexicon_dc option:selected').text();
+        var lexName = $('#id_lexicon option:selected').text();
         $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
         getDcResults();
     }
@@ -89,7 +89,7 @@ function processLengthCounts(lStr, _url)
     
     
     $('#id_challenge').change(challengeChangeEventHandler);
-    $('#id_lexicon_dc').change(challengeChangeEventHandler);
+    $('#id_lexicon').change(challengeChangeEventHandler);
     
     // show results label with selected challenge on load
     challengeChangeEventHandler();
@@ -100,7 +100,8 @@ function processLengthCounts(lStr, _url)
     savedListOptionChangeHandler();
     savedListChangeHandler();
     
-    $('#id_lexicon_sl').change(savedListLexiconChanged);
+    $('#id_lexicon').change(savedListLexiconChanged);
+    savedListLexiconChanged();
 }
 
 function savedListOptionChangeHandler()
@@ -154,7 +155,7 @@ function getDcResults()
 {
     // gets daily challenge results from server
     $.post(url, {action: 'getDcResults', 
-                lexicon: $('#id_lexicon_dc option:selected').text(),
+                lexicon: $('#id_lexicon option:selected').text(),
                 chName: $('#id_challenge option:selected').text() }, 
                 populateDcResults, 'json')
 }
@@ -167,7 +168,7 @@ function populateDcResults(data)
 function savedListLexiconChanged()
 {
     $.post(url, {action: 'getSavedListList', 
-                lexicon: $('#id_lexicon_sl option:selected').text()}, 
+                lexicon: $('#id_lexicon option:selected').text()}, 
                 processSavedListResults, 'json')
 }
 
