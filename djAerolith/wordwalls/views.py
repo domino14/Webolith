@@ -69,23 +69,6 @@ def homepage(request):
         #                 else:
         #                     return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
         #         
-        #         elif 'savedListsSubmit' in request.POST:
-        #             slForm = SavedListForm(request.POST)
-        #             if slForm.is_valid():
-        #                 if slForm.cleaned_data['listOption'] == SavedListForm.DELETE_LIST_CHOICE:
-        #                     deleteSavedList(slForm.cleaned_data['wordList'], request.user)
-        #                     # todo AJAXify this; return a response. it must have the new total list size, for this user, and it must tell
-        #                     # the javascript to delete the non-existent list model
-        #                 else:                    
-        #                     lex = Lexicon.objects.get(lexiconName=slForm.cleaned_data['lexicon_sl'])
-        #                     wwg = WordwallsGame()
-        #                     tablenum = wwg.initializeBySavedList(lex, request.user, slForm.cleaned_data['wordList'],
-        #                                                             slForm.cleaned_data['listOption'],
-        #                                                             int(round(slForm.cleaned_data['quizTime_sl'] * 60)))
-        #                     if tablenum == 0:
-        #                         raise Http404
-        #                     else:
-        #                         return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
                 
         
         if 'action' in request.POST:
@@ -161,6 +144,7 @@ def homepage(request):
                                                         mimetype="application/javascript")
                     response['Content-Type'] = 'text/plain; charset=utf-8'
                     return response
+                
             elif request.POST['action'] == 'savedListsSubmit':
                 lexForm = LexiconForm(request.POST)
                 timeForm = TimeForm(request.POST)
@@ -377,6 +361,9 @@ def getSavedListList(lex, user):
         return None
 
 def deleteSavedList(savedList, user):
+    if savedList.user != user:      # !
+        return
+        
     numAlphagrams = savedList.numAlphagrams
     savedList.delete()      
     profile = user.get_profile()
