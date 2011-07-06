@@ -140,6 +140,36 @@ def homepage(request):
                 response = HttpResponse(json.dumps({'na': numAlphas, 'l': limit}), mimetype="application/javascript")
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
+                
+            elif request.POST['action'] == 'challengeSubmit':
+                lex_pk = int(request.POST['lexicon'])
+                challenge_pk = int(request.POST['challenge'])
+                try:
+                    lex = Lexicon.objects.get(pk=lex_pk)
+                except:
+                    raise Http404
+                    
+                try:
+                    challengeName = DailyChallengeName.objects.get(pk=challenge_pk)
+                except:
+                    raise Http404
+                
+                print 'challenge:', challengeName, lex
+                wwg = WordwallsGame()
+                tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
+                print tablenum
+                if tablenum == 0:
+                    raise Http404
+                else:
+                    response = HttpResponse(json.dumps(
+                                    {'url': reverse('wordwalls_table', args=(tablenum,)),
+                                    'success': True}
+                                    ),
+                                    mimetype="application/javascript")
+                    response['Content-Type'] = 'text/plain; charset=utf-8'
+                    return response
+#                    return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
+                
                     
     lengthCounts = dict([(l.lexiconName, l.lengthCounts) for l in Lexicon.objects.all()])                         
     return render_to_response('wordwalls/index.html', 

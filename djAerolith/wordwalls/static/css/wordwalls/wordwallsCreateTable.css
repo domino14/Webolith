@@ -29,17 +29,10 @@ td#dcFormCell
     vertical-align: top;
 }
 
-td#dcResultsButtonCell
-{
-    width: 100px;
-    height: 300px;
-    vertical-align: top;
-}
-
 td#dcResultsCell
 {
     width: 300px;
-    height: 300px;
+    max-height: 300px;
 }
 
 td.dcResultsTableCell
@@ -61,7 +54,7 @@ td.dcResultsTableHeader
 div#dcResultsDiv
 {
     width: 330px;
-    height: 330px;
+    height: 300px;
     
     border-top-width: 2px;
     border-top-style: dotted;
@@ -72,11 +65,7 @@ div#dcResultsDiv
 
 div.showHelp
 {
-    border-style: dotted;
-    border-width: 1px;
-    border-color: rgb(0, 0, 0);
-    text-align: center;
-    width:100px;
+    width:150px;
 }
 
 div.help
@@ -98,4 +87,9 @@ span#savedListWarning
 #listTabs
 {
     width: 800px;
+}
+
+#id_challenge
+{
+    width: 175px;
 }

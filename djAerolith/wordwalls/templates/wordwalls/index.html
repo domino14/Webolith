@@ -46,10 +46,8 @@ What type of list do you want?
         <table id="challengesLayout"> 
         <tr>
             <td id="dcFormCell">
-                <form method="post">{% csrf_token %}
-                    {{ dcForm.as_p}}
-                    <input type="submit" name ="challengesSubmit" value="Play!"/>
-                </form>
+                {{ dcForm.as_p}}
+                <button class="formSubmitButton" id="challengeSubmit">Play!</button>
             </td>
             <td id="dcResultsCell">
                 <span id="dcResultsLabel"></span><BR>
@@ -57,6 +55,7 @@ What type of list do you want?
             </td>
         </tr>
         </table>
+        
     </div>
 
     <div id="tabs-2">
@@ -68,10 +67,9 @@ What type of list do you want?
         <P>Here, you can search word lists by probability (and possibly other parameters in the future). Simply select a lexicon and a word length. The minimum probability must always be greater than or equal 1; the maximum probability must be less than or equal to the number of words with that word length -- this number will show up in the "Max probability" label below. In the future, you'll also be able to select multiplayer modes.</P>
         <P>The probabilities are alphagram probabilities, and not word probabilities.</P>
         </div>
-        <form method="post">{% csrf_token %}
-            {{ fwForm.as_p }}
-            <input type="submit" name = "searchParamsSubmit" value ="Play!"/>
-        </form>
+        
+        {{ fwForm.as_p }}
+        <button class="formSubmitButton" id="searchParamsSubmit">Play!</button>
     </div>
 
     <div id ="tabs-3">
@@ -95,10 +93,10 @@ What type of list do you want?
             <P>This option completely deletes the list; this cannot be undone! Make sure you want to delete your saved list before you choose this!</P>
         </div>
         <div id="numAlphasInfo"></div>
-        <form method="post">{% csrf_token %}
             {{ slForm.as_p }}
-            <input type="submit" name="savedListsSubmit" value="Play!"/><span id="savedListWarning"></span>
-        </form>
+        <span id="savedListWarning"></span>
+        
+        <button class="formSubmitButton" id="savedListSubmit">Play!</button>
     </div>
 
     <div id ="tabs-4">
@@ -109,6 +107,7 @@ What type of list do you want?
         <P>Help for named lists</P>
         </div>
         Form for named lists
+        <button class="formSubmitButton" id="namedListSubmit">Play!</button>
     </div>
     
     <div id="tabs-5">
@@ -122,10 +121,8 @@ What type of list do you want?
         <P>You can easily export a list from a program such as Zyzzyva; simply do a search, and right click on the search window, and click Save List. The list must contain no more than {{upload_list_limit}} words at this time, and the words must be between 2 and 15 letters long. This limit will probably be increased in the future once I figure out how to use Celery. </P>
         <P>Once you are in the table, you must click the Save button there if you wish to save the list. Then you can access the list later using the "Saved List" button at the top of this page.</P>
         </div>
-        <form method="post" enctype="multipart/form-data">{% csrf_token %}
             {{ ulForm.as_p }}
-            <input type="submit" name = "userListsSubmit" value ="Upload and play"/>
-        </form>
+        <button class="formSubmitButton" id="userListSubmit">Play!</button>
     </div>
 </div>
 
@@ -146,9 +143,12 @@ What type of list do you want?
     $(".showHelp").click(function(){
         $(this).next(".help").toggle("slow");
     });
+    $(".showHelp").button();
 
     requestSavedListInfo();
     $("#listTabs").tabs();
+    $(".formSubmitButton").button();
+    $("#challengeSubmit").click(challengeSubmitClicked);
  });
 </script>
 

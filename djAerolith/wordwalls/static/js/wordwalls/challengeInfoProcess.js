@@ -8,6 +8,7 @@ function sortEntry(e1, e2)
 
 function processDcResults(data, divIdToPopulate)
 {
+//    data = fakeDcData();
     if (data == null)
     {
         $("#" + divIdToPopulate).text("No one has done this challenge today. Be the first!");
@@ -36,4 +37,16 @@ function processDcResults(data, divIdToPopulate)
         tableBuilder += '</table>'
         $("#" + divIdToPopulate).html(tableBuilder);
     }
+}
+
+function fakeDcData()
+{
+    var data = {};
+    data['maxScore'] = 100;
+    data['entries'] = [];
+    for (var i = 0; i < 50; i++)
+    {
+        data['entries'].push({'user': "User" + i, 'score': Math.floor(Math.random()*100), 'tr': Math.floor(Math.random() * 200)});
+    }
+    return data;
 }

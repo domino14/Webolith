@@ -61,12 +61,13 @@ To contact the author, please email delsolar at gmail dot com
         <a href="/blog" class="navbarLink">Aerolith Blog/News</a>
         <a href="/wordwalls" class="navbarLink">Wordwalls</a>   
     </div>
-        <script type="text/javascript">
-          $(document).ready(function() {
-            $(".userbar").buttonset();
-            $(".aerolithBar").buttonset();
-         });
-        </script>
+    <script type="text/javascript">
+      //$(document).ready(function() {
+        $(".userbar").buttonset();
+        $(".aerolithBar").buttonset();
+        
+     //});
+    </script>
 
     {% endblock %}
     <div id="content_title">
@@ -79,7 +80,7 @@ To contact the author, please email delsolar at gmail dot com
         Welcome to Aerolith 2.0! Please <a href="/accounts/login">log in</a>, or <a href="/accounts/register">register</a> if you are new to this site.
         {% else %}
         Welcome back, {{user}}! Here are some things you can do: <BR><BR>
-        <a href="wordwalls">Play WordWalls</a><BR>
+        <a href="wordwalls" class="playlink">Play WordWalls</a><BR>
         
         {% endif %}
         
@@ -98,6 +99,10 @@ To contact the author, please email delsolar at gmail dot com
                 {% endif %}
                 </a>
         </div>
+        
+        <script type="text/javascript">
+        $(".playlink").button();
+        </script>
         {% endif %}
         
         <P>
