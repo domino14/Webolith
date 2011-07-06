@@ -19,7 +19,7 @@
 # Create your views here.
 from django.http import Http404
 from django.shortcuts import render_to_response
-from forms import FindWordsForm, DailyChallengesForm, UserListForm, SavedListForm, CommonForm
+from forms import FindWordsForm, DailyChallengesForm, UserListForm, SavedListForm, LexiconForm, TimeForm
 from django.template import RequestContext
 from base.models import Lexicon, Alphagram, Word, alphProbToProbPK
 from django.contrib.auth.decorators import login_required
@@ -39,7 +39,8 @@ from locks import lonelock, loneunlock
 
 @login_required
 def homepage(request):
-    cfForm = CommonForm()
+    lexForm = LexiconForm()
+    timeForm = TimeForm()
     fwForm = FindWordsForm() # unbound
     dcForm = DailyChallengesForm() #unbound
     ulForm = UserListForm() # unbound
@@ -50,66 +51,44 @@ def homepage(request):
     if not profile.member:
         limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
     
-    if request.method == 'POST':
-        if 'searchParamsSubmit' in request.POST:
-            fwForm = FindWordsForm(request.POST)   # form bound to the POST data
-            if fwForm.is_valid():
-                alphasSearchDescription = searchForAlphagrams(fwForm.cleaned_data)
-                wwg = WordwallsGame()
-                tablenum = wwg.initializeBySearchParams(request.user, alphasSearchDescription, 
-                                fwForm.cleaned_data['playerMode'], int(round(fwForm.cleaned_data['quizTime'] * 60)))
-    
-                return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
-        elif 'challengesSubmit' in request.POST:
-            dcForm = DailyChallengesForm(request.POST)
-            if dcForm.is_valid():
-                wwg = WordwallsGame()
-                lex = Lexicon.objects.get(lexiconName=dcForm.cleaned_data['lexicon_dc'])
-                challengeName = DailyChallengeName.objects.get(name=dcForm.cleaned_data['challenge'])
-                print 'challenge:', challengeName, lex
-                tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
-                if tablenum == 0:
-                    raise Http404
-                else:
-                    return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
-                    
-        elif 'userListsSubmit' in request.POST:
-            # these are needed so that the forms are defined in case the ulForm.is_valid() fails. 
-            # is there a better way to do this?
-            
-            ulForm = UserListForm(request.POST, request.FILES)
-            if ulForm.is_valid():
-                lex = Lexicon.objects.get(lexiconName=ulForm.cleaned_data['lexicon_ul'])
-                wwg = WordwallsGame()
-                
-                tablenum = wwg.initializeByUserList(request.FILES['file'], lex, 
-                            request.user, int(round(ulForm.cleaned_data['quizTime_ul'] * 60)))
-                #return HttpResponseRedirect('/success/url/')
-                if tablenum == 0:
-                    raise Http404   # TODO better error message
-                else:
-                    return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
-        
-        elif 'savedListsSubmit' in request.POST:
-            slForm = SavedListForm(request.POST)
-            if slForm.is_valid():
-                if slForm.cleaned_data['listOption'] == SavedListForm.DELETE_LIST_CHOICE:
-                    deleteSavedList(slForm.cleaned_data['wordList'], request.user)
-                    # todo AJAXify this; return a response. it must have the new total list size, for this user, and it must tell
-                    # the javascript to delete the non-existent list model
-                else:                    
-                    lex = Lexicon.objects.get(lexiconName=slForm.cleaned_data['lexicon_sl'])
-                    wwg = WordwallsGame()
-                    tablenum = wwg.initializeBySavedList(lex, request.user, slForm.cleaned_data['wordList'],
-                                                            slForm.cleaned_data['listOption'],
-                                                            int(round(slForm.cleaned_data['quizTime_sl'] * 60)))
-                    if tablenum == 0:
-                        raise Http404
-                    else:
-                        return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
+    if request.method == 'POST':                    
+        # elif 'userListsSubmit' in request.POST:
+        #             # these are needed so that the forms are defined in case the ulForm.is_valid() fails. 
+        #             # is there a better way to do this?
+        #             
+        #             ulForm = UserListForm(request.POST, request.FILES)
+        #             if ulForm.is_valid():
+        #                 lex = Lexicon.objects.get(lexiconName=ulForm.cleaned_data['lexicon_ul'])
+        #                 wwg = WordwallsGame()
+        #                 
+        #                 tablenum = wwg.initializeByUserList(request.FILES['file'], lex, 
+        #                             request.user, int(round(ulForm.cleaned_data['quizTime_ul'] * 60)))
+        #                 #return HttpResponseRedirect('/success/url/')
+        #                 if tablenum == 0:
+        #                     raise Http404   # TODO better error message
+        #                 else:
+        #                     return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
+        #         
+        #         elif 'savedListsSubmit' in request.POST:
+        #             slForm = SavedListForm(request.POST)
+        #             if slForm.is_valid():
+        #                 if slForm.cleaned_data['listOption'] == SavedListForm.DELETE_LIST_CHOICE:
+        #                     deleteSavedList(slForm.cleaned_data['wordList'], request.user)
+        #                     # todo AJAXify this; return a response. it must have the new total list size, for this user, and it must tell
+        #                     # the javascript to delete the non-existent list model
+        #                 else:                    
+        #                     lex = Lexicon.objects.get(lexiconName=slForm.cleaned_data['lexicon_sl'])
+        #                     wwg = WordwallsGame()
+        #                     tablenum = wwg.initializeBySavedList(lex, request.user, slForm.cleaned_data['wordList'],
+        #                                                             slForm.cleaned_data['listOption'],
+        #                                                             int(round(slForm.cleaned_data['quizTime_sl'] * 60)))
+        #                     if tablenum == 0:
+        #                         raise Http404
+        #                     else:
+        #                         return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
                 
         
-        elif 'action' in request.POST:
+        if 'action' in request.POST:
             print request.POST['action']
             if request.POST['action'] == 'getDcResults':
                 try:
@@ -142,34 +121,71 @@ def homepage(request):
                 return response
                 
             elif request.POST['action'] == 'challengeSubmit':
-                lex_pk = int(request.POST['lexicon'])
-                challenge_pk = int(request.POST['challenge'])
-                try:
-                    lex = Lexicon.objects.get(pk=lex_pk)
-                except:
-                    raise Http404
-                    
-                try:
-                    challengeName = DailyChallengeName.objects.get(pk=challenge_pk)
-                except:
-                    raise Http404
+                lexForm = LexiconForm(request.POST)
+                dcForm = DailyChallengesForm(request.POST)
                 
-                print 'challenge:', challengeName, lex
-                wwg = WordwallsGame()
-                tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
-                print tablenum
-                if tablenum == 0:
-                    raise Http404
-                else:
+                if lexForm.is_valid() and dcForm.is_valid():
+                    lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+                    wwg = WordwallsGame()
+                    challengeName = DailyChallengeName.objects.get(name=dcForm.cleaned_data['challenge'])
+                    print 'challenge:', challengeName, lex
+                    tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
+                    if tablenum == 0:
+                        raise Http404
+                    else:
+                        response = HttpResponse(json.dumps(
+                                                            {'url': reverse('wordwalls_table', args=(tablenum,)),
+                                                            'success': True}
+                                                            ),
+                                                            mimetype="application/javascript")
+                        response['Content-Type'] = 'text/plain; charset=utf-8'
+                        return response
+            
+            elif request.POST['action'] == 'searchParamsSubmit':
+                lexForm = LexiconForm(request.POST)
+                timeForm = TimeForm(request.POST)
+                fwForm = FindWordsForm(request.POST)   # form bound to the POST data
+                print request.POST
+                if lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid():
+                    lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+                    quizTime = int(round(timeForm.cleaned_data['quizTime'] * 60))
+                    alphasSearchDescription = searchForAlphagrams(fwForm.cleaned_data, lex)
+                    wwg = WordwallsGame()
+                    tablenum = wwg.initializeBySearchParams(request.user, alphasSearchDescription, 
+                                    fwForm.cleaned_data['playerMode'], quizTime)
+
                     response = HttpResponse(json.dumps(
-                                    {'url': reverse('wordwalls_table', args=(tablenum,)),
-                                    'success': True}
-                                    ),
-                                    mimetype="application/javascript")
+                                                        {'url': reverse('wordwalls_table', args=(tablenum,)),
+                                                        'success': True}
+                                                        ),
+                                                        mimetype="application/javascript")
                     response['Content-Type'] = 'text/plain; charset=utf-8'
                     return response
-#                    return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
-                
+            elif request.POST['action'] == 'savedListsSubmit':
+                lexForm = LexiconForm(request.POST)
+                timeForm = TimeForm(request.POST)
+                slForm = SavedListForm(request.POST)
+                if lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid():
+                    if slForm.cleaned_data['listOption'] == SavedListForm.DELETE_LIST_CHOICE:
+                        deleteSavedList(slForm.cleaned_data['wordList'], request.user)
+                        # todo AJAXify this; return a response. it must have the new total list size, for this user, and it must tell
+                        # the javascript to delete the non-existent list model
+                    else:                    
+                        lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+                        quizTime = int(round(timeForm.cleaned_data['quizTime'] * 60))
+                        wwg = WordwallsGame()
+                        tablenum = wwg.initializeBySavedList(lex, request.user, slForm.cleaned_data['wordList'],
+                                                                    slForm.cleaned_data['listOption'], quizTime)
+                        if tablenum == 0:
+                            raise Http404
+                        else:
+                            response = HttpResponse(json.dumps(
+                                                                {'url': reverse('wordwalls_table', args=(tablenum,)),
+                                                                'success': True}
+                                                                ),
+                                                                mimetype="application/javascript")
+                            response['Content-Type'] = 'text/plain; charset=utf-8'
+                            return response
                     
     lengthCounts = dict([(l.lexiconName, l.lengthCounts) for l in Lexicon.objects.all()])                         
     return render_to_response('wordwalls/index.html', 
@@ -177,7 +193,8 @@ def homepage(request):
                             'dcForm' : dcForm, 
                             'ulForm' : ulForm,
                             'slForm' : slForm,
-                            'cfForm' : cfForm,
+                            'lexForm' : lexForm,
+                            'timeForm' : timeForm,
                             'lengthCounts' : json.dumps(lengthCounts),
                             'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT }, 
                             context_instance=RequestContext(request))
@@ -297,9 +314,8 @@ def table(request, id):
         else:
             return render_to_response('wordwalls/notPermitted.html', {'tablenum': id})
     
-def searchForAlphagrams(data):
+def searchForAlphagrams(data, lex):
     """ searches for alphagrams using form data """
-    lex = Lexicon.objects.get(lexiconName=data['lexicon'])
     length = int(data['wordLength'])
     minP = alphProbToProbPK(data['probabilityMin'], lex.pk, length)
     maxP = alphProbToProbPK(data['probabilityMax'], lex.pk, length)

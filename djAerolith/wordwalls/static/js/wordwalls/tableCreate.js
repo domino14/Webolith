@@ -107,7 +107,7 @@ function processLengthCounts(lStr, _url)
 function savedListOptionChangeHandler()
 {
     var optionName = $('#id_listOption option:selected').text();
-    $('#savedListSubmit').button('option', 'label', 'Play!').button('enable');
+    $('#savedListsSubmit').button('option', 'label', 'Play!').button('enable');
 
     if (optionName == "Continue list")
     {
@@ -124,7 +124,7 @@ function savedListOptionChangeHandler()
     }
     else if (optionName == "Delete list")
     {
-        $('#savedListSubmit').button('option', 'label', 'Delete selected list');
+        $('#savedListsSubmit').button('option', 'label', 'Delete selected list');
         $('#savedListWarning').text("This will delete the selected list! Make sure you want to do this!");
     }
 }
@@ -144,11 +144,11 @@ function dimSubmitIfListUnfinished()
     if (listName.charAt(listName.length-1) != '*')
     {
         /* list has NOT been gone thru at least once. so going thru first missed should not work! */
-        $('#savedListSubmit').button('disable');
+        $('#savedListsSubmit').button('disable');
     }
     else
     {
-        $('#savedListSubmit').button('enable');
+        $('#savedListsSubmit').button('enable');
     }
 }
 
@@ -206,25 +206,55 @@ function requestSavedListInfo()
                 'json')
 }
 
+function wwRedirect(data)
+{
+    if (data['success'])
+    {
+        if (data['url'])
+        {
+            window.location.href = data['url'];   // redirect
+        }
+    }
+    else
+    {
+        alert('!');
+    }
+}
+
 function challengeSubmitClicked()
 {
     $.post(url, {action: 'challengeSubmit',
                 lexicon: $('#id_lexicon').val(),
                 challenge: $('#id_challenge').val()},
-                function(data)
-                {
-                    if (data['success'])
-                    {
-                        if (data['url'])
-                        {
-                            window.location.href = data['url'];   // redirect
-                        }
-                    }
-                    else
-                    {
-                        alert('!');
-                    }
+                wwRedirect,
+                'json');
+}
+
+function searchParamsSubmitClicked()
+{
+    $.post(url, {
+                    action: 'searchParamsSubmit',
+                    lexicon: $('#id_lexicon').val(),
+                    quizTime: $("#id_quizTime").val(),
+                    wordLength: $("#id_wordLength").val(),
+                    probabilityMin: $("#id_probabilityMin").val(),
+                    probabilityMax: $("#id_probabilityMax").val(),
+                    playerMode: $("#id_playerMode").val()
                 },
+                wwRedirect,
+                'json');
+}
+
+function savedListsSubmitClicked()
+{
+    $.post(url, {
+                    action: 'savedListsSubmit',
+                    lexicon: $('#id_lexicon').val(),
+                    quizTime: $("#id_quizTime").val(),
+                    listOption: $("#id_listOption").val(),
+                    wordList: $("#id_wordList").val()
+                },
+                wwRedirect,
                 'json');
 }
 

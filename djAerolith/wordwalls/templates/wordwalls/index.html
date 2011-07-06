@@ -22,7 +22,8 @@
 
 <P></P>
 <div id="commonForm">
-    {{cfForm.as_p}}
+    {{lexForm.as_p}}
+    {{timeForm.as_p}}
 </div>
 What type of list do you want?
 <div id="listTabs">
@@ -96,7 +97,7 @@ What type of list do you want?
             {{ slForm.as_p }}
         <span id="savedListWarning"></span>
         
-        <button class="formSubmitButton" id="savedListSubmit">Play!</button>
+        <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
     </div>
 
     <div id ="tabs-4">
@@ -149,6 +150,8 @@ What type of list do you want?
     $("#listTabs").tabs();
     $(".formSubmitButton").button();
     $("#challengeSubmit").click(challengeSubmitClicked);
+    $("#searchParamsSubmit").click(searchParamsSubmitClicked);
+    $("#savedListsSubmit").click(savedListsSubmitClicked);
  });
 </script>
 
