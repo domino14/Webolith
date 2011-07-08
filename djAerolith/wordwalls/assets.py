@@ -5,6 +5,7 @@ from django_assets import Bundle, register
 tableCreateJs = Bundle('js/wordwalls/csrfAjax.js', 
                         'js/wordwalls/challengeInfoProcess.js', 
                         'js/wordwalls/tableCreate.js',
+                        'js/aerolith/fileuploader.js',
                         filters='jsmin', 
                         output='js/wordwalls/packedTableCreate.js')
             
@@ -23,6 +24,7 @@ register('js_table', 'js/aerolith/jquery-1.6.1.min.js', tableJs)
 # css
 
 tableCreateCss = Bundle('css/wordwalls/wordwallsCreateTable.css',
+                        'css/aerolith/fileuploader.css',
                         filters='cssmin',
                         output='css/wordwalls/packedWWCT.css')
        

@@ -49,8 +49,8 @@ urlpatterns = patterns('',
     (r'^supporter/', 'views.supporter'),
     #(r'^accounts/confirm/(?P<activation_key>[0-9a-f]+)', 'accounts.views.confirm'),
     #(r'^accounts/profile/$', 'accounts.views.profile'),
-    url(r'^wordwalls/$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
-    url(r'^wordwalls/table/(?P<id>\d+)/$', wordwalls.views.table, name='wordwalls_table'),
+    (r'^wordwalls/', include('wordwalls.urls')),
+
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
