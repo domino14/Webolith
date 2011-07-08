@@ -51,7 +51,10 @@ def homepage(request):
     if not profile.member:
         limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
     
-    if request.method == 'POST':                    
+    if request.method == 'POST':        
+        if 'userListsSubmit' in request.POST:
+            print request.POST
+            print request.FILES            
         # elif 'userListsSubmit' in request.POST:
         #             # these are needed so that the forms are defined in case the ulForm.is_valid() fails. 
         #             # is there a better way to do this?
