@@ -36,6 +36,8 @@ import wordwalls.settings
 import os
 from locks import lonelock, loneunlock
 from django.middleware.csrf import get_token
+from base.models import alphagrammize
+import random
 
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
@@ -302,9 +304,14 @@ def table(request, id):
             return render_to_response('wordwalls/notPermitted.html', {'tablenum': id})
     
 def ajax_upload(request):
-    if request.method == "POST":    
+    if request.method == "POST":
+        lexForm = LexiconForm(request.GET)
+        if lexForm.is_valid():
+            lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+        else:
+            raise Http404("Bad lexicon")
+         
         if request.is_ajax( ):
-            print "is ajax"
             # the file is stored raw in the request
             upload = request
             is_raw = True
@@ -330,42 +337,78 @@ def ajax_upload(request):
             filename = upload.name
 
       # save the file
-        success = save_upload( upload, filename, is_raw )
-
+        success, msg = createUserList(upload, filename, lex, request.user)
+        
         # let Ajax Upload know whether we saved it or not
 
-        ret_json = { 'success': success, }
+        ret_json = { 'success': success,
+                     'msg': msg}
         return HttpResponse( json.dumps( ret_json ) )
-        
-def save_upload( uploaded, filename, raw_data ):
-    ''' 
-    raw_data: if True, uploaded is an HttpRequest object with the file being
-        the raw post data 
-        if False, uploaded has been submitted via the basic form
-        submission and is a regular Django UploadedFile in request.FILES
-    '''
+    
+def createUserList(upload, filename, lex, user):
+    # TODO gevent.sleep(0.1)  (look into switching context to prevent this from blocking if using async. or use a proper queue)
+    filename_stripped, extension = os.path.splitext(filename)
     try:
-        from io import FileIO, BufferedWriter
-        with BufferedWriter( FileIO( filename, "wb" ) ) as dest:
-            # if the "advanced" upload, read directly from the HTTP request 
-            # with the Django 1.3 functionality
-            if raw_data:
-                foo = uploaded.read( 1024 )
-                while foo:
-                    dest.write( foo )
-                    foo = uploaded.read( 1024 ) 
-            # if not raw, it was a form upload so read in the normal Django chunks fashion
-            else:
-                for c in uploaded.chunks( ):
-                    dest.write( c )
-            # got through saving the upload, report success
-            return True
-    except IOError:
-        # could not open the file most likely
+        SavedList.objects.get(name=filename_stripped, user=user, lexicon=lex)
+        # uh oh, it exists!
+        return False, "A list by the name " + filename_stripped + " already exists for this lexicon! Please rename your file."
+    except:
         pass
-    return False
+    t1 = time.time()
+    lineNumber = 0
+    alphaSet = set()
+    for line in upload:
+        word = line.strip()
+        if len(word) > 15:
+            return False, "List contains non-word elements"
+        lineNumber += 1
+        if lineNumber > wordwalls.settings.UPLOAD_FILE_LINE_LIMIT:
+            return False, "List contains more words than the current allowed per-file limit of " + str(wordwalls.settings.UPLOAD_FILE_LINE_LIMIT)
+        if len(word) > 2:
+            alphaSet.add(alphagrammize(word))
 
+    profile = user.get_profile()
+    numSavedAlphas = profile.wordwallsSaveListSize
+    limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
+    
+    if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
+        return False, "This list would exceed your total list size limit"
 
+    pkList = []
+    failedAlphagrams = []
+    for alphagram in alphaSet:
+        try:
+            a = Alphagram.objects.get(alphagram=alphagram, lexicon=lex)
+            pkList.append(a.pk)
+        except:
+            failedAlphagrams.append(alphagram)
+            # doesn't exist here. TODO send a message saying some of your words couldn't be uploaded.
+    numAlphagrams = len(pkList)
+    random.shuffle(pkList)
+    print 'number of uploaded alphagrams', numAlphagrams
+    print 'elapsed time', time.time() - t1
+
+    addlMsg = ""
+    if len(failedAlphagrams) > 0:
+        addlMsg = ('Could not process all your alphagrams. (Did you choose the right lexicon?) ' +
+                                 'You had ' + str(len(failedAlphagrams)) + ' unmatched alphagrams (the first of which is ' +
+                                 failedAlphagrams[0] +').')
+    
+    sl = SavedList(lexicon=lex, name=filename_stripped, user=user,
+                    numAlphagrams=numAlphagrams, numCurAlphagrams=numAlphagrams, numFirstMissed=0,
+                    numMissed=0, goneThruOnce=False, questionIndex=0,
+                    origQuestions=json.dumps(pkList), curQuestions=json.dumps(range(numAlphagrams)), 
+                    missed=json.dumps([]), firstMissed=json.dumps([]))
+    try:
+        sl.save()
+    except:
+        return False, "Unable to save list!"          
+    
+    profile.wordwallsSaveListSize += numAlphagrams
+    profile.save()               
+    
+    return True, addlMsg
+         
 def searchForAlphagrams(data, lex):
     """ searches for alphagrams using form data """
     length = int(data['wordLength'])

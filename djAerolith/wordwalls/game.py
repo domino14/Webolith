@@ -16,7 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import Alphagram, Word, alphProbToProbPK, probPKToAlphProb, alphagrammize
+from base.models import Alphagram, Word, alphProbToProbPK, probPKToAlphProb
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
@@ -146,60 +146,6 @@ class WordwallsGame:
 
         return wgm.pk   # this is a table number id!
     
-    def initializeByUserList(self, file, lex, user, secs):
-        # returns a table number
-        # TODO gevent.sleep(0.1)  (look into switching context to prevent this from blocking if using async. or use a proper queue)
-        t1 = time.time()
-        lineNumber = 0
-        alphaSet = set()
-        for line in file:
-            word = line.strip()
-            if len(word) > 15 or len(word) < 2:
-                return 0
-            lineNumber += 1
-            if lineNumber > wordwalls.settings.UPLOAD_FILE_LINE_LIMIT:
-                return 0
-            alphaSet.add(alphagrammize(word))
-
-        pkList = []
-        failedAlphagrams = []
-        for alphagram in alphaSet:
-            try:
-                a = Alphagram.objects.get(alphagram=alphagram, lexicon=lex)
-                pkList.append(a.pk)
-            except:
-                failedAlphagrams.append(alphagram)
-                # doesn't exist here. TODO send a message saying some of your words couldn't be uploaded.
-
-        random.shuffle(pkList)
-        print 'number of uploaded alphagrams', len(pkList)
-        print 'elapsed time', time.time() - t1
-
-        addlParams = {'timerSecs': secs}
-        if len(failedAlphagrams) > 0:
-            addlParams['introMessage'] = ('Could not process all your alphagrams. (Did you choose the right lexicon?) ' +
-                                    'You had ' + str(len(failedAlphagrams)) + ' unmatched alphagrams (the first of which is ' +
-                                    failedAlphagrams[0] +').')
-        
-        wgm = self.createGameModelInstance(user, GenericTableGameModel.SINGLEPLAYER_GAME, lex, 
-                                            len(pkList),
-                                            json.dumps(pkList), 
-                                            len(pkList),
-                                            json.dumps(range(len(pkList))), 
-                                            0,
-                                            json.dumps([]), 
-                                            0,
-                                            json.dumps([]), 
-                                            **addlParams)
-        
-        
-        wgm.save()
-        wgm.inTable.add(user)
-
-        return wgm.pk   # this is a table number id!
-        
-        #sl = SavedList(lexicon=lex, name=listName, user=user.username, state=json.dumps(saveObj), )
-    
     def initializeBySavedList(self, lex, user, savedList, listOption, secs):
         # first of all, return 0 if the user and the saved list don't match. TODO test this
         if savedList.user != user:
@@ -222,6 +168,7 @@ class WordwallsGame:
             missedStr = json.dumps([])
             numMissed = 0
             goneThruOnce = False
+            #TODO shuffle origQuestions
         else:
         # add the other keys that the state variable needs.
             if listOption == SavedListForm.FIRST_MISSED_CHOICE:

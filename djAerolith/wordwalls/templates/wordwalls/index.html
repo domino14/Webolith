@@ -108,6 +108,8 @@ What type of list do you want?
                 <p>Please enable JavaScript to use file uploader.</p>
             </noscript>         
         </div>
+        <div id="file-upload-msgs">
+        </div>
     </div>
 
     <div id ="tabs-4">
@@ -154,27 +156,36 @@ What type of list do you want?
     $("#savedListsSubmit").click(savedListsSubmitClicked);
 
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
+    
+    //$(".qq-upload-button").button();  // dammit i can't change this stupid red button?
  });
 
 var uploader = new qq.FileUploader( {
      action: "{% url ajax_upload %}",
      element: $('#file-uploader')[0],
-     multiple: true,
+     multiple: false,
      onComplete: function( id, fileName, responseJSON ) {
        if( responseJSON.success )
-         alert( "success!" ) ;
+        {
+            $("#file-upload-msgs").text("Success! " + responseJSON.msg);
+            requestSavedListInfo();
+            savedListLexiconChanged();  // to reload lists
+        }
        else
-         alert( "upload failed!" ) ;
+         {
+            $("#file-upload-msgs").text("Error: " + responseJSON.msg);
+         }
      },
      onAllComplete: function( uploads ) {
        // uploads is an array of maps
        // the maps look like this: { file: FileObject, response: JSONServerResponse }
-       alert( "All complete!" ) ;
+      
      },
      params: {
        'csrf_token': '{{ csrf_token }}',
        'csrf_name': 'csrfmiddlewaretoken',
        'csrf_xname': 'X-CSRFToken',
+       'lexicon': $("#id_lexicon").val()
      },
    });
   
