@@ -26,6 +26,7 @@ class DailyChallengeName(models.Model):
     WEEKS_BINGO_TOUGHIES = "Week's Bingo Toughies"
     WEEKS_BINGO_TOUGHIES_ISOWEEKDAY = 2   # Tuesday's coming, did you bring a coat?
     name = models.CharField(max_length=32)
+    timeSecs = models.IntegerField(default=0)
     def __unicode__(self):
         return self.name
 

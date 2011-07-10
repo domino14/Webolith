@@ -3,105 +3,120 @@
     "model": "wordwalls.DailyChallengeName",
     "pk": 1,
     "fields": {
-      "name": "Today's 2s"
+      "name": "Today's 2s",
+      "timeSecs": 90
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 2,
     "fields": {
-      "name": "Today's 3s"
+      "name": "Today's 3s",
+      "timeSecs": 120
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 3,
     "fields": {
-      "name": "Today's 4s"
+      "name": "Today's 4s",
+      "timeSecs": 180
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 4,
     "fields": {
-      "name": "Today's 5s"
+      "name": "Today's 5s",
+      "timeSecs": 210
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 5,
     "fields": {
-      "name": "Today's 6s"
+      "name": "Today's 6s",
+      "timeSecs": 240
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 6,
     "fields": {
-      "name": "Today's 7s"
+      "name": "Today's 7s",
+      "timeSecs": 270
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 7,
     "fields": {
-      "name": "Today's 8s"
+      "name": "Today's 8s",
+      "timeSecs": 270
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 8,
     "fields": {
-      "name": "Today's 9s"
+      "name": "Today's 9s",
+      "timeSecs": 300
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 9,
     "fields": {
-      "name": "Today's 10s"
+      "name": "Today's 10s",
+      "timeSecs": 330
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 10,
     "fields": {
-      "name": "Today's 11s"
+      "name": "Today's 11s",
+      "timeSecs": 330
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 11,
     "fields": {
-      "name": "Today's 12s"
+      "name": "Today's 12s",
+      "timeSecs": 330
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 12,
     "fields": {
-      "name": "Today's 13s"
+      "name": "Today's 13s",
+      "timeSecs": 360
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 13,
     "fields": {
-      "name": "Today's 14s"
+      "name": "Today's 14s",
+      "timeSecs": 360
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 14,
     "fields": {
-      "name": "Today's 15s"
+      "name": "Today's 15s",
+      "timeSecs": 360
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 15,
     "fields": {
-      "name": "Week's Bingo Toughies"
+      "name": "Week's Bingo Toughies",
+      "timeSecs": 270
     }
   }
 ]

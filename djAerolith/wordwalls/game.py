@@ -33,10 +33,6 @@ import os
 from django.db import transaction
 from locks import lonelock
 
-# daily challenge seconds map (how many seconds per word length?)
-dcTimeMap = {2: 60, 3: 90, 4: 150, 5: 180, 6: 240, 7: 270, 8: 270, 9: 300, 
-                        10: 330, 11: 330, 12: 330, 13: 360, 14: 360, 15: 360, DailyChallengeName.WEEKS_BINGO_TOUGHIES: 270}
-
 class WordwallsGame:
 
 
@@ -669,7 +665,7 @@ class WordwallsGame:
             pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
             
             print "time to gen", time.time() - t1
-            return pks, dcTimeMap[wordLength]
+            return pks, challengeName.timeSecs
         else:
             if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
                 from wordwalls.management.commands.genMissedBingoChalls import genPks
@@ -681,7 +677,7 @@ class WordwallsGame:
                 random.shuffle(pks)
                 
                 print "time to gen", time.time() - t1
-                return pks, dcTimeMap[DailyChallengeName.WEEKS_BINGO_TOUGHIES]
+                return pks, challengeName.timeSecs
         return None        
             
 class SearchDescription:

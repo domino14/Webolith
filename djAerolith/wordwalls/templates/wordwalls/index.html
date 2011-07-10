@@ -37,7 +37,7 @@ What type of list do you want?
         <div id="showChallengesHelp" class="showHelp">
         Click for help
         </div>
-
+        
         <div id="challengesHelp" class="help">
         <P>Hooooooold. Challenge. A new set of challenges is generated once a day. To play the challenges, select the lexicon and challenge, and click Play! You can also see how other people did today on the display to the right of the challenge.</P>
         <P>The "Week's Bingo Toughies" list gets updated every Tuesday at midnight PST (i.e. Tuesday 3AM EST). It will have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The toughest bingos are the ones most commonly missed that week.</P>
@@ -132,8 +132,9 @@ What type of list do you want?
 
 <script type="text/javascript">
   $(document).ready(function() {
-    var lStr = "{{lengthCounts|escapejs}}"; 
-    processLengthCounts(lStr, "{% url wordwalls_create_table %}");
+
+    initializeTableCreatePage("{{lengthCounts|escapejs}}", "{{dcTimes|escapejs}}", "{% url wordwalls_create_table %}");
+
     var labelSize = '130px';
     $("label[for='id_wordLength']").width(labelSize);
     $("label[for='id_probabilityMin']").width(labelSize);
@@ -149,12 +150,15 @@ What type of list do you want?
     $(".showHelp").button();
 
     requestSavedListInfo();
-    $("#listTabs").tabs();
+    $("#listTabs").tabs({
+                        select: tabSelected,
+                        });
     $(".formSubmitButton").button();
     $("#challengeSubmit").click(challengeSubmitClicked);
     $("#searchParamsSubmit").click(searchParamsSubmitClicked);
     $("#savedListsSubmit").click(savedListsSubmitClicked);
-    $("#uploadListSubmit").click(uploadListSubmitClicked);
+
+    $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
  });
 
 var uploader = new qq.FileUploader( {

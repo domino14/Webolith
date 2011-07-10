@@ -19,7 +19,7 @@ To contact the author, please email delsolar at gmail dot com*/
 var lengthCounts;
 var maxProb = 999999;
 var url;
-
+var dcTimeMap;
 
 function changeMaxProb()
 {
@@ -46,6 +46,7 @@ function challengeChangeEventHandler()
     {
         // this is the ----- text
         $('#dcResultsLabel').text('Select a challenge to view leaderboard');
+        $("#id_quizTime").val(0);
     }
     else
     {
@@ -53,13 +54,33 @@ function challengeChangeEventHandler()
         var lexName = $('#id_lexicon option:selected').text();
         $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
         getDcResults();
+        $("#id_quizTime").val(dcTimeMap[cVal]/60.0);
     }
 }
 
-function processLengthCounts(lStr, _url)
+function tabSelected(event, ui)
+{
+    /* this function gets triggered when the user selects a tab from the list types */
+    //alert(ui.index);  //ui.index gets the index of the selected tab
+    
+    if (ui.index == 0)
+    {
+        /* today's challenges. disable time select */
+        $("#id_quizTime").attr('disabled', true);
+    }
+    else
+    {
+        $("#id_quizTime").attr('disabled', false);
+        $("#id_quizTime").val(4);
+    }
+}
+
+function initializeTableCreatePage(lStr, dcStr, _url)
 {
     url = _url;
     lengthCounts = $.parseJSON(lStr);
+    dcTimeMap = $.parseJSON(dcStr);
+
     for (lex in lengthCounts)
     {
         lengthCounts[lex] = $.parseJSON(lengthCounts[lex]);

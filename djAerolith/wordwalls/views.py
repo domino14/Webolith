@@ -24,8 +24,7 @@ from django.template import RequestContext
 from base.models import Lexicon, Alphagram, Word, alphProbToProbPK
 from django.contrib.auth.decorators import login_required
 import json
-from game import WordwallsGame
-from game import SearchDescription
+from wordwalls.game import WordwallsGame, SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName, WordwallsGameModel
@@ -37,6 +36,12 @@ import wordwalls.settings
 import os
 from locks import lonelock, loneunlock
 from django.middleware.csrf import get_token
+
+dcTimeMap = {}
+for i in DailyChallengeName.objects.all():
+    dcTimeMap[i.pk] = i.timeSecs
+    
+
 
 @login_required
 def homepage(request):
@@ -52,29 +57,7 @@ def homepage(request):
     if not profile.member:
         limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
     
-    if request.method == 'POST':        
-        if 'userListsSubmit' in request.POST:
-            print request.POST
-            print request.FILES            
-        # elif 'userListsSubmit' in request.POST:
-        #             # these are needed so that the forms are defined in case the ulForm.is_valid() fails. 
-        #             # is there a better way to do this?
-        #             
-        #             ulForm = UserListForm(request.POST, request.FILES)
-        #             if ulForm.is_valid():
-        #                 lex = Lexicon.objects.get(lexiconName=ulForm.cleaned_data['lexicon_ul'])
-        #                 wwg = WordwallsGame()
-        #                 
-        #                 tablenum = wwg.initializeByUserList(request.FILES['file'], lex, 
-        #                             request.user, int(round(ulForm.cleaned_data['quizTime_ul'] * 60)))
-        #                 #return HttpResponseRedirect('/success/url/')
-        #                 if tablenum == 0:
-        #                     raise Http404   # TODO better error message
-        #                 else:
-        #                     return HttpResponseRedirect(reverse('wordwalls_table', args=(tablenum,)))
-        #         
-                
-        
+    if request.method == 'POST':                
         if 'action' in request.POST:
             print request.POST['action']
             if request.POST['action'] == 'getDcResults':
@@ -180,7 +163,7 @@ def homepage(request):
     ctx = RequestContext( request, {
       'csrf_token': get_token( request ),
     } )
-                           
+    print "dcTimes", json.dumps(dcTimeMap)
     return render_to_response('wordwalls/index.html', 
                             {'fwForm': fwForm, 
                             'dcForm' : dcForm, 
@@ -189,7 +172,8 @@ def homepage(request):
                             'lexForm' : lexForm,
                             'timeForm' : timeForm,
                             'lengthCounts' : json.dumps(lengthCounts),
-                            'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT }, 
+                            'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
+                            'dcTimes': json.dumps(dcTimeMap) }, 
                             context_instance=ctx)
 
 
@@ -310,6 +294,7 @@ def table(request, id):
 def ajax_upload(request):
     if request.method == "POST":    
         if request.is_ajax( ):
+            print "is ajax"
             # the file is stored raw in the request
             upload = request
             is_raw = True
@@ -320,6 +305,7 @@ def ajax_upload(request):
                 return HttpResponseBadRequest( "AJAX request not valid" )
             # not an ajax upload, so it was the "basic" iframe version with submission via form
         else:
+            print "is not ajax"
             is_raw = False
             if len( request.FILES ) == 1:
                     # FILES is a dictionary in Django but Ajax Upload gives the uploaded file an
