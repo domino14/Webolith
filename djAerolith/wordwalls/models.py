@@ -117,3 +117,9 @@ class DailyChallengeMissedBingos(models.Model): # only tracks missed 7&8 letter 
     
     def __unicode__(self):
         return self.challenge.__unicode__() + ", " + self.alphagram.alphagram + ", " + str(self.numTimesMissed)
+        
+class NamedList(models.Model):
+    lexicon = models.ForeignKey(Lexicon)
+    numQuestions = models.IntegerField()
+    wordLength = models.IntegerField()
+    isRange = models.BooleanField() # is a range of alphagram pk indices, or if False it is a list of indices
