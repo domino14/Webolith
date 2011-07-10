@@ -268,7 +268,10 @@ function searchParamsSubmitClicked()
 
 function savedListsSubmitClicked()
 {
-    $.post(url, {
+    var optionName = $('#id_listOption option:selected').text();
+    if (optionName != "Delete list")
+    {
+        $.post(url, {
                     action: 'savedListsSubmit',
                     lexicon: $('#id_lexicon').val(),
                     quizTime: $("#id_quizTime").val(),
@@ -277,21 +280,25 @@ function savedListsSubmitClicked()
                 },
                 wwRedirect,
                 'json');
-}
-
-/*
-function userListsSubmitEH(event)
-{
-    var title = $("#id_title").val();
-    // handler for when the submit button is pressed for user lists
-    if (/\S/.test(title))
-    {
-        // if this is the case, the string in the test function has at least one character of non whitespace
-        
     }
     else
     {
-        alert('Please enter a valid title');
-        event.preventDefault();
+        $.post(url, {
+                    action: 'savedListDelete',
+                    lexicon: $('#id_lexicon').val(),
+                    listOption: $("#id_listOption").val(),  /*todo redundancy, dry */
+                    wordList: $("#id_wordList").val()
+                },
+                savedListDelete,
+                'json');
     }
-}*/
+}
+
+function savedListDelete(data)
+{
+    if (data['deleted'])
+    {
+        $("#id_wordList option[value=" + data['wordList'] + "]").remove()
+        requestSavedListInfo(); // populate new limit/text
+    }
+}

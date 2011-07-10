@@ -136,34 +136,44 @@ def homepage(request):
                 lexForm = LexiconForm(request.POST)
                 timeForm = TimeForm(request.POST)
                 slForm = SavedListForm(request.POST)
-                if lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid():
-                    if slForm.cleaned_data['listOption'] == SavedListForm.DELETE_LIST_CHOICE:
-                        deleteSavedList(slForm.cleaned_data['wordList'], request.user)
-                        # todo AJAXify this; return a response. it must have the new total list size, for this user, and it must tell
-                        # the javascript to delete the non-existent list model
-                    else:                    
-                        lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
-                        quizTime = int(round(timeForm.cleaned_data['quizTime'] * 60))
-                        wwg = WordwallsGame()
-                        tablenum = wwg.initializeBySavedList(lex, request.user, slForm.cleaned_data['wordList'],
+                if lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid():           
+                    lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+                    quizTime = int(round(timeForm.cleaned_data['quizTime'] * 60))
+                    wwg = WordwallsGame()
+                    tablenum = wwg.initializeBySavedList(lex, request.user, slForm.cleaned_data['wordList'],
                                                                     slForm.cleaned_data['listOption'], quizTime)
-                        if tablenum == 0:
-                            raise Http404
-                        else:
-                            response = HttpResponse(json.dumps(
+                    if tablenum == 0:
+                        raise Http404
+                    else:
+                        response = HttpResponse(json.dumps(
                                                                 {'url': reverse('wordwalls_table', args=(tablenum,)),
                                                                 'success': True}
                                                                 ),
                                                                 mimetype="application/javascript")
-                            response['Content-Type'] = 'text/plain; charset=utf-8'
-                            return response
+                        response['Content-Type'] = 'text/plain; charset=utf-8'
+                        return response
+            elif request.POST['action'] == 'savedListDelete':
+                lexForm = LexiconForm(request.POST)
+                slForm = SavedListForm(request.POST)
+                if lexForm.is_valid() and slForm.is_valid():  
+                    deletedListPk = slForm.cleaned_data['wordList'].pk
+                    deleteSavedList(slForm.cleaned_data['wordList'], request.user)
+
+                    response = HttpResponse(json.dumps(
+                                                    {'deleted': True,
+                                                     'wordList': deletedListPk
+                                                     }
+                                                    ),
+                                                    mimetype="application/javascript")
+                    response['Content-Type'] = 'text/plain; charset=utf-8'
+                    return response
                     
     lengthCounts = dict([(l.lexiconName, l.lengthCounts) for l in Lexicon.objects.all()])  
     
     ctx = RequestContext( request, {
       'csrf_token': get_token( request ),
     } )
-    print "dcTimes", json.dumps(dcTimeMap)
+
     return render_to_response('wordwalls/index.html', 
                             {'fwForm': fwForm, 
                             'dcForm' : dcForm, 
@@ -419,7 +429,7 @@ def getSavedListList(lex, user):
         return None
 
 def deleteSavedList(savedList, user):
-    if savedList.user != user:      # !
+    if savedList.user != user:      # amateur mistake not putting this in before!
         return
         
     numAlphagrams = savedList.numAlphagrams
@@ -427,16 +437,4 @@ def deleteSavedList(savedList, user):
     profile = user.get_profile()
     profile.wordwallsSaveListSize -= numAlphagrams
     profile.save()  
-
-#    omino14: in Apache, you just put an Alias line
-#    6:51
-#    munderwo
-#    dominio14: admin media is the CSS and JS for the admin pages...
-#    so something like this Alias /media /var/www/domain.com/iappSite/media
-#    and then there is a the location bit as well..
-#    6:55
-#    jimmy-james [~jimmy-jam@75-144-149-126-NewEngland.hfc.comcastbusiness.net] entered the room.
-#    6:55
-##    munderwo
-#    domino14: i think the media_url gets put into the urls that django serves up... so it does know what to serve up.. I think if you get a 404 in debug mode and it shows you all the urls that it can server up then your MEDIA_URL will be in there as well.
-#    6:56
+    return profile.wordwallsSaveListSize

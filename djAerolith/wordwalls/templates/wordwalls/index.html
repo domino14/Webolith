@@ -102,12 +102,7 @@ What type of list do you want?
         <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
         <br>
         <H3>Or upload a new list:</H3>
-        {% comment %}
-        <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ ulForm.as_p}}
-        <input type="submit" class="formSubmitButton" id="uploadListSubmit" value="Upload" name="userListsSubmit"></input>
-        </form>
-        {% endcomment %}
+
         <div id="file-uploader">       
             <noscript>          
                 <p>Please enable JavaScript to use file uploader.</p>
