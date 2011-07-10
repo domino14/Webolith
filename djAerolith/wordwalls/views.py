@@ -28,7 +28,7 @@ from wordwalls.game import WordwallsGame, SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName, WordwallsGameModel
-from datetime import date
+from datetime import date, datetime
 import sys
 import time
 
@@ -452,7 +452,42 @@ def getLeaderboardData(lex, chName):
     
     return getLeaderboardDataDcInstance(dc)
         
+def pretty_date(now, time):
+    """
+    Get a datetime object and return a
+    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+    'just now', etc
+    """
     
+    diff = now - time
+    second_diff = diff.seconds
+    day_diff = diff.days
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 10:
+            return "just now"
+        if second_diff < 60:
+            return str(second_diff) + " seconds ago"
+        if second_diff < 120:
+            return  "a minute ago"
+        if second_diff < 3600:
+            return str( second_diff / 60 ) + " minutes ago"
+        if second_diff < 7200:
+            return "an hour ago"
+        if second_diff < 86400:
+            return str( second_diff / 3600 ) + " hours ago"
+    if day_diff == 1:
+        return "Yesterday"
+    if day_diff < 7:
+        return str(day_diff) + " days ago"
+    if day_diff < 31:
+        return str(day_diff/7) + " weeks ago"
+    if day_diff < 365:
+        return str(day_diff/30) + " months ago"
+    return str(day_diff/365) + " years ago"    
 
 def getSavedListList(lex, user):
     try:
@@ -463,8 +498,9 @@ def getSavedListList(lex, user):
     try:
         qset = SavedList.objects.filter(lexicon=lex_object, user=user).order_by('lastSaved')
         retData = []
+        now = datetime.now()
         for sl in qset:
-            retData.append({'name': sl.name,  'lastSaved': str(sl.lastSaved), 'lexicon': sl.lexicon.lexiconName, 
+            retData.append({'name': sl.name,  'lastSaved': pretty_date(now, sl.lastSaved), 'lexicon': sl.lexicon.lexiconName, 
                             'goneThruOnce': sl.goneThruOnce, 'pk': sl.pk, 'numAlphas': sl.numAlphagrams})
 
         return retData
