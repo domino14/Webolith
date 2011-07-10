@@ -102,7 +102,7 @@ What type of list do you want?
         <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
         <br>
         <H3>Or upload a new list:</H3>
-
+        
         <div id="file-uploader">       
             <noscript>          
                 <p>Please enable JavaScript to use file uploader.</p>
@@ -157,7 +157,7 @@ What type of list do you want?
 
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
     
-    //$(".qq-upload-button").button();  // dammit i can't change this stupid red button?
+   // $(".qq-upload-button").button();  // dammit i can't change this stupid red button?
  });
 
 var uploader = new qq.FileUploader( {
@@ -188,7 +188,7 @@ var uploader = new qq.FileUploader( {
        'lexicon': $("#id_lexicon").val()
      },
    });
-  
+
 </script>
 
 {% endblock %}
