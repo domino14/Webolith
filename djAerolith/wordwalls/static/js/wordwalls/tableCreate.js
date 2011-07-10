@@ -207,7 +207,8 @@ function processSavedListResults(data)
         {
             options.push('<option value=', '"', data[i]['pk'], '">', data[i]['name'], ' (last saved ', data[i]['lastSaved'], ')');
             if (data[i]['goneThruOnce'])
-                options.push(' *')
+                options.push(' *');
+            options.push(' -- ', data[i]['numAlphas'], " total alphagrams");
             options.push('</option>');
         }
         $("#id_wordList").html(options.join(''));

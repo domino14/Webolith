@@ -78,7 +78,7 @@ def homepage(request):
                 try:
                     lex = request.POST['lexicon']
                     lt = getSavedListList(lex, request.user)
-                    print lt
+                    #print lt
                     response = HttpResponse(json.dumps(lt, ensure_ascii=False), 
                                             mimetype="application/javascript")
                     response['Content-Type'] = 'text/plain; charset=utf-8'
@@ -465,7 +465,7 @@ def getSavedListList(lex, user):
         retData = []
         for sl in qset:
             retData.append({'name': sl.name,  'lastSaved': str(sl.lastSaved), 'lexicon': sl.lexicon.lexiconName, 
-                            'goneThruOnce': sl.goneThruOnce, 'pk': sl.pk})
+                            'goneThruOnce': sl.goneThruOnce, 'pk': sl.pk, 'numAlphas': sl.numAlphagrams})
 
         return retData
     except:
