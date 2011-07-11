@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Edit {{profile.user.username}}'s profile{% endblock %}
+
+{% block content %}
+{% if profile.member %}
+You are currently a supporter; your membership expires on {{profile.membershipExpiry}}.
+{% else %}
+
+{% endif %}
+<form action="{% url accounts_edit_profile %}" method="post">{% csrf_token %}
+{{ pForm.as_p }}
+<input type="submit" value="Save profile" />
+</form>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+      $("#id_profileText").val("{{profile.profile}}");
+      $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").attr('selected', 'selected');      
+      $('<div>Enter up to 2000 characters. You may use <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a></div>').insertBefore($("label[for='id_profileText']"))
+  });
+</script>
+
+{% endblock %}

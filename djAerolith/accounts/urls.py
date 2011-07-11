@@ -16,11 +16,10 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django import forms
-from base.models import Lexicon
+from django.conf.urls.defaults import *
 
-class ProfileEditForm(forms.Form):
-    defaultLexicon = forms.ModelChoiceField(queryset=Lexicon.objects.all(), label='Default Lexicon',
-            widget=forms.Select(), empty_label=None)
-    profileText = forms.CharField(widget=forms.Textarea, label='Your profile', required=False)
-            
+urlpatterns = patterns('',
+    url(r'^$', 'accounts.views.editProfile', name='accounts_edit_profile'),
+    url(r'^(?P<username>\w+)/$', 'accounts.views.viewProfile', name='accounts_view_profile'),
+    
+    )

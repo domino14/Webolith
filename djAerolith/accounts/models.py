@@ -18,12 +18,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 from registration.signals import user_activated
-
+from base.models import Lexicon
 class AerolithProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     
     coins = models.IntegerField(default = 0)
-    profile = models.CharField(max_length=1000, blank = True)
+    profile = models.CharField(max_length=2000, blank = True)
     rating = models.IntegerField(default = 0)
     
     NONE_MTYPE = 0
@@ -46,7 +46,8 @@ class AerolithProfile(models.Model):
     customWordwallsStyle = models.CharField(max_length=1000, blank = True)
     wordwallsSaveListSize = models.IntegerField(default = 0)
     
-    
+    # project-wide
+    defaultLexicon = models.ForeignKey(Lexicon, default=Lexicon.objects.get(lexiconName='OWL2'))
     
     def __unicode__(self):
         return "Profile for " + self.user.username

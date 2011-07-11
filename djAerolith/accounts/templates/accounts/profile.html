@@ -1,13 +1,9 @@
 {% extends "base.html" %}
-
-{% block title %} {{username}}'s profile{% endblock %}
-
-
+{% block title %}{{profile.user.username}}'s profile{% endblock %}
+{% block content_title %}{{profile.user.username}}'s profile {% endblock %}
+{% load markup %}
 {% block content %}
-<a href="../../wordwalls">Play Word Walls</a><BR><BR>
-This is your profile page. You are currently logged in as {{username}}<BR>
-
-
+{{profile.profile|markdown}}
 {% endblock %}
 
 {% comment %} Aerolith 2.0: A web-based word game website
