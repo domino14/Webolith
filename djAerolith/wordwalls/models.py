@@ -120,6 +120,8 @@ class DailyChallengeMissedBingos(models.Model): # only tracks missed 7&8 letter 
         
 class NamedList(models.Model):
     lexicon = models.ForeignKey(Lexicon)
+    name = models.CharField(max_length=50, default='')
     numQuestions = models.IntegerField()
     wordLength = models.IntegerField()
     isRange = models.BooleanField() # is a range of alphagram pk indices, or if False it is a list of indices
+    questions = models.TextField(default='')  # json string

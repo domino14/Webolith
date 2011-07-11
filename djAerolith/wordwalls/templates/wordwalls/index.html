@@ -117,11 +117,11 @@ What type of list do you want?
         Click for help
         </div>
         <div id="namedListHelp" class="help">
-        <P>Help for named lists</P>
+        <P>These are named lists for each lexicon, which can be used as shortcuts instead of searching by probability. There are also JQXZ lists and CSW-only lists available. There may be more lists in the future. Simply find a list and click Play!</P>
+        <P>If you wish to save your progress on a list here, you can enter a list name once you're playing, just like the other lists. The saved list will show up in your saved lists.</P>
         </div>
-        <P>
-        Form for named lists
-        </P>
+        
+        {{ nlForm.as_p }}
         <button class="formSubmitButton" id="namedListSubmit">Play!</button>
     </div>
 </div>
@@ -145,7 +145,6 @@ What type of list do you want?
         $(this).next(".help").toggle("slow");
     });
     $(".showHelp").button();
-
     requestSavedListInfo();
     $("#listTabs").tabs({
                         select: tabSelected,
@@ -154,7 +153,7 @@ What type of list do you want?
     $("#challengeSubmit").click(challengeSubmitClicked);
     $("#searchParamsSubmit").click(searchParamsSubmitClicked);
     $("#savedListsSubmit").click(savedListsSubmitClicked);
-
+    $("#namedListSubmit").click(namedListSubmitClicked);
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
     
    // $(".qq-upload-button").button();  // dammit i can't change this stupid red button?

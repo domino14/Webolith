@@ -41,6 +41,13 @@ function changeMaxProb()
 
 function challengeChangeEventHandler()
 {
+
+    if ($("#listTabs").tabs('option', 'selected') != 0) return; // if this isn't the challenge tab, don't run this code
+    challengeChanged();
+}
+
+function challengeChanged()
+{
     var cVal = $('#id_challenge option:selected').val();
     if (cVal == "")
     {
@@ -67,6 +74,8 @@ function tabSelected(event, ui)
     {
         /* today's challenges. disable time select */
         $("#id_quizTime").attr('disabled', true);
+        challengeChanged();
+        
     }
     else
     {
@@ -123,6 +132,9 @@ function initializeTableCreatePage(lStr, dcStr, _url)
     
     $('#id_lexicon').change(savedListLexiconChanged);
     savedListLexiconChanged();
+    
+    $("#id_lexicon").change(namedListLexiconChanged);
+    namedListLexiconChanged();
 }
 
 function savedListOptionChangeHandler()
@@ -194,6 +206,14 @@ function savedListLexiconChanged()
                 processSavedListResults, 'json')
 }
 
+function namedListLexiconChanged()
+{
+    $.post(url, {action: 'getNamedListList', 
+                lexicon: $('#id_lexicon option:selected').text()}, 
+                processNamedListResults, 'json')
+}
+
+
 function processSavedListResults(data)
 {
     if (data == null)
@@ -203,7 +223,7 @@ function processSavedListResults(data)
     else
     {
         var options = [];
-        for (var i = data.length-1; i >= 0; i--) 
+        for (var i = 0; i < data.length; i++)
         {
             options.push('<option value=', '"', data[i]['pk'], '">', data[i]['name'], ' (last saved ', data[i]['lastSaved'], ')');
             if (data[i]['goneThruOnce'])
@@ -214,6 +234,26 @@ function processSavedListResults(data)
         $("#id_wordList").html(options.join(''));
     }
 }
+
+function processNamedListResults(data)
+{
+    if (data == null)
+    {
+        $("#id_namedList").html("");
+    }
+    else
+    {
+        var options = [];
+        for (var i = 0; i < data.length; i++) 
+        {
+            options.push('<option value=', '"', data[i]['pk'], '">', data[i]['name']);
+            options.push(' -- ', data[i]['numAlphas'], " total alphagrams");
+            options.push('</option>');
+        }
+        $("#id_namedList").html(options.join(''));
+    }
+}
+
 
 function requestSavedListInfo()
 {
@@ -226,6 +266,11 @@ function requestSavedListInfo()
                     $("#numAlphasInfo").text("You have " + data['na'] + " alphagrams over all your saved lists. " + addlText);
                 },
                 'json')
+}
+
+function requestNamedListInfo()
+{
+    
 }
 
 function wwRedirect(data)
@@ -265,6 +310,18 @@ function searchParamsSubmitClicked()
                 },
                 wwRedirect,
                 'json');
+}
+
+function namedListSubmitClicked()
+{
+    $.post(url, {
+                action: 'namedListSubmit',
+                lexicon: $('#id_lexicon').val(),
+                quizTime: $("#id_quizTime").val(),
+                namedList: $("#id_namedList").val()
+            },
+            wwRedirect,
+            'json');
 }
 
 function savedListsSubmitClicked()

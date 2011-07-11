@@ -24,7 +24,7 @@ import pickle
 import time
 from datetime import date, timedelta
 import random
-from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList
+from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, NamedList
 from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
 import re
 from forms import SavedListForm
@@ -146,6 +146,33 @@ class WordwallsGame:
 
         return wgm.pk   # this is a table number id!
     
+    def initializeByNamedList(self, lex, user, namedList, secs):
+        
+        addlParams = {}
+        addlParams['timerSecs'] = secs
+        pks = json.loads(namedList.questions)
+        if namedList.isRange:
+            pks = range(pks[0], pks[1]+1)
+            
+        if len(pks) != namedList.numQuestions:
+            raise
+            
+        random.shuffle(pks)
+        wgm = self.createGameModelInstance(user, GenericTableGameModel.SINGLEPLAYER_GAME, lex, 
+                                                    namedList.numQuestions,
+                                                    json.dumps(pks), 
+                                                    namedList.numQuestions,
+                                                    json.dumps(range(len(pks))), 
+                                                    0,
+                                                    json.dumps([]),
+                                                    0, 
+                                                    json.dumps([]), 
+                                                    **addlParams)
+        wgm.save()
+        wgm.inTable.add(user)
+        
+        return wgm.pk
+        
     def initializeBySavedList(self, lex, user, savedList, listOption, secs):
         # first of all, return 0 if the user and the saved list don't match. TODO test this
         if savedList.user != user:

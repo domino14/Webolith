@@ -20,7 +20,7 @@ from django import forms
 from django.core import validators
 from base.models import Lexicon
 from tablegame.models import GenericTableGameModel
-from wordwalls.models import SavedList, DailyChallengeName
+from wordwalls.models import SavedList, DailyChallengeName, NamedList
 import re
 from django.forms.widgets import RadioSelect
 
@@ -95,10 +95,7 @@ class WordListChoiceField(forms.ModelChoiceField):
             return None
         return sl  
     
-class SavedListForm(forms.Form):
-    # todo have a lexicon field that has no default, and set its onchange attribute to actually call a function
-    # in javascript. the javascript will auto-populate a multichoices field.
-    
+class SavedListForm(forms.Form):    
     CONTINUE_LIST_CHOICE = 1
     FIRST_MISSED_CHOICE = 2
     RESTART_LIST_CHOICE = 3
@@ -116,4 +113,19 @@ class SavedListForm(forms.Form):
                                         queryset=SavedList.objects.none(),
                                         widget=forms.Select(attrs={'size':'10'}))
 
-    
+class NamedListChoiceField(forms.ModelChoiceField):
+    def to_python(self, value):
+        if not value:
+            return None
+            
+        try:
+            nl = NamedList.objects.get(pk=value)
+        except:
+            return None
+        return nl
+        
+        
+class NamedListForm(forms.Form):
+    namedList = NamedListChoiceField(label='List choice',
+                                        queryset=NamedList.objects.none(),
+                                        widget=forms.Select(attrs={'size':'15'}))

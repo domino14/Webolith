@@ -19,7 +19,7 @@
 # Create your views here.
 from django.http import Http404
 from django.shortcuts import render_to_response
-from forms import FindWordsForm, DailyChallengesForm, UserListForm, SavedListForm, LexiconForm, TimeForm
+from forms import FindWordsForm, DailyChallengesForm, UserListForm, SavedListForm, LexiconForm, TimeForm, NamedListForm
 from django.template import RequestContext
 from base.models import Lexicon, Alphagram, Word, alphProbToProbPK
 from django.contrib.auth.decorators import login_required
@@ -27,7 +27,8 @@ import json
 from wordwalls.game import WordwallsGame, SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry, SavedList, DailyChallengeName, WordwallsGameModel
+from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry
+from wordwalls.models import SavedList, DailyChallengeName, WordwallsGameModel, NamedList
 from datetime import date, datetime
 import sys
 import time
@@ -47,12 +48,15 @@ for i in DailyChallengeName.objects.all():
 
 @login_required
 def homepage(request):
+    #unbound forms
     lexForm = LexiconForm()
     timeForm = TimeForm()
-    fwForm = FindWordsForm() # unbound
-    dcForm = DailyChallengesForm() #unbound
-    ulForm = UserListForm() # unbound
+    fwForm = FindWordsForm()
+    dcForm = DailyChallengesForm()
+    ulForm = UserListForm() 
     slForm = SavedListForm()
+    nlForm = NamedListForm()
+    
     profile = request.user.get_profile()
     numAlphas = profile.wordwallsSaveListSize
     limit = 0
@@ -86,7 +90,21 @@ def homepage(request):
                 
                 except:
                     raise Http404
-                    
+            elif request.POST['action'] == 'getNamedListList':
+                # gets a list of saved lists!
+                try:
+                    lex = request.POST['lexicon']
+                    lt = getNamedListList(lex)
+                    #print lt
+                    response = HttpResponse(json.dumps(lt, ensure_ascii=False), 
+                                            mimetype="application/javascript")
+                    response['Content-Type'] = 'text/plain; charset=utf-8'
+                    return response
+                
+                except:
+                    raise Http404
+                
+                
             elif request.POST['action'] == 'getSavedListNumAlphas':
                 response = HttpResponse(json.dumps({'na': numAlphas, 'l': limit}), mimetype="application/javascript")
                 response['Content-Type'] = 'text/plain; charset=utf-8'
@@ -154,6 +172,7 @@ def homepage(request):
                                                                 mimetype="application/javascript")
                         response['Content-Type'] = 'text/plain; charset=utf-8'
                         return response
+                        
             elif request.POST['action'] == 'savedListDelete':
                 lexForm = LexiconForm(request.POST)
                 slForm = SavedListForm(request.POST)
@@ -170,6 +189,27 @@ def homepage(request):
                     response['Content-Type'] = 'text/plain; charset=utf-8'
                     return response
                     
+            elif request.POST['action'] == 'namedListSubmit':
+                lexForm = LexiconForm(request.POST)
+                timeForm = TimeForm(request.POST)
+                nlForm = NamedListForm(request.POST)
+                if lexForm.is_valid() and timeForm.is_valid() and nlForm.is_valid():
+                    lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+                    quizTime = int(round(timeForm.cleaned_data['quizTime'] * 60))
+                    wwg = WordwallsGame()
+                    tablenum = wwg.initializeByNamedList(lex, request.user, nlForm.cleaned_data['namedList'], quizTime)
+                    if tablenum == 0:
+                        raise Http404
+                    else:
+                        response = HttpResponse(json.dumps(
+                                                                {'url': reverse('wordwalls_table', args=(tablenum,)),
+                                                                'success': True}
+                                                                ),
+                                                                mimetype="application/javascript")
+                        response['Content-Type'] = 'text/plain; charset=utf-8'
+                        return response
+                    
+                    
     lengthCounts = dict([(l.lexiconName, l.lengthCounts) for l in Lexicon.objects.all()])  
     
     ctx = RequestContext( request, {
@@ -183,6 +223,7 @@ def homepage(request):
                             'slForm' : slForm,
                             'lexForm' : lexForm,
                             'timeForm' : timeForm,
+                            'nlForm': nlForm,
                             'lengthCounts' : json.dumps(lengthCounts),
                             'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
                             'dcTimes': json.dumps(dcTimeMap) }, 
@@ -496,7 +537,7 @@ def getSavedListList(lex, user):
         return None
         
     try:
-        qset = SavedList.objects.filter(lexicon=lex_object, user=user).order_by('lastSaved')
+        qset = SavedList.objects.filter(lexicon=lex_object, user=user).order_by('-lastSaved')
         retData = []
         now = datetime.now()
         for sl in qset:
@@ -507,6 +548,22 @@ def getSavedListList(lex, user):
     except:
         return None
 
+def getNamedListList(lex):
+    try:
+        lex_object = Lexicon.objects.get(lexiconName=lex)
+    except:
+        return None
+    try:
+        qset = NamedList.objects.filter(lexicon=lex_object).order_by('pk')
+        retData = []
+        for nl in qset:
+            retData.append({'name': nl.name,  'lexicon': nl.lexicon.lexiconName, 
+                            'numAlphas': nl.numQuestions, 'pk': nl.pk})
+
+        return retData
+    except:
+        return None
+        
 def deleteSavedList(savedList, user):
     if savedList.user != user:      # amateur mistake not putting this in before!
         return

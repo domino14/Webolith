@@ -79,6 +79,11 @@ select#id_wordList
     width: 450px;
 }
 
+select#id_namedList
+{
+    width: 450px;
+}
+
 span#savedListWarning
 {
     color: red;
