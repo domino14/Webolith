@@ -226,7 +226,8 @@ def homepage(request):
                             'nlForm': nlForm,
                             'lengthCounts' : json.dumps(lengthCounts),
                             'upload_list_limit' : wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
-                            'dcTimes': json.dumps(dcTimeMap) }, 
+                            'dcTimes': json.dumps(dcTimeMap),
+                            'defaultLexicon': profile.defaultLexicon }, 
                             context_instance=ctx)
 
 

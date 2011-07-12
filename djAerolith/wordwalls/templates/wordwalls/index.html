@@ -130,6 +130,7 @@ What type of list do you want?
 <script type="text/javascript">
   $(document).ready(function() {
 
+    $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');  
     initializeTableCreatePage("{{lengthCounts|escapejs}}", "{{dcTimes|escapejs}}", "{% url wordwalls_create_table %}");
 
     var labelSize = '130px';

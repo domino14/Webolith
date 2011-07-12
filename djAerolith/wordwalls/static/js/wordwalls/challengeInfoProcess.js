@@ -29,7 +29,7 @@ function processDcResults(data, divIdToPopulate)
             var score = entry['score'];
             var tr = entry['tr'];
             tableBuilder += '<tr><td class="dcResultsTableCell">' + (i+1) + 
-                            '</td><td class="dcResultsTableCell">' + user + 
+                            '</td><td class="dcResultsTableCell"><a href="/accounts/profile/' + user + '">' + user + '</a>' + 
                             '</td><td class="dcResultsTableCell">' + (score/maxScore * 100).toFixed(1) + '%' + 
                             '</td><td class="dcResultsTableCell">' + tr + ' s.' + '</td></tr>'
             

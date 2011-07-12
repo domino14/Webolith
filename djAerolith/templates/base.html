@@ -47,7 +47,7 @@ To contact the author, please email delsolar at gmail dot com
             <a href="/accounts/login" class="navbarLink">Log in</a>
             <a href="/accounts/register" class="navbarLink">Register</a>
         {% else %}
-            <a href="/accounts/profile" class="navbarLink"><span class="ui-icon ui-icon-wrench"></span>{{user}}</a>
+            <a href="/accounts/profile/{{user}}" class="navbarLink"><span class="ui-icon ui-icon-wrench"></span>{{user}}</a>
             {% if user.get_profile.member %}
                 {# do nothing, member #}
             {% else %}

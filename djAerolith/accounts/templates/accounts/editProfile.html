@@ -9,15 +9,17 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
 {% endif %}
 <form action="{% url accounts_edit_profile %}" method="post">{% csrf_token %}
 {{ pForm.as_p }}
-<input type="submit" value="Save profile" />
+<input type="submit" value="Save profile" id="saveProfile"/>
 </form>
 
 <script type="text/javascript">
   $(document).ready(function() {
-      $("#id_profileText").val("{{profile.profile}}");
+      $("#id_profileText").val("{{profile.profile|escapejs}}");
       $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").attr('selected', 'selected');      
-      $('<div>Enter up to 2000 characters. You may use <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a></div>').insertBefore($("label[for='id_profileText']"))
+      $('<div>Enter up to 2000 characters of information about yourself to show on your profile. You may use <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a>.</div>').insertBefore($("label[for='id_profileText']"))
   });
+      $("#id_profileText").css({'height': '300px', 'width': '500px'});
+      $("#saveProfile").button();
 </script>
 
 {% endblock %}

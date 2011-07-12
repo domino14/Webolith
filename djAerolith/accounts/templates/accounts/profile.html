@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{{profile.user.username}}'s profile{% endblock %}
-{% block content_title %}{{profile.user.username}}'s profile {% endblock %}
+
+
+{% block content_title %}{{profile.user.username}}'s profile 
+
+{% if user == profile.user %}
+<a href="/accounts/profile">(Click here</a> to edit)
+{% endif %}
+{% endblock %}
+
 {% load markup %}
 {% block content %}
 {{profile.profile|markdown}}
