@@ -2,11 +2,12 @@
 {% block title %}{{profile.user.username}}'s profile{% endblock %}
 
 
-{% block content_title %}{{profile.user.username}}'s profile 
+{% block content_title %}<H3>{{profile.user.username}}'s profile</H3> 
 
 {% if user == profile.user %}
-<a href="/accounts/profile">(Click here</a> to edit)
+<a href="/accounts/profile">(Edit</a>)
 {% endif %}
+
 {% endblock %}
 
 {% load markup %}
