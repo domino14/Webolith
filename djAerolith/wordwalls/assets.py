@@ -24,9 +24,12 @@ register('js_table', 'js/aerolith/jquery-1.6.1.min.js', tableJs)
 # css
 
 tableCreateCss = Bundle('css/wordwalls/wordwallsCreateTable.css',
-                        'css/aerolith/fileuploader.css',
                         filters='cssmin',
                         output='css/wordwalls/packedWWCT.css')
+                        
+fileUploaderCss = Bundle('css/aerolith/fileuploader.css',
+                        filters='cssmin',
+                        output='css/aerolith/packedFU.css')
        
 tableCss = Bundle('css/wordwalls/wordwallsTableSS.css',
                     filters='cssmin',
@@ -34,3 +37,4 @@ tableCss = Bundle('css/wordwalls/wordwallsTableSS.css',
         
 register('css_table_create', tableCreateCss)
 register('css_table', tableCss)
+register('css_fileuploader', fileUploaderCss)
