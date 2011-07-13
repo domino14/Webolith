@@ -41,7 +41,6 @@ function changeMaxProb()
 
 function challengeChangeEventHandler()
 {
-
     if ($("#listTabs").tabs('option', 'selected') != 0) return; // if this isn't the challenge tab, don't run this code
     challengeChanged();
 }
@@ -122,7 +121,7 @@ function initializeTableCreatePage(lStr, dcStr, _url)
     $('#id_lexicon').change(challengeChangeEventHandler);
     
     // show results label with selected challenge on load
-    challengeChangeEventHandler();
+    challengeChanged();
     changeMaxProb();
     $('#id_listOption').change(savedListOptionChangeHandler);
     $('#id_wordList').change(savedListChangeHandler);
