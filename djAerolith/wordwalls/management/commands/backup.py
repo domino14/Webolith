@@ -6,6 +6,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.mail import EmailMessage
 from django.conf import settings
 
+# example: python manage.py backup -e base_word -e base_alphagram -c --email delsolar@gmail.com
+
 # Based on: http://www.djangosnippets.org/snippets/823/
 # Based on: http://www.yashh.com/blog/2008/sep/05/django-database-backup-view/
 class Command(BaseCommand):
