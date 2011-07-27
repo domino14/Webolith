@@ -406,7 +406,7 @@ def createUserList(upload, filename, lex, user):
         lineNumber += 1
         if lineNumber > wordwalls.settings.UPLOAD_FILE_LINE_LIMIT:
             return False, "List contains more words than the current allowed per-file limit of " + str(wordwalls.settings.UPLOAD_FILE_LINE_LIMIT)
-        if len(word) > 2:
+        if len(word) > 1:
             alphaSet.add(alphagrammize(word))
 
     profile = user.get_profile()

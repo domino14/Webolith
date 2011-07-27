@@ -189,11 +189,17 @@ var uploader = new qq.FileUploader( {
        // the maps look like this: { file: FileObject, response: JSONServerResponse }
       
      },
+     onSubmit: function()
+     {
+         uploader.setParams({
+            'lexicon': $("#id_lexicon").val(),
+            'csrf_token': '{{ csrf_token }}',
+            'csrf_name': 'csrfmiddlewaretoken',
+            'csrf_xname': 'X-CSRFToken'
+         });  
+     },
      params: {
-       'csrf_token': '{{ csrf_token }}',
-       'csrf_name': 'csrfmiddlewaretoken',
-       'csrf_xname': 'X-CSRFToken',
-       'lexicon': $("#id_lexicon").val()
+
      },
    });
 
