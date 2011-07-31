@@ -189,7 +189,7 @@ def homepage(request):
                     response['Content-Type'] = 'text/plain; charset=utf-8'
                     return response
                     
-            elif request.POST['action'] == 'namedListSubmit':
+            elif request.POST['action'] == 'namedListsSubmit':
                 lexForm = LexiconForm(request.POST)
                 timeForm = TimeForm(request.POST)
                 nlForm = NamedListForm(request.POST)

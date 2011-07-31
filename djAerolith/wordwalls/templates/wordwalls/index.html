@@ -77,6 +77,7 @@ What type of list do you want?
         
         {{ fwForm.as_p }}
         <button class="formSubmitButton" id="searchParamsSubmit">Play!</button>
+        <button class="formSubmitButton" id="searchParamsFlashcard">Flashcard</button>
     </div>
 
     <div id ="tabs-3">
@@ -108,6 +109,7 @@ What type of list do you want?
         <span id="savedListWarning"></span>
         
         <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
+        <button class="formSubmitButton" id="savedListsFlashcard">Flashcard</button>
         <br>
         <H3>Or upload a new list:</H3>
         
@@ -130,7 +132,8 @@ What type of list do you want?
         </div>
         
         {{ nlForm.as_p }}
-        <button class="formSubmitButton" id="namedListSubmit">Play!</button>
+        <button class="formSubmitButton" id="namedListsSubmit">Play!</button>
+        <button class="formSubmitButton" id="namedListsFlashcard">Flashcard</button>
     </div>
 </div>
 
@@ -139,7 +142,10 @@ What type of list do you want?
   $(document).ready(function() {
 
     $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');  
-    initializeTableCreatePage("{{lengthCounts|escapejs}}", "{{dcTimes|escapejs}}", "{% url wordwalls_create_table %}");
+    initializeTableCreatePage("{{lengthCounts|escapejs}}", 
+                                "{{dcTimes|escapejs}}", 
+                                "{% url wordwalls_create_table %}",
+                                "{% url flashcards_create_quiz %}");
 
     var labelSize = '130px';
     $("label[for='id_wordLength']").width(labelSize);
@@ -162,7 +168,12 @@ What type of list do you want?
     $("#challengeSubmit").click(challengeSubmitClicked);
     $("#searchParamsSubmit").click(searchParamsSubmitClicked);
     $("#savedListsSubmit").click(savedListsSubmitClicked);
-    $("#namedListSubmit").click(namedListSubmitClicked);
+    $("#namedListsSubmit").click(namedListsSubmitClicked);
+    
+    $("#searchParamsFlashcard").click(searchParamsFlashcardClicked);
+    $("#savedListsFlashcard").click(savedListsFlashcardClicked);
+    $("#namedListsFlashcard").click(namedListsFlashcardClicked);
+    
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
     
    // $(".qq-upload-button").button();  // dammit i can't change this stupid red button?

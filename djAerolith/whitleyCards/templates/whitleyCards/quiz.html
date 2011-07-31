@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% comment %}
+<body onload="loadQuiz();selectNextItem();">
+{% endcomment %}  
+
+{% load assets %}
+
+{% assets "js_quiz" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+<div>
+    <form name="game" onSubmit="solve(); return false;">
+        <font face="verdana" style="font-size:15px;">
+            <input type="text" name="word">
+            <input type="button" onClick="completeSolve();" value="Solve">
+            <input type="button" onClick="forceReveal();" value="Hint">
+            <input type="button" onClick="toggleHints();" value="Auto">
+            <input type="button" onClick="changeSpeed(-1);" value="-">
+            <input type="button" onClick="changeSpeed(1);" value="+">
+            <span id="speed"><font color='khaki'>5 |||||</font></span>
+        </font>
+    </form>
+    <span id="question" style="font-family:'scramble','Lucida Console',monospace; font-size:36px; height:36px;"></span>
+    <div id="progress" style="font-family:'verdana'; font-size:15px; height:20px; color:linen">&nbsp;</div>
+    <div id="hints" style="font-family:'scramble','Lucida Console',monospace; font-size:36px;height:40px;"></div>
+    <div id="variants" style="font-family:'scramble','Lucida Console',monospace; font-size:24px; min-height:25px;"></div>
+    <div id="trace"></div>
+    <div id="solved"></div>
+
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    initializeQuiz("{{ request.get_full_path }}");
+
+});
+</script>
+{% endblock content %}

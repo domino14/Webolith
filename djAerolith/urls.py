@@ -50,6 +50,7 @@ urlpatterns = patterns('',
     #(r'^accounts/confirm/(?P<activation_key>[0-9a-f]+)', 'accounts.views.confirm'),
     #(r'^accounts/profile/$', 'accounts.views.profile'),
     (r'^wordwalls/', include('wordwalls.urls')),
+    (r'^flashcards/', include('whitleyCards.urls')),
 
 )
 

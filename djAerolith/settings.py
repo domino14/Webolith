@@ -142,6 +142,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_assets',
     'south',
+    'whitleyCards',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:

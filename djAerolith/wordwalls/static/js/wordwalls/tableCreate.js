@@ -19,6 +19,7 @@ To contact the author, please email delsolar at gmail dot com*/
 var lengthCounts;
 var maxProb = 999999;
 var url;
+var flashcardUrl;
 var dcTimeMap;
 
 function changeMaxProb()
@@ -83,9 +84,10 @@ function tabSelected(event, ui)
     }
 }
 
-function initializeTableCreatePage(lStr, dcStr, _url)
+function initializeTableCreatePage(lStr, dcStr, _url, furl)
 {
     url = _url;
+    flashcardUrl = furl;
     lengthCounts = $.parseJSON(lStr);
     dcTimeMap = $.parseJSON(dcStr);
 
@@ -311,16 +313,51 @@ function searchParamsSubmitClicked()
                 'json');
 }
 
-function namedListSubmitClicked()
+function fcRedirect(data)
+{
+    if (data['success'])
+    {
+        if (data['url'])
+        {
+            window.location.href = data['url'];   // redirect
+        }
+    }
+    else
+    {
+        alert('!');
+    }
+}
+
+function searchParamsFlashcardClicked()
+{
+    $.post(flashcardUrl, {
+                    action: 'searchParamsFlashcard',
+                    lexicon: $('#id_lexicon').val(),
+                    wordLength: $("#id_wordLength").val(),
+                    probabilityMin: $("#id_probabilityMin").val(),
+                    probabilityMax: $("#id_probabilityMax").val(),
+                    playerMode: $("#id_playerMode").val()
+                    
+                },
+                fcRedirect,
+                'json');
+}
+
+function namedListsSubmitClicked()
 {
     $.post(url, {
-                action: 'namedListSubmit',
+                action: 'namedListsSubmit',
                 lexicon: $('#id_lexicon').val(),
                 quizTime: $("#id_quizTime").val(),
                 namedList: $("#id_namedList").val()
             },
             wwRedirect,
             'json');
+}
+
+function namedListsFlashcardClicked()
+{
+
 }
 
 function savedListsSubmitClicked()
@@ -349,6 +386,11 @@ function savedListsSubmitClicked()
                 savedListDelete,
                 'json');
     }
+}
+
+function savedListsFlashcardClicked()
+{
+
 }
 
 function savedListDelete(data)
