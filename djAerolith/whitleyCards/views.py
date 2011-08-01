@@ -8,6 +8,8 @@ from base.models import Lexicon, Alphagram
 import json
 from django.core.urlresolvers import reverse
 
+QUIZ_CHUNK_SIZE = 10
+
 @login_required
 def createQuiz(request):
     if request.method == 'GET':                
@@ -30,33 +32,58 @@ def createQuiz(request):
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
 
+def getQuizChunk(minP, maxP):
+    maxPGet = maxP
+    newMinP = -1
+    if maxP-minP+1 > QUIZ_CHUNK_SIZE:
+        # only quiz on first 100 and send new lower limit as part of data
+        newMinP = minP + QUIZ_CHUNK_SIZE
+        maxPGet = newMinP - 1
+    wordData = getWordDataByProb(minP, maxPGet)
+    return (wordData, newMinP, maxP)
+    
 @login_required  
 def probPkRange(request, minP, maxP):     
     if request.method == 'GET':               
-        return render_to_response('whitleyCards/quiz.html', {'minIndex': minP, 'maxIndex': maxP}, 
-                                                context_instance=RequestContext(request))
+        return render_to_response('whitleyCards/quiz.html', context_instance=RequestContext(request))
     elif request.method == 'POST':
         action = request.POST['action']
         if action == 'getInitialSet':
             minP = int(minP)
             maxP = int(maxP)
 
-            maxPGet = maxP
-            newMinP = -1
-            if maxP-minP+1 > 100:
-                # only quiz on first 100 and send new lower limit as part of data
-                newMinP = minP + 100
-                maxPGet = newMinP - 1
-            wordData = getWordDataByProb(minP, maxPGet)
+            data = getQuizChunk(minP, maxP)
 
             response = HttpResponse(json.dumps(
-                                                {'data': wordData,
-                                                'nextMinP': newMinP,
-                                                'nextMaxP': maxP }
+                                                {'data': data[0],
+                                                'nextMinP': data[1],
+                                                'nextMaxP': data[2] }
                                                 ),
                                                 mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
             return response
+        elif action == 'getNextSet':
+            minP = int(request.POST['minP'])
+            
+            if minP == -1: # quiz is over
+                response = HttpResponse(json.dumps({'data': []}),
+                                                    mimetype="application/javascript")
+                response['Content-Type'] = 'text/plain; charset=utf-8'
+                return response
+            
+            maxP = int(request.POST['maxP'])
+            print "getting set", minP, maxP
+            
+            data = getQuizChunk(minP, maxP)
+            response = HttpResponse(json.dumps(
+                                                {'data': data[0],
+                                                'nextMinP': data[1],
+                                                'nextMaxP': data[2] }
+                                                ),
+                                                mimetype="application/javascript")
+            response['Content-Type'] = 'text/plain; charset=utf-8'
+            return response
+            
                             
 def getWordDataByProb(minP, maxP):
     data = []

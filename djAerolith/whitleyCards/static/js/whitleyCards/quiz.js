@@ -13,8 +13,10 @@ var
 	variantsSolved=0,
 	pauseInterval,
 	speedNumber=5,
-	speedString='|||||';
-
+	speedString='|||||',
+    nextMinP = 0,
+    nextMaxP = 0;
+    
 var postUrl;
 function toggleHints()
 {
@@ -110,13 +112,22 @@ function selectNextItem()
 	{
 		cardNumber++;
 		if (cardNumber==quiz.length)
-			cardNumber=0;
+		{
+			cardNumber=0;	
+		    itemNumber = -1;
+		    $.post(postUrl, {action: "getNextSet", minP: nextMinP, maxP: nextMaxP},
+                    loadQuiz, 'json');
+            return;
+		}
 		itemNumber=0;
 	}
 	if (itemNumber==0)
 	{
-		if (cardNumber==0)
+		if (cardNumber==0)          /* happens when restarting too */
+		{
 			shuffle(quiz);
+			
+		}
 		shuffle(quiz[cardNumber]);
 		for (var i=0;i<quiz[cardNumber].length;i++)
 			quiz[cardNumber][i].solved=false;
@@ -271,6 +282,11 @@ function completeSolve()
 function loadQuiz(quizData)
 {
     quiz = [];
+    if (quizData['data'].length == 0)
+    {
+        document.getElementById("messages").innerHTML = "The quiz is done.";
+        return;
+    }
     for (var i = 0; i < quizData['data'].length; i++)
     {
         
@@ -285,6 +301,9 @@ function loadQuiz(quizData)
     document.game.word.focus();
     
     selectNextItem();
+    
+    nextMinP = quizData['nextMinP'];
+    nextMaxP = quizData['nextMaxP'];
 }
 
 function initializeQuiz(url)
