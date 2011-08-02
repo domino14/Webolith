@@ -142,7 +142,7 @@ function savedListOptionChangeHandler()
 {
     var optionName = $('#id_listOption option:selected').text();
     $('#savedListsSubmit').button('option', 'label', 'Play!').button('enable');
-
+    $('#savedListsFlashcard').button('enable');
     if (optionName == "Continue list")
     {
         $('#savedListWarning').text("");
@@ -160,6 +160,7 @@ function savedListOptionChangeHandler()
     {
         $('#savedListsSubmit').button('option', 'label', 'Delete selected list');
         $('#savedListWarning').text("This will delete the selected list! Make sure you want to do this!");
+        $('#savedListsFlashcard').button('disable');
     }
 }
 
@@ -362,7 +363,13 @@ function namedListsSubmitClicked()
 
 function namedListsFlashcardClicked()
 {
-
+    $.post(flashcardUrl, {
+                action: 'namedListsFlashcard',
+                lexicon: $('#id_lexicon').val(),
+                namedList: $("#id_namedList").val()
+            },
+            fcRedirect,
+            'json');
 }
 
 function savedListsSubmitClicked()
@@ -395,7 +402,14 @@ function savedListsSubmitClicked()
 
 function savedListsFlashcardClicked()
 {
-
+    $.post(flashcardUrl, {
+                action: 'savedListsFlashcard',
+                lexicon: $('#id_lexicon').val(),
+                listOption: $('#id_listOption').val(),
+                wordList: $("#id_wordList").val()
+            },
+            fcRedirect,
+            'json');
 }
 
 function savedListDelete(data)

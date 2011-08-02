@@ -13,9 +13,11 @@ var
 	variantsSolved=0,
 	pauseInterval,
 	speedNumber=5,
-	speedString='|||||',
+	speedString='|||||',    /* next variables added by cesar */
     nextMinP = 0,
-    nextMaxP = 0;
+    nextMaxP = 0,
+    curAlpha = 1,
+    numAlphas = 0;
     
 var postUrl;
 function toggleHints()
@@ -111,6 +113,7 @@ function selectNextItem()
 	if (itemNumber==quiz[cardNumber].length)
 	{
 		cardNumber++;
+		curAlpha++;
 		if (cardNumber==quiz.length)
 		{
 			cardNumber=0;	
@@ -230,7 +233,7 @@ function updateSolved(newSolution)
 	variantsSolved++;
 //	document.getElementById("trace").innerHTML=totalSolved;
 	totalSolved=solvedItems.push(newSolution);
-	document.getElementById("progress").innerHTML=totalSolved+" quizzed of "+quizLength;
+	document.getElementById("progress").innerHTML=curAlpha+" alphagrams quizzed of "+numAlphas;
 	if (variantsSolved<currentCard.length)
 		document.getElementById("variants").innerHTML="<font color="+newSolution.color+">"+newSolution.word+"</font><br />"+document.getElementById("variants").innerHTML;
 	displaySolved();
@@ -273,7 +276,7 @@ function completeSolve()
 			totalSolved=solvedItems.push(currentCard[i]);
 			displaySolved();
 		}
-	document.getElementById("progress").innerHTML=totalSolved+" quizzed of "+quizLength;
+	document.getElementById("progress").innerHTML=curAlpha+" alphagrams quizzed of "+numAlphas;
 	document.game.word.focus();
 	setTimeout("selectNextItem()",0);
 }
@@ -304,6 +307,8 @@ function loadQuiz(quizData)
     
     nextMinP = quizData['nextMinP'];
     nextMaxP = quizData['nextMaxP'];
+    if ('numAlphas' in quizData)
+        numAlphas = quizData['numAlphas'];
 }
 
 function initializeQuiz(url)
