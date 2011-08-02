@@ -174,15 +174,16 @@ function savedListChangeHandler()
 
 function dimSubmitIfListUnfinished()
 {
-    var listName = $('#id_wordList option:selected').text();
-    if (listName.charAt(listName.length-1) != '*')
+    if ($('#id_wordList option:selected').attr('goneThruOnce') != "true")
     {
         /* list has NOT been gone thru at least once. so going thru first missed should not work! */
         $('#savedListsSubmit').button('disable');
+        $('#savedListsFlashcard').button('disable');
     }
     else
     {
         $('#savedListsSubmit').button('enable');
+        $('#savedListsFlashcard').button('enable');
     }
 }
 
@@ -226,7 +227,11 @@ function processSavedListResults(data)
         var options = [];
         for (var i = 0; i < data.length; i++)
         {
-            options.push('<option value=', '"', data[i]['pk'], '">', data[i]['name'], ' (last saved ', data[i]['lastSaved'], ')');
+            options.push('<option value=', '"', data[i]['pk'], '"');
+            if (data[i]['goneThruOnce'])
+                options.push(' goneThruOnce="true"');
+            
+            options.push('>', data[i]['name'], ' (last saved ', data[i]['lastSaved'], ')');
             if (data[i]['goneThruOnce'])
                 options.push(' *');
             options.push(' -- ', data[i]['numAlphas'], " total alphagrams");
