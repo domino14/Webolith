@@ -109,7 +109,8 @@ What type of list do you want?
         <span id="savedListWarning"></span>
         
         <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
-        <button class="formSubmitButton" id="savedListsFlashcard">Flashcard</button>
+        <button class="formSubmitButton" id="savedListsFlashcardEntire">Flashcard entire list</button>
+        <button class="formSubmitButton" id="savedListsFlashcardFM">Flashcard first missed</button>
         <br>
         <H3>Or upload a new list:</H3>
         
@@ -171,7 +172,8 @@ What type of list do you want?
     $("#namedListsSubmit").click(namedListsSubmitClicked);
     
     $("#searchParamsFlashcard").click(searchParamsFlashcardClicked);
-    $("#savedListsFlashcard").click(savedListsFlashcardClicked);
+    $("#savedListsFlashcardEntire").click(savedListsFlashcardEntireClicked);
+    $("#savedListsFlashcardFM").click(savedListsFlashcardFMClicked);
     $("#namedListsFlashcard").click(namedListsFlashcardClicked);
     
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected

@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from wordwalls.views import searchForAlphagrams
 from wordwalls.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
-from wordwalls.models import NamedList
+from wordwalls.models import NamedList, SavedList
 from base.models import Lexicon, Alphagram
 import json
 from django.core.urlresolvers import reverse
@@ -138,8 +138,10 @@ def getQuizChunkFromNamedList(nlpk, minIndex):
         data = getQuizChunkByIndices(questions, minIndex)
         return data
     
-        
-    
+def getQuizChunkFromSavedList(slpk, minIndex, option):
+    sl = SavedList.objects.get(pk=slpk)
+    if option == SavedListForm.CONTINUE_LIST_CHOICE:
+        questions = sl.curQuestions
     
 @login_required
 def namedListPk(request, nlpk):
@@ -185,7 +187,40 @@ def savedListPk(request, slpk, option):
     if request.method == 'GET':               
         return render_to_response('whitleyCards/quiz.html', context_instance=RequestContext(request))
     elif request.method == 'POST':
-        pass
+        action = request.POST['action']
+        if action == 'getInitialSet':
+            data = getQuizChunkFromSavedList(slpk, 0, option)
+            response = HttpResponse(json.dumps(
+                                                {'data': data[0],
+                                                'nextMinP': data[1],
+                                                'nextMaxP': data[2],
+                                                'numAlphas': data[3] }
+                                                ),
+                                                mimetype="application/javascript")
+            response['Content-Type'] = 'text/plain; charset=utf-8'
+            return response
+        elif action == 'getNextSet':
+            minP = int(request.POST['minP'])
+            
+            if minP == -1: # quiz is over
+                response = HttpResponse(json.dumps({'data': []}),
+                                                    mimetype="application/javascript")
+                response['Content-Type'] = 'text/plain; charset=utf-8'
+                return response
+            
+            maxP = int(request.POST['maxP'])
+            print "getting set", minP, maxP # these are now indices
+            
+            data = getQuizChunkFromSavedList(slpk, minP, option)
+            response = HttpResponse(json.dumps(
+                                                {'data': data[0],
+                                                'nextMinP': data[1],
+                                                'nextMaxP': data[2] }
+                                                ),
+                                                mimetype="application/javascript")
+            response['Content-Type'] = 'text/plain; charset=utf-8'
+            return response
+        
     
 
 def getWordDataByProb(minP, maxP):

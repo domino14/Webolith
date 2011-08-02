@@ -142,7 +142,8 @@ function savedListOptionChangeHandler()
 {
     var optionName = $('#id_listOption option:selected').text();
     $('#savedListsSubmit').button('option', 'label', 'Play!').button('enable');
-    $('#savedListsFlashcard').button('enable');
+    $('#savedListsFlashcardEntire').button('enable');
+    $('#savedListsFlashcardFM').button('enable');
     if (optionName == "Continue list")
     {
         $('#savedListWarning').text("");
@@ -160,8 +161,10 @@ function savedListOptionChangeHandler()
     {
         $('#savedListsSubmit').button('option', 'label', 'Delete selected list');
         $('#savedListWarning').text("This will delete the selected list! Make sure you want to do this!");
-        $('#savedListsFlashcard').button('disable');
+        $('#savedListsFlashcardEntire').button('disable');
+        $('#savedListsFlashcardFM').button('disable');
     }
+    dimFlashcardFMIfListUnfinished();    
 }
 
 function savedListChangeHandler()
@@ -169,8 +172,10 @@ function savedListChangeHandler()
     var optionName = $('#id_listOption option:selected').text();
     if (optionName == "Quiz on first missed")
     {
-        dimSubmitIfListUnfinished();    
+        dimSubmitIfListUnfinished();   
     }
+    
+    dimFlashcardFMIfListUnfinished();    
 }
 
 function dimSubmitIfListUnfinished()
@@ -179,12 +184,23 @@ function dimSubmitIfListUnfinished()
     {
         /* list has NOT been gone thru at least once. so going thru first missed should not work! */
         $('#savedListsSubmit').button('disable');
-        $('#savedListsFlashcard').button('disable');
     }
     else
     {
         $('#savedListsSubmit').button('enable');
-        $('#savedListsFlashcard').button('enable');
+    }
+}
+
+function dimFlashcardFMIfListUnfinished()
+{
+    if ($('#id_wordList option:selected').attr('goneThruOnce') != "true")
+    {
+        /* list has NOT been gone thru at least once. so going thru first missed should not work! */
+        $('#savedListsFlashcardFM').button('disable');
+    }
+    else
+    {
+        $('#savedListsFlashcardFM').button('enable');
     }
 }
 
@@ -400,7 +416,19 @@ function savedListsSubmitClicked()
     }
 }
 
-function savedListsFlashcardClicked()
+function savedListsFlashcardEntireClicked()
+{
+    $.post(flashcardUrl, {
+                action: 'savedListsFlashcard',
+                lexicon: $('#id_lexicon').val(),
+                listOption: $('#id_listOption').val(),
+                wordList: $("#id_wordList").val()
+            },
+            fcRedirect,
+            'json');
+}
+
+function savedListsFlashcardFMClicked()
 {
     $.post(flashcardUrl, {
                 action: 'savedListsFlashcard',
