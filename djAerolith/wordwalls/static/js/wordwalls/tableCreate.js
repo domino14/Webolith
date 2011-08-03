@@ -419,7 +419,7 @@ function savedListsSubmitClicked()
 function savedListsFlashcardEntireClicked()
 {
     $.post(flashcardUrl, {
-                action: 'savedListsFlashcard',
+                action: 'savedListsFlashcardEntire',
                 lexicon: $('#id_lexicon').val(),
                 listOption: $('#id_listOption').val(),
                 wordList: $("#id_wordList").val()
@@ -431,7 +431,7 @@ function savedListsFlashcardEntireClicked()
 function savedListsFlashcardFMClicked()
 {
     $.post(flashcardUrl, {
-                action: 'savedListsFlashcard',
+                action: 'savedListsFlashcardFM',
                 lexicon: $('#id_lexicon').val(),
                 listOption: $('#id_listOption').val(),
                 wordList: $("#id_wordList").val()

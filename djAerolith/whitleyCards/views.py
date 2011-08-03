@@ -9,7 +9,7 @@ from base.models import Lexicon, Alphagram
 import json
 from django.core.urlresolvers import reverse
 
-QUIZ_CHUNK_SIZE = 10
+QUIZ_CHUNK_SIZE = 100
 
 @login_required
 def createQuiz(request):
@@ -38,7 +38,7 @@ def createQuiz(request):
             nlForm = NamedListForm(request.POST)
             if lexForm.is_valid() and nlForm.is_valid():
                 lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
-
+                # lex doesn't matter
                 response = HttpResponse(json.dumps(
                                                     {'url': reverse('flashcards_by_namedList_pk', 
                                                                 args=(nlForm.cleaned_data['namedList'].pk,)),
@@ -47,15 +47,22 @@ def createQuiz(request):
                                                     mimetype="application/javascript")
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
-        elif request.POST['action'] == 'savedListsFlashcard':
+        elif request.POST['action'] == 'savedListsFlashcardEntire' or request.POST['action'] == 'savedListsFlashcardFM':
             lexForm = LexiconForm(request.POST)
             slForm = SavedListForm(request.POST)
             if lexForm.is_valid() and slForm.is_valid():           
                 lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
+                # lex doesn't matter
+                
+                if request.POST['action'] == 'savedListsFlashcardEntire': 
+                    option = SavedListForm.RESTART_LIST_CHOICE
+                elif request.POST['action'] == 'savedListsFlashcardFM':
+                    option = SavedListForm.FIRST_MISSED_CHOICE
+                
                 response = HttpResponse(json.dumps(         
                                                         {'url': reverse('flashcards_by_savedList_pk', 
                                                                         args=(slForm.cleaned_data['wordList'].pk,
-                                                                            slForm.cleaned_data['listOption'])),
+                                                                            option)),
                                                             'success': True}
                                                             ),
                                                             mimetype="application/javascript")
@@ -137,11 +144,7 @@ def getQuizChunkFromNamedList(nlpk, minIndex):
     else:
         data = getQuizChunkByIndices(questions, minIndex)
         return data
-    
-def getQuizChunkFromSavedList(slpk, minIndex, option):
-    sl = SavedList.objects.get(pk=slpk)
-    if option == SavedListForm.CONTINUE_LIST_CHOICE:
-        questions = sl.curQuestions
+
     
 @login_required
 def namedListPk(request, nlpk):
@@ -181,7 +184,21 @@ def namedListPk(request, nlpk):
                                                 mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
             return response
-
+            
+def getQuizChunkFromSavedList(slpk, minIndex, option):
+    sl = SavedList.objects.get(pk=slpk)
+    if option == SavedListForm.RESTART_LIST_CHOICE:
+        questions = json.loads(sl.origQuestions)
+        data = getQuizChunkByIndices(questions, minIndex)
+        return data[0], data[1], data[2], sl.numAlphagrams
+    elif option == SavedListForm.FIRST_MISSED_CHOICE:
+        questionIndices = json.loads(sl.firstMissed)    
+        origQuestions = json.loads(sl.origQuestions)
+        questions = [origQuestions[i] for i in questionIndices]
+        data = getQuizChunkByIndices(questions, minIndex)
+        print questions, data
+        return data[0], data[1], data[2], sl.numFirstMissed
+        
 @login_required
 def savedListPk(request, slpk, option):
     if request.method == 'GET':               
@@ -189,7 +206,7 @@ def savedListPk(request, slpk, option):
     elif request.method == 'POST':
         action = request.POST['action']
         if action == 'getInitialSet':
-            data = getQuizChunkFromSavedList(slpk, 0, option)
+            data = getQuizChunkFromSavedList(slpk, 0, int(option))
             response = HttpResponse(json.dumps(
                                                 {'data': data[0],
                                                 'nextMinP': data[1],
@@ -211,7 +228,7 @@ def savedListPk(request, slpk, option):
             maxP = int(request.POST['maxP'])
             print "getting set", minP, maxP # these are now indices
             
-            data = getQuizChunkFromSavedList(slpk, minP, option)
+            data = getQuizChunkFromSavedList(slpk, minP, int(option))
             response = HttpResponse(json.dumps(
                                                 {'data': data[0],
                                                 'nextMinP': data[1],
