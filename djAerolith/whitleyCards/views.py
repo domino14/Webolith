@@ -9,7 +9,7 @@ from base.models import Lexicon, Alphagram
 import json
 from django.core.urlresolvers import reverse
 
-QUIZ_CHUNK_SIZE = 100
+QUIZ_CHUNK_SIZE = 1000
 
 @login_required
 def createQuiz(request):
