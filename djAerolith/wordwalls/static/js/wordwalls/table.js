@@ -156,8 +156,8 @@ function processQuestionObj(questionObj)
     questionLocationHash = {};
     wrongWordsHash = {};
     wrongAlphasHash = {};
-    var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>\<</td>';
-    solutionsTableBuilder += '<td>Word</td><td>\></td><td>Definition</td></tr>';
+    var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>Rating</td>';
+    solutionsTableBuilder += '<td>\<</td><td>Word</td><td>\></td><td>Definition</td></tr>';
     var tcText = tileClassToText(tileClass);
     numTotalAnswersThisRound = 0;
     numAnswersGottenThisRound = 0;
@@ -186,10 +186,16 @@ function processQuestionObj(questionObj)
                 if (j == 0)
                 {
                     solutionsTableBuilder += '<tr><td>' + qObj[i]['p'] + '</td><td class = "alphagramCell" id="a_' + alphagram + '">';
-                    solutionsTableBuilder += alphagram + '</td>';
+                    solutionsTableBuilder += alphagram;
+                    solutionsTableBuilder += '<td class="starcell" id="r_' + alphagram + '">'; 
+                    solutionsTableBuilder += '<div id="sw' + i + '" class="starwrapper">';
+                    for (var k = 0; k < 5; k++)
+                        solutionsTableBuilder += '<input name="star' +i + '" type="radio" value="' + (k+1) + '"/>';
+                        
+                    solutionsTableBuilder += '</div></td>';
                 }
                 else
-                    solutionsTableBuilder += '<tr><td></td><td></td>';    // an empty probability & alphagram cell
+                    solutionsTableBuilder += '<tr><td></td><td></td><td></td>';    // an empty probability & alphagram & star cell
                 
                 var word = words[j]['w'];
                 solutionsTableBuilder += '<td class="frontHooksCell">' + words[j]['fh'] + '</td>';   // front hooks
@@ -244,6 +250,7 @@ function processQuestionObj(questionObj)
     $('#pointsLabelFraction').text('0/'+numTotalAnswersThisRound);
     $('#pointsLabelPercent').text('0%');
     $('#correctAnswers').html("");
+    $('.starwrapper').stars();
 }
 
 function requestStart()

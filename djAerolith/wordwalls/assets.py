@@ -19,7 +19,8 @@ tableJs = Bundle('js/wordwalls/csrfAjax.js',
             
 register('js_table_create', tableCreateJs)
 
-register('js_table', 'js/aerolith/jquery-1.6.1.min.js', tableJs)
+register('js_table', 'js/aerolith/jquery-1.6.1.min.js', 'js/aerolith/jquery-ui-1.8.14.custom.min.js', 
+                        'stars/jquery.ui.stars.min.js', tableJs)
 
 # css
 
@@ -36,5 +37,5 @@ tableCss = Bundle('css/wordwalls/wordwallsTableSS.css',
                     output='css/wordwalls/packedWWT.css')
         
 register('css_table_create', tableCreateCss)
-register('css_table', tableCss)
+register('css_table','stars/jquery.ui.stars.min.css', tableCss)
 register('css_fileuploader', fileUploaderCss)
