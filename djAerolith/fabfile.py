@@ -1,16 +1,23 @@
-from fabric.api import env, run,roles
+from fabric.api import env, run,roles,cd
 import os
 
 env.key_filename= os.getenv("HOME") + "/Dropbox/aws/cesarkey.pem"
 env.roledefs = {
-    'prod_web': ['ec2-user@aerolith.org']
+    'prod': ['ec2-user@aerolith.org']
 }
 
 @roles('prod')
 def deploy_prod():
     run("kill `cat /home/ec2-user/webolith/gunicorn.pid`")  # kill the gunicorn process
-    run("cd webolith/ && git pull")
-    run("cd djAerolith && python manage.py collectstatic")  # collect static files!
-    # TODO take care of migrations
-    run("python manage.py run_gunicorn --config ../gunicornConf.py --daemon")
-    
+    with cd("webolith"):
+        run("git pull")
+        with cd("djAerolith"):
+            run("python manage.py collectstatic")  # collect static files!
+            # TODO take care of migrations
+            run("python manage.py run_gunicorn --config ../gunicornConf.py --daemon")
+
+@roles('prod')
+def test_prod():
+    with cd("webolith/"):
+        with cd("djAerolith/"):
+            run("ls -al")
