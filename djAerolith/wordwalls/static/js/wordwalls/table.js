@@ -43,6 +43,9 @@ var numTotalAnswersThisRound = 0;
 var numAnswersGottenThisRound = 0;
 var messageTextBoxLimit = 3000; // characters
 
+var solTableOrder = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 2, 
+                        6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47];
+
 function disableSelection(target)
 {
     if (typeof target.onselectstart!="undefined") //IE route
@@ -156,11 +159,54 @@ function processQuestionObj(questionObj)
     questionLocationHash = {};
     wrongWordsHash = {};
     wrongAlphasHash = {};
-    var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>Rating</td>';
-    solutionsTableBuilder += '<td>\<</td><td>Word</td><td>\></td><td>Definition</td></tr>';
+
     var tcText = tileClassToText(tileClass);
     numTotalAnswersThisRound = 0;
     numAnswersGottenThisRound = 0;
+    
+    /* populate solutions table*/
+    var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>Rating</td>';
+    solutionsTableBuilder += '<td>\<</td><td>Word</td><td>\></td><td>Definition</td></tr>';
+    
+    // solutions table should be populated 'vertically', i.e. with qindices 0, 4, 8, ..., 1, 5, 9, ...
+    
+    for (var x = 0; x < 50; x++)
+    {
+        var i = solTableOrder[x];
+        if (i < qObj.length)
+        {
+            var alphagram = qObj[i]['a'];
+            var words = qObj[i]['ws'];
+            var numWords = words.length;
+            for (var j = 0; j < numWords; j++)
+            {
+                if (j == 0)
+                {
+                    solutionsTableBuilder += '<tr><td>' + qObj[i]['p'] + '</td><td class = "alphagramCell" id="a_' + alphagram + '">';
+                    solutionsTableBuilder += alphagram;
+                    solutionsTableBuilder += '<td class="starcell" id="r_' + alphagram + '">'; 
+                    solutionsTableBuilder += '<div id="sw' + i + '" class="starwrapper">';
+                    for (var k = 0; k < 5; k++)
+                        solutionsTableBuilder += '<input name="star' +i + '" type="radio" value="' + (k+1) + '"/>';
+                    
+                    solutionsTableBuilder += '</div></td>';
+                }
+                else
+                    solutionsTableBuilder += '<tr><td></td><td></td><td></td>';    // an empty probability & alphagram & star cell
+            
+                var word = words[j]['w'];
+                solutionsTableBuilder += '<td class="frontHooksCell">' + words[j]['fh'] + '</td>';   // front hooks
+                solutionsTableBuilder += '<td class="solutionCell" id="s_' + word + '">' + word + words[j]['s'] + '</td>';    // word + lex symbols
+                solutionsTableBuilder += '<td class="backHooksCell">' + words[j]['bh'] + '</td>';   // back hooks
+                solutionsTableBuilder += '<td>' + words[j]['d'] + '</td>';  // definition
+                solutionsTableBuilder += '</tr>';
+            }
+        }
+    }
+    solutionsTableBuilder += '</table>';
+    
+    /* populate questions UL */
+    
     for (var i = 0; i < 50; i++)
     {
         var cellStr = "q" + i;
@@ -183,28 +229,8 @@ function processQuestionObj(questionObj)
             
             for (var j = 0; j < numWords; j++)
             {
-                if (j == 0)
-                {
-                    solutionsTableBuilder += '<tr><td>' + qObj[i]['p'] + '</td><td class = "alphagramCell" id="a_' + alphagram + '">';
-                    solutionsTableBuilder += alphagram;
-                    solutionsTableBuilder += '<td class="starcell" id="r_' + alphagram + '">'; 
-                    solutionsTableBuilder += '<div id="sw' + i + '" class="starwrapper">';
-                    for (var k = 0; k < 5; k++)
-                        solutionsTableBuilder += '<input name="star' +i + '" type="radio" value="' + (k+1) + '"/>';
-                        
-                    solutionsTableBuilder += '</div></td>';
-                }
-                else
-                    solutionsTableBuilder += '<tr><td></td><td></td><td></td>';    // an empty probability & alphagram & star cell
-                
+                // let's populate the correct words hash (for keeping track of missed questions for display purposes client-side)
                 var word = words[j]['w'];
-                solutionsTableBuilder += '<td class="frontHooksCell">' + words[j]['fh'] + '</td>';   // front hooks
-                solutionsTableBuilder += '<td class="solutionCell" id="s_' + word + '">' + word + words[j]['s'] + '</td>';    // word + lex symbols
-                solutionsTableBuilder += '<td class="backHooksCell">' + words[j]['bh'] + '</td>';   // back hooks
-                solutionsTableBuilder += '<td>' + words[j]['d'] + '</td>';  // definition
-                solutionsTableBuilder += '</tr>'
-                
-                // let's also populate the correct words hash (for keeping track of missed questions for display purposes client-side)
                 wrongWordsHash[word] = true;     
                 numTotalAnswersThisRound++;  
             }
@@ -213,7 +239,7 @@ function processQuestionObj(questionObj)
         ulBuilder += '</li>';
     }
     ulBuilder += '</ul>';
-    solutionsTableBuilder += '</table>';
+    
     $("#questions").html(ulBuilder);
     var qlistLIs = $(".qle");
     for (var i = 0; i < 50; i++)
@@ -251,6 +277,9 @@ function processQuestionObj(questionObj)
     $('#pointsLabelPercent').text('0%');
     $('#correctAnswers').html("");
     $('.starwrapper').stars();
+    
+    /* hide the stars for now -- use later */
+    $('#solutionsTable td:nth-child(3)').hide();
 }
 
 function requestStart()
