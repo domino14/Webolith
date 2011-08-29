@@ -13,7 +13,7 @@ def deploy_prod():
         run("git pull")
         with cd("djAerolith"):
             run("python manage.py collectstatic")  # collect static files!
-            # TODO take care of migrations
+            run("python manage.py migrate") # execute any needed migrations
             run("python manage.py run_gunicorn --config ../gunicornConf.py --daemon")
 
 @roles('prod')
