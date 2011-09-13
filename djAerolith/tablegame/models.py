@@ -38,8 +38,8 @@ class GenericTableGameModel(models.Model):
             (MULTIPLAYER_GAME, "MultiPlayer"),
             )
     lexicon = models.ForeignKey(Lexicon)
-    host = models.ForeignKey(User, related_name="host")
-    inTable = models.ManyToManyField(User, related_name="inTable") # everyone in table including the host
+    host = models.ForeignKey(User, related_name="%(app_label)s_%(class)s_host")
+    inTable = models.ManyToManyField(User, related_name="%(app_label)s_%(class)s_inTable") # everyone in table including the host
     lastActivity = models.DateTimeField(auto_now=True)   # last activity, unix timestamp
     currentGameState = models.TextField()
     gameType = models.IntegerField(choices=GAME_TYPES)

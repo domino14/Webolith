@@ -35,7 +35,7 @@ DATABASES = {
         'NAME': 'djAerolith',                      # Or path to database file if using sqlite3.
         'USER': settings_local.sqlUser,                      # Not used with sqlite3.
         'PASSWORD': settings_local.sqlPw,                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'OPTIONS': {"init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED" } ,
         # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
