@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load assets %}
+
+{% block ss%}
+{% assets "jquery_css" %}
+   <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+{% endassets %}
+{% endblock %}
+
+{% block title %}Wordwalls - select list{% endblock %}
+
+{% block content %}
+{% assets "js_table_create" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+
+<P></P>
+<div id="lexForm">
+    {{lexForm.as_p}}
+</div>
+
+<div id="listTabs">
+    <ul>
+        <li><a href="#tabs-1">Play WordDash (Beginner)</a></li>
+        <li><a href="#tabs-2">Play WordStruck (Advanced)</a></li>     
+    </ul>
+    <div id="tabs-1">
+        vilula
+        
+    </div>
+    <div id="tabs-2">
+        lol
+    </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');
+    
+    });
+    $
+</script>
+
+{% endblock %}

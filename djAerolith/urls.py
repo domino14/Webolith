@@ -51,6 +51,7 @@ urlpatterns = patterns('',
     #(r'^accounts/profile/$', 'accounts.views.profile'),
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
+    (r'^wordgrids/', include('wordgrids.urls')),
 
 )
 

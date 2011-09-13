@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'django_assets',
     'south',
     'whitleyCards',
+    'wordgrids',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
