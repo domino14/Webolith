@@ -1,6 +1,6 @@
 from django_assets import Bundle, register
 
-flashcardJs = Bundle('js/wordwalls/csrfAjax.js',
+flashcardJs = Bundle('js/aerolith/csrfAjax.js',
                 'js/whitleyCards/quiz.js',
                 filters = 'jsmin', 
                 output='js/whitleyCards/packedFlashcards.js')
