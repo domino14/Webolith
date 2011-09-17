@@ -23,7 +23,8 @@ class WordGridRecord(models.Model):
     whenAchieved = models.DateTimeField(auto_now_add=True)
     pathTaken = models.TextField()  # description of how user achieved this record
     
-class WordGridsTable(GenericTableGameModel):
+class WordgridsTable(GenericTableGameModel):
     currentGrid = models.ForeignKey(WordGrid)
+    challenge = models.CharField(max_length=8)
 
     

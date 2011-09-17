@@ -25,13 +25,8 @@ def homepage(request):
             
             if lexForm.is_valid():
                 lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
-                wgg = WordgridsGame()
-                if request.POST['challenge'] == 1:
-                    print 1
-                elif request.POST['challenge'] == '1':
-                    print 'string 1'
-                    
-                tablenum = wgg.initialize()
+                wgg = WordgridsGame()                    
+                tablenum = wgg.initializeByChallenge(request.POST['challenge'], lex, request.user)
                 if tablenum == 0:
                     raise Http404
                 else:
@@ -56,4 +51,7 @@ def homepage(request):
                             context_instance=ctx)
 @login_required
 def table(request, id):
-    pass
+    ctx = RequestContext( request, {
+      'csrf_token': get_token( request ),
+    } )
+    return render_to_response('wordgrids/table.html', {'tablenum': id}, context_instance=ctx)

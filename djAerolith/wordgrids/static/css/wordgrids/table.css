@@ -1,0 +1,25 @@
+#gameBoard 
+{
+    width: 860px;
+    height: 355px;
+    padding-top: 15px;
+    float: left;
+}
+
+#textBar
+{
+    margin-top: 10px;
+    width: 875px;
+}
+
+div#messages
+{
+    float: left;
+    width: 700px;
+    height: 100px;
+    border-style: inset;
+    border-width: 1px;
+    margin-right: 25px;
+    overflow-y: auto;
+    font-size: 80%;
+}

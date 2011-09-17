@@ -8,6 +8,7 @@ tableCreateJs = Bundle('js/aerolith/csrfAjax.js',
                         output='js/wordgrids/packedTableCreate.js')
             
 tableJs = Bundle('js/aerolith/csrfAjax.js',
+                'js/wordgrids/table.js',
                 filters = 'jsmin', 
                 output='js/wordgrids/packedTable.js')
             

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<head>
+<title>WordGrids - table {{tablenum}}</title>
+
+{% load assets %}
+{% assets "css_wordgrids_table" %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+{% endassets %}
+
+
+</head>
+<body>
+{% block content %}
+
+{% assets "js_wordgrids_table" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+ 
+<div id="gameBoard"></div> 
+ 
+<div id="textBar">
+    <span id="guessLabel">Chat: </span><input type="text" name="Chat" size="127" id="chatInput">
+    <div id="messages"></div>
+</div>
+ 
+ 
+ 
+ 
+ 
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    initializeTable("{% url wordgrids_table tablenum %}", "{{username}}");
+  });
+</script>
+
+{% endblock %}
+
+<div id="netbookBorders">
+</div>
+
+</body>
+
