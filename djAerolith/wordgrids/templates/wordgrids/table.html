@@ -17,10 +17,25 @@
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
  
-<div id="gameBoard"></div> 
  
+<div id="topEncloser">
+    <div id="gameBoard">
+    </div>
+
+    <div id="playerRanks">
+    </div>
+
+    <div id="userBox">
+        <span id="avatarLabel"></span>
+        <span id="usernameLabel">{{username}}</span>
+        <span id="pointsLabelPercent"></span>
+        <span id="pointsLabelFraction"></span>
+        <div id="correctAnswers"></div>
+    </div>
+</div> 
+
 <div id="textBar">
-    <span id="guessLabel">Chat: </span><input type="text" name="Chat" size="127" id="chatInput">
+    <span id="chatLabel">Chat: </span><input type="text" name="Chat" size="127" id="chatInput">
     <div id="messages"></div>
 </div>
  
@@ -32,6 +47,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
     initializeTable("{% url wordgrids_table tablenum %}", "{{username}}");
+    $("#chatInput").keypress(chatInputKeyHandler);
   });
 </script>
 

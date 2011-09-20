@@ -46,7 +46,6 @@ def homepage(request):
     return render_to_response('wordgrids/index.html',
                             {'lexForm' : lexForm,
                              'defaultLexicon': profile.defaultLexicon,
-                              
                             },
                             context_instance=ctx)
 @login_required
@@ -54,4 +53,7 @@ def table(request, id):
     ctx = RequestContext( request, {
       'csrf_token': get_token( request ),
     } )
-    return render_to_response('wordgrids/table.html', {'tablenum': id}, context_instance=ctx)
+    return render_to_response('wordgrids/table.html', 
+                                        {'tablenum': id,
+                                          'username': request.user.username}, 
+                                        context_instance=ctx)
