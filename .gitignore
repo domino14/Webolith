@@ -5,3 +5,5 @@ settings_local.py
 dbCreator-build-desktop
 dbCreator.pro.user
 gunicorn.log
+words/*.trie
+words/*.txt
