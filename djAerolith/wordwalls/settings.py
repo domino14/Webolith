@@ -16,6 +16,6 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-UPLOAD_FILE_LINE_LIMIT = 2000
+UPLOAD_FILE_LINE_LIMIT = 15000
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000    # should still have a limit just in case

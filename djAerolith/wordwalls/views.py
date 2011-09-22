@@ -32,6 +32,7 @@ from wordwalls.models import SavedList, DailyChallengeName, WordwallsGameModel, 
 from datetime import date, datetime
 import sys
 import time
+from django.conf import settings
 
 import wordwalls.settings
 import os
@@ -39,6 +40,7 @@ from locks import lonelock, loneunlock
 from django.middleware.csrf import get_token
 from base.models import alphagrammize
 import random
+import redis
 
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
@@ -418,13 +420,25 @@ def createUserList(upload, filename, lex, user):
 
     pkList = []
     failedAlphagrams = []
+    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
+    pipe = r.pipeline()
+    
     for alphagram in alphaSet:
-        try:
-            a = Alphagram.objects.get(alphagram=alphagram, lexicon=lex)
-            pkList.append(a.pk)
-        except:
-            failedAlphagrams.append(alphagram)
-            # doesn't exist here. TODO send a message saying some of your words couldn't be uploaded.
+        key = alphagram + ':' + str(lex.pk)
+        pipe.get(key)
+        
+    pkList = pipe.execute()
+    
+    # for alphagram in alphaSet:
+    #     try:
+    #         a = Alphagram.objects.get(alphagram=alphagram, lexicon=lex)
+    #         pkList.append(a.pk)
+    #     except:
+    #         failedAlphagrams.append(alphagram)
+    #         # doesn't exist here. TODO send a message saying some of your words couldn't be uploaded.
+    
+    pkList = [int(pk) for pk in pkList] # turn into integers from strings in redis store
+    
     numAlphagrams = len(pkList)
     random.shuffle(pkList)
     print 'number of uploaded alphagrams', numAlphagrams
