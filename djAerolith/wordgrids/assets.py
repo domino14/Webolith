@@ -14,7 +14,10 @@ tableJs = Bundle('js/aerolith/csrfAjax.js',
             
 register('js_wordgrids_table_create', tableCreateJs)
 
-register('js_wordgrids_table', 'js/aerolith/jquery-1.6.1.min.js', 'js/aerolith/raphael-min.js', tableJs)
+register('js_wordgrids_table', 
+            'js/aerolith/jquery-1.6.1.min.js', 
+            'js/aerolith/raphael-min.js', 
+            'js/aerolith/font/Andika_400.font.js', tableJs)
 
 # css
 

@@ -46,7 +46,7 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    initializeTable("{% url wordgrids_table tablenum %}", "{{username}}");
+    initializeTable("{% url wordgrids_table tablenum %}", "{{username}}", "{{grid.letters}}");
     $("#chatInput").keypress(chatInputKeyHandler);
   });
 </script>

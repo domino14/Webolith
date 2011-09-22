@@ -9,6 +9,8 @@ from base.models import Lexicon
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 import json
+from wordgrids.models import WordgridsTable
+
 @login_required
 def homepage(request):    
     
@@ -55,5 +57,6 @@ def table(request, id):
     } )
     return render_to_response('wordgrids/table.html', 
                                         {'tablenum': id,
-                                          'username': request.user.username}, 
+                                          'username': request.user.username,
+                                          'grid': WordgridsTable.objects.get(pk=id).currentGrid}, 
                                         context_instance=ctx)

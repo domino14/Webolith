@@ -1,8 +1,11 @@
 var tableUrl, username;
-function initializeTable(tUrl, u)
+var paper;
+var grid;
+function initializeTable(tUrl, u, g)
 {
     tableUrl = tUrl;
     username = u;
+    grid = g;
     drawBoard();
 }
 
@@ -27,19 +30,33 @@ function submitChat(chatText)
 
 function drawBoard()
 {
-    // Creates canvas 320 × 200 at 10, 50
+    paper = Raphael("gameBoard", 860, 400);
+    drawGrid();
+}
 
-    var set = Raphael(["gameBoard", 320, 200, {
-        type: "rect",
-        x: 10,
-        y: 10,
-        width: 25,
-        height: 25,
-        stroke: "#f00"
-    }, {
-        type: "text",
-        x: 30,
-        y: 40,
-        text: "Dump"
-    }]);
+function drawGrid()
+{
+    var font = paper.getFont("Andika");
+    var tilesize = 50;
+    var lMarg = 100;
+    var tMarg = 10;
+    var radius = 10;
+    var fontSize = 40;
+    for (i = 0; i < 7; i++)
+    {
+        for (j = 0; j < 7; j++)
+        {
+            var x = i*tilesize + lMarg;
+            var y = j*tilesize + tMarg;
+            var r = paper.rect(x, y, tilesize, tilesize, radius).attr({'fill': '#A67D3D', 'cursor': 'pointer'});
+            var letter = grid[j+7*i];
+            /*paper.print(x + tilesize/4, y+tilesize/2, letter, font, fontSize).
+                                    attr();  // left-align*/
+            paper.text(x + tilesize/2, y + tilesize/2, letter).
+                    attr({'font-family': 'sans-serif', 
+                            'font-size': fontSize, 'cursor': 'pointer'});
+
+        }
+    }
+    
 }
