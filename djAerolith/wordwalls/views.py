@@ -261,8 +261,8 @@ def table(request, id):
             
             state = wwg.guess(request.POST['guess'], id, request.user)
             
-            wgm2 = WordwallsGameModel.objects.get(pk=id)
-            newState = json.loads(wgm2.currentGameState)
+            # wgm2 = WordwallsGameModel.objects.get(pk=id)
+            #             newState = json.loads(wgm2.currentGameState)
             response = HttpResponse(json.dumps({'g': state[0], 'C': state[1]}, ensure_ascii=False), 
                         mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
