@@ -6,8 +6,10 @@ from django.conf import settings
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        if len(args) != 1:
+            raise CommandError("Need to enter path to alphs.txt file")
         r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
-        alphs_file = '/Users/cesar/coding/webolith/dbCreator-build-desktop/alphs.txt'
+        alphs_file = args[0]
         alphReader = csv.reader(open(alphs_file, 'rb'))
         
         pipe = r.pipeline(transaction=False)
