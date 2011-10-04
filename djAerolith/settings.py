@@ -24,7 +24,7 @@ DEBUG = settings_local.DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-#     ('Cesar Del Solar', 'delsolar@gmail.com'),
+     ('Cesar Del Solar', 'delsolar@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -194,6 +194,54 @@ INTERNAL_IPS = ('127.0.0.1',)
 # l = logging.getLogger('django.db.backends')
 # l.setLevel(logging.DEBUG)
 # l.addHandler(logging.StreamHandler())
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'log_file':{
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(PROJECT_ROOT, 'logs/django.log'),
+            'maxBytes': '16777216', # 16megabytes
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    'apps': { # I keep all my apps here, but you can also add them one by one
+            'handlers': ['log_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    }
+}
 
 ASSETS_DEBUG = settings_local.ASSETS_DEBUG
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"

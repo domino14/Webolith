@@ -41,12 +41,12 @@ from django.middleware.csrf import get_token
 from base.models import alphagrammize
 import random
 import redis
-
+import logging
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
     dcTimeMap[i.pk] = i.timeSecs
     
-
+logger = logging.getLogger("apps")
 
 @login_required
 def homepage(request):
@@ -417,7 +417,6 @@ def createUserList(upload, filename, lex, user):
     
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
-
     pkList = []
     failedAlphagrams = []
     r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
@@ -425,8 +424,7 @@ def createUserList(upload, filename, lex, user):
     
     for alphagram in alphaSet:
         key = alphagram + ':' + str(lex.pk)
-        pipe.get(key)
-        
+        pipe.get(key) 
     pkList = pipe.execute()
     
     # for alphagram in alphaSet:
@@ -436,14 +434,12 @@ def createUserList(upload, filename, lex, user):
     #     except:
     #         failedAlphagrams.append(alphagram)
     #         # doesn't exist here. TODO send a message saying some of your words couldn't be uploaded.
-    
     pkList = [int(pk) for pk in pkList] # turn into integers from strings in redis store
-    
     numAlphagrams = len(pkList)
     random.shuffle(pkList)
-    print 'number of uploaded alphagrams', numAlphagrams
-    print 'elapsed time', time.time() - t1
-
+    logger.info('number of uploaded alphagrams: %d', numAlphagrams)
+    logger.info('elapsed time: %f', time.time() - t1)
+    logger.info('user: %s, filename: %s', user.username, filename)
     addlMsg = ""
     if len(failedAlphagrams) > 0:
         addlMsg = ('Could not process all your alphagrams. (Did you choose the right lexicon?) ' +

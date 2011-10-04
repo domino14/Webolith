@@ -12,7 +12,9 @@ def deploy_prod():
     with cd("webolith"):
         run("git pull")
         with cd("djAerolith"):
-            run("python manage.py collectstatic")  # collect static files!
+            with settings(warn_only=True):
+                run("mkdir logs")
+            run("python manage.py collectstatic --noinput")  # collect static files!
             run("python manage.py migrate") # execute any needed migrations
             run("python manage.py run_gunicorn --config ../gunicornConf.py --daemon")
 
