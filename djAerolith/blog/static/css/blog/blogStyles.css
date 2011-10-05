@@ -2,9 +2,10 @@
 {
     border: 1px dotted;
     border-color: blue;
-    margin-left: 200px;
+    margin-left: 100px;
     margin-bottom: 20px;
     margin-right: 200px;
+    padding: 10px; 
 }
 
 .date
@@ -33,7 +34,8 @@
     border-color: blue;
     margin-left: 200px;
     margin-bottom: 20px;
-    margin-right: 200px; 
+    margin-right: 200px;
+    padding: 10px; 
 }
 
 .inline_tag_list
@@ -41,11 +43,10 @@
     font-style: italic;
     color: gray;
 }
-
 .body
 {
     border-bottom: 1px solid;
-    border-color: blue;
+    border-color: blue;   
 }
 
 .plzLogin
@@ -61,7 +62,7 @@
 
 .name
 {
-    background-color: orange;
+    background-color: #eedd82;
 }
 
 #id_honeypot

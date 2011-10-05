@@ -19,6 +19,7 @@ def deploy_prod():
                 run("python manage.py collectstatic --noinput")  # collect static files!
                 run("python manage.py migrate") # execute any needed migrations
                 run("python manage.py run_gunicorn --config ../gunicornConf.py --daemon")
+                run("sleep 3")
 
 @roles('prod')
 def test_prod():
