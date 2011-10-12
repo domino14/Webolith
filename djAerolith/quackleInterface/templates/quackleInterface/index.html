@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Wordwalls - select list{% endblock %}
+
+{% block content %}
+
+<P>
+    The Quackle interface at the moment consists of a 'bookmarklet'. Please drag the following link to your Bookmarks bar in your browser.
+</P>
+<P>
+    <a href="javascript:(function(){var head=document.getElementsByTagName('head')[0],script=document.createElement('script');script.type='text/javascript';script.src='http://127.0.0.1:8000/static/js/quackleInterface/bookmarklet.js?' + Math.floor(Math.random()*99999);head.appendChild(script);})(); void 0">Quackle Interface Bookmarklet</a>
+</P>
+<P>
+    To use, it is very simple. Go to a cross-tables annotated game, and whenever you want to ask for Quackle's opinion on a play, click the bookmarklet in your bookmarks bar. Quackle may take up to a minute or two for some positions.
+    The results will be shown under the game. These are only visible to you; if you wish to share them, simply copy and paste them to the discussion thread below!
+</P>
+
+{% endblock %}
+
+{% comment %} Aerolith 2.0: A web-based word game website
+Copyright (C) 2011 Cesar Del Solar
+ 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+To contact the author, please email delsolar at gmail dot com
+{% endcomment %}

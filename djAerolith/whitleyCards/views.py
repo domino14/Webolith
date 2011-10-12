@@ -70,6 +70,9 @@ def createQuiz(request):
                 return response
                 # don't do any checking right now for user access to other user lists. why? maybe people can share lists this way
                 # as long as we're not letting the users delete lists, i think it should be fine.
+    response = HttpResponse(json.dumps({'success': False}), mimetype="application/javascript")
+    response['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
     
 def getQuizChunkByProb(minP, maxP):
     maxPGet = maxP

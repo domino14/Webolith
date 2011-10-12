@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     #(r'^accounts/profile/$', 'accounts.views.profile'),
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
-
+    (r'^quackleInterface/', include('quackleInterface.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true

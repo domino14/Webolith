@@ -273,20 +273,18 @@ def table(request, id):
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.checkGameEnded(id)
-            if ret:
-                response = HttpResponse(json.dumps({'g': False}, ensure_ascii=False), 
-                            mimetype="application/javascript")
-                response['Content-Type'] = 'text/plain; charset=utf-8'
-                return response
+            response = HttpResponse(json.dumps({'g': not ret}, ensure_ascii=False),     # 'going' is the opposite of 'game ended'
+                        mimetype="application/javascript")
+            response['Content-Type'] = 'text/plain; charset=utf-8'
+            return response
         elif action == "giveUp":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
-            ret = wwg.giveUp(request.user, id)
-            if ret:
-                response = HttpResponse(json.dumps({'g': False}, ensure_ascii=False), 
-                            mimetype="application/javascript")
-                response['Content-Type'] = 'text/plain; charset=utf-8'
-                return response
+            ret = wwg.giveUp(request.user, id)        
+            response = HttpResponse(json.dumps({'g': not ret}, ensure_ascii=False), 
+                        mimetype="application/javascript")
+            response['Content-Type'] = 'text/plain; charset=utf-8'
+            return response
         elif action == "save":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()

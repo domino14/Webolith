@@ -32,6 +32,9 @@ import wordwalls.settings
 import os
 from django.db import transaction
 from locks import lonelock
+import logging
+
+logger = logging.getLogger("apps")
 
 class WordwallsGame:
 
@@ -352,8 +355,10 @@ class WordwallsGame:
             wgm.save()
             
             return True
-        
-        return False
+        else:
+            logger.debug('Got game ended but did not actually end: start_time=%f timer=%f now=%f', 
+                            state['quizStartTime'], state['timerSecs'], time.time())
+            return False
     
     def giveUp(self, user, tablenum):
         try:

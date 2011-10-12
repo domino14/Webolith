@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     'django_assets',
     'south',
     'whitleyCards',
+    'quackleInterface',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:

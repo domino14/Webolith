@@ -346,7 +346,7 @@ function fcRedirect(data)
     }
     else
     {
-        alert('!');
+        //alert('!');
     }
 }
 
