@@ -3,7 +3,7 @@ import os
 
 env.key_filename= os.getenv("HOME") + "/Dropbox/aws/cesarkey.pem"
 env.roledefs = {
-    'prod': ['ubuntu@ec2-50-18-16-103.us-west-1.compute.amazonaws.com']
+    'prod': ['ubuntu@aerolith.org']
 }
 
 @roles('prod')
