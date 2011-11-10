@@ -22,6 +22,38 @@ var url;
 var flashcardUrl;
 var dcTimeMap;
 
+var needNewSig = false;
+function establishSocketConnection(server) {
+    var socket = io.connect(socketServer, 
+                    {rememberTransport: false, 
+                    'reconnect': true,
+                    'reconnection delay': 500,
+                    'max reconnection attempts': 10,
+                    'secure': true});
+
+    socket.on('connect', function() {
+        if (!needNewSig) {
+            socket.emit('connect', SIGNGATURE);
+        }
+        else {   
+            // if node.js goes down because of a server update (or crashes...) now that we reconnected we need to request and re-emit a new signature
+           $.post('/wordwalls/getNewSignature/', 
+                SIGNATURE, 
+                function(data) {
+                    socket.emit('connect', data);
+                }, 'json');
+        }
+    });
+
+    socket.on('message', function(message){
+        processMessage(message);
+    });
+
+    socket.on('disconnect', function() {
+        needNewSig = true;
+    });
+}
+
 function changeMaxProb()
 {
     var lex = $('#id_lexicon option:selected').text();
