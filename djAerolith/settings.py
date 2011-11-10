@@ -250,3 +250,5 @@ RECAPTCHA_PRIVATE_KEY = settings_local.RECAPTCHA_PRIVATE_KEY
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+
+SOCKET_IO_SERVER = 'http://www.aerolith.org:1988'
