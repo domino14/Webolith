@@ -356,7 +356,7 @@ class WordwallsGame:
             
             return True
         else:
-            logger.debug('Got game ended but did not actually end: start_time=%f timer=%f now=%f', 
+            logger.info('Got game ended but did not actually end: start_time=%f timer=%f now=%f', 
                             state['quizStartTime'], state['timerSecs'], time.time())
             return False
     
@@ -628,7 +628,7 @@ class WordwallsGame:
     def generateDailyChallengePks(self, challengeName, lex, chDate):
         t1 = time.time()
         # capture number. first try to match to today's lists
-        m = re.match("Today's (?P<length>[0-9]+)s", challengeName.name)
+        m = re.match("(?:Today's|Moar) (?P<length>[0-9]+)s", challengeName.name)
         
         if m:   # ignore the challenge date
             wordLength = int(m.group('length'))

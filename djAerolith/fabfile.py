@@ -26,3 +26,10 @@ def test_prod():
     with cd("webolith/"):
         with cd("djAerolith/"):
             run("ls -al")
+
+@roles('prod')
+def prod_fixtures():
+    with cd("webolith"):
+        with cd("djAerolith"):
+            with prefix("workon aeroenv"):
+                run("python manage.py loaddata dcNames") 

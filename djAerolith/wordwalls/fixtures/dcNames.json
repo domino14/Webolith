@@ -118,5 +118,45 @@
       "name": "Week's Bingo Toughies",
       "timeSecs": 270
     }
-  }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 16,
+    "fields": {
+      "name": "Moar 7s",
+      "timeSecs": 240
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 17,
+    "fields": {
+      "name": "Moar 8s",
+      "timeSecs": 240
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 18,
+    "fields": {
+      "name": "Moar 9s",
+      "timeSecs": 300
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 19,
+    "fields": {
+      "name": "Moar 10s",
+      "timeSecs": 330
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 20,
+    "fields": {
+      "name": "Moar 11s",
+      "timeSecs": 330
+    }
+  },
 ]
