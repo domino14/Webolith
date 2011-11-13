@@ -2,14 +2,14 @@ from django_assets import Bundle, register
 
 # javascript
 
-tableCreateJs = Bundle('js/wordwalls/csrfAjax.js', 
+tableCreateJs = Bundle('js/aerolith/csrfAjax.js', 
                         'js/wordwalls/challengeInfoProcess.js', 
                         'js/wordwalls/tableCreate.js',
                         'js/aerolith/fileuploader.js',
                         filters='jsmin', 
                         output='js/wordwalls/packedTableCreate.js')
             
-tableJs = Bundle('js/wordwalls/csrfAjax.js',
+tableJs = Bundle('js/aerolith/csrfAjax.js',
                 'js/aerolith/json2.js',
                 'js/wordwalls/challengeInfoProcess.js',
                 'js/wordwalls/table.js',

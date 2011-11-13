@@ -144,6 +144,8 @@ INSTALLED_APPS = (
     'south',
     'whitleyCards',
     'quackleInterface',
+    'wordgrids',
+    'crosswordgame'
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
