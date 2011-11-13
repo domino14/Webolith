@@ -8,8 +8,6 @@ env.roledefs = {
 
 @roles('prod')
 def deploy_prod():    
-    with settings(warn_only=True):
-        run("kill `cat /home/ubuntu/webolith/gunicorn.pid`")  # kill the gunicorn process    
     with cd("webolith"):
         run("git pull")
         with cd("djAerolith"):
