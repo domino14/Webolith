@@ -18,8 +18,7 @@ def deploy_prod():
             with prefix("workon aeroenv"):
                 run("python manage.py collectstatic --noinput")  # collect static files!
                 run("python manage.py migrate") # execute any needed migrations
-                run("python manage.py run_gunicorn --config ../gunicornConf.py --daemon")
-                run("sleep 3")
+            run("sudo supervisorctl reload")
 
 @roles('prod')
 def test_prod():
