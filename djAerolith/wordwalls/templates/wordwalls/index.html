@@ -151,7 +151,7 @@ What type of list do you want?
                                 "{{dcTimes|escapejs}}", 
                                 "{% url wordwalls_create_table %}",
                                 "{% url flashcards_create_quiz %}");
-    establishSocketConnection("{% value_from_settings SOCKET_IO_SERVER %}");
+    //establishSocketConnection("{% value_from_settings SOCKET_IO_SERVER %}");
     var labelSize = '130px';
     $("label[for='id_wordLength']").width(labelSize);
     $("label[for='id_probabilityMin']").width(labelSize);
