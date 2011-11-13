@@ -22,5 +22,5 @@ urlpatterns = patterns('',
     url(r'^$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
     url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table', name='wordwalls_table'),
     url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload' ),
-    url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
+   # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
     )
