@@ -143,7 +143,10 @@ def getQuizChunkFromNamedList(nlpk, minIndex):
     questions = json.loads(nl.questions)
     if nl.isRange:
         data = getQuizChunkByProb(questions[0] + minIndex, questions[1])
-        return (data[0], data[1] - questions[0], data[2])
+        if data[1] != -1:
+            return (data[0], data[1] - questions[0], data[2])
+        else:
+            return (data[0], -1, data[2])
     else:
         data = getQuizChunkByIndices(questions, minIndex)
         return data
@@ -168,7 +171,6 @@ def namedListPk(request, nlpk):
             return response
         elif action == 'getNextSet':
             minP = int(request.POST['minP'])
-            
             if minP == -1: # quiz is over
                 response = HttpResponse(json.dumps({'data': []}),
                                                     mimetype="application/javascript")
