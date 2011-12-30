@@ -232,6 +232,8 @@ void LexiconMap::createMap()
                                        "OWL2.trie", "OWL2_r.trie", 4, "North American 2006 Official Word List 2006"));
     map.insert("CSW07", LexiconInfo("CSW07", "CSW07.txt", englishLetterDist, "CSW07.trie", "CSW07_r.trie", 5,
                                     "Collins 2007 International English Word List"));
+    map.insert("CSW12", LexiconInfo("CSW12", "CSW12.txt", englishLetterDist, "CSW12.trie", "CSW12_r.trie", 6,
+                                    "Collins 2012 International English Word List"));
     /* my lexicon indices are 4 and 5 because that's the way they first got made, and if I change them now
        in production it'll screw everything up (saved lists) */
 

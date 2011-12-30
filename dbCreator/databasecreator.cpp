@@ -99,9 +99,10 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     else lessThan = ENGLISH_LESS_THAN;
 
     bool updateCSWPoundSigns = (lexiconName == "CSW07");
+    bool updateCSWPlusSigns = (lexiconName == "CSW12");
     /* update lexicon symbols if this is CSW (compare to OWL2)*/
     LexiconInfo* lexInfoAmerica = &(lexiconMap->map["OWL2"]);
-
+    LexiconInfo* lexInfoCSW07 = &(lexiconMap->map["CSW07"]);
 
     QTextStream in(&file);
     QHash <QString, QString> definitionsHash;
@@ -175,8 +176,10 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             QString backHooks = lexInfo->dawg.findHooks(word.toAscii());
             QString frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
             QString lexSymbols = "";
-            if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
+            if ( (updateCSWPoundSigns||updateCSWPlusSigns) && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
                 lexSymbols = "#";
+	    if ( (updateCSWPlusSigns) && lexInfoCSW07 && !lexInfoCSW07->dawg.findWord(word.toAscii()))
+                lexSymbols += "+";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
                         << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
                         << frontHooks << "," << backHooks << endl;    

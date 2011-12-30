@@ -48,7 +48,7 @@ def createNamedLists(lex):
                             name='JQXZ ' + friendlyNumberMap[i])
             nl.save()
     
-        print 'csw', i
+        print 'csw07', i
         if lex.lexiconName == 'CSW07':
             # only in csw07
             pks = []
@@ -63,11 +63,26 @@ def createNamedLists(lex):
                             name='CSW07 ' + friendlyNumberMap[i] + ' not in OWL2')
             
             nl.save()
+        
+        if lex.lexiconName == 'CSW12':
+            pks = []
+            for p in range(minProbPk, maxProbPk+1):
+                alph = Alphagram.objects.get(pk=p)
+                if len(alph.word_set.filter(lexiconSymbols='#+')) > 0:
+                    # this is a CSW12 alphagram
+                    pks.append(p)
+            
+            nl = NamedList(lexicon=lex, numQuestions=len(pks), wordLength=i, isRange=False,
+                            questions=json.dumps(pks),
+                            name='CSW12 ' + friendlyNumberMap[i] + ' not in OWL2')
+            
+            nl.save()
             
     print lex, "elapsed", time.time() - t1
 class Command(NoArgsCommand):
     help = """Populates database with named lists"""
 
     def handle_noargs(self, **options):
+        NamedList.objects.all().delete()
         for lex in Lexicon.objects.all():
             createNamedLists(lex)
