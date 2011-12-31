@@ -74,8 +74,21 @@ def createNamedLists(lex):
             
             nl = NamedList(lexicon=lex, numQuestions=len(pks), wordLength=i, isRange=False,
                             questions=json.dumps(pks),
-                            name='CSW12 ' + friendlyNumberMap[i] + ' not in OWL2')
+                            name='CSW12 ' + friendlyNumberMap[i] + ' not in CSW07')
             
+            nl.save()
+            
+            pks = []
+            for p in range(minProbPk, maxProbPk+1):
+                alph = Alphagram.objects.get(pk=p)
+                if len(alph.word_set.filter(lexiconSymbols__contains='#')) > 0:  #   # or #+
+                    # this is a CSW 7 and/or 12 alphagram
+                    pks.append(p)
+
+            nl = NamedList(lexicon=lex, numQuestions=len(pks), wordLength=i, isRange=False,
+                            questions=json.dumps(pks),
+                            name='CSW12 ' + friendlyNumberMap[i] + ' not in OWL2')
+
             nl.save()
             
     print lex, "elapsed", time.time() - t1
