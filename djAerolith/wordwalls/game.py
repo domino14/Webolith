@@ -182,7 +182,7 @@ class WordwallsGame:
             return 0
 
         if listOption == SavedListForm.FIRST_MISSED_CHOICE and savedList.goneThruOnce == False:
-            print 'error, first missed list only valid if player has gone thru list once'
+            logger.info('error, first missed list only valid if player has gone thru list once')
             return 0    # can't do a 'first missed' list if we haven't gone thru it once!        
         
         addlParams = {}
@@ -309,7 +309,7 @@ class WordwallsGame:
         
         qsSet = set(qs)
         if len(qsSet) != len(qs):
-            print "Question set is not unique!!"
+            logger.info("Question set is not unique!!")
         
         questions = []
         answerHash = {}
@@ -356,8 +356,8 @@ class WordwallsGame:
             
             return True
         else:
-            logger.info('Got game ended but did not actually end: start_time=%f timer=%f now=%f', 
-                            state['quizStartTime'], state['timerSecs'], time.time())
+            logger.info('Got game ended but did not actually end: start_time=%f timer=%f now=%f quizGoing=%s', 
+                            state['quizStartTime'], state['timerSecs'], time.time(), state['quizGoing'])
             return False
     
     def giveUp(self, user, tablenum):
@@ -368,7 +368,7 @@ class WordwallsGame:
         if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and user in wgm.inTable.all():
             state = json.loads(wgm.currentGameState)
             if state['quizGoing'] == False: 
-                print "the quiz isn't going. can't give up."
+                logger.info("the quiz isn't going. can't give up.")
                 return False
             
             state['timeRemaining'] = 0
@@ -397,7 +397,7 @@ class WordwallsGame:
             return {'success': False}
     
     def save(self, user, tablenum, listname):
-        print "called save"
+        logger.info("called save")
         ret = {'success': False}
         try:
             wgm = WordwallsGameModel.objects.get(pk=tablenum)
@@ -504,10 +504,10 @@ class WordwallsGame:
         # check if the list is unique
         uniqueMissed = set(missed)
         if len(uniqueMissed) != len(missed):
-            print "missed list is not unique!!"
+            logger.info("missed list is not unique!!")
             #raise Exception('Missed list is not unique')
         
-        print len(missedPks), "missed this round", ",", len(missed), "missed total"
+        logger.info("%d missed this round, %d missed total", len(missedPks), len(missed))
         if state['gameType'] == 'challenge':
             state['gameType'] = 'challengeOver'
             self.createChallengeLeaderboardEntries(state, tablenum, wgm)
@@ -619,8 +619,6 @@ class WordwallsGame:
             return True #todo unless there is an invite list, etc in the future
         # else    
         if user != wgm.host:    # single player, return false!
-            print user
-            print wgm.host
             return False
         
         return True     
@@ -633,29 +631,23 @@ class WordwallsGame:
         if m:   # ignore the challenge date
             wordLength = int(m.group('length'))
             if wordLength < 2 or wordLength > 15: return None   # someone is trying to break my server >:(
-            print 'Generating daily challenges', lex, wordLength
+            logger.info('Generating daily challenges %s %d', lex, wordLength)
             minP = 1
             maxP = json.loads(lex.lengthCounts)[repr(wordLength)] # lengthCounts is a dictionary of strings as keys        
             
             r = range(minP, maxP+1)
             random.shuffle(r)
             r = r[:50]  # just the first 50 elements for the daily challenge
-            print r
             pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
             
-            print "time to gen", time.time() - t1
             return pks, challengeName.timeSecs
         else:
             if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
                 from wordwalls.management.commands.genMissedBingoChalls import genPks
                 mbs = genPks(lex, 0)
-                print mbs
-                print "---"
                 pks = [m[0] for m in mbs]
-                print pks
                 random.shuffle(pks)
                 
-                print "time to gen", time.time() - t1
                 return pks, challengeName.timeSecs
         return None        
             

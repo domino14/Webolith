@@ -67,7 +67,7 @@ def homepage(request):
     
     if request.method == 'POST':                
         if 'action' in request.POST:
-            print request.POST['action']
+            logger.info(request.POST['action'])
             if request.POST['action'] == 'getDcResults':
                 try:
                     lex = request.POST['lexicon']
@@ -120,7 +120,6 @@ def homepage(request):
                     lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
                     wwg = WordwallsGame()
                     challengeName = DailyChallengeName.objects.get(name=dcForm.cleaned_data['challenge'])
-                    print 'challenge:', challengeName, lex
                     tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
                     if tablenum == 0:
                         raise Http404
@@ -137,7 +136,6 @@ def homepage(request):
                 lexForm = LexiconForm(request.POST)
                 timeForm = TimeForm(request.POST)
                 fwForm = FindWordsForm(request.POST)   # form bound to the POST data
-                print request.POST
                 if lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid():
                     lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
                     quizTime = int(round(timeForm.cleaned_data['quizTime'] * 60))
@@ -235,12 +233,11 @@ def homepage(request):
 
 @login_required
 def table(request, id):        
-    print "request:", request.method
+    logger.info("request: %s", request.method)
 
     if request.method == 'POST':
         action = request.POST['action']
-        print action
-        
+        logger.info('action %s', action)
         if action == "start":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
@@ -255,11 +252,11 @@ def table(request, id):
             return response
         elif action == "guess":
             lonelock(WordwallsGameModel, id)
-            print request.POST['guess']
+            logger.info('%s: guess %s, table %s', request.user.username, request.POST['guess'], id)
             
             wwg = WordwallsGame()
             
-            state = wwg.guess(request.POST['guess'], id, request.user)
+            state = wwg.guess(request.POST['guess'].strip(), id, request.user)
             
             # wgm2 = WordwallsGameModel.objects.get(pk=id)
             #             newState = json.loads(wgm2.currentGameState)
@@ -289,7 +286,6 @@ def table(request, id):
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.save(request.user, id, request.POST['listname'])
-            print "save returned: ", ret
             response = HttpResponse(json.dumps(ret, ensure_ascii=False), 
                             mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
@@ -299,7 +295,6 @@ def table(request, id):
             wwg = WordwallsGame()
             ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
             # this shouldn't return a response, because it's not going to be caught by the javascript
-            print "giveup and save returned: ", ret
             response = HttpResponse(json.dumps(ret, ensure_ascii=False), 
                             mimetype="application/javascript")
             response['Content-Type'] = 'text/plain; charset=utf-8'
@@ -307,7 +302,6 @@ def table(request, id):
         elif action == "savePrefs":
             profile = request.user.get_profile()
             profile.customWordwallsStyle = request.POST['prefs']
-            print "saving custom style", profile.customWordwallsStyle
             profile.save()
             response = HttpResponse(json.dumps({'success': True}), 
                             mimetype="application/javascript")
@@ -332,7 +326,6 @@ def table(request, id):
             try:
                 profile = request.user.get_profile()
                 style = profile.customWordwallsStyle
-                print 'style', style
                 if style != "":
                     params['style'] = style
             except:
@@ -364,7 +357,6 @@ def ajax_upload(request):
                 return HttpResponseBadRequest( "AJAX request not valid" )
             # not an ajax upload, so it was the "basic" iframe version with submission via form
         else:
-            print "is not ajax"
             is_raw = False
             if len( request.FILES ) == 1:
                     # FILES is a dictionary in Django but Ajax Upload gives the uploaded file an
@@ -416,33 +408,29 @@ def createUserList(upload, filename, lex, user):
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
     pkList = []
-    failedAlphagrams = []
     r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
     pipe = r.pipeline()
     
     for alphagram in alphaSet:
         key = alphagram + ':' + str(lex.pk)
         pipe.get(key) 
-    pkList = pipe.execute()
+    pkListCopy = pipe.execute()
+    addlMsg = ""
     
-    # for alphagram in alphaSet:
-    #     try:
-    #         a = Alphagram.objects.get(alphagram=alphagram, lexicon=lex)
-    #         pkList.append(a.pk)
-    #     except:
-    #         failedAlphagrams.append(alphagram)
-    #         # doesn't exist here. TODO send a message saying some of your words couldn't be uploaded.
-    pkList = [int(pk) for pk in pkList] # turn into integers from strings in redis store
+    for pk in pkListCopy:
+        if pk:
+            pkList.append(int(pk))
+        else:
+            addlMsg = 'Could not process all your alphagrams. (Did you choose the right lexicon?)'
+    
+    pkList = [int(pk) for pk in pkList if pk] # turn into integers from strings in redis store
     numAlphagrams = len(pkList)
     random.shuffle(pkList)
     logger.info('number of uploaded alphagrams: %d', numAlphagrams)
     logger.info('elapsed time: %f', time.time() - t1)
     logger.info('user: %s, filename: %s', user.username, filename)
-    addlMsg = ""
-    if len(failedAlphagrams) > 0:
-        addlMsg = ('Could not process all your alphagrams. (Did you choose the right lexicon?) ' +
-                                 'You had ' + str(len(failedAlphagrams)) + ' unmatched alphagrams (the first of which is ' +
-                                 failedAlphagrams[0] +').')
+
+        
     
     sl = SavedList(lexicon=lex, name=filename_stripped, user=user,
                     numAlphagrams=numAlphagrams, numCurAlphagrams=numAlphagrams, numFirstMissed=0,
@@ -484,7 +472,6 @@ def getLeaderboardDataDcInstance(dc):
 def getLeaderboardData(lex, chName):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
-        print "lex", lex_object
     except:
         return None
     
@@ -493,10 +480,8 @@ def getLeaderboardData(lex, chName):
         chdate = challengeDate(delta=0)
     else:
         chdate = date.today()
-    print chdate
     try:
         dc = DailyChallenge.objects.get(lexicon=lex_object, date=chdate, name=chName)
-        print "dc", dc
     except:
         return None # daily challenge doesn't exist
     
