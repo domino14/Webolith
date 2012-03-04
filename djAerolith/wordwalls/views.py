@@ -72,7 +72,12 @@ def homepage(request):
                 try:
                     lex = request.POST['lexicon']
                     chName = DailyChallengeName.objects.get(name=request.POST['chName'])
-                    leaderboardData = getLeaderboardData(lex, chName)
+                    try:
+                        date = datetime.strptime(request.POST['date'], '%m/%d/%Y').date()
+                    except:
+                        date = date.today()
+                    
+                    leaderboardData = getLeaderboardData(lex, chName, date)
                     response = HttpResponse(json.dumps(leaderboardData, ensure_ascii=False), 
                                             mimetype="application/javascript")
                     response['Content-Type'] = 'text/plain; charset=utf-8'
@@ -469,17 +474,17 @@ def getLeaderboardDataDcInstance(dc):
     
     return retData
 
-def getLeaderboardData(lex, chName):
+def getLeaderboardData(lex, chName, date):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
     except:
         return None
     
     if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-        from wordwalls.management.commands.genMissedBingoChalls import challengeDate
-        chdate = challengeDate(delta=0)
+        from wordwalls.management.commands.genMissedBingoChalls import challengeDateFromReqDate
+        chdate = challengeDateFromReqDate(date)
     else:
-        chdate = date.today()
+        chdate = date
     try:
         dc = DailyChallenge.objects.get(lexicon=lex_object, date=chdate, name=chName)
     except:

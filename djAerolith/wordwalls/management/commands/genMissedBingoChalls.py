@@ -36,6 +36,7 @@ def genPksByDC(dcName, num, minDate, maxDate, lex):
     bingers = sorted(mbDict.items(), key=lambda x: x[1][1], reverse=True)[:num]
     return bingers
         
+# for toughie challenges
 def challengeDate(delta):
     datenow = date.today() + timedelta(days=delta)
     diff = datenow.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
@@ -45,6 +46,14 @@ def challengeDate(delta):
     chDate = datenow - timedelta(days=diff)
     return chDate
 
+# for toughie challenges
+def challengeDateFromReqDate(reqDate):
+    diff = reqDate.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
+    if diff < 0:
+        diff = 7-abs(diff)
+
+    chDate = reqDate - timedelta(days=diff)
+    return chDate
 
 def genPks(lex, delta):    
     t1 = time.time()

@@ -1,0 +1,1 @@
+from testBasics import ChallengeTestCase

@@ -80,6 +80,7 @@ function challengeChangeEventHandler()
 
 function challengeChanged()
 {
+    var date = $('#datepicker').val();
     var cVal = $('#id_challenge option:selected').val();
     if (cVal == "")
     {
@@ -91,7 +92,11 @@ function challengeChanged()
     {
         var cName = $('#id_challenge option:selected').text();
         var lexName = $('#id_lexicon option:selected').text();
-        $('#dcResultsLabel').text('(' + lexName + ') ' + cName + ' leaderboard');
+        var lblText = '(' + lexName + ') ' + cName + ' leaderboard';
+        if (date) {
+            lblText += ' (' + date + ')';
+        }
+        $('#dcResultsLabel').text(lblText);
         getDcResults();
         $("#id_quizTime").val(dcTimeMap[cVal]/60.0);
     }
@@ -150,7 +155,7 @@ function initializeTableCreatePage(lStr, dcStr, _url, furl)
 
     /* event handlers - today's challenges */
     
-    
+    $('#datepicker').change(challengeChangeEventHandler);
     $('#id_challenge').change(challengeChangeEventHandler);
     $('#id_lexicon').change(challengeChangeEventHandler);
     
@@ -241,7 +246,9 @@ function getDcResults()
     // gets daily challenge results from server
     $.post(url, {action: 'getDcResults', 
                 lexicon: $('#id_lexicon option:selected').text(),
-                chName: $('#id_challenge option:selected').text() }, 
+                chName: $('#id_challenge option:selected').text(),
+                date: $('#datepicker').val()
+                 }, 
                 populateDcResults, 'json')
 }
 
