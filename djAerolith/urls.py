@@ -61,7 +61,8 @@ urlpatterns = patterns('',
     (r'^socket_token/', 'views.socket_token'),
     (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'}),
     (r'^nsc2013/', 'nsc2013.views.main'),
-    ('^nexus/', include(nexus.site.urls))
+    ('^nexus/', include(nexus.site.urls)),
+    (r'^crosswords/', include('crosswordgame.urls'))
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
