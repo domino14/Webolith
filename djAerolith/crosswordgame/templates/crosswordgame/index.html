@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+{% load assets %}
+<head>
+{% assets "js_crosswordgame_table" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+</head>
+
+<body>
+    hi {{username}}
+    
+    <div id="gameBoard"></div>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        console.log('here first')
+        drawBoard();
+    });
+    </script>
+</body>
