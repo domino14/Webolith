@@ -1,5 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
-from wordwalls.models import DailyChallenge, DailyChallengeName, DailyChallengeMissedBingos
+from wordwalls.models import (DailyChallenge, 
+                                DailyChallengeName, 
+                                DailyChallengeMissedBingos, 
+                                DailyChallengeLeaderboard, 
+                                DailyChallengeLeaderboardEntry)
 from datetime import date, timedelta
 from base.models import Lexicon
 import random
@@ -13,11 +17,13 @@ def genPksByDC(dcName, num, minDate, maxDate, lex):
     # how many people did each challenge? store this to avoid looking it up
     for dc in qset:
         try:
-            dcDict[dc] = len(dc.dailychallengeleaderboard_set.all()[0].dailychallengeleaderboardentry_set.all())
-        except:
+            lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
+            entries = DailyChallengeLeaderboardEntry.objects.filter(board=lb, qualifyForAward=True)
+            dcDict[dc] = len(entries)
+        except DailyChallengeLeaderboard.DoesNotExist:
             # shouldn't ever happen
             dcDict[dc] = 1e6    # an abnormally large number
-
+        
     print "challenge dict", dcDict
 
     mbDict = {}
@@ -35,16 +41,6 @@ def genPksByDC(dcName, num, minDate, maxDate, lex):
    
     bingers = sorted(mbDict.items(), key=lambda x: x[1][1], reverse=True)[:num]
     return bingers
-        
-# for toughie challenges
-def challengeDate(delta):
-    datenow = date.today() + timedelta(days=delta)
-    diff = datenow.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
-    if diff < 0:
-        diff = 7-abs(diff)
-        
-    chDate = datenow - timedelta(days=diff)
-    return chDate
 
 # for toughie challenges
 def challengeDateFromReqDate(reqDate):
@@ -55,9 +51,9 @@ def challengeDateFromReqDate(reqDate):
     chDate = reqDate - timedelta(days=diff)
     return chDate
 
-def genPks(lex, delta):    
+def genPks(lex, reqDate):    
     t1 = time.time()
-    chDate = challengeDate(delta)
+    chDate = challengeDateFromReqDate(reqDate)
     minDate = chDate - timedelta(days=7)
     maxDate = chDate - timedelta(days=1)
     print "minDate", minDate, "maxDate", maxDate
@@ -79,10 +75,8 @@ class Command(BaseCommand):
             lex = Lexicon.objects.get(lexiconName=args[0])
         except:
             raise CommandError("That lexicon does not exist!")
-        if len(args) == 2 and args[1] == "thisweek": delta = 7
-        else: delta=0
         # generate challenges from this week's missed bingos
         # first, find all the challenges that match. search back in time 7 days from chDate, not including chDate
-        pks = genPks(lex, delta)
+        pks = genPks(lex, date.today())
         print "PKS", pks
     

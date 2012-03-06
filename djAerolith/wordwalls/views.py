@@ -73,11 +73,11 @@ def homepage(request):
                     lex = request.POST['lexicon']
                     chName = DailyChallengeName.objects.get(name=request.POST['chName'])
                     try:
-                        date = datetime.strptime(request.POST['date'], '%m/%d/%Y').date()
+                        chDate = datetime.strptime(request.POST['date'], '%m/%d/%Y').date()
                     except:
-                        date = date.today()
+                        chDate = date.today()
                     
-                    leaderboardData = getLeaderboardData(lex, chName, date)
+                    leaderboardData = getLeaderboardData(lex, chName, chDate)
                     response = HttpResponse(json.dumps(leaderboardData, ensure_ascii=False), 
                                             mimetype="application/javascript")
                     response['Content-Type'] = 'text/plain; charset=utf-8'
@@ -125,7 +125,11 @@ def homepage(request):
                     lex = Lexicon.objects.get(lexiconName=lexForm.cleaned_data['lexicon'])
                     wwg = WordwallsGame()
                     challengeName = DailyChallengeName.objects.get(name=dcForm.cleaned_data['challenge'])
-                    tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName)
+                    chDate = dcForm.cleaned_data['challengeDate']
+                    if (not chDate) or (chDate > date.today()):
+                        chDate = date.today()
+
+                    tablenum = wwg.initializeByDailyChallenge(request.user, lex, challengeName, chDate)
                     if tablenum == 0:
                         raise Http404
                     else:
@@ -469,12 +473,12 @@ def getLeaderboardDataDcInstance(dc):
     retData = {'maxScore': lb.maxScore, 'entries': []}
     
     for lbe in lbes:
-        entry = {'user': lbe.user.username, 'score': lbe.score, 'tr': lbe.timeRemaining}
+        entry = {'user': lbe.user.username, 'score': lbe.score, 'tr': lbe.timeRemaining, 'addl': lbe.additionalData}
         retData['entries'].append(entry)
     
     return retData
 
-def getLeaderboardData(lex, chName, date):
+def getLeaderboardData(lex, chName, challengeDate):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
     except:
@@ -482,9 +486,9 @@ def getLeaderboardData(lex, chName, date):
     
     if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         from wordwalls.management.commands.genMissedBingoChalls import challengeDateFromReqDate
-        chdate = challengeDateFromReqDate(date)
+        chdate = challengeDateFromReqDate(challengeDate)
     else:
-        chdate = date
+        chdate = challengeDate
     try:
         dc = DailyChallenge.objects.get(lexicon=lex_object, date=chdate, name=chName)
     except:

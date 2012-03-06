@@ -55,9 +55,9 @@
             have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The 
             toughest bingos are the ones most commonly missed that week.</P>
         <P>If you want to view results of previous challenges select the date below. You can also play these challenges.
-            Any new records set for older challenges won't count for your medal total, though.</P>
+            Any new records set for older challenges won't count for your medal total, though. <em>Note: All dates are in
+                Pacific Standard Time (PST).</em></P>
         </div>
-        <p>Date: <input type="text" id="datepicker"></p>
         <table id="challengesLayout"> 
         <tr>
             <td id="dcFormCell">
@@ -188,7 +188,7 @@
     $("#namedListsFlashcard").click(namedListsFlashcardClicked);
     
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
-    $("#datepicker").datepicker({
+    $("#id_challengeDate").datepicker({
         minDate: new Date(2011, 5, 14), 
         maxDate: 0, 
         showButtonPanel: true});

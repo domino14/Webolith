@@ -80,17 +80,22 @@ class WordwallsGame:
                     
         return wgm
     
-    def initializeByDailyChallenge(self, user, challengeLex, challengeName):
+    def initializeByDailyChallenge(self, user, challengeLex, challengeName, challengeDate):
         # does a daily challenge exist with this name and the current date? if not, create it.
-        datenow = date.today()
+        today = date.today()
+        qualifyForAward = False
         if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
             # repeat on Tuesday at midnight local time (ie beginning of the day, 0:00)
             # Tuesday is an isoweekday of 2. Find the nearest Tuesday back in time. isoweekday goes from 1 to 7
-            from wordwalls.management.commands.genMissedBingoChalls import challengeDate
-            chDate = challengeDate(delta=0)    
+            from wordwalls.management.commands.genMissedBingoChalls import challengeDateFromReqDate
+            chDate = challengeDateFromReqDate(challengeDate)    
+            if chDate == challengeDateFromReqDate(today):
+                qualifyForAward = True
         # otherwise, it's not a 'bingo toughies', but a regular challenge.
         else:
-            chDate = datenow
+            chDate = challengeDate
+            if chDate == today:
+                qualifyForAward = True
             
         try:
             dc = DailyChallenge.objects.get(date=chDate, lexicon=challengeLex, name=challengeName)
@@ -123,7 +128,8 @@ class WordwallsGame:
                                             json.dumps([]), 
                                             gameType='challenge',
                                             challengeId=dc.pk,
-                                            timerSecs=secs)
+                                            timerSecs=secs,
+                                            qualifyForAward=qualifyForAward)
         
         wgm.save()
         wgm.inTable.add(user)
@@ -546,8 +552,14 @@ class WordwallsGame:
                                                                 # inside the guess processing function
             else:
                 timeRemaining = 0                               # else, nothing would write it into the state
+
+            if 'qualifyForAward' in state:
+                qualifyForAward = state['qualifyForAward']
+            else:
+                qualifyForAward = False     # i suppose this shouldn't happen
+
             lbe = DailyChallengeLeaderboardEntry(user=wgm.host, score=score, board=lb, 
-                                    timeRemaining=timeRemaining)
+                                    timeRemaining=timeRemaining, qualifyForAward=qualifyForAward)
             lbe.save()
             if len(state['answerHash']) > 0 and (dc.name.name == "Today's 7s" or dc.name.name == "Today's 8s"):
                 # if the user missed some 7s or 8s
@@ -628,7 +640,7 @@ class WordwallsGame:
         # capture number. first try to match to today's lists
         m = re.match("(?:Today's|Moar) (?P<length>[0-9]+)s", challengeName.name)
         
-        if m:   # ignore the challenge date
+        if m:
             wordLength = int(m.group('length'))
             if wordLength < 2 or wordLength > 15: return None   # someone is trying to break my server >:(
             logger.info('Generating daily challenges %s %d', lex, wordLength)
@@ -644,7 +656,7 @@ class WordwallsGame:
         else:
             if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
                 from wordwalls.management.commands.genMissedBingoChalls import genPks
-                mbs = genPks(lex, 0)
+                mbs = genPks(lex, chDate)
                 pks = [m[0] for m in mbs]
                 random.shuffle(pks)
                 

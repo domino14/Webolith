@@ -56,6 +56,8 @@ class DailyChallengeLeaderboardEntry(models.Model):
     user = models.ForeignKey(User)
     score = models.IntegerField()
     timeRemaining = models.IntegerField()
+    qualifyForAward = models.BooleanField(default=True) # only qualify for award if entry is in allowable range
+    additionalData = models.TextField(null=True) # awards, anything else?
     def __unicode__(self):
         return (self.board.challenge.__unicode__() + ' --- ' + 
                         self.user.username + ' ' + str(self.score) + ' (' + str(self.timeRemaining) + 's.)')

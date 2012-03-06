@@ -24,14 +24,15 @@ class DailyChallengeAdmin(admin.ModelAdmin):
     fields = ['lexicon', 'date', 'name']
     search_fields = ['name']
     list_display = ('date', 'name', 'lexicon')
-    readonly_fields = ('date',)
+    readonly_fields = ('date', 'name', 'lexicon')
 
 class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
     fields = ['challenge', 'maxScore']
+    readonly_fields = ('challenge', 'maxScore')
 
 class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
-    fields = ['user', 'score', 'timeRemaining', 'board']
-
+    fields = ['user', 'score', 'timeRemaining', 'board', 'additionalData', 'qualifyForAward']
+    readonly_fields = ('board',)
 
 admin.site.register(DailyChallengeLeaderboard, DailyChallengeLeaderboardAdmin)
 admin.site.register(DailyChallengeLeaderboardEntry, DailyChallengeLeaderboardEntryAdmin)
@@ -53,6 +54,7 @@ class WordwallsSavedListAdmin(admin.ModelAdmin):
 class DailyChallengeMissedBingosAdmin(admin.ModelAdmin):
     fields = ['challenge', 'alphagram', 'numTimesMissed']
     list_display = ('challenge', 'alphagram', 'numTimesMissed')
+    readonly_fields = ('challenge', 'alphagram', 'numTimesMissed')
     
 admin.site.register(SavedList, WordwallsSavedListAdmin)
 admin.site.register(DailyChallengeMissedBingos, DailyChallengeMissedBingosAdmin)

@@ -80,7 +80,7 @@ function challengeChangeEventHandler()
 
 function challengeChanged()
 {
-    var date = $('#datepicker').val();
+    var date = $('#id_challengeDate').val();
     var cVal = $('#id_challenge option:selected').val();
     if (cVal == "")
     {
@@ -155,7 +155,7 @@ function initializeTableCreatePage(lStr, dcStr, _url, furl)
 
     /* event handlers - today's challenges */
     
-    $('#datepicker').change(challengeChangeEventHandler);
+    $('#id_challengeDate').change(challengeChangeEventHandler);
     $('#id_challenge').change(challengeChangeEventHandler);
     $('#id_lexicon').change(challengeChangeEventHandler);
     
@@ -247,7 +247,7 @@ function getDcResults()
     $.post(url, {action: 'getDcResults', 
                 lexicon: $('#id_lexicon option:selected').text(),
                 chName: $('#id_challenge option:selected').text(),
-                date: $('#datepicker').val()
+                date: $('#id_challengeDate').val()
                  }, 
                 populateDcResults, 'json')
 }
@@ -354,7 +354,8 @@ function challengeSubmitClicked()
 {
     $.post(url, {action: 'challengeSubmit',
                 lexicon: $('#id_lexicon').val(),
-                challenge: $('#id_challenge').val()},
+                challenge: $('#id_challenge').val(),
+                challengeDate: $('#id_challengeDate').val()},
                 wwRedirect,
                 'json');
 }

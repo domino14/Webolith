@@ -23,6 +23,7 @@ from tablegame.models import GenericTableGameModel
 from wordwalls.models import SavedList, DailyChallengeName, NamedList
 import re
 from django.forms.widgets import RadioSelect
+from datetime import date
 
 lexes = Lexicon.objects.all()
 lexList = tuple([(l.lexiconName, l.lexiconName) for l in lexes])
@@ -77,6 +78,7 @@ class FindWordsForm(forms.Form):
         return self.cleaned_data
         
 class DailyChallengesForm(forms.Form):
+    challengeDate = forms.DateField(label='Date', required=False)
     challenge = forms.ModelChoiceField(queryset=DailyChallengeName.objects.all(), 
                         label='Challenge', widget=forms.Select(attrs={'size':'16'}))
 
