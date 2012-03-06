@@ -1,0 +1,3 @@
+0 0 * * * /bin/bash /home/ubuntu/webolith/scripts/dailyCleanup.sh
+@reboot /usr/bin/supervisord -edebug -c /home/ubuntu/webolith/djAerolith/supervisord.conf
+@reboot /usr/local/bin/redis-server /etc/redis/redis.conf
