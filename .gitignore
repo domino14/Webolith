@@ -9,3 +9,4 @@ words/*.trie
 words/*.txt
 node/node_modules/*
 djAerolith/static/pictures/avatars/*
+wordsdir/
