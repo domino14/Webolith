@@ -20,16 +20,41 @@ function processDcResults(data, divIdToPopulate)
         var entries = data['entries'];
         
         entries.sort(sortEntry);
-        tableBuilder += '<td class="dcResultsTableHeader">#</td><td class="dcResultsTableHeader">Name</td>' +
-                        '<td class="dcResultsTableHeader">Score</td><td class="dcResultsTableHeader">Remaining</td></tr>'
+        tableBuilder += '<td class="dcResultsTableHeader">#</td>' +
+                        '<td class="dcResultsTableHeader">Name</td>' +
+                        '<td class="dcResultsTableHeader">Score</td>' +
+                        '<td class="dcResultsTableHeader">Remaining</td></tr>'
         for (var i = 0; i < entries.length; i++)
         {
             var entry = entries[i];
             var user = entry['user'];
             var score = entry['score'];
             var tr = entry['tr'];
-            tableBuilder += '<tr><td class="dcResultsTableCell">' + (i+1) + 
-                            '</td><td class="dcResultsTableCell"><a href="/accounts/profile/' + user + '" target="_blank">' + user + '</a>' + 
+            var addlData = entry['addl'];
+            try {
+                addlData = $.parseJSON(addlData);
+            }
+            catch (e) {}
+            var medalHtml = '';
+            if (addlData) {
+                if (addlData.medal == 'Platinum') {
+                    medalHtml = '<img src="/static/img/aerolith/platinum_star_16x16.png">';
+                }
+                else if (addlData.medal == 'Gold') {
+                    medalHtml = '<img src="/static/img/aerolith/gold_medal_16x16.png">';
+                }
+                else if (addlData.medal == 'Silver') {
+                    medalHtml = '<img src="/static/img/aerolith/silver_medal_16x16.png">';
+                }
+                else if (addlData.medal == 'Bronze') {
+                    medalHtml = '<img src="/static/img/aerolith/bronze_medal_16x16.png">';
+                }
+            }
+
+            tableBuilder += '<tr>' + 
+                            '<td class="dcResultsTableCell">' + (i+1) + 
+                            '</td><td class="dcResultsTableCell"><a href="/accounts/profile/' + user + 
+                                        '" target="_blank">' + medalHtml + user + '</a>' + 
                             '</td><td class="dcResultsTableCell">' + (score/maxScore * 100).toFixed(1) + '%' + 
                             '</td><td class="dcResultsTableCell">' + tr + ' s.' + '</td></tr>'
             

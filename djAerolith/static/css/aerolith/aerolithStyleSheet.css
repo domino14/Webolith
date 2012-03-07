@@ -38,3 +38,24 @@ ul.errorlist li
 {
     float: left;
 }
+
+div#profile {
+    float: left;
+    width: 600px;
+    height: 400px;
+    overflow: auto;
+    margin: 10px;
+}
+
+div#awards {
+/*    width: 300px;*/
+    display: inline;
+    margin-left: 20px;
+}
+
+span.medalCount {
+    display: inline-block;
+    font-size: 32px;
+    font-family: serif;
+    font-weight: 700;
+}

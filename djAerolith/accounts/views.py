@@ -22,6 +22,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from accounts.forms import ProfileEditForm
+import json
 
 @login_required
 def editProfile(request):
@@ -62,6 +63,13 @@ def viewProfile(request, username):
     except:
         raise Http404   # although this shouldn't happen!! every user should have a profile
 
+    try:
+        wwMedals = json.loads(profile.wordwallsMedals)
+    except:
+        wwMedals = {}
+
+    print wwMedals
     return render_to_response('accounts/profile.html', 
-                                {'profile': profile},
+                                {'profile': profile,
+                                'wwMedals': wwMedals},
                                 context_instance=RequestContext(request))

@@ -12,8 +12,33 @@
 
 {% load markup %}
 {% block content %}
+<div id="profile">
+  <H2>Profile</H2>  
 {{profile.profile|markdown}}
+</div>
+<div id="awards">
+    <H2>Award Case</H2>
+{% if wwMedals.medals.Platinum %}<P><img src="{{STATIC_URL}}img/aerolith/platinum_star_32x32.png"> 
+                                        <span class="medalCount">{{wwMedals.medals.Platinum}}</span></P>{% endif %}
+{% if wwMedals.medals.Gold %}<P><img src="{{STATIC_URL}}img/aerolith/gold_medal_32x32.png">
+                                         <span class="medalCount">{{wwMedals.medals.Gold}}</span></P>{% endif %}
+{% if wwMedals.medals.Silver %}<P><img src="{{STATIC_URL}}img/aerolith/silver_medal_32x32.png">
+                                         <span class="medalCount">{{wwMedals.medals.Silver}}</span></P>{% endif %}
+{% if wwMedals.medals.Bronze %}<P><img src="{{STATIC_URL}}img/aerolith/bronze_medal_32x32.png">
+                                         <span class="medalCount">{{wwMedals.medals.Bronze}}</span></P>{% endif %}
+</div>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
 
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
