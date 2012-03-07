@@ -47,6 +47,8 @@ class DailyChallenge(models.Model):
 class DailyChallengeLeaderboard(models.Model):
     challenge = models.ForeignKey(DailyChallenge, unique=True) 
     maxScore = models.IntegerField()
+    medalsAwarded = models.BooleanField(default=False)
+
     def __unicode__(self):
         return "Leaderboard: " + self.challenge.__unicode__()
     

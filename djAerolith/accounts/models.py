@@ -49,7 +49,7 @@ class AerolithProfile(models.Model):
     # specific per game
     customWordwallsStyle = models.CharField(max_length=1000, blank = True)
     wordwallsSaveListSize = models.IntegerField(default = 0)
-    
+    wordwallsMedals = models.TextField(null=True)
     
     # project-wide
     defaultLexicon = models.ForeignKey(Lexicon, default=getLexicon)
