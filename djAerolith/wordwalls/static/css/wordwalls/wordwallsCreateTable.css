@@ -89,12 +89,50 @@ span#savedListWarning
     color: red;
 }
 
-#listTabs
-{
-    width: 800px;
-}
-
 #id_challenge
 {
     width: 175px;
+}
+
+#content {
+    /* wraps listTabs/ lobby / etc -- main div */
+    width: 1000px;
+    border: 1px solid blue;
+}
+#commonForm {
+    clear: both;
+}
+#listTabs
+{
+    width: 600px;
+    float: left;
+}
+
+#lobby {
+    width:375px;
+    border: 1px solid red;
+    height: 450px;
+    float: right;
+}
+
+#news {
+    width: 275px;
+    border: 1px solid green;
+    height: 300px;
+    float: left;
+    overflow: auto;
+}
+#people {
+    width: 90px;
+    border: 1px solid black;
+    height: 300px;
+    float: right;
+    overflow: auto;
+}
+#chat {
+    width: 95%;
+}
+
+.clear {
+    clear:both;
 }
