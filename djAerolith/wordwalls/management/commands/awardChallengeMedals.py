@@ -28,7 +28,7 @@ class Command(BaseCommand):
                     continue    # do not award
                 lbes = sorted(lbes, cmp=sortCmp)
 
-                if lb.challenge.name == toughies:
+                if lb.challenge.name == toughies or lb.challenge.name = "Today's Bingo Marathon":
                     # award extra medal
                     medals = ['Platinum', 'Gold', 'Silver', 'Bronze']
                 else:

@@ -170,9 +170,9 @@ function processQuestionObj(questionObj)
     
     // solutions table should be populated 'vertically', i.e. with qindices 0, 4, 8, ..., 1, 5, 9, ...
     
-    for (var x = 0; x < 50; x++)
+    for (var x = 0; x < qObj.length; x++)
     {
-        var i = solTableOrder[x];
+        var i = solTableOrder[x%52];
         if (i < qObj.length)
         {
             var alphagram = qObj[i]['a'];

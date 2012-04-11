@@ -116,7 +116,12 @@ class WordwallsGame:
                 dc.save()
             else:
                 return 0
-        
+
+        if challengeName.name == "Today's Bingo Marathon":
+            questionsToPull = 250
+        else:
+            questionsToPull = 50
+            
         wgm = self.createGameModelInstance(user, GenericTableGameModel.SINGLEPLAYER_GAME, challengeLex, 
                                             len(pkIndices),
                                             json.dumps(pkIndices), 
@@ -129,7 +134,8 @@ class WordwallsGame:
                                             gameType='challenge',
                                             challengeId=dc.pk,
                                             timerSecs=secs,
-                                            qualifyForAward=qualifyForAward)
+                                            qualifyForAward=qualifyForAward,
+                                            questionsToPull=questionsToPull)
         
         wgm.save()
         wgm.inTable.add(user)
@@ -661,6 +667,26 @@ class WordwallsGame:
                 random.shuffle(pks)
                 
                 return pks, challengeName.timeSecs
+            elif challengeName.name == "Today's Bingo Marathon":
+                logger.info('Generating daily challenges %s Bingo Marathon', lex)
+                # 125 7s
+                minP = 1
+                maxP = json.loads(lex.lengthCounts)['7'] # lengthCounts is a dictionary of strings as keys        
+
+                r = range(minP, maxP+1)
+                random.shuffle(r)
+                r = r[:125]  
+                pks = [alphProbToProbPK(i, lex.pk, 7) for i in r]
+                
+                # 125 8s
+                maxP = json.loads(lex.lengthCounts)['8']
+                r = range(minP, maxP+1)
+                random.shuffle(r)
+                r = r[:125]  
+                pks.extend([alphProbToProbPK(i, lex.pk, 8) for i in r])
+
+                return pks, challengeName.timeSecs
+
         return None        
             
 class SearchDescription:
