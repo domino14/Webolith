@@ -43,9 +43,6 @@ var numTotalAnswersThisRound = 0;
 var numAnswersGottenThisRound = 0;
 var messageTextBoxLimit = 3000; // characters
 
-var solTableOrder = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 2, 
-                        6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47];
-
 function disableSelection(target)
 {
     if (typeof target.onselectstart!="undefined") //IE route
@@ -169,10 +166,34 @@ function processQuestionObj(questionObj)
     solutionsTableBuilder += '<td>\<</td><td>Word</td><td>\></td><td>Definition</td></tr>';
     
     // solutions table should be populated 'vertically', i.e. with qindices 0, 4, 8, ..., 1, 5, 9, ...
-    
+    // build solTableOrder array (to flip horizontal to vertical)
+
+    var solTableOrder = []
+    var x = 0;
+    var els = 0;
+    while (true) {
+        var val = 52 * Math.floor(x/52.0) + (Math.floor( (x%52)/13.0) + 4 * (x%13));
+        if (val >= qObj.length) {
+            x++;
+            if (els == qObj.length) {
+                break;
+            }
+            else {
+                continue;
+            }
+        }
+        x++;
+        els++;
+        solTableOrder.push(val);
+        if (els == qObj.length) {
+            break;
+        }
+    }
+
     for (var x = 0; x < qObj.length; x++)
     {
-        var i = solTableOrder[x%52];
+
+        var i = solTableOrder[x];
         if (i < qObj.length)
         {
             var alphagram = qObj[i]['a'];
