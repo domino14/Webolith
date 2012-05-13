@@ -1,0 +1,25 @@
+#left-col {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 300px;
+}
+
+#right-col {
+    position: absolute;
+    top: 10px;
+    left: 350px;
+}
+
+#cal1 {
+    float: left;
+}
+
+#cal2 {
+    float: left;
+}
+
+#cal3 {
+    float: left;
+}
+
