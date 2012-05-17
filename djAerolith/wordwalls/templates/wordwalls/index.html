@@ -205,9 +205,11 @@ var uploader = new qq.FileUploader( {
             $("#file-upload-msgs").text("Success! " + responseJSON.msg);
             requestSavedListInfo();
             savedListLexiconChanged();  // to reload lists
+            mixpanel.track('Uploaded list');
         }
        else
          {
+            mixpanel.track('Upload list error');
             $("#file-upload-msgs").text("Error: " + responseJSON.msg);
          }
      },
