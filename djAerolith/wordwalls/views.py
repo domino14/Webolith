@@ -577,3 +577,30 @@ def deleteSavedList(savedList, user):
     profile.wordwallsSaveListSize -= numAlphagrams
     profile.save()  
     return profile.wordwallsSaveListSize
+
+######################
+# api views
+def api_challengers(request, month, day, year, lex, ch_id):
+    # the people who have done daily challenges today
+    # used to test a certain pull api :P
+    lex = Lexicon.objects.get(pk=lex).lexiconName
+    chName = DailyChallengeName.objects.get(pk=ch_id)
+    chDate = date(day=int(day), month=int(month), year=int(year))
+    data = getLeaderboardData(lex, chName, chDate)
+
+    rows = [ ['User', 'Score', 'Time remaining'] ]
+    try:
+        maxScore = data['maxScore']
+        for entry in data['entries']:
+            user = entry['user']
+            score = '%.1f%%' % (100 * (float(entry['score']) / float(maxScore)))
+            tr = entry['tr']
+            rows.append([user, score, tr])
+
+    except:
+        import traceback; print traceback.format_exc()
+
+    return HttpResponse(json.dumps({"streamName": "mytable", 
+                                    "point": {"table": rows} }
+                                    ))
+
