@@ -23,6 +23,10 @@ urlpatterns = patterns('',
     url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table', name='wordwalls_table'),
     url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload' ),
     url(r'^api/challengers/(?P<month>\d+)/(?P<day>\d+)/(?P<year>\d+)/(?P<lex>\d+)/(?P<ch_id>\d+)/$', 
-        'wordwalls.views.api_challengers', name='wordwalls_api'),
+        'wordwalls.views.api_challengers'),
+    url(r'^api/challengers_days_from_today/(?P<days>\d+)/(?P<lex>\d+)/(?P<ch_id>\d+)/$',
+        'wordwalls.views.api_challengers_days_from_today'),
+    url(r'^api/random_toughie/$', 'wordwalls.views.api_random_toughie'),
+    url(r'^api/num_tables_created/$', 'wordwalls.views.api_num_tables_created')
    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
     )
