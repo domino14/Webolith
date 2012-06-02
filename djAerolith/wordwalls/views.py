@@ -611,12 +611,28 @@ def api_num_tables_created(request):
 def api_random_toughie(request):
     from wordwalls.management.commands.genMissedBingoChalls import challengeDateFromReqDate
     # from the PREVIOUS toughies challenge
-    chdate = challengeDateFromReqDate(date.today()) - timedelta(days=7)
+    chdate = challengeDateFromReqDate(date.today()) - timedelta(days=7*20)
     dc = DailyChallenge.objects.get(lexicon=Lexicon.objects.get(pk=4), 
                                         date=chdate, 
                                         name=DailyChallengeName.objects.get(name=DailyChallengeName.WEEKS_BINGO_TOUGHIES))
     alphs = json.loads(dc.alphagrams)
-    alphagram = json.dumps({"label": "Random Toughie from last week: " + Alphagram.objects.get(pk=random.choice(alphs)).alphagram})
+
+    alpha = Alphagram.objects.get(pk=random.choice(alphs))
+    words = Word.objects.filter(alphagram=alpha)
+    wordString = " ".join([word.word for word in words])
+    alphaString = alpha.alphagram
+    html = """
+    <script>
+    $("#toughie").hover(function() {
+        $(this).text("%s");
+    },
+    function() {
+        $(this).text("%s");
+    });</script>
+    <div id="toughie" style="font-size: 32px">%s</div>
+    """ % (alphaString, wordString, alphaString)
+
+    alphagram = json.dumps({"html": html})
 
     return HttpResponse(alphagram)
 # api views helpers
