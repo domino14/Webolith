@@ -629,8 +629,8 @@ def api_random_toughie(request):
     function() {
         $(this).text("%s");
     });</script>
-    <div id="toughie" style="font-size: 32px">%s</div>
-    """ % (alphaString, wordString, alphaString)
+    <div id="toughie" style="font-size: 32px;">%s</div>
+    """ % (wordString, alphaString, alphaString)
 
     alphagram = json.dumps({"html": html})
 
