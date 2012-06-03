@@ -18,16 +18,61 @@ To contact the author, please email delsolar at gmail dot com*/
 
 /* a stylesheet*/
 
-img#logo
-{
+div#logo {
     float: left;
+}
+
+body {
+    margin: 0px 0px 0px 0px;
+    background-color: #F9F9F9;
+    background-image: url('/static/img/aerolith/scribble_light.png');
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    color: #444444;
+}
+
+ul#navlist {
+    float: right;
+    padding: 5px 0 0;
+    list-style: none outside none;
+}
+
+ul#navlist li {
+    float: left;
+    margin-left: 30px;
+}
+ul#navlist li a {
+    text-decoration: none;
+    color: inherit;
+}
+div#topShadow {
+    background-image: url("/static/img/aerolith/top-shadow.png");
+    background-position: center bottom;
+    background-repeat: repeat-x;
+    height: 10px;
+    margin-bottom: -10px;
+    width: 100%;
+}
+
+div#topbar {
+    height: 50px;
+    position: relative;
+    width: 100%;
+    background-image: url('/static/img/aerolith/wide_rectangles.png');
+}
+
+div.center {
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 900px;
 }
 
 div#content
 {
     margin-top: 50px;
-    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; 
-    font-size: 14px; 
+    margin-bottom: 50px;
+/*    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; 
+    font-size: 14px; */
 }
 
 ul.errorlist li
@@ -48,7 +93,6 @@ div#profile {
 }
 
 div#awards {
-/*    width: 300px;*/
     display: inline;
     margin-left: 20px;
 }
@@ -58,4 +102,36 @@ span.medalCount {
     font-size: 32px;
     font-family: serif;
     font-weight: 700;
+}
+
+div#footer {
+    padding: 5px;
+    position: relative;
+    width: 100%;
+    background-image: url('/static/img/aerolith/wide_rectangles.png');
+}
+div#copyright {
+    float: left;
+    padding-top: 10px;
+}
+div#mixpanel {
+    padding-left: 750px;
+}
+
+form input, form select, form textarea {
+    border: 2px solid #AAAAAA;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 5px #AAAAAA;
+    font-family: inherit;
+    font-size: 1.5em;
+    margin: 10px 0;
+    padding: 8px 5px 5px;
+    width: 200px;
+}
+
+form label {
+    clear: both;
+    display: block;
+    padding-right: 20px;
+    font-size: 1.1em;
 }

@@ -55,48 +55,44 @@ mixpanel.identify("{{user}}");
 
 
 <body>
-    {% block picture %}
-    <a href="/">
-    <img id="logo" src="{{ STATIC_URL }}img/aerolith/aerolith.png"></a>
-    {% endblock %}
-    
     {% block navbar %}
     {% assets "js_jquery" %}
-        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
-    <div class="userbar">
-        {% if user.username == "" %}
-            <a href="/accounts/login" class="navbarLink">Log in</a>
-            <a href="/accounts/register" class="navbarLink">Register</a>
-        {% else %}
-            <a href="/accounts/profile/{{user}}" class="navbarLink"><span class="ui-icon ui-icon-wrench"></span>{{user}}</a>
-            {% if user.get_profile.member %}
-                {# do nothing, member #}
-            {% else %}
-                <a href="/supporter" class="navbarLink">Become a supporter</a>
-            {% endif %}
-            <a href="/accounts/logout" class="navbarLink">Log out</a>
-        {% endif %}
-        <a href="/about" class="navbarLink">About Aerolith 2.0</a>
+    <div id="topbar">
+        <div class="center">
+            <div id="logo">
+                <a href="/"><img src="{{ STATIC_URL }}img/aerolith/aerolith_rock.png"></a>    
+            </div>
+                <ul id="navlist">
+                {% if user.username == "" %}
+                    <li><a href="/accounts/login" class="navbarLink">Log in</a></li>
+                    <li><a href="/accounts/register" class="navbarLink">Register</a></li>
+                {% else %}
+                    <li><a href="/accounts/profile/{{user}}" class="navbarLink">
+                        <span class="ui-icon ui-icon-wrench"></span>{{user}}</a>
+                    </li>
+                    {% if user.get_profile.member %}
+                        {# do nothing, member #}
+                    {% else %}
+                        <li><a href="/supporter" class="navbarLink">Membership</a></li>
+                    {% endif %}
+                    <li><a href="/accounts/logout" class="navbarLink">Log out</a></li>
+                {% endif %}
+                <li><a href="/about" class="navbarLink">About</a></li>
+                <li><a href="/blog" class="navbarLink">Blog/News</a></li>
+                <li><a href="/wordwalls" class="navbarLink">Wordwalls</a></li>
+                </ul>
+        </div>
     </div>
-    <div class="aerolithBar">
-        <a href="/blog" class="navbarLink">Aerolith Blog/News</a>
-        <a href="/wordwalls" class="navbarLink">Wordwalls</a>   
-    </div>
-    <script type="text/javascript">
-      //$(document).ready(function() {
-        $(".userbar").buttonset();
-        $(".aerolithBar").buttonset();
-        
-     //});
-    </script>
+    <div id="topShadow"></div>
 
-    {% endblock %}
+    {% endblock navbar %}
     <div id="content_title">
     {% block content_title %}
     {% endblock %}
     </div>
-    <div id="content">
+    <div id="content" class="center">
         {% block content %}
         {% if user.username == "" %}
         Welcome to Aerolith 2.0! Please <a href="/accounts/login">log in</a>, or <a href="/accounts/register">register</a> if you are new to this site.
@@ -138,8 +134,13 @@ mixpanel.identify("{{user}}");
         {% endblock %}
         
     </div>
-    <div id="footer" style="padding-top: 20px; float: right;">
-        <a href="https://mixpanel.com/f/partner"><img src="https://mixpanel.com/site_media/images/partner/badge_light.png" alt="Mobile and Web Analytics" /></a>
+    <div id="footer">
+        <div class="center">
+            <div id="copyright">&copy; 2012 Cesarware. All Rights Reserved.</div>
+            <div id="mixpanel">
+            <a href="https://mixpanel.com/f/partner"><img src="https://mixpanel.com/site_media/images/partner/badge_light.png" alt="Mobile and Web Analytics" /></a>
+            </div>
+        </div>
     </div>
 </body>
 <script>
