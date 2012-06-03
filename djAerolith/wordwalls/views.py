@@ -29,7 +29,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from wordwalls.models import DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry
 from wordwalls.models import SavedList, DailyChallengeName, WordwallsGameModel, NamedList
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import sys
 import time
 from django.conf import settings
@@ -472,10 +472,20 @@ def getLeaderboardDataDcInstance(dc):
     lbes = DailyChallengeLeaderboardEntry.objects.filter(board=lb)
     retData = {'maxScore': lb.maxScore, 'entries': []}
     
+    entries = []
     for lbe in lbes:
         entry = {'user': lbe.user.username, 'score': lbe.score, 'tr': lbe.timeRemaining, 'addl': lbe.additionalData}
-        retData['entries'].append(entry)
-    
+        entries.append(entry)
+ 
+    def cmpFunction(e1, e2):
+        if e1['score'] != e2['score']:
+            return int(e2['score'] - e1['score'])
+        else:
+            return int(e2['tr'] - e1['tr'])
+
+    entries = sorted(entries, cmpFunction)
+    retData['entries'] = entries
+
     return retData
 
 def getLeaderboardData(lex, chName, challengeDate):
@@ -577,3 +587,80 @@ def deleteSavedList(savedList, user):
     profile.wordwallsSaveListSize -= numAlphagrams
     profile.save()  
     return profile.wordwallsSaveListSize
+
+######################
+# api views
+def api_challengers(request, month, day, year, lex, ch_id):
+    # the people who have done daily challenges 
+    # used to test a certain pull api :P
+    rows = challengers(month, day, year, lex, ch_id)
+    return HttpResponse(json.dumps({"table": rows}))
+
+def api_challengers_days_from_today(request, days, lex, ch_id):
+    day = date.today() - timedelta(days=int(days))
+    rows = challengers(day.month, day.day, day.year, lex, ch_id)
+
+    return HttpResponse(json.dumps({"table": rows}))
+
+
+def api_num_tables_created(request):
+    allGames = WordwallsGameModel.objects.all().reverse()[:1]
+    numTables = allGames[0].pk
+    return HttpResponse(json.dumps({"number": numTables, "timestamp": time.time()}))
+
+def api_random_toughie(request):
+    from wordwalls.management.commands.genMissedBingoChalls import challengeDateFromReqDate
+    # from the PREVIOUS toughies challenge
+    chdate = challengeDateFromReqDate(date.today()) - timedelta(days=7*20)
+    dc = DailyChallenge.objects.get(lexicon=Lexicon.objects.get(pk=4), 
+                                        date=chdate, 
+                                        name=DailyChallengeName.objects.get(name=DailyChallengeName.WEEKS_BINGO_TOUGHIES))
+    alphs = json.loads(dc.alphagrams)
+
+    alpha = Alphagram.objects.get(pk=random.choice(alphs))
+    words = Word.objects.filter(alphagram=alpha)
+    wordString = " ".join([word.word for word in words])
+    alphaString = alpha.alphagram
+    html = """
+    <script>
+    $("#toughie").hover(function() {
+        $(this).text("%s");
+    },
+    function() {
+        $(this).text("%s");
+    });</script>
+    <div id="toughie" style="font-size: 32px;">%s</div>
+    """ % (wordString, alphaString, alphaString)
+
+    alphagram = json.dumps({"html": html})
+
+    return HttpResponse(alphagram)
+# api views helpers
+
+def challengers(month, day, year, lex, ch_id):
+    rows = [ ['User', 'Score', 'Time remaining'] ]
+    try:
+        lex = Lexicon.objects.get(pk=lex).lexiconName
+        chName = DailyChallengeName.objects.get(pk=ch_id)
+        chDate = date(day=int(day), month=int(month), year=int(year))
+
+        data = getLeaderboardData(lex, chName, chDate)
+    except:
+        import traceback; print traceback.format_exc()
+
+    try:
+        maxScore = data['maxScore']
+        for entry in data['entries']:
+            user = entry['user']
+            score = '%.1f%%' % (100 * (float(entry['score']) / float(maxScore)))
+            tr = entry['tr']
+            rows.append([user, score, tr])
+
+    except:
+        pass
+    return rows
+
+
+
+
+

@@ -35,7 +35,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     initializeQuiz("{{ request.get_full_path }}");
-
+    mixpanel.track('Entered flashcards page');
 });
 </script>
 {% endblock content %}

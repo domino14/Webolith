@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>MCC</title>
+    <script type="text/javascript" src="/static/js/aerolith/jquery-1.6.1.min.js"></script>
+    <script type="text/javascript" src="/static/js/aerolith/jquery-ui-1.8.14.custom.min.js"></script>
+    <script>
+        $(function() {
+            // $( "#mainCalendar" ).datepicker();
+            // $( "#cal1" ).datepicker();
+           /* $( "#cal2" ).datepicker();
+            $( "#cal3" ).datepicker();*/
+
+            var mainCal = $("#mainCalendar").datepicker({inline:true,
+                onSelect: function(dateText, inst) { 
+                    calculateNextDates();
+                }
+
+            });
+            var cal1 = $("#cal1").datepicker({inline:true, disabled:true});
+            var cal2 = $("#cal2").datepicker({inline:true, disabled:true});
+            var cal3 = $("#cal3").datepicker({inline:true, disabled:true});
+
+            var period = $( "#period").val(28).change(function() {
+                calculateNextDates();
+            });
+
+            $("#datetype").change(function() {
+                calculateNextDates();
+            });
+
+            function calculateNextDates() {
+                var prevDate = mainCal.datepicker("getDate");
+                var days = $("#period").val();
+                
+                if ($("#datetype").val() == "ovulation") {
+                    prevDate = new Date(prevDate.getTime() - ( (days / 2) * 24* 60 * 60000) );
+                }
+                var millisecs = days * 24 * 60 * 60000;
+
+                for (var i = 0; i < 3; i++) {
+                    var dateObj = new Date(prevDate.getTime() + millisecs);
+                    $("#cal" + (i+1)).datepicker("setDate", dateObj);
+                    prevDate = dateObj;
+                }
+                $("#calInfo").html("<P>Selected date: " + mainCal.datepicker("getDate").toLocaleDateString() + "</P>" +
+                                "<P>Date 1: " + cal1.datepicker("getDate").toLocaleDateString() + "</P>" +
+                                "<P>Date 2: " + cal2.datepicker("getDate").toLocaleDateString() + "</P>" +
+                                "<P>Date 3: " + cal3.datepicker("getDate").toLocaleDateString() + "</P>");
+            }
+
+            calculateNextDates();
+
+        });
+    </script>
+    <link href="/static/css/redmond/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/misctools/misctools.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+    <div id="left-col">
+    <P>Select date of menses (Today's date is highlighted in yellow):</P>
+    <div id="mainCalendar" class="calendar"></div>
+    <P>Enter days in between and press Enter:</P>
+    <input id="period"></input>
+    <P><select id="datetype"><option value="menses">Show menses</option>
+                <option value="ovulation">Show ovulation</option></select></P>
+    <P>The calendars on the right will display the next three dates of menstruation or ovulation from the selected date.</P>
+    </div>
+
+    <div id="right-col">
+        <div id="cal1" class="calendar"></div>
+        <div id="cal2" class="calendar"></div>
+        <div id="cal3" class="calendar"></div>
+        <div id="calInfo"></div>
+    </div>
+</body>
+</html>

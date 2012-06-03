@@ -424,7 +424,7 @@ function textBoxKeyHandler(event)
   if(event.keyCode == 13)
   {
       var guessText = $(this).val();
-      if (guessText.length < 2 || guessText.length > 15) return;   // ignore
+      if (guessText.length < 1 || guessText.length > 18) return;   // ignore
       $(this).val("");
       /* should post */
       submitGuess(guessText);

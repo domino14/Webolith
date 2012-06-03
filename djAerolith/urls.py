@@ -23,6 +23,7 @@ from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.views import register
+from django.views.generic.simple import direct_to_template
 
 admin.autodiscover()
 
@@ -53,6 +54,8 @@ urlpatterns = patterns('',
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^wordgrids/', include('wordgrids.urls')),
+
+    (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'})
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
