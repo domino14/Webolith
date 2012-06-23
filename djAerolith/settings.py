@@ -144,7 +144,6 @@ INSTALLED_APPS = (
     'south',
     'whitleyCards',
     'quackleInterface',
-    'wordgrids',
     'crosswordgame',
     'misctools'
     #'debug_toolbar',
