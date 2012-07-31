@@ -12,10 +12,13 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
 <input type="submit" value="Save profile" id="saveProfile"/>
 </form>
 
+<p style="font-size: 75%;">
+    <a href="/accounts/password/change">Password change form</a>
+</p>
 <script type="text/javascript">
   $(document).ready(function() {
       $("#id_profileText").val("{{profile.profile|escapejs}}");
-      $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").attr('selected', 'selected');      
+      $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").attr('selected', 'selected');
       $('<div>Enter up to 2000 characters of information about yourself to show on your profile. You may use <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">Markdown</a>.</div>').insertBefore($("label[for='id_profileText']"))
   });
       $("#id_profileText").css({'height': '300px', 'width': '500px'});

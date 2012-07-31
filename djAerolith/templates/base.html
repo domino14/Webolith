@@ -1,16 +1,16 @@
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -62,7 +62,7 @@ mixpanel.identify("{{user}}");
     <div id="topbar">
         <div class="center">
             <div id="logo">
-                <a href="/"><img src="{{ STATIC_URL }}img/aerolith/aerolith_rock.png"></a>    
+                <a href="/"><img src="{{ STATIC_URL }}img/aerolith/aerolith_rock.png"></a>
             </div>
                 <ul id="navlist">
                 {% if user.username == "" %}
@@ -95,13 +95,14 @@ mixpanel.identify("{{user}}");
     <div id="content" class="center">
         {% block content %}
         {% if user.username == "" %}
-        Welcome to Aerolith 2.0! Please <a href="/accounts/login">log in</a>, or <a href="/accounts/register">register</a> if you are new to this site.
+        <p>Welcome to Aerolith 2.0! Please <a href="/accounts/login">log in</a>, or <a href="/accounts/register">register</a> if you are new to this site.</p>
+        <p style="font-size: 75%;"><a href="/accounts/password/reset">Forget your password?</a></p>
         {% else %}
         Welcome back, {{user}}! Here are some things you can do: <BR><BR>
         <a href="wordwalls" class="playlink">Play WordWalls</a><BR>
-        
+
         {% endif %}
-        
+
         <center><H2>Latest News</H2></center>
         {% if latestPost %}
         <div class="postdetail">
@@ -117,7 +118,7 @@ mixpanel.identify("{{user}}");
                 {% endif %}
                 </a>
         </div>
-        
+
         {% endif %}
         <script type="text/javascript">
         $(".playlink").button();
@@ -130,9 +131,9 @@ mixpanel.identify("{{user}}");
         </P>
         <P>
         <strong>Tip: </strong>this site works on netbooks too! Press F11 to put your browser in full-screen mode, and again to return to regular mode. </P>
-        
+
         {% endblock %}
-        
+
     </div>
     <div id="footer">
         <div class="center">
