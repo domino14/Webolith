@@ -53,6 +53,7 @@ urlpatterns = patterns('',
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
+    (r'^cardbox/', include('flashcards.urls')),
 
     (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'})
 )
