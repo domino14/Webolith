@@ -1,112 +1,12 @@
 {% extends "base.html" %}
-{% load assets %}
-{% block title %}Aerolith Cardbox{% endblock %}
-
-{% block ss %}
-    {% assets "css_fileuploader" %}
-        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-    {% endassets %}
-
-    {% assets "base_css" %}
-        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-    {% endassets %}
-
-    {% assets "jquery_css" %}
-        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-    {% endassets %}
-{% endblock ss %}
 
 {% block content %}
 
-{% assets "js_cardbox" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-<div>
-    {{lexForm.as_p}}
-</div>
-
-<p>Welcome, {{user}}!</p>
-
-
-{% if questionCount == 0 %}
-<P>You seem to not have any questions saved. You can either upload a Zyzzyva
-cardbox file, or start one from scratch.</p>
-
-<div id="accordion">
-    <h3><a href="#">Start from Scratch</a></h3>
-    <div>
-        <p>
-        Do a probability search
-        </p>
-    </div>
-
-    <h3><a href="#">File upload</a></h3>
-    <div>
-       <p>File upload instructions:</p>
-            <ul><li>Select the lexicon for the cardbox you wish to upload.
-                </li>
-                <li>Determine your Zyzzyva data directory. Simply open up Zyzzyva, open its
-                preferences, and copy the Location under "Data Directory".</li>
-                <li>Navigate to that location with the file upload tool, then go into the
-                    quiz/data/ directory and select the proper directory for your lexicon.
-                <li>Go into your lexicon directory and select the file named Anagrams.db</li>
-                <li>Click "Open" and please wait a few seconds while we generate your
-                    Aerolith cardbox from your Zyzzyva data.</li></ul>
-            <div id="file-uploader">
-                <noscript>
-                    <p>Please enable JavaScript to use file uploader.</p>
-                </noscript>
-            </div>
-            <div id="file-upload-msgs">
-            </div>
-
-        </p>
-    </div>
-
-</div>
-
+{% if accessedWithGet %}
+Please access the Flashcard application through the <a href="/wordwalls">Wordwalls</a> program.
 {% else %}
-
+you accessed with post?
 {% endif %}
 
-<script>
-$(function() {
-    $("#accordion").accordion({autoheight: false,
-                               collapsible: true,
-                               fillspace: true});
 
-    var uploader = new qq.FileUploader( {
-         action: "{% url ajax_upload %}",
-         element: $('#file-uploader')[0],
-         multiple: false,
-         onComplete: function( id, fileName, responseJSON ) {
-           if( responseJSON.success )
-            {
-                $("#file-upload-msgs").text("Success! " + responseJSON.msg);
-            }
-           else
-             {
-             }
-         },
-         onAllComplete: function( uploads ) {
-           // uploads is an array of maps
-           // the maps look like this: { file: FileObject, response: JSONServerResponse }
-
-         },
-         onSubmit: function()
-         {
-             uploader.setParams({
-                // 'lexicon': $("#id_lexicon").val(),
-                'csrf_token': '{{ csrf_token }}',
-                'csrf_name': 'csrfmiddlewaretoken',
-                'csrf_xname': 'X-CSRFToken'
-             });
-         },
-         params: {
-
-         },
-       });
-});
-</script>
-
-{% endblock %}
+{% endblock content %}

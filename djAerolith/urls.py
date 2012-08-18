@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     #(r'^accounts/confirm/(?P<activation_key>[0-9a-f]+)', 'accounts.views.confirm'),
     #(r'^accounts/profile/$', 'accounts.views.profile'),
     (r'^wordwalls/', include('wordwalls.urls')),
-    (r'^flashcards/', include('whitleyCards.urls')),
+    (r'^flashcards/', include('flashcards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^cardbox/', include('flashcards.urls')),
 

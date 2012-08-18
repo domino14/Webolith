@@ -142,7 +142,6 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_assets',
     'south',
-    'whitleyCards',
     'quackleInterface',
     'crosswordgame',
     'misctools',

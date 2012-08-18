@@ -1,0 +1,10 @@
+form input {
+    border: 2px solid #AAAAAA;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 5px #AAAAAA;
+    font-family: inherit;
+    font-size: 1em;
+    margin: 10px 0;
+    padding: 8px 5px 5px;
+    width: 100px;
+}

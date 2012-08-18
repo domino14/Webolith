@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load assets %}
+{% block title %}Aerolith IKM{% endblock %}
+
+{% block ss %}
+    {% assets "base_css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+    {% endassets %}
+
+    {% assets "jquery_css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+    {% endassets %}
+{% endblock ss %}
+
+{% block content %}
+
+{% assets "js_ikm" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+<p>Welcome, {{user}}!</p>
+
+
+
+{% endblock %}
