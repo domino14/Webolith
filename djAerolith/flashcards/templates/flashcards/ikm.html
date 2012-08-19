@@ -10,16 +10,86 @@
     {% assets "jquery_css" %}
         <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
     {% endassets %}
+
+    {% assets "ikm_css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
+    {% endassets %}
 {% endblock ss %}
 
 {% block content %}
 
-{% assets "js_ikm" %}
+{% assets "js_ikm_quiz" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
 
 <p>Welcome, {{user}}!</p>
 
+<script type="text/javascript">
+    $(function(){
+        IKMQuizApp.init({{ikmRunList|safe}});
+    });
+</script>
 
+<div id="mainDiv">
+    <div id="errorMsg"></div>
+    <p>You can select a previous IKM run...</p>
+    <div id="runList"></div>
+    <div style="clear: both; padding-top: 20px;">
+        <p>Or, add a new run:</p>
+        <select id="wordList">
+            <option value="owl2_6s">OWL2 6s</option>
+            <option value="owl2_7s">OWL2 7s</option>
+            <option value="owl2_8s">OWL2 8s</option>
+            <option value="csw12_6s">CSW12 6s</option>
+            <option value="csw12_7s">CSW12 7s</option>
+            <option value="csw12_8s">CSW12 8s</option>
+        </select>
+        <button id="listStart">Select</button>
+    </div>
+
+</div>
+
+<div id="quizDiv">
+</div>
+
+
+{# ICANHAZ TEMPLATES #}
+{# need verbatim tag so that Django doesn't render Mustache's curly braces #}
+
+{% load verbatim %}
+{% verbatim %}
+
+    <script id="runTemplate" type="text/html">
+        <div class="run">
+            <div class="description">{{description}}</div>
+            <div class="lexicon">{{lexicon}}</div>
+            <div class="progress">{{qindex}} / {{totalQs}}</div>
+            <div class="startDate">Started on: {{started}}</div>
+            <div class="lastSaved">Last saved: {{lastSeen}}</div>
+            <button class="continueRun">Continue</button>
+            <button class="deleteRun">Delete</button>
+        </div>
+    </script>
+
+    <script id="ikmQuizTemplate" type="text/html">
+        <div class="timer"></div>
+        <div class="flashcardQ">
+            <div class="question">{{question}}</div>
+            <div class="answers">
+            {{#answers}}
+            <div class="answer">{{answer}}</div>
+            <div class="definition">{{definition}}</div>
+            {{/answers}}
+            </div>
+        </div>
+        <div class="buttonbox">
+        <button class="answerButton" id="answer1">Got it</button>
+        <button class="answerButton" id="answer2">Almost</button>
+        <button class="answerButton" id="answer3">Missed it</button>
+        </div>
+        <button class="goBack">Go Back</button>
+    </script>
+
+{% endverbatim %}
 
 {% endblock %}

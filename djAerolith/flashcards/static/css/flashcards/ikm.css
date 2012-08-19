@@ -1,0 +1,53 @@
+#errorMsg {
+    clear: both;
+    margin-top: 10px;
+    color: red;
+    display: none;
+}
+
+div.run {
+    padding: 10px;
+    margin: 10px 20px 0 0;
+    border: 2px solid #AAAAAA;
+    box-shadow: 0 0 5px #AAAAAA;
+    border-radius: 5px 5px 5px 5px;
+    background-color: #fff;
+    width: 300px;
+    float: left;
+}
+
+.description {
+    color: gray;
+    padding-bottom: 10px;
+}
+
+button {
+    border: 2px solid #AAAAAA;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 5px #AAAAAA;
+    font-family: inherit;
+    font-size: 1em;
+    margin: 10px 30px 0 0;
+    padding: 8px 5px 5px 5px;
+    width: 100px;
+    cursor: pointer;
+}
+
+button:focus, button:focus:hover{
+    -webkit-box-shadow: 0px 0px 5px #ffe69f;
+    -moz-box-shadow: 0px 0px 5px #ffe69f;
+    box-shadow: 0px 0px 5px #ffe69f;
+    border: 2px solid #ffb600;
+}
+
+button:hover{
+    -webkit-box-shadow: 0px 0px 5px #bbb;
+    -moz-box-shadow: 0px 0px 5px #bbb;
+    box-shadow: 0px 0px 5px #bbb;
+    border: 2px solid #ccc;
+}
+
+select {
+    font-size: 1.1em;
+    margin-right: 20px;
+}

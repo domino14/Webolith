@@ -1,15 +1,22 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from flashcards.models import Question
+from flashcards.models import Question, IKMRun
 from wordwalls.forms import (
     LexiconForm, FindWordsForm, NamedListForm, SavedListForm)
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from wordwalls.views import searchForAlphagrams
 from wordwalls.models import NamedList, SavedList
-from base.models import Lexicon, Alphagram
-import json
+from base.models import Lexicon, Alphagram, alphProbToProbPK
+
+import random
+try:
+    import simplejson as json
+except:
+    import json
 from django.core.urlresolvers import reverse
+import re
+
 
 QUIZ_CHUNK_SIZE = 1000
 
@@ -25,11 +32,88 @@ def mainview(request):
                               context_instance=RequestContext(request))
 
 
+@login_required
 def ikm(request):
+    ikmRuns = IKMRun.objects.filter(user=request.user)
+    ikmRunList = []
+    for run in ikmRuns:
+        totalQs = len(json.loads(run.alphagramOrder))
+
+        runObj = {'id': run.pk,
+                  'lexicon': str(run.lexicon),
+                  'qindex': run.qindex,
+                  'totalQs': totalQs,
+                  'started': str(run.started),
+                  'lastSeen': str(run.lastSeen),
+                  'description': run.description}
+
+        ikmRunList.append(runObj)
+
     return render_to_response("flashcards/ikm.html",
+                              {'ikmRunList': json.dumps(ikmRunList)},
                               context_instance=RequestContext(request))
 
 
+@login_required
+def api_ikmruns(request):
+    try:
+        data = json.loads(request.raw_post_data)
+    except:
+        return HttpResponseForbidden("Malformed JSON")
+
+    list_regex = re.search(r'(?P<lexName>[a-zA-Z0-9]*)_(?P<length>[0-9]*)s',
+                           data['list'])
+
+    run = IKMRun()
+
+    run.lexicon = Lexicon.objects.get(
+        lexiconName=list_regex.group('lexName').upper())
+    run.user = request.user
+    run.qindex = 0
+    run.answers = json.dumps([])
+    run.additionalData = json.dumps({})
+
+    minP = 1
+    # lengthCounts is a dictionary of strings as keys
+    wordLength = list_regex.group('length')
+    maxP = json.loads(run.lexicon.lengthCounts)[wordLength]
+    r = range(minP, maxP + 1)
+    random.shuffle(r)
+    pks = [alphProbToProbPK(i, run.lexicon.pk, int(wordLength)) for i in r]
+
+    run.alphagramOrder = json.dumps(pks)
+    try:
+        run.description = data['description']
+    except:
+        run.description = '%s %ds' % (run.lexicon.lexiconName, int(wordLength))
+
+    run.save()
+
+    return HttpResponse(json.dumps({'id': run.pk,
+                                    'description': run.description,
+                                    'lexicon': run.lexicon.lexiconName,
+                                    'qindex': run.qindex,
+                                    'totalQs': len(pks),
+                                    'started': str(run.started),
+                                    'lastSeen': str(run.lastSeen)}),
+                        mimetype="application/json")
+
+
+@login_required
+def api_ikmrun_modify(request, id):
+    if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
+        method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
+        if method == 'DELETE':
+            try:
+                run = IKMRun.objects.get(pk=id, user=request.user)
+            except:
+                return HttpResponseForbidden("Forbidden")
+
+            run.delete()
+            return HttpResponse(status=200)
+
+
+############# WHITLEY FLASHCARDS
 
 
 @login_required
