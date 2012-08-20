@@ -13,6 +13,10 @@ var IKMQuizApp = (function(Backbone, $) {
         url: '/flashcards/api/ikmruns/'
     });
 
+    var IKMCard = Backbone.Model.extend({});
+    var IKMCardList = Backbone.Collection.extend({
+        model: IKMCard
+    });
 
     /* views */
 
@@ -99,29 +103,50 @@ var IKMQuizApp = (function(Backbone, $) {
 
         },
 
-        continueRun: function() {
+        continueRun: function(model) {
             this.$el.hide();
-            CardApp
+            this.trigger('continueRunEvent', model);
         }
     });
 
     var CardView = Backbone.View.extend({
+        tagName: "div",
+        className: "flashcard",
         events: {
-            "click .goBack": "backOneQuestion",
             "click .answerButton": "clickedAnswer"
         },
         initialize: function() {
 
         },
-        backOneQuestion: function() {
-
-        },
         clickedAnswer: function() {
 
+            this.trigger('answeredCard', this.model);
+        },
+        render: function() {
+            var json = this.model.toJSON();
+            this.$el.html(ich.ikmQuizTemplate(json));
+            return this;
         }
     });
 
-    var CardApp = new CardView({el: $("#quizDiv")})
+    var CardsView = Backbone.View.extend({
+        initialize: function() {
+            this.collection.on('add', this.addCard, this);
+        },
+
+        addCard: function(card) {
+            var view = new CardView({model: card});
+            view.on('answeredCard', this.answeredCard, this);
+            this.$("#cardList").prepend(view.render().$el);
+
+        },
+
+        answeredCard: function() {
+            // go to the next card
+            this.collection.create()
+
+        }
+    });
 
     /* handle CSRF */
     $('html').ajaxSend(function (event, xhr, settings) {
@@ -149,13 +174,33 @@ var IKMQuizApp = (function(Backbone, $) {
         }
     });
 
-
-
     return {
         init: function(ikmRunList) {
             var RunList = new IKMRunList();
             var RunsApp = new RunsView({collection: RunList, el: $("#mainDiv")});
             RunList.reset(ikmRunList);
+
+            var CardList = new IKMCardList();
+            var CardsApp = new CardsView({collection: CardList, el: $("#quizDiv")});
+
+            var Dispatcher = _.clone(Backbone.Events);
+
+            RunsApp.on('continueRunEvent', function(model) {
+                // CardsApp.addCard({'question': 'ACHIMNOR',
+                //                   'answers': [{'answer': 'HARMONIC',
+                //                               'definition': 'pertaining to harmony'},
+                //                               {'answer': 'OMNIARCH',
+                //                               'definition': 'better than a tetrarch'}]
+                //                 });
+
+                CardList.create({'question': 'ACHIMNOR',
+                      'answers': [{'answer': 'HARMONIC',
+                                  'definition': 'pertaining to harmony'},
+                                  {'answer': 'OMNIARCH',
+                                  'definition': 'better than a tetrarch'}]
+                    });
+            });
+
         }
     }
 

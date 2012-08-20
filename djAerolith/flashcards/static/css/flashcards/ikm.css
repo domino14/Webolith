@@ -51,3 +51,15 @@ select {
     font-size: 1.1em;
     margin-right: 20px;
 }
+
+div.flashcard {
+    padding: 10px;
+    margin: 10px 20px 0 0;
+    border: 2px solid #AAAAAA;
+    box-shadow: 0 0 5px #AAAAAA;
+    border-radius: 5px 5px 5px 5px;
+    background-color: #fff;
+    width: 500px;
+    height: 500px;
+    float: left;
+}
