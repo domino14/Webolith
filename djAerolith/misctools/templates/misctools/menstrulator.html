@@ -5,6 +5,12 @@
     <script type="text/javascript" src="/static/js/aerolith/jquery-ui-1.8.14.custom.min.js"></script>
     <script>
         $(function() {
+            Date.prototype.addDays = function(days) {
+                var dat = new Date(this.valueOf())
+                dat.setDate(dat.getDate() + days);
+                return dat;
+            }
+
             var mainCal = $("#mainCalendar").datepicker({inline:true,
                 onSelect: function(dateText, inst) {
                     calculateNextDates();
@@ -16,7 +22,6 @@
             for (var i = 1; i <= 3; i++) {
                 cals[i] = $("#cal" + i).datepicker({inline:true, disabled:true});
             }
-            console.log('cals', cals)
 
             var period = 28;
 
@@ -36,17 +41,16 @@
                 if ($("#datetype").val() != "menses") {
                     var multipleDates = true;
                 }
-                var beginDate = new Date(prevDate.getDate() + numDays);
 
+                var beginDate = prevDate.addDays(numDays);
                 for (var i = 0; i < 3; i++) {
-                    var dateObj = new Date(beginDate.getDate() + period * i);
+                    var dateObj = beginDate.addDays(period * i);
                     var $calendar = $("#cal"+ (i+1));
                     var $calendarCaption = $("#cal" + (i+1) + "Caption");
-                    console.log($calendar);
-                    console.log($calendarCaption);
+
                     if (multipleDates === true) {
                         // highlight three days
-                        var maxDate = new Date(dateObj.getDate() + 2);
+                        var maxDate = dateObj.addDays(2);
                         $calendar.datepicker("option", "minDate", dateObj);
                         $calendar.datepicker("option", "maxDate", maxDate);
                         $calendarCaption.html(dateObj.toLocaleDateString() + "<br/>through<br/>" +
