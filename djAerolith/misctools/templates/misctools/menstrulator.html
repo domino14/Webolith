@@ -19,9 +19,6 @@
             console.log('cals', cals)
 
             var period = 28;
-            var dayToMillisecs = 24 * 60 * 60 * 1000;
-            var periodToMillisecs = period * dayToMillisecs + 3600000;
-            // we add an extra hour to account for any problems with DST.
 
             $("#datetype").change(function() {
                 calculateNextDates();
@@ -35,25 +32,21 @@
                 var prevDate = mainCal.datepicker("getDate");
                 var days = period;
 
-                // if ($("#datetype").val() == "ovulation") {
-                //     prevDate = new Date(prevDate.getTime() - ( (days / 2) * 24* 60 * 60000) );
-                // }
-
                 var numDays = dayMap[$("#datetype").val()];
                 if ($("#datetype").val() != "menses") {
                     var multipleDates = true;
                 }
-                var beginDate = new Date(prevDate.getTime() + dayToMillisecs * numDays);
+                var beginDate = new Date(prevDate.getDate() + numDays);
 
                 for (var i = 0; i < 3; i++) {
-                    var dateObj = new Date(beginDate.getTime() + periodToMillisecs * i);
+                    var dateObj = new Date(beginDate.getDate() + period * i);
                     var $calendar = $("#cal"+ (i+1));
                     var $calendarCaption = $("#cal" + (i+1) + "Caption");
                     console.log($calendar);
                     console.log($calendarCaption);
                     if (multipleDates === true) {
                         // highlight three days
-                        var maxDate = new Date(dateObj.getTime() + dayToMillisecs * 2);
+                        var maxDate = new Date(dateObj.getDate() + 2);
                         $calendar.datepicker("option", "minDate", dateObj);
                         $calendar.datepicker("option", "maxDate", maxDate);
                         $calendarCaption.html(dateObj.toLocaleDateString() + "<br/>through<br/>" +
