@@ -11,15 +11,27 @@
     left: 350px;
 }
 
-#cal1 {
+.calHolder {
     float: left;
+    margin-right: 20px;
 }
 
-#cal2 {
-    float: left;
+.calendarCaption {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700;
 }
 
-#cal3 {
-    float: left;
+#selectedDate {
+    margin-top: 10px;
+    font-weight: 700;
 }
 
+
+body {
+    background-color: #F9F9F9;
+    background-image: url('/static/img/aerolith/scribble_light.png');
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    color: #444444;
+}

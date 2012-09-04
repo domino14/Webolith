@@ -5,52 +5,77 @@
     <script type="text/javascript" src="/static/js/aerolith/jquery-ui-1.8.14.custom.min.js"></script>
     <script>
         $(function() {
-            // $( "#mainCalendar" ).datepicker();
-            // $( "#cal1" ).datepicker();
-           /* $( "#cal2" ).datepicker();
-            $( "#cal3" ).datepicker();*/
-
             var mainCal = $("#mainCalendar").datepicker({inline:true,
-                onSelect: function(dateText, inst) { 
+                onSelect: function(dateText, inst) {
                     calculateNextDates();
                 }
 
             });
-            var cal1 = $("#cal1").datepicker({inline:true, disabled:true});
-            var cal2 = $("#cal2").datepicker({inline:true, disabled:true});
-            var cal3 = $("#cal3").datepicker({inline:true, disabled:true});
 
-            var period = $( "#period").val(28).change(function() {
-                calculateNextDates();
-            });
+            var cals = {};
+            for (var i = 1; i <= 3; i++) {
+                cals[i] = $("#cal" + i).datepicker({inline:true, disabled:true});
+            }
+            console.log('cals', cals)
+
+            var period = 28;
+            var dayToMillisecs = 24 * 60 * 60 * 1000;
+            var periodToMillisecs = period * dayToMillisecs + 3600000;
+            // we add an extra hour to account for any problems with DST.
 
             $("#datetype").change(function() {
                 calculateNextDates();
             });
 
+            var dayMap = {'ovulation': 12,
+                          'therapy': 24,
+                          'menses': 28}
+
             function calculateNextDates() {
                 var prevDate = mainCal.datepicker("getDate");
-                var days = $("#period").val();
-                
-                if ($("#datetype").val() == "ovulation") {
-                    prevDate = new Date(prevDate.getTime() - ( (days / 2) * 24* 60 * 60000) );
+                var days = period;
+
+                // if ($("#datetype").val() == "ovulation") {
+                //     prevDate = new Date(prevDate.getTime() - ( (days / 2) * 24* 60 * 60000) );
+                // }
+
+                var numDays = dayMap[$("#datetype").val()];
+                if ($("#datetype").val() != "menses") {
+                    var multipleDates = true;
                 }
-                var millisecs = days * 24 * 60 * 60000;
+                var beginDate = new Date(prevDate.getTime() + dayToMillisecs * numDays);
 
                 for (var i = 0; i < 3; i++) {
-                    var dateObj = new Date(prevDate.getTime() + millisecs);
-                    $("#cal" + (i+1)).datepicker("setDate", dateObj);
-                    prevDate = dateObj;
+                    var dateObj = new Date(beginDate.getTime() + periodToMillisecs * i);
+                    var $calendar = $("#cal"+ (i+1));
+                    var $calendarCaption = $("#cal" + (i+1) + "Caption");
+                    console.log($calendar);
+                    console.log($calendarCaption);
+                    if (multipleDates === true) {
+                        // highlight three days
+                        var maxDate = new Date(dateObj.getTime() + dayToMillisecs * 2);
+                        $calendar.datepicker("option", "minDate", dateObj);
+                        $calendar.datepicker("option", "maxDate", maxDate);
+                        $calendarCaption.html(dateObj.toLocaleDateString() + "<br/>through<br/>" +
+                            maxDate.toLocaleDateString());
+                    }
+                    else {
+                        // cancel the highlights
+                        $calendar.datepicker("option", "minDate", null);
+                        $calendar.datepicker("option", "maxDate", null);
+                        $calendarCaption.html(dateObj.toLocaleDateString());
+                    }
+                    $calendar.datepicker("setDate", dateObj);
                 }
-                $("#calInfo").html("<P>Selected date: " + mainCal.datepicker("getDate").toLocaleDateString() + "</P>" +
-                                "<P>Date 1: " + cal1.datepicker("getDate").toLocaleDateString() + "</P>" +
-                                "<P>Date 2: " + cal2.datepicker("getDate").toLocaleDateString() + "</P>" +
-                                "<P>Date 3: " + cal3.datepicker("getDate").toLocaleDateString() + "</P>");
+
+                $("#titlebar").html("<center>" + $("#datetype option:selected").text() + "</center>");
+                $("#selectedDate").html("You have selected: <br/>" + prevDate.toLocaleDateString());
             }
 
             calculateNextDates();
 
         });
+
     </script>
     <link href="/static/css/redmond/jquery-ui-1.8.14.custom.css" rel="stylesheet" type="text/css">
     <link href="/static/css/misctools/misctools.css" rel="stylesheet" type="text/css">
@@ -58,19 +83,34 @@
 </head>
 <body>
     <div id="left-col">
-    <P>Select date of menses (Today's date is highlighted in yellow):</P>
+    <h3>Step 1</h3>
+    <P>Select first date of menses (Today's date is highlighted in yellow):</P>
     <div id="mainCalendar" class="calendar"></div>
-    <P>Enter days in between and press Enter:</P>
-    <input id="period"></input>
-    <P><select id="datetype"><option value="menses">Show menses</option>
-                <option value="ovulation">Show ovulation</option></select></P>
-    <P>The calendars on the right will display the next three dates of menstruation or ovulation from the selected date.</P>
+    <div id="selectedDate"></div>
+    <h3>Step 2</h3>
+    <p>Select dates you would like to view</p>
+    <P><select id="datetype"><option value="menses">Menses: day 1</option>
+                <option value="ovulation">Baseline evaluation: days 13 through 15</option>
+                <option value="therapy">Therapy and evaluation: days 25 through 27</option>
+        </select></P>
+    <P>The calendars on the right will display the calculations for a 28-day cycle.</P>
     </div>
 
+
     <div id="right-col">
-        <div id="cal1" class="calendar"></div>
-        <div id="cal2" class="calendar"></div>
-        <div id="cal3" class="calendar"></div>
+        <h2 id="titlebar"></h2>
+        <div id="cal1Holder" class="calHolder">
+            <div id="cal1" class="calendar"></div>
+            <div id="cal1Caption" class="calendarCaption"></div>
+        </div>
+        <div id="cal2Holder" class="calHolder">
+            <div id="cal2" class="calendar"></div>
+            <div id="cal2Caption" class="calendarCaption"></div>
+        </div>
+        <div id="cal3Holder" class="calHolder">
+            <div id="cal3" class="calendar"></div>
+            <div id="cal3Caption" class="calendarCaption"></div>
+        </div>
         <div id="calInfo"></div>
     </div>
 </body>
