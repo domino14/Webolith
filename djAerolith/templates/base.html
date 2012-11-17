@@ -23,6 +23,11 @@ To contact the author, please email delsolar at gmail dot com
 <head>
     {% block ss %}
      {% load assets %}
+     {% load value_from_settings %}
+     {% value_from_settings USE_MX as use_mx %}
+     {% value_from_settings USE_GA as use_ga %}
+     {% value_from_settings USE_FB as use_fb %}
+
      {% assets "base_css" %}
          <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
      {% endassets %}
@@ -33,8 +38,8 @@ To contact the author, please email delsolar at gmail dot com
     {% endblock %}
     {% block addlCSS %}{% endblock %}
     <title>{% block title %}Aerolith{% endblock %}</title>
+    {% if use_ga %}
     <script type="text/javascript">
-
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-26099415-1']);
       _gaq.push(['_trackPageview']);
@@ -44,14 +49,27 @@ To contact the author, please email delsolar at gmail dot com
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-
     </script>
+    {% endif %}
+    {% if use_mx %}
 <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
 for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
 mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
 mixpanel.identify("{{user}}");
 </script><!-- end Mixpanel -->
+    {% else %}
+    <script type="text/javascript">
+        window.mixpanel = function() {
 
+        }
+        window.mixpanel.track = function(item) {
+            console.log('mock mixpanel track ' + item);
+        }
+        window.mixpanel.name_tag = function(item) {
+            console.log('mock mixpanel name_tag ' + item);
+        }
+    </script>
+    {% endif %}
 </head>
 
 
@@ -124,9 +142,12 @@ mixpanel.identify("{{user}}");
         <script type="text/javascript">
         $(".playlink").button();
         </script>
+
+        {% if use_fb %}
         <center>
         <iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FAerolithorg%2F187993161284057&amp;width=300&amp;height=290&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=false&amp;header=true&amp;appId=17369129469" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:290px;" allowTransparency="true"></iframe>
         </center>
+        {% endif %}
         <P>
         <strong>Tip: </strong>this site works on netbooks too! Press F11 to put your browser in full-screen mode, and again to return to regular mode. </P>
 
@@ -136,9 +157,11 @@ mixpanel.identify("{{user}}");
     <div id="footer">
         <div class="center">
             <div id="copyright">&copy; 2012 Cesarware. All Rights Reserved.</div>
+            {% if use_mx %}
             <div id="mixpanel">
             <a href="https://mixpanel.com/f/partner"><img src="https://mixpanel.com/site_media/images/partner/badge_light.png" alt="Mobile and Web Analytics" /></a>
             </div>
+            {% endif %}
         </div>
     </div>
 </body>

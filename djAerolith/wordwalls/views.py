@@ -224,7 +224,7 @@ def homepage(request):
     ctx = RequestContext( request, {
       'csrf_token': get_token( request ),
     } )
-
+    logger.debug('Rendering wordwalls index page')
     return render_to_response('wordwalls/index.html', 
                             {'fwForm': fwForm, 
                             'dcForm' : dcForm, 

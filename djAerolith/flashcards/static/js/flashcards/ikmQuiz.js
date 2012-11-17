@@ -145,6 +145,10 @@ var IKMQuizApp = (function(Backbone, $) {
             // go to the next card
             this.collection.create()
 
+        },
+
+        fetchCards: function(runModel) {
+            $.get('/api/')
         }
     });
 
@@ -183,22 +187,17 @@ var IKMQuizApp = (function(Backbone, $) {
             var CardList = new IKMCardList();
             var CardsApp = new CardsView({collection: CardList, el: $("#quizDiv")});
 
-            var Dispatcher = _.clone(Backbone.Events);
+            // var Dispatcher = _.clone(Backbone.Events);
 
             RunsApp.on('continueRunEvent', function(model) {
-                // CardsApp.addCard({'question': 'ACHIMNOR',
-                //                   'answers': [{'answer': 'HARMONIC',
-                //                               'definition': 'pertaining to harmony'},
-                //                               {'answer': 'OMNIARCH',
-                //                               'definition': 'better than a tetrarch'}]
-                //                 });
-
-                CardList.create({'question': 'ACHIMNOR',
-                      'answers': [{'answer': 'HARMONIC',
-                                  'definition': 'pertaining to harmony'},
-                                  {'answer': 'OMNIARCH',
-                                  'definition': 'better than a tetrarch'}]
-                    });
+                console.log('continueRunEvent triggered by model', model);
+                // CardList.add({'question': 'ACHIMNOR',
+                //       'answers': [{'answer': 'HARMONIC',
+                //                   'definition': 'pertaining to harmony'},
+                //                   {'answer': 'OMNIARCH',
+                //                   'definition': 'better than a tetrarch'}]
+                //     });
+                CardsApp.fetchCards(model);
             });
 
         }

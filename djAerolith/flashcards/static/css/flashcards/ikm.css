@@ -60,6 +60,12 @@ div.flashcard {
     border-radius: 5px 5px 5px 5px;
     background-color: #fff;
     width: 500px;
-    height: 500px;
+    height: 300px;
     float: left;
+    display: block;
+}
+
+div#quizDiv {
+    width: 500px;
+    height: 500px;
 }

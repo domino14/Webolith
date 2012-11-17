@@ -238,9 +238,9 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    'apps': { # I keep all my apps here, but you can also add them one by one
-            'handlers': ['log_file'],
-            'level': 'INFO',
+        'apps': { # I keep all my apps here, but you can also add them one by one
+            'handlers': ['console'], #['log_file'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     }
@@ -254,3 +254,7 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 SOCKET_IO_SERVER = 'http://www.aerolith.org:1988'
+
+USE_MX = settings_local.USE_MX
+USE_GA = settings_local.USE_GA
+USE_FB = settings_local.USE_FB

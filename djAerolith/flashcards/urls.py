@@ -12,5 +12,6 @@ urlpatterns = patterns(
         'flashcards.views.savedListPk', name='flashcards_by_savedList_pk'),
 
     url(r'^api/ikmruns/$', 'flashcards.views.api_ikmruns'),
-    url(r'^api/ikmruns/(\d*)$', 'flashcards.views.api_ikmrun_modify')
+    url(r'^api/ikmruns/(\d*)$', 'flashcards.views.api_ikmrun_modify'),
+   # url(r'^api/flashcards/fromRun/$', 'flashcards.views.api_flashcards_fromRun'),
 )
