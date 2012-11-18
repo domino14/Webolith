@@ -1,6 +1,5 @@
 # chew's reference: http://www.poslfit.com/scrabble/gcg/
 import uuid
-import json
 import re
 
 
@@ -9,7 +8,7 @@ class GCGParseError(Exception):
 
 
 class GCGParser:
-    """ Parses a .gcg file and outputs a serialized JSON format I
+    """ Parses a .gcg file and outputs a python object in a format I
     invented. Not all .gcg options are supported; this should not be
     taken as a reference parser. Unsupported options are listed here:
 
@@ -35,12 +34,15 @@ class GCGParser:
                 self.processPragma(line, output)
             elif line.startswith('>'):
                 self.processEvent(line, output)
-
+            elif len(line) == 0:
+                continue
+            else:
+                raise GCGParseError('File has an unrecognized line beginning')
         if output['id'] == '':
             # auto-assign an id
             output['id'] = 'org.aerolith %s' % uuid.uuid4()
 
-        return json.dumps(output, indent=2)
+        return output
 
     def processPragma(self, line, output):
         try:
@@ -118,6 +120,7 @@ class GCGParser:
             event['score'] = int(eventParams[1])
             event['totalscore'] = int(eventParams[2])
 
+        event['originalevent'] = params
         output['moves'].append(event)
 
     def position(self, directive):
@@ -219,6 +222,19 @@ x = """
 >roy:  (CNR) +10 422
 """
 
+y = """
+#player1 David David
+#player2 Randy Randy
+>David: ANTHER? n8 ANoTHER +73 416
+>Randy: U - +0 380
+>David: SEQSPO? -QO +0 268
+>Randy: MOULAGD -- -76 354
+>David: DROWNUG (challenge) +5 289
+>Randy: (G) +4 539
+>Randy: FWLI (FWLI) -10 426
+>David: ISBALI (time) -10 409
+"""
+
 if __name__ == '__main__':
     parser = GCGParser()
-    print parser.parse(x)
+    print parser.parse(y)

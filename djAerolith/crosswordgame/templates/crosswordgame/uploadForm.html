@@ -1,0 +1,8 @@
+{% extends "crosswordgame/crossword_base.html" %}
+{% block content %}
+<form enctype="multipart/form-data" action="" method="post">
+    {% csrf_token %}
+{{gcgform.as_p}}
+<input type="submit" name="upload" value="Upload">
+</form>
+{% endblock %}

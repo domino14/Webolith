@@ -1,24 +1,25 @@
 from django_assets import Bundle, register
-            
+
 tableJs = Bundle('js/aerolith/csrfAjax.js',
-                'js/crosswordgame/table.js',
-                filters = 'jsmin', 
-                output='js/crosswordgame/packedTable.js')
-            
-register('js_crosswordgame_table',
-        'js/aerolith/jquery-1.6.1.min.js',
-        'js/aerolith/raphael-min.js', tableJs)
+                 'js/crosswordgame/gcg.js',
+                 'js/crosswordgame/gcgViews.js',
+                 filters='jsmin',
+                 output='js/crosswordgame/packedTable.js')
 
+register('js_crosswordgame_table', tableJs)
 
-# css
+register('js_base_libraries',
+         'js/aerolith/jquery-1.8.3.min.js',
+         'lib/bootstrap/js/bootstrap.min.js')
 
-# tableCreateCss = Bundle('css/wordgrids/createTable.css',
-#                         filters='cssmin',
-#                         output='css/wordgrids/packedCreateTable.css')
-#        
-# tableCss = Bundle('css/wordgrids/table.css',
-#                     filters='cssmin',
-#                     output='css/wordgrids/packedTable.css')
-#         
-# register('css_wordgrids_table_create', tableCreateCss)
-# register('css_wordgrids_table', tableCss)
+register('js_crosswordgame_libraries',
+         'js/aerolith/raphael-min.js',
+         'lib/underscore-min.js',
+         'lib/backbone-min.js')
+
+tableCss = Bundle(
+                  filters='cssmin',
+                  output='css/crosswordgame/packedTable.css')
+
+register('css_crosswordgame_base',
+         'lib/bootstrap/css/bootstrap.min.css')

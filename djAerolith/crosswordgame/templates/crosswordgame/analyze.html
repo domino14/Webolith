@@ -1,0 +1,42 @@
+{% extends "crosswordgame/crossword_base.html" %}
+{% load assets %}
+
+{% block scripts %}
+{% assets "js_crosswordgame_libraries" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+{% assets "js_crosswordgame_table" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
+
+<script type="text/javascript">
+$(document).ready(function () {
+    App.init({{gamejson|safe}});
+});
+</script>
+
+
+{% endblock %}
+{% block content %}
+<div class="row">
+    hi
+</div>
+<div class="row">
+    <div class="span6">
+        <div id="gameBoard"></div>
+    </div>
+    <div class="span6">
+        <button class="btn btn-mini" type="button" id="back">Back</button>
+        <button class="btn btn-mini" type="button" id="forward">Forward</button>
+        <button type="button" class="btn btn-mini" data-toggle="collapse" data-target="#moveList">Move List</button>
+
+        <div id="moveList" class="collapse">
+            <div class="row">
+                <div class="span3" id="player1moves"></div>
+                <div class="span3" id="player2moves"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
