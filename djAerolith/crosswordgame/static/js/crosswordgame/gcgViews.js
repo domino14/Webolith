@@ -59,13 +59,6 @@ var App = (function(Backbone, $) {
                               attr({'fill': colors[griddy[place]],
                                     'cursor': 'pointer',
                                     'stroke': '#777777'});
-              //var letter = grid[j+7*i];
-              /*paper.print(x + tilesize/4, y+tilesize/2, letter, font, fontSize).
-                                      attr();  // left-align*/
-            /*  paper.text(x + tilesize/2, y + tilesize/2, letter).
-                      attr({'font-family': 'sans-serif',
-                              'font-size': fontSize, 'cursor': 'pointer'});*/
-
           }
       }
   }
