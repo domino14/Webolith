@@ -1,16 +1,16 @@
 # Aerolith 2.0: A web-based word game website
 # Copyright (C) 2011 Cesar Del Solar
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -136,7 +136,7 @@ INSTALLED_APPS = (
     'base',
     'tablegame',
     'wordwalls',
-    'registration', 
+    'registration',
     'accounts',
     'django.contrib.staticfiles',
     'gunicorn',
@@ -151,7 +151,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
-ACCOUNT_ACTIVATION_DAYS = 2 
+ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
 
 AUTH_PROFILE_MODULE = 'accounts.AerolithProfile'
@@ -174,9 +174,9 @@ IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt'
 SEND_BROKEN_LINK_EMAILS = False
 
 INTERNAL_IPS = ('127.0.0.1',)
-# 
+#
 # DEBUG_TOOLBAR_PANELS = (
-# 
+#
 #     'debug_toolbar.panels.version.VersionDebugPanel',
 #        'debug_toolbar.panels.timer.TimerDebugPanel',
 #        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
@@ -186,10 +186,10 @@ INTERNAL_IPS = ('127.0.0.1',)
 #        'debug_toolbar.panels.sql.SQLDebugPanel',
 #        'debug_toolbar.panels.signals.SignalDebugPanel',
 #        'debug_toolbar.panels.logger.LoggingPanel',
-# 
+#
 # )
-# 
-# DEBUG_TOOLBAR_CONFIG = {        
+#
+# DEBUG_TOOLBAR_CONFIG = {
 #         'INTERCEPT_REDIRECTS': False,
 #    }
 
@@ -222,9 +222,10 @@ LOGGING = {
         'log_file':{
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(PROJECT_ROOT, 'logs/django.log'),
-            'maxBytes': '16777216', # 16megabytes
-            'formatter': 'verbose'
+            'filename': os.path.join(os.getenv("HOME"), 'django.log'),
+            'maxBytes': 50000000,
+            'formatter': 'verbose',
+            'backupCount': 10
         },
         'mail_admins': {
             'level': 'ERROR',
