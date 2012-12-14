@@ -13,3 +13,4 @@ wordsdir/
 djAerolith/logs
 *.sublime-workspace
 *.sublime-project
+namedLists.json
