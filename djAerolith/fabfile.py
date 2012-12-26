@@ -19,7 +19,7 @@ def deploy_prod():
                 run("python manage.py collectstatic --noinput")
                 # execute any needed migrations
                 run("python manage.py migrate")
-            run("sudo supervisorctl reload")
+                run("supervisorctl reload")
 
 
 @roles('prod')
