@@ -19,7 +19,7 @@ def deploy_prod():
                 run("python manage.py collectstatic --noinput")
                 # execute any needed migrations
                 run("python manage.py migrate")
-                run("supervisorctl reload")
+                run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
 @roles('prod')
