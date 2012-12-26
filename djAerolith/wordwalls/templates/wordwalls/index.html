@@ -156,6 +156,8 @@
     $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');  
     initializeTableCreatePage("{{lengthCounts|escapejs}}", 
                                 "{{dcTimes|escapejs}}", 
+    // remove CSW07
+    $("#id_lexicon option[value='5']").remove();
                                 "{% url wordwalls_create_table %}",
                                 "{% url flashcards_create_quiz %}");
     //establishSocketConnection("{% value_from_settings SOCKET_IO_SERVER %}");
