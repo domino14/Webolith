@@ -7,8 +7,8 @@ env.roledefs = {
 }
 
 @roles('prod')
-def deploy_prod():    
-    with cd("webolith"):
+def deploy_prod():
+    with cd("Webolith"):
         run("git pull")
         with cd("djAerolith"):
             with settings(warn_only=True):
@@ -20,13 +20,13 @@ def deploy_prod():
 
 @roles('prod')
 def test_prod():
-    with cd("webolith/"):
+    with cd("Webolith/"):
         with cd("djAerolith/"):
             run("ls -al")
 
 @roles('prod')
 def prod_fixtures():
-    with cd("webolith"):
+    with cd("Webolith"):
         with cd("djAerolith"):
             with prefix("workon aeroenv"):
-                run("python manage.py loaddata dcNames") 
+                run("python manage.py loaddata dcNames")
