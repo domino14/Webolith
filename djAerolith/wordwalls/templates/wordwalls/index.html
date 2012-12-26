@@ -40,25 +40,25 @@
         <li><a href="#tabs-1">Today's Challenges</a></li>
         <li><a href="#tabs-2">Search by probability</a></li>
         <li><a href="#tabs-3">Saved List</a></li>
-        <li><a href="#tabs-4">Named List</a></li>       
+        <li><a href="#tabs-4">Named List</a></li>
     </ul>
     <div id="tabs-1">
         <div id="showChallengesHelp" class="showHelp">
         Click for help
         </div>
-        
+
         <div id="challengesHelp" class="help">
-        <P>Hooooooold. Challenge. A new set of challenges is generated once a day. To play the challenges, select the 
-            lexicon and challenge, and click Play! You can also see how other people did today on the display to the 
+        <P>Hooooooold. Challenge. A new set of challenges is generated once a day. To play the challenges, select the
+            lexicon and challenge, and click Play! You can also see how other people did today on the display to the
             right of the challenge.</P>
-        <P>The "Week's Bingo Toughies" list gets updated every Tuesday at midnight PST (i.e. Tuesday 3AM EST). It will 
-            have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The 
+        <P>The "Week's Bingo Toughies" list gets updated every Tuesday at midnight PST (i.e. Tuesday 3AM EST). It will
+            have the 50 toughest bingo alphagrams (7 and 8 letter words) of all of the previous week's challenges. The
             toughest bingos are the ones most commonly missed that week.</P>
         <P>If you want to view results of previous challenges select the date below. You can also play these challenges.
             Any new records set for older challenges won't count for your medal total, though. <em>Note: All dates are in
                 Pacific Standard Time (PST).</em></P>
         </div>
-        <table id="challengesLayout"> 
+        <table id="challengesLayout">
         <tr>
             <td id="dcFormCell">
                 {{ dcForm.as_p}}
@@ -70,7 +70,7 @@
             </td>
         </tr>
         </table>
-        
+
     </div>
 
     <div id="tabs-2">
@@ -82,7 +82,7 @@
         <P>Here, you can search word lists by probability (and possibly other parameters in the future). Simply select a lexicon and a word length. The minimum probability must always be greater than or equal 1; the maximum probability must be less than or equal to the number of words with that word length -- this number will show up in the "Max probability" label below. In the future, you'll also be able to select multiplayer modes.</P>
         <P>The probabilities are alphagram probabilities, and not word probabilities.</P>
         </div>
-        
+
         {{ fwForm.as_p }}
         <button class="formSubmitButton" id="searchParamsSubmit">Play!</button>
         <span style="width:100px;display:inline-block;text-align:center;">or</span>
@@ -100,10 +100,10 @@
             <P>You can select a list that you have previously saved here. When you are playing a game, you have the option to save at the beginning or end of a round by clicking the Save button. Once you do this, the game will autosave after every round you play. When you save you will be prompted for a case-insensitive list name. These saved games show up in the list below. There are four options:</P>
             <H4>Continue list progress (default)</H4>
             <P>This will continue the list from where you last left off.</P>
- 
+
             <H4>Quiz only on first missed</H4>
             <P>The very first time you go through a word list in its entirety, you will have a list of missed words. This quiz will consist only of those missed words. <em>If you select this option, and don't finish the 'first missed' list, if you want to finish it next time make sure to select 'continue list progress.'</em> You will get an error if you select this option before finishing a quiz once.</P>
-        
+
             <H4>Restart list</H4>
             <P>In this option, you will restart the list from scratch. This eliminates progress on the list, so be careful! Your 'first' missed data will be lost.</P>
             <P>The table below that shows your word lists will show the name of the word list, and the last time this list was saved. There will also be an asterisk (*) after the date if you have already gone through the entire word list at least once.</P>
@@ -116,18 +116,18 @@
         <div id="numAlphasInfo"></div>
             {{ slForm.as_p }}
         <span id="savedListWarning"></span>
-        
+
         <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
         <span style="width:100px;display:inline-block;text-align:center;">or</span>
         <button class="formSubmitButton" id="savedListsFlashcardEntire">Flashcard entire list</button>
         <button class="formSubmitButton" id="savedListsFlashcardFM">Flashcard first missed</button>
         <br>
         <H3>Or upload a new list:</H3>
-        
-        <div id="file-uploader">       
-            <noscript>          
+
+        <div id="file-uploader">
+            <noscript>
                 <p>Please enable JavaScript to use file uploader.</p>
-            </noscript>         
+            </noscript>
         </div>
         <div id="file-upload-msgs">
         </div>
@@ -141,7 +141,7 @@
         <P>These are named lists for each lexicon, which can be used as shortcuts instead of searching by probability. There are also JQXZ lists and CSW-only lists available. There may be more lists in the future. Simply find a list and click Play!</P>
         <P>If you wish to save your progress on a list here, you can enter a list name once you're playing, just like the other lists. The saved list will show up in your saved lists.</P>
         </div>
-        
+
         {{ nlForm.as_p }}
         <button class="formSubmitButton" id="namedListsSubmit">Play!</button>
         <span style="width:100px;display:inline-block;text-align:center;">or</span>
@@ -152,12 +152,11 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-
-    $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');  
-    initializeTableCreatePage("{{lengthCounts|escapejs}}", 
-                                "{{dcTimes|escapejs}}", 
     // remove CSW07
     $("#id_lexicon option[value='5']").remove();
+    $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');
+    initializeTableCreatePage("{{lengthCounts|escapejs}}",
+                                "{{dcTimes|escapejs}}",
                                 "{% url wordwalls_create_table %}",
                                 "{% url flashcards_create_quiz %}");
     //establishSocketConnection("{% value_from_settings SOCKET_IO_SERVER %}");
@@ -183,16 +182,16 @@
     $("#searchParamsSubmit").click(searchParamsSubmitClicked);
     $("#savedListsSubmit").click(savedListsSubmitClicked);
     $("#namedListsSubmit").click(namedListsSubmitClicked);
-    
+
     $("#searchParamsFlashcard").click(searchParamsFlashcardClicked);
     $("#savedListsFlashcardEntire").click(savedListsFlashcardEntireClicked);
     $("#savedListsFlashcardFM").click(savedListsFlashcardFMClicked);
     $("#namedListsFlashcard").click(namedListsFlashcardClicked);
-    
+
     $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
     $("#id_challengeDate").datepicker({
-        minDate: new Date(2011, 5, 14), 
-        maxDate: 0, 
+        minDate: new Date(2011, 5, 14),
+        maxDate: 0,
         showButtonPanel: true});
    // $(".qq-upload-button").button();  // dammit i can't change this stupid red button?
  });
@@ -218,7 +217,7 @@ var uploader = new qq.FileUploader( {
      onAllComplete: function( uploads ) {
        // uploads is an array of maps
        // the maps look like this: { file: FileObject, response: JSONServerResponse }
-      
+
      },
      onSubmit: function()
      {
@@ -227,7 +226,7 @@ var uploader = new qq.FileUploader( {
             'csrf_token': '{{ csrf_token }}',
             'csrf_name': 'csrfmiddlewaretoken',
             'csrf_xname': 'X-CSRFToken'
-         });  
+         });
      },
      params: {
 
@@ -240,17 +239,17 @@ var uploader = new qq.FileUploader( {
 
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
