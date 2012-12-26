@@ -1,10 +1,11 @@
-from fabric.api import env, run,roles,cd, settings, prefix
+from fabric.api import env, run, roles, cd, settings, prefix
 import os
 
-env.key_filename= os.getenv("HOME") + "/Dropbox/aws/cesarkey.pem"
+env.key_filename = os.getenv("HOME") + "/.rackspace/aerolith_production.pem"
 env.roledefs = {
     'prod': ['ubuntu@aerolith.org']
 }
+
 
 @roles('prod')
 def deploy_prod():
@@ -14,15 +15,19 @@ def deploy_prod():
             with settings(warn_only=True):
                 run("mkdir logs")
             with prefix("workon aeroenv"):
-                run("python manage.py collectstatic --noinput")  # collect static files!
-                run("python manage.py migrate") # execute any needed migrations
+                # collect static files!
+                run("python manage.py collectstatic --noinput")
+                # execute any needed migrations
+                run("python manage.py migrate")
             run("sudo supervisorctl reload")
+
 
 @roles('prod')
 def test_prod():
     with cd("Webolith/"):
         with cd("djAerolith/"):
             run("ls -al")
+
 
 @roles('prod')
 def prod_fixtures():
