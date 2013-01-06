@@ -44,6 +44,7 @@ from base.models import alphagrammize
 import random
 import redis
 import logging
+from lib.response import response
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
     dcTimeMap[i.pk] = i.timeSecs
@@ -83,11 +84,7 @@ def homepage(request):
                         chDate = date.today()
 
                     leaderboardData = getLeaderboardData(lex, chName, chDate)
-                    response = HttpResponse(
-                        json.dumps(leaderboardData, ensure_ascii=False),
-                        mimetype="application/javascript")
-                    response['Content-Type'] = 'text/plain; charset=utf-8'
-                    return response
+                    return response(leaderboardData)
                 except:
                     raise Http404
             elif request.POST['action'] == 'getSavedListList':
@@ -95,12 +92,7 @@ def homepage(request):
                 try:
                     lex = request.POST['lexicon']
                     lt = getSavedListList(lex, request.user)
-                    #print lt
-                    response = HttpResponse(json.dumps(lt, ensure_ascii=False),
-                                            mimetype="application/javascript")
-                    response['Content-Type'] = 'text/plain; charset=utf-8'
-                    return response
-
+                    return response(lt)
                 except:
                     raise Http404
             elif request.POST['action'] == 'getNamedListList':
@@ -108,21 +100,12 @@ def homepage(request):
                 try:
                     lex = request.POST['lexicon']
                     lt = getNamedListList(lex)
-                    #print lt
-                    response = HttpResponse(json.dumps(lt, ensure_ascii=False),
-                                            mimetype="application/javascript")
-                    response['Content-Type'] = 'text/plain; charset=utf-8'
-                    return response
-
+                    return response(lt)
                 except:
                     raise Http404
 
             elif request.POST['action'] == 'getSavedListNumAlphas':
-                response = HttpResponse(
-                    json.dumps({'na': numAlphas, 'l': limit}),
-                    mimetype="application/javascript")
-                response['Content-Type'] = 'text/plain; charset=utf-8'
-                return response
+                return response({'na': numAlphas, 'l': limit})
 
             elif request.POST['action'] == 'challengeSubmit':
                 lexForm = LexiconForm(request.POST)
@@ -143,14 +126,10 @@ def homepage(request):
                     if tablenum == 0:
                         raise Http404
                     else:
-                        response = HttpResponse(
-                            json.dumps(
-                                {'url': reverse('wordwalls_table',
-                                                args=(tablenum,)),
-                                 'success': True}),
-                            mimetype="application/javascript")
-                        response['Content-Type'] = 'text/plain; charset=utf-8'
-                        return response
+                        return response(
+                            {'url': reverse('wordwalls_table',
+                                            args=(tablenum,)),
+                             'success': True})
 
             elif request.POST['action'] == 'searchParamsSubmit':
                 lexForm = LexiconForm(request.POST)
@@ -170,13 +149,9 @@ def homepage(request):
                         request.user, alphasSearchDescription,
                         fwForm.cleaned_data['playerMode'], quizTime)
 
-                    response = HttpResponse(
-                        json.dumps({'url': reverse('wordwalls_table',
-                                                   args=(tablenum,)),
-                                    'success': True}),
-                        mimetype="application/javascript")
-                    response['Content-Type'] = 'text/plain; charset=utf-8'
-                    return response
+                    return response({'url': reverse('wordwalls_table',
+                                                    args=(tablenum,)),
+                                     'success': True})
 
             elif request.POST['action'] == 'savedListsSubmit':
                 lexForm = LexiconForm(request.POST)
@@ -195,13 +170,9 @@ def homepage(request):
                     if tablenum == 0:
                         raise Http404
                     else:
-                        response = HttpResponse(
-                            json.dumps({'url': reverse('wordwalls_table',
-                                                       args=(tablenum,)),
-                                        'success': True}),
-                            mimetype="application/javascript")
-                        response['Content-Type'] = 'text/plain; charset=utf-8'
-                        return response
+                        return response({'url': reverse('wordwalls_table',
+                                                        args=(tablenum,)),
+                                         'success': True})
 
             elif request.POST['action'] == 'savedListDelete':
                 lexForm = LexiconForm(request.POST)
@@ -211,12 +182,8 @@ def homepage(request):
                     deleteSavedList(slForm.cleaned_data['wordList'],
                                     request.user)
 
-                    response = HttpResponse(
-                        json.dumps({'deleted': True,
-                                    'wordList': deletedListPk}),
-                        mimetype="application/javascript")
-                    response['Content-Type'] = 'text/plain; charset=utf-8'
-                    return response
+                    return response({'deleted': True,
+                                     'wordList': deletedListPk})
 
             elif request.POST['action'] == 'namedListsSubmit':
                 lexForm = LexiconForm(request.POST)
@@ -235,13 +202,9 @@ def homepage(request):
                     if tablenum == 0:
                         raise Http404
                     else:
-                        response = HttpResponse(
-                            json.dumps({'url': reverse('wordwalls_table',
-                                                       args=(tablenum,)),
-                                        'success': True}),
-                            mimetype="application/javascript")
-                        response['Content-Type'] = 'text/plain; charset=utf-8'
-                        return response
+                        return response({'url': reverse('wordwalls_table',
+                                                        args=(tablenum,)),
+                                        'success': True})
 
     lengthCounts = dict([(l.lexiconName, l.lengthCounts)
                         for l in Lexicon.objects.all()])
@@ -276,17 +239,10 @@ def table(request, id):
             wwg = WordwallsGame()
             gameReady = wwg.startRequest(request.user, id)
             if not gameReady:
-                response = HttpResponse(
-                    json.dumps({"serverMsg": request.user.username}),
-                    mimetype="application/javascript")
+                return response({"serverMsg": request.user.username})
             else:
                 quizParams = wwg.startQuiz(id, request.user)
-
-                response = HttpResponse(
-                    json.dumps(quizParams, ensure_ascii=False),
-                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+                return response(quizParams)
         elif action == "guess":
             lonelock(WordwallsGameModel, id)
             logger.info('%s: guess %s, table %s', request.user.username,
@@ -298,67 +254,42 @@ def table(request, id):
 
             # wgm2 = WordwallsGameModel.objects.get(pk=id)
             #             newState = json.loads(wgm2.currentGameState)
-            response = HttpResponse(json.dumps({'g': state[0], 'C': state[1]},
-                                               ensure_ascii=False),
-                                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+            return response({'g': state[0], 'C': state[1]})
         elif action == "gameEnded":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.checkGameEnded(id)
             # 'going' is the opposite of 'game ended'
-            response = HttpResponse(json.dumps({'g': not ret},
-                                               ensure_ascii=False),
-                                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+            return response({'g': not ret})
         elif action == "giveUp":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.giveUp(request.user, id)
-            response = HttpResponse(json.dumps({'g': not ret},
-                                               ensure_ascii=False),
-                                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+            return response({'g': not ret})
         elif action == "save":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.save(request.user, id, request.POST['listname'])
-            response = HttpResponse(json.dumps(ret, ensure_ascii=False),
-                                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+            return response(ret)
         elif action == "giveUpAndSave":
             lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
             # this shouldn't return a response, because it's not going to be
             # caught by the javascript
-            response = HttpResponse(json.dumps(ret, ensure_ascii=False),
-                                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+            return response(ret)
         elif action == "savePrefs":
             profile = request.user.get_profile()
             profile.customWordwallsStyle = request.POST['prefs']
             profile.save()
-            response = HttpResponse(json.dumps({'success': True}),
-                                    mimetype="application/javascript")
-            response['Content-Type'] = 'text/plain; charset=utf-8'
-            return response
+            return response({'success': True})
         elif action == "getDcData":
             wwg = WordwallsGame()
             dcId = wwg.getDcId(id)
             if dcId > 0:
                 leaderboardData = getLeaderboardDataDcInstance(
                     DailyChallenge.objects.get(pk=dcId))
-                response = HttpResponse(json.dumps(leaderboardData,
-                                                   ensure_ascii=False),
-                                        mimetype="application/javascript")
-                response['Content-Type'] = 'text/plain; charset=utf-8'
-                return response
+                return response(leaderboardData)
 
     else:   # it's a GET
         wwg = WordwallsGame()
@@ -396,7 +327,6 @@ def ajax_upload(request):
         if request.is_ajax():
             # the file is stored raw in the request
             upload = request
-            is_raw = True
             # AJAX Upload will pass the filename in the querystring if
             # it is the "advanced" ajax upload
             try:
@@ -406,7 +336,6 @@ def ajax_upload(request):
             # Not an ajax upload, so it was the "basic" iframe version
             # with submission via form
         else:
-            is_raw = False
             if len(request.FILES) == 1:
                 # FILES is a dictionary in Django but Ajax Upload gives
                 # the uploaded file an ID based on a random number, so
@@ -555,9 +484,10 @@ def getLeaderboardData(lex, chName, challengeDate):
         dc = DailyChallenge.objects.get(lexicon=lex_object, date=chdate,
                                         name=chName)
     except:
-        return None # daily challenge doesn't exist
+        return None  # daily challenge doesn't exist
 
     return getLeaderboardDataDcInstance(dc)
+
 
 def pretty_date(now, time):
     """
@@ -650,6 +580,7 @@ def deleteSavedList(savedList, user):
     profile.save()
     return profile.wordwallsSaveListSize
 
+
 ######################
 # api views
 def api_challengers(request, month, day, year, lex, ch_id):
@@ -729,4 +660,3 @@ def challengers(month, day, year, lex, ch_id):
     except:
         pass
     return rows
-
