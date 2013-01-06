@@ -1,16 +1,16 @@
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -54,11 +54,11 @@ mixpanel.identify("{{username}}");
 {% assets "js_table" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
- 
+
 <script type="text/javascript">
   $(document).ready(function() {
-    initializeTable("{% url wordwalls_table tablenum %}", "{{username}}", "{{addParams|escapejs}}");
-    setupPopupEvent();
+    WordwallsApp.init("{% url wordwalls_table tablenum %}",
+                      "{{username}}", "{{addParams|escapejs}}");
     mixpanel.track('Entered table');
   });
 </script>
@@ -104,23 +104,15 @@ mixpanel.identify("{{username}}");
 <div id="messages"></div>
 <div id="guesses"></div>
 </div>
-<script type="text/javascript">
-/* handle text box 'enter' press. We have to do this after defining the text apparently*/
-$("#guessText").keypress(textBoxKeyHandler);
-window.onbeforeunload = unloadEventHandler;
-disableSelection($('#shuffle')[0]);
-disableSelection($('#alphagram')[0]);
-</script>
-
 <div id="customize_popup" class="popup_block customize_popup_block">
     <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    
+
     <div id="customSample">
         <ul class="questionList">
         <li id="qt1" style="cursor: default; "><span class="chip chip1">1</span> <span class="tiles"><span class="tile">A</span><span class="tile">C</span><span class="tile">I</span><span class="tile">N</span><span class="tile">S</span><span class="tile">T</span><span class="tile">Y</span><span class="tile">Y</span></span></li>
-                
-    
-        
+
+
+
         </ul>
     </div>
     <BR>
@@ -167,18 +159,6 @@ disableSelection($('#alphagram')[0]);
     </div>
 </div>
 
-
-
-<script type="text/javascript">
-$("#dontUseTiles").change(dontUseTilesChangeHandler);
-$("#useSans").change(useSansHandler);
-$("#tilesBold").change(tilesBoldHandler);
-
-$("#tileStyleSelect").change(tileStyleSelectHandler);
-$("#dontShowTable").change(dontShowTableHandler);
-$("#dontShowCanvas").change(dontShowCanvasHandler);
-$("#showBorders").change(showBordersHandler);
-</script>
 {% endblock %}
 
 <div id="netbookBorders">
@@ -189,4 +169,43 @@ $("#showBorders").change(showBordersHandler);
 <script>
 mixpanel.name_tag("{{username}}");
 </script>
+
+{% comment %} ICanHaz templates. These need the "verbatim" tag so that Django doesn't try to render Mustache's curly braces.{% endcomment %}
+{% load verbatim %}
+{% verbatim %}
+
+<script id="solutionsTable" type="text/html">
+  <table id="solutionsTable">
+    <tr class="header">
+      <td>Prob</td>
+      <td>Alphagram</td>
+      <td>Rating</td>
+      <td><</td>
+      <td>Word</td>
+      <td>></td>
+      <td>Definition</td>
+    </tr>
+    <tr>
+      <td>{{prob}}</td>
+      <td class="alphagramCell" id=""
+
+    // <div class="email">{{email}}</div>
+    // <div class='userInfo'>
+    //     <div class="globalshare">Global Share Link:
+    //         <a href="{{globalShareHref}}" target="_blank">{{globalShare}}</a>
+    //     </div>
+    //     <div class="apikey">API Access Key: {{apiKey}}</div>
+    // </div>
+    // <button class="wideButton deleteUser">Delete User
+    //     <span class="icon ui-icon ui-icon-minusthick"></span>
+    // </button>
+    // <button class="duplicateDashboards">Duplicate</button>
+    // <a class="impersonateLink" href="{{dashboardSetupLink}}" target="_blank">
+    //     <button>Set Up Dashboard</button>
+    // </a>
+    // <div class="clear"></div>
+</script>
+
+
+
 </html>
