@@ -63,16 +63,16 @@ mixpanel.identify("{{username}}");
   });
 </script>
 <div id="topBar">
-<span id="start" onClick="requestStart(); mixpanel.track('request start');" class="tableButton">Start</span>
+<span id="start" onClick="WordwallsApp.requestStart(); mixpanel.track('request start');" class="tableButton">Start</span>
 <span id="gameTimer"> : </span>
-<span id="giveup" onClick="giveUp(); mixpanel.track('give up');" class="tableButton">Give up</span>
-<span id="solutions" onClick="showSolutions(); mixpanel.track('show solutions');" class="tableButton">Solutions</span>
+<span id="giveup" onClick="WordwallsApp.giveUp(); mixpanel.track('give up');" class="tableButton">Give up</span>
+<span id="solutions" onClick="WordwallsApp.showSolutions(); mixpanel.track('show solutions');" class="tableButton">Solutions</span>
 
-<span id="save" onClick="saveGame(); mixpanel.track('save game');" class="tableButton">Save</span>
+<span id="save" onClick="WordwallsApp.saveGame(); mixpanel.track('save game');" class="tableButton">Save</span>
 <input type="text" size="20" id="saveListName">
-<span id="customize" onClick="customize(); mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
+<span id="customize" onClick="WordwallsApp.customize(); mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
 <span id="horSep1"></span>
-<span id="exit" onClick="exit(); mixpanel.track('clicked exit');" class="tableButton">Exit</span>
+<span id="exit" onClick="WordwallsApp.exit(); mixpanel.track('clicked exit');" class="tableButton">Exit</span>
 </div>
 
 <div id="encloser">
@@ -96,8 +96,8 @@ mixpanel.identify("{{username}}");
 <div id="bottomBar">
 <span id="guessLabel">Guess: </span><input type="text" name="Guess" size="15" id="guessText">
 <span id="horSep2"></span>
-<span id="shuffle" onClick="shuffle()" class="utilityButton">Shuffle (1)</span>
-<span id="alphagram" onClick="alphagram()" class="utilityButton">Alphagram (2)</span>
+<span id="shuffle" onClick="WordwallsApp.shuffle()" class="utilityButton">Shuffle (1)</span>
+<span id="alphagram" onClick="WordwallsApp.alphagram()" class="utilityButton">Alphagram (2)</span>
 </div>
 
 <div id="textBar">
@@ -137,7 +137,7 @@ mixpanel.identify("{{username}}");
         <span class="configInput"><input type="checkbox" id="showBorders">Show borders around questions</input></span>
         <div>
         <BR>
-        <button id="savePrefs" onClick="savePrefs()">Save preferences</button><span id="prefsInfo"></span>
+        <button id="savePrefs" onClick="WordwallsApp.savePrefs()">Save preferences</button><span id="prefsInfo"></span>
         </div>
     </div>
 </div>
@@ -173,39 +173,49 @@ mixpanel.name_tag("{{username}}");
 {% comment %} ICanHaz templates. These need the "verbatim" tag so that Django doesn't try to render Mustache's curly braces.{% endcomment %}
 {% load verbatim %}
 {% verbatim %}
+<script id="questionList" type="text/html">
+  <ul class="questionList">
+    {{#questions}}
+      <li id="{{cellStr}}" class="qle">
+        <span class="chip chip{{numWords}}">{{numWords}}</span>
+        <span class="tiles">{{#tiles}}<span class="{{tcText}}">{{letter}}</span>{{/tiles}}
+        </span>
+      </li>
+    {{/questions}}
+  </ul>
+</script>
+
 
 <script id="solutionsTable" type="text/html">
   <table id="solutionsTable">
     <tr class="header">
       <td>Prob</td>
       <td>Alphagram</td>
-      <td>Rating</td>
       <td><</td>
       <td>Word</td>
       <td>></td>
       <td>Definition</td>
     </tr>
+    {{#solutions}}
     <tr>
       <td>{{prob}}</td>
-      <td class="alphagramCell" id=""
-
-    // <div class="email">{{email}}</div>
-    // <div class='userInfo'>
-    //     <div class="globalshare">Global Share Link:
-    //         <a href="{{globalShareHref}}" target="_blank">{{globalShare}}</a>
-    //     </div>
-    //     <div class="apikey">API Access Key: {{apiKey}}</div>
-    // </div>
-    // <button class="wideButton deleteUser">Delete User
-    //     <span class="icon ui-icon ui-icon-minusthick"></span>
-    // </button>
-    // <button class="duplicateDashboards">Duplicate</button>
-    // <a class="impersonateLink" href="{{dashboardSetupLink}}" target="_blank">
-    //     <button>Set Up Dashboard</button>
-    // </a>
-    // <div class="clear"></div>
+      <td class="alphagramCell" {{#alphagram}}id="a_{{alphagram}}"{{/alphagram}}>
+        {{#alphagram}}{{alphagram}}{{/alphagram}}
+      </td>
+      <td class="frontHooksCell">{{frontHooks}}</td>
+      <td class="solutionCell" id="s_{{word}}">{{word}}{{lexSymbol}}</td>
+      <td class="backHooksCell">{{backHooks}}</td>
+      <td>{{definition}}</td>
+    </tr>
+    {{/solutions}}
+  </table>
+  <BR>
+  <div id="solstats"></div>
 </script>
 
+
+
+{% endverbatim %}
 
 
 </html>

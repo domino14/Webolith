@@ -32,7 +32,7 @@ var WordwallsApp = (function($, _, Backbone) {
   var wrongAlphasHash = {};
   var gameTimerID;
   var challenge = false;
-  var tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5}
+  var tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5};
   var unsavedChanges = false;
   var autoSave = false;
   var addParams = null;
@@ -55,21 +55,24 @@ var WordwallsApp = (function($, _, Backbone) {
 
   function disableSelection(target)
   {
-      if (typeof target.onselectstart != "undefined") //IE route
-      {
-  	    target.onselectstart = function() {
-          return false;
-        }
-      } else if (typeof target.style.MozUserSelect!="undefined") {
-        //Firefox route
-  	    target.style.MozUserSelect = "none";
-      } else {
-        // All other route (ie: Opera)
-  	    target.onmousedown=function(){
-          return false;
-        }
-      }
-      target.style.cursor = "default";
+    if (!target) {
+      return;
+    }
+    if (typeof target.onselectstart != "undefined") //IE route
+    {
+	    target.onselectstart = function() {
+        return false;
+      };
+    } else if (typeof target.style.MozUserSelect!="undefined") {
+      //Firefox route
+	    target.style.MozUserSelect = "none";
+    } else {
+      // All other route (ie: Opera)
+	    target.onmousedown=function(){
+        return false;
+      };
+    }
+    target.style.cursor = "default";
   }
 
   function updateTextBox(message, textBoxId)
@@ -181,101 +184,128 @@ var WordwallsApp = (function($, _, Backbone) {
 
   function processQuestionObj(questionObj)
   {
+    var tcText, solutionsContext, x, i, j, solutionObj, words,
+      questionsContext, tempObj, alphagram;
       qObj = questionObj;
-      var ulBuilder = '<ul class="questionList"><tr>';
       questionLocationHash = {};
       wrongWordsHash = {};
       wrongAlphasHash = {};
 
-      var tcText = tileClassToText(tileClass);
+      tcText = tileClassToText(tileClass);
       numTotalAnswersThisRound = 0;
       numAnswersGottenThisRound = 0;
 
       /* populate solutions table*/
-      var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>Rating</td>';
-      solutionsTableBuilder += '<td>\<</td><td>Word</td><td>\></td><td>Definition</td></tr>';
+      // var solutionsTableBuilder = '<table id="solutionsTable"><tr class="header"><td>Prob</td><td>Alphagram</td><td>Rating</td>';
+      // solutionsTableBuilder += '<td>\<</td><td>Word</td><td>\></td><td>Definition</td></tr>';
 
       // solutions table should be populated 'vertically', i.e. with qindices 0, 4, 8, ..., 1, 5, 9, ...
+      solutionsContext = {solutions: []};
 
-      for (var x = 0; x < 50; x++)
-      {
-          var i = solTableOrder[x];
-          if (i < qObj.length)
-          {
-              var alphagram = qObj[i]['a'];
-              var words = qObj[i]['ws'];
-              var numWords = words.length;
-              for (var j = 0; j < numWords; j++)
-              {
-                  if (j == 0)
-                  {
-                      solutionsTableBuilder += '<tr><td>' + qObj[i]['p'] + '</td><td class = "alphagramCell" id="a_' + alphagram + '">';
-                      solutionsTableBuilder += alphagram;
-                      solutionsTableBuilder += '<td class="starcell" id="r_' + alphagram + '">';
-                      solutionsTableBuilder += '<div id="sw' + i + '" class="starwrapper">';
-                      for (var k = 0; k < 5; k++)
-                          solutionsTableBuilder += '<input name="star' +i + '" type="radio" value="' + (k+1) + '"/>';
-
-                      solutionsTableBuilder += '</div></td>';
-                  }
-                  else
-                      solutionsTableBuilder += '<tr><td></td><td></td><td></td>';    // an empty probability & alphagram & star cell
-
-                  var word = words[j]['w'];
-                  solutionsTableBuilder += '<td class="frontHooksCell">' + words[j]['fh'] + '</td>';   // front hooks
-                  solutionsTableBuilder += '<td class="solutionCell" id="s_' + word + '">' + word + words[j]['s'] + '</td>';    // word + lex symbols
-                  solutionsTableBuilder += '<td class="backHooksCell">' + words[j]['bh'] + '</td>';   // back hooks
-                  solutionsTableBuilder += '<td>' + words[j]['d'] + '</td>';  // definition
-                  solutionsTableBuilder += '</tr>';
-              }
+      for (x = 0; x < 50; x++) {
+        i = solTableOrder[x];
+        if (i < qObj.length) {
+          words = qObj[i]['ws'];
+          for (j = 0; j < words.length; j++) {
+            // for every word, add a new "solutionObj"
+            solutionObj = {};
+            if (j === 0) {
+              solutionObj.alphagram = qObj[i]['a'];
+              solutionObj.prob = qObj[i]['p'];
+            } else {
+              solutionObj.alphagram = null;
+              solutionObj.prob = "";
+            }
+            solutionObj.frontHooks = words[j]['fh'];
+            solutionObj.backHooks = words[j]['bh'];
+            solutionObj.word = words[j]['w'];
+            solutionObj.lexSymbol = words[j]['s'];
+            solutionObj.definition = words[j]['d'];
+            solutionsContext.solutions.push(solutionObj);
           }
+        }
       }
-      solutionsTableBuilder += '</table>';
 
-      /* populate questions UL */
-
-      for (var i = 0; i < 50; i++)
-      {
-          var cellStr = "q" + i;
-          ulBuilder += '<li id="' + cellStr + '" class="qle">';
-          if (i < qObj.length)
-          {
-              var alphagram = qObj[i]['a'];
-              var words = qObj[i]['ws'];
-              var numWords = words.length;
-              ulBuilder += '<span class="chip chip' + Math.min(numWords, 9) + '">' + numWords + "</span> ";
-              ulBuilder += '<span class="tiles">';
-              qObj[i]['ahtml'] = '';
-              for (var j = 0; j < alphagram.length; j++)
-              {
-                  ulBuilder += '<span class="' + tcText + '">' + alphagram.charAt(j) + '</span>';
-                  qObj[i]['ahtml'] += '<span class="' + tcText + '">' + alphagram.charAt(j) + '</span>';
-              }
-              ulBuilder += '</span>';
-              questionLocationHash[alphagram] = i;
-
-              for (var j = 0; j < numWords; j++)
-              {
-                  // let's populate the correct words hash (for keeping track of missed questions for display purposes client-side)
-                  var word = words[j]['w'];
-                  wrongWordsHash[word] = true;
-                  numTotalAnswersThisRound++;
-              }
-              wrongAlphasHash[alphagram] = true;
+      /* populate questions UL and relevant objects */
+      questionsContext = {questions: []};
+      for (i = 0; i < 50; i++) {
+        if (i < qObj.length) {
+          tempObj = {};
+          tempObj.cellStr = "q" + i;
+          words = qObj[i]['ws'];
+          alphagram = qObj[i]['a'];
+          tempObj.numWords = words.length;
+          qObj[i]['ahtml'] = '';
+          tempObj.tiles = [];
+          for (j = 0; j < alphagram.length; j++) {
+            tempObj.tiles.push({
+              tcText: tcText,
+              letter: alphagram.charAt(j)
+            });
+            qObj[i]['ahtml'] += '<span class="' + tcText + '">' +
+              alphagram.charAt(j) + '</span>';
           }
-          ulBuilder += '</li>';
-      }
-      ulBuilder += '</ul>';
+          questionsContext.questions.push(tempObj);
 
-      $("#questions").html(ulBuilder);
+          for (j = 0; j < tempObj.numWords; j++) {
+            /**
+             * let's populate the correct words hash (for keeping
+             * track of missed questions for display purposes
+             * client-side)
+             */
+            wrongWordsHash[words[j]['w']] = true;
+            numTotalAnswersThisRound++;
+          }
+          questionLocationHash[alphagram] = i;
+          wrongAlphasHash[alphagram] = true;
+
+        }
+      }
+
+      // for (var i = 0; i < 50; i++)
+      // {
+      //     var cellStr = "q" + i;
+      //     ulBuilder += '<li id="' + cellStr + '" class="qle">';
+      //     if (i < qObj.length)
+      //     {
+      //         var alphagram = qObj[i]['a'];
+      //         var words = qObj[i]['ws'];
+      //         var numWords = words.length;
+      //         ulBuilder += '<span class="chip chip' + Math.min(numWords, 9) + '">' + numWords + "</span> ";
+      //         ulBuilder += '<span class="tiles">';
+      //         qObj[i]['ahtml'] = '';
+      //         for (var j = 0; j < alphagram.length; j++)
+      //         {
+      //             ulBuilder += '<span class="' + tcText + '">' + alphagram.charAt(j) + '</span>';
+      //             qObj[i]['ahtml'] += '<span class="' + tcText + '">' + alphagram.charAt(j) + '</span>';
+      //         }
+      //         ulBuilder += '</span>';
+      //         questionLocationHash[alphagram] = i;
+
+      //         for (var j = 0; j < numWords; j++)
+      //         {
+      //             // let's populate the correct words hash (for keeping track of missed questions for display purposes client-side)
+      //             var word = words[j]['w'];
+      //             wrongWordsHash[word] = true;
+      //             numTotalAnswersThisRound++;
+      //         }
+      //         wrongAlphasHash[alphagram] = true;
+      //     }
+      //     ulBuilder += '</li>';
+      // }
+      // ulBuilder += '</ul>';
+
+      $("#questions").html(ich.questionList(questionsContext));
       var qlistLIs = $(".qle");
-      for (var i = 0; i < 50; i++)
-          disableSelection(qlistLIs[i]);
-      $("#defs_popup_content").html(solutionsTableBuilder +
-                                    '<BR><div id="solstats"></div>');
+      console.log(qlistLIs);
+      for (i = 0; i < 50; i++) {
+        console.log('Disabling qlistLI', qlistLIs[i]);
+        disableSelection(qlistLIs[i]);
+      }
+      $("#defs_popup_content").html(ich.solutionsTable(solutionsContext));
       $("#defs_popup_content").css({'visibility': 'hidden'});
       /* change tile sizes depending on length of alphagram */
-      for (var i = 0; i < 50; i++)
+      for (i = 0; i < 50; i++)
       {
           var cellSelector = "#q" + i;
           if (i < qObj.length)    // start shrinking tiles
@@ -304,10 +334,6 @@ var WordwallsApp = (function($, _, Backbone) {
       $('#pointsLabelFraction').text('0/'+numTotalAnswersThisRound);
       $('#pointsLabelPercent').text('0%');
       $('#correctAnswers').html("");
-      $('.starwrapper').stars();
-
-      /* hide the stars for now -- use later */
-      $('#solutionsTable td:nth-child(3)').hide();
   }
 
   function requestStart()
@@ -862,7 +888,17 @@ var WordwallsApp = (function($, _, Backbone) {
   return {
     init: initializeTable,
     textBoxKeyHandler: textBoxKeyHandler,
-    unloadEventHandler: unloadEventHandler
+    unloadEventHandler: unloadEventHandler,
+    requestStart: requestStart,
+    giveUp: giveUp,
+    showSolutions: showSolutions,
+    saveGame: saveGame,
+    customize: customize,
+    exit: exit,
+    shuffle: shuffle,
+    alphagram: alphagram,
+    savePrefs: savePrefs
+
   }
 
 }(jQuery, _, Backbone));
