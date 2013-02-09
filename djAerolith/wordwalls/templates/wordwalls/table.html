@@ -57,22 +57,32 @@ mixpanel.identify("{{username}}");
 
 <script type="text/javascript">
   $(document).ready(function() {
-    WordwallsApp.init("{% url wordwalls_table tablenum %}",
-                      "{{username}}", "{{addParams|escapejs}}");
+    var confModel = new WW.Configure.Model;
+    var confView = new WW.Configure.View({
+      model: confModel,
+      el: $("#customize_popup")
+    });
+    var appView = new WW.App.View;
+    confModel.setConfig("{{addParams|escapejs}}");
+    // WW.App.setOptions({
+    //   tableUrl: "{% url wordwalls_table tablenum %}",
+    //   username: "{{username}}",
+    //   addParams: "{{addParams|escapejs}}"
+    // });
     mixpanel.track('Entered table');
   });
 </script>
 <div id="topBar">
-<span id="start" onClick="WordwallsApp.requestStart(); mixpanel.track('request start');" class="tableButton">Start</span>
+<span id="start" onClick="mixpanel.track('request start');" class="tableButton">Start</span>
 <span id="gameTimer"> : </span>
-<span id="giveup" onClick="WordwallsApp.giveUp(); mixpanel.track('give up');" class="tableButton">Give up</span>
-<span id="solutions" onClick="WordwallsApp.showSolutions(); mixpanel.track('show solutions');" class="tableButton">Solutions</span>
+<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">Give up</span>
+<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">Solutions</span>
 
-<span id="save" onClick="WordwallsApp.saveGame(); mixpanel.track('save game');" class="tableButton">Save</span>
+<span id="save" onClick="mixpanel.track('save game');" class="tableButton">Save</span>
 <input type="text" size="20" id="saveListName">
-<span id="customize" onClick="WordwallsApp.customize(); mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
+<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
 <span id="horSep1"></span>
-<span id="exit" onClick="WordwallsApp.exit(); mixpanel.track('clicked exit');" class="tableButton">Exit</span>
+<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">Exit</span>
 </div>
 
 <div id="encloser">
@@ -96,12 +106,13 @@ mixpanel.identify("{{username}}");
 <div id="bottomBar">
 <span id="guessLabel">Guess: </span><input type="text" name="Guess" size="15" id="guessText">
 <span id="horSep2"></span>
-<span id="shuffle" onClick="WordwallsApp.shuffle()" class="utilityButton">Shuffle (1)</span>
-<span id="alphagram" onClick="WordwallsApp.alphagram()" class="utilityButton">Alphagram (2)</span>
+<span id="shuffle" class="utilityButton">Shuffle (1)</span>
+<span id="alphagram" class="utilityButton">Alphagram (2)</span>
 </div>
 
 <div id="textBar">
 <div id="messages"></div>
+Guesses:
 <div id="guesses"></div>
 </div>
 <div id="customize_popup" class="popup_block customize_popup_block">
@@ -137,7 +148,7 @@ mixpanel.identify("{{username}}");
         <span class="configInput"><input type="checkbox" id="showBorders">Show borders around questions</input></span>
         <div>
         <BR>
-        <button id="savePrefs" onClick="WordwallsApp.savePrefs()">Save preferences</button><span id="prefsInfo"></span>
+        <button id="savePrefs">Save preferences</button><span id="prefsInfo"></span>
         </div>
     </div>
 </div>
@@ -209,7 +220,7 @@ mixpanel.name_tag("{{username}}");
     </tr>
     {{/solutions}}
   </table>
-  <BR>
+  <BR></BR>
   <div id="solstats"></div>
 </script>
 
