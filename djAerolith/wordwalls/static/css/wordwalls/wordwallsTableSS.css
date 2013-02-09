@@ -1,33 +1,33 @@
 /*Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
 
-body.canvasBg 
+body.canvasBg
 {
-    background-image:url('../../img/wordwalls/canvas.png');    
+    background-image:url('../../img/wordwalls/canvas.png');
 }
 
 div.tableBg
 {
-    background-image:url('../../img/wordwalls/table.png'); 
-    background-repeat:no-repeat;  
+    background-image:url('../../img/wordwalls/table.png');
+    background-repeat:no-repeat;
 }
 
-#questions 
+#questions
 {
     width: 860px;
     height: 355px;
@@ -89,7 +89,7 @@ div.tableBg
     overflow-x: hidden;
     font-size: 80%;
     font-weight: 700;
-    
+
 }
 
 #correctAnswers
@@ -131,8 +131,8 @@ div#guesses
 {
     float: left;
     width: 120px;
-    height: 50px;
-    margin-top: 50px;
+    height: 80px;
+    margin-top: 0px;
     border-style: inset;
     border-width: 1px;
     overflow-y: hidden;
@@ -162,19 +162,19 @@ td.frontHooksCell
     text-align: right;
 }
 
-ul.questionList 
+ul.questionList
 {
     width:868px;
     text-align:center;
-    padding: 0; 
+    padding: 0;
     margin-top: 5px;
     margin-left: 20px;
     vertical-align: center;
     list-style-type: none;  /* remove bullets*/
 }
 
-ul.questionList li 
-{ 
+ul.questionList li
+{
     float:left;
 }
 
@@ -191,7 +191,7 @@ li.borders
     border: 1px solid gray;
 }
 
-ul#questionList:after {  
+ul#questionList:after {
   content    : ".";
   display    : block;
   height     : 0;
@@ -234,7 +234,7 @@ span#gameTimer
     height: 20px;
     line-height: 20px;
     text-align: center;
-} 
+}
 
 .utilityButton
 {
@@ -394,7 +394,7 @@ span#gameTimer
 #customize:active
 {
     border-color: rgb(70, 70, 70);
-    background-color: rgb(250, 250, 250); 
+    background-color: rgb(250, 250, 250);
 }
 
 
@@ -524,7 +524,7 @@ span.chip8 { background-image: url('../../img/wordwalls/chip8.png'); }
 span.chip9 { background-image: url('../../img/wordwalls/chip9.png'); color: rgb(255, 255, 255);}
 span.chipBlack { background-image: url('../../img/wordwalls/chipBlack.png'); color: rgb(255, 255, 255); }
 span.chipNone {}
-    
+
 span#horSep1
 {
     display: inline-block;
@@ -544,7 +544,7 @@ span#prefsInfo
 
 #netbookBorders
 {
-    position: fixed; 
+    position: fixed;
     left: 0; top: 0;
     width: 1024px; height: 600px;
     border-color: black;
@@ -558,8 +558,8 @@ span#prefsInfo
 #fade {
     /* this div covers the entire screen with absolute positioning */
 	display: none;
-	background: #000; 
-	position: fixed; left: 0; top: 0; 
+	background: #000;
+	position: fixed; left: 0; top: 0;
 	z-index: 10;
 	width: 100%; height: 100%;
 	opacity: .80;
@@ -569,7 +569,7 @@ span#prefsInfo
 .popup_block{
 	display: none;
 	background: #fff;
-	padding: 20px; 	
+	padding: 20px;
 	border: 20px solid #bdf;
 	float: left;
 	position: fixed;
@@ -601,15 +601,15 @@ div#addlInfo_content
 }
 
 img.btn_close {
-	float: right; 
+	float: right;
 	margin: -45px -45px 0 0;
-	background-image:url('../../img/wordwalls/close_pop1.png'); 
-	background-repeat: no-repeat;  
+	background-image:url('../../img/wordwalls/close_pop1.png');
+	background-repeat: no-repeat;
 }
 
-img.btn_close:hover 
+img.btn_close:hover
 {
-    background-image:url('../../img/wordwalls/close_pop2.png');    
+    background-image:url('../../img/wordwalls/close_pop2.png');
     /* this doesn't work */
 }
 
