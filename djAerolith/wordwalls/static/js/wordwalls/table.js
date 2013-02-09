@@ -21,6 +21,8 @@ To contact the author, please email delsolar at gmail dot com*/
 var WW = {};
 WW.Configure = {};
 WW.App = {};
+WW.Word = {};
+WW.Alphagram = {};
 
 WW.App.View = Backbone.View.extend({
   el: $("body"),
