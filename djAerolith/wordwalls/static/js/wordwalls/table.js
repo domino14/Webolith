@@ -202,6 +202,15 @@ WW.App.View = Backbone.View.extend({
   render: function() {}
 });
 
+function initializeApp() {
+  WW.configuration = new WW.Configure.Model;
+  WW.configurationView = new WW.Configure.View({
+    model: WW.configuration,
+    el: $("#customize_popup")
+  });
+  WW.appView = new WW.App.View;
+
+}
 
 // var WW = (function($, _, Backbone) {
 //   var qObj = null;
