@@ -8,7 +8,6 @@ WW.Alphagram.View = Backbone.View.extend({
     this.viewConfig = options.viewConfig;
   },
   changeConfig: function(configModel) {
-    console.log('config changed')
     this.viewConfig = configModel;
     this.render();
   },
@@ -34,7 +33,15 @@ WW.Alphagram.View = Backbone.View.extend({
     return text;
   },
   render: function() {
+    console.log('rendering')
     var context, tiles, tilesContext, i, tcText;
+    if (this.viewConfig.attributes.showBorders) {
+      this.$el.addClass('borders');
+      this.$el.removeClass('noborders');
+    } else {
+      this.$el.addClass('noborders');
+      this.$el.removeClass('borders');
+    }
     tcText = this.configToClassText();
     tiles = this.model.get('alphagram').split('');
     tilesContext = [];
@@ -50,7 +57,6 @@ WW.Alphagram.View = Backbone.View.extend({
       'tiles': tilesContext
     }
     this.$el.html(ich.singleQuestion(context));
-    console.log('rendered', this.$el);
     return this;
   }
 });

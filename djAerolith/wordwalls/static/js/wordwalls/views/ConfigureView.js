@@ -50,12 +50,9 @@ WW.Configure.View = Backbone.View.extend({
       viewConfig: this.model
     });
     /*
-     * Bind 'this' correctly (is there any way to do this with listenTo?).
      * Re-render question when configuration changes.
      */
     this.model.on('change', view.changeConfig, view);
-    console.log('in addAlphagram')
     this.$('#configQL').append(view.render().el);
-    console.log('leaving addAlphagram')
   }
 });
