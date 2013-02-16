@@ -3,6 +3,7 @@ WW.Alphagram.View = Backbone.View.extend({
    * An alphagram view is the main question view.
    */
   tagName: 'li',
+  className: 'qle',
   initialize: function(options) {
     this.listenTo(this.model, 'change', this.render);
     this.viewConfig = options.viewConfig;
@@ -33,7 +34,6 @@ WW.Alphagram.View = Backbone.View.extend({
     return text;
   },
   render: function() {
-    console.log('rendering')
     var context, tiles, tilesContext, i, tcText;
     if (this.viewConfig.attributes.showBorders) {
       this.$el.addClass('borders');
@@ -52,7 +52,6 @@ WW.Alphagram.View = Backbone.View.extend({
       });
     }
     context = {
-      'cellStr': 'sampleCell',
       'numWords': this.model.get('numWords'),
       'tiles': tilesContext
     }
