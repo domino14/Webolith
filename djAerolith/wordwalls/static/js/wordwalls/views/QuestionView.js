@@ -19,7 +19,7 @@ WW.Alphagram.View = Backbone.View.extend({
       this.tileOrder.push(i);
     }
     this.naturalTileOrder = _.clone(this.tileOrder);
-    this.disableSelection(this.el);
+    this.$el.disableSelection();
   },
   changeConfig: function(configModel) {
     this.viewConfig = configModel;
@@ -89,26 +89,6 @@ WW.Alphagram.View = Backbone.View.extend({
         list[j] = t;
       }
     }
-  },
-  disableSelection: function(target) {
-    if (!target) {
-      return;
-    }
-    if (typeof target.onselectstart != "undefined") //IE route
-    {
-     target.onselectstart = function() {
-        return false;
-      };
-    } else if (typeof target.style.MozUserSelect!="undefined") {
-      //Firefox route
-     target.style.MozUserSelect = "none";
-    } else {
-      // All other route (ie: Opera)
-      target.onmousedown = function(){
-        return false;
-      };
-    }
-    target.style.cursor = "default";
   }
 });
 
