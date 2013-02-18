@@ -4,9 +4,20 @@ WW.Alphagram.View = Backbone.View.extend({
    */
   tagName: 'li',
   className: 'qle',
+  events: {
+    'click': 'shuffle'
+  },
   initialize: function(options) {
+    var i, alphLength;
     this.listenTo(this.model, 'change', this.render);
     this.viewConfig = options.viewConfig;
+    /* Generate tile order. */
+    this.tileOrder = [];
+    alphLength = this.model.get('alphagram').length;
+    for (i = 0; i < alphLength; i++) {
+      this.tileOrder.push(i);
+    }
+    this.naturalTileOrder = _.clone(this.tileOrder);
   },
   changeConfig: function(configModel) {
     this.viewConfig = configModel;
@@ -48,7 +59,7 @@ WW.Alphagram.View = Backbone.View.extend({
     for (i = 0; i < tiles.length; i++) {
       tilesContext.push({
         'tcText': tcText,
-        'letter': tiles[i]
+        'letter': tiles[this.tileOrder[i]]
       });
     }
     context = {
@@ -57,6 +68,25 @@ WW.Alphagram.View = Backbone.View.extend({
     }
     this.$el.html(ich.singleQuestion(context));
     return this;
+  },
+  shuffle: function() {
+    this.shuffleList(this.tileOrder);
+    this.render();
+  },
+  alphagram: function() {
+    this.tileOrder = _.clone(this.naturalTileOrder);
+    this.render();
+  },
+  shuffleList: function(list) {
+    var i, j, t;
+    for (i = 1; i < list.length; i++) {
+      j = Math.floor(Math.random() * (1 + i));  // choose j in [0..i]
+      if (j !== i) {
+        t = list[i];                        // swap list[i] and list[j]
+        list[i] = list[j];
+        list[j] = t;
+      }
+    }
   }
 });
 

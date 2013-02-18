@@ -1,12 +1,6 @@
 WW.Configure.View = Backbone.View.extend({
   events: {
-    "change #dontUseTiles": "confChangeHandler",
-    "change #useSans": "confChangeHandler",
-    "change #tilesBold": "confChangeHandler",
-    "change #tileStyleSelect": "confChangeHandler",
-    "change #dontShowTable": "confChangeHandler",
-    "change #dontShowCanvas": "confChangeHandler",
-    "change #showBorders": "confChangeHandler"
+    "change .configInput": "confChangeHandler"
   },
   initialize: function() {
     this.alphagramCollection = new WW.Alphagram.Collection;

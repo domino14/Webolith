@@ -629,7 +629,7 @@ div#defs_popup_content
 }
 
 /******/
-span.configInput
+span.configInputSpan
 {
     display: inline-block;
     width: 200px;

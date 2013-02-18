@@ -28,8 +28,9 @@ tableJs = Bundle('js/aerolith/csrfAjax.js',
                 'js/wordwalls/views/QuestionView.js',
                 'js/wordwalls/models/Configure.js',
                 'js/wordwalls/views/ConfigureView.js',
+                'js/wordwalls/views/AppView.js',
                 'js/wordwalls/tableTests.js',
-                filters = 'jsmin',
+                filters='jsmin',
                 output='js/wordwalls/packedTable.js')
 
 register('js_table_create', 'js/aerolith/socket.io.min.js', tableCreateJs)
