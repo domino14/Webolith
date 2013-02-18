@@ -25,5 +25,6 @@ WW.Configure.Model = Backbone.Model.extend({
         showBorders: styleObj.bc.showBorders
       });
     }
-  }
+  },
+  url: ''
 });

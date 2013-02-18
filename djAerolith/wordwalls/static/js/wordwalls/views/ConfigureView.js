@@ -1,6 +1,7 @@
 WW.Configure.View = Backbone.View.extend({
   events: {
-    "change .configInput": "confChangeHandler"
+    "change .configInput": "confChangeHandler",
+    "click #savePrefs": "savePreferences"
   },
   initialize: function() {
     this.alphagramCollection = new WW.Alphagram.Collection;
@@ -48,5 +49,8 @@ WW.Configure.View = Backbone.View.extend({
      */
     this.model.on('change', view.changeConfig, view);
     this.$('#configQL').append(view.render().el);
+  },
+  savePreferences: function() {
+    this.model.save();
   }
 });

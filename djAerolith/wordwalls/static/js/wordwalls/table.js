@@ -71,34 +71,6 @@ function initializeApp() {
 //                        3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47];
 
 
-
-
-
-
-
-
-//   function disableSelection(target)
-//   {
-//     if (!target) {
-//       return;
-//     }
-//     if (typeof target.onselectstart != "undefined") //IE route
-//     {
-// 	    target.onselectstart = function() {
-//         return false;
-//       };
-//     } else if (typeof target.style.MozUserSelect!="undefined") {
-//       //Firefox route
-// 	    target.style.MozUserSelect = "none";
-//     } else {
-//       // All other route (ie: Opera)
-// 	    target.onmousedown=function(){
-//         return false;
-//       };
-//     }
-//     target.style.cursor = "default";
-//   }
-
 //   function updateTextBox(message, textBoxId)
 //   {
 //       var box = $('#' + textBoxId);

@@ -662,3 +662,11 @@ span.wrongGuess
     width: 125px;
     text-align: center;
 }
+
+.qle {
+    cursor: default;
+}
+
+.tile {
+    cursor: default;
+}
