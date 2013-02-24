@@ -9,7 +9,6 @@ WW.App.View = Backbone.View.extend({
     "click #exit": "exit",
     "click #shuffle": "shuffle",
     "click #alphagram": "alphagram",
-    "click #savePrefs": "savePrefs",
     "keypress #guessText": "readSpecialKeypress"
   },
   initialize: function() {
@@ -156,19 +155,5 @@ WW.App.View = Backbone.View.extend({
     }
     $(".tile").removeClass().addClass(tileClassToText(tileClass));
   },
-
-  savePrefs: function() {
-    var jsonPrefs = JSON.stringify({tc: tileClass, bc: backgroundClass});
-    $.post(tableUrl, {action: "savePrefs", prefs: jsonPrefs},
-      function(data) {
-        if (data['success']) {
-          $("#prefsInfo").text("Your preferences have been saved.");
-        } else {
-          $("#prefsInfo").text("Unable to save preferences.");
-        }
-      },
-      'json');
-  },
-
   render: function() {}
 });

@@ -11,6 +11,7 @@ WW.Configure.View = Backbone.View.extend({
       alphagram: 'ACNPRSYY',
       numWords: 1
     }]);
+    this.prefsInfo = this.$("#prefsInfo");
   },
   setCheckmark: function(searchStr, value, checkedValue) {
     this.$(searchStr).prop('checked', value === checkedValue);
@@ -51,6 +52,13 @@ WW.Configure.View = Backbone.View.extend({
     this.$('#configQL').append(view.render().el);
   },
   savePreferences: function() {
-    this.model.save();
+    this.model.save({}, {
+      success: _.bind(function(model, response, options) {
+        this.prefsInfo.html("Successfully saved preferences.");
+      }, this),
+      error: function() {
+        this.prefsInfo.html("There was an error");
+      }
+    });
   }
 });

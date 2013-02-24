@@ -26,5 +26,5 @@ WW.Configure.Model = Backbone.Model.extend({
       });
     }
   },
-  url: ''
+  url: '/wordwalls/api/configure/'
 });
