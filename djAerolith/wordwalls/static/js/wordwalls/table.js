@@ -26,12 +26,17 @@ WW.Alphagram = {};
 
 
 function initializeApp() {
+  var Dispatcher;
   WW.configuration = new WW.Configure.Model;
   WW.configurationView = new WW.Configure.View({
     model: WW.configuration,
     el: $("#customize_popup")
   });
   WW.appView = new WW.App.View;
+  Dispatcher = _.clone(Backbone.Events);
+  // Scope of 'this' is going to drive me nuts.
+  Dispatcher.listenTo(WW.configuration, 'change', _.bind(
+    WW.appView.configChange, WW.appView));
 
 }
 

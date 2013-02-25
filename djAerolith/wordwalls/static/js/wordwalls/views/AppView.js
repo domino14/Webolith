@@ -15,7 +15,16 @@ WW.App.View = Backbone.View.extend({
     this.guessInput = this.$("#guessText");
 
     this.setupPopupEvent();
-
+    this.wordwallsGame = new WW.WordwallsGame();
+    this.listenTo(this.wordwallsGame, 'tick', _.bind(
+      this.updateTimeDisplay, this));
+    this.listenTo(this.wordwallsGame, 'timerExpired', _.bind(
+      this.gameEnded, this));
+    this.listenTo(this.wordwallsGame, 'gotQuestionData', _.bind(
+      this.gotQuestionData, this));
+    this.messageTextBoxLimit = 3000;  // characters
+    this.viewConfig = null;
+    this.$questionsList = this.$("#questions > .questionList");
     // handle text box 'enter' press. We have to do this after
     //  defining the text apparently
 
@@ -34,23 +43,19 @@ WW.App.View = Backbone.View.extend({
       return false;
     });
   },
-  setOptions: function(options) {
-    tableUrl = options.tableUrl;
-    username = options.username;
-    addParams = $.parseJSON(options.params);
-    if (addParams) {
-      if (_.has(addParams, 'saveName')) {
-        this.$("#saveListName").val(addParams.saveName);
-        autoSave = true;
-        updateMessages("Autosave is on! Aerolith will save your list " +
-                       "progress at the end of every round.");
-      } else if (_.has(addParams, 'style')) {
-        styleObj = $.parseJSON(addParams.style);
-        tileClass = styleObj.tc;
-        backgroundClass = styleObj.bc;
-      }
-    }
-  },
+  // setOptions: function(options) {
+  //   tableUrl = options.tableUrl;
+  //   username = options.username;
+  //   addParams = $.parseJSON(options.params);
+  //   if (addParams) {
+  //     if (_.has(addParams, 'saveName')) {
+  //       this.$("#saveListName").val(addParams.saveName);
+  //       autoSave = true;
+  //       updateMessages("Autosave is on! Aerolith will save your list " +
+  //                      "progress at the end of every round.");
+  //     }
+  //   }
+  // },
 
   readSpecialKeypress: function(e) {
     var guessText;
@@ -75,11 +80,11 @@ WW.App.View = Backbone.View.extend({
 
   requestStart: function() {
     this.guessInput.focus();
-    $.post(tableUrl, {action: "start"}, processStartData, 'json');
+    $.post('', {action: "start"}, _.bind(this.processStartData, this), 'json');
   },
 
   giveUp: function() {
-    $.post(tableUrl, {action: "giveUp"}, processGiveUp, 'json');
+    $.post(tableUrl, {action: "giveUp"}, this.processGiveUp, 'json');
   },
 
   showSolutions: function() {
@@ -155,5 +160,89 @@ WW.App.View = Backbone.View.extend({
     }
     $(".tile").removeClass().addClass(tileClassToText(tileClass));
   },
-  render: function() {}
+
+  processStartData: function (data) {
+    /* Probably should track gameGoing with a signal from wordwallsGame? */
+    if (!this.wordwallsGame.get('gameGoing')) {
+      if (_.has(data, 'serverMsg')) {
+        this.updateMessages(data['serverMsg']);
+        this.wordwallsGame.set(
+          'quizzingOnMissed', data.serverMsg.indexOf('missed') !== -1);
+      }
+      if (_.has(data, 'error')) {
+        this.updateMessages(data['error']);
+        this.wordwallsGame.set(
+          'quizOverForever', data.error.indexOf('nice day') !== -1);
+      }
+      if (_.has(data, 'questions')) {
+        this.wordwallsGame.processQuestionObj(data['questions']);
+      }
+      if (_.has(data, 'time')) {
+        // +1 since we're about to call this function
+        this.wordwallsGame.startTimer(data['time']);
+      }
+      if (_.has(data, 'gameType')) {
+        this.wordwallsGame.set('challenge', data.gameType === 'challenge');
+      }
+    }
+  },
+
+  processGiveUp: function() {
+
+  },
+  render: function() {},
+  gameEnded: function() {},
+  updateTimeDisplay: function(currentTimer) {
+    var mins, secs, pad;
+    mins = Math.floor(currentTimer / 60);
+    secs = currentTimer % 60;
+    pad = ""
+    if (secs < 10) {
+      pad = "0";
+    }
+    this.$("#gameTimer").text(mins + ":" + pad + secs);
+  },
+  updateMessages: function(message) {
+    this.updateTextBox(message, 'messages');
+  },
+  updateTextBox: function(message, textBoxId) {
+    var $box, newMessage;
+    $box = $('#' + textBoxId);
+    var newMessage = $box.html() + message + '<BR>';
+    if (newMessage.length > this.messageTextBoxLimit) {
+      newMessage = newMessage.substr(
+        newMessage.length - this.messageTextBoxLimit);
+    }
+    $box.html(newMessage);
+    $box.scrollTop($box[0].scrollHeight - $box.height());
+  },
+  /**
+   * This function gets triggered when the wordwalls game model gets a
+   * collection of questions from the server.
+   * @param  {Object} questionCollection An instance of
+   *                                     WW.Alphagram.Collection.
+   */
+  gotQuestionData: function(questionCollection) {
+    /*
+     * Create a view for each alphagram, and render it. First empty out the
+     * display list.
+     */
+    this.$questionsList.html("");
+    questionCollection.each(function(question) {
+      var questionView;
+      questionView = new WW.Alphagram.View({
+        model: question,
+        viewConfig: this.viewConfig
+      });
+      this.viewConfig.on('change', questionView.changeConfig, questionView);
+      this.$questionsList.append(questionView.render().el);
+    }, this);
+  },
+  /**
+   * When Configure.Model changes, this function gets triggered.
+   * @param  {Object} configuration An instance of WW.Configure.Model
+   */
+  configChange: function(configuration) {
+    this.viewConfig = configuration;
+  }
 });

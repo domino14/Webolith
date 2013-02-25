@@ -235,14 +235,7 @@ def table(request, id):
         action = request.POST['action']
         logger.info('action %s', action)
         if action == "start":
-            lonelock(WordwallsGameModel, id)
-            wwg = WordwallsGame()
-            gameReady = wwg.startRequest(request.user, id)
-            if not gameReady:
-                return response({"serverMsg": request.user.username})
-            else:
-                quizParams = wwg.startQuiz(id, request.user)
-                return response(quizParams)
+            return start_game(request, id)
         elif action == "guess":
             lonelock(WordwallsGameModel, id)
             logger.info('%s: guess %s, table %s', request.user.username,
@@ -314,6 +307,17 @@ def table(request, id):
         else:
             return render_to_response('wordwalls/notPermitted.html',
                                       {'tablenum': id})
+
+
+def start_game(request, id):
+    lonelock(WordwallsGameModel, id)
+    wwg = WordwallsGame()
+    gameReady = wwg.startRequest(request.user, id)
+    if not gameReady:
+        return response({"serverMsg": request.user.username})
+    else:
+        quizParams = wwg.startQuiz(id, request.user)
+        return response(quizParams)
 
 
 def ajax_upload(request):

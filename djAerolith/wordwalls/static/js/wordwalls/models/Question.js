@@ -19,7 +19,8 @@ WW.Alphagram.Model = Backbone.Model.extend({
     return {
       alphagram: '',
       words: null,   /* Will be an instance of a Word Collection. */
-      numWords: 0
+      numWords: 0,
+      prob: null
     }
   }
 });

@@ -52,6 +52,7 @@ WW.Configure.View = Backbone.View.extend({
     this.$('#configQL').append(view.render().el);
   },
   savePreferences: function() {
+    this.prefsInfo.html("");
     this.model.save({}, {
       success: _.bind(function(model, response, options) {
         this.prefsInfo.html("Successfully saved preferences.");
