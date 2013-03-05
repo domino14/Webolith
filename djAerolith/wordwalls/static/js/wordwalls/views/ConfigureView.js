@@ -1,15 +1,17 @@
+"use strict";
 WW.Configure.View = Backbone.View.extend({
   events: {
     "change .configInput": "confChangeHandler",
     "click #savePrefs": "savePreferences"
   },
   initialize: function() {
-    this.alphagramCollection = new WW.Alphagram.Collection;
+    this.alphagramCollection = new WW.Alphagram.Collection();
     this.listenTo(this.alphagramCollection, 'add', this.addAlphagram);
     this.listenTo(this.model, 'change', this.render);
     this.alphagramCollection.add([{
       alphagram: 'ACNPRSYY',
-      numWords: 1
+      numWords: 1,
+      wordsRemaining: 1
     }]);
     this.prefsInfo = this.$("#prefsInfo");
   },
@@ -19,7 +21,7 @@ WW.Configure.View = Backbone.View.extend({
   render: function() {
     this.setCheckmark('#dontUseTiles', this.model.get('tilesOn'), false);
     this.setCheckmark('#useSans', this.model.get('font') === 'sans', true);
-    this.setCheckmark('#tilesBold', this.model.get('bold'), true)
+    this.setCheckmark('#tilesBold', this.model.get('bold'), true);
 
     this.setCheckmark('#dontShowTable', this.model.get('showTable'), false);
     this.setCheckmark('#dontShowCanvas', this.model.get('showCanvas'), false);

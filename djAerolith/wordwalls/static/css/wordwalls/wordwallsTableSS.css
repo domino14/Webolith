@@ -635,7 +635,7 @@ span.configInputSpan
     width: 200px;
 }
 
-span.wrongGuess
+.wrongGuess
 {
     color: red;
 }

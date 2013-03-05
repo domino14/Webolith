@@ -30,6 +30,7 @@ tableJs = Bundle('js/aerolith/csrfAjax.js',
                 'js/wordwalls/views/ConfigureView.js',
                 'js/wordwalls/views/AppView.js',
                 'js/wordwalls/models/WordwallsGame.js',
+                'js/wordwalls/views/WordSolutionView.js',
                 'js/wordwalls/tableTests.js',
                 filters='jsmin',
                 output='js/wordwalls/packedTable.js')

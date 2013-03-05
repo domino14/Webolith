@@ -1,3 +1,4 @@
+"use strict";
 WW.Alphagram.View = Backbone.View.extend({
   /*
    * An alphagram view is the main question view.
@@ -20,6 +21,7 @@ WW.Alphagram.View = Backbone.View.extend({
     }
     this.naturalTileOrder = _.clone(this.tileOrder);
     this.$el.disableSelection();
+    this.tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5};
   },
   changeConfig: function(configModel) {
     this.viewConfig = configModel;
@@ -47,7 +49,7 @@ WW.Alphagram.View = Backbone.View.extend({
     return text;
   },
   render: function() {
-    var context, tiles, tilesContext, i, tcText;
+    var context, tiles, tilesContext, i, tcText, alphagramLength, tileSize;
     if (this.viewConfig.attributes.showBorders) {
       this.$el.addClass('borders');
       this.$el.removeClass('noborders');
@@ -65,10 +67,20 @@ WW.Alphagram.View = Backbone.View.extend({
       });
     }
     context = {
-      'numWords': this.model.get('numWords'),
+      'wordsRemaining': this.model.get('wordsRemaining'),
       'tiles': tilesContext
-    }
+    };
     this.$el.html(ich.singleQuestion(context));
+    alphagramLength = this.model.get('alphagram').length;
+    if (alphagramLength > 9) {
+      tileSize = this.tileSizeMap[alphagramLength];
+      this.$el.find('.tile').css({
+        'width': tileSize + 'px',
+        'height': tileSize + 'px',
+        'line-height': tileSize + 'px',
+        'font-size': tileSize * 10 + '%'
+      });
+    }
     return this;
   },
   shuffle: function() {

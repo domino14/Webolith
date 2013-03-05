@@ -1,3 +1,4 @@
+"use strict";
 WW.App.View = Backbone.View.extend({
   el: $("body"),
   events: {
@@ -19,12 +20,15 @@ WW.App.View = Backbone.View.extend({
     this.listenTo(this.wordwallsGame, 'tick', _.bind(
       this.updateTimeDisplay, this));
     this.listenTo(this.wordwallsGame, 'timerExpired', _.bind(
-      this.gameEnded, this));
+      this.processQuizEnded, this));
     this.listenTo(this.wordwallsGame, 'gotQuestionData', _.bind(
       this.gotQuestionData, this));
+    this.listenTo(this.wordwallsGame, 'message', this.updateMessages);
     this.messageTextBoxLimit = 3000;  // characters
     this.viewConfig = null;
     this.$questionsList = this.$("#questions > .questionList");
+    this.questionViewsByAlphagram = {};
+    this.defsDiv = this.$("#defs_popup_content");
     // handle text box 'enter' press. We have to do this after
     //  defining the text apparently
 
@@ -57,23 +61,32 @@ WW.App.View = Backbone.View.extend({
   //   }
   // },
 
+  /**
+   * Tries to get an event keycode in a browser-independent way.
+   * @param  {Object} e The keypress event.
+   * @return {[type]}   [description]
+   */
+  getKeyCode: function(e) {
+    var charCode = e.which || e.keyCode;
+    return charCode;
+  },
   readSpecialKeypress: function(e) {
-    var guessText;
+    var guessText, keyCode;
     guessText = this.guessInput.val();
-    if (e.keyCode === 13 || e.keyCode === 32) {  // Return/Enter or Spacebar
+    keyCode = this.getKeyCode(e);
+    if (keyCode === 13 || keyCode === 32) {  // Return/Enter or Spacebar
       if (guessText.length < 1 || guessText.length > 18) {
         return;   // ignore
       }
       this.guessInput.val("");
-      /* should post */
       this.submitGuess(guessText);
-    } else if (e.keyCode === 49) {
+    } else if (keyCode === 49) {
       // 1 -- shuffle
-      shuffle();
+      this.shuffle();
       e.preventDefault();
-    } else if (e.keyCode === 50) {
+    } else if (keyCode === 50) {
       // 2 -- alphagram
-      alphagram();
+      this.alphagram();
       e.preventDefault();
     }
   },
@@ -84,7 +97,8 @@ WW.App.View = Backbone.View.extend({
   },
 
   giveUp: function() {
-    $.post(tableUrl, {action: "giveUp"}, this.processGiveUp, 'json');
+    $.post('', {action: "giveUp"}, _.bind(this.processGiveUp, this),
+      'json');
   },
 
   showSolutions: function() {
@@ -119,20 +133,23 @@ WW.App.View = Backbone.View.extend({
   saveGame: function() {
     var text = this.$("#saveListName").val();
     if (!text) {
-      updateMessages("You must enter a list name for saving!");
+      this.updateMessages("You must enter a list name for saving!");
     } else {
       $.post(
-        tableUrl, {action: "save", listname: text},
+        '', {
+          action: "save", listname: text
+        },
         function(data) {
           if (_.has(data, 'success') && data.success) {
-            updateMessages("Saved as " + text);
-            if (autoSave === false) {
-              updateMessages("Autosave is now on! Aerolith will save your " +
-                             "list progress at the end of every round.");
-              autoSave = true;
+            this.updateMessages("Saved as " + text);
+            if (this.autoSave === false) {
+              this.updateMessages([
+                "Autosave is now on! Aerolith will save your ",
+                "list progress at the end of every round."].join(''));
+              this.autoSave = true;
             }
           } else if (_.has(data, 'info')) {
-            updateMessages(data.info);
+            this.updateMessages(data.info);
           }
         }, 'json');
     }
@@ -144,21 +161,16 @@ WW.App.View = Backbone.View.extend({
 
   shuffle: function() {
     this.guessInput.focus();
-    // cellIndex varies from 0 to 49 inclusive (maybe more in the future)
-    for (var i = 0; i < 50; i++) {
-      shuffleSingleCell(i);
-    }
+    _.each(this.questionViewsByAlphagram, function(view, key) {
+      view.shuffle();
+    });
   },
 
   alphagram: function() {
     this.guessInput.focus();
-    for (var i = 0; i < 50; i++) {
-      if (i < qObj.length) {
-        // Restore original html saved in 'ahtml'.
-        $('#q' + i + ' > span.tiles').html(qObj[i]['ahtml']);
-      }
-    }
-    $(".tile").removeClass().addClass(tileClassToText(tileClass));
+    _.each(this.questionViewsByAlphagram, function(view, key) {
+      view.alphagram();
+    });
   },
 
   processStartData: function (data) {
@@ -187,16 +199,18 @@ WW.App.View = Backbone.View.extend({
     }
   },
 
-  processGiveUp: function() {
-
+  processGiveUp: function(data) {
+    if (_.has(data, 'g') && !data.g) {
+      this.processQuizEnded();
+    }
   },
   render: function() {},
-  gameEnded: function() {},
   updateTimeDisplay: function(currentTimer) {
     var mins, secs, pad;
+    currentTimer = Math.floor(currentTimer);
     mins = Math.floor(currentTimer / 60);
     secs = currentTimer % 60;
-    pad = ""
+    pad = "";
     if (secs < 10) {
       pad = "0";
     }
@@ -205,10 +219,16 @@ WW.App.View = Backbone.View.extend({
   updateMessages: function(message) {
     this.updateTextBox(message, 'messages');
   },
+  updateCorrectAnswer: function(answer) {
+    this.updateTextBox(answer, 'correctAnswers');
+  },
+  updateGuesses: function(guess) {
+    this.updateTextBox(guess, 'guesses');
+  },
   updateTextBox: function(message, textBoxId) {
     var $box, newMessage;
     $box = $('#' + textBoxId);
-    var newMessage = $box.html() + message + '<BR>';
+    newMessage = $box.html() + message + '<BR>';
     if (newMessage.length > this.messageTextBoxLimit) {
       newMessage = newMessage.substr(
         newMessage.length - this.messageTextBoxLimit);
@@ -227,7 +247,11 @@ WW.App.View = Backbone.View.extend({
      * Create a view for each alphagram, and render it. First empty out the
      * display list.
      */
+    var $defsTable;
     this.$questionsList.html("");
+    this.questionViewsByAlphagram = {};
+    this.defsDiv.html(ich.solutionsTable({}));
+    $defsTable = this.defsDiv.children("#solutionsTable");
     questionCollection.each(function(question) {
       var questionView;
       questionView = new WW.Alphagram.View({
@@ -236,7 +260,17 @@ WW.App.View = Backbone.View.extend({
       });
       this.viewConfig.on('change', questionView.changeConfig, questionView);
       this.$questionsList.append(questionView.render().el);
+      this.questionViewsByAlphagram[question.get('alphagram')] = questionView;
+      /* Populate the solutions table now and hide it. */
+      question.get('words').each(function(word, index) {
+        var wordSolutionView;
+        wordSolutionView = new WW.Word.WordSolutionView({
+          model: word});
+        $defsTable.append(wordSolutionView.render().el);
+      }, this);
+
     }, this);
+    $defsTable.hide();
   },
   /**
    * When Configure.Model changes, this function gets triggered.
@@ -244,5 +278,64 @@ WW.App.View = Backbone.View.extend({
    */
   configChange: function(configuration) {
     this.viewConfig = configuration;
+    /* Render table / canvas backgrounds as appropriate. */
+    if (configuration.get('showCanvas')) {
+      $("body").removeClass().addClass("canvasBg");
+    } else {
+      $("body").removeClass();
+    }
+    if (configuration.get('showTable')) {
+      $("#questions").removeClass().addClass("tableBg");
+    } else {
+      $("#questions").removeClass();
+    }
+  },
+  /**
+   * Submits a guess to the back-end server.
+   * @param  {string} guessText A guess.
+   */
+  submitGuess: function(guessText) {
+    var ucGuess;
+    ucGuess = $.trim(guessText.toUpperCase());
+    $.post('', {
+      action: "guess", guess: guessText
+    }, _.bind(this.processGuessResponse, this, ucGuess),
+    'json');
+  },
+  /**
+   * Processes a back-end response to a guess.
+   * @param {string} ucGuess The upper-cased guess.
+   * @param {Object} data The data object returned by the back-end server
+   *                      in response to a guess.
+   */
+  processGuessResponse: function(ucGuess, data) {
+    var view, wordsRemaining;
+    if (_.has(data, 'C') && data.C !== '') {
+      /* data.C contains the alphagram. */
+      view = this.questionViewsByAlphagram[data.C];
+      wordsRemaining = view.model.get('wordsRemaining') - 1;
+      /* Trigger an update of the view here. */
+      view.model.set({
+        wordsRemaining: wordsRemaining
+      });
+      this.wordwallsGame.correctGuess(ucGuess);
+      if (wordsRemaining === 0) {
+        this.wordwallsGame.finishedAlphagram(data.C);
+      }
+
+      this.updateCorrectAnswer(ucGuess);
+      this.updateGuesses(ucGuess);
+    }
+    if (_.has(data, 'g') && !data.g) {
+      this.processQuizEnded();
+    }
+  },
+
+  processQuizEnded: function() {
+    this.wordwallsGame.endGame();
+    this.$questionsList.html("");
+    this.$("#gameTimer").text("0:00");
+    this.defsDiv.children("#solutionsTable").show();
   }
+
 });

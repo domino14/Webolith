@@ -1,3 +1,4 @@
+"use strict";
 WW.Word.Model = Backbone.Model.extend({
   defaults: function() {
     return {
@@ -5,8 +6,10 @@ WW.Word.Model = Backbone.Model.extend({
       definition: null,
       frontHooks: null,
       backHooks: null,
-      lexiconSymbol: null
-    }
+      lexiconSymbol: null,
+      alphagram: null,
+      prob: null
+    };
   }
 });
 
@@ -20,8 +23,9 @@ WW.Alphagram.Model = Backbone.Model.extend({
       alphagram: '',
       words: null,   /* Will be an instance of a Word Collection. */
       numWords: 0,
+      wordsRemaining: null,
       prob: null
-    }
+    };
   }
 });
 

@@ -178,8 +178,10 @@ mixpanel.name_tag("{{username}}");
 {% verbatim %}
 
 <script id="singleQuestion" type="text/html">
-  <span class="chip chip{{numWords}}">{{numWords}}</span>
+  {{#wordsRemaining}}
+  <span class="chip chip{{wordsRemaining}}">{{wordsRemaining}}</span>
   <span class="tiles">{{#tiles}}<span class="{{tcText}}">{{letter}}</span>{{/tiles}}</span>
+  {{/wordsRemaining}}
 </script>
 
 <script id="solutionsTable" type="text/html">
@@ -192,21 +194,18 @@ mixpanel.name_tag("{{username}}");
       <td>></td>
       <td>Definition</td>
     </tr>
-    {{#solutions}}
-    <tr>
-      <td>{{prob}}</td>
-      <td class="alphagramCell" {{#alphagram}}id="a_{{alphagram}}"{{/alphagram}}>
-        {{#alphagram}}{{alphagram}}{{/alphagram}}
-      </td>
-      <td class="frontHooksCell">{{frontHooks}}</td>
-      <td class="solutionCell" id="s_{{word}}">{{word}}{{lexSymbol}}</td>
-      <td class="backHooksCell">{{backHooks}}</td>
-      <td>{{definition}}</td>
-    </tr>
-    {{/solutions}}
   </table>
   <BR></BR>
   <div id="solstats"></div>
+</script>
+
+<script id="singleSolution" type="text/html">
+  <td>{{prob}}</td>
+  <td class="alphagramCell{{#wrongAlpha}} wrongGuess{{/wrongAlpha}}">{{alphagramText}}</td>
+  <td class="frontHooksCell">{{frontHooks}}</td>
+  <td class="solutionCell{{#wrong}} wrongGuess{{/wrong}}">{{word}}{{lexiconSymbol}}</td>
+  <td class="backHooksCell">{{backHooks}}</td>
+  <td>{{definition}}</td>
 </script>
 
 

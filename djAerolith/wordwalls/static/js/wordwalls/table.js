@@ -15,9 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
-// global questions object
 //
-
+"use strict";
 var WW = {};
 WW.Configure = {};
 WW.App = {};
@@ -27,12 +26,12 @@ WW.Alphagram = {};
 
 function initializeApp() {
   var Dispatcher;
-  WW.configuration = new WW.Configure.Model;
+  WW.configuration = new WW.Configure.Model();
   WW.configurationView = new WW.Configure.View({
     model: WW.configuration,
     el: $("#customize_popup")
   });
-  WW.appView = new WW.App.View;
+  WW.appView = new WW.App.View();
   Dispatcher = _.clone(Backbone.Events);
   // Scope of 'this' is going to drive me nuts.
   Dispatcher.listenTo(WW.configuration, 'change', _.bind(
