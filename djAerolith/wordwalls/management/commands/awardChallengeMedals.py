@@ -1,9 +1,9 @@
 # cleans up DailyChallenges that are older than specified number of days in the past
 
 from django.core.management.base import BaseCommand, CommandError
-from wordwalls.models import (DailyChallenge, 
-                                DailyChallengeLeaderboard, 
-                                DailyChallengeLeaderboardEntry, 
+from wordwalls.models import (DailyChallenge,
+                                DailyChallengeLeaderboard,
+                                DailyChallengeLeaderboardEntry,
                                 DailyChallengeName)
 from datetime import datetime, timedelta, date
 from wordwalls.management.commands.genMissedBingoChalls import challengeDateFromReqDate
@@ -17,7 +17,7 @@ class Command(BaseCommand):
         for lb in lbs:
             award = True
             if lb.challenge.name == toughies:
-                chDate = challengeDateFromReqDate(today)    
+                chDate = challengeDateFromReqDate(today)
                 if chDate == lb.challenge.date: # toughies challenge still ongoing
                     award = False
             if award:
@@ -33,7 +33,7 @@ class Command(BaseCommand):
                     medals = ['Platinum', 'Gold', 'Silver', 'Bronze']
                 else:
                     medals = ['Gold', 'Silver', 'Bronze']
-                
+
                 for i in range(len(medals)):
                     lbes[i].additionalData = json.dumps({'medal': medals[i]})
                     lbes[i].save()
@@ -41,6 +41,8 @@ class Command(BaseCommand):
                     try:
                         userMedals = json.loads(profile.wordwallsMedals)
                     except TypeError:
+                        userMedals = {'medals': {}}
+                    if 'medals' not in userMedals:
                         userMedals = {'medals': {}}
                     if medals[i] in userMedals['medals']:
                         userMedals['medals'][medals[i]] += 1
@@ -50,7 +52,7 @@ class Command(BaseCommand):
                     profile.wordwallsMedals = json.dumps(userMedals)
                     profile.save()
                     print profile.user.username, profile.wordwallsMedals
-            
+
                 print 'awarded medals', lb
                 lb.medalsAwarded = True
                 lb.save()
