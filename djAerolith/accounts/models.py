@@ -47,7 +47,7 @@ class AerolithProfile(models.Model):
     member = models.BooleanField(default=False)
     membershipType = models.IntegerField(choices=MEMBERSHIP_TYPES,
                                          default=NONE_MTYPE)
-    membershipExpiry = models.DateTimeField(null=True)
+    membershipExpiry = models.DateTimeField(null=True, blank=True)
 
     # specific per game
     customWordwallsStyle = models.CharField(max_length=1000, blank=True)
