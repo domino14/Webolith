@@ -24,11 +24,14 @@ WW.App.View = Backbone.View.extend({
     this.listenTo(this.wordwallsGame, 'gotQuestionData', _.bind(
       this.gotQuestionData, this));
     this.listenTo(this.wordwallsGame, 'message', this.updateMessages);
+    this.listenTo(this.wordwallsGame, 'updateQStats', _.bind(
+      this.renderQStats, this));
     this.messageTextBoxLimit = 3000;  // characters
     this.viewConfig = null;
     this.$questionsList = this.$("#questions > .questionList");
     this.questionViewsByAlphagram = {};
     this.defsDiv = this.$("#defs_popup_content");
+    //this.$("#avatarLabel").
     // handle text box 'enter' press. We have to do this after
     //  defining the text apparently
 
@@ -135,26 +138,23 @@ WW.App.View = Backbone.View.extend({
     if (!text) {
       this.updateMessages("You must enter a list name for saving!");
     } else {
-      $.post(
-        '', {
-          action: "save", listname: text
-        },
-        function(data) {
-          if (_.has(data, 'success') && data.success) {
-            this.updateMessages("Saved as " + text);
-            if (this.autoSave === false) {
-              this.updateMessages([
-                "Autosave is now on! Aerolith will save your ",
-                "list progress at the end of every round."].join(''));
-              this.autoSave = true;
-            }
-          } else if (_.has(data, 'info')) {
-            this.updateMessages(data.info);
-          }
-        }, 'json');
+      $.post('', {action: "save", listname: text},
+        _.bind(this.processSaveResponse, this), 'json');
     }
   },
-
+  processSaveResponse: function(data) {
+    if (_.has(data, 'success') && data.success) {
+      this.updateMessages("Saved as " + text);
+      if (this.autoSave === false) {
+        this.updateMessages([
+          "Autosave is now on! Aerolith will save your ",
+          "list progress at the end of every round."].join(''));
+        this.autoSave = true;
+      }
+    } else if (_.has(data, 'info')) {
+      this.updateMessages(data.info);
+    }
+  },
   exit: function() {
     window.location = "/wordwalls";
   },
@@ -176,6 +176,7 @@ WW.App.View = Backbone.View.extend({
   processStartData: function (data) {
     /* Probably should track gameGoing with a signal from wordwallsGame? */
     if (!this.wordwallsGame.get('gameGoing')) {
+      this.wordwallsGame.set('gameGoing', true);
       if (_.has(data, 'serverMsg')) {
         this.updateMessages(data['serverMsg']);
         this.wordwallsGame.set(
@@ -206,15 +207,17 @@ WW.App.View = Backbone.View.extend({
   },
   render: function() {},
   updateTimeDisplay: function(currentTimer) {
-    var mins, secs, pad;
-    currentTimer = Math.floor(currentTimer);
+    var mins, secs, pad, text, originalTimer;
+    originalTimer = currentTimer;
+    currentTimer = Math.round(currentTimer);
     mins = Math.floor(currentTimer / 60);
     secs = currentTimer % 60;
     pad = "";
     if (secs < 10) {
       pad = "0";
     }
-    this.$("#gameTimer").text(mins + ":" + pad + secs);
+    text = mins + ":" + pad + secs;
+    this.$("#gameTimer").text(text);
   },
   updateMessages: function(message) {
     this.updateTextBox(message, 'messages');
@@ -247,10 +250,11 @@ WW.App.View = Backbone.View.extend({
      * Create a view for each alphagram, and render it. First empty out the
      * display list.
      */
-    var $defsTable;
+    var $defsTable, totalAnswers;
     this.$questionsList.html("");
     this.questionViewsByAlphagram = {};
     this.defsDiv.html(ich.solutionsTable({}));
+    totalAnswers = 0;
     $defsTable = this.defsDiv.children("#solutionsTable");
     questionCollection.each(function(question) {
       var questionView;
@@ -267,10 +271,22 @@ WW.App.View = Backbone.View.extend({
         wordSolutionView = new WW.Word.WordSolutionView({
           model: word});
         $defsTable.append(wordSolutionView.render().el);
+        totalAnswers++;
       }, this);
-
     }, this);
     $defsTable.hide();
+    this.renderQStats(totalAnswers, 0);
+  },
+  /**
+   * Renders question stats - num total answered correctly, percentages, etc.
+   */
+  renderQStats: function(total, gotten) {
+    var fractionText, percentText;
+    fractionText = gotten + '/' + total;
+    percentText = (gotten / total * 100).toFixed(1) + '%';
+    this.$("#pointsLabelFraction").text(fractionText);
+    this.$("#pointsLabelPercent").text(percentText);
+    this.$("#solstats").text(fractionText + ' (' + percentText + ')');
   },
   /**
    * When Configure.Model changes, this function gets triggered.
@@ -310,20 +326,21 @@ WW.App.View = Backbone.View.extend({
    */
   processGuessResponse: function(ucGuess, data) {
     var view, wordsRemaining;
-    if (_.has(data, 'C') && data.C !== '') {
-      /* data.C contains the alphagram. */
-      view = this.questionViewsByAlphagram[data.C];
-      wordsRemaining = view.model.get('wordsRemaining') - 1;
-      /* Trigger an update of the view here. */
-      view.model.set({
-        wordsRemaining: wordsRemaining
-      });
-      this.wordwallsGame.correctGuess(ucGuess);
-      if (wordsRemaining === 0) {
-        this.wordwallsGame.finishedAlphagram(data.C);
+    if (_.has(data, 'C')) {
+      if (data.C !== '') {
+        /* data.C contains the alphagram. */
+        view = this.questionViewsByAlphagram[data.C];
+        wordsRemaining = view.model.get('wordsRemaining') - 1;
+        /* Trigger an update of the view here. */
+        view.model.set({
+          wordsRemaining: wordsRemaining
+        });
+        this.wordwallsGame.correctGuess(ucGuess);
+        if (wordsRemaining === 0) {
+          this.wordwallsGame.finishedAlphagram(data.C);
+        }
+        this.updateCorrectAnswer(ucGuess);
       }
-
-      this.updateCorrectAnswer(ucGuess);
       this.updateGuesses(ucGuess);
     }
     if (_.has(data, 'g') && !data.g) {
@@ -336,6 +353,20 @@ WW.App.View = Backbone.View.extend({
     this.$questionsList.html("");
     this.$("#gameTimer").text("0:00");
     this.defsDiv.children("#solutionsTable").show();
+  },
+  unloadEventHandler: function() {
+    if (this.wordwallsGame.get('gameGoing')) {
+      $.ajax({
+         url: '',
+         async: false,
+         data: {
+          action: "giveUpAndSave",
+          listname: $("#saveListName").val()
+         },
+         type: "POST"
+      });
+    }
   }
+
 
 });

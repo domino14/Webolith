@@ -36,6 +36,11 @@ function initializeApp() {
   // Scope of 'this' is going to drive me nuts.
   Dispatcher.listenTo(WW.configuration, 'change', _.bind(
     WW.appView.configChange, WW.appView));
+  /*
+   * Catch beforeunload events. I can't figure out how to put this in
+   * the appView.
+   */
+  window.onbeforeunload = _.bind(WW.appView.unloadEventHandler, WW.appView);
 
 }
 

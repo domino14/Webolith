@@ -3,12 +3,16 @@
  */
 "use strict";
 WW.WordwallsGame = Backbone.Model.extend({
+  defaults: function() {
+    return {
+      gameGoing: false,
+      quizzingOnMissed: false,
+      quizOverForever: false,
+      challenge: false
+    }
+  },
   initialize: function() {
-    this.gameGoing = false;
-    this.quizzingOnMissed = false;
-    this.quizOverForever = false;
     this.currentTimer = 0;
-    this.challenge = false;
     this.questionCollection = new WW.Alphagram.Collection();
     this.timeStarted = null;
     this.timeForQuiz = null;
@@ -22,7 +26,7 @@ WW.WordwallsGame = Backbone.Model.extend({
     this.wrongAlphasHash = {};
     this.numTotalAnswersThisRound = 0;
     this.numAnswersGottenThisRound = 0;
-
+    this.cleanupPrevious();
     _.each(questions, function(question, index) {
       var wordCollection, questionModel;
       questionModel = new WW.Alphagram.Model();
@@ -52,8 +56,6 @@ WW.WordwallsGame = Backbone.Model.extend({
       this.questionCollection.add(questionModel);
       this.wrongAlphasHash[question.a] = questionModel;
     }, this);
-
-
     this.trigger('gotQuestionData', this.questionCollection);
   },
   /**
@@ -66,13 +68,11 @@ WW.WordwallsGame = Backbone.Model.extend({
     this.timeForQuiz = time;
     /* Add 1 since we're about to call this function. */
     this.currentTimer = time + 1;
-    _.delay(_.bind(this.updateTimer, this), 1000);
-    this.updateTimer(); // Call it now, too.
-    this.gameGoing = true;
+    this.updateTimer();
   },
   updateTimer: function() {
     var timeNow;
-    if (!this.gameGoing) {
+    if (!this.get('gameGoing')) {
       return;
     }
     timeNow = new Date().getTime();
@@ -88,21 +88,15 @@ WW.WordwallsGame = Backbone.Model.extend({
   correctGuess: function(word) {
     delete this.wrongWordsHash[word];
     this.numAnswersGottenThisRound++;
-    /*
-    var fractionText = numAnswersGottenThisRound + '/' + numTotalAnswersThisRound;
-                        var percentText = (numAnswersGottenThisRound / numTotalAnswersThisRound * 100).toFixed(1) + '%';
-                        $('#pointsLabelFraction').text(fractionText);
-                        $('#pointsLabelPercent').text(percentText);
-                        $("#solstats").text(fractionText + ' (' + percentText + ')');
-
-     */
+    this.trigger('updateQStats', this.numTotalAnswersThisRound,
+      this.numAnswersGottenThisRound);
   },
   finishedAlphagram: function(alphagram) {
     delete this.wrongAlphasHash[alphagram];
   },
   endGame: function() {
-    if (this.gameGoing) {
-      if (this.challenge) {
+    if (this.get('gameGoing')) {
+      if (this.get('challenge')) {
         this.trigger('message', 'The challenge has ended!');
         /* TODO getDcData */
       }
@@ -113,7 +107,7 @@ WW.WordwallsGame = Backbone.Model.extend({
           "Autosave is NOT on. To save your progress, type in a name ",
           "for this list next to the Save button, and click Save."].join(''));
       }
-      this.gameGoing = false;
+      this.set('gameGoing', false);
       _.each(this.wrongWordsHash, function(word) {
         word.set('wrong', true);
       });
@@ -121,5 +115,14 @@ WW.WordwallsGame = Backbone.Model.extend({
         alphagram.set('wrong', true);
       });
     }
+  },
+  /**
+   * Cleans up old models / collections / etc.
+   */
+  cleanupPrevious: function() {
+    this.questionCollection.each(function(question) {
+      question.get('words').reset();
+    });
+    this.questionCollection.reset();
   }
 });
