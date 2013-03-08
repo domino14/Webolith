@@ -239,13 +239,19 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-    'apps': { # I keep all my apps here, but you can also add them one by one
-            'handlers': ['log_file'],
-            'level': 'INFO',
-            'propagate': True,
+    'apps': {
+         'handlers': ['log_file'],
+        'level': 'INFO',
+        'propagate': True,
         },
     }
 }
+
+try:
+    # Overwrite with settings_local's LOGGING if available.
+    LOGGING = settings_local.LOGGING
+except AttributeError:
+    pass
 
 ASSETS_DEBUG = settings_local.ASSETS_DEBUG
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
