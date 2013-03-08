@@ -270,6 +270,7 @@ def table(request, id):
             ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
             # this shouldn't return a response, because it's not going to be
             # caught by the javascript
+            logger.debug("Give up and saving returned: %s" % ret)
             return response(ret)
         elif action == "savePrefs":
             profile = request.user.get_profile()
@@ -302,7 +303,8 @@ def table(request, id):
             return render_to_response('wordwalls/table.html',
                                       {'tablenum': id,
                                        'username': request.user.username,
-                                       'addParams': json.dumps(params)},
+                                       'addParams': json.dumps(params),
+                                       'avatarUrl': profile.avatarUrl},
                                       context_instance=RequestContext(request))
         else:
             return render_to_response('wordwalls/notPermitted.html',
