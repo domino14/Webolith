@@ -1,24 +1,24 @@
-function sortEntry(e1, e2)
-{
-    if (e1['score'] == e2['score'])
-        return e2['tr'] - e1['tr'];
-    else
-        return e2['score'] - e1['score'];
-}
-
-function processDcResults(data, divIdToPopulate)
-{
-//    data = fakeDcData();
-    if (data == null)
-    {
-        $("#" + divIdToPopulate).text("No one has done this challenge today. Be the first!");
+WW = WW || {};
+WW.App = WW.App || {};
+WW.App.Challenges = function() {
+  var sortEntry_, processDcResults_, fakeDcData_;
+  sortEntry = function(e1, e2)
+  {
+    if (e1['score'] == e2['score']) {
+      return e2['tr'] - e1['tr'];
+    } else {
+      return e2['score'] - e1['score'];
     }
-    else
-    {
+  }
+  processDcResults = function(data, divIdToPopulate) {
+    if (_.isNull(data) {
+      $("#" + divIdToPopulate).text(
+        "No one has done this challenge today. Be the first!");
+    } else {
         var tableBuilder = '<table id="dcResultsTable"><tr>'
         var maxScore = data['maxScore'];
         var entries = data['entries'];
-        
+
         entries.sort(sortEntry);
         tableBuilder += '<td class="dcResultsTableHeader">#</td>' +
                         '<td class="dcResultsTableHeader">Name</td>' +
@@ -51,27 +51,33 @@ function processDcResults(data, divIdToPopulate)
                 }
             }
 
-            tableBuilder += '<tr>' + 
-                            '<td class="dcResultsTableCell">' + (i+1) + 
-                            '</td><td class="dcResultsTableCell"><a href="/accounts/profile/' + user + 
-                                        '" target="_blank">' + medalHtml + user + '</a>' + 
-                            '</td><td class="dcResultsTableCell">' + (score/maxScore * 100).toFixed(1) + '%' + 
+            tableBuilder += '<tr>' +
+                            '<td class="dcResultsTableCell">' + (i+1) +
+                            '</td><td class="dcResultsTableCell"><a href="/accounts/profile/' + user +
+                                        '" target="_blank">' + medalHtml + user + '</a>' +
+                            '</td><td class="dcResultsTableCell">' + (score/maxScore * 100).toFixed(1) + '%' +
                             '</td><td class="dcResultsTableCell">' + tr + ' s.' + '</td></tr>'
-            
+
         }
         tableBuilder += '</table>'
         $("#" + divIdToPopulate).html(tableBuilder);
     }
 }
 
-function fakeDcData()
-{
-    var data = {};
+  fakeDcData = function() {
+    var data, i;
+    data = {};
     data['maxScore'] = 100;
     data['entries'] = [];
-    for (var i = 0; i < 50; i++)
-    {
-        data['entries'].push({'user': "User" + i, 'score': Math.floor(Math.random()*100), 'tr': Math.floor(Math.random() * 200)});
+    for (i = 0; i < 50; i++) {
+      data['entries'].push({
+        'user': "User" + i,
+        'score': Math.floor(Math.random()*100),
+        'tr': Math.floor(Math.random() * 200)
+      });
     }
     return data;
+  }
+
+
 }
