@@ -57,13 +57,13 @@ mixpanel.identify("{{username}}");
 
 <script type="text/javascript">
   $(document).ready(function() {
+    var addParams;
     initializeApp();
-    WW.configuration.setConfig("{{addParams|escapejs}}");
-    // WW.App.setOptions({
-    //   tableUrl: "{% url wordwalls_table tablenum %}",
-    //   username: "{{username}}",
-    //   addParams: "{{addParams|escapejs}}"
-    // });
+    addParams = $.parseJSON("{{addParams|escapejs}}");
+    WW.configuration.setConfig(addParams.style);
+    if (_.has(addParams, 'saveName')) {
+      WW.appView.setSaveName(addParams.saveName);
+    }
     mixpanel.track('Entered table');
   });
 </script>

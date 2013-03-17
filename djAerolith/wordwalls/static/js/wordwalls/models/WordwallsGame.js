@@ -97,23 +97,20 @@ WW.WordwallsGame = Backbone.Model.extend({
   endGame: function() {
     if (this.get('gameGoing')) {
       if (this.get('challenge')) {
-        this.trigger('message', 'The challenge has ended!');
-        /* TODO getDcData */
+        this.trigger('challengeEnded');
       }
-      if (this.autoSave) {
-        /* TODO saveGame */
+      if (this.get('autoSave')) {
+        this.trigger('saveGame');
       } else {
-        this.trigger('message', [
-          "Autosave is NOT on. To save your progress, type in a name ",
-          "for this list next to the Save button, and click Save."].join(''));
+        this.trigger('autosaveDisabled');
       }
-      this.set('gameGoing', false);
       _.each(this.wrongWordsHash, function(word) {
         word.set('wrong', true);
       });
       _.each(this.wrongAlphasHash, function(alphagram) {
         alphagram.set('wrong', true);
       });
+      this.set('gameGoing', false);
     }
   },
   /**

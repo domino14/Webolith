@@ -10,6 +10,7 @@ WW.App.View = Backbone.View.extend({
     "click #exit": "exit",
     "click #shuffle": "shuffle",
     "click #alphagram": "alphagram",
+    "click .dcInfo": "showAddlInfo",
     "keypress #guessText": "readSpecialKeypress"
   },
   initialize: function() {
@@ -17,15 +18,19 @@ WW.App.View = Backbone.View.extend({
 
     this.setupPopupEvent();
     this.wordwallsGame = new WW.WordwallsGame();
-    this.listenTo(this.wordwallsGame, 'tick', _.bind(
-      this.updateTimeDisplay, this));
-    this.listenTo(this.wordwallsGame, 'timerExpired', _.bind(
-      this.processQuizEnded, this));
-    this.listenTo(this.wordwallsGame, 'gotQuestionData', _.bind(
-      this.gotQuestionData, this));
-    this.listenTo(this.wordwallsGame, 'message', this.updateMessages);
-    this.listenTo(this.wordwallsGame, 'updateQStats', _.bind(
-      this.renderQStats, this));
+    this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
+    this.listenTo(this.wordwallsGame, 'timerExpired',
+      this.processTimerExpired);
+    this.listenTo(this.wordwallsGame, 'gotQuestionData', this.gotQuestionData);
+    this.listenTo(this.wordwallsGame, 'updateQStats', this.renderQStats);
+    this.listenTo(this.wordwallsGame, 'saveGame', this.saveGame);
+    this.listenTo(this.wordwallsGame, 'challengeEnded',
+      this.handleChallengeEnded);
+    this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
+      this.updateMessages([
+        "Autosave is NOT on. To save your progress, type in a name ",
+        "for this list next to the Save button, and click Save."].join(''));
+    });
     this.messageTextBoxLimit = 3000;  // characters
     this.viewConfig = null;
     this.$questionsList = this.$("#questions > .questionList");
@@ -50,20 +55,13 @@ WW.App.View = Backbone.View.extend({
       return false;
     });
   },
-  // setOptions: function(options) {
-  //   tableUrl = options.tableUrl;
-  //   username = options.username;
-  //   addParams = $.parseJSON(options.params);
-  //   if (addParams) {
-  //     if (_.has(addParams, 'saveName')) {
-  //       this.$("#saveListName").val(addParams.saveName);
-  //       autoSave = true;
-  //       updateMessages("Autosave is on! Aerolith will save your list " +
-  //                      "progress at the end of every round.");
-  //     }
-  //   }
-  // },
-
+  setSaveName: function(saveName) {
+    this.$("#saveListName").val(saveName);
+    this.updateMessages([
+      "Autosave is on! Aerolith will save your list progress at the end ",
+      "of every round."].join(''));
+    this.wordwallsGame.set('autoSave', true);
+  },
   /**
    * Tries to get an event keycode in a browser-independent way.
    * @param  {Object} e The keypress event.
@@ -103,36 +101,40 @@ WW.App.View = Backbone.View.extend({
     $.post('', {action: "giveUp"}, _.bind(this.processGiveUp, this),
       'json');
   },
-
-  showSolutions: function() {
-    $('#definitions_popup').fadeIn();
-
-    //Define margin for center alignment (vertical + horizontal) - we add 80 to the height/width to accomodate for the padding + border width defined in the css
-    var popMargTop = ($('#definitions_popup').height() + 80) / 2;
-    var popMargLeft = ($('#definitions_popup').width() + 80) / 2;
-
-    //Apply Margin to Popup
-    $('#definitions_popup').css({
-      'margin-top' : -popMargTop,
-      'margin-left' : -popMargLeft
+  fadeInDialog: function(id, fadeLayer) {
+    var $dialog, popMargTop, popMargLeft;
+    $dialog = $('#' + id);
+    $dialog.fadeIn();
+    popMargTop = ($dialog.height() + 80) / 2;
+    popMargLeft = ($dialog.width() + 80) / 2;
+    $dialog.css({
+      'margin-top': -popMargTop,
+      'margin-left': -popMargLeft
     });
-
-    //Fade in Background
-    $('#fade').fadeIn(); //Fade in the fade layer
+    if (fadeLayer) {
+      $('#fade').fadeIn();
+    }
   },
-
   customize: function() {
-    $('#customize_popup').fadeIn();
-    var popMargTop = ($('#customize_popup').height() + 80) / 2;
-    var popMargLeft = ($('#customize_popup').width() + 80) / 2;
-
-    //Apply Margin to Popup
-    $('#customize_popup').css({
-      'margin-top' : -popMargTop,
-      'margin-left' : -popMargLeft
-    });
+    this.fadeInDialog('customize_popup', false);
   },
-
+  showAddlInfo: function() {
+    this.fadeInDialog('addlInfo_popup', true);
+  },
+  showSolutions: function() {
+    this.fadeInDialog('definitions_popup', true);
+  },
+  handleChallengeEnded: function() {
+    this.updateMessages("The challenge has ended!");
+    $.post('', {action: 'getDcData'},
+      function(data) {
+        processDcResults(data, "addlInfo_content");
+      },
+      'json');
+    this.updateMessages([
+      'Click <a class="softLink dcInfo">here</a> to see current results for ',
+      'this challenge.'].join(''));
+  },
   saveGame: function() {
     var text = this.$("#saveListName").val();
     if (!text) {
@@ -144,14 +146,15 @@ WW.App.View = Backbone.View.extend({
   },
   processSaveResponse: function(data) {
     if (_.has(data, 'success') && data.success) {
-      this.updateMessages("Saved as " + text);
-      if (this.autoSave === false) {
+      this.updateMessages("Saved as " + data.listname);
+      if (this.wordwallsGame.get('autoSave') === false) {
         this.updateMessages([
           "Autosave is now on! Aerolith will save your ",
           "list progress at the end of every round."].join(''));
-        this.autoSave = true;
+        this.wordwallsGame.set('autoSave') = true;
       }
-    } else if (_.has(data, 'info')) {
+    }
+    if (_.has(data, 'info')) {
       this.updateMessages(data.info);
     }
   },
@@ -176,7 +179,6 @@ WW.App.View = Backbone.View.extend({
   processStartData: function (data) {
     /* Probably should track gameGoing with a signal from wordwallsGame? */
     if (!this.wordwallsGame.get('gameGoing')) {
-      this.wordwallsGame.set('gameGoing', true);
       if (_.has(data, 'serverMsg')) {
         this.updateMessages(data['serverMsg']);
         this.wordwallsGame.set(
@@ -191,7 +193,7 @@ WW.App.View = Backbone.View.extend({
         this.wordwallsGame.processQuestionObj(data['questions']);
       }
       if (_.has(data, 'time')) {
-        // +1 since we're about to call this function
+        this.wordwallsGame.set('gameGoing', true);
         this.wordwallsGame.startTimer(data['time']);
       }
       if (_.has(data, 'gameType')) {
@@ -347,7 +349,15 @@ WW.App.View = Backbone.View.extend({
       this.processQuizEnded();
     }
   },
-
+  processTimerExpired: function() {
+    /* Tell the server the timer expired. */
+    $.post('', {action: 'gameEnded'}, _.bind(function(data) {
+      if (_.has(data, 'g') && !data.g) {
+        this.processQuizEnded();
+      }
+    }, this),
+    'json');
+  },
   processQuizEnded: function() {
     this.wordwallsGame.endGame();
     this.$questionsList.html("");
@@ -357,13 +367,13 @@ WW.App.View = Backbone.View.extend({
   unloadEventHandler: function() {
     if (this.wordwallsGame.get('gameGoing')) {
       $.ajax({
-         url: '',
-         async: false,
-         data: {
+        url: '',
+        async: false,
+        data: {
           action: "giveUpAndSave",
           listname: $("#saveListName").val()
-         },
-         type: "POST"
+        },
+        type: "POST"
       });
     }
   }

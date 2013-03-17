@@ -12,9 +12,8 @@ WW.Configure.Model = Backbone.Model.extend({
   },
   setConfig: function(params) {
     var styleObj;
-    params = $.parseJSON(params);
-    if (_.has(params, 'style')) {
-      styleObj = $.parseJSON(params.style);
+    styleObj = $.parseJSON(params);
+    if (styleObj) {
       this.set({
         tilesOn: styleObj.tc.on,
         tileSelection: styleObj.tc.selection,

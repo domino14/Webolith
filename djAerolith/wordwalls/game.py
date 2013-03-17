@@ -515,6 +515,7 @@ class WordwallsGame:
             try:
                 sl.save()
                 ret['success'] = True
+                ret['listname'] = listname
                 state['saveName'] = listname
                 wgm.currentGameState = json.dumps(state)
                 wgm.save()
