@@ -51,22 +51,21 @@ mixpanel.identify("{{username}}");
 <body>
 {% block content %}
 
-{% assets "js_table" %}
+<!-- {% assets "js_table" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    var addParams;
-    initializeApp();
-    addParams = $.parseJSON("{{addParams|escapejs}}");
-    WW.configuration.setConfig(addParams.style);
-    if (_.has(addParams, 'saveName')) {
-      WW.appView.setSaveName(addParams.saveName);
+{% endassets %} -->
+<!-- http://stackoverflow.com/questions/9916073/how-to-load-bootstrapped-models-in-backbone-js-while-using-amd-require-js -->
+<script>
+var require = {
+  config: {
+    'main': {
+      addlParams: "{{addParams|escapejs}}"
     }
-    mixpanel.track('Entered table');
-  });
+  }
+}
 </script>
+<script src="/static/lib/require/require-min.js" data-main="/static/js/wordwalls/main"></script>
+
 <div id="topBar">
 <span id="start" onClick="mixpanel.track('request start');" class="tableButton">Start</span>
 <span id="gameTimer"> : </span>
@@ -172,54 +171,4 @@ Guesses:
 <script>
 mixpanel.name_tag("{{username}}");
 </script>
-
-{% comment %} ICanHaz templates. These need the "verbatim" tag so that Django doesn't try to render Mustache's curly braces.{% endcomment %}
-{% load verbatim %}
-{% verbatim %}
-
-<script id="singleQuestion" type="text/html">
-  {{#wordsRemaining}}
-  <span class="chip chip{{wordsRemaining}}">{{wordsRemaining}}</span>
-  <span class="tiles">{{#tiles}}<span class="{{tcText}}">{{letter}}</span>{{/tiles}}</span>
-  {{/wordsRemaining}}
-</script>
-
-<script id="solutionsTable" type="text/html">
-  <table id="solutionsTable">
-    <tr class="header">
-      <td>Prob</td>
-      <td>Alphagram</td>
-      <td><</td>
-      <td>Word</td>
-      <td>></td>
-      <td>Definition</td>
-    </tr>
-  </table>
-  <BR></BR>
-  <div id="solstats"></div>
-</script>
-
-<script id="singleSolution" type="text/html">
-  <td>{{prob}}</td>
-  <td class="alphagramCell{{#wrongAlpha}} wrongGuess{{/wrongAlpha}}">{{alphagramText}}</td>
-  <td class="frontHooksCell">{{frontHooks}}</td>
-  <td class="solutionCell{{#wrong}} wrongGuess{{/wrong}}">{{word}}{{lexiconSymbol}}</td>
-  <td class="backHooksCell">{{backHooks}}</td>
-  <td>{{definition}}</td>
-</script>
-
-<script id="challengeSolution" type="text/html">
-  <table id="dcResultsTable">
-  <tr>
-    <td class="dcResultsTableHeader">#</td>
-    <td class="dcResultsTableHeader">Name</td>
-    <td class="dcResultsTableHeader">Score</td>
-    <td class="dcResultsTableHeader">Remaining</td>
-  </tr>
-
-</script>
-
-{% endverbatim %}
-
-
 </html>

@@ -14,37 +14,28 @@ if settings.DEBUG:
 # javascript
 
 tableCreateJs = Bundle('js/aerolith/csrfAjax.js',
-                        'js/wordwalls/challengeInfoProcess.js',
+                        #'js/wordwalls/challengeInfoProcess.js',
                         'js/wordwalls/tableCreate.js',
                         'js/aerolith/fileuploader.js',
                         filters='jsmin',
                         output='js/wordwalls/packedTableCreate.js')
 
-tableJs = Bundle('js/aerolith/csrfAjax.js',
-                'js/aerolith/json2.js',
-                'js/wordwalls/table.js',
-                'js/wordwalls/challengeInfoProcess.js',
-                'js/wordwalls/models/Question.js',
-                'js/wordwalls/views/QuestionView.js',
-                'js/wordwalls/models/Configure.js',
-                'js/wordwalls/views/ConfigureView.js',
-                'js/wordwalls/views/AppView.js',
-                'js/wordwalls/models/WordwallsGame.js',
-                'js/wordwalls/views/WordSolutionView.js',
-                'js/wordwalls/tableTests.js',
-                filters='jsmin',
-                output='js/wordwalls/packedTable.js')
+# tableJs = Bundle('js/aerolith/csrfAjax.js',
+#                 'js/aerolith/json2.js',
+#                 'js/wordwalls/table.js',
+#                 'js/wordwalls/challengeInfoProcess.js',
+#                 'js/wordwalls/models/Question.js',
+#                 'js/wordwalls/views/QuestionView.js',
+#                 'js/wordwalls/models/Configure.js',
+#                 'js/wordwalls/views/ConfigureView.js',
+#                 'js/wordwalls/views/AppView.js',
+#                 'js/wordwalls/models/WordwallsGame.js',
+#                 'js/wordwalls/views/WordSolutionView.js',
+#                 'js/wordwalls/tableTests.js',
+#                 filters='jsmin',
+#                 output='js/wordwalls/packedTable.js')
 
 register('js_table_create', 'js/aerolith/socket.io.min.js', tableCreateJs)
-
-register('js_table', 'js/aerolith/jquery-1.6.1.min.js',
-                     'js/aerolith/jquery-ui-1.8.14.custom.min.js',
-                     'stars/jquery.ui.stars.min.js',
-                     LIBRARIES['underscore'],
-                     LIBRARIES['backbone'],
-                     'lib/mustache.js',
-                     'lib/ICanHaz-no-mustache.min.js',
-                     tableJs)
 
 # css
 

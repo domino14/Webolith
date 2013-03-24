@@ -1,16 +1,16 @@
 /*Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -24,8 +24,8 @@ var dcTimeMap;
 
 var needNewSig = false;
 function establishSocketConnection(server) {
-    var socket = io.connect(socketServer, 
-                    {rememberTransport: false, 
+    var socket = io.connect(socketServer,
+                    {rememberTransport: false,
                     'reconnect': true,
                     'reconnection delay': 500,
                     'max reconnection attempts': 10,
@@ -35,10 +35,10 @@ function establishSocketConnection(server) {
         if (!needNewSig) {
             socket.emit('connect', SIGNGATURE);
         }
-        else {   
+        else {
             // if node.js goes down because of a server update (or crashes...) now that we reconnected we need to request and re-emit a new signature
-           $.post('/wordwalls/getNewSignature/', 
-                SIGNATURE, 
+           $.post('/wordwalls/getNewSignature/',
+                SIGNATURE,
                 function(data) {
                     socket.emit('connect', data);
                 }, 'json');
@@ -58,7 +58,7 @@ function changeMaxProb()
 {
     var lex = $('#id_lexicon option:selected').text();
     var curLength = $('#id_wordLength').val();
-    if (curLength < 2 || curLength > 15) 
+    if (curLength < 2 || curLength > 15)
     {
         return false;    /* don't change anything */
     }
@@ -66,7 +66,7 @@ function changeMaxProb()
     {
         maxProb = lengthCounts[lex][curLength];
         $('label[for="id_probabilityMax"]').text("Max probability (at most " + maxProb + ")");
-        if ($('#id_probabilityMax').val() > maxProb) 
+        if ($('#id_probabilityMax').val() > maxProb)
              $('#id_probabilityMax').val(maxProb);
         return true;
     }
@@ -106,13 +106,13 @@ function tabSelected(event, ui)
 {
     /* this function gets triggered when the user selects a tab from the list types */
     //alert(ui.index);  //ui.index gets the index of the selected tab
-    
+
     if (ui.index == 0)
     {
         /* today's challenges. disable time select */
         $("#id_quizTime").attr('disabled', true);
         challengeChanged();
-        
+
     }
     else
     {
@@ -132,47 +132,59 @@ function initializeTableCreatePage(lStr, dcStr, _url, furl)
     {
         lengthCounts[lex] = $.parseJSON(lengthCounts[lex]);
     }
-    
+
     /* set up event handlers */
-    $('#id_lexicon').change(function() { 
+    $('#id_lexicon').change(function() {
         var success = changeMaxProb();
         if (!success) $("#id_wordLength").val("");
     });
-    
+
     $('#id_wordLength').change(function() {
         var success = changeMaxProb();
         if (!success) $("#id_wordLength").val("");
     });
-    
+
     $('#id_probabilityMin').change(function() {
         /* if it's less than 1, set it equal to 1, if it's greater than the max probability, set it to the max */
-       if ($(this).val() < 1) $(this).val("1");       
+       if ($(this).val() < 1) $(this).val("1");
     });
-    
+
     $('#id_probabilityMax').change(function() {
         if ($(this).val() > maxProb) $(this).val(maxProb);
     });
 
     /* event handlers - today's challenges */
-    
+
     $('#id_challengeDate').change(challengeChangeEventHandler);
     $('#id_challenge').change(challengeChangeEventHandler);
     $('#id_lexicon').change(challengeChangeEventHandler);
-    
+
     // show results label with selected challenge on load
     challengeChanged();
     changeMaxProb();
+
+    initializeButtons();
+
     $('#id_listOption').change(savedListOptionChangeHandler);
     $('#id_wordList').change(savedListChangeHandler);
-    
+
     savedListOptionChangeHandler();
     savedListChangeHandler();
-    
+
     $('#id_lexicon').change(savedListLexiconChanged);
     savedListLexiconChanged();
-    
+
     $("#id_lexicon").change(namedListLexiconChanged);
     namedListLexiconChanged();
+}
+
+function initializeButtons() {
+    $('#savedListsSubmit').button();
+    $('#savedListsFlashcardEntire').button();
+    $('#savedListsFlashcardFM').button();
+    $('#savedListsSubmit').button();
+    $('#savedListsFlashcardEntire').button();
+    $('#savedListsFlashcardFM').button();
 }
 
 function savedListOptionChangeHandler()
@@ -201,7 +213,7 @@ function savedListOptionChangeHandler()
         $('#savedListsFlashcardEntire').button('disable');
         $('#savedListsFlashcardFM').button('disable');
     }
-    dimFlashcardFMIfListUnfinished();    
+    dimFlashcardFMIfListUnfinished();
 }
 
 function savedListChangeHandler()
@@ -209,10 +221,10 @@ function savedListChangeHandler()
     var optionName = $('#id_listOption option:selected').text();
     if (optionName == "Quiz on first missed")
     {
-        dimSubmitIfListUnfinished();   
+        dimSubmitIfListUnfinished();
     }
-    
-    dimFlashcardFMIfListUnfinished();    
+
+    dimFlashcardFMIfListUnfinished();
 }
 
 function dimSubmitIfListUnfinished()
@@ -244,11 +256,11 @@ function dimFlashcardFMIfListUnfinished()
 function getDcResults()
 {
     // gets daily challenge results from server
-    $.post(url, {action: 'getDcResults', 
+    $.post(url, {action: 'getDcResults',
                 lexicon: $('#id_lexicon option:selected').text(),
                 chName: $('#id_challenge option:selected').text(),
                 date: $('#id_challengeDate').val()
-                 }, 
+                 },
                 populateDcResults, 'json')
 }
 
@@ -259,15 +271,15 @@ function populateDcResults(data)
 
 function savedListLexiconChanged()
 {
-    $.post(url, {action: 'getSavedListList', 
-                lexicon: $('#id_lexicon option:selected').text()}, 
+    $.post(url, {action: 'getSavedListList',
+                lexicon: $('#id_lexicon option:selected').text()},
                 processSavedListResults, 'json')
 }
 
 function namedListLexiconChanged()
 {
-    $.post(url, {action: 'getNamedListList', 
-                lexicon: $('#id_lexicon option:selected').text()}, 
+    $.post(url, {action: 'getNamedListList',
+                lexicon: $('#id_lexicon option:selected').text()},
                 processNamedListResults, 'json')
 }
 
@@ -286,7 +298,7 @@ function processSavedListResults(data)
             options.push('<option value=', '"', data[i]['pk'], '"');
             if (data[i]['goneThruOnce'])
                 options.push(' goneThruOnce="true"');
-            
+
             options.push('>', data[i]['name'], ' (last saved ', data[i]['lastSaved'], ')');
             if (data[i]['goneThruOnce'])
                 options.push(' *');
@@ -306,7 +318,7 @@ function processNamedListResults(data)
     else
     {
         var options = [];
-        for (var i = 0; i < data.length; i++) 
+        for (var i = 0; i < data.length; i++)
         {
             options.push('<option value=', '"', data[i]['pk'], '">', data[i]['name']);
             options.push(' -- ', data[i]['numAlphas'], " total alphagrams");
@@ -332,7 +344,7 @@ function requestSavedListInfo()
 
 function requestNamedListInfo()
 {
-    
+
 }
 
 function wwRedirect(data)
@@ -399,7 +411,7 @@ function searchParamsFlashcardClicked()
                     probabilityMin: $("#id_probabilityMin").val(),
                     probabilityMax: $("#id_probabilityMax").val(),
                     playerMode: $("#id_playerMode").val()
-                    
+
                 },
                 fcRedirect,
                 'json');

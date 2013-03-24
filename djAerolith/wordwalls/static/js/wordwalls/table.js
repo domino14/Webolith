@@ -16,33 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
 //
-"use strict";
-var WW = {};
-WW.Configure = {};
-WW.App = {};
-WW.Word = {};
-WW.Alphagram = {};
+//
 
-
-function initializeApp() {
-  var Dispatcher;
-  WW.configuration = new WW.Configure.Model();
-  WW.configurationView = new WW.Configure.View({
-    model: WW.configuration,
-    el: $("#customize_popup")
-  });
-  WW.appView = new WW.App.View();
-  Dispatcher = _.clone(Backbone.Events);
-  // Scope of 'this' is going to drive me nuts.
-  Dispatcher.listenTo(WW.configuration, 'change', _.bind(
-    WW.appView.configChange, WW.appView));
-  /*
-   * Catch beforeunload events. I can't figure out how to put this in
-   * the appView.
-   */
-  window.onbeforeunload = _.bind(WW.appView.unloadEventHandler, WW.appView);
-
-}
 
 // var WW = (function($, _, Backbone) {
 //   var qObj = null;
