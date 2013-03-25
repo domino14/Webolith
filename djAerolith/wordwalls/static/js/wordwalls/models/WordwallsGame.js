@@ -8,7 +8,7 @@ define([
   'models/Alphagram',
   'models/Word',
   'underscore'
-  ], function(Backbone, Alphagrams, Words, Alphagram, Word, _) {
+], function(Backbone, Alphagrams, Words, Alphagram, Word, _) {
   "use strict";
   var Game = Backbone.Model.extend({
     defaults: function() {
@@ -35,7 +35,7 @@ define([
       this.numTotalAnswersThisRound = 0;
       this.numAnswersGottenThisRound = 0;
       this.cleanupPrevious();
-      _.each(questions, function(question, index) {
+      _.each(questions, function(question) {
         var wordCollection, questionModel;
         questionModel = new Alphagram();
         wordCollection = new Words();

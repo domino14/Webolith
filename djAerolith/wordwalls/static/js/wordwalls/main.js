@@ -6,17 +6,22 @@ requirejs.config({
     underscore: '/static/lib/underscore-min',
     backbone: '/static/lib/backbone-1.0.0',
     mustache: '/static/lib/mustache',
-    text: '/static/lib/require/text'
+    text: '/static/lib/require/text',
+    csrfAjax: '/static/js/aerolith/csrfAjax',
+    json2: '/static/js/aerolith/json2'
   },
   shim: {
     underscore: {
       exports: '_'  // ^_^
     },
     backbone: {
-      deps: ['underscore', 'jquery'],
+      deps: ['underscore', 'jquery', 'json2'],
       exports: 'Backbone'
     },
-    'jquery_ui': ['jquery']
+    'jquery_ui': ['jquery'],
+    'json2': {
+      exports: 'JSON'
+    }
   }
 });
 
@@ -24,12 +29,12 @@ requirejs.config({
 define([
   'module',
   'jquery',
-  './models/Configure',
-  './views/ConfigureView',
-  './views/AppView'
+  'models/Configure',
+  'views/ConfigureView',
+  'views/AppView',
+  'csrfAjax'
   ], function (module, $, Configure, ConfigureView, AppView) {
   "use strict";
-  /* Wait till DOM is ready for ICH templates to load. */
   $(function() {
     var accounts, Dispatcher, configuration, configurationView, appView,
         addlParams;
@@ -42,6 +47,7 @@ define([
       el: $("#customize_popup")
     });
     appView = new AppView();
+    appView.setTablenum(module.config().tablenum);
     Dispatcher = _.clone(Backbone.Events);
     // Scope of 'this' is going to drive me nuts.
     Dispatcher.listenTo(configuration, 'change', _.bind(

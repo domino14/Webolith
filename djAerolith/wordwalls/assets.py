@@ -13,12 +13,12 @@ if settings.DEBUG:
 
 # javascript
 
-tableCreateJs = Bundle('js/aerolith/csrfAjax.js',
-                        #'js/wordwalls/challengeInfoProcess.js',
-                        'js/wordwalls/tableCreate.js',
-                        'js/aerolith/fileuploader.js',
-                        filters='jsmin',
-                        output='js/wordwalls/packedTableCreate.js')
+# tableCreateJs = Bundle('js/aerolith/csrfAjax.js',
+#                         #'js/wordwalls/challengeInfoProcess.js',
+#                         'js/wordwalls/tableCreate.js',
+#                         'js/aerolith/fileuploader.js',
+#                         filters='jsmin',
+#                         output='js/wordwalls/packedTableCreate.js')
 
 # tableJs = Bundle('js/aerolith/csrfAjax.js',
 #                 'js/aerolith/json2.js',
@@ -35,7 +35,7 @@ tableCreateJs = Bundle('js/aerolith/csrfAjax.js',
 #                 filters='jsmin',
 #                 output='js/wordwalls/packedTable.js')
 
-register('js_table_create', 'js/aerolith/socket.io.min.js', tableCreateJs)
+# register('js_table_create', 'js/aerolith/socket.io.min.js', tableCreateJs)
 
 # css
 

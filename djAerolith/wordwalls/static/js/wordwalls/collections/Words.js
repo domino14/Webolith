@@ -6,5 +6,5 @@ define([
   Words = Backbone.Collection.extend({
     model: Word
   });
-  return Word;
+  return Words;
 });

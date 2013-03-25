@@ -1,0 +1,16 @@
+<table id="dcResultsTable">
+<tr>
+    <td class="dcResultsTableHeader">#</td>
+    <td class="dcResultsTableHeader">Name</td>
+    <td class="dcResultsTableHeader">Score</td>
+    <td class="dcResultsTableHeader">Remaining</td>
+</tr>
+{{#results}}
+<tr>
+    <td class="dcResultsTableCell">{{place}}</td>
+    <td class="dcResultsTableCell"><a href="/accounts/profile/{{user}}" target="_blank">{{#medal}}<img src="/static/img/aerolith/{{medal}}_16x16.png">{{/medal}}{{user}}</a></td>
+    <td class="dcResultsTableCell">{{scorePercent}}%</td>
+    <td class="dcResultsTableCell">{{secondsRemaining}} s.</td>
+</tr>
+{{/results}}
+</table>

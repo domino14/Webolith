@@ -6,9 +6,10 @@ define([
   'views/AlphagramView',
   'views/WordSolutionView',
   'text!templates/solutionsTable.html',
-  'mustache'
-  ], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
-    SolutionsTable, Mustache) {
+  'mustache',
+  'ChallengeView'
+], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
+     SolutionsTable, Mustache, ChallengeView) {
   "use strict";
   var App;
   App = Backbone.View.extend({
@@ -58,6 +59,10 @@ define([
       // disableSelection(this.$('#alphagram')[0]);
 
     },
+    setTablenum: function(tablenum) {
+      this.tablenum = tablenum;
+      this.tableUrl = '/wordwalls/table/' + tablenum + '/';
+    },
     setupPopupEvent: function() {
       // setup definition popup event
       //Close Popups and Fade Layer
@@ -106,12 +111,13 @@ define([
 
     requestStart: function() {
       this.guessInput.focus();
-      $.post('', {action: "start"}, _.bind(this.processStartData, this), 'json');
+      $.post(this.tableUrl, {action: "start"},
+        _.bind(this.processStartData, this), 'json');
     },
 
     giveUp: function() {
-      $.post('', {action: "giveUp"}, _.bind(this.processGiveUp, this),
-        'json');
+      $.post(this.tableUrl, {action: "giveUp"},
+        _.bind(this.processGiveUp, this), 'json');
     },
     fadeInDialog: function(id, fadeLayer) {
       var $dialog, popMargTop, popMargLeft;
@@ -138,9 +144,9 @@ define([
     },
     handleChallengeEnded: function() {
       this.updateMessages("The challenge has ended!");
-      $.post('', {action: 'getDcData'},
+      $.post(this.tableUrl, {action: 'getDcData'},
         function(data) {
-          processDcResults(data, "addlInfo_content");
+          ChallengeView.processDcResults(data, "addlInfo_content");
         },
         'json');
       this.updateMessages([
@@ -152,7 +158,7 @@ define([
       if (!text) {
         this.updateMessages("You must enter a list name for saving!");
       } else {
-        $.post('', {action: "save", listname: text},
+        $.post(this.tableUrl, {action: "save", listname: text},
           _.bind(this.processSaveResponse, this), 'json');
       }
     },
@@ -327,7 +333,7 @@ define([
     submitGuess: function(guessText) {
       var ucGuess;
       ucGuess = $.trim(guessText.toUpperCase());
-      $.post('', {
+      $.post(this.tableUrl, {
         action: "guess", guess: guessText
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json');
@@ -363,7 +369,7 @@ define([
     },
     processTimerExpired: function() {
       /* Tell the server the timer expired. */
-      $.post('', {action: 'gameEnded'}, _.bind(function(data) {
+      $.post(this.tableUrl, {action: 'gameEnded'}, _.bind(function(data) {
         if (_.has(data, 'g') && !data.g) {
           this.processQuizEnded();
         }
