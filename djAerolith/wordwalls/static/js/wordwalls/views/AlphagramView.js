@@ -1,3 +1,4 @@
+/* global define */
 define([
   'backbone',
   'jquery',
@@ -5,7 +6,7 @@ define([
   'text!templates/singleQuestion.html',
   'mustache',
   'jquery_ui'   /* Needed for disableSelection */
-  ], function(Backbone, $, _, questionTemplate, Mustache) {
+], function(Backbone, $, _, QuestionTemplate, Mustache) {
   "use strict";
   var AlphagramView;
   AlphagramView = Backbone.View.extend({
@@ -77,9 +78,10 @@ define([
       }
       context = {
         'wordsRemaining': this.model.get('wordsRemaining'),
+        'wordsRemainingMax': Math.min(this.model.get('wordsRemaining'), 9),
         'tiles': tilesContext
       };
-      this.$el.html(Mustache.render(questionTemplate, context));
+      this.$el.html(Mustache.render(QuestionTemplate, context));
       alphagramLength = this.model.get('alphagram').length;
       if (alphagramLength > 9) {
         tileSize = this.tileSizeMap[alphagramLength];

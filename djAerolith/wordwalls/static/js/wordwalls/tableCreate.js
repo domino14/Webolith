@@ -76,7 +76,7 @@ define([
     });
     $("#listTabs").tabs({
       beforeActivate: tabSelected
-    });
+    }).css('display', 'block');
     /* set up event handlers */
     $('#id_lexicon').change(function() {
       success = changeMaxProb();
@@ -374,6 +374,8 @@ define([
     }
   }
   return {
-    initializeTableCreatePage: initializeTableCreatePage
+    initializeTableCreatePage: initializeTableCreatePage,
+    requestSavedListInfo: requestSavedListInfo,
+    savedListLexiconChanged: savedListLexiconChanged
   };
 });

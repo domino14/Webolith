@@ -1,3 +1,4 @@
+/* global requirejs,define,mixpanel */
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   paths: {
@@ -7,7 +8,7 @@ requirejs.config({
     csrfAjax: '/static/js/aerolith/csrfAjax',
     fileUploader: '/static/js/aerolith/fileuploader',
     mustache: '/static/lib/mustache',
-    text: '/static/lib/require/text',
+    text: '/static/lib/require/text'
   },
   shim: {
     underscore: {
@@ -26,8 +27,8 @@ define([
   'tableCreate',
   'fileUploader',
   'csrfAjax',
-  'jquery_ui',
-  ], function (module, $, TableCreate, fileUploader) {
+  'jquery_ui'
+], function (module, $, TableCreate, fileUploader) {
   "use strict";
   $(function() {
     var tableCreateParams, labelSize, uploader;
@@ -50,7 +51,7 @@ define([
 
     $(".help").hide();
     $(".showHelp").click(function(){
-        $(this).next(".help").toggle("slow");
+      $(this).next(".help").toggle("slow");
     });
     $(".showHelp").button();
     $(".formSubmitButton").button();
@@ -59,7 +60,8 @@ define([
     $("#id_challengeDate").datepicker({
       minDate: new Date(2011, 5, 14),
       maxDate: 0,
-      showButtonPanel: true});
+      showButtonPanel: true
+    });
     uploader = new fileUploader.FileUploader({
       action: tableCreateParams.ajaxUploadUrl,
       element: $('#file-uploader')[0],
@@ -67,8 +69,8 @@ define([
       onComplete: function(id, fileName, responseJSON) {
         if (responseJSON.success ){
           $("#file-upload-msgs").text("Success! " + responseJSON.msg);
-          requestSavedListInfo();
-          savedListLexiconChanged();  // to reload lists
+          TableCreate.requestSavedListInfo();
+          TableCreate.savedListLexiconChanged();  // to reload lists
           mixpanel.track('Uploaded list');
         } else {
           mixpanel.track('Upload list error');
@@ -80,14 +82,14 @@ define([
       onSubmit: function() {
         uploader.setParams({
           'lexicon': $("#id_lexicon").val(),
-          'csrf_token': '{{ csrf_token }}',
+          'csrf_token': tableCreateParams.csrfToken,
           'csrf_name': 'csrfmiddlewaretoken',
           'csrf_xname': 'X-CSRFToken'
         });
       },
       params: {
 
-      },
+      }
     });
   });
 });
