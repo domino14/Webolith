@@ -31,6 +31,7 @@ from forms import SavedListForm
 import wordwalls.settings
 from locks import lonelock
 import logging
+from django.db import IntegrityError
 
 logger = logging.getLogger("apps")
 
@@ -75,6 +76,19 @@ class WordwallsGame:
 
         return wgm
 
+    def getDc(self, chDate, chLex, chName):
+        """
+            Gets a challenge with date, lex, name.
+        """
+        dc = DailyChallenge.objects.get(date=chDate, lexicon=chLex,
+                                        name=chName)
+        # pull out its indices
+
+        pkIndices = json.loads(dc.alphagrams)
+        secs = dc.seconds
+        random.shuffle(pkIndices)
+        return pkIndices, secs
+
     def initializeByDailyChallenge(self, user, challengeLex, challengeName,
                                    challengeDate):
         # Does a daily challenge exist with this name and the current
@@ -97,14 +111,7 @@ class WordwallsGame:
                 qualifyForAward = True
 
         try:
-            dc = DailyChallenge.objects.get(date=chDate, lexicon=challengeLex,
-                                            name=challengeName)
-            # pull out its indices
-
-            pkIndices = json.loads(dc.alphagrams)
-
-            secs = dc.seconds
-            random.shuffle(pkIndices)
+            pkIndices, secs = self.getDc(chDate, challengeLex, challengeName)
         except DailyChallenge.DoesNotExist:
             # does not exist!
             ret = self.generateDailyChallengePks(challengeName, challengeLex,
@@ -114,8 +121,14 @@ class WordwallsGame:
                 dc = DailyChallenge(date=chDate, lexicon=challengeLex,
                                     name=challengeName, seconds=secs,
                                     alphagrams=json.dumps(pkIndices))
-
-                dc.save()
+                try:
+                    dc.save()
+                except IntegrityError:
+                    logger.exception("Caught integrity error")
+                    # This happens rarely if the DC gets generated twice
+                    # in very close proximity.
+                    pkIndices, secs = self.getDc(chDate, challengeLex,
+                                                 challengeName)
             else:
                 return 0
 
