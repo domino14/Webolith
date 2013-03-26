@@ -1,3 +1,4 @@
+/* global requirejs,define*/
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   paths: {
@@ -29,19 +30,20 @@ requirejs.config({
 define([
   'module',
   'jquery',
+  'underscore',
   'models/Configure',
   'views/ConfigureView',
   'views/AppView',
+  'backbone',
   'csrfAjax'
-  ], function (module, $, Configure, ConfigureView, AppView) {
+], function (module, $, _, Configure, ConfigureView, AppView, Backbone) {
   "use strict";
   $(function() {
-    var accounts, Dispatcher, configuration, configurationView, appView,
-        addlParams;
+    var Dispatcher, configuration, configurationView, appView, addlParams;
     /* Load bootstrapped params from backend. */
     addlParams = module.config().addlParams;
     addlParams = $.parseJSON(module.config().addlParams);
-    configuration = new Configure;
+    configuration = new Configure();
     configurationView = new ConfigureView({
       model: configuration,
       el: $("#customize_popup")
@@ -63,8 +65,8 @@ define([
     if (_.has(addlParams, 'saveName')) {
       appView.setSaveName(addlParams.saveName);
     }
-    if (mixpanel) {
-      mixpanel.track('Entered table');
+    if (window.mixpanel) {
+      window.mixpanel.track('Entered table');
     }
   });
 });

@@ -1,9 +1,10 @@
+/* global define*/
 define([
   'backbone',
   'collections/Alphagrams',
   'views/AlphagramView',
   'underscore'
-  ], function(Backbone, Alphagrams, AlphagramView, _) {
+], function(Backbone, Alphagrams, AlphagramView, _) {
   "use strict";
   var ConfigureView;
   ConfigureView = Backbone.View.extend({
@@ -63,7 +64,7 @@ define([
     savePreferences: function() {
       this.prefsInfo.html("");
       this.model.save({}, {
-        success: _.bind(function(model, response, options) {
+        success: _.bind(function() {
           this.prefsInfo.html("Successfully saved preferences.");
         }, this),
         error: function() {

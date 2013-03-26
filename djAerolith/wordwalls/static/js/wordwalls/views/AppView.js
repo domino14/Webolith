@@ -1,3 +1,4 @@
+/* global define*/
 define([
   'backbone',
   'jquery',
@@ -34,7 +35,8 @@ define([
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
       this.listenTo(this.wordwallsGame, 'timerExpired',
         this.processTimerExpired);
-      this.listenTo(this.wordwallsGame, 'gotQuestionData', this.gotQuestionData);
+      this.listenTo(this.wordwallsGame, 'gotQuestionData',
+        this.gotQuestionData);
       this.listenTo(this.wordwallsGame, 'updateQStats', this.renderQStats);
       this.listenTo(this.wordwallsGame, 'saveGame', this.saveGame);
       this.listenTo(this.wordwallsGame, 'challengeEnded',
@@ -42,7 +44,8 @@ define([
       this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
         this.updateMessages([
           "Autosave is NOT on. To save your progress, type in a name ",
-          "for this list next to the Save button, and click Save."].join(''));
+          "for this list next to the Save button, and click Save."
+        ].join(''));
       });
       this.messageTextBoxLimit = 3000;  // characters
       this.viewConfig = null;
@@ -76,7 +79,8 @@ define([
       this.$("#saveListName").val(saveName);
       this.updateMessages([
         "Autosave is on! Aerolith will save your list progress at the end ",
-        "of every round."].join(''));
+        "of every round."
+      ].join(''));
       this.wordwallsGame.set('autoSave', true);
     },
     /**
@@ -151,7 +155,8 @@ define([
         'json');
       this.updateMessages([
         'Click <a class="softLink dcInfo">here</a> to see current results for ',
-        'this challenge.'].join(''));
+        'this challenge.'
+      ].join(''));
     },
     saveGame: function() {
       var text = this.$("#saveListName").val();
@@ -168,7 +173,8 @@ define([
         if (this.wordwallsGame.get('autoSave') === false) {
           this.updateMessages([
             "Autosave is now on! Aerolith will save your ",
-            "list progress at the end of every round."].join(''));
+            "list progress at the end of every round."
+          ].join(''));
           this.wordwallsGame.set('autoSave', true);
         }
       }
@@ -182,14 +188,14 @@ define([
 
     shuffle: function() {
       this.guessInput.focus();
-      _.each(this.questionViewsByAlphagram, function(view, key) {
+      _.each(this.questionViewsByAlphagram, function(view) {
         view.shuffle();
       });
     },
 
     alphagram: function() {
       this.guessInput.focus();
-      _.each(this.questionViewsByAlphagram, function(view, key) {
+      _.each(this.questionViewsByAlphagram, function(view) {
         view.alphagram();
       });
     },
@@ -198,21 +204,21 @@ define([
       /* Probably should track gameGoing with a signal from wordwallsGame? */
       if (!this.wordwallsGame.get('gameGoing')) {
         if (_.has(data, 'serverMsg')) {
-          this.updateMessages(data['serverMsg']);
+          this.updateMessages(data.serverMsg);
           this.wordwallsGame.set(
             'quizzingOnMissed', data.serverMsg.indexOf('missed') !== -1);
         }
         if (_.has(data, 'error')) {
-          this.updateMessages(data['error']);
+          this.updateMessages(data.error);
           this.wordwallsGame.set(
             'quizOverForever', data.error.indexOf('nice day') !== -1);
         }
         if (_.has(data, 'questions')) {
-          this.wordwallsGame.processQuestionObj(data['questions']);
+          this.wordwallsGame.processQuestionObj(data.questions);
         }
         if (_.has(data, 'time')) {
           this.wordwallsGame.set('gameGoing', true);
-          this.wordwallsGame.startTimer(data['time']);
+          this.wordwallsGame.startTimer(data.time);
         }
         if (_.has(data, 'gameType')) {
           this.wordwallsGame.set('challenge', data.gameType === 'challenge');
@@ -286,10 +292,11 @@ define([
         this.$questionsList.append(questionView.render().el);
         this.questionViewsByAlphagram[question.get('alphagram')] = questionView;
         /* Populate the solutions table now and hide it. */
-        question.get('words').each(function(word, index) {
+        question.get('words').each(function(word) {
           var wordSolutionView;
           wordSolutionView = new WordSolutionView({
-            model: word});
+            model: word
+          });
           $defsTable.append(wordSolutionView.render().el);
           totalAnswers++;
         }, this);
@@ -334,7 +341,8 @@ define([
       var ucGuess;
       ucGuess = $.trim(guessText.toUpperCase());
       $.post(this.tableUrl, {
-        action: "guess", guess: guessText
+        action: "guess",
+        guess: guessText
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json');
     },

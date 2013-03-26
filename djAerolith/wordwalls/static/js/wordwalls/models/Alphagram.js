@@ -1,6 +1,7 @@
+/* global define*/
 define([
   'backbone'
-  ], function(Backbone) {
+], function(Backbone) {
   "use strict";
   var Alphagram;
   Alphagram = Backbone.Model.extend({

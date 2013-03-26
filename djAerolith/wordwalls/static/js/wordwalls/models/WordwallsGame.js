@@ -1,3 +1,4 @@
+/* global define*/
 /**
  * @fileOverview A file that holds the front-end logic for the Wordwalls game.
  */

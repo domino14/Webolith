@@ -1,7 +1,8 @@
+/* global define*/
 define([
   'backbone',
   'jquery'
-  ], function(Backbone, $) {
+], function(Backbone, $) {
   var Configure;
   Configure = Backbone.Model.extend({
     defaults: function() {
