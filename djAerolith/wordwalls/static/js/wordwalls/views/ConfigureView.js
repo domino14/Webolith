@@ -58,7 +58,6 @@ define([
       /*
        * Re-render question when configuration changes.
        */
-      this.model.on('change', view.changeConfig, view);
       this.$('#configQL').append(view.render().el);
     },
     savePreferences: function() {
