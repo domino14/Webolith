@@ -21,7 +21,8 @@ from base.models import Lexicon
 
 
 class ProfileEditForm(forms.Form):
-    defaultLexicon = forms.ModelChoiceField(queryset=Lexicon.objects.all(),
+    lexiconChoices = Lexicon.objects.exclude(lexiconName="CSW07")
+    defaultLexicon = forms.ModelChoiceField(queryset=lexiconChoices,
                                             label='Default Lexicon',
                                             widget=forms.Select(),
                                             empty_label=None)
