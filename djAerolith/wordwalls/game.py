@@ -87,7 +87,7 @@ class WordwallsGame:
         pkIndices = json.loads(dc.alphagrams)
         secs = dc.seconds
         random.shuffle(pkIndices)
-        return pkIndices, secs
+        return pkIndices, secs, dc
 
     def initializeByDailyChallenge(self, user, challengeLex, challengeName,
                                    challengeDate):
@@ -111,7 +111,8 @@ class WordwallsGame:
                 qualifyForAward = True
 
         try:
-            pkIndices, secs = self.getDc(chDate, challengeLex, challengeName)
+            pkIndices, secs, dc = self.getDc(
+                chDate, challengeLex, challengeName)
         except DailyChallenge.DoesNotExist:
             # does not exist!
             ret = self.generateDailyChallengePks(challengeName, challengeLex,
@@ -127,8 +128,8 @@ class WordwallsGame:
                     logger.exception("Caught integrity error")
                     # This happens rarely if the DC gets generated twice
                     # in very close proximity.
-                    pkIndices, secs = self.getDc(chDate, challengeLex,
-                                                 challengeName)
+                    pkIndices, secs, dc = self.getDc(chDate, challengeLex,
+                                                     challengeName)
             else:
                 return 0
 
