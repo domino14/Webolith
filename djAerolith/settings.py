@@ -240,13 +240,28 @@ LOGGING = {
             'propagate': True,
         },
     'apps': {
-         'handlers': ['log_file'],
+        'handlers': ['log_file'],
         'level': 'INFO',
         'propagate': True,
-        },
+        }
     }
 }
-
+try:
+    USE_MX = settings_local.USE_MX
+except AttributeError:
+    USE_MX = True
+try:
+    USE_GA = settings_local.USE_GA
+except AttributeError:
+    USE_GA = True
+try:
+    USE_FB = settings_local.USE_FB
+except AttributeError:
+    USE_FB = True
+try:
+    USE_UV = settings_local.USE_UV
+except AttributeError:
+    USE_UV = True
 try:
     # Overwrite with settings_local's LOGGING if available.
     LOGGING = settings_local.LOGGING

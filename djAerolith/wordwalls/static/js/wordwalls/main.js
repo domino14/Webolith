@@ -54,6 +54,8 @@ define([
     // Scope of 'this' is going to drive me nuts.
     Dispatcher.listenTo(configuration, 'change', _.bind(
       appView.configChange, appView));
+    /* Add the configuration to appView. */
+    appView.configChange(configuration);
     /*
      * Catch beforeunload events. I can't figure out how to put this in
      * the appView.

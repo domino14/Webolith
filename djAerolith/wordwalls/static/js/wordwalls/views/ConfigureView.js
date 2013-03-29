@@ -67,9 +67,9 @@ define([
         success: _.bind(function() {
           this.prefsInfo.html("Successfully saved preferences.");
         }, this),
-        error: function() {
+        error: _.bind(function() {
           this.prefsInfo.html("There was an error");
-        }
+        }, this)
       });
     }
   });

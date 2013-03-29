@@ -23,6 +23,7 @@ define([
       var i, alphLength;
       this.listenTo(this.model, 'change', this.render);
       this.viewConfig = options.viewConfig;
+      this.listenTo(this.viewConfig, 'change', this.changeConfig);
       /* Generate tile order. */
       this.tileOrder = [];
       alphLength = this.model.get('alphagram').length;

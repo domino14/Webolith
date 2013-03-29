@@ -288,7 +288,6 @@ define([
           model: question,
           viewConfig: this.viewConfig
         });
-        this.viewConfig.on('change', questionView.changeConfig, questionView);
         this.$questionsList.append(questionView.render().el);
         this.questionViewsByAlphagram[question.get('alphagram')] = questionView;
         /* Populate the solutions table now and hide it. */
