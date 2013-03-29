@@ -37,7 +37,7 @@ define([
     // Remove CSW07
     $("#id_lexicon option[value='5']").remove();
     $("#id_lexicon option[value='" + tableCreateParams.defaultLexicon +
-      "']").attr('selected', 'selected');
+      "']").prop('selected', true);
     TableCreate.initializeTableCreatePage(
       tableCreateParams.lengthCounts, tableCreateParams.dcTimes,
       tableCreateParams.createTableUrl, tableCreateParams.createQuizUrl);
@@ -56,7 +56,7 @@ define([
     $(".showHelp").button();
     $(".formSubmitButton").button();
     // Disable time select since daily challenges are selected.
-    $("#id_quizTime").attr('disabled', true);
+    $("#id_quizTime").prop('disabled', true);
     $("#id_challengeDate").datepicker({
       minDate: new Date(2011, 5, 14),
       maxDate: 0,

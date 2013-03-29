@@ -57,10 +57,10 @@ define([
     the list types */
     if (ui.newTab.index() === 0) {
         /* today's challenges. disable time select */
-      $("#id_quizTime").attr('disabled', true);
+      $("#id_quizTime").prop('disabled', true);
       challengeChanged();
     } else {
-      $("#id_quizTime").attr('disabled', false);
+      $("#id_quizTime").prop('disabled', false);
       $("#id_quizTime").val(4);
     }
   }

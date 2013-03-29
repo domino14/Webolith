@@ -18,7 +18,7 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
 <script type="text/javascript">
   $(document).ready(function() {
       $("#id_profileText").val("{{profile.profile|escapejs}}");
-      $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").attr('selected', 'selected');
+      $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").prop('selected', true);
       $('<div>Enter up to 2000 characters of information about yourself to show on your profile. You may use <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">Markdown</a>.</div>').insertBefore($("label[for='id_profileText']"))
   });
       $("#id_profileText").css({'height': '300px', 'width': '500px'});
