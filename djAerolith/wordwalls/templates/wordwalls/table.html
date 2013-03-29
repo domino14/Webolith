@@ -22,12 +22,15 @@ To contact the author, please email delsolar at gmail dot com
 <html>
 <head>
 <title>WordWalls - table {{tablenum}}</title>
+{% load value_from_settings %}
+{% value_from_settings USE_MX as USE_MX %}
+{% value_from_settings USE_GA as USE_GA %}
 
 {% load assets %}
 {% assets "css_table" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
 {% endassets %}
-
+{% if USE_GA %}
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -41,19 +44,23 @@ To contact the author, please email delsolar at gmail dot com
   })();
 
 </script>
+{% endif %}
+{% if USE_MX %}
 <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
 for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
 mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
 mixpanel.identify("{{username}}");
 </script><!-- end Mixpanel -->
-
+{% else %}
+<script>
+var mixpanel = {};
+mixpanel.track = function() {};
+mixpanel.name_tag = function() {};
+</script>
+{% endif %}
 </head>
 <body>
 {% block content %}
-
-<!-- {% assets "js_table" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %} -->
 <!-- http://stackoverflow.com/questions/9916073/how-to-load-bootstrapped-models-in-backbone-js-while-using-amd-require-js -->
 <script>
 var require = {
