@@ -146,17 +146,15 @@ class WordwallsGame:
             gameType='challenge',
             challengeId=dc.pk,
             timerSecs=secs,
-            qualifyForAward=qualifyForAward)
-
+            qualifyForAward=qualifyForAward,
+            questionsToPull=len(pkIndices))
         wgm.save()
         wgm.inTable.add(user)
-
         return wgm.pk   # the table number
 
     def initializeBySearchParams(self, user, alphasSearchDescription,
                                  playerType, timeSecs):
         pkIndices = self.getPkIndices(alphasSearchDescription)
-
         wgm = self.createGameModelInstance(
             user, playerType, alphasSearchDescription['lexicon'],
             len(pkIndices),
@@ -170,20 +168,16 @@ class WordwallsGame:
             timerSecs=timeSecs)
         wgm.save()
         wgm.inTable.add(user)
-
         return wgm.pk   # this is a table number id!
 
     def initializeByNamedList(self, lex, user, namedList, secs):
-
         addlParams = {}
         addlParams['timerSecs'] = secs
         pks = json.loads(namedList.questions)
         if namedList.isRange:
             pks = range(pks[0], pks[1] + 1)
-
         if len(pks) != namedList.numQuestions:
             raise
-
         random.shuffle(pks)
         wgm = self.createGameModelInstance(
             user, GenericTableGameModel.SINGLEPLAYER_GAME, lex,
@@ -198,7 +192,6 @@ class WordwallsGame:
             **addlParams)
         wgm.save()
         wgm.inTable.add(user)
-
         return wgm.pk
 
     def initializeBySavedList(self, lex, user, savedList, listOption, secs):
@@ -270,25 +263,20 @@ class WordwallsGame:
         return wgm.pk   # this is a table number id!
 
     def getDcId(self, tablenum):
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
+        wgm = self.getWGM(tablenum)
+        if not wgm:
             return 0
         state = json.loads(wgm.currentGameState)
-        try:
-            return state['challengeId']
-        except:
-            return 0
+        return state.get('challengeId', 0)
 
     # startRequest may be not used at all until later. for now we only
     # have two types of games: single player will start right away with
     # no 'request' needed multiplayer will have timed starts - every
     # minute or so
     def startRequest(self, user, tablenum):
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
-            return False  # table not found
+        wgm = self.getWGM(tablenum)
+        if not wgm:
+            return False
         # check if the player that sent the request is actually in the table.
         if user in wgm.inTable.all():
             #print user, "sent start request!"
@@ -302,11 +290,9 @@ class WordwallsGame:
         return {'error': message}
 
     def startQuiz(self, tablenum, user):
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
+        wgm = self.getWGM(tablenum)
+        if not wgm:
             return self.createErrorMessage("That table does not exist.")
-
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
@@ -336,9 +322,12 @@ class WordwallsGame:
             state['questionIndex']:state['questionIndex'] +
             state['questionsToPull']]
 
-        startMessage += "These are questions %d through %d of %d." % (
-            state['questionIndex'] + 1, len(qs) + state['questionIndex'],
-            wgm.numCurQuestions)
+        if state['gameType'] != 'challenge':
+            startMessage += "These are questions %d through %d of %d." % (
+                state['questionIndex'] + 1, len(qs) + state['questionIndex'],
+                wgm.numCurQuestions)
+        else:
+            startMessage += "Have fun!"
 
         state['questionIndex'] += state['questionsToPull']
 
@@ -376,14 +365,21 @@ class WordwallsGame:
         # internal function; not meant to be called by the outside
         return (state['quizStartTime'] + state['timerSecs']) < time.time()
 
+    def getWGM(self, tablenum):
+        try:
+            wgm = WordwallsGameModel.objects.get(pk=tablenum)
+        except WordwallsGameModel.DoesNotExist:
+            return None
+        return wgm
+
     def checkGameEnded(self, tablenum):
         # Called when javascript tells the server that time ran out on
         # its end. TODO think about what happens if javascript tells the
         # server too early
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
+        wgm = self.getWGM(tablenum)
+        if not wgm:
             return False
+
         state = json.loads(wgm.currentGameState)
         if self.didTimerRunOut(state) and state['quizGoing']:
             # the game is over! mark it so.
@@ -401,9 +397,8 @@ class WordwallsGame:
             return False
 
     def giveUp(self, user, tablenum):
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
+        wgm = self.getWGM(tablenum)
+        if not wgm:
             return False
         if (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
                 user in wgm.inTable.all()):
@@ -420,9 +415,8 @@ class WordwallsGame:
         return False
 
     def getAddParams(self, tablenum):
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
+        wgm = self.getWGM(tablenum)
+        if not wgm:
             return {}
 
         state = json.loads(wgm.currentGameState)
@@ -440,9 +434,8 @@ class WordwallsGame:
     def save(self, user, tablenum, listname):
         logger.info("called save")
         ret = {'success': False}
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
+        wgm = self.getWGM(tablenum)
+        if not wgm:
             ret['info'] = 'That table does not exist!'
             return ret
 
@@ -504,7 +497,7 @@ class WordwallsGame:
                         profile.wordwallsSaveListSize - oldNumAlphas +
                         sl.numAlphagrams)
                     profileModified = True
-            except:
+            except SavedList.DoesNotExist:
                 sl = SavedList(
                     lexicon=wgm.lexicon, name=listname, user=user,
                     numAlphagrams=wgm.numOrigQuestions,
@@ -581,11 +574,11 @@ class WordwallsGame:
         # First create a leaderboard if one doesn't exist for this challenge.
         try:
             dc = DailyChallenge.objects.get(pk=state['challengeId'])
-        except:
+        except DailyChallenge.DoesNotExist:
             return  # this shouldn't happen
         try:
             lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
-        except:
+        except DailyChallengeLeaderboard.DoesNotExist:
             # doesn't exist
             lb = DailyChallengeLeaderboard(
                 challenge=dc, maxScore=state['numAnswersThisRound'])
@@ -633,7 +626,8 @@ class WordwallsGame:
 
         lonelock(DailyChallenge, dc.pk)
         # Always lock the daily challenge missed bingos list here
-        # because of the += 1 below will be unlocked on db disconnect.
+        # because of the += 1 below.
+        # Will be unlocked on db disconnect.
 
         for alpha in missedAlphas:
             try:
@@ -659,7 +653,9 @@ class WordwallsGame:
 
     def guess(self, guessStr, tablenum, user):
         guessStr = guessStr.upper()
-        wgm = WordwallsGameModel.objects.get(pk=tablenum)
+        wgm = self.getWGM(tablenum)
+        if not wgm:
+            return (False, '')
         state = json.loads(wgm.currentGameState)
         if state['quizGoing']:
             if self.didTimerRunOut(state):
@@ -688,10 +684,9 @@ class WordwallsGame:
         return state['quizGoing'], state.get('LastCorrect', '')
 
     def permit(self, user, tablenum):
-        try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
-        except:
-            return False  # table not found
+        wgm = self.getWGM(tablenum)
+        if not wgm:
+            return False
         if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
             # TODO unless there is an invite list, etc in the future
             return True
@@ -718,16 +713,14 @@ class WordwallsGame:
             random.shuffle(r)
             r = r[:50]  # just the first 50 elements for the daily challenge
             pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
-
             return pks, challengeName.timeSecs
         else:
             if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
                 from wordwalls.management.commands.genMissedBingoChalls import(
                     genPks)
                 mbs = genPks(lex, chDate)
-                pks = [m[0] for m in mbs]
+                pks = [mb[0] for mb in mbs]
                 random.shuffle(pks)
-
                 return pks, challengeName.timeSecs
         return None
 

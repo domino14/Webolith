@@ -171,6 +171,9 @@ ul.questionList
     margin-left: 20px;
     vertical-align: center;
     list-style-type: none;  /* remove bullets*/
+    overflow-y: hidden;
+    overflow-x: hidden;
+    height: 340px;
 }
 
 ul.questionList li

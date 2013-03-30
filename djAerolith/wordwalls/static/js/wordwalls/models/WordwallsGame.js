@@ -29,6 +29,7 @@ define([
       this.wrongAlphasHash = {};
       this.numTotalAnswersThisRound = 0;
       this.numAnswersGottenThisRound = 0;
+      this.numAlphagramsLeft = 0;
     },
     processQuestionObj: function(questions) {
       this.wrongWordsHash = {};
@@ -65,6 +66,7 @@ define([
         this.questionCollection.add(questionModel);
         this.wrongAlphasHash[question.a] = questionModel;
       }, this);
+      this.numAlphagramsLeft = this.questionCollection.length;
       this.trigger('gotQuestionData', this.questionCollection);
     },
     /**
@@ -102,6 +104,14 @@ define([
     },
     finishedAlphagram: function(alphagram) {
       delete this.wrongAlphasHash[alphagram];
+      this.numAlphagramsLeft--;
+    },
+    /**
+     * Returns the number of alphagrams that have not been yet solved.
+     * @return {number} The number of alphagrams left this round.
+     */
+    alphagramsLeft: function() {
+      return this.numAlphagramsLeft;
     },
     endGame: function() {
       if (this.get('gameGoing')) {

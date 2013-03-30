@@ -50,8 +50,10 @@ define([
       this.messageTextBoxLimit = 3000;  // characters
       this.viewConfig = null;
       this.numColumns = 4;
+      this.maxScreenQuestions = 50;   // How many questions fit on the screen?
       this.$questionsList = this.$("#questions > .questionList");
       this.questionViewsByAlphagram = {};
+      this.questionViews = [];
       this.defsDiv = this.$("#defs_popup_content");
       this.roundTotalAnswers = null;
       this.$('#shuffle').disableSelection();
@@ -275,11 +277,13 @@ define([
       length = questionCollection.length;
       this.$questionsList.html("");
       this.questionViewsByAlphagram = {};
+      this.questionViews = [];
       this.defsDiv.html(Mustache.render(SolutionsTable, {}));
       /* Fetch the actual table element and hide it. */
       $defsTable = this.defsDiv.children("#solutionsTable");
       $defsTable.hide();
       this.roundTotalAnswers = 0;
+      /* Generate an array to help us show solution data vertically. */
       track = 0;
       colCount = 0;
       orderArray = [];
@@ -291,8 +295,7 @@ define([
           track = colCount;
         }
       }
-      questionCollection.each(_.bind(
-        this.renderQuestionData, this));
+      questionCollection.each(_.bind(this.renderQuestionData, this));
       /* Render the solutions vertically. */
       for (i = 0; i < length; i++) {
         this.renderSolutionData($defsTable, questionCollection.at(
@@ -311,6 +314,7 @@ define([
       });
       this.$questionsList.append(questionView.render().el);
       this.questionViewsByAlphagram[question.get('alphagram')] = questionView;
+      this.questionViews.push(questionView);
     },
     /**
      * Renders solutions.
@@ -389,6 +393,7 @@ define([
           this.wordwallsGame.correctGuess(ucGuess);
           if (wordsRemaining === 0) {
             this.wordwallsGame.finishedAlphagram(data.C);
+            this.moveUpNextQuestion(view);
           }
           word = view.model.get('words').find(function(word) {
             return word.get('word').toUpperCase() === ucGuess;
@@ -400,6 +405,32 @@ define([
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();
       }
+    },
+    /**
+     * Moves up the next question to the viewport window. This should be
+     * done in a non-distracting way, so it doesn't suffice to just remove
+     * the passed-in view.
+     * @param  {Object} questionView A Backbone View for the question that
+     *                               was just solved.
+     */
+    moveUpNextQuestion: function(questionView) {
+      var lastView;
+      if (this.wordwallsGame.alphagramsLeft() <=
+          this.maxScreenQuestions) {
+        return;   // Do nothing; no need to move up any questions.
+      }
+      lastView = this.questionViews.pop();
+      _.delay(function() {
+        /*
+         * Basically, swap the elements of the views, then remove the view
+         * we don't care about.
+         */
+        var lastElement = lastView.el;
+        lastView.setElement(questionView.el);
+        questionView.setElement(lastElement);
+        questionView.remove();
+        lastView.render();
+      }, 5000);
     },
     processTimerExpired: function() {
       /* Tell the server the timer expired. */
