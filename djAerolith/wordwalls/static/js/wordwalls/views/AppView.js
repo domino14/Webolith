@@ -352,7 +352,7 @@ define([
      *                      in response to a guess.
      */
     processGuessResponse: function(ucGuess, data) {
-      var view, wordsRemaining;
+      var view, wordsRemaining, word;
       if (_.has(data, 'C')) {
         if (data.C !== '') {
           /* data.C contains the alphagram. */
@@ -366,7 +366,10 @@ define([
           if (wordsRemaining === 0) {
             this.wordwallsGame.finishedAlphagram(data.C);
           }
-          this.updateCorrectAnswer(ucGuess);
+          word = view.model.get('words').find(function(word) {
+            return word.get('word').toUpperCase() === ucGuess;
+          });
+          this.updateCorrectAnswer(ucGuess + word.get('lexiconSymbol'));
         }
         this.updateGuesses(ucGuess);
       }
