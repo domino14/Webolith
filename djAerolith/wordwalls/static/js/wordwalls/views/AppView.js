@@ -49,18 +49,13 @@ define([
       });
       this.messageTextBoxLimit = 3000;  // characters
       this.viewConfig = null;
+      this.numColumns = 4;
       this.$questionsList = this.$("#questions > .questionList");
       this.questionViewsByAlphagram = {};
       this.defsDiv = this.$("#defs_popup_content");
-      //this.$("#avatarLabel").
-      // handle text box 'enter' press. We have to do this after
-      //  defining the text apparently
-
-      // TODO: re-enable
-      // window.onbeforeunload = unloadEventHandler;
-      // disableSelection(this.$('#shuffle')[0]);
-      // disableSelection(this.$('#alphagram')[0]);
-
+      this.roundTotalAnswers = null;
+      this.$('#shuffle').disableSelection();
+      this.$('#alphagram').disableSelection();
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;
@@ -276,32 +271,61 @@ define([
        * Create a view for each alphagram, and render it. First empty out the
        * display list.
        */
-      var $defsTable, totalAnswers;
+      var $defsTable, track, colCount, length, i, orderArray;
+      length = questionCollection.length;
       this.$questionsList.html("");
       this.questionViewsByAlphagram = {};
       this.defsDiv.html(Mustache.render(SolutionsTable, {}));
-      totalAnswers = 0;
+      /* Fetch the actual table element and hide it. */
       $defsTable = this.defsDiv.children("#solutionsTable");
-      questionCollection.each(function(question) {
-        var questionView;
-        questionView = new AlphagramView({
-          model: question,
-          viewConfig: this.viewConfig
-        });
-        this.$questionsList.append(questionView.render().el);
-        this.questionViewsByAlphagram[question.get('alphagram')] = questionView;
-        /* Populate the solutions table now and hide it. */
-        question.get('words').each(function(word) {
-          var wordSolutionView;
-          wordSolutionView = new WordSolutionView({
-            model: word
-          });
-          $defsTable.append(wordSolutionView.render().el);
-          totalAnswers++;
-        }, this);
-      }, this);
       $defsTable.hide();
-      this.renderQStats(totalAnswers, 0);
+      this.roundTotalAnswers = 0;
+      track = 0;
+      colCount = 0;
+      orderArray = [];
+      for (i = 0; i < length; i++) {
+        orderArray.push(track);
+        track += this.numColumns;
+        if (track >= questionCollection.length) {
+          colCount++;
+          track = colCount;
+        }
+      }
+      questionCollection.each(_.bind(
+        this.renderQuestionData, this));
+      /* Render the solutions vertically. */
+      for (i = 0; i < length; i++) {
+        this.renderSolutionData($defsTable, questionCollection.at(
+          orderArray[i]));
+      }
+      this.renderQStats(this.roundTotalAnswers, 0);
+    },
+    /**
+     * Renders questions on table.
+     * @param {Object} question An instance of Alphagram.
+     */
+    renderQuestionData: function(question) {
+      var questionView = new AlphagramView({
+        model: question,
+        viewConfig: this.viewConfig
+      });
+      this.$questionsList.append(questionView.render().el);
+      this.questionViewsByAlphagram[question.get('alphagram')] = questionView;
+    },
+    /**
+     * Renders solutions.
+     * @param {Object} $defsTable A DOM element for the definitions table.
+     * @param {Object} question An instance of Alphagram.
+     */
+    renderSolutionData: function($defsTable, question) {
+      question.get('words').each(function(word) {
+        var wordSolutionView;
+        wordSolutionView = new WordSolutionView({
+          model: word
+        });
+        $defsTable.append(wordSolutionView.render().el);
+        this.roundTotalAnswers++;
+      }, this);
     },
     /**
      * Renders question stats - num total answered correctly, percentages, etc.

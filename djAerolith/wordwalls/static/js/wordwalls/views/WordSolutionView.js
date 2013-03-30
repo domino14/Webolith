@@ -1,9 +1,10 @@
+/* global define*/
 define([
   "backbone",
   "underscore",
   "text!templates/singleSolution.html",
   "mustache"
-  ], function(Backbone, _, SingleSolution, Mustache) {
+], function(Backbone, _, SingleSolution, Mustache) {
   "use strict";
   var SolutionView = Backbone.View.extend({
     /*
