@@ -211,15 +211,15 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
-        'console':{
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'log_file':{
+        'log_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(os.getenv("HOME"), 'django.log'),
@@ -234,18 +234,43 @@ LOGGING = {
         }
     },
     'loggers': {
+        'django.db': {
+            'handlers': ['log_file'],
+            'level': 'INFO'
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
-    'apps': { # I keep all my apps here, but you can also add them one by one
-            'handlers': ['log_file'],
-            'level': 'INFO',
+        '': {
+            'handlers': ['log_file', 'mail_admins'],
+            'level': 'DEBUG',
             'propagate': True,
-        },
+        }
     }
 }
+try:
+    USE_MX = settings_local.USE_MX
+except AttributeError:
+    USE_MX = True
+try:
+    USE_GA = settings_local.USE_GA
+except AttributeError:
+    USE_GA = True
+try:
+    USE_FB = settings_local.USE_FB
+except AttributeError:
+    USE_FB = True
+try:
+    USE_UV = settings_local.USE_UV
+except AttributeError:
+    USE_UV = True
+try:
+    # Overwrite with settings_local's LOGGING if available.
+    LOGGING = settings_local.LOGGING
+except AttributeError:
+    pass
 
 ASSETS_DEBUG = settings_local.ASSETS_DEBUG
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"

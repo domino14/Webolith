@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% load assets %}
-{% load value_from_settings %}
 
 {% block ss %}
 {% assets "css_table_create" %}
@@ -25,9 +24,10 @@
 
 {% block content %}
 
-{% assets "js_table_create" %}
+<!-- {% assets "js_table_create" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
+{% endassets %} -->
+
 
 <P></P>
 <div id="commonForm">
@@ -35,7 +35,7 @@
     {{timeForm.as_p}}
 </div>
 
-<div id="listTabs">
+<div id="listTabs" style="display:none;">
     <ul>
         <li><a href="#tabs-1">Today's Challenges</a></li>
         <li><a href="#tabs-2">Search by probability</a></li>
@@ -149,91 +149,22 @@
     </div>
 </div>
 
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    // remove CSW07
-    $("#id_lexicon option[value='5']").remove();
-    $("#id_lexicon option[value='{{defaultLexicon.pk}}']").attr('selected', 'selected');
-    initializeTableCreatePage("{{lengthCounts|escapejs}}",
-                                "{{dcTimes|escapejs}}",
-                                "{% url wordwalls_create_table %}",
-                                "{% url flashcards_create_quiz %}");
-    //establishSocketConnection("{% value_from_settings SOCKET_IO_SERVER %}");
-    var labelSize = '130px';
-    $("label[for='id_wordLength']").width(labelSize);
-    $("label[for='id_probabilityMin']").width(labelSize);
-    $("label[for='id_probabilityMax']").width(labelSize);
-    $("label[for='id_quizTime']").width(labelSize);
-    $("label[for='id_playerMode']").width(labelSize);
-    $("label[for='id_lexicon']").width(labelSize);
-
-    $(".help").hide();
-    $(".showHelp").click(function(){
-        $(this).next(".help").toggle("slow");
-    });
-    $(".showHelp").button();
-    requestSavedListInfo();
-    $("#listTabs").tabs({
-                        select: tabSelected,
-                        });
-    $(".formSubmitButton").button();
-    $("#challengeSubmit").click(challengeSubmitClicked);
-    $("#searchParamsSubmit").click(searchParamsSubmitClicked);
-    $("#savedListsSubmit").click(savedListsSubmitClicked);
-    $("#namedListsSubmit").click(namedListsSubmitClicked);
-
-    $("#searchParamsFlashcard").click(searchParamsFlashcardClicked);
-    $("#savedListsFlashcardEntire").click(savedListsFlashcardEntireClicked);
-    $("#savedListsFlashcardFM").click(savedListsFlashcardFMClicked);
-    $("#namedListsFlashcard").click(namedListsFlashcardClicked);
-
-    $("#id_quizTime").attr('disabled', true);   // disable time select since daily challenges are selected
-    $("#id_challengeDate").datepicker({
-        minDate: new Date(2011, 5, 14),
-        maxDate: 0,
-        showButtonPanel: true});
-   // $(".qq-upload-button").button();  // dammit i can't change this stupid red button?
- });
-
-var uploader = new qq.FileUploader( {
-     action: "{% url ajax_upload %}",
-     element: $('#file-uploader')[0],
-     multiple: false,
-     onComplete: function( id, fileName, responseJSON ) {
-       if( responseJSON.success )
-        {
-            $("#file-upload-msgs").text("Success! " + responseJSON.msg);
-            requestSavedListInfo();
-            savedListLexiconChanged();  // to reload lists
-            mixpanel.track('Uploaded list');
-        }
-       else
-         {
-            mixpanel.track('Upload list error');
-            $("#file-upload-msgs").text("Error: " + responseJSON.msg);
-         }
-     },
-     onAllComplete: function( uploads ) {
-       // uploads is an array of maps
-       // the maps look like this: { file: FileObject, response: JSONServerResponse }
-
-     },
-     onSubmit: function()
-     {
-         uploader.setParams({
-            'lexicon': $("#id_lexicon").val(),
-            'csrf_token': '{{ csrf_token }}',
-            'csrf_name': 'csrfmiddlewaretoken',
-            'csrf_xname': 'X-CSRFToken'
-         });
-     },
-     params: {
-
-     },
-   });
-
+<script>
+var require = {
+  config: {
+    'createTableMain': {
+      lengthCounts: "{{lengthCounts|escapejs}}",
+      dcTimes: "{{dcTimes|escapejs}}",
+      createTableUrl: "{% url wordwalls_create_table %}",
+      createQuizUrl: "{% url flashcards_create_quiz %}",
+      defaultLexicon: "{{defaultLexicon.pk}}",
+      csrfToken: "{{csrf_token}}",
+      ajaxUploadUrl: "{% url ajax_upload %}"
+    }
+  }
+}
 </script>
+<script src="/static/lib/require/require-min.js" data-main="/static/js/wordwalls/createTableMain"></script>
 
 {% endblock %}
 

@@ -40,16 +40,15 @@ import wordwalls.settings
 import os
 from locks import lonelock
 from django.middleware.csrf import get_token
-from base.models import alphagrammize
 import random
-import redis
 import logging
 from lib.response import response
+from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
     dcTimeMap[i.pk] = i.timeSecs
 
-logger = logging.getLogger("apps")
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -235,14 +234,7 @@ def table(request, id):
         action = request.POST['action']
         logger.info('action %s', action)
         if action == "start":
-            lonelock(WordwallsGameModel, id)
-            wwg = WordwallsGame()
-            gameReady = wwg.startRequest(request.user, id)
-            if not gameReady:
-                return response({"serverMsg": request.user.username})
-            else:
-                quizParams = wwg.startQuiz(id, request.user)
-                return response(quizParams)
+            return start_game(request, id)
         elif action == "guess":
             lonelock(WordwallsGameModel, id)
             logger.info('%s: guess %s, table %s', request.user.username,
@@ -277,6 +269,7 @@ def table(request, id):
             ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
             # this shouldn't return a response, because it's not going to be
             # caught by the javascript
+            logger.debug("Give up and saving returned: %s" % ret)
             return response(ret)
         elif action == "savePrefs":
             profile = request.user.get_profile()
@@ -309,11 +302,23 @@ def table(request, id):
             return render_to_response('wordwalls/table.html',
                                       {'tablenum': id,
                                        'username': request.user.username,
-                                       'addParams': json.dumps(params)},
+                                       'addParams': json.dumps(params),
+                                       'avatarUrl': profile.avatarUrl},
                                       context_instance=RequestContext(request))
         else:
             return render_to_response('wordwalls/notPermitted.html',
                                       {'tablenum': id})
+
+
+def start_game(request, id):
+    lonelock(WordwallsGameModel, id)
+    wwg = WordwallsGame()
+    gameReady = wwg.startRequest(request.user, id)
+    if not gameReady:
+        return response({"serverMsg": request.user.username})
+    else:
+        quizParams = wwg.startQuiz(id, request.user)
+        return response(quizParams)
 
 
 def ajax_upload(request):
@@ -360,8 +365,6 @@ def ajax_upload(request):
 
 
 def createUserList(upload, filename, lex, user):
-    # TODO gevent.sleep(0.1)  (look into switching context to prevent
-    # this from blocking if using async. or use a proper queue)
     filename_stripped, extension = os.path.splitext(filename)
     try:
         SavedList.objects.get(name=filename_stripped, user=user, lexicon=lex)
@@ -371,19 +374,10 @@ def createUserList(upload, filename, lex, user):
     except:
         pass
     t1 = time.time()
-    lineNumber = 0
-    alphaSet = set()
-    for line in upload:
-        word = line.strip()
-        if len(word) > 15:
-            return False, "List contains non-word elements"
-        lineNumber += 1
-        if lineNumber > wordwalls.settings.UPLOAD_FILE_LINE_LIMIT:
-            return (False, "List contains more words than the current "
-                           "allowed per-file limit of %d." %
-                           wordwalls.settings.UPLOAD_FILE_LINE_LIMIT)
-        if len(word) > 1:
-            alphaSet.add(alphagrammize(word))
+    try:
+        alphaSet = get_alphas_from_words(upload)
+    except UserListParseException as e:
+        return (False, str(e))
 
     profile = user.get_profile()
     numSavedAlphas = profile.wordwallsSaveListSize
@@ -391,24 +385,8 @@ def createUserList(upload, filename, lex, user):
 
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
-    pkList = []
-    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
-    pipe = r.pipeline()
 
-    for alphagram in alphaSet:
-        key = alphagram + ':' + str(lex.pk)
-        pipe.get(key)
-    pkListCopy = pipe.execute()
-    addlMsg = ""
-
-    for pk in pkListCopy:
-        if pk:
-            pkList.append(int(pk))
-        else:
-            addlMsg = ("Could not process all your alphagrams. "
-                       "(Did you choose the right lexicon?)")
-    # turn into integers from strings in redis store
-    pkList = [int(pk) for pk in pkList if pk]
+    pkList, addlMsg = get_pks_from_alphas(alphaSet, lex.pk)
     numAlphagrams = len(pkList)
     random.shuffle(pkList)
     logger.info('number of uploaded alphagrams: %d', numAlphagrams)

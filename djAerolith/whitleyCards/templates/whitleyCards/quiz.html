@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% comment %}
-<body onload="loadQuiz();selectNextItem();">
-{% endcomment %}  
 
 {% load assets %}
+{% load value_from_settings %}
 
 {% assets "js_quiz" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
-<p style="color:linen">Flashcards programmed by David Whitley and adapted by Cesar Del Solar, based on code at Ottawa Scrabble Club website by Chris Ten Den</p>
+<p style="color:gray">Flashcards programmed by David Whitley and adapted by Cesar Del Solar, based on code at Ottawa Scrabble Club website by Chris Ten Den</p>
 <div>
     <div id="messages"></div>
     <form name="game" onSubmit="solve(); return false;">
@@ -21,7 +19,7 @@
             <input type="button" onClick="toggleHints();" value="Auto">
             <input type="button" onClick="changeSpeed(-1);" value="-">
             <input type="button" onClick="changeSpeed(1);" value="+">
-            <span id="speed"><font color='khaki'>5 |||||</font></span>
+            <span id="speed"><font color='gray'>5 |||||</font></span>
         </font>
     </form>
     <span id="question" style="font-family:'scramble','Lucida Console',monospace; font-size:36px; height:36px;"></span>

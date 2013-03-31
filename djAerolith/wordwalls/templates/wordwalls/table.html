@@ -1,16 +1,16 @@
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -22,12 +22,15 @@ To contact the author, please email delsolar at gmail dot com
 <html>
 <head>
 <title>WordWalls - table {{tablenum}}</title>
+{% load value_from_settings %}
+{% value_from_settings USE_MX as USE_MX %}
+{% value_from_settings USE_GA as USE_GA %}
 
 {% load assets %}
 {% assets "css_table" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
 {% endassets %}
-
+{% if USE_GA %}
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -41,42 +44,52 @@ To contact the author, please email delsolar at gmail dot com
   })();
 
 </script>
+{% endif %}
+{% if USE_MX %}
 <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
 for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
 mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
 mixpanel.identify("{{username}}");
 </script><!-- end Mixpanel -->
-
+{% else %}
+<script>
+var mixpanel = {};
+mixpanel.track = function() {};
+mixpanel.name_tag = function() {};
+</script>
+{% endif %}
 </head>
 <body>
 {% block content %}
-
-{% assets "js_table" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
- 
-<script type="text/javascript">
-  $(document).ready(function() {
-    initializeTable("{% url wordwalls_table tablenum %}", "{{username}}", "{{addParams|escapejs}}");
-    setupPopupEvent();
-    mixpanel.track('Entered table');
-  });
+<!-- http://stackoverflow.com/questions/9916073/how-to-load-bootstrapped-models-in-backbone-js-while-using-amd-require-js -->
+<script>
+var require = {
+  config: {
+    'main': {
+      addlParams: "{{addParams|escapejs}}",
+      tablenum: {{tablenum}}
+    }
+  }
+}
 </script>
-<div id="topBar">
-<span id="start" onClick="requestStart(); mixpanel.track('request start');" class="tableButton">Start</span>
-<span id="gameTimer"> : </span>
-<span id="giveup" onClick="giveUp(); mixpanel.track('give up');" class="tableButton">Give up</span>
-<span id="solutions" onClick="showSolutions(); mixpanel.track('show solutions');" class="tableButton">Solutions</span>
+<script src="/static/lib/require/require-min.js" data-main="/static/js/wordwalls/main"></script>
 
-<span id="save" onClick="saveGame(); mixpanel.track('save game');" class="tableButton">Save</span>
+<div id="topBar">
+<span id="start" onClick="mixpanel.track('request start');" class="tableButton">Start</span>
+<span id="gameTimer"> : </span>
+<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">Give up</span>
+<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">Solutions</span>
+
+<span id="save" onClick="mixpanel.track('save game');" class="tableButton">Save</span>
 <input type="text" size="20" id="saveListName">
-<span id="customize" onClick="customize(); mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
+<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
 <span id="horSep1"></span>
-<span id="exit" onClick="exit(); mixpanel.track('clicked exit');" class="tableButton">Exit</span>
+<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">Exit</span>
 </div>
 
 <div id="encloser">
     <div id="questions">
+        <ul class="questionList"></ul>
     </div>
 
     <div id="playerRanks">
@@ -96,41 +109,30 @@ mixpanel.identify("{{username}}");
 <div id="bottomBar">
 <span id="guessLabel">Guess: </span><input type="text" name="Guess" size="15" id="guessText">
 <span id="horSep2"></span>
-<span id="shuffle" onClick="shuffle()" class="utilityButton">Shuffle (1)</span>
-<span id="alphagram" onClick="alphagram()" class="utilityButton">Alphagram (2)</span>
+<span id="shuffle" class="utilityButton">Shuffle (1)</span>
+<span id="alphagram" class="utilityButton">Alphagram (2)</span>
 </div>
 
 <div id="textBar">
 <div id="messages"></div>
+Guesses:
 <div id="guesses"></div>
 </div>
-<script type="text/javascript">
-/* handle text box 'enter' press. We have to do this after defining the text apparently*/
-$("#guessText").keypress(textBoxKeyHandler);
-window.onbeforeunload = unloadEventHandler;
-disableSelection($('#shuffle')[0]);
-disableSelection($('#alphagram')[0]);
-</script>
-
 <div id="customize_popup" class="popup_block customize_popup_block">
     <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    
+
     <div id="customSample">
-        <ul class="questionList">
-        <li id="qt1" style="cursor: default; "><span class="chip chip1">1</span> <span class="tiles"><span class="tile">A</span><span class="tile">C</span><span class="tile">I</span><span class="tile">N</span><span class="tile">S</span><span class="tile">T</span><span class="tile">Y</span><span class="tile">Y</span></span></li>
-                
-    
-        
-        </ul>
+    <ul class="questionList" id="configQL">
+    </ul>
     </div>
     <BR>
     <div id="customize_popup_content" style="clear: both;">
         <h3>Tiles:</h3>
-        <span class="configInput"><input type="checkbox" id="dontUseTiles">Don't use tiles</input></span>
-        <span class="configInput"><input type="checkbox" id="useSans">Sans-serif font</input></span>
-        <span class="configInput"><input type="checkbox" id="tilesBold">Bold letters</input></span>
-        <span class="configInput">Tile style:
-        <select id="tileStyleSelect">
+        <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">Don't use tiles</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">Sans-serif font</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">Bold letters</input></span>
+        <span class="configInputSpan">Tile style:
+        <select id="tileStyleSelect" class="configInput">
           <option value="1">Style 1</option>
           <option value="2">Style 2</option>
           <option value="3">Style 3</option>
@@ -140,12 +142,12 @@ disableSelection($('#alphagram')[0]);
           <option value="7">Style 7</option>
         </select></span>
         <h3>Table:</h3>
-        <span class="configInput"><input type="checkbox" id="dontShowTable">Don't show green table</input></span>
-        <span class="configInput"><input type="checkbox" id="dontShowCanvas">Don't show canvas background</input></span>
-        <span class="configInput"><input type="checkbox" id="showBorders">Show borders around questions</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">Don't show green table</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">Don't show canvas background</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">Show borders around questions</input></span>
         <div>
         <BR>
-        <button id="savePrefs" onClick="savePrefs()">Save preferences</button><span id="prefsInfo"></span>
+        <button id="savePrefs">Save preferences</button><span id="prefsInfo"></span>
         </div>
     </div>
 </div>
@@ -167,18 +169,6 @@ disableSelection($('#alphagram')[0]);
     </div>
 </div>
 
-
-
-<script type="text/javascript">
-$("#dontUseTiles").change(dontUseTilesChangeHandler);
-$("#useSans").change(useSansHandler);
-$("#tilesBold").change(tilesBoldHandler);
-
-$("#tileStyleSelect").change(tileStyleSelectHandler);
-$("#dontShowTable").change(dontShowTableHandler);
-$("#dontShowCanvas").change(dontShowCanvasHandler);
-$("#showBorders").change(showBordersHandler);
-</script>
 {% endblock %}
 
 <div id="netbookBorders">

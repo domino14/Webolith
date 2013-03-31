@@ -1,3 +1,4 @@
+
 var
 	quiz=[],
 	quizLength,
@@ -18,7 +19,7 @@ var
     nextMaxP = 0,
     curAlpha = 1,
     numAlphas = 0;
-    
+
 var postUrl;
 function toggleHints()
 {
@@ -116,7 +117,7 @@ function selectNextItem()
 		curAlpha++;
 		if (cardNumber==quiz.length)
 		{
-			cardNumber=0;	
+			cardNumber=0;
 		    itemNumber = -1;
 		    $.post(postUrl, {action: "getNextSet", minP: nextMinP, maxP: nextMaxP},
                     loadQuiz, 'json');
@@ -129,7 +130,7 @@ function selectNextItem()
 		if (cardNumber==0)          /* happens when restarting too */
 		{
 			shuffle(quiz);
-			
+
 		}
 		shuffle(quiz[cardNumber]);
 		for (var i=0;i<quiz[cardNumber].length;i++)
@@ -210,7 +211,7 @@ function solve()
 		}
 		document.game.word.value="";
 	}
-	else 
+	else
 	{
 		for (var i=0;i<currentCard.length;i++)
 			if (guess.toUpperCase()==currentCard[i].word && !currentCard[i].solved) matchedNumber=i;
@@ -292,19 +293,19 @@ function loadQuiz(quizData)
     }
     for (var i = 0; i < quizData['data'].length; i++)
     {
-        
+
         quiz.push(new quizItem(quizData['data'][i]['w'], quizData['data'][i]['d'], ''));
     }
-    
+
     quiz.sort(function(a,b) {
         return (a.alphagram.join()+a.word>b.alphagram.join()+b.word)-.5;
-        }); 
-        
-    groupAlphagrams(); 
+        });
+
+    groupAlphagrams();
     document.game.word.focus();
-    
+
     selectNextItem();
-    
+
     nextMinP = quizData['nextMinP'];
     nextMaxP = quizData['nextMaxP'];
     if ('numAlphas' in quizData)
@@ -317,3 +318,40 @@ function initializeQuiz(url)
     $.post(postUrl, {action: "getInitialSet"},
             loadQuiz, 'json');
 }
+
+$(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
