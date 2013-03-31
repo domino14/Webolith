@@ -386,7 +386,7 @@ def createUserList(upload, filename, lex, user):
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
 
-    pkList, addlMsg = get_pks_from_alphas(alphas, lex.pk)
+    pkList, addlMsg = get_pks_from_alphas(alphaSet, lex.pk)
     numAlphagrams = len(pkList)
     random.shuffle(pkList)
     logger.info('number of uploaded alphagrams: %d', numAlphagrams)

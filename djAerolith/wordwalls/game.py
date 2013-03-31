@@ -322,12 +322,9 @@ class WordwallsGame:
             state['questionIndex']:state['questionIndex'] +
             state['questionsToPull']]
 
-        if state['gameType'] != 'challenge':
-            startMessage += "These are questions %d through %d of %d." % (
-                state['questionIndex'] + 1, len(qs) + state['questionIndex'],
-                wgm.numCurQuestions)
-        else:
-            startMessage += "Have fun!"
+        startMessage += "These are questions %d through %d of %d." % (
+            state['questionIndex'] + 1, len(qs) + state['questionIndex'],
+            wgm.numCurQuestions)
 
         state['questionIndex'] += state['questionsToPull']
 
