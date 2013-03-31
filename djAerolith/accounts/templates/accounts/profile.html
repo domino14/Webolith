@@ -2,7 +2,7 @@
 {% block title %}{{profile.user.username}}'s profile{% endblock %}
 
 
-{% block content_title %}<H3>{{profile.user.username}}'s profile</H3> 
+{% block content_title %}<H3>{{profile.user.username}}'s profile</H3>
 
 {% if user == profile.user %}
 <a href="/accounts/profile">(Edit</a>)
@@ -13,12 +13,12 @@
 {% load markup %}
 {% block content %}
 <div id="profile">
-  <H2>Profile</H2>  
+  <H2>Profile</H2>
 {{profile.profile|markdown}}
 </div>
 <div id="awards">
     <H2>Award Case</H2>
-{% if wwMedals.medals.Platinum %}<P><img src="{{STATIC_URL}}img/aerolith/platinum_star_32x32.png"> 
+{% if wwMedals.medals.Platinum %}<P><img src="{{STATIC_URL}}img/aerolith/platinum_star_32x32.png">
                                         <span class="medalCount">{{wwMedals.medals.Platinum}}</span></P>{% endif %}
 {% if wwMedals.medals.Gold %}<P><img src="{{STATIC_URL}}img/aerolith/gold_medal_32x32.png">
                                          <span class="medalCount">{{wwMedals.medals.Gold}}</span></P>{% endif %}
@@ -42,17 +42,17 @@
 
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
