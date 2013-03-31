@@ -33,7 +33,7 @@ from locks import lonelock
 import logging
 from django.db import IntegrityError
 
-logger = logging.getLogger("apps")
+logger = logging.getLogger(__name__)
 
 
 class WordwallsGame:

@@ -211,15 +211,15 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
-        'console':{
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'log_file':{
+        'log_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(os.getenv("HOME"), 'django.log'),
@@ -234,15 +234,19 @@ LOGGING = {
         }
     },
     'loggers': {
+        'django.db': {
+            'handlers': ['log_file'],
+            'level': 'INFO'
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
-    'apps': {
-        'handlers': ['log_file'],
-        'level': 'INFO',
-        'propagate': True,
+        '': {
+            'handlers': ['log_file', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
         }
     }
 }
