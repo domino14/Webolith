@@ -13,16 +13,17 @@ class Command(BaseCommand):
     help = 'Creates DailyChallenge instances from file(s).'
 
     def handle(self, *args, **options):
-        if len(args) != 5:
+        if len(args) != 6:
             raise CommandError("""
-Arguments: nameId lexname date filetype filename
+Arguments: nameId lexname date numbertoselect filetype filename
 nameId - The challenge name ID (a number)
 lexname - The lexicon name
 date - YYYYmmdd (PST)
+numbertoselect - The number of questions to select from the file, randomly
 filetype - pks or words
 filename - full path to file.
             """)
-        nameId, lexname, dt, filetype, filename = args
+        nameId, lexname, dt, numbertoselect, filetype, filename = args
         if filetype not in ('pks', 'words'):
             raise CommandError('File type must be pks or words')
         try:
@@ -45,11 +46,12 @@ filename - full path to file.
             print "Exit"
             return
 
-        f = open(filename)
-        self.create_challenge(name, lexicon, stripped_date, f, filetype)
+        f = open(filename, 'rb')
+        self.create_challenge(name, lexicon, stripped_date,
+                              int(numbertoselect), f, filetype)
         f.close()
 
-    def create_challenge(self, name, lexicon, dt, f, filetype):
+    def create_challenge(self, name, lexicon, dt, numbertoselect, f, filetype):
         ch = DailyChallenge(lexicon=lexicon, date=dt, name=name,
                             seconds=name.timeSecs)
         if filetype == 'words':
@@ -64,7 +66,8 @@ filename - full path to file.
                 except Alphagram.DoesNotExist:
                     raise CommandError("Alphagram %s does not exist!" % line)
                 pk_list.append(int(line))
-        ch.alphagrams = json.dumps(pk_list)
+            random.shuffle(pk_list)
+        ch.alphagrams = json.dumps(pk_list[:numbertoselect])
         print "Got alphagrams, trying to save..."
         try:
             ch.save()
