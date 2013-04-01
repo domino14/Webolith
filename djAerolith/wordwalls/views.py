@@ -44,6 +44,7 @@ import random
 import logging
 from lib.response import response
 from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
+from djAerolith.views import get_random_title
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
     dcTimeMap[i.pk] = i.timeSecs
@@ -222,7 +223,8 @@ def homepage(request):
         'lengthCounts': json.dumps(lengthCounts),
         'upload_list_limit': wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
         'dcTimes': json.dumps(dcTimeMap),
-        'defaultLexicon': profile.defaultLexicon},
+        'defaultLexicon': profile.defaultLexicon,
+        'image_title': get_random_title()},
         context_instance=ctx)
 
 

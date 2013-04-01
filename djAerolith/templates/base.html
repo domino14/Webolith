@@ -77,7 +77,8 @@ window.mixpanel.name_tag = function() {};
     <div id="topbar">
         <div class="center">
             <div id="logo">
-                <a href="/"><img src="{{ STATIC_URL }}img/aerolith/aerolith_rock.png"></a>
+                <a href="/"><img src="{{ STATIC_URL }}img/aerolith/aerolith_rock.png" style="-webkit-transform:rotate(180deg);"
+                    title="{{image_title}}"></a>
             </div>
                 <ul id="navlist">
                 {% if user.username == "" %}
