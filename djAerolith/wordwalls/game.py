@@ -694,7 +694,7 @@ class WordwallsGame:
 
     def generateDailyChallengePks(self, challengeName, lex, chDate):
         # capture number. first try to match to today's lists
-        m = re.match("(?:Today's|Moar) (?P<length>[0-9]+)s",
+        m = re.match("Today's (?P<length>[0-9]+)s",
                      challengeName.name)
 
         if m:
@@ -719,8 +719,14 @@ class WordwallsGame:
                 pks = [mb[0] for mb in mbs]
                 random.shuffle(pks)
                 return pks, challengeName.timeSecs
+            elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
+                pks = self.generateBlankBingos(lex)
+                random.shuffle(pks)
+                return pks, challengeName.timeSecs
         return None
 
+    def generateBlankBingos(self, lex):
+        pass
 
 class SearchDescription:
     @staticmethod

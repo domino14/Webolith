@@ -26,14 +26,18 @@ lexList = tuple([(l.lexiconName, l.lexiconName) for l in lexes])
 
 
 class LexiconForm(forms.Form):
-    lexicon = forms.ModelChoiceField(queryset=Lexicon.objects.all(),
-                                     label='Lexicon',
-                                     widget=forms.Select(), empty_label=None)
+    lexicon = forms.ModelChoiceField(
+        queryset=Lexicon.objects.exclude(lexiconName="CSW07"),
+        label='Lexicon',
+        widget=forms.Select(attrs={'class': 'input-small'}),
+        empty_label=None)
 
 
 class TimeForm(forms.Form):
-    quizTime = forms.FloatField(max_value=100, min_value=0.05, initial=4,
-                                label='Time (minutes)')
+    quizTime = forms.FloatField(
+        max_value=100, min_value=0.05, initial=4,
+        label='Time (minutes)',
+        widget=forms.TextInput(attrs={'class': 'input-small'}))
 
 
 class FindWordsForm(forms.Form):

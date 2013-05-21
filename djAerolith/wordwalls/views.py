@@ -70,143 +70,9 @@ def homepage(request):
         limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if request.method == 'POST':
-        if 'action' in request.POST:
-            logger.info(request.POST['action'])
-            if request.POST['action'] == 'getDcResults':
-                try:
-                    lex = request.POST['lexicon']
-                    chName = DailyChallengeName.objects.get(
-                        name=request.POST['chName'])
-                    try:
-                        chDate = datetime.strptime(request.POST['date'],
-                                                   '%m/%d/%Y').date()
-                    except:
-                        chDate = date.today()
+        return handle_homepage_post(request)
 
-                    leaderboardData = getLeaderboardData(lex, chName, chDate)
-                    return response(leaderboardData)
-                except:
-                    raise Http404
-            elif request.POST['action'] == 'getSavedListList':
-                # gets a list of saved lists!
-                try:
-                    lex = request.POST['lexicon']
-                    lt = getSavedListList(lex, request.user)
-                    return response(lt)
-                except:
-                    raise Http404
-            elif request.POST['action'] == 'getNamedListList':
-                # gets a list of saved lists!
-                try:
-                    lex = request.POST['lexicon']
-                    lt = getNamedListList(lex)
-                    return response(lt)
-                except:
-                    raise Http404
-
-            elif request.POST['action'] == 'getSavedListNumAlphas':
-                return response({'na': numAlphas, 'l': limit})
-
-            elif request.POST['action'] == 'challengeSubmit':
-                lexForm = LexiconForm(request.POST)
-                dcForm = DailyChallengesForm(request.POST)
-
-                if lexForm.is_valid() and dcForm.is_valid():
-                    lex = Lexicon.objects.get(
-                        lexiconName=lexForm.cleaned_data['lexicon'])
-                    wwg = WordwallsGame()
-                    challengeName = DailyChallengeName.objects.get(
-                        name=dcForm.cleaned_data['challenge'])
-                    chDate = dcForm.cleaned_data['challengeDate']
-                    if (not chDate) or (chDate > date.today()):
-                        chDate = date.today()
-
-                    tablenum = wwg.initializeByDailyChallenge(
-                        request.user, lex, challengeName, chDate)
-                    if tablenum == 0:
-                        raise Http404
-                    else:
-                        return response(
-                            {'url': reverse('wordwalls_table',
-                                            args=(tablenum,)),
-                             'success': True})
-
-            elif request.POST['action'] == 'searchParamsSubmit':
-                lexForm = LexiconForm(request.POST)
-                timeForm = TimeForm(request.POST)
-                fwForm = FindWordsForm(request.POST)
-                # form bound to the POST data
-                if (lexForm.is_valid() and timeForm.is_valid() and
-                        fwForm.is_valid()):
-                    lex = Lexicon.objects.get(
-                        lexiconName=lexForm.cleaned_data['lexicon'])
-                    quizTime = int(
-                        round(timeForm.cleaned_data['quizTime'] * 60))
-                    alphasSearchDescription = searchForAlphagrams(
-                        fwForm.cleaned_data, lex)
-                    wwg = WordwallsGame()
-                    tablenum = wwg.initializeBySearchParams(
-                        request.user, alphasSearchDescription,
-                        fwForm.cleaned_data['playerMode'], quizTime)
-
-                    return response({'url': reverse('wordwalls_table',
-                                                    args=(tablenum,)),
-                                     'success': True})
-
-            elif request.POST['action'] == 'savedListsSubmit':
-                lexForm = LexiconForm(request.POST)
-                timeForm = TimeForm(request.POST)
-                slForm = SavedListForm(request.POST)
-                if (lexForm.is_valid() and timeForm.is_valid() and
-                        slForm.is_valid()):
-                    lex = Lexicon.objects.get(
-                        lexiconName=lexForm.cleaned_data['lexicon'])
-                    quizTime = int(
-                        round(timeForm.cleaned_data['quizTime'] * 60))
-                    wwg = WordwallsGame()
-                    tablenum = wwg.initializeBySavedList(
-                        lex, request.user, slForm.cleaned_data['wordList'],
-                        slForm.cleaned_data['listOption'], quizTime)
-                    if tablenum == 0:
-                        raise Http404
-                    else:
-                        return response({'url': reverse('wordwalls_table',
-                                                        args=(tablenum,)),
-                                         'success': True})
-
-            elif request.POST['action'] == 'savedListDelete':
-                lexForm = LexiconForm(request.POST)
-                slForm = SavedListForm(request.POST)
-                if lexForm.is_valid() and slForm.is_valid():
-                    deletedListPk = slForm.cleaned_data['wordList'].pk
-                    deleteSavedList(slForm.cleaned_data['wordList'],
-                                    request.user)
-
-                    return response({'deleted': True,
-                                     'wordList': deletedListPk})
-
-            elif request.POST['action'] == 'namedListsSubmit':
-                lexForm = LexiconForm(request.POST)
-                timeForm = TimeForm(request.POST)
-                nlForm = NamedListForm(request.POST)
-                if (lexForm.is_valid() and timeForm.is_valid() and
-                        nlForm.is_valid()):
-                    lex = Lexicon.objects.get(
-                        lexiconName=lexForm.cleaned_data['lexicon'])
-                    quizTime = int(
-                        round(timeForm.cleaned_data['quizTime'] * 60))
-                    wwg = WordwallsGame()
-                    tablenum = wwg.initializeByNamedList(
-                        lex, request.user, nlForm.cleaned_data['namedList'],
-                        quizTime)
-                    if tablenum == 0:
-                        raise Http404
-                    else:
-                        return response({'url': reverse('wordwalls_table',
-                                                        args=(tablenum,)),
-                                        'success': True})
-
-    lengthCounts = dict([(l.lexiconName, l.lengthCounts)
+    lengthCounts = dict([(l.lexiconName, json.loads(l.lengthCounts))
                         for l in Lexicon.objects.all()])
 
     ctx = RequestContext(request, {'csrf_token': get_token(request)})
@@ -226,6 +92,145 @@ def homepage(request):
         'defaultLexicon': profile.defaultLexicon,
         'image_title': get_random_title()},
         context_instance=ctx)
+
+
+def handle_homepage_post(request):
+    if 'action' in request.POST:
+        logger.debug(request.POST)
+        if request.POST['action'] == 'getDcResults':
+            try:
+                lex = request.POST['lexicon']
+                chName = DailyChallengeName.objects.get(
+                    name=request.POST['chName'])
+                try:
+                    chDate = datetime.strptime(request.POST['date'],
+                                               '%m/%d/%Y').date()
+                except:
+                    chDate = date.today()
+
+                leaderboardData = getLeaderboardData(lex, chName, chDate)
+                return response(leaderboardData)
+            except:
+                raise Http404
+        elif request.POST['action'] == 'getSavedListList':
+            # gets a list of saved lists!
+            try:
+                lex = request.POST['lexicon']
+                lt = getSavedListList(lex, request.user)
+                return response(lt)
+            except:
+                raise Http404
+        elif request.POST['action'] == 'getNamedListList':
+            # gets a list of saved lists!
+            try:
+                lex = request.POST['lexicon']
+                lt = getNamedListList(lex)
+                return response(lt)
+            except:
+                raise Http404
+
+        elif request.POST['action'] == 'getSavedListNumAlphas':
+            return response({'na': numAlphas, 'l': limit})
+
+        elif request.POST['action'] == 'challengeSubmit':
+            lexForm = LexiconForm(request.POST)
+            dcForm = DailyChallengesForm(request.POST)
+            if lexForm.is_valid() and dcForm.is_valid():
+                lex = Lexicon.objects.get(
+                    lexiconName=lexForm.cleaned_data['lexicon'])
+                wwg = WordwallsGame()
+                challengeName = DailyChallengeName.objects.get(
+                    name=request.POST['challenge'])
+                chDate = dcForm.cleaned_data['challengeDate']
+                if not chDate or chDate > date.today():
+                    chDate = date.today()
+
+                tablenum = wwg.initializeByDailyChallenge(
+                    request.user, lex, challengeName, chDate)
+                if tablenum == 0:
+                    raise Http404
+                else:
+                    return response(
+                        {'url': reverse('wordwalls_table',
+                                        args=(tablenum,)),
+                         'success': True})
+
+        elif request.POST['action'] == 'searchParamsSubmit':
+            lexForm = LexiconForm(request.POST)
+            timeForm = TimeForm(request.POST)
+            fwForm = FindWordsForm(request.POST)
+            print lexForm.is_valid(), timeForm.is_valid(), fwForm.is_valid()
+            # form bound to the POST data
+            if (lexForm.is_valid() and timeForm.is_valid() and
+                    fwForm.is_valid()):
+                lex = Lexicon.objects.get(
+                    lexiconName=lexForm.cleaned_data['lexicon'])
+                quizTime = int(
+                    round(timeForm.cleaned_data['quizTime'] * 60))
+                alphasSearchDescription = searchForAlphagrams(
+                    fwForm.cleaned_data, lex)
+                wwg = WordwallsGame()
+                tablenum = wwg.initializeBySearchParams(
+                    request.user, alphasSearchDescription,
+                    fwForm.cleaned_data['playerMode'], quizTime)
+
+                return response({'url': reverse('wordwalls_table',
+                                                args=(tablenum,)),
+                                 'success': True})
+
+        elif request.POST['action'] == 'savedListsSubmit':
+            lexForm = LexiconForm(request.POST)
+            timeForm = TimeForm(request.POST)
+            slForm = SavedListForm(request.POST)
+            if (lexForm.is_valid() and timeForm.is_valid() and
+                    slForm.is_valid()):
+                lex = Lexicon.objects.get(
+                    lexiconName=lexForm.cleaned_data['lexicon'])
+                quizTime = int(
+                    round(timeForm.cleaned_data['quizTime'] * 60))
+                wwg = WordwallsGame()
+                tablenum = wwg.initializeBySavedList(
+                    lex, request.user, slForm.cleaned_data['wordList'],
+                    slForm.cleaned_data['listOption'], quizTime)
+                if tablenum == 0:
+                    raise Http404
+                else:
+                    return response({'url': reverse('wordwalls_table',
+                                                    args=(tablenum,)),
+                                     'success': True})
+
+        elif request.POST['action'] == 'savedListDelete':
+            lexForm = LexiconForm(request.POST)
+            slForm = SavedListForm(request.POST)
+            if lexForm.is_valid() and slForm.is_valid():
+                deletedListPk = slForm.cleaned_data['wordList'].pk
+                deleteSavedList(slForm.cleaned_data['wordList'],
+                                request.user)
+
+                return response({'deleted': True,
+                                 'wordList': deletedListPk})
+
+        elif request.POST['action'] == 'namedListsSubmit':
+            lexForm = LexiconForm(request.POST)
+            timeForm = TimeForm(request.POST)
+            nlForm = NamedListForm(request.POST)
+            if (lexForm.is_valid() and timeForm.is_valid() and
+                    nlForm.is_valid()):
+                lex = Lexicon.objects.get(
+                    lexiconName=lexForm.cleaned_data['lexicon'])
+                quizTime = int(
+                    round(timeForm.cleaned_data['quizTime'] * 60))
+                wwg = WordwallsGame()
+                tablenum = wwg.initializeByNamedList(
+                    lex, request.user, nlForm.cleaned_data['namedList'],
+                    quizTime)
+                if tablenum == 0:
+                    raise Http404
+                else:
+                    return response({'url': reverse('wordwalls_table',
+                                                    args=(tablenum,)),
+                                    'success': True})
+
 
 
 @login_required
