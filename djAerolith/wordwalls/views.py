@@ -72,7 +72,7 @@ def homepage(request):
     if request.method == 'POST':
         return handle_homepage_post(request)
 
-    lengthCounts = dict([(l.lexiconName, json.loads(l.lengthCounts))
+    lengthCounts = dict([(l.lexiconName, l.lengthCounts)
                         for l in Lexicon.objects.all()])
 
     ctx = RequestContext(request, {'csrf_token': get_token(request)})
