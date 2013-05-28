@@ -62,15 +62,10 @@ def homepage(request):
     ulForm = UserListForm()
     slForm = SavedListForm()
     nlForm = NamedListForm()
-
     profile = request.user.get_profile()
-    numAlphas = profile.wordwallsSaveListSize
-    limit = 0
-    if not profile.member:
-        limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if request.method == 'POST':
-        return handle_homepage_post(request)
+        return handle_homepage_post(profile, request)
 
     lengthCounts = dict([(l.lexiconName, l.lengthCounts)
                         for l in Lexicon.objects.all()])
@@ -94,7 +89,11 @@ def homepage(request):
         context_instance=ctx)
 
 
-def handle_homepage_post(request):
+def handle_homepage_post(profile, request):
+    numAlphas = profile.wordwallsSaveListSize
+    limit = 0
+    if not profile.member:
+        limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
     if 'action' in request.POST:
         logger.debug(request.POST)
         if request.POST['action'] == 'getDcResults':
@@ -140,7 +139,7 @@ def handle_homepage_post(request):
                     lexiconName=lexForm.cleaned_data['lexicon'])
                 wwg = WordwallsGame()
                 challengeName = DailyChallengeName.objects.get(
-                    name=request.POST['challenge'])
+                    name=dcForm.cleaned_data['challenge'])
                 chDate = dcForm.cleaned_data['challengeDate']
                 if not chDate or chDate > date.today():
                     chDate = date.today()
