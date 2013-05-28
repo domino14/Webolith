@@ -55,7 +55,7 @@ class AlphagramManager(models.Manager):
 class Alphagram(models.Model):
     objects = AlphagramManager()
 
-    alphagram = models.CharField(max_length=15)
+    alphagram = models.CharField(max_length=15, db_index=True)
     lexicon = models.ForeignKey(Lexicon)
     probability = models.IntegerField()
     probability_pk = models.IntegerField(primary_key=True)
