@@ -74,7 +74,7 @@ class Alphagram(models.Model):
 
 
 class Word(models.Model):
-    word = models.CharField(max_length=15)
+    word = models.CharField(max_length=15, db_index=True)
     alphagram = models.ForeignKey(Alphagram)
     lexicon = models.ForeignKey(Lexicon)
     lexiconSymbols = models.CharField(max_length=5)
