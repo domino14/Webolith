@@ -280,3 +280,7 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 SOCKET_IO_SERVER = 'http://www.aerolith.org:1988'
+
+# See https://www.github.com/14domino/ujamaa
+# General-purpose word tool.
+UJAMAA_PATH = settings_local.UJAMAA_PATH

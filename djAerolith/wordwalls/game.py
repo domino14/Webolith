@@ -16,12 +16,13 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import Alphagram, alphProbToProbPK, probPKToAlphProb
+from base.models import (Alphagram, alphProbToProbPK, probPKToAlphProb,
+                         alphagrammize, Word)
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
 import time
-from datetime import date
+from datetime import date, datetime
 import random
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry, SavedList)
@@ -32,7 +33,7 @@ import wordwalls.settings
 from locks import lonelock
 import logging
 from django.db import IntegrityError
-
+import os
 logger = logging.getLogger(__name__)
 
 
@@ -84,10 +85,10 @@ class WordwallsGame:
                                         name=chName)
         # pull out its indices
 
-        pkIndices = json.loads(dc.alphagrams)
+        qs = json.loads(dc.alphagrams)
         secs = dc.seconds
-        random.shuffle(pkIndices)
-        return pkIndices, secs, dc
+        random.shuffle(qs)
+        return qs, secs, dc
 
     def initializeByDailyChallenge(self, user, challengeLex, challengeName,
                                    challengeDate):
@@ -111,34 +112,34 @@ class WordwallsGame:
                 qualifyForAward = True
 
         try:
-            pkIndices, secs, dc = self.getDc(
+            qs, secs, dc = self.getDc(
                 chDate, challengeLex, challengeName)
         except DailyChallenge.DoesNotExist:
             # does not exist!
             ret = self.generateDailyChallengePks(challengeName, challengeLex,
                                                  chDate)
             if ret:
-                pkIndices, secs = ret
+                qs, secs = ret
                 dc = DailyChallenge(date=chDate, lexicon=challengeLex,
                                     name=challengeName, seconds=secs,
-                                    alphagrams=json.dumps(pkIndices))
+                                    alphagrams=json.dumps(qs))
                 try:
                     dc.save()
                 except IntegrityError:
                     logger.exception("Caught integrity error")
                     # This happens rarely if the DC gets generated twice
                     # in very close proximity.
-                    pkIndices, secs, dc = self.getDc(chDate, challengeLex,
-                                                     challengeName)
+                    qs, secs, dc = self.getDc(chDate, challengeLex,
+                                              challengeName)
             else:
                 return 0
-
+        num_questions = len(qs)
         wgm = self.createGameModelInstance(
             user, GenericTableGameModel.SINGLEPLAYER_GAME, challengeLex,
-            len(pkIndices),
-            json.dumps(pkIndices),
-            len(pkIndices),
-            json.dumps(range(len(pkIndices))),
+            num_questions,
+            json.dumps(qs),
+            num_questions,
+            json.dumps(range(num_questions)),
             0,
             json.dumps([]),
             0,
@@ -147,7 +148,7 @@ class WordwallsGame:
             challengeId=dc.pk,
             timerSecs=secs,
             qualifyForAward=qualifyForAward,
-            questionsToPull=len(pkIndices))
+            questionsToPull=num_questions)
         wgm.save()
         wgm.inTable.add(user)
         return wgm.pk   # the table number
@@ -335,15 +336,25 @@ class WordwallsGame:
         questions = []
         answerHash = {}
         for i in qs:
-            a = Alphagram.objects.get(pk=origQuestionsObj[i])
             words = []
-            for w in a.word_set.all():
+            if type(origQuestionsObj[i]) == int:
+                a = Alphagram.objects.get(pk=origQuestionsObj[i])
+                alphagram_str = a.alphagram
+                alphagram_pk = a.pk
+                word_set = a.word_set.all()
+            elif type(origQuestionsObj[i]) == dict:
+                # This is a direct alphagram, usually a blank alphagram.
+                alphagram_str = origQuestionsObj[i]['q']
+                alphagram_pk = None
+                word_set = [Word.objects.get(pk=word_pk) for word_pk in
+                            origQuestionsObj[i]['a']]
+            for w in word_set:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
                               's': w.lexiconSymbols})
-                answerHash[w.word] = a.alphagram, i
-            questions.append({'a': a.alphagram, 'ws': words,
-                              'p': probPKToAlphProb(a.pk)})
+                answerHash[w.word] = alphagram_str, i
+            questions.append({'a': alphagram_str, 'ws': words,
+                              'p': probPKToAlphProb(alphagram_pk)})
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answerHash
@@ -538,13 +549,13 @@ class WordwallsGame:
         state['quizGoing'] = False
         state['LastCorrect'] = ""
         # copy missed alphagrams to state['missed']
-        missedPks = set()
+        missed_indices = set()
         for w in state['answerHash']:
-            missedPks.add(state['answerHash'][w][1])
+            missed_indices.add(state['answerHash'][w][1])
             # [0] is the alphagram, [1] is the index in origQuestions
 
         missed = json.loads(wgm.missed)
-        missed.extend(missedPks)
+        missed.extend(missed_indices)
         wgm.missed = json.dumps(missed)
         wgm.numMissed = len(missed)
 
@@ -555,7 +566,7 @@ class WordwallsGame:
             #raise Exception('Missed list is not unique')
 
         logger.info("%d missed this round, %d missed total",
-                    len(missedPks), len(missed))
+                    len(missed_indices), len(missed))
         if state['gameType'] == 'challenge':
             state['gameType'] = 'challengeOver'
             self.createChallengeLeaderboardEntries(state, tablenum, wgm)
@@ -720,13 +731,34 @@ class WordwallsGame:
                 random.shuffle(pks)
                 return pks, challengeName.timeSecs
             elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
-                pks = self.generateBlankBingos(lex)
-                random.shuffle(pks)
-                return pks, challengeName.timeSecs
+                questions = self.generate_blank_bingos(lex)
+                random.shuffle(questions)
+                return questions, challengeName.timeSecs
         return None
 
-    def generateBlankBingos(self, lex):
-        pass
+    def generate_blank_bingos(self, lex):
+        """
+            Reads the previously generated blank bingo files for lex.
+        """
+        start = time.time()
+        today = datetime.today()
+        bingos = []
+        for length in (7, 8):
+            filename = today.strftime("%Y-%m-%d") + "-%s-%ss.txt" % (
+                lex.lexiconName, length)
+            path = os.path.join(os.getenv("HOME"), 'blanks', filename)
+            f = open(path, 'rb')
+            for line in f:
+                qas = line.split()
+                # Look up pks for words.
+                words = qas[1:]
+                word_pks = [Word.objects.get(word=word, lexicon=lex).pk for
+                            word in words]
+                bingos.append({'q': alphagrammize(qas[0]), 'a': word_pks})
+            f.close()
+        logger.debug("Elapsed: %s" % (time.time() - start))
+        return bingos
+
 
 class SearchDescription:
     @staticmethod
