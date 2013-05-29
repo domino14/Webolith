@@ -3,6 +3,7 @@ from django.conf import settings
 from subprocess import Popen
 import datetime
 import os
+import glob
 
 MAX_ANSWERS_PER_QUESTION = 10
 
@@ -15,7 +16,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if len(args) != 0:
             raise CommandError("No arguments required")
-        tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
+        today = datetime.datetime.today()
+        tomorrow = today + datetime.timedelta(days=1)
 
         executable = os.path.join(settings.UJAMAA_PATH, 'src', 'anagrammer',
                                   'blank_challenges')
@@ -34,3 +36,16 @@ class Command(BaseCommand):
                        path]
                 p = Popen(cmd)
                 p.wait()
+
+        # Clean up old files.
+        old_date = today - datetime.timedelta(days=14)
+        path = os.path.join(os.getenv("HOME"), "blanks")
+        files = os.listdir(path)
+        os.chdir(path)
+        for f in files:
+            date_str = f[:10]
+            dt = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+            if dt < old_date:
+                print 'Deleting %s' % f
+                os.unlink(f)
+
