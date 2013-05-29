@@ -21,7 +21,8 @@ define ([
       'gold': 'gold_medal',
       'silver': 'silver_medal',
       'bronze': 'bronze_medal',
-      'platinum': 'platinum_star'
+      'platinum': 'platinum_star',
+      'goldstar': 'gold_star'
     }[medal];
   };
   processDcResults_ = function(data, divIdToPopulate) {
