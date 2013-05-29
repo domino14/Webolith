@@ -734,6 +734,15 @@ class WordwallsGame:
                 questions = self.generate_blank_bingos(lex)
                 random.shuffle(questions)
                 return questions, challengeName.timeSecs
+            elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
+                pks = []
+                for lgt in (7, 8):
+                    min_p = 1
+                    max_p = json.loads(lex.lengthCounts)[str(lgt)]
+                    r = range(min_p, max_p + 1)
+                    random.shuffle(r)
+                    pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
+                return pks, challengeName.timeSecs
         return None
 
     def generate_blank_bingos(self, lex):

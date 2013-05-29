@@ -26,6 +26,7 @@ from locks import LockableObject
 class DailyChallengeName(models.Model):
     WEEKS_BINGO_TOUGHIES = "Week's Bingo Toughies"
     BLANK_BINGOS = "Blank Bingos"
+    BINGO_MARATHON = "Bingo Marathon"
     # Tuesday's coming, did you bring a coat?
     WEEKS_BINGO_TOUGHIES_ISOWEEKDAY = 2
     name = models.CharField(max_length=32)
