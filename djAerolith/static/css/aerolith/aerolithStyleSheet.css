@@ -1,16 +1,16 @@
 /*Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
- 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -71,7 +71,8 @@ div#content
 {
     margin-top: 50px;
     margin-bottom: 50px;
-/*    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; 
+    overflow: auto;
+/*    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
     font-size: 14px; */
 }
 
@@ -87,13 +88,10 @@ ul.errorlist li
 div#profile {
     float: left;
     width: 600px;
-    height: 400px;
-    overflow: auto;
     margin: 10px;
 }
 
 div#awards {
-    display: inline;
     margin-left: 20px;
 }
 
@@ -105,7 +103,7 @@ span.medalCount {
 }
 
 div#footer {
-    padding: 5px;
+    padding: 5px 0;
     position: relative;
     width: 100%;
     background-image: url('/static/img/aerolith/wide_rectangles.png');
