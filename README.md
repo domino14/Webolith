@@ -1,4 +1,4 @@
-Aerolith 2.0 is a word study website - Copyright 2007, 2008, 2009, 2010, 2011, 2012 Cesar Del Solar
+Aerolith 2.0 is a word study website - Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013 Cesar Del Solar
 
 =======
 
@@ -28,3 +28,8 @@ simplify it and/or rewrite it in Python sometime in the future, at least to keep
 
 The files this dbCreator generates also need to be added to Redis. This can be done with python manage.py loadWordsIntoRedis.
 I use Redis for checking uploaded word lists at the moment; its scope will probably significantly expand as Redis is awesome.
+
+=======
+
+To generate blank challenges, there is a dependency on [Ujamaa](https://github.com/domino14/ujamaa). 
+See: [code](https://github.com/domino14/ujamaa/blob/v0.0.3/src/anagrammer/gen_blank_challenges.c)
