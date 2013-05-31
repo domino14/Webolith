@@ -5,7 +5,7 @@ import datetime
 import os
 import glob
 
-MAX_ANSWERS_PER_QUESTION = 10
+MAX_ANSWERS_PER_QUESTION = 5
 
 
 class Command(BaseCommand):
