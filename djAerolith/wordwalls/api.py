@@ -9,7 +9,8 @@ def configure(request):
         saveObj['tc'] = {'on': prefs['tilesOn'],
                          'font': prefs['font'],
                          'selection': prefs['tileSelection'],
-                         'bold': prefs['bold']}
+                         'bold': prefs['bold'],
+                         'blankCharacter': prefs['blankCharacter']}
         saveObj['bc'] = {'showTable': prefs['showTable'],
                          'showCanvas': prefs['showCanvas'],
                          'showBorders': prefs['showBorders']}
@@ -19,6 +20,6 @@ def configure(request):
         profile.save()
         # Backbone needs JSON to be returned back to not raise
         # an error :/
-        return HttpResponse(json.dumps({}))
+        return HttpResponse(json.dumps("Ok"))
 
     return HttpResponseForbidden("Cannot save preferences.")

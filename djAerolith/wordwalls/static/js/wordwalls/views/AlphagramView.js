@@ -59,6 +59,22 @@ define([
       }
       return text;
     },
+    /**
+     * Transforms a letter to display as something else, optionally.
+     * @param  {string} letter A letter.
+     * @return {string}        The transformed tile character string.
+     */
+    transformLetter: function(letter) {
+      var blankCharacter;
+      if (letter !== '?') {
+        return letter;
+      }
+      blankCharacter = this.viewConfig.attributes.blankCharacter;
+      if (blankCharacter === ' ') {
+        blankCharacter = '&nbsp;';
+      }
+      return blankCharacter;
+    },
     render: function() {
       var context, tiles, tilesContext, i, tcText, alphagramLength, tileSize;
       if (this.viewConfig.attributes.showBorders) {
@@ -74,7 +90,7 @@ define([
       for (i = 0; i < tiles.length; i++) {
         tilesContext.push({
           'tcText': tcText,
-          'letter': tiles[this.tileOrder[i]]
+          'letter': this.transformLetter(tiles[this.tileOrder[i]])
         });
       }
       context = {

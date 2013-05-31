@@ -17,9 +17,9 @@ define([
       this.listenTo(this.alphagramCollection, 'add', this.addAlphagram);
       this.listenTo(this.model, 'change', this.render);
       this.alphagramCollection.add([{
-        alphagram: 'ACNPRSYY',
-        numWords: 1,
-        wordsRemaining: 1
+        alphagram: 'ADEEMMO?',
+        numWords: 2,
+        wordsRemaining: 2
       }]);
       this.prefsInfo = this.$("#prefsInfo");
     },
@@ -34,7 +34,7 @@ define([
       this.setCheckmark('#dontShowTable', this.model.get('showTable'), false);
       this.setCheckmark('#dontShowCanvas', this.model.get('showCanvas'), false);
       this.setCheckmark('#showBorders', this.model.get('showBorders'), true);
-
+      this.$("#blankCharacter").val(this.model.get('blankCharacter'));
       this.$("#tileStyleSelect").val(this.model.get('tileSelection'));
       this.$("#tileStyleSelect").prop("disabled", !this.model.get('tilesOn'));
     },
@@ -46,7 +46,8 @@ define([
         'tileSelection': this.$("#tileStyleSelect option:selected").val(),
         'showTable': !this.$("#dontShowTable").prop("checked"),
         'showCanvas': !this.$("#dontShowCanvas").prop("checked"),
-        'showBorders': this.$("#showBorders").prop("checked")
+        'showBorders': this.$("#showBorders").prop("checked"),
+        'blankCharacter': this.$("#blankCharacter").val()
       });
       this.$("#tileStyleSelect").prop("disabled", !this.model.get('tilesOn'));
     },

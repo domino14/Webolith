@@ -24,13 +24,18 @@ def alphProbToProbPK(prob, lexId, length):
 
 
 def probPKToAlphProb(probPk):
-    return probPk & ((1 << 24) - 1)
+    if probPk:
+        return probPk & ((1 << 24) - 1)
+    return None
 
 
 def alphagrammize(word):
+    # Replace blank with something lexically bigger than the largest letter.
+    # This seems like a hack.
+    word = word.replace('?', chr(128))
     l = list(word)
     l.sort()
-    return string.join(l, '').upper()
+    return string.join(l, '').upper().replace(chr(128), '?')
 
 
 class Lexicon(models.Model):
@@ -55,7 +60,7 @@ class AlphagramManager(models.Manager):
 class Alphagram(models.Model):
     objects = AlphagramManager()
 
-    alphagram = models.CharField(max_length=15)
+    alphagram = models.CharField(max_length=15, db_index=True)
     lexicon = models.ForeignKey(Lexicon)
     probability = models.IntegerField()
     probability_pk = models.IntegerField(primary_key=True)
@@ -74,7 +79,7 @@ class Alphagram(models.Model):
 
 
 class Word(models.Model):
-    word = models.CharField(max_length=15)
+    word = models.CharField(max_length=15, db_index=True)
     alphagram = models.ForeignKey(Alphagram)
     lexicon = models.ForeignKey(Lexicon)
     lexiconSymbols = models.CharField(max_length=5)

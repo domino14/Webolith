@@ -51,7 +51,8 @@ admin.site.register(WordwallsGameModel, WordwallsGameAdmin)
 
 class WordwallsSavedListAdmin(admin.ModelAdmin):
     fields = ['user', 'name', 'lexicon', 'created', 'lastSaved',
-              'numAlphagrams', 'goneThruOnce']
+              'numAlphagrams', 'goneThruOnce', 'missed', 'firstMissed',
+              'origQuestions', 'curQuestions']
     readonly_fields = ('lastSaved', 'created')
 
 
