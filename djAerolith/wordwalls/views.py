@@ -76,6 +76,8 @@ def homepage(request):
         'wordwalls/index.html',
         {'fwForm': fwForm,
         'dcForm': dcForm,
+        'challengeTypes': [(n.pk, n.name) for n in
+                           DailyChallengeName.objects.all()],
         'ulForm': ulForm,
         'slForm': slForm,
         'lexForm': lexForm,

@@ -45,9 +45,7 @@ define([
     $("label[for='id_wordLength']").width(labelSize);
     $("label[for='id_probabilityMin']").width(labelSize);
     $("label[for='id_probabilityMax']").width(labelSize);
-    $("label[for='id_quizTime']").width(labelSize);
     $("label[for='id_playerMode']").width(labelSize);
-    $("label[for='id_lexicon']").width(labelSize);
 
     $(".help").hide();
     $(".showHelp").click(function(){

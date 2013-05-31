@@ -29,7 +29,7 @@ class LexiconForm(forms.Form):
     lexicon = forms.ModelChoiceField(
         queryset=Lexicon.objects.exclude(lexiconName="CSW07"),
         label='Lexicon',
-        widget=forms.Select(attrs={'class': 'input-small'}),
+        widget=forms.Select(),
         empty_label=None)
 
 
@@ -92,7 +92,7 @@ class DailyChallengesForm(forms.Form):
     challengeDate = forms.DateField(label='Date', required=False)
     challenge = forms.ModelChoiceField(
         queryset=DailyChallengeName.objects.all(),
-        label='Challenge', widget=forms.Select(attrs={'size': '16'}))
+        label='Challenge', widget=forms.Select(attrs={'size': '18'}))
 
 
 class UserListForm(forms.Form):
