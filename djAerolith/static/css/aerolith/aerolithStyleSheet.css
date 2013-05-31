@@ -88,12 +88,11 @@ ul.errorlist li
 div#profile {
     float: left;
     width: 600px;
-    margin: 10px;
 }
 
 div#awards {
-    margin-left: 20px;
     float: right;
+    margin-right: 100px;
 }
 
 span.medalCount {
