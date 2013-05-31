@@ -20,6 +20,8 @@
     <H2>Award Case</H2>
 {% if wwMedals.medals.Platinum %}<P><img src="{{STATIC_URL}}img/aerolith/platinum_star_32x32.png">
                                         <span class="medalCount">{{wwMedals.medals.Platinum}}</span></P>{% endif %}
+{% if wwMedals.medals.GoldStar %}<P><img src="{{STATIC_URL}}img/aerolith/gold_star_32x32.png">
+<span class="medalCount">{{wwMedals.medals.GoldStar}}</span></P>{% endif %}
 {% if wwMedals.medals.Gold %}<P><img src="{{STATIC_URL}}img/aerolith/gold_medal_32x32.png">
                                          <span class="medalCount">{{wwMedals.medals.Gold}}</span></P>{% endif %}
 {% if wwMedals.medals.Silver %}<P><img src="{{STATIC_URL}}img/aerolith/silver_medal_32x32.png">

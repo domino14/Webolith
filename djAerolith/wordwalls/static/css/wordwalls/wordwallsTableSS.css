@@ -431,24 +431,24 @@ span.tileoff
 }
 
 /* different tile styles */
-span.tile2
-{
-    background-color: #ff9900;
-    color: #000000;
-    border-color: #aa3300;
-}
 
 span.tile1
 {
-    background-color: rgb(68, 0, 186);
+    background-color: #4400BA;
     color: rgb(255, 255, 255);
+    border-color: #49238b;
 }
-
+span.tile2
+{
+    background-color: #ffb800;
+    color: #000000;
+    border-color: #a67800;
+}
 span.tile3
 {
-    background-color: #33ff33;
+    background-color: #dcfa00;
     color: #000000;
-    border-color: #11dd11;
+    border-color: #ecfc72;
 }
 
 span.tile4
@@ -466,9 +466,9 @@ span.tile5
 
 span.tile6
 {
-    background-color: #ffff00;
+    background-color: #ffe100;
     color: #000000;
-    border-color: #dddd00;
+    border-color: #ffe840;
 }
 
 span.tile7
@@ -637,6 +637,16 @@ span.configInputSpan
     display: inline-block;
     width: 200px;
 }
+
+#blankCharacter {
+    width: 20px;
+    margin-left: 10px;
+}
+
+#customTileOrdering {
+}
+
+
 
 .wrongGuess
 {

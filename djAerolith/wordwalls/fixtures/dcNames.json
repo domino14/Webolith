@@ -4,7 +4,8 @@
     "pk": 1,
     "fields": {
       "name": "Today's 2s",
-      "timeSecs": 90
+      "timeSecs": 90,
+      "orderPriority": 3
     }
   },
   {
@@ -12,7 +13,8 @@
     "pk": 2,
     "fields": {
       "name": "Today's 3s",
-      "timeSecs": 120
+      "timeSecs": 120,
+      "orderPriority": 1
     }
   },
   {
@@ -20,7 +22,8 @@
     "pk": 3,
     "fields": {
       "name": "Today's 4s",
-      "timeSecs": 180
+      "timeSecs": 180,
+      "orderPriority": 1
     }
   },
   {
@@ -28,7 +31,8 @@
     "pk": 4,
     "fields": {
       "name": "Today's 5s",
-      "timeSecs": 210
+      "timeSecs": 210,
+      "orderPriority": 1
     }
   },
   {
@@ -36,7 +40,8 @@
     "pk": 5,
     "fields": {
       "name": "Today's 6s",
-      "timeSecs": 240
+      "timeSecs": 240,
+      "orderPriority": 1
     }
   },
   {
@@ -44,7 +49,8 @@
     "pk": 6,
     "fields": {
       "name": "Today's 7s",
-      "timeSecs": 270
+      "timeSecs": 270,
+      "orderPriority": 1
     }
   },
   {
@@ -52,7 +58,8 @@
     "pk": 7,
     "fields": {
       "name": "Today's 8s",
-      "timeSecs": 270
+      "timeSecs": 270,
+      "orderPriority": 1
     }
   },
   {
@@ -60,7 +67,8 @@
     "pk": 8,
     "fields": {
       "name": "Today's 9s",
-      "timeSecs": 300
+      "timeSecs": 300,
+      "orderPriority": 1
     }
   },
   {
@@ -68,7 +76,9 @@
     "pk": 9,
     "fields": {
       "name": "Today's 10s",
-      "timeSecs": 330
+      "timeSecs": 330,
+      "orderPriority": 1
+
     }
   },
   {
@@ -76,7 +86,9 @@
     "pk": 10,
     "fields": {
       "name": "Today's 11s",
-      "timeSecs": 330
+      "timeSecs": 330,
+      "orderPriority": 3
+
     }
   },
   {
@@ -84,7 +96,8 @@
     "pk": 11,
     "fields": {
       "name": "Today's 12s",
-      "timeSecs": 330
+      "timeSecs": 330,
+      "orderPriority": 3
     }
   },
   {
@@ -92,7 +105,8 @@
     "pk": 12,
     "fields": {
       "name": "Today's 13s",
-      "timeSecs": 360
+      "timeSecs": 360,
+      "orderPriority": 3
     }
   },
   {
@@ -100,7 +114,8 @@
     "pk": 13,
     "fields": {
       "name": "Today's 14s",
-      "timeSecs": 360
+      "timeSecs": 360,
+      "orderPriority": 3
     }
   },
   {
@@ -108,7 +123,8 @@
     "pk": 14,
     "fields": {
       "name": "Today's 15s",
-      "timeSecs": 360
+      "timeSecs": 360,
+      "orderPriority": 3
     }
   },
   {
@@ -116,47 +132,26 @@
     "pk": 15,
     "fields": {
       "name": "Week's Bingo Toughies",
-      "timeSecs": 270
+      "timeSecs": 300,
+      "orderPriority": 2
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 16,
     "fields": {
-      "name": "Moar 7s",
-      "timeSecs": 240
+      "name": "Blank Bingos",
+      "timeSecs": 540,
+      "orderPriority": 2
     }
   },
   {
     "model": "wordwalls.DailyChallengeName",
     "pk": 17,
     "fields": {
-      "name": "Moar 8s",
-      "timeSecs": 240
+      "name": "Bingo Marathon",
+      "timeSecs": 480,
+      "orderPriority": 2
     }
-  },
-  {
-    "model": "wordwalls.DailyChallengeName",
-    "pk": 18,
-    "fields": {
-      "name": "Moar 9s",
-      "timeSecs": 300
-    }
-  },
-  {
-    "model": "wordwalls.DailyChallengeName",
-    "pk": 19,
-    "fields": {
-      "name": "Moar 10s",
-      "timeSecs": 330
-    }
-  },
-  {
-    "model": "wordwalls.DailyChallengeName",
-    "pk": 20,
-    "fields": {
-      "name": "Moar 11s",
-      "timeSecs": 330
-    }
-  },
+  }
 ]

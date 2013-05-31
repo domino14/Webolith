@@ -4,7 +4,8 @@ define([
   'jquery',
   'underscore'
 ], function(Backbone, $, _) {
-  var Configure;
+  var Configure, DEFAULT_BLANK_CHARACTER;
+  DEFAULT_BLANK_CHARACTER = '?';
   Configure = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -14,7 +15,8 @@ define([
         bold: false,
         showTable: true,
         showCanvas: true,
-        showBorders: false
+        showBorders: false,
+        blankCharacter: DEFAULT_BLANK_CHARACTER
       };
     },
     /**
@@ -29,7 +31,8 @@ define([
           'on': 'tilesOn',
           'selection': 'tileSelection',
           'font': 'font',
-          'bold': 'bold'
+          'bold': 'bold',
+          'blankCharacter': 'blankCharacter'
         }[secondLevelKey];
       } else if (topLevelKey === 'bc') {
         return {

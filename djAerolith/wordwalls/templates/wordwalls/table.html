@@ -17,8 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 To contact the author, please email delsolar at gmail dot com
 {% endcomment %}
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <title>WordWalls - table {{tablenum}}</title>
@@ -146,6 +145,10 @@ Guesses:
         <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">Don't show canvas background</input></span>
         <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">Show borders around questions</input></span>
         <div>
+
+        <h3>Other:</h3>
+        <span class="configInputSpan">Blank character: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
+       <!--  <span class="configInputSpan">Custom tile ordering: (Activated when you select the Custom button)<input type="text" id="customTileOrdering" maxlength="27"></input></span> -->
         <BR>
         <button id="savePrefs">Save preferences</button><span id="prefsInfo"></span>
         </div>
