@@ -93,6 +93,7 @@ div#profile {
 
 div#awards {
     margin-left: 20px;
+    float: right;
 }
 
 span.medalCount {
