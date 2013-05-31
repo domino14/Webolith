@@ -5,7 +5,7 @@
     "fields": {
       "name": "Today's 2s",
       "timeSecs": 90,
-      "orderPriority": 12
+      "orderPriority": 3
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "name": "Today's 3s",
       "timeSecs": 120,
-      "orderPriority": 11
+      "orderPriority": 1
     }
   },
   {
@@ -32,7 +32,7 @@
     "fields": {
       "name": "Today's 5s",
       "timeSecs": 210,
-      "orderPriority": 2
+      "orderPriority": 1
     }
   },
   {
@@ -41,7 +41,7 @@
     "fields": {
       "name": "Today's 6s",
       "timeSecs": 240,
-      "orderPriority": 3
+      "orderPriority": 1
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "name": "Today's 7s",
       "timeSecs": 270,
-      "orderPriority": 4
+      "orderPriority": 1
     }
   },
   {
@@ -59,7 +59,7 @@
     "fields": {
       "name": "Today's 8s",
       "timeSecs": 270,
-      "orderPriority": 5
+      "orderPriority": 1
     }
   },
   {
@@ -68,7 +68,7 @@
     "fields": {
       "name": "Today's 9s",
       "timeSecs": 300,
-      "orderPriority": 6
+      "orderPriority": 1
     }
   },
   {
@@ -77,7 +77,7 @@
     "fields": {
       "name": "Today's 10s",
       "timeSecs": 330,
-      "orderPriority": 7
+      "orderPriority": 1
 
     }
   },
@@ -87,7 +87,7 @@
     "fields": {
       "name": "Today's 11s",
       "timeSecs": 330,
-      "orderPriority": 13
+      "orderPriority": 3
 
     }
   },
@@ -97,7 +97,7 @@
     "fields": {
       "name": "Today's 12s",
       "timeSecs": 330,
-      "orderPriority": 14
+      "orderPriority": 3
     }
   },
   {
@@ -106,7 +106,7 @@
     "fields": {
       "name": "Today's 13s",
       "timeSecs": 360,
-      "orderPriority": 15
+      "orderPriority": 3
     }
   },
   {
@@ -115,7 +115,7 @@
     "fields": {
       "name": "Today's 14s",
       "timeSecs": 360,
-      "orderPriority": 16
+      "orderPriority": 3
     }
   },
   {
@@ -124,7 +124,7 @@
     "fields": {
       "name": "Today's 15s",
       "timeSecs": 360,
-      "orderPriority": 17
+      "orderPriority": 3
     }
   },
   {
@@ -133,7 +133,7 @@
     "fields": {
       "name": "Week's Bingo Toughies",
       "timeSecs": 300,
-      "orderPriority": 8
+      "orderPriority": 2
     }
   },
   {
@@ -142,7 +142,7 @@
     "fields": {
       "name": "Blank Bingos",
       "timeSecs": 540,
-      "orderPriority": 9
+      "orderPriority": 2
     }
   },
   {
@@ -151,7 +151,7 @@
     "fields": {
       "name": "Bingo Marathon",
       "timeSecs": 480,
-      "orderPriority": 10
+      "orderPriority": 2
     }
   }
 ]
