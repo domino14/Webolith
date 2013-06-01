@@ -8,7 +8,8 @@ requirejs.config({
     csrfAjax: '/static/js/aerolith/csrfAjax',
     fileUploader: '/static/js/aerolith/fileuploader',
     mustache: '/static/lib/mustache',
-    text: '/static/lib/require/text'
+    text: '/static/lib/require/text',
+    sockjs: '/static/js/aerolith/sockjs-0.3.min'
   },
   shim: {
     underscore: {
@@ -26,12 +27,14 @@ define([
   'jquery',
   'tableCreate',
   'fileUploader',
+  'socket',
+  'utils',
   'csrfAjax',
   'jquery_ui'
-], function (module, $, TableCreate, fileUploader) {
+], function (module, $, TableCreate, fileUploader, Socket, utils) {
   "use strict";
   $(function() {
-    var tableCreateParams, labelSize, uploader;
+    var tableCreateParams, labelSize, uploader, s;
     /* Load bootstrapped params from backend. */
     tableCreateParams = module.config();
     // Remove CSW07
@@ -87,6 +90,20 @@ define([
       },
       params: {
 
+      }
+    });
+
+    s = new Socket();
+    s.setUrl('http://127.0.0.1:9999/echo');
+    s.setMessageHandler(function(data) {
+      utils.updateTextBox(data, "chatText");
+    });
+    s.connect();
+
+    $("#chatBar").keypress(function(e) {
+      if (e.keyCode === 13) {
+        s.send($("#chatBar").val());
+        $("#chatBar").val("");
       }
     });
   });
