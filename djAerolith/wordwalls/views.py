@@ -149,7 +149,8 @@ def handle_homepage_post(profile, request):
                 tablenum = wwg.initializeByDailyChallenge(
                     request.user, lex, challengeName, chDate)
                 if tablenum == 0:
-                    raise Http404
+                    return response({'success': False,
+                                     'error': 'Challenge does not exist.'})
                 else:
                     return response(
                         {'url': reverse('wordwalls_table',

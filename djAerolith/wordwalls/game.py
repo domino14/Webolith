@@ -116,8 +116,12 @@ class WordwallsGame:
                 chDate, challengeLex, challengeName)
         except DailyChallenge.DoesNotExist:
             # does not exist!
-            ret = self.generateDailyChallengePks(challengeName, challengeLex,
-                                                 chDate)
+            try:
+                ret = self.generateDailyChallengePks(challengeName,
+                                                     challengeLex,
+                                                     chDate)
+            except IOError:
+                return 0
             if ret:
                 qs, secs = ret
                 dc = DailyChallenge(date=chDate, lexicon=challengeLex,
@@ -731,7 +735,7 @@ class WordwallsGame:
                 random.shuffle(pks)
                 return pks, challengeName.timeSecs
             elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
-                questions = self.generate_blank_bingos(lex)
+                questions = self.generate_blank_bingos(lex, chDate)
                 random.shuffle(questions)
                 return questions, challengeName.timeSecs
             elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
@@ -745,15 +749,14 @@ class WordwallsGame:
                 return pks, challengeName.timeSecs
         return None
 
-    def generate_blank_bingos(self, lex):
+    def generate_blank_bingos(self, lex, ch_date):
         """
             Reads the previously generated blank bingo files for lex.
         """
         start = time.time()
-        today = datetime.today()
         bingos = []
         for length in (7, 8):
-            filename = today.strftime("%Y-%m-%d") + "-%s-%ss.txt" % (
+            filename = ch_date.strftime("%Y-%m-%d") + "-%s-%ss.txt" % (
                 lex.lexiconName, length)
             path = os.path.join(os.getenv("HOME"), 'blanks', filename)
             f = open(path, 'rb')
