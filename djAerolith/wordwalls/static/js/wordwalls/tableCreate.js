@@ -276,6 +276,14 @@ define([
       if (data.url) {
         window.location.href = data.url;   // redirect
       }
+    } else {
+      // XXX: use templates
+      $("#infoDialog").html("<P>" + data.error + "</P>").attr(
+        "title", "Error");
+      $("#infoDialog").dialog({
+        height: 120,
+        modal: true
+      }).show();
     }
   }
 

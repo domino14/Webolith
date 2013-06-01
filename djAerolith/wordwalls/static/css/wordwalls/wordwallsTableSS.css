@@ -556,6 +556,9 @@ span#prefsInfo
     display: none;
 }
 
+#infoDialog {
+    display: none;
+}
 
 /******** definitions popup **********/
 #fade {
