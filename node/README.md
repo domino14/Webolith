@@ -1,0 +1,1 @@
+This is the socket server for Aerolith. It uses SockJS.

@@ -2,7 +2,7 @@
   "name": "aerolith-sockets",
   "description": "Aerolith sockjs server",
   "author": "Cesar Del Solar <delsolar@gmail.com>",
-  "version": "0.1",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/domino14/Webolith.git"
@@ -10,7 +10,6 @@
   "dependencies": {
     "underscore": ">=1.4.4",
     "redis": ">=0.8.3",
-    "requirejs": ">=2.1.6",
     "sockjs": ">=0.3.7"
   },
   "engine": "node >= 0.10.9"
