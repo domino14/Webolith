@@ -14,7 +14,7 @@ define([
     Socket.prototype.singletonInstance_ = this;
     this.conn_ = null;
     this.url_ = null;
-    this.tokenPath = '/socket_token';
+    this.tokenPath = '/socket_token/';
     this.connected_ = false;
     this.messageHandler_ = null;
     // Used for exponential backoff for reconnect.
@@ -39,8 +39,6 @@ define([
     if (this.connected_ || this.backoffCounter_ > this.maxConnRetries_) {
       return;
     }
-    console.log("Trying to get connection in", this.currentConnectInterval_,
-                "ms...");
     this.conn_ = new SockJS(this.url_);
     this.conn_.onopen = _.bind(this.handleConnect_, this);
     this.conn_.onmessage = _.bind(this.handleMessage_, this);
@@ -81,6 +79,8 @@ define([
   };
   Socket.prototype.handleDisconnect_ = function() {
     this.connected_ = false;
+    console.log("Reconnecting in", this.currentConnectInterval_,
+                "ms...");
     _.delay(_.bind(this.connect, this), this.currentConnectInterval_);
     this.currentConnectInterval_ *= 2;
     this.backoffCounter_ += 1;

@@ -10,7 +10,8 @@ requirejs.config({
     mustache: '/static/lib/mustache',
     text: '/static/lib/require/text',
     sockjs: '/static/js/aerolith/sockjs-0.3.min',
-    json2: '/static/js/aerolith/json2'
+    json2: '/static/js/aerolith/json2',
+    backbone: '/static/lib/backbone-1.0.0'
   },
   shim: {
     underscore: {
@@ -22,6 +23,10 @@ requirejs.config({
     },
     'json2': {
       exports: 'JSON'
+    },
+    backbone: {
+      deps: ['underscore', 'jquery', 'json2'],
+      exports: 'Backbone'
     }
   }
 });
@@ -32,14 +37,14 @@ define([
   'tableCreate',
   'fileUploader',
   'socket',
-  'utils',
+  'chat',
   'json2',
   'csrfAjax',
   'jquery_ui'
-], function (module, $, TableCreate, fileUploader, Socket, utils, JSON) {
+], function (module, $, TableCreate, fileUploader, Socket, Chat, JSON) {
   "use strict";
   $(function() {
-    var tableCreateParams, labelSize, uploader, s;
+    var tableCreateParams, labelSize, uploader, s, c;
     /* Load bootstrapped params from backend. */
     tableCreateParams = module.config();
     // Remove CSW07
@@ -100,26 +105,12 @@ define([
 
     s = new Socket();
     s.setUrl('http://127.0.0.1:9999/socket');
-    s.setMessageHandler(function(data) {
-      if (data.type === 'chat') {
-        utils.updateTextBox(data.from + ': ' + data.msg, 'chatText');
-      }
-      if (data.type === 'error') {
-        utils.updateTextBox('Server error: ' + data.msg, 'chatText');
-      }
+    c = new Chat({
+      el: $("#lobby"),
+      socket: s,
+      channel: 'lobby'
     });
     s.setToken(tableCreateParams.socketConnectionToken);
     s.connect();
-    $("#chatBar").keypress(function(e) {
-      var msg;
-      if (e.keyCode === 13) {
-        msg = JSON.stringify({
-          'chat': $("#chatBar").val(),
-          'channel': 'lobby'
-        });
-        s.send(msg);
-        $("#chatBar").val("");
-      }
-    });
   });
 });

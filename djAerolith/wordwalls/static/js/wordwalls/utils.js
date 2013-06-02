@@ -1,6 +1,6 @@
 /* global define*/
 define([
-  'jquery'
+  'jquery',
 ], function($) {
   var Utils, messageTextBoxLimit;
   messageTextBoxLimit = 3000; // Characters.
@@ -15,6 +15,9 @@ define([
       }
       $box.html(newMessage);
       $box.scrollTop($box[0].scrollHeight - $box.height());
+    },
+    clearTextBox: function(textBoxId) {
+      $("#" + textBoxId).html("");
     }
   };
 

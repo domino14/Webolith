@@ -64,7 +64,7 @@ div#topbar {
 div.center {
     margin: 0 auto;
     padding: 0 20px;
-    width: 900px;
+    width: 975px;
 }
 
 div#content
@@ -132,4 +132,8 @@ form label {
     display: block;
     padding-right: 20px;
     font-size: 1.1em;
+}
+
+.chatSender {
+    font-weight: 800;
 }
