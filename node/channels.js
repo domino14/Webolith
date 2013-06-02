@@ -24,8 +24,6 @@ var _ = require('underscore');
       }
       // Associate the username with the connection.
       connectionHash[conn.id] = username;
-      console.log('Added', conn.id, username, 'to channel', name);
-      console.log('connections:', connectionHash);
       /*
        * Now tell everyone in the channel that this connection joined,
        * and tell this connection about everyone in the channel.
@@ -47,7 +45,6 @@ var _ = require('underscore');
         var toDelete = [];
         _.each(ChannelMap[channelName], function(connection, id) {
           if (id === conn.id) {
-            console.log("Found this connection in", channelName, "...deleting");
             toDelete.push(id);
           }
         });
@@ -63,7 +60,6 @@ var _ = require('underscore');
       if (_.has(connectionHash, conn.id)) {
         delete connectionHash[(conn.id)];
       }
-      console.log('connections:', connectionHash);
     },
     /**
      * Broadcasts a message of type `type` to `channel` from `conn`.
@@ -77,15 +73,14 @@ var _ = require('underscore');
     broadcastToChannel: function(type, message, channel, conn, skipConn) {
       var username, toSend;
       if (!_.has(ChannelMap, channel)) {
-        console.log('User tried to broadcast to nonexistent channel.');
         return;
       }
       if (!_.has(connectionHash, conn.id)) {
-        console.log('User not in connection hash.', connectionHash);
         return;
       }
       username = connectionHash[(conn.id)];
       toSend = JSON.stringify({'type': type, 'from': username, 'msg': message});
+      console.log(toSend);
       // Find all sockets in this channel.
       _.each(ChannelMap[channel], function(connection) {
         if (!skipConn || connection !== conn) {

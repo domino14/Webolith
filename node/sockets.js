@@ -14,14 +14,11 @@ sockServer = sockjs.createServer();
 redisClient = redis.createClient(redisPort, redisHost);
 sockServer.on('connection', function(conn) {
   const subscribe = redis.createClient(redisPort, redisHost);
-  console.log('new connection ' + conn.id);
   conn.on('data', function(message) {
     // Let's see what's in this message.
-    console.log('got data', message);
     handleMessage(message, conn);
   });
   conn.on('close', function() {
-    console.log('connection', conn, 'closed');
     channels.manager.removeConnection(conn);
   });
 });
@@ -69,7 +66,6 @@ function handleTokenMessage(token, connection) {
         return;
       }
       if (_.isNull(reply)) {
-        console.log('Token non-existent, do not accept connection.');
         connection.write(JSON.stringify({'type': 'tokenError'}));
         return;
       }

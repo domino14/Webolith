@@ -30,7 +30,6 @@ define([
       };
     },
     messageHandler: function(data) {
-      console.log('Got data', data);
       if (data.type === 'chat') {
         this.updateChat(data.from, data.msg, this.chatTextId);
       } else if (data.type === 'error') {

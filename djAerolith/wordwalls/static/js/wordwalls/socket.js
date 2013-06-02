@@ -79,8 +79,6 @@ define([
   };
   Socket.prototype.handleDisconnect_ = function() {
     this.connected_ = false;
-    console.log("Reconnecting in", this.currentConnectInterval_,
-                "ms...");
     _.delay(_.bind(this.connect, this), this.currentConnectInterval_);
     this.currentConnectInterval_ *= 2;
     this.backoffCounter_ += 1;
@@ -88,7 +86,6 @@ define([
   Socket.prototype.send = function(m) {
     if (this.connected_) {
       this.conn_.send(m);
-      console.log('Sent', m);
     }
   };
   return Socket;

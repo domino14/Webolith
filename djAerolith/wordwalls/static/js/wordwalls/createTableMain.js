@@ -38,10 +38,9 @@ define([
   'fileUploader',
   'socket',
   'chat',
-  'json2',
   'csrfAjax',
   'jquery_ui'
-], function (module, $, TableCreate, fileUploader, Socket, Chat, JSON) {
+], function (module, $, TableCreate, fileUploader, Socket, Chat) {
   "use strict";
   $(function() {
     var tableCreateParams, labelSize, uploader, s, c;
