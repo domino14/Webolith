@@ -91,7 +91,8 @@ def homepage(request):
         'dcTimes': json.dumps(dcTimeMap),
         'defaultLexicon': profile.defaultLexicon,
         'image_title': get_random_title(),
-        'connToken': conn_token},
+        'connToken': conn_token,
+        'socketUrl': settings.SOCKJS_SERVER},
         context_instance=ctx)
 
 

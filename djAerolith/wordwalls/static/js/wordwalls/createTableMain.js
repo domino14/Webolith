@@ -103,7 +103,7 @@ define([
     });
 
     s = new Socket();
-    s.setUrl('http://127.0.0.1:9999/socket');
+    s.setUrl(tableCreateParams.socketUrl);
     c = new Chat({
       el: $("#lobby"),
       socket: s,

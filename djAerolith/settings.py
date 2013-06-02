@@ -280,7 +280,7 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_SOCKET_TOKEN_DB = 2
 
-SOCKET_IO_SERVER = 'http://www.aerolith.org:1988'
+SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 
 # See https://www.github.com/14domino/ujamaa
 # General-purpose word tool.

@@ -23,12 +23,6 @@
 {% block title %}Wordwalls - select list{% endblock %}
 
 {% block content %}
-
-<!-- {% assets "js_table_create" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %} -->
-
-
 <P></P>
 <div id="commonForm">
     {{lexForm.as_p}}
@@ -143,7 +137,8 @@ var require = {
       defaultLexicon: "{{defaultLexicon.pk}}",
       csrfToken: "{{csrf_token}}",
       ajaxUploadUrl: "{% url ajax_upload %}",
-      socketConnectionToken: "{{connToken}}"
+      socketConnectionToken: "{{connToken}}",
+      socketUrl: "{{socketUrl}}"
     }
   }
 }

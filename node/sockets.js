@@ -1,19 +1,27 @@
-var http = require('http'),
+/*global require, console, process*/
+var https = require('https'),
+  http = require('http'),
   sockjs = require('sockjs'),
   redis = require('redis'),
+  fs = require('fs'),
   _ = require('underscore'),
   channels = require('./channels'),
   sockServer,
+  server,
   redisClient;
 
-const redisPort = 6379,
+var sslOptions = {
+  key: fs.readFileSync('../../aerolith.key', 'utf8'),
+  cert: fs.readFileSync('../../aerolith.org.chained.crt', 'utf8')
+};
+
+var redisPort = 6379,
   redisHost = 'localhost',
   REDIS_TOKEN_DB = 2;
 sockServer = sockjs.createServer();
 
 redisClient = redis.createClient(redisPort, redisHost);
 sockServer.on('connection', function(conn) {
-  const subscribe = redis.createClient(redisPort, redisHost);
   conn.on('data', function(message) {
     // Let's see what's in this message.
     handleMessage(message, conn);
@@ -23,7 +31,11 @@ sockServer.on('connection', function(conn) {
   });
 });
 
-var server = http.createServer();
+if (process.env.NODE_ENV === 'production') {
+  server = https.createServer(sslOptions);
+} else {
+  server = http.createServer();
+}
 sockServer.installHandlers(server, {prefix: '/socket'});
 server.listen(9999, '0.0.0.0');
 
@@ -54,7 +66,7 @@ function handleMessage(message, connection) {
  */
 function handleTokenMessage(token, connection) {
   // This is a connection token. Verify that it exists in redis.
-  redisClient.select(REDIS_TOKEN_DB, function(err, reply) {
+  redisClient.select(REDIS_TOKEN_DB, function(err) {
     if (err) {
       console.log(err);
       return;
