@@ -1,8 +1,10 @@
 /* global define*/
 define([
   'sockjs',
-  'underscore'
-], function(SockJS, _) {
+  'underscore',
+  'json2',
+  'jquery'
+], function(SockJS, _, JSON, $) {
   "use strict";
   var Socket;
   Socket = function() {
@@ -12,17 +14,22 @@ define([
     Socket.prototype.singletonInstance_ = this;
     this.conn_ = null;
     this.url_ = null;
+    this.tokenPath = '/socket_token';
     this.connected_ = false;
     this.messageHandler_ = null;
     // Used for exponential backoff for reconnect.
     this.resetBackoff_();
     this.maxConnRetries_ = 12;
+    this.socketConnectionToken_ = null;
   };
   Socket.prototype.setUrl = function(url) {
     this.url_ = url;
   };
   Socket.prototype.setMessageHandler = function(messageHandler) {
     this.messageHandler_ = messageHandler;
+  };
+  Socket.prototype.setToken = function(token) {
+    this.socketConnectionToken_ = token;
   };
   Socket.prototype.connect = function() {
     /*
@@ -41,11 +48,28 @@ define([
     this.conn_.onerror = _.bind(this.handleError_, this);
   };
   Socket.prototype.handleMessage_ = function(e) {
-    this.messageHandler_(e.data);
+    /*
+     * Check if this is a special type of error - tokenError. If so we
+     * will need a token refresh from the server.
+     */
+    var msgObj = JSON.parse(e.data);
+    if (msgObj.type === 'tokenError') {
+      $.get(this.tokenPath, _.bind(function(data) {
+        this.socketConnectionToken_ = data;
+        this.sendConnectionToken_();
+      }, this), 'json');
+    } else {
+      this.messageHandler_(msgObj);
+    }
   };
   Socket.prototype.handleConnect_ = function() {
     this.connected_ = true;
     this.resetBackoff_();
+    this.sendConnectionToken_();
+  };
+  Socket.prototype.sendConnectionToken_ = function() {
+    var msg = JSON.stringify({'token': this.socketConnectionToken_});
+    this.send(msg);
   };
   Socket.prototype.resetBackoff_ = function() {
     this.backoffCounter_ = 0;
@@ -64,6 +88,7 @@ define([
   Socket.prototype.send = function(m) {
     if (this.connected_) {
       this.conn_.send(m);
+      console.log('Sent', m);
     }
   };
   return Socket;

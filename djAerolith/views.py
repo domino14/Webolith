@@ -20,6 +20,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from basic.blog.models import Post, Category
 import random
+from django.contrib.auth.decorators import login_required
+from lib.socket_helper import get_connection_token
+from lib.response import response
 
 
 def homepage(request):
@@ -63,3 +66,9 @@ def oldhomepage(request):
 def about(request):
     return render_to_response('about.html',
                               context_instance=RequestContext(request))
+
+
+@login_required
+def socket_token(request):
+    conn_token = get_connection_token(request.user)
+    return response(conn_token)

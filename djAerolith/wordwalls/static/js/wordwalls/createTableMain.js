@@ -9,7 +9,8 @@ requirejs.config({
     fileUploader: '/static/js/aerolith/fileuploader',
     mustache: '/static/lib/mustache',
     text: '/static/lib/require/text',
-    sockjs: '/static/js/aerolith/sockjs-0.3.min'
+    sockjs: '/static/js/aerolith/sockjs-0.3.min',
+    json2: '/static/js/aerolith/json2'
   },
   shim: {
     underscore: {
@@ -18,6 +19,9 @@ requirejs.config({
     jquery_ui: ['jquery'],
     fileUploader: {
       exports: 'qq'
+    },
+    'json2': {
+      exports: 'JSON'
     }
   }
 });
@@ -29,9 +33,10 @@ define([
   'fileUploader',
   'socket',
   'utils',
+  'json2',
   'csrfAjax',
   'jquery_ui'
-], function (module, $, TableCreate, fileUploader, Socket, utils) {
+], function (module, $, TableCreate, fileUploader, Socket, utils, JSON) {
   "use strict";
   $(function() {
     var tableCreateParams, labelSize, uploader, s;
@@ -94,15 +99,25 @@ define([
     });
 
     s = new Socket();
-    s.setUrl('http://127.0.0.1:9999/echo');
+    s.setUrl('http://127.0.0.1:9999/socket');
     s.setMessageHandler(function(data) {
-      utils.updateTextBox(data, "chatText");
+      if (data.type === 'chat') {
+        utils.updateTextBox(data.from + ': ' + data.msg, 'chatText');
+      }
+      if (data.type === 'error') {
+        utils.updateTextBox('Server error: ' + data.msg, 'chatText');
+      }
     });
+    s.setToken(tableCreateParams.socketConnectionToken);
     s.connect();
-
     $("#chatBar").keypress(function(e) {
+      var msg;
       if (e.keyCode === 13) {
-        s.send($("#chatBar").val());
+        msg = JSON.stringify({
+          'chat': $("#chatBar").val(),
+          'channel': 'lobby'
+        });
+        s.send(msg);
         $("#chatBar").val("");
       }
     });
