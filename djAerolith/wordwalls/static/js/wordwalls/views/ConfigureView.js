@@ -62,8 +62,9 @@ define([
       this.$('#configQL').append(view.render().el);
     },
     savePreferences: function() {
+      var saveResult;
       this.prefsInfo.html("");
-      this.model.save({}, {
+      saveResult = this.model.save({}, {
         success: _.bind(function() {
           this.prefsInfo.html("Successfully saved preferences.");
         }, this),
@@ -71,6 +72,10 @@ define([
           this.prefsInfo.html("There was an error");
         }, this)
       });
+      if (!saveResult) {
+        // Failed validation.
+        this.prefsInfo.html(this.model.validationError);
+      }
     }
   });
   return ConfigureView;

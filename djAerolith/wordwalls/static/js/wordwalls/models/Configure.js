@@ -19,6 +19,14 @@ define([
         blankCharacter: DEFAULT_BLANK_CHARACTER
       };
     },
+    validate: function(attrs) {
+      if (attrs.blankCharacter === "") {
+        return [
+          "You must enter a character to use for the blank. If you want ",
+          "it to look empty, please enter a Space (with the spacebar)."
+        ].join('');
+      }
+    },
     /**
      * Maps server keys to a front-end model key.
      * @param  {string} topLevelKey    Top level is 'tc' or 'bc'.
