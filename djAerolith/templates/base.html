@@ -69,9 +69,11 @@ window.mixpanel.name_tag = function() {};
 
 <body>
     {% block navbar %}
+    {% block jquery_js %}
     {% assets "js_jquery" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
+    {% endblock %}
     <div id="topbar">
         <div class="center">
             <div id="logo">

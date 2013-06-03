@@ -1,17 +1,23 @@
 /* global requirejs,define,mixpanel */
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
+  /*
+   * Due to Django's style of having static directories per app, and because
+   * our libs live in the djAerolith/static directory, we must append this
+   * ugly path to every library file in order for the optimizer (r.js) to
+   * work properly.
+   */
   paths: {
-    jquery: '/static/js/aerolith/jquery-1.9.1.min',
-    jquery_ui: '/static/js/aerolith/jquery-ui-1.10.2.custom.min',
-    underscore: '/static/lib/underscore-min',
-    csrfAjax: '/static/js/aerolith/csrfAjax',
-    fileUploader: '/static/js/aerolith/fileuploader',
-    mustache: '/static/lib/mustache',
-    text: '/static/lib/require/text',
-    sockjs: '/static/js/aerolith/sockjs-0.3.min',
-    json2: '/static/js/aerolith/json2',
-    backbone: '/static/lib/backbone-1.0.0'
+    jquery: '../../../../static/js/aerolith/jquery-1.9.1.min',
+    jquery_ui: '../../../../static/js/aerolith/jquery-ui-1.10.2.custom.min',
+    underscore: '../../../../static/lib/underscore-min',
+    csrfAjax: '../../../../static/js/aerolith/csrfAjax',
+    fileUploader: '../../../../static/js/aerolith/fileuploader',
+    mustache: '../../../../static/lib/mustache',
+    text: '../../../../static/lib/require/text',
+    sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
+    json2: '../../../../static/js/aerolith/json2',
+    backbone: '../../../../static/lib/backbone-1.0.0'
   },
   shim: {
     underscore: {
