@@ -44,7 +44,11 @@ define([
     },
     setConfig: function(params) {
       var styleObj, setObj;
-      styleObj = $.parseJSON(params);
+      if (_.isUndefined(params) || _.isNull(params)) {
+        params = {};
+      } else {
+        styleObj = $.parseJSON(params);
+      }
       setObj = {};
       if (styleObj) {
         _.each(styleObj, function(dict, key) {
