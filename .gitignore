@@ -1,6 +1,7 @@
 *.pyc
 *.tmproj
 settings_local.py
+settings_local_prod.py
 *~
 dbCreator-build-desktop
 dbCreator.pro.user*

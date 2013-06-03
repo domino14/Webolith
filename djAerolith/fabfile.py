@@ -25,6 +25,9 @@ def deploy_prod():
                 run("python manage.py collectstatic --noinput")
                 # execute any needed migrations
                 run("python manage.py migrate")
+                # Copy settings_local_prod.py to settings_local.py
+                put(os.path.join(curdir, 'settings_local_prod.py'),
+                    'settings_local.py')
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
