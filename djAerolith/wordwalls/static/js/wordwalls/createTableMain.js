@@ -8,9 +8,9 @@ requirejs.config({
    * work properly.
    */
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.9.1.min',
+    jquery: '../../../../static/js/aerolith/jquery-1.10.1',
     jquery_ui: '../../../../static/js/aerolith/jquery-ui-1.10.2.custom.min',
-    underscore: '../../../../static/lib/underscore-min',
+    underscore: '../../../../static/lib/underscore-1.4.4',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
     fileUploader: '../../../../static/js/aerolith/fileuploader',
     mustache: '../../../../static/lib/mustache',

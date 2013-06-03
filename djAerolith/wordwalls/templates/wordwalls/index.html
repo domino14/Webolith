@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% load assets %}
+{% load value_from_settings %}
+{% value_from_settings DEBUG_JS as DEBUG_JS %}
 
 {% block ss %}
 {% assets "css_table_create" %}
@@ -147,13 +149,17 @@ var require = {
 <script src="/static/lib/require/require-min.js"></script>
 <script>
 require.config({
-    //urlArgs: 'v=2',
-    paths: {
-        //Comment out this line to go back to loading
-        //the non-optimized main.js source file.
-        //"createTableMain": "/static/create-table-main-built"
-        "createTableMain": "/static/js/wordwalls/createTableMain"
-    }
+    {% if DEBUG_JS %}
+        paths: {
+            "createTableMain": "/static/js/wordwalls/createTableMain"
+        }
+
+    {% else %}
+        urlArgs: 'v={{CURRENT_VERSION}}',
+        paths: {
+            "createTableMain": "/static/create-table-main-built"
+        }
+    {% endif %}
 });
 require(["createTableMain"]);
 </script>

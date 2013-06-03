@@ -46,6 +46,10 @@ from lib.response import response
 from lib.socket_helper import get_connection_token
 from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
 from djAerolith.views import get_random_title
+from current_version import CURRENT_VERSION
+from wordwalls.utils import UserListParseException
+
+
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
     dcTimeMap[i.pk] = i.timeSecs
@@ -92,7 +96,8 @@ def homepage(request):
         'defaultLexicon': profile.defaultLexicon,
         'image_title': get_random_title(),
         'connToken': conn_token,
-        'socketUrl': settings.SOCKJS_SERVER},
+        'socketUrl': settings.SOCKJS_SERVER,
+        'CURRENT_VERSION': CURRENT_VERSION},
         context_instance=ctx)
 
 
@@ -332,7 +337,9 @@ def table(request, id):
                                       {'tablenum': id,
                                        'username': request.user.username,
                                        'addParams': json.dumps(params),
-                                       'avatarUrl': profile.avatarUrl},
+                                       'avatarUrl': profile.avatarUrl,
+                                       'CURRENT_VERSION': CURRENT_VERSION
+                                       },
                                       context_instance=RequestContext(request))
         else:
             return render_to_response('wordwalls/notPermitted.html',

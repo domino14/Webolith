@@ -24,7 +24,7 @@ To contact the author, please email delsolar at gmail dot com
 {% load value_from_settings %}
 {% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
-
+{% value_from_settings DEBUG_JS as DEBUG_JS %}
 {% load assets %}
 {% assets "css_table" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
@@ -71,7 +71,22 @@ var require = {
   }
 }
 </script>
-<script src="/static/lib/require/require-min.js" data-main="/static/js/wordwalls/main"></script>
+<script src="/static/lib/require/require-min.js"></script>
+<script>
+require.config({
+  {% if DEBUG_JS %}
+    paths: {
+      'main': '/static/js/wordwalls/main'
+    }
+  {% else %}
+    urlArgs: 'v={{CURRENT_VERSION}}',
+    paths: {
+      'main': '/static/table-main-built'
+    }
+  {% endif %}
+});
+require(['main']);
+</script>
 
 <div id="topBar">
 <span id="start" onClick="mixpanel.track('request start');" class="tableButton">Start</span>
