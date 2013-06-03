@@ -144,10 +144,19 @@ var require = {
   }
 }
 </script>
-<script src="/static/lib/require/require-min.js" data-main="/static/js/wordwalls/createTableMain"></script>
-
-<!-- <script src="/static/create-table-main-built.js"></script>
- -->
+<script src="/static/lib/require/require-min.js"></script>
+<script>
+require.config({
+    //urlArgs: 'v=2',
+    paths: {
+        //Comment out this line to go back to loading
+        //the non-optimized main.js source file.
+        //"createTableMain": "/static/create-table-main-built"
+        "createTableMain": "/static/js/wordwalls/createTableMain"
+    }
+});
+require(["createTableMain"]);
+</script>
 
 {% endblock %}
 
