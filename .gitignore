@@ -15,5 +15,4 @@ djAerolith/logs
 *.sublime-project
 namedLists.json
 r.js
-djAerolith/static/create-table-main-built.js
-djAerolith/static/table-main-built.js
+djAerolith/static/build/*
