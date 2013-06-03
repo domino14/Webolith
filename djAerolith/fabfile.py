@@ -28,7 +28,6 @@ def deploy_prod():
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
-@roles('prod')
 def deploy_js_build():
     """
         Uses r.js to generate a build.
@@ -62,7 +61,9 @@ def restart_node():
     with cd("Webolith"):
         with cd("node"):
             with prefix("workon aeroenv"):
-                run("supervisorctl reload")
+                # supervisorctl reload doesn't actually seem to restart
+                # process :/
+                run("supervisorctl restart my_node")
 
 
 @roles('prod_sudo')
