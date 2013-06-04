@@ -8,9 +8,10 @@ define([
   'views/WordSolutionView',
   'text!templates/solutionsTable.html',
   'mustache',
-  'ChallengeView'
+  'ChallengeView',
+  'utils'
 ], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
-     SolutionsTable, Mustache, ChallengeView) {
+     SolutionsTable, Mustache, ChallengeView, utils) {
   "use strict";
   var App;
   App = Backbone.View.extend({
@@ -47,7 +48,6 @@ define([
           "for this list next to the Save button, and click Save."
         ].join(''));
       });
-      this.messageTextBoxLimit = 3000;  // characters
       this.viewConfig = null;
       this.numColumns = 4;
       this.maxScreenQuestions = 50;   // How many questions fit on the screen?
@@ -243,24 +243,13 @@ define([
       this.$("#gameTimer").text(text);
     },
     updateMessages: function(message) {
-      this.updateTextBox(message, 'messages');
+      utils.updateTextBox(message, 'messages');
     },
     updateCorrectAnswer: function(answer) {
-      this.updateTextBox(answer, 'correctAnswers');
+      utils.updateTextBox(answer, 'correctAnswers');
     },
     updateGuesses: function(guess) {
-      this.updateTextBox(guess, 'guesses');
-    },
-    updateTextBox: function(message, textBoxId) {
-      var $box, newMessage;
-      $box = $('#' + textBoxId);
-      newMessage = $box.html() + message + '<BR>';
-      if (newMessage.length > this.messageTextBoxLimit) {
-        newMessage = newMessage.substr(
-          newMessage.length - this.messageTextBoxLimit);
-      }
-      $box.html(newMessage);
-      $box.scrollTop($box[0].scrollHeight - $box.height());
+      utils.updateTextBox(guess, 'guesses');
     },
     /**
      * This function gets triggered when the wordwalls game model gets a

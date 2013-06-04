@@ -22,6 +22,7 @@ import re
 import settings_local   # this file is not shared on vcs
 DEBUG = settings_local.DEBUG
 TEMPLATE_DEBUG = DEBUG
+DEBUG_JS = settings_local.DEBUG_JS
 
 ADMINS = (
      ('Cesar Del Solar', 'delsolar@gmail.com'),
@@ -278,9 +279,12 @@ RECAPTCHA_PRIVATE_KEY = settings_local.RECAPTCHA_PRIVATE_KEY
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+REDIS_SOCKET_TOKEN_DB = 2
 
-SOCKET_IO_SERVER = 'http://www.aerolith.org:1988'
+SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 
 # See https://www.github.com/14domino/ujamaa
 # General-purpose word tool.
 UJAMAA_PATH = settings_local.UJAMAA_PATH
+
+
