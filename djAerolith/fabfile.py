@@ -62,6 +62,7 @@ def prod_fixtures():
 @roles('prod')
 def restart_node():
     with cd("Webolith"):
+        run("git pull")
         with cd("node"):
             with prefix("workon aeroenv"):
                 # supervisorctl reload doesn't actually seem to restart
