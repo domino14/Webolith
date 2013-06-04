@@ -22,12 +22,12 @@ def deploy_prod():
                 run("mkdir logs")
             with prefix("workon aeroenv"):
                 # collect static files!
-                run("python manage.py collectstatic --noinput")
-                # execute any needed migrations
-                run("python manage.py migrate")
                 # Copy settings_local_prod.py to settings_local.py
                 put(os.path.join(curdir, 'settings_local_prod.py'),
                     'settings_local.py')
+                run("python manage.py collectstatic --noinput")
+                # execute any needed migrations
+                run("python manage.py migrate")
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
