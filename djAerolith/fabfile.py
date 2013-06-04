@@ -67,7 +67,7 @@ def restart_node():
             with prefix("workon aeroenv"):
                 # supervisorctl reload doesn't actually seem to restart
                 # process :/
-                run("supervisorctl restart my_node")
+                run("supervisorctl restart mynode")
 
 
 @roles('prod_sudo')

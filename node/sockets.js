@@ -23,7 +23,7 @@ sockServer = sockjs.createServer();
 redisClient = redis.createClient(redisPort, redisHost);
 sockServer.on('connection', function(conn) {
   console.log(conn);
-  if (_.isNull(conn) {
+  if (_.isNull(conn)) {
     return;
   });
   conn.on('data', function(message) {
