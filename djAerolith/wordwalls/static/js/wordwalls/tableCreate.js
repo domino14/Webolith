@@ -278,13 +278,17 @@ define([
       }
     } else {
       // XXX: use templates
-      $("#infoDialog").html("<P>" + data.error + "</P>").attr(
-        "title", "Error");
-      $("#infoDialog").dialog({
-        height: 120,
-        modal: true
-      }).show();
+      showError(data.error);
     }
+  }
+
+  function showError(error) {
+    $("#infoDialog").html("<P>" + error + "</P>").attr(
+        "title", "Error");
+    $("#infoDialog").dialog({
+      height: 140,
+      modal: true
+    }).show();
   }
 
   function challengeSubmitClicked() {
@@ -379,6 +383,8 @@ define([
     if (data.deleted) {
       $("#id_wordList option[value=" + data.wordList + "]").remove();
       requestSavedListInfo(); // populate new limit/text
+    } else {
+      showError(data.error);
     }
   }
   return {

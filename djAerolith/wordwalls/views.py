@@ -156,12 +156,15 @@ def handle_homepage_post(profile, request):
                         {'url': reverse('wordwalls_table',
                                         args=(tablenum,)),
                          'success': True})
+            return response({'success': False,
+                             'error': 'No challenge was selected.'})
 
         elif request.POST['action'] == 'searchParamsSubmit':
             lexForm = LexiconForm(request.POST)
             timeForm = TimeForm(request.POST)
             fwForm = FindWordsForm(request.POST)
             print lexForm.is_valid(), timeForm.is_valid(), fwForm.is_valid()
+            print timeForm.errors
             # form bound to the POST data
             if (lexForm.is_valid() and timeForm.is_valid() and
                     fwForm.is_valid()):
@@ -179,6 +182,9 @@ def handle_homepage_post(profile, request):
                 return response({'url': reverse('wordwalls_table',
                                                 args=(tablenum,)),
                                  'success': True})
+            return response({'success': False,
+                             'error': 'There was something wrong with your '
+                                      'search parameters or time selection.'})
 
         elif request.POST['action'] == 'savedListsSubmit':
             lexForm = LexiconForm(request.POST)
@@ -200,6 +206,10 @@ def handle_homepage_post(profile, request):
                     return response({'url': reverse('wordwalls_table',
                                                     args=(tablenum,)),
                                      'success': True})
+            return response({'success': False,
+                             'error': 'Please check that you have selected '
+                                      'a word list and a time greater than '
+                                      '1 minute.'})
 
         elif request.POST['action'] == 'savedListDelete':
             lexForm = LexiconForm(request.POST)
@@ -211,6 +221,8 @@ def handle_homepage_post(profile, request):
 
                 return response({'deleted': True,
                                  'wordList': deletedListPk})
+            return response({'success': False,
+                             'error': 'You did not select a list to delete.'})
 
         elif request.POST['action'] == 'namedListsSubmit':
             lexForm = LexiconForm(request.POST)
@@ -233,7 +245,10 @@ def handle_homepage_post(profile, request):
                                                     args=(tablenum,)),
                                     'success': True})
 
-
+            return response({'success': False,
+                             'error': 'Please check that you have selected a '
+                                      'list and that your quiz time is greater '
+                                      'than 1 minute.'})
 
 @login_required
 def table(request, id):
