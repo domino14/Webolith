@@ -71,7 +71,6 @@ div.showHelp
 div.help
 {
     color: rgb(80, 80, 120);
-    width: 750px;
 }
 
 select#id_wordList
@@ -91,7 +90,48 @@ span#savedListWarning
 
 #listTabs
 {
-    width: 800px;
+    width: 600px;
+    float: left;
+}
+
+#lobby {
+    float: right;
+    width: 355px;
+    height: 405px;
+}
+
+#chatTextOuter {
+    width: 258px;
+    margin-left: 5px;
+    margin-top: 5px;
+    height: 363px;
+    border: solid gray 1px;
+    float: left;
+}
+#chatText {
+    padding: 5px;
+    overflow-y: auto;
+    height: 353px;
+    width: 248px;
+}
+#peopleOuter {
+    width: 80px;
+    margin-right: 5px;
+    margin-top: 5px;
+    height: 250px;
+    border: solid gray 1px;
+    float: right;
+}
+#people {
+    padding: 5px;
+    overflow-y: auto;
+    height: 240px;
+    width: 65px;
+}
+.chatBar {
+    width: 255px;
+    margin-left: 5px;
+    margin-top: 5px;
 }
 
 #id_challenge

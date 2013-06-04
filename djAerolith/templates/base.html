@@ -21,6 +21,8 @@ To contact the author, please email delsolar at gmail dot com
 {% value_from_settings USE_GA as USE_GA %}
 {% value_from_settings USE_FB as USE_FB %}
 {% value_from_settings USE_UV as USE_UV %}
+{% value_from_settings DEBUG_JS as DEBUG_JS %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,9 +71,11 @@ window.mixpanel.name_tag = function() {};
 
 <body>
     {% block navbar %}
+    {% block jquery_js %}
     {% assets "js_jquery" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
+    {% endblock %}
     <div id="topbar">
         <div class="center">
             <div id="logo">
@@ -145,7 +149,7 @@ window.mixpanel.name_tag = function() {};
         <div class="center">
             <div id="copyright">&copy; 2013 Cesarware. All Rights Reserved.</div>
             <div id="mixpanel">
-            <a href="https://mixpanel.com/f/partner"><img src="https://mixpanel.com/site_media/images/partner/badge_light.png" alt="Mobile and Web Analytics" /></a>
+            <a href="https://mixpanel.com/f/partner"><img src="/static/img/aerolith/mixpanel_badge_light.png" alt="Mobile and Web Analytics" /></a>
             </div>
         </div>
     </div>

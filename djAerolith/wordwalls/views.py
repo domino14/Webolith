@@ -43,8 +43,13 @@ from django.middleware.csrf import get_token
 import random
 import logging
 from lib.response import response
+from lib.socket_helper import get_connection_token
 from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
 from djAerolith.views import get_random_title
+from current_version import CURRENT_VERSION
+from wordwalls.utils import UserListParseException
+
+
 dcTimeMap = {}
 for i in DailyChallengeName.objects.all():
     dcTimeMap[i.pk] = i.timeSecs
@@ -71,7 +76,9 @@ def homepage(request):
                         for l in Lexicon.objects.all()])
 
     ctx = RequestContext(request, {'csrf_token': get_token(request)})
-
+    # Create a random token for socket connection and store in Redis
+    # temporarily.
+    conn_token = get_connection_token(request.user)
     return render_to_response(
         'wordwalls/index.html',
         {'fwForm': fwForm,
@@ -87,7 +94,10 @@ def homepage(request):
         'upload_list_limit': wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
         'dcTimes': json.dumps(dcTimeMap),
         'defaultLexicon': profile.defaultLexicon,
-        'image_title': get_random_title()},
+        'image_title': get_random_title(),
+        'connToken': conn_token,
+        'socketUrl': settings.SOCKJS_SERVER,
+        'CURRENT_VERSION': CURRENT_VERSION},
         context_instance=ctx)
 
 
@@ -327,7 +337,9 @@ def table(request, id):
                                       {'tablenum': id,
                                        'username': request.user.username,
                                        'addParams': json.dumps(params),
-                                       'avatarUrl': profile.avatarUrl},
+                                       'avatarUrl': profile.avatarUrl,
+                                       'CURRENT_VERSION': CURRENT_VERSION
+                                       },
                                       context_instance=RequestContext(request))
         else:
             return render_to_response('wordwalls/notPermitted.html',
