@@ -22,6 +22,10 @@ sockServer = sockjs.createServer();
 
 redisClient = redis.createClient(redisPort, redisHost);
 sockServer.on('connection', function(conn) {
+  console.log(conn);
+  if (_.isNull(conn) {
+    return;
+  });
   conn.on('data', function(message) {
     // Let's see what's in this message.
     handleMessage(message, conn);
