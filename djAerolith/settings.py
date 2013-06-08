@@ -287,4 +287,4 @@ SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 # General-purpose word tool.
 UJAMAA_PATH = settings_local.UJAMAA_PATH
 
-
+RECAPTCHA_SSL = settings_local.RECAPTCHA_SSL
