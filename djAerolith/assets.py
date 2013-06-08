@@ -13,5 +13,5 @@ jqueryCss = Bundle('css/redmond/jquery-ui-1.10.2.custom.css',
 register('base_css', baseCss)
 register('jquery_css', jqueryCss)
 
-register('js_jquery', 'js/aerolith/jquery-1.9.1.min.js',
-                        'js/aerolith/jquery-ui-1.10.2.custom.min.js')
+register('js_jquery', 'js/aerolith/jquery-1.10.1.min.js',
+                      'js/aerolith/jquery-ui-1.10.2.custom.min.js')

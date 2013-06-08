@@ -14,7 +14,7 @@ class ReCaptcha(forms.widgets.Widget):
 
     def render(self, name, value, attrs=None):
         return mark_safe(u'%s' % captcha.displayhtml(
-            settings.RECAPTCHA_PUBLIC_KEY))
+            settings.RECAPTCHA_PUBLIC_KEY, use_ssl=settings.RECAPTCHA_SSL))
 
     def value_from_datadict(self, data, files, name):
         return [data.get(self.recaptcha_challenge_name, None),
