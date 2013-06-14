@@ -39,12 +39,12 @@ def editProfile(request):
             # process data in pForm.cleaned_data
             profile.defaultLexicon = pForm.cleaned_data['defaultLexicon']
             profile.profile = pForm.cleaned_data['profileText']
-
+            profile.additional_data = json.dumps(
+                {'disableChat': pForm.cleaned_data['disableChat']})
             profile.save()
 
             return HttpResponseRedirect('/accounts/profile/%s' %
                                         profile.user.username)
-    print profile.defaultLexicon.pk, profile.defaultLexicon.lexiconName
     return render_to_response('accounts/editProfile.html',
                               {'profile': profile,
                                'pForm': pForm},

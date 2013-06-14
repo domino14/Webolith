@@ -117,11 +117,12 @@
     </div>
 </div>
 
-<div id="lobby" class="ui-widget ui-widget-content ui-corner-all">
-<div id="chatTextOuter"><div id="chatText"></div></div>
-<div id="peopleOuter"><div id="people"></div></div>
-<input type="text" class="chatBar" placeholder="Say something!"/ maxlength="140">
-
+{% if chatEnabled %}
+    <div id="lobby" class="ui-widget ui-widget-content ui-corner-all">
+    <div id="chatTextOuter"><div id="chatText"></div></div>
+    <div id="peopleOuter"><div id="people"></div></div>
+    <input type="text" class="chatBar" placeholder="Say something!"/ maxlength="140">
+{% endif %}
 </div>
 
 <div id="infoDialog" title="">
@@ -138,6 +139,7 @@ var require = {
       defaultLexicon: "{{defaultLexicon.pk}}",
       csrfToken: "{{csrf_token}}",
       ajaxUploadUrl: "{% url ajax_upload %}",
+      chatEnabled: "{{chatEnabled}}",
       socketConnectionToken: "{{connToken}}",
       socketUrl: "{{socketUrl}}"
     }
