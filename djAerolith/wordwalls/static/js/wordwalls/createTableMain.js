@@ -117,6 +117,8 @@ define([
       });
       s.setToken(tableCreateParams.socketConnectionToken);
       s.connect();
+    } else {
+      $('#listTabs').css({'width': '900px'});
     }
   });
 });
