@@ -107,15 +107,18 @@ define([
 
       }
     });
-
-    s = new Socket();
-    s.setUrl(tableCreateParams.socketUrl);
-    c = new Chat({
-      el: $("#lobby"),
-      socket: s,
-      channel: 'lobby'
-    });
-    s.setToken(tableCreateParams.socketConnectionToken);
-    s.connect();
+    if (tableCreateParams.chatEnabled === 'True') {
+      s = new Socket();
+      s.setUrl(tableCreateParams.socketUrl);
+      c = new Chat({
+        el: $("#lobby"),
+        socket: s,
+        channel: 'lobby'
+      });
+      s.setToken(tableCreateParams.socketConnectionToken);
+      s.connect();
+    } else {
+      $('#listTabs').css({'width': '900px'});
+    }
   });
 });
