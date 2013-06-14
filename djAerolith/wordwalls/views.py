@@ -79,6 +79,11 @@ def homepage(request):
     # Create a random token for socket connection and store in Redis
     # temporarily.
     conn_token = get_connection_token(request.user)
+    profile = request.user.get_profile()
+    try:
+        data = json.loads(profile.additional_data)
+    except (TypeError, ValueError):
+        data = {}
     return render_to_response(
         'wordwalls/index.html',
         {'fwForm': fwForm,
@@ -96,6 +101,7 @@ def homepage(request):
         'defaultLexicon': profile.defaultLexicon,
         'image_title': get_random_title(),
         'connToken': conn_token,
+        'chatEnabled': not data.get('disableChat', False),
         'socketUrl': settings.SOCKJS_SERVER,
         'CURRENT_VERSION': CURRENT_VERSION},
         context_instance=ctx)

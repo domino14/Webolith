@@ -28,3 +28,4 @@ class ProfileEditForm(forms.Form):
                                             empty_label=None)
     profileText = forms.CharField(widget=forms.Textarea, label='Your profile',
                                   required=False)
+    disableChat = forms.BooleanField(label='Disable Chat', required=False)
