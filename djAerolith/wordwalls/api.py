@@ -10,7 +10,8 @@ def configure(request):
                          'font': prefs['font'],
                          'selection': prefs['tileSelection'],
                          'bold': prefs['bold'],
-                         'blankCharacter': prefs['blankCharacter']}
+                         'blankCharacter': prefs['blankCharacter'],
+                         'customOrder': prefs['customOrder']}
         saveObj['bc'] = {'showTable': prefs['showTable'],
                          'showCanvas': prefs['showCanvas'],
                          'showBorders': prefs['showBorders']}
