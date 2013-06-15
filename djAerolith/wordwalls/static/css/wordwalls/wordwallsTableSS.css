@@ -556,10 +556,6 @@ span#prefsInfo
     display: none;
 }
 
-#infoDialog {
-    display: none;
-}
-
 /******** definitions popup **********/
 #fade {
     /* this div covers the entire screen with absolute positioning */

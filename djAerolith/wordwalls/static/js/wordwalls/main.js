@@ -39,7 +39,7 @@ define([
 ], function (module, $, _, Configure, ConfigureView, AppView, Backbone) {
   "use strict";
   $(function() {
-    var Dispatcher, configuration, configurationView, appView, addlParams;
+    var Dispatcher, configuration, configurationView, appView, addlParams, rx;
     /* Load bootstrapped params from backend. */
     addlParams = module.config().addlParams;
     addlParams = $.parseJSON(module.config().addlParams);
@@ -60,7 +60,7 @@ define([
      * Catch beforeunload events. I can't figure out how to put this in
      * the appView.
      */
-    window.onbeforeunload = _.bind(appView.unloadEventHandler, appView);
+    window.onbeforeunload = _.bind(appView.beforeUnloadEventHandler, appView);
 
     /* Load addlParams into app. */
     configuration.setConfig(addlParams.style);
@@ -70,5 +70,16 @@ define([
     if (window.mixpanel) {
       window.mixpanel.track('Entered table');
     }
+    // Disallow backspace to go back.
+    rx = /INPUT|SELECT|TEXTAREA/i;
+    $(document).bind("keydown keypress", function(e) {
+      if (e.which === 8 ) {
+        // 8 == backspace
+        if (!rx.test(e.target.tagName) ||
+           e.target.disabled || e.target.readOnly) {
+          e.preventDefault();
+        }
+      }
+    });
   });
 });

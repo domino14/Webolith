@@ -83,7 +83,7 @@ define([
     /**
      * Tries to get an event keycode in a browser-independent way.
      * @param  {Object} e The keypress event.
-     * @return {[type]}   [description]
+     * @return {number}   keyCode.
      */
     getKeyCode: function(e) {
       var charCode = e.which || e.keyCode;
@@ -447,19 +447,21 @@ define([
       this.$("#gameTimer").text("0:00");
       this.defsDiv.children("#solutionsTable").show();
     },
-    unloadEventHandler: function() {
-      if (this.wordwallsGame.get('gameGoing')) {
-        $.ajax({
-          url: '',
-          async: false,
-          data: {
-            action: "giveUpAndSave",
-            listname: $("#saveListName").val()
-          },
-          type: "POST"
-        });
+    beforeUnloadEventHandler: function() {
+      if (!this.wordwallsGame.get('gameGoing')) {
+        return;  // Allow unload.
       }
+      $.ajax({
+        url: '',
+        async: false,
+        data: {
+          action: "giveUpAndSave",
+          listname: $("#saveListName").val()
+        },
+        type: "POST"
+      });
     }
+
   });
   return App;
 });
