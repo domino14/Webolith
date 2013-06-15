@@ -45,7 +45,7 @@ def deploy_js_build():
     local("gzip -c static/build/create-table-main-built.js > "
           "static/build/create-table-main-built.js.gz")
     with settings(warn_only=True):
-        with cd("Webolith/djAerolith/static"):
+        with cd("static"):
             run("mkdir build")
     put(os.path.join(curdir, 'static/build/*.gz'),
         '/home/ubuntu/Webolith/djAerolith/static/build/')
