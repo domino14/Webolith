@@ -10,6 +10,7 @@ define([
   ConfigureView = Backbone.View.extend({
     events: {
       "change .configInput": "confChangeHandler",
+      'change #customTileOrdering': 'confChangeHandler',
       "click #savePrefs": "savePreferences"
     },
     initialize: function() {
@@ -36,6 +37,7 @@ define([
       this.setCheckmark('#showBorders', this.model.get('showBorders'), true);
       this.$("#blankCharacter").val(this.model.get('blankCharacter'));
       this.$("#tileStyleSelect").val(this.model.get('tileSelection'));
+      this.$('#customTileOrdering').val(this.model.get('customOrder'));
       this.$("#tileStyleSelect").prop("disabled", !this.model.get('tilesOn'));
     },
     confChangeHandler: function() {
@@ -47,7 +49,8 @@ define([
         'showTable': !this.$("#dontShowTable").prop("checked"),
         'showCanvas': !this.$("#dontShowCanvas").prop("checked"),
         'showBorders': this.$("#showBorders").prop("checked"),
-        'blankCharacter': this.$("#blankCharacter").val()
+        'blankCharacter': this.$("#blankCharacter").val(),
+        'customOrder': this.$('#customTileOrdering').val().toUpperCase()
       });
       this.$("#tileStyleSelect").prop("disabled", !this.model.get('tilesOn'));
     },
@@ -56,9 +59,6 @@ define([
         model: alphagram,
         viewConfig: this.model
       });
-      /*
-       * Re-render question when configuration changes.
-       */
       this.$('#configQL').append(view.render().el);
     },
     savePreferences: function() {

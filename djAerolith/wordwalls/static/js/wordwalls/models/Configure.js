@@ -4,8 +4,10 @@ define([
   'jquery',
   'underscore'
 ], function(Backbone, $, _) {
-  var Configure, DEFAULT_BLANK_CHARACTER;
+  "use strict";
+  var Configure, DEFAULT_BLANK_CHARACTER, DEFAULT_CUSTOM_ORDER;
   DEFAULT_BLANK_CHARACTER = '?';
+  DEFAULT_CUSTOM_ORDER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ?';
   Configure = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -16,15 +18,29 @@ define([
         showTable: true,
         showCanvas: true,
         showBorders: false,
-        blankCharacter: DEFAULT_BLANK_CHARACTER
+        blankCharacter: DEFAULT_BLANK_CHARACTER,
+        customOrder: DEFAULT_CUSTOM_ORDER
       };
     },
     validate: function(attrs) {
+      var i;
       if (attrs.blankCharacter === "") {
         return [
           "You must enter a character to use for the blank. If you want ",
           "it to look empty, please enter a Space (with the spacebar)."
         ].join('');
+      }
+      /*
+       * Check if all letters are contained in customOrder exactly once,
+       * including the blank.
+       */
+      for (i = 0; i < DEFAULT_CUSTOM_ORDER.length; i++) {
+        if (attrs.customOrder.indexOf(DEFAULT_CUSTOM_ORDER[i]) === -1) {
+          return [
+            "Your custom order is missing at least one letter: ",
+            DEFAULT_CUSTOM_ORDER[i], "."
+          ].join('');
+        }
       }
     },
     /**
@@ -40,7 +56,8 @@ define([
           'selection': 'tileSelection',
           'font': 'font',
           'bold': 'bold',
-          'blankCharacter': 'blankCharacter'
+          'blankCharacter': 'blankCharacter',
+          'customOrder': 'customOrder'
         }[secondLevelKey];
       } else if (topLevelKey === 'bc') {
         return {

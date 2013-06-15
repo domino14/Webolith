@@ -25,6 +25,7 @@ define([
       "click #exit": "exit",
       "click #shuffle": "shuffle",
       "click #alphagram": "alphagram",
+      'click #customOrder': 'customOrder',
       "click .dcInfo": "showAddlInfo",
       "keypress #guessText": "readSpecialKeypress"
     },
@@ -56,8 +57,7 @@ define([
       this.questionViews = [];
       this.defsDiv = this.$("#defs_popup_content");
       this.roundTotalAnswers = null;
-      this.$('#shuffle').disableSelection();
-      this.$('#alphagram').disableSelection();
+      this.$('.utilityButton').disableSelection();
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;
@@ -106,6 +106,10 @@ define([
       } else if (keyCode === 50) {
         // 2 -- alphagram
         this.alphagram();
+        e.preventDefault();
+      } else if (keyCode === 51) {
+        // 3 -- custom order
+        this.customOrder();
         e.preventDefault();
       }
     },
@@ -194,6 +198,13 @@ define([
       this.guessInput.focus();
       _.each(this.questionViewsByAlphagram, function(view) {
         view.alphagram();
+      });
+    },
+
+    customOrder: function() {
+      this.guessInput.focus();
+      _.each(this.questionViewsByAlphagram, function(view) {
+        view.customOrder();
       });
     },
 
