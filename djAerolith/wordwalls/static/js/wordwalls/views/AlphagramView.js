@@ -33,6 +33,24 @@ define([
       this.naturalTileOrder = _.clone(this.tileOrder);
       this.$el.disableSelection();
       this.tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5};
+      /**
+       * A memoized function to avoid recomputing the custom tile ordering
+       * every time.
+       * @param  {string} order   The custom tile ordering.
+       * @return {Array.<number>} The actual tile ordering object.
+       */
+      this.customOrder_ = _.memoize(_.bind(function(order) {
+        var lettersObj, i, letters;
+        lettersObj = [];
+        letters = this.model.get('alphagram');
+        for (i = 0; i < letters.length; i++) {
+          lettersObj.push({letter: letters[i], index: i});
+        }
+        lettersObj = _.sortBy(lettersObj, function(letterObj) {
+          return order.indexOf(letterObj.letter);
+        });
+        return _.pluck(lettersObj, 'index');
+      }, this));
     },
     changeConfig: function(configModel) {
       this.viewConfig = configModel;
@@ -117,6 +135,11 @@ define([
     },
     alphagram: function() {
       this.tileOrder = _.clone(this.naturalTileOrder);
+      this.render();
+    },
+    customOrder: function() {
+      this.tileOrder = _.clone(
+        this.customOrder_(this.viewConfig.get('customOrder')));
       this.render();
     },
     shuffleList: function(list) {
