@@ -17,7 +17,8 @@ define([
         gameGoing: false,
         quizzingOnMissed: false,
         quizOverForever: false,
-        challenge: false
+        challenge: false,
+        autoSave: false
       };
     },
     initialize: function() {
