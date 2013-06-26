@@ -57,7 +57,7 @@ class AerolithProfile(models.Model):
     # project-wide
     defaultLexicon = models.ForeignKey(Lexicon, default=getLexicon)
     avatarUrl = models.CharField(null=True, blank=True, max_length=512)
-    additional_data = models.TextField(default='{}')
+    additional_data = models.TextField(default='{}', blank=True)
 
     def __unicode__(self):
         return "Profile for " + self.user.username
