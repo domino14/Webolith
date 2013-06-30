@@ -4,9 +4,9 @@ import os
 curdir = os.path.dirname(__file__)
 
 
-env.key_filename = os.getenv("HOME") + "/.rackspace/aerolith_production.pem"
+env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
-    'prod': ['ubuntu@aerolith.org'],
+    'prod': ['ubuntu@192.241.203.184'],
     'prod_sudo': ['cesar@aerolith.org']
 }
 
