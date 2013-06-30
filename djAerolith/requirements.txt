@@ -8,6 +8,7 @@ cssmin==0.1.4
 -e git://github.com/azuer88/django-basic-apps.git@c757ee207b4e699ddf2c4cd00bb495d9a3b65ca9#egg=django_basic_apps-dev
 django-registration==0.8
 django-tagging==0.3.1
+gargoyle==0.10.8
 gunicorn==0.13.4
 paramiko==1.7.7.1
 pycrypto==2.3

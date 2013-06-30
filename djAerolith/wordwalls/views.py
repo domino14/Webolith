@@ -48,6 +48,7 @@ from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
 from djAerolith.views import get_random_title
 from current_version import CURRENT_VERSION
 from wordwalls.utils import UserListParseException
+from gargoyle import gargoyle
 
 
 dcTimeMap = {}
@@ -327,6 +328,8 @@ def table(request, id):
     else:   # it's a GET
         wwg = WordwallsGame()
         permitted = wwg.permit(request.user, id)
+        if gargoyle.is_active('disable_games', request):
+            permitted = False
         if permitted:
             params = wwg.getAddParams(id)
             # Add styling params from user's profile (for styling table
@@ -349,10 +352,15 @@ def table(request, id):
                                       context_instance=RequestContext(request))
         else:
             return render_to_response('wordwalls/notPermitted.html',
-                                      {'tablenum': id})
+                                      {'tablenum': id},
+                                      context_instance=RequestContext(request))
 
 
 def start_game(request, id):
+    if gargoyle.is_active('disable_games', request):
+        return response(
+            {'serverMsg': 'Unable to start game as this is temporarily '
+                          'disabled. Please try again in a few minutes.'})
     lonelock(WordwallsGameModel, id)
     wwg = WordwallsGame()
     gameReady = wwg.startRequest(request.user, id)
