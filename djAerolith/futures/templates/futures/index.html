@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+{% load value_from_settings %}
+{% value_from_settings DEBUG_JS as DEBUG_JS %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Futures</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Mobile Aerolith.">
+    <meta name="author" content="Cesar Del Solar">
+
+    <link href="/static/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="/static/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+   <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Aerolith Exchange</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div id="app-view">
+        <div class="row" id="alert-area">
+        </div>
+
+        <div class="row">
+          <div class="span3">
+            <h3>Categories</h3>
+            <ul id="category-list"></ul>
+            <h3>Wallet</h3>
+            <div id="wallet-manager">
+              {% if wallet %}
+                You currently have <strong>{{points}}</strong> points to spend.
+              {% else %}
+                <P>Your wallet hasn't been set up yet. You will be given 10000 free points to spend.</P>
+                <button id="setupWallet" class="btn">Set up now</button>
+              {% endif %}
+            </div>
+          </div>
+          <div class="span4">
+            <div id="future-list"></div>
+          </div>
+          <div class="span4">
+            <div id="transaction-form"></div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal hide fade" id="instructions">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Aerolith Exchange</h3>
+      </div>
+      <div class="modal-body">
+        {% include "futures/instructions.html" %}
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+
+    </div>
+
+    <script>
+    var require = {
+      config: {
+        'main': {
+          'categories': '{{categories|escapejs}}'
+        }
+      }
+    }
+    </script>
+    <script src="/static/lib/require/require-min.js"></script>
+    <script>
+    require.config({
+        {% if DEBUG_JS %}
+            paths: {
+                'main': '/static/js/futures/main'
+            }
+        {% else %}
+            urlArgs: 'v={{CURRENT_VERSION}}',
+            paths: {
+                'main': '/static/build/futures-built'
+            }
+        {% endif %}
+    });
+    require(['main']);
+    </script>
+
+  </body>
+</html>

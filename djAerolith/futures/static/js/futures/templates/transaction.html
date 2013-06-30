@@ -1,0 +1,29 @@
+<P>
+{{#buy}}
+You wish to <em>buy</em> shares of {{name}}.
+{{/buy}}
+{{#sell}}
+You wish to <em>sell</em> shares of {{name}}. This is permitted even if you don't own these shares yet.
+{{/sell}}
+</P>
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="numShares">Number of shares</label>
+        <div class="controls">
+            <input type="text" id="numShares" class="input-small"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="desiredPrice">Desired price</label>
+        <div class="controls">
+            <input type="text" id="desiredPrice" class="input-small"/> points
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <button id="submitTransaction" class="btn btn-{{#buy}}buy{{/buy}}{{#sell}}sell{{/sell}}" data-futureid="{{futureId}}">Submit</button>
+        </div>
+    </div>
+    <small><a href="#instructions" data-toggle="modal">How does it work?</a></small>
+</form>

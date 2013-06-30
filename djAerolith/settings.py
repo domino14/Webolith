@@ -148,7 +148,8 @@ INSTALLED_APPS = (
     'crosswordgame',
     'misctools',
     'gargoyle',
-    'nexus'
+    'nexus',
+    'futures'
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
