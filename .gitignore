@@ -15,7 +15,6 @@ djAerolith/logs
 *.sublime-workspace
 *.sublime-project
 namedLists.json
-r.js
 djAerolith/static/build/*
 dump.rdb
 scripts/digoceanssh.py

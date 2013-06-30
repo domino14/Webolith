@@ -37,19 +37,23 @@ def deploy_prod():
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
-def deploy_js_build():
+def create_js_build():
     """
         Uses r.js to generate a build.
     """
-    lcd(os.path.join(curdir, 'djAerolith'))
-    local("node r.js -o js_build/create_table_wordwalls.js")
-    local("node r.js -o js_build/table_wordwalls.js")
-    with settings(warn_only=True):
-        local("rm static/build/*.gz")
-    local("gzip -c static/build/table-main-built.js > "
-          "static/build/table-main-built.js.gz")
-    local("gzip -c static/build/create-table-main-built.js > "
-          "static/build/create-table-main-built.js.gz")
+    with lcd(os.path.join(curdir, 'djAerolith')):
+        local("node r.js -o js_build/create_table_wordwalls.js")
+        local("node r.js -o js_build/table_wordwalls.js")
+        with settings(warn_only=True):
+            local("rm static/build/*.gz")
+        local("gzip -c static/build/table-main-built.js > "
+              "static/build/table-main-built.js.gz")
+        local("gzip -c static/build/create-table-main-built.js > "
+              "static/build/create-table-main-built.js.gz")
+
+
+def deploy_js_build():
+    create_js_build()
     with settings(warn_only=True):
         with cd("static"):
             run("mkdir build")
