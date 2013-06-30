@@ -1,13 +1,18 @@
-from fabric.api import env, run, roles, cd, settings, prefix, lcd, put, local
+from fabric.api import (env, run, roles, cd, settings, prefix, lcd, put, local,
+                        execute, parallel)
 import os
+from ..scripts.digoceanssh import get_servers
+from ..scripts.gen_firewall import gen_firewall
 
 curdir = os.path.dirname(__file__)
 
 
 env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
-    'prod': ['ubuntu@192.241.203.184'],
-    'prod_sudo': ['cesar@aerolith.org']
+    'prod': ['ubuntu@aerolith.org'],
+    'prod_redis': ['ubuntu@192.241.203.24'],
+    'prod_db': ['ubuntu@192.241.203.48']
+
 }
 
 
@@ -75,3 +80,26 @@ def reload_nginx_config():
     put(os.path.join(curdir, '../config/nginx.conf'),
         "/etc/nginx/nginx.conf", use_sudo=True)
     run("sudo kill -HUP $( cat /var/run/nginx.pid )")
+
+
+def deploy_firewalls():
+    servers = get_servers()
+    execute(deploy_all_firewalls, servers)
+
+
+@parallel
+@roles('prod', 'prod_db', 'prod_redis')
+def deploy_all_firewalls(servers):
+    secGroup = None
+    if env.host_string in env.roledefs['prod']():
+        secGroup = 'Web'
+    elif env.host_string in env.roledefs['prod_db']():
+        secGroup = 'Database'
+    elif env.host_string in env.roledefs['prod_redis']():
+        secGroup = 'Redis'
+    gen_firewall(secGroup, servers)
+
+    # write the firewall to the /etc/iptables.up.rules file
+    # put('iptables.%s.rules' % secGroup, '/etc/iptables.up.rules',
+    #    use_sudo=True)
+    # sudo('iptables-restore < /etc/iptables.up.rules')
