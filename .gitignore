@@ -19,3 +19,4 @@ r.js
 djAerolith/static/build/*
 dump.rdb
 scripts/digoceanssh.py
+scripts/gen_firewall.py
