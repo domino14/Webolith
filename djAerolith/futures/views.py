@@ -2,12 +2,11 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from futures.models import FutureCategory, Future, Wallet, Transaction
+from futures.models import FutureCategory, Future, Wallet, Order
 from lib.response import response
 import json
 from django.contrib.auth.decorators import login_required
 from locks import lonelock
-from django.db import transaction
 
 
 def main(request):
@@ -116,6 +115,16 @@ def validate_order_params(num_shares, price, wallet, order_type, future):
 
 @login_required
 def orders(request):
+    """
+        An order was submitted. This function should save it and then try
+        actually executing it if there are matching orders.
+        Since we are using the Django Transaction Middleware, this entire
+        view function is in a transaction. If something goes wrong / times out
+        it will automatically roll back (thus canceling the order).
+
+        We will still additionally need a lock in order to prevent concurrent
+        accesses by other threads.
+    """
     if request.method == 'POST':
         # Submit an order!
         num_shares = request.POST.get('numShares')
@@ -131,16 +140,15 @@ def orders(request):
                                       future)
         if error:
             return response(error, status=400)
-        # Create a transaction.
-        t = Transaction(future=future, quantity=int(num_shares),
-                                  unit_price=int(price))
+        # Create an order.
+        order = Order(future=future, quantity=int(num_shares),
+                      unit_price=int(price))
         if order_type == 'buy':
-            t.buyer = request.user
+            order.buyer = request.user
         elif order_type == 'sell':
-            t.seller = request.user
-        t.save()
-        # Try to execute transaction now, if possible.
-        with transaction.commit_on_success():
-            pass
+            order.seller = request.user
+        order.save()
+        # Try to execute order now, if possible.
 
-        return response(t.id)
+
+        return response(order.id)

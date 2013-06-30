@@ -6,13 +6,13 @@ define([
   'collections/futures',
   'views/category_view',
   'views/future_view',
-  'text!templates/transaction.html',
+  'text!templates/order.html',
   'text!templates/wallet.html',
   'text!templates/alert.html',
   'mustache',
   'bootstrap'
 ], function(Backbone, $, _, Categories, Futures, CategoryView, FutureView,
-  TransactionTemplate, WalletTemplate, AlertTemplate, Mustache) {
+  OrderTemplate, WalletTemplate, AlertTemplate, Mustache) {
   "use strict";
   var WALLET_URL, ORDERS_URL, FuturesApp;
   WALLET_URL = '/futures/api/wallet/';
@@ -25,7 +25,7 @@ define([
       this.currentFutures = new Futures();
       this.categoryList = this.$('#category-list');
       this.futureList = this.$('#future-list');
-      this.transactionForm = this.$('#transaction-form');
+      this.orderForm = this.$('#order-form');
       this.listenTo(this.categories, 'reset', _.bind(this.addCategories, this));
       this.listenTo(this.currentFutures, 'reset', _.bind(this.addFutures,
         this));
@@ -54,7 +54,7 @@ define([
     addFuture: function(future) {
       var futureView = new FutureView({model: future});
       this.futureList.append(futureView.render().el);
-      this.listenTo(futureView, 'newTransaction', this.showOrderForm);
+      this.listenTo(futureView, 'newOrder', this.showOrderForm);
     },
     addFutures: function() {
       this.currentFutures.each(this.addFuture, this);
@@ -63,18 +63,19 @@ define([
     },
     /**
      * Show form for buying or selling future.
-     * @param  {Backbone.Model} future The Future that the user wishes to buy.
+     * @param {Backbone.Model} future The Future that the user wishes to buy.
+     * @param {string} orderType The type of order; buy or sell.
      */
-    showOrderForm: function(future, transactionType) {
+    showOrderForm: function(future, orderType) {
       var context = {};
-      if (transactionType === 'buy') {
+      if (orderType === 'buy') {
         context.buy = true;
-      } else if (transactionType === 'sell') {
+      } else if (orderType === 'sell') {
         context.sell = true;
       }
       context.name = future.attributes.name;
       context.futureId = future.attributes.id;
-      this.transactionForm.html(Mustache.render(TransactionTemplate, context));
+      this.orderForm.html(Mustache.render(OrderTemplate, context));
     },
     /**
      * Actually submit an order to buy a future.
@@ -97,7 +98,7 @@ define([
         type: type,
         numShares: this.$('#numShares').val(),
         price: this.$('#desiredPrice').val(),
-        future: this.$('#submitTransaction').data('futureid')
+        future: this.$('#submitOrder').data('futureid')
       }, function(data) {
         console.log(data);
       }, 'json').fail(_.bind(this.failRequestHandler, this));

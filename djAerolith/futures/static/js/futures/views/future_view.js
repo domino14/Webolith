@@ -22,13 +22,13 @@ define([
      * Buy shares was clicked. Put up shares for offer.
      */
     buyShares: function() {
-      this.trigger('newTransaction', this.model, 'buy');
+      this.trigger('newOrder', this.model, 'buy');
     },
     /**
      * Sell shares was clicked. Sell a share you own (or short-sell).
      */
     sellShares: function() {
-      this.trigger('newTransaction', this.model, 'sell');
+      this.trigger('newOrder', this.model, 'sell');
     }
   });
 });

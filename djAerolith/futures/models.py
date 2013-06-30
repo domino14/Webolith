@@ -31,16 +31,17 @@ class FutureHistory(models.Model):
     date = models.DateTimeField()
 
 
-class Transaction(models.Model):
+class Order(models.Model):
     future = models.ForeignKey(Future)
     quantity = models.IntegerField()
     buyer = models.ForeignKey(User, null=True,
-                              related_name='transaction_buyer')
+                              related_name='order_buyer')
     seller = models.ForeignKey(User, null=True,
-                               related_name='transaction_seller')
+                               related_name='order_seller')
     unit_price = models.IntegerField()
-    # Did the transaction go through?
+    # Did the order go through?
     executed = models.BooleanField(default=False)
+    last_modified = models.DateTimeField(auto_now=True, auto_now_add=True)
 
 
 class Wallet(models.Model):
