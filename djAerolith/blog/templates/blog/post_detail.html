@@ -7,7 +7,7 @@
 {% block body_id %}post_{{ object.id }}{% endblock %}
 
 {% block content_title %}
-  <h2>{{ object.title }}</h2>  
+  <h2>{{ object.title }}</h2>
 {% endblock %}
 
 {% block content %}
@@ -31,7 +31,7 @@
         <h5 class="name">
             {{ comment.user.username }} ({{ comment.submit_date|date:"F j, Y @ P" }})
         </h5>
-        {{ comment.comment|markdown }}
+        {{ comment.comment|markdown:"safe" }}
       </div>
       {% endif %}
     {% endfor %}
