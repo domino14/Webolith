@@ -24,8 +24,12 @@ from django.contrib import admin
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.views import register
 from django.views.generic.simple import direct_to_template
+import nexus
+import gargoyle
 
 admin.autodiscover()
+nexus.autodiscover()
+gargoyle.autodiscover()
 
 import wordwalls.views
 
@@ -54,7 +58,8 @@ urlpatterns = patterns('',
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
-    (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'})
+    (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'}),
+    ('^nexus/', include(nexus.site.urls))
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
