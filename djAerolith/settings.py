@@ -160,10 +160,11 @@ LOGIN_REDIRECT_URL = "/"
 AUTH_PROFILE_MODULE = 'accounts.AerolithProfile'
 
 EMAIL_HOST = "smtp.mailgun.org"
-EMAIL_PORT = 465
-EMAIL_HOST_USER = "postmaster@aerolith.mailgun.org"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'
 EMAIL_HOST_PASSWORD = settings_local.emailPw
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'webmaster@aerolith.mailgun.org'
 
 LOGIN_URL = "/accounts/login"
 
