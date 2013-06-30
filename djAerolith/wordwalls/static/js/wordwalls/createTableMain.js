@@ -107,7 +107,7 @@ define([
 
       }
     });
-    if (tableCreateParams.chatEnabled === 'True') {
+    if (tableCreateParams.chatEnabled === 'True' && false) {
       s = new Socket();
       s.setUrl(tableCreateParams.socketUrl);
       c = new Chat({

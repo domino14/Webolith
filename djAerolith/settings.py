@@ -36,7 +36,7 @@ DATABASES = {
         'NAME': 'djAerolith',                      # Or path to database file if using sqlite3.
         'USER': settings_local.sqlUser,                      # Not used with sqlite3.
         'PASSWORD': settings_local.sqlPw,                  # Not used with sqlite3.
-        'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': settings_local.SQL_HOST,                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'OPTIONS': {"init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED" } ,
         # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
@@ -279,7 +279,7 @@ ASSETS_DEBUG = settings_local.ASSETS_DEBUG
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
 RECAPTCHA_PRIVATE_KEY = settings_local.RECAPTCHA_PRIVATE_KEY
 
-REDIS_HOST = 'localhost'
+REDIS_HOST = settings_local.REDIS_HOST
 REDIS_PORT = 6379
 REDIS_SOCKET_TOKEN_DB = 2
 
