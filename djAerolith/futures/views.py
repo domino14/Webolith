@@ -2,10 +2,12 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from futures.models import FutureCategory, Future, Wallet
+from futures.models import FutureCategory, Future, Wallet, Transaction
 from lib.response import response
 import json
 from django.contrib.auth.decorators import login_required
+from locks import lonelock
+from django.db import transaction
 
 
 def main(request):
@@ -68,7 +70,7 @@ def wallet(request):
         return response({'id': wallet.id, 'points': wallet.points})
 
 
-def validate_order_params(num_shares, price, wallet, order_type):
+def validate_order_params(num_shares, price, wallet, order_type, future):
     """
         Validate that num_shares and price are valid numbers.
         Then validate that the user can actually carry out this trade.
@@ -84,13 +86,10 @@ def validate_order_params(num_shares, price, wallet, order_type):
     except (ValueError, TypeError):
         return ("Please ensure that the price is a whole number between 0 and "
                 "1000.")
-    try:
-        future = Future.objects.get(pk=future)
-    except Future.DoesNotExist:
-        return "That is a non-existent future."
+
 
     # Now do some basic math.
-    to_spend = wallet.coins - wallet.frozen
+    to_spend = wallet.points - wallet.frozen
     if order_type == 'buy':
         if num_shares * price > to_spend:
             return 'You cannot spend that many points!'
@@ -107,7 +106,9 @@ def validate_order_params(num_shares, price, wallet, order_type):
             max_possible_loss = diff * (1000 - price)
             if max_possible_loss > to_spend:
                 return ('You cannot short-sell that many of this share, as '
-                        'your possible losses are not covered. Try a lower '
+                        'your possible losses are not covered. If the event '
+                        'happens, you can stand to lose ' +
+                        str(max_possible_loss) + ' points. Try a lower '
                         'number of shares and/or a higher short-sell price.')
     else:
         return 'This is an unsupported order type. h4x?'
@@ -120,7 +121,10 @@ def orders(request):
         num_shares = request.POST.get('numShares')
         price = request.POST.get('price')
         order_type = request.POST.get('type')
-        future = request.POST.get('future')
+        try:
+            future = Future.objects.get(pk=request.POST.get('future'))
+        except Future.DoesNotExist:
+            return "That is a non-existent future."
         wallet = Wallet.objects.get(user=request.user)
         # Validate these parameters.
         error = validate_order_params(num_shares, price, wallet, order_type,
@@ -128,4 +132,15 @@ def orders(request):
         if error:
             return response(error, status=400)
         # Create a transaction.
+        t = Transaction(future=future, quantity=int(num_shares),
+                                  unit_price=int(price))
+        if order_type == 'buy':
+            t.buyer = request.user
+        elif order_type == 'sell':
+            t.seller = request.user
+        t.save()
+        # Try to execute transaction now, if possible.
+        with transaction.commit_on_success():
+            pass
 
+        return response(t.id)
