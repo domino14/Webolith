@@ -14,7 +14,7 @@ You wish to <em>sell</em> shares of {{name}}. This is permitted even if you don'
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="desiredPrice">Desired price</label>
+        <label class="control-label" for="desiredPrice">Limit price</label>
         <div class="controls">
             <input type="text" id="desiredPrice" class="input-small"/> points
         </div>
@@ -22,7 +22,7 @@ You wish to <em>sell</em> shares of {{name}}. This is permitted even if you don'
 
     <div class="control-group">
         <div class="controls">
-            <button id="submitOrder" class="btn btn-{{#buy}}buy{{/buy}}{{#sell}}sell{{/sell}}" data-futureid="{{futureId}}">Submit</button>
+            <button id="submitOrder" class="btn btn-{{#buy}}buy{{/buy}}{{#sell}}sell{{/sell}}" data-futureid="{{futureId}}" type="button">Submit</button>
         </div>
     </div>
     <small><a href="#instructions" data-toggle="modal">How does it work?</a></small>

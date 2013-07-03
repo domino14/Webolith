@@ -1,0 +1,92 @@
+[
+  {
+    "pk": 1, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 1, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 8, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 13, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 14, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 15, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 16, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 17, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 18, 
+      "shares_owned": "{}"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "futures.wallet", 
+    "fields": {
+      "frozen": 0, 
+      "points": 10000, 
+      "user": 19, 
+      "shares_owned": "{}"
+    }
+  }
+]

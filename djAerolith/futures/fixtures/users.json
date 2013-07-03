@@ -1,0 +1,164 @@
+[
+  {
+    "pk": 1,
+    "model": "auth.user",
+    "fields": {
+      "username": "cesar",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": true,
+      "is_staff": true,
+      "last_login": "2013-06-30 01:41:52",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@domain.com",
+      "date_joined": "2011-06-02 22:46:57"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "auth.user",
+    "fields": {
+      "username": "marq2",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-07-10 01:13:43",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@domain.com",
+      "date_joined": "2011-06-04 13:21:06"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "auth.user",
+    "fields": {
+      "username": "ozmarules",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-06-28 22:45:51",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@hotmail.com",
+      "date_joined": "2011-06-04 13:33:10"
+    }
+  },
+  {
+    "pk": 14,
+    "model": "auth.user",
+    "fields": {
+      "username": "overbored",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2013-06-13 18:09:06",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@domain.com",
+      "date_joined": "2011-06-04 13:37:06"
+    }
+  },
+  {
+    "pk": 15,
+    "model": "auth.user",
+    "fields": {
+      "username": "chaithedog",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2013-06-04 17:40:00",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@domain.net",
+      "date_joined": "2011-06-04 14:02:52"
+    }
+  },
+  {
+    "pk": 16,
+    "model": "auth.user",
+    "fields": {
+      "username": "maria",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2011-06-14 23:52:42",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@gmail.com",
+      "date_joined": "2011-06-04 14:18:26"
+    }
+  },
+  {
+    "pk": 17,
+    "model": "auth.user",
+    "fields": {
+      "username": "kurl",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2013-06-07 17:56:39",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@gmail.com",
+      "date_joined": "2011-06-04 14:35:34"
+    }
+  },
+  {
+    "pk": 18,
+    "model": "auth.user",
+    "fields": {
+      "username": "muffinwithtentacle",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2013-06-04 13:41:16",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@hotmail.com",
+      "date_joined": "2011-06-04 14:58:04"
+    }
+  },
+  {
+    "pk": 19,
+    "model": "auth.user",
+    "fields": {
+      "username": "GoldfishBW",
+      "first_name": "",
+      "last_name": "",
+      "is_active": true,
+      "is_superuser": false,
+      "is_staff": false,
+      "last_login": "2013-05-03 07:40:12",
+      "groups": [],
+      "user_permissions": [],
+      "password": "sha1$e6cdc$abcdefg",
+      "email": "test@yahoo.com",
+      "date_joined": "2011-06-04 15:49:55"
+    }
+  }
+]

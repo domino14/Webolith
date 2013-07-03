@@ -1,0 +1,80 @@
+[
+  {
+    "pk": 1, 
+    "model": "futures.future", 
+    "fields": {
+      "category": 1, 
+      "name": "Nigel Richards", 
+      "last_buy": 0, 
+      "volume": 0, 
+      "is_open": true, 
+      "last_trade_date": null, 
+      "description": "Nigel wins nationals"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "futures.future", 
+    "fields": {
+      "category": 1, 
+      "name": "Cesar Del Solar", 
+      "last_buy": 0, 
+      "volume": 0, 
+      "is_open": true, 
+      "last_trade_date": null, 
+      "description": "Cesar wins nationals"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "futures.future", 
+    "fields": {
+      "category": 2, 
+      "name": "Dielle Saldanha", 
+      "last_buy": 0, 
+      "volume": 0, 
+      "is_open": true, 
+      "last_trade_date": null, 
+      "description": "Dielle cashes at nationals (only placement prizes)"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "futures.future", 
+    "fields": {
+      "category": 1, 
+      "name": "Jesse Day", 
+      "last_buy": 0, 
+      "volume": 0, 
+      "is_open": true, 
+      "last_trade_date": "2013-07-03 00:54:30", 
+      "description": "JD!"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "futures.future", 
+    "fields": {
+      "category": 1, 
+      "name": "Kenji Matsumoto", 
+      "last_buy": 0, 
+      "volume": 0, 
+      "is_open": true, 
+      "last_trade_date": "2013-07-03 00:54:50", 
+      "description": "Don't retire"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "futures.future", 
+    "fields": {
+      "category": 1, 
+      "name": "Peter Armstrong", 
+      "last_buy": 0, 
+      "volume": 0, 
+      "is_open": true, 
+      "last_trade_date": "2013-07-03 00:55:34", 
+      "description": "Bay Area rules"
+    }
+  }
+]
