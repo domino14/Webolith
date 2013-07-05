@@ -19,12 +19,15 @@ class Future(models.Model):
     description = models.CharField(max_length=256)
     is_open = models.BooleanField(default=False)
     last_buy = models.IntegerField()
+    bid = models.IntegerField(null=True)
+    ask = models.IntegerField(null=True)
     last_trade_date = models.DateTimeField(auto_now=True, null=True)
     volume = models.IntegerField()
     category = models.ForeignKey(FutureCategory)
 
     def __unicode__(self):
-        return '%s' % self.name
+        return '%s (A: %s B: %s LB: %s)' % (self.name, self.ask, self.bid,
+                                            self.last_buy)
 
 
 class FutureHistory(models.Model):
@@ -34,7 +37,10 @@ class FutureHistory(models.Model):
     """
     future = models.ForeignKey(Future)
     price = models.IntegerField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return '%s: %s, %s' % (self.date, self.future, self.price)
 
 
 class Order(models.Model):

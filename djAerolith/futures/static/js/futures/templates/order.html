@@ -1,9 +1,9 @@
 <P>
 {{#buy}}
-You wish to <em>buy</em> shares of {{name}}.
+You wish to <strong>buy</strong> shares of {{name}}.
 {{/buy}}
 {{#sell}}
-You wish to <em>sell</em> shares of {{name}}. This is permitted even if you don't own these shares yet.
+You wish to <strong>sell</strong> shares of {{name}}. This is permitted even if you don't own these shares yet.
 {{/sell}}
 </P>
 <form class="form-horizontal">
@@ -25,5 +25,4 @@ You wish to <em>sell</em> shares of {{name}}. This is permitted even if you don'
             <button id="submitOrder" class="btn btn-{{#buy}}buy{{/buy}}{{#sell}}sell{{/sell}}" data-futureid="{{futureId}}" type="button">Submit</button>
         </div>
     </div>
-    <small><a href="#instructions" data-toggle="modal">How does it work?</a></small>
 </form>

@@ -1,1 +1,30 @@
-You currently have <strong>{{points}}</strong> points to spend.
+{{^setup}}
+<P>Your wallet hasn't been set up yet. You will be given 100,000 free points to spend.</P>
+<button id="setupWallet" class="btn">Set up now</button>
+{{/setup}}
+{{#setup}}
+<div>
+    <P>Points in wallet: {{points}}</P>
+    <P>Frozen: {{frozen}}</P>
+    <P>You can spend: <strong>{{toSpend}}</strong></P>
+</div>
+{{#sharesToView}}
+<h4>Owned Shares</h4>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Share Name</th>
+                <th>Quantity Owned</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{#displayShares}}
+        <tr>
+            <td>{{shareName}}</td>
+            <td>{{numShares}}</td>
+        </tr>
+        {{/displayShares}}
+        </tbody>
+    </table>
+{{/sharesToView}}
+{{/setup}}

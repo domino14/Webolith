@@ -1,0 +1,20 @@
+.share-control {
+    display: table-cell;
+    width: 120px;
+    height: 20px;
+}
+
+.share-control .buttons {
+    margin-top: 30px;
+}
+
+.share-control .buttons button {
+}
+
+.share-market-info {
+    display: table-cell;
+}
+
+.future-detail {
+    background-color: linen;
+}

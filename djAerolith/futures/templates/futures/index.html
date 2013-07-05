@@ -11,6 +11,7 @@
     <meta name="author" content="Cesar Del Solar">
 
     <link href="/static/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/futures/futures.css" rel="stylesheet">
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -30,6 +31,12 @@
             <span class="icon-bar"></span>
           </button>
           <a class="brand" href="#">Aerolith Exchange</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#instructions" data-toggle="modal">Help</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
@@ -45,20 +52,19 @@
             <ul id="category-list"></ul>
             <h3>Wallet</h3>
             <div id="wallet-manager">
-              {% if wallet %}
-                You currently have <strong>{{points}}</strong> points to spend.
-              {% else %}
-                <P>Your wallet hasn't been set up yet. You will be given 10000 free points to spend.</P>
-                <button id="setupWallet" class="btn">Set up now</button>
-              {% endif %}
             </div>
           </div>
-          <div class="span4">
+          <div class="span3">
+            <h3><center><span id="category-title"></span></center></h3>
             <div id="future-list"></div>
           </div>
-          <div class="span4">
+          <div class="span6">
             <div id="order-form"></div>
-
+            <h3>Your Last Transactions</h3>
+            <div id="last-transactions">
+            </div>
+            <h3>Your Open Orders</h3>
+            <div id="open-orders"></div>
           </div>
         </div>
 
@@ -83,7 +89,10 @@
     var require = {
       config: {
         'main': {
-          'categories': '{{categories|escapejs}}'
+          'categories': '{{categories|escapejs}}',
+          'wallet': '{{wallet|escapejs}}',
+          'orders': '{{orders|escapejs}}',
+          'lastTransactions': '{{last_transactions|escapejs}}'
         }
       }
     }

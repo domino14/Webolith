@@ -1,0 +1,22 @@
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Share</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#transactions}}
+    <tr class="{{#buy}}success{{/buy}}{{#sell}}error{{/sell}}">
+        <td>{{date}}</td>
+        <td>{{type}}</td>
+        <td>{{name}}</td>
+        <td>{{quantity}}</td>
+        <td>{{unitPrice}}</td>
+    </tr>
+    {{/transactions}}
+    </tbody>
+</table>

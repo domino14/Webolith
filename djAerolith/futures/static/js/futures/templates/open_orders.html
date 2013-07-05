@@ -1,0 +1,23 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Share name</th>
+            <th>Order type</th>
+            <th>Quantity</th>
+            <th>Price per share</th>
+            <th>Cancel</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#orders}}
+        <tr class="{{#buy}}success{{/buy}}{{#sell}}error{{/sell}}">
+            <td>{{name}}</td>
+            <td>{{orderType}}</td>
+            <td>{{quantity}}</td>
+            <td>{{unitPrice}}</td>
+            <td><button class="btn btn-danger cancel-order has-tooltip" data-orderid="{{id}}" data-toggle="tooltip" title="Canceling this order will unfreeze {{frozen}} points.">Cancel</button></td>
+        </tr>
+    {{/orders}}
+    </tbody>
+
+</table>

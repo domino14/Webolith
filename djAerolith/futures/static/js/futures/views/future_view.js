@@ -7,7 +7,7 @@ define([
   "use strict";
   return Backbone.View.extend({
     tagName: 'div',
-    className: 'well well-small',
+    className: 'well well-small future-detail',
     initialize: function() {
     },
     events: {

@@ -44,6 +44,9 @@ define([
     });
     app = new App({
       categories: JSON.parse(module.config().categories),
+      wallet: JSON.parse(module.config().wallet),
+      orders: JSON.parse(module.config().orders),
+      lastTransactions: JSON.parse(module.config().lastTransactions),
       el: $('#app-view')
     });
     // Set up router events.

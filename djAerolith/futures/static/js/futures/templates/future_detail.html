@@ -1,12 +1,13 @@
-<div style="float: left;">
+<div class="share-control">
     <div><strong>{{name}}</strong></div>
-    <div><small>{{description}}</small></div>
+    <div class="buttons">
+        <button class="btn btn-success shares-buy has-tooltip" data-toggle="tooltip" title="If you think this event WILL happen, you want to buy. If the event happens, each share is settled at 1000 points.">Buy</button>
+        <button class="btn btn-danger shares-sell has-tooltip" data-toggle="tooltip" title="If you think this event WILL NOT happen, you want to sell. If the event does not happen, each share is settled at 0 points.">Sell</button>
+    </div>
 </div>
-<div style="float: right;">
-    <P>Current Price: <strong>0</strong> points</P>
-    <P style="margin-top: 30px;"><small>Market volume: 0 trades</small></P>
+<div class="share-market-info">
+    <P class="has-tooltip" data-toggle="tooltip" title="The lowest price this share is being sold at.">Ask: <strong>{{ask}}</strong> points</P>
+    <P class="has-tooltip" data-toggle="tooltip" title="The highest price a buyer is willing to pay for this share.">Bid: <strong>{{bid}}</strong> points</P>
+    <P class="has-tooltip" data-toggle="tooltip" title="How many shares have been traded since the beginning."><small>Market volume: {{volume}} trades</small></P>
 </div>
-<div style="clear: left;">
-<button class="btn btn-success shares-buy" data-toggle="tooltip" title="If you think this event WILL happen, you want to buy. If the event happens, each share is settled at 1000 points.">Buy</button>
-<button class="btn btn-danger shares-sell" data-toggle="tooltip" title="If you think this event WILL NOT happen, you want to sell. If the event does not happen, each share is settled at 0 points." style="margin-left: 20px;">Sell</button>
-</div>
+

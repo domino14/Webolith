@@ -152,5 +152,19 @@
       "filled": false,
       "filled_by": null
     }
+  },
+  {
+    "pk": 12,
+    "model": "futures.order",
+    "fields": {
+      "order_type": "S",
+      "creator": 13,
+      "unit_price": 600,
+      "future": 1,
+      "last_modified": "2013-07-03 08:20:28",
+      "quantity": 5,
+      "filled": false,
+      "filled_by": null
+    }
   }
 ]

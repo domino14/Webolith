@@ -1,33 +1,78 @@
 # Create your views here.
-
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from futures.models import FutureCategory, Future, Wallet, Order
+from futures.models import (FutureCategory, Future, Wallet, Order,
+                            SuccessfulTransaction, FutureHistory)
 from lib.response import response
 import json
 from django.contrib.auth.decorators import login_required
-from locks import lonelock
+from locks import lonelock, loneunlock
 import logging
 logger = logging.getLogger(__name__)
 
 
-def main(request):
-    categories = FutureCategory.objects.all()
+def wallet_response(user):
+    if not user.is_authenticated():
+        return None
     try:
-        wallet = Wallet.objects.get(user=request.user)
-        points = wallet.points
-        frozen = wallet.frozen
+        wallet = Wallet.objects.get(user=user)
     except Wallet.DoesNotExist:
         wallet = None
-        points = 0
-        frozen = 0
-    categories_resp = [{'name': c.name,
-                        'description': c.description,
-                        'id': c.pk} for c in categories]
-    context = {'categories': json.dumps(categories_resp),
-               'points': points,
-               'frozen': frozen,
-               'wallet': wallet}
+    if not wallet:
+        resp = None
+    else:
+        resp = {'points': wallet.points,
+                'frozen': wallet.frozen,
+                'id': wallet.pk,
+                'shares_owned': json.loads(wallet.shares_owned)}
+    return resp
+
+
+def orders_response(user):
+    if not user.is_authenticated():
+        return []
+    orders = Order.objects.filter(creator=user, filled=False)
+    resp = []
+    for order in orders:
+        resp.append({'order_type': order.order_type,
+                     'future': order.future.pk,
+                     'quantity': order.quantity,
+                     'unit_price': order.unit_price,
+                     'id': order.pk})
+    return resp
+
+
+def last_transactions(user):
+    ret = []
+    if not user.is_authenticated():
+        return ret
+    user_transactions = (SuccessfulTransaction.objects.filter(buyer=user) |
+                         SuccessfulTransaction.objects.filter(seller=user)
+                         ).order_by('-created')[:10]
+    for t in user_transactions:
+        obj = {}
+        if t.buyer == user:
+            obj['type'] = 'Buy'
+        elif t.seller == user:
+            obj['type'] = 'Sell'
+        obj['future'] = t.future.id,
+        obj['quantity'] = t.quantity
+        obj['unitPrice'] = t.unit_price
+        obj['date'] = str(t.created) + ' PST'  # Since our Django app is in PST
+                                               # time...
+        ret.append(obj)
+    return ret
+
+
+def main(request):
+    categories_response = [{'name': c.name,
+                            'description': c.description,
+                            'id': c.pk} for c in FutureCategory.objects.all()]
+    context = {'categories': json.dumps(categories_response),
+               'wallet': json.dumps(wallet_response(request.user)),
+               'orders': json.dumps(orders_response(request.user)),
+               'last_transactions': json.dumps(last_transactions(request.user))
+               }
     return render_to_response('futures/index.html', context,
                               context_instance=RequestContext(request))
 
@@ -47,6 +92,8 @@ def futures(request):
                      'id': f.id,
                      'is_open': f.is_open,
                      'last_buy': f.last_buy,
+                     'bid': f.bid,
+                     'ask': f.ask,
                      'volume': f.volume} for f in futures]
     return response(futures_resp)
 
@@ -55,8 +102,7 @@ def wallet(request):
     if request.method == 'POST':
         # Set up a new wallet.
         if not request.user.is_authenticated():
-            return response("You must set up an Aerolith account first.",
-                            status=403)
+            return response("", status=403)
         try:
             wallet = Wallet.objects.get(user=request.user)
             return response("You already have a wallet.",
@@ -64,11 +110,11 @@ def wallet(request):
         except Wallet.DoesNotExist:
             pass
         wallet = Wallet(user=request.user)
-        wallet.points = 10000
+        wallet.points = 100000
         wallet.frozen = 0
         wallet.shares_owned = '{}'
         wallet.save()
-        return response({'id': wallet.id, 'points': wallet.points})
+        return response(wallet_response(request.user))
 
 
 def validate_order_params(num_shares, price, wallet, order_type, future):
@@ -102,8 +148,7 @@ def validate_order_params(num_shares, price, wallet, order_type, future):
         if num_owned == 0:
             # Calculate what's maximum user can lose on this short
             # sell and don't allow more than that.
-            diff = num_shares - num_owned
-            max_possible_loss = diff * (1000 - price)
+            max_possible_loss = num_shares * (1000 - price)
             if max_possible_loss > to_spend:
                 return ('You cannot short-sell that many of this share, as '
                         'your possible losses are not covered. If the event '
@@ -121,7 +166,6 @@ def validate_order_params(num_shares, price, wallet, order_type, future):
         return 'This is an unsupported order type. h4x?'
 
 
-@login_required
 def orders(request):
     """
         An order was submitted. This function should save it and then try
@@ -133,6 +177,8 @@ def orders(request):
         We will still additionally need a lock in order to prevent concurrent
         accesses by other threads.
     """
+    if not request.user.is_authenticated():
+        return response("", status=403)
     if request.method == 'POST':
         # Submit an order!
         num_shares = request.POST.get('numShares')
@@ -141,7 +187,7 @@ def orders(request):
         try:
             future = Future.objects.get(pk=request.POST.get('future'))
         except Future.DoesNotExist:
-            return "That is a non-existent future."
+            return response("That is a non-existent future.", status=400)
         wallet = Wallet.objects.get(user=request.user)
 
         return process_order(num_shares, price, wallet, order_type, future)
@@ -177,10 +223,63 @@ def process_order(num_shares, price, wallet, order_type, future):
         open_orders = open_orders.filter(order_type=Order.ORDER_TYPE_BUY)
     # Save the order, then we will see if we have a match.
     order.save()
+    freeze_assets(order, wallet)
+
+    logger.debug('*' * 20)
+    logger.debug(order)
     # Try to execute order now, if possible.
     transfers = execute_order(order, open_orders)
     # Try to execute all transfers.
-    return response(order.id)
+    execute_transfers(transfers)
+    logger.debug('*' * 20)
+
+    # Update bid/ask
+    update_bid_ask(future.pk)
+    return response('Success')  # Front-end should just refresh the page for
+                                # ease.
+
+
+def freeze_assets(order, wallet):
+    """
+        Freeze some assets for order.creator.
+    """
+    shares = json.loads(wallet.shares_owned)
+    key = '%s' % order.future.pk
+    num_shares = shares.get(key, 0)
+    logger.debug('Freezing assets for: %s', order)
+    if order.order_type == Order.ORDER_TYPE_SELL:
+        if num_shares < 0:
+            # We are short-selling.
+            max_possible_loss = num_shares * (1000 - order.unit_price)
+            # We would have never gotten here if we weren't allowed to short
+            # so don't check that again.
+            wallet.frozen += max_possible_loss
+            assert wallet.frozen <= wallet.points
+    elif order.order_type == Order.ORDER_TYPE_BUY:
+        assert order.quantity > 0
+        wallet.frozen += order.unit_price * order.quantity
+    wallet.save()
+
+
+def update_bid_ask(future_id):
+    """
+        Update the bid and ask for a future based on open orders.
+    """
+    future = Future.objects.get(pk=future_id)
+    open_orders = Order.objects.filter(filled=False, future=future)
+    bids = open_orders.filter(order_type=Order.ORDER_TYPE_BUY).order_by(
+        '-unit_price')
+    asks = open_orders.filter(order_type=Order.ORDER_TYPE_SELL).order_by(
+        'unit_price')
+    if bids.count() > 0:
+        future.bid = bids[0].unit_price
+    else:
+        future.bid = None
+    if asks.count() > 0:
+        future.ask = asks[0].unit_price
+    else:
+        future.ask = None
+    future.save()
 
 
 def execute_order(order, open_orders):
@@ -236,32 +335,40 @@ def try_next_order(open_order, order, remaining_items):
 
     # We can fill the order (either fully or partially!). Set up the
     # points & stock transfer.
+    transaction = SuccessfulTransaction(future=order.future,
+                                        quantity=open_order.quantity,
+                                        unit_price=open_order.unit_price)
     if order.order_type == Order.ORDER_TYPE_BUY:
         # Transfer points from order.creator to open_order.creator
         transfer = {'buyer': order.creator.pk,
                     'seller': open_order.creator.pk,
+                    'price': open_order.unit_price,
                     'points': quantity * open_order.unit_price,
                     'share_quantity': quantity,
                     'share_type': order.future.pk}
+        transaction.buyer = order.creator
+        transaction.seller = open_order.creator
     elif order.order_type == Order.ORDER_TYPE_SELL:
         # Transfer points from open_order.creator to order.creator
         transfer = {'buyer': open_order.creator.pk,
                     'seller': order.creator.pk,
+                    'price': open_order.unit_price,
                     'points': quantity * open_order.unit_price,
                     'share_quantity': quantity,
                     'share_type': order.future.pk}
+        transaction.buyer = open_order.creator
+        transaction.seller = order.creator
+    history_entry = FutureHistory(future=order.future,
+                                  price=open_order.unit_price)
+
     if filled_q > 0:
         # We want to buy or sell more than this open order's quantity.
         # The open order should be completely filled and we should continue
         # searching for more orders.
         open_order.filled = True
         open_order.filled_by = order.creator
-        open_order.save()
         remaining_items -= quantity
         order.quantity = remaining_items
-        order.save()
-        return transfer, remaining_items
-
     elif filled_q == 0:
         # We are buying or selling the exact quantity we need. Yay!
         # Close both orders and get out of here.
@@ -270,15 +377,72 @@ def try_next_order(open_order, order, remaining_items):
         open_order.save()
         order.filled = True
         order.filled_by = open_order.creator
-        order.save()
-        return transfer, 0
+        remaining_items = 0
     elif filled_q < 0:
         # We want to buy or sell less than this open order's quantity.
         # We can fill our own order, but the open order will remain open
         # at a lower quantity level.
         order.filled = True
         order.filled_by = open_order.creator
-        order.save()
         open_order.quantity = open_order.quantity - order.quantity
-        open_order.save()
-        return transfer, 0
+        remaining_items = 0
+    order.save()
+    open_order.save()
+    history_entry.save()
+    transaction.save()
+    return transfer, remaining_items
+
+
+def execute_transfers(transfers):
+    """
+        Executes all transfers of stock and points from one user to another.
+        This is still wrapped in the same view transaction for the `orders`
+        function.
+
+        Additionally we need a lock on the wallet of each of the relevant
+        transferees.
+    """
+    for transfer in transfers:
+        execute_transfer(transfer)
+
+
+def execute_transfer(transfer):
+    """
+        Executes a single transfer. This needs to be an atomic operation.
+    """
+    # Lock the entire wallet. This is expensive but I can't think of a
+    # better way.
+    lonelock(Wallet, 0)
+    buyer_wallet = Wallet.objects.get(user__pk=transfer['buyer'])
+    seller_wallet = Wallet.objects.get(user__pk=transfer['seller'])
+    points = transfer['points']
+    shares = transfer['share_quantity']
+    future = Future.objects.get(pk=transfer['share_type'])
+    buyer_owned_shares = json.loads(buyer_wallet.shares_owned)
+    seller_owned_shares = json.loads(seller_wallet.shares_owned)
+
+    future_key = '%s' % future.pk
+    buyer_owned_shares[future_key] = (
+        buyer_owned_shares.get(future_key, 0) + shares)
+    seller_owned_shares[future_key] = (
+        seller_owned_shares.get(future_key, 0) - shares)
+
+    # Unfreeze some points.
+    buyer_wallet.points -= points
+    seller_wallet.points += points
+    # The seller got rid of some stock; if they were previously short-sold
+    # they should unfreeze those points.
+
+    # The buyer bought some stock, transfer frozen points or something.
+
+    buyer_wallet.shares_owned = json.dumps(buyer_owned_shares)
+    seller_wallet.shares_owned = json.dumps(seller_owned_shares)
+    buyer_wallet.save()
+    seller_wallet.save()
+    future.volume += shares
+    future.last_buy = transfer['price']
+    future.save()
+    logger.debug('Updated future: %s', future)
+    logger.debug('Updated buyer wallet: %s', buyer_wallet)
+    logger.debug('Updated seller wallet: %s', seller_wallet)
+    loneunlock(Wallet, 0)
