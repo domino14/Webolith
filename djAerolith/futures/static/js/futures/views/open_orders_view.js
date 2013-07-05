@@ -40,7 +40,7 @@ define([
           quantity: order.quantity,
           unitPrice: order.unit_price,
           frozen: order.order_type === 'B' ? order.quantity * order.unit_price :
-            (MAX_ORDER_SETTLE - order.unit_price) * order.quantity,
+            SETTLEMENT_PRICE * order.quantity,
           buy: order.order_type === 'B',
           sell: order.order_type === 'S',
           orderType: order.order_type === 'B' ? 'Buy' : 'Sell'

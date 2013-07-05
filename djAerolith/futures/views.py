@@ -11,6 +11,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+SETTLEMENT_PRICE = 1000
+
+
 def wallet_response(user):
     if not user.is_authenticated():
         return None
@@ -117,6 +120,20 @@ def wallet(request):
         return response(wallet_response(request.user))
 
 
+def compute_frozen(order, wallet):
+    """
+        Compute how many points should be frozen by this order.
+    """
+    shares = json.loads(wallet.shares_owned)
+    key = '%s' % order.future.pk
+    num_shares = shares.get(key, 0)
+    if order.order_type == Order.ORDER_TYPE_BUY:
+        return order.quantity * order.unit_price
+    elif order.order_type == Order.ORDER_TYPE_SELL and num_shares <= 0:
+        return SETTLEMENT_PRICE * order.quantity
+    return 0
+
+
 def validate_order_params(num_shares, price, wallet, order_type, future):
     """
         Validate that num_shares and price are valid numbers.
@@ -132,7 +149,7 @@ def validate_order_params(num_shares, price, wallet, order_type, future):
         price = int(price)
     except (ValueError, TypeError):
         return ("Please ensure that the price is a whole number between 0 and "
-                "1000.")
+                "%s." % SETTLEMENT_PRICE)
 
     # Now do some basic math.
     to_spend = wallet.points - wallet.frozen
@@ -148,13 +165,14 @@ def validate_order_params(num_shares, price, wallet, order_type, future):
         if num_owned == 0:
             # Calculate what's maximum user can lose on this short
             # sell and don't allow more than that.
-            max_possible_loss = num_shares * (1000 - price)
+            max_possible_loss = num_shares * SETTLEMENT_PRICE
             if max_possible_loss > to_spend:
                 return ('You cannot short-sell that many of this share, as '
                         'your possible losses are not covered. If the event '
-                        'happens, you can stand to lose ' +
-                        str(max_possible_loss) + ' points. Try a lower '
-                        'number of shares and/or a higher short-sell price.')
+                        'happens, you would need to buy back these shares, at '
+                        'a cost of %s points. Try a lower '
+                        'number of shares and/or a higher short-sell price.' %
+                        max_possible_loss)
         elif num_shares > num_owned:
             # We're trying to short-sell some shares, and regular-sell other
             # shares. This is potentially complicated so we will not allow it.
@@ -243,21 +261,9 @@ def freeze_assets(order, wallet):
     """
         Freeze some assets for order.creator.
     """
-    shares = json.loads(wallet.shares_owned)
-    key = '%s' % order.future.pk
-    num_shares = shares.get(key, 0)
+
     logger.debug('Freezing assets for: %s', order)
-    if order.order_type == Order.ORDER_TYPE_SELL:
-        if num_shares < 0:
-            # We are short-selling.
-            max_possible_loss = num_shares * (1000 - order.unit_price)
-            # We would have never gotten here if we weren't allowed to short
-            # so don't check that again.
-            wallet.frozen += max_possible_loss
-            assert wallet.frozen <= wallet.points
-    elif order.order_type == Order.ORDER_TYPE_BUY:
-        assert order.quantity > 0
-        wallet.frozen += order.unit_price * order.quantity
+    wallet.frozen += compute_frozen(order, wallet)
     wallet.save()
 
 
@@ -286,9 +292,6 @@ def execute_order(order, open_orders):
     """
         Attempts to execute an order against open_orders. Note this whole
         function is protected by a transaction and a lock.
-        Note: This will only close a single order. Otherwise this logic gets
-        annoying. Users should make multiple orders if they want to sell
-        multiple.
 
         Logic for buying:
         - Search for lowest prices. If several orders have the same prices
@@ -341,7 +344,9 @@ def try_next_order(open_order, order, remaining_items):
     if order.order_type == Order.ORDER_TYPE_BUY:
         # Transfer points from order.creator to open_order.creator
         transfer = {'buyer': order.creator.pk,
+                    'buyer_order': order.pk,
                     'seller': open_order.creator.pk,
+                    'seller_order': open_order.pk,
                     'price': open_order.unit_price,
                     'points': quantity * open_order.unit_price,
                     'share_quantity': quantity,
@@ -351,7 +356,9 @@ def try_next_order(open_order, order, remaining_items):
     elif order.order_type == Order.ORDER_TYPE_SELL:
         # Transfer points from open_order.creator to order.creator
         transfer = {'buyer': open_order.creator.pk,
+                    'buyer_order': open_order.pk,
                     'seller': order.creator.pk,
+                    'seller_order': order.pk,
                     'price': open_order.unit_price,
                     'points': quantity * open_order.unit_price,
                     'share_quantity': quantity,
@@ -374,7 +381,6 @@ def try_next_order(open_order, order, remaining_items):
         # Close both orders and get out of here.
         open_order.filled = True
         open_order.filled_by = order.creator
-        open_order.save()
         order.filled = True
         order.filled_by = open_order.creator
         remaining_items = 0
@@ -422,18 +428,26 @@ def execute_transfer(transfer):
     seller_owned_shares = json.loads(seller_wallet.shares_owned)
 
     future_key = '%s' % future.pk
-    buyer_owned_shares[future_key] = (
-        buyer_owned_shares.get(future_key, 0) + shares)
+    old_buyer_owned = buyer_owned_shares.get(future_key, 0)
+    buyer_owned_shares[future_key] = (old_buyer_owned + shares)
     seller_owned_shares[future_key] = (
         seller_owned_shares.get(future_key, 0) - shares)
 
-    # Unfreeze some points.
+    # Transfer some points.
     buyer_wallet.points -= points
     seller_wallet.points += points
-    # The seller got rid of some stock; if they were previously short-sold
-    # they should unfreeze those points.
-
-    # The buyer bought some stock, transfer frozen points or something.
+    # Unfreeze points.
+    # Buyer points -- unfreeze 'points' since they were already transferred
+    # right above this - the order went through.
+    buyer_wallet.frozen -= points
+    # Seller points -- don't unfreeze anything. Short stock is already frozen.
+    # Selling more stock, whether short or not, should not unfreeze points.
+    # Buyer points -- if we just bought back some short-sold stock, should
+    # unfreeze those points.
+    if old_buyer_owned < 0:
+        buyer_wallet.frozen -= (shares * SETTLEMENT_PRICE)
+        if buyer_wallet.frozen < 0:
+            buyer_wallet.frozen = 0
 
     buyer_wallet.shares_owned = json.dumps(buyer_owned_shares)
     seller_wallet.shares_owned = json.dumps(seller_owned_shares)
