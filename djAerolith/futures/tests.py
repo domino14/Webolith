@@ -146,8 +146,8 @@ class OrderTest(TestCase):
         wallet = Wallet.objects.get(user=user)
         # Want to short-sell "Nigel Richards".
         future = Future.objects.get(pk=1)
-        response = process_order(51, 800, wallet, 'sell', future)
-        # We don't own Nigel, if event happens we stand to lose (200 * 51)
+        response = process_order(11, 800, wallet, 'sell', future)
+        # We don't own Nigel, if event happens we stand to lose (1000 * 11)
         # which is more than this user's default wallet.
         self.assertContains(response, 'cannot short-sell', status_code=400)
 
@@ -168,6 +168,8 @@ class OrderTest(TestCase):
         wallet = Wallet.objects.get(user=user)
         # Want to short-sell "Nigel Richards".
         future = Future.objects.get(pk=1)
+        wallet.points = 11000
+        wallet.save()
         response = process_order(11, 140, wallet, 'sell', future)
         order = Order.objects.all().order_by('-pk')[0]
         order_1 = Order.objects.get(pk=1)  # Buy 10@155
@@ -196,8 +198,9 @@ class OrderTest(TestCase):
         wallet_1 = Wallet.objects.get(user=order_1.creator)
         key = '%s' % future.pk
         self.assertEqual(json.loads(wallet_1.shares_owned)[key], 10)
-        self.assertEqual(wallet.points, 10000 + (10 * 155))
+        self.assertEqual(wallet.points, 11000 + (10 * 155))
         self.assertEqual(wallet_1.points, 10000 - (10 * 155))
+        self.assertEqual(wallet.frozen, 11000)
 
     def test_order_4(self):
         """
@@ -205,7 +208,94 @@ class OrderTest(TestCase):
         """
         user = User.objects.get(pk=1)
         wallet = Wallet.objects.get(user=user)
-        wallet.shares_owned = """{"1": 3}"""
+        wallet.shares_owned = """{"1": 7, "4": 10}"""
         future = Future.objects.get(pk=1)
-        response = process_order(4, 200, wallet, 'sell', future)
+        response = process_order(4, 150, wallet, 'sell', future)
+        # Someone wants to buy 10@155
+        order = Order.objects.all().order_by('-pk')[0]
+        order_1 = Order.objects.get(pk=1) # Buy 10@155
+        self.assertEqual(order_1.filled, False)
+        self.assertEqual(order.filled, True)
+        self.assertEqual(order_1.quantity, 6)
+        self.assertEqual(order.filled_by, order_1.creator)
+        future = Future.objects.get(pk=1)
+        self.assertEqual(future.last_buy, 155)
+        self.assertEqual(future.ask, 600)
+        self.assertEqual(future.bid, 155)
+        self.assertEqual(future.volume, 4)
+        history = FutureHistory.objects.filter(future=future)
+        self.assertEqual(history.count(), 1)
+        self.assertEqual(history[0].price, 155)
+        transactions = SuccessfulTransaction.objects.filter(future=future)
+        self.assertEqual(transactions.count(), 1)
+        self.assertTrue(self.compare_transactions(
+            transactions[0], SuccessfulTransaction(
+                buyer=order_1.creator, seller=user, future=future,
+                quantity=4, unit_price=155)))
+        # Wallets
+        wallet = Wallet.objects.get(user=user)
+        wallet_1 = Wallet.objects.get(user=order_1.creator)
+        key = '%s' % future.pk
+        self.assertEqual(json.loads(wallet.shares_owned)[key], 3)
+        self.assertEqual(json.loads(wallet_1.shares_owned)[key], 4)
+        self.assertEqual(json.loads(wallet.shares_owned)['4'], 10) # Unchanged.
+        self.assertEqual(wallet_1.points, 10000 - (4 * 155))
+        self.assertEqual(wallet.points, 10000 + (4 * 155))
+        self.assertEqual(wallet.frozen, 0)
+        self.assertEqual(wallet_1.frozen, 0)
 
+    def test_order_5(self):
+        """
+            A regular sell to multiple people, with some stock still left over.
+        """
+        user = User.objects.get(pk=1)
+        wallet = Wallet.objects.get(user=user)
+        wallet.shares_owned = """{"4": 95, "1": 7}"""
+        future = Future.objects.get(pk=4)
+        # Sell 93 shares at 95 each.
+        response = process_order(93, 95, wallet, 'sell', future)
+        # Someone wants to buy 75@100, 15@275
+        order = Order.objects.all().order_by('-pk')[0]  # My sell.
+        order_1 = Order.objects.get(pk=11)  # 15@275
+        order_2 = Order.objects.get(pk=5)   # 75@100
+        self.assertEqual(order_1.filled, True)
+        self.assertEqual(order_2.filled, True)
+        self.assertEqual(order.filled, False)
+        self.assertEqual(order.quantity, 3)
+        self.assertEqual(order_1.filled_by, user)
+        self.assertEqual(order_2.filled_by, user)
+        future = Future.objects.get(pk=4)
+        self.assertEqual(future.last_buy, 100)
+        self.assertEqual(future.ask, 95)  # Lowest sale order, my own
+        self.assertEqual(future.bid, None)  # Highest buy order
+        self.assertEqual(future.volume, 90)
+        # History
+        history = FutureHistory.objects.filter(future=future)
+        self.assertEqual(history.count(), 2)
+        self.assertEqual(history[0].price, 275)
+        self.assertEqual(history[1].price, 100)  # Got the highest then lowest.
+        transactions = SuccessfulTransaction.objects.filter(future=future)
+        self.assertEqual(transactions.count(), 2)
+        self.assertTrue(self.compare_transactions(
+            transactions[0], SuccessfulTransaction(
+                buyer=order_1.creator, seller=user, future=future,
+                quantity=15, unit_price=275)))
+        self.assertTrue(self.compare_transactions(
+            transactions[1], SuccessfulTransaction(
+                buyer=order_2.creator, seller=user, future=future,
+                quantity=75, unit_price=100)))
+        # Wallets
+        wallet = Wallet.objects.get(user=user)
+        wallet_1 = Wallet.objects.get(user=order_1.creator)
+        wallet_2 = Wallet.objects.get(user=order_2.creator)
+        key = '%s' % future.pk
+        self.assertEqual(json.loads(wallet.shares_owned)[key], 5)
+        self.assertEqual(json.loads(wallet_1.shares_owned)[key], 15)
+        self.assertEqual(json.loads(wallet_2.shares_owned)[key], 75)
+        self.assertEqual(json.loads(wallet.shares_owned)['1'], 7)  # Unchanged.
+        self.assertEqual(wallet.points, 10000 + (15 * 275) + (75 * 100))
+        self.assertEqual(wallet_1.points, 10000 - (15 * 275))
+        self.assertEqual(wallet_2.points, 10000 - (75 * 100))
+        self.assertEqual(wallet.frozen, 0)
+        self.assertEqual(wallet_1.frozen, 0)
+        self.assertEqual(wallet_2.frozen, 0)

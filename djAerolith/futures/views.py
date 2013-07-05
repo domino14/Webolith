@@ -321,6 +321,8 @@ def execute_order(order, open_orders):
 
 
 def try_next_order(open_order, order, remaining_items):
+    logger.debug('Trying next order: %s, my order: %s, remaining_items: %s',
+                 open_order, order, remaining_items)
     transfer = {}
     quantity = open_order.quantity
     filled_q = remaining_items - quantity
@@ -339,29 +341,20 @@ def try_next_order(open_order, order, remaining_items):
     # We can fill the order (either fully or partially!). Set up the
     # points & stock transfer.
     transaction = SuccessfulTransaction(future=order.future,
-                                        quantity=open_order.quantity,
                                         unit_price=open_order.unit_price)
     if order.order_type == Order.ORDER_TYPE_BUY:
         # Transfer points from order.creator to open_order.creator
         transfer = {'buyer': order.creator.pk,
-                    'buyer_order': order.pk,
                     'seller': open_order.creator.pk,
-                    'seller_order': open_order.pk,
                     'price': open_order.unit_price,
-                    'points': quantity * open_order.unit_price,
-                    'share_quantity': quantity,
                     'share_type': order.future.pk}
         transaction.buyer = order.creator
         transaction.seller = open_order.creator
     elif order.order_type == Order.ORDER_TYPE_SELL:
         # Transfer points from open_order.creator to order.creator
         transfer = {'buyer': open_order.creator.pk,
-                    'buyer_order': open_order.pk,
                     'seller': order.creator.pk,
-                    'seller_order': order.pk,
                     'price': open_order.unit_price,
-                    'points': quantity * open_order.unit_price,
-                    'share_quantity': quantity,
                     'share_type': order.future.pk}
         transaction.buyer = open_order.creator
         transaction.seller = order.creator
@@ -375,6 +368,8 @@ def try_next_order(open_order, order, remaining_items):
         open_order.filled = True
         open_order.filled_by = order.creator
         remaining_items -= quantity
+        transfer['share_quantity'] = open_order.quantity
+        transfer['points'] = open_order.quantity * open_order.unit_price
         order.quantity = remaining_items
     elif filled_q == 0:
         # We are buying or selling the exact quantity we need. Yay!
@@ -384,14 +379,19 @@ def try_next_order(open_order, order, remaining_items):
         order.filled = True
         order.filled_by = open_order.creator
         remaining_items = 0
+        transfer['share_quantity'] = open_order.quantity
+        transfer['points'] = open_order.quantity * open_order.unit_price
     elif filled_q < 0:
         # We want to buy or sell less than this open order's quantity.
         # We can fill our own order, but the open order will remain open
         # at a lower quantity level.
         order.filled = True
         order.filled_by = open_order.creator
+        transfer['share_quantity'] = order.quantity
+        transfer['points'] = order.quantity * open_order.unit_price
         open_order.quantity = open_order.quantity - order.quantity
         remaining_items = 0
+    transaction.quantity = transfer['share_quantity']
     order.save()
     open_order.save()
     history_entry.save()
@@ -446,8 +446,8 @@ def execute_transfer(transfer):
     # unfreeze those points.
     if old_buyer_owned < 0:
         buyer_wallet.frozen -= (shares * SETTLEMENT_PRICE)
-        if buyer_wallet.frozen < 0:
-            buyer_wallet.frozen = 0
+    if buyer_wallet.frozen < 0:
+        buyer_wallet.frozen = 0
 
     buyer_wallet.shares_owned = json.dumps(buyer_owned_shares)
     seller_wallet.shares_owned = json.dumps(seller_owned_shares)
