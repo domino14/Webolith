@@ -59,6 +59,7 @@ urlpatterns = patterns('',
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
     (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'}),
+    (r'^nsc2013/', direct_to_template, {'template': 'nsc2013/index.html'}),
     ('^nexus/', include(nexus.site.urls))
 )
 
