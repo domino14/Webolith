@@ -48,16 +48,7 @@
           </div>
           <div style="margin-bottom: 30px;"></div>
 
-
-<script src="//www.gmodules.com/ig/ifr?url=https://www.google.com/ig/modules/youtube.xml&amp;
-up_channel=tenviscamera&amp;
-synd=open&amp;
-w=280&amp;
-h=360&amp;
-title=&amp;
-border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;
-output=js">
-</script>
+          <div id="yt"></div>
 
 
         </div>
@@ -73,6 +64,29 @@ output=js">
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/static/js/aerolith/jquery-1.10.1.min.js"></script>
     <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function() {
+          var randNumber = RandNo(1,5);
 
+          $.ajax({
+              type: "POST",
+              url: "https://gdata.youtube.com/feeds/api/users/domino14/uploads?v=2&alt=jsonc&max-results=5",
+              data: "{}",
+              contentType: "application/json; charset=utf-8",
+              dataType: "jsonp",
+              success: function(result) {
+                console.log(result.data)
+                  var data = result.data;
+
+                  $("#yt").html("<iframe width='560' height='315' src='http://www.youtube.com/embed/" + data.items[randNumber].id + "' frameborder='0' allowfullscreen></iframe>");
+              }
+          });
+      });
+
+      function RandNo(min,max) {
+           return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+    </script>
   </body>
 </html>
