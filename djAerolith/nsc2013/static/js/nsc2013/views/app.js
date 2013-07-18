@@ -45,7 +45,6 @@ define([
     handleFetch_: function(result) {
       var data, i, context, date;
       this.videoList.empty();
-      console.log(result)
       data = result.data;
       if (!(data.items && data.items[0])) {
         return;

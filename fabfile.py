@@ -44,12 +44,15 @@ def create_js_build():
     with lcd(os.path.join(curdir, 'djAerolith')):
         local("node r.js -o js_build/create_table_wordwalls.js")
         local("node r.js -o js_build/table_wordwalls.js")
+        local("node r.js -o js_build/nsc.js")
         with settings(warn_only=True):
             local("rm static/build/*.gz")
         local("gzip -c static/build/table-main-built.js > "
               "static/build/table-main-built.js.gz")
         local("gzip -c static/build/create-table-main-built.js > "
               "static/build/create-table-main-built.js.gz")
+        local("gzip -c static/build/nsc2013-built.js > "
+              "static/build/nsc2013-built.js.gz")
 
 
 def deploy_js_build():
