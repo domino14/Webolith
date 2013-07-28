@@ -1,6 +1,6 @@
 from django_assets import Bundle, register
 
-tableJs = Bundle('js/aerolith/csrfAjax.js',
+tableJs = Bundle(#'js/aerolith/csrfAjax.js',
                  'js/crosswordgame/gcg.js',
                  'js/crosswordgame/gcgViews.js',
                  filters='jsmin',
@@ -15,7 +15,8 @@ register('js_base_libraries',
 register('js_crosswordgame_libraries',
          'js/aerolith/raphael-min.js',
          'lib/underscore-min.js',
-         'lib/backbone-min.js')
+         'lib/backbone-min.js',
+         'lib/require.js')
 
 tableCss = Bundle(
                   filters='cssmin',
