@@ -3,7 +3,7 @@ requirejs.config({
   baseUrl: '/static/js/flashcards',
   paths: {
     jquery: '../../../../static/js/aerolith/jquery-1.10.1',
-    bootstrap: '../../../../static/bootstrap/js/bootstrap',
+    bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
     underscore: '../../../../static/lib/underscore-1.4.4',
     backbone: '../../../../static/lib/backbone-1.0.0',
     mustache: '../../../../static/lib/mustache',
