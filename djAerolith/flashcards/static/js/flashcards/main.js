@@ -33,13 +33,20 @@ define([
   'module',
   'jquery',
   'views/app',
+  'router',
   'csrfAjax'
-], function (module, $, App) {
+], function (module, $, App, Router) {
   "use strict";
-  var app = new App({
+  var router, app;
+  location.hash = '';
+  app = new App({
     el: $('#app-view'),
     numCards: module.config().numCards
   });
-  app.render();
 
+  router = new Router();
+  Backbone.history.start({
+    root: '/cards'
+  });
+  router.on('route:newQuiz', _.bind(app.newQuiz, app));
 });

@@ -17,6 +17,7 @@
       }
     </style>
     <link href="/static/lib/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/flashcards/cards.css" rel="stylesheet">
   </head>
 
   <body>
@@ -33,33 +34,28 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li><a href="#instructions">About</a></li>
+              <li><a href="#newquiz">New Quiz</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
 
-    <div class="container">
-
-        <H1>Flashcard Loader</H1>
-
-        <div id="app-view">
-          <div id="app-header"></div>
-          <div id="loader">
-            <label for="prob-low">Probability min<input class="small" name="prob-low" id="prob-low"></input></label>
-            <label for="prob-high">Probability max<input class="small" name="prob-high" id="prob-high"></input></label>
-            <label for="word-length">Word length<input class="small" name="word-length" id="word-length"></input></label>
-            <label for="lexicon">Lexicon<input class="small" name="lexicon" id="lexicon"></input></label>
-            <button type="button" class="btn" id="load-prob">Load By Probability</button>
+    <div class="container" id="app-view">
+      <div class="row">
+        <div id="card-setup"></div>
+      </div>
+      <div class="row" id="card-area">
+        <div class="span4">
+          <div class="row">
+            <div id="card" class="well"></div>
           </div>
-          <div id="card-area">
-
-
+          <div class="row">
+            <div id="info"></div>
           </div>
-          <button type="button" class="btn" id="get-cards">Get scheduled cards</button>
         </div>
+      </div>
 
     </div> <!-- /container -->
 

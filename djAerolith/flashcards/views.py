@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def create_quiz(request):
+def main(request):
     user_cards = Card.objects.filter(user=request.user)
     num_cards = user_cards.count()
     return render_to_response("flashcards/index.html", {
@@ -22,7 +22,40 @@ def create_quiz(request):
                               context_instance=RequestContext(request))
 
 
-def load_cards(request):
+def to_python(alphagram):
+    """
+        Converts the alphagram model instance to a Python object.
+    """
+    return {
+        'question': alphagram.alphagram,
+        'answers': [{
+            'word': word.word,
+            'def': word.definition,
+            'f_hooks': word.front_hooks,
+            'b_hooks': word.back_hooks,
+            'symbols': word.lexiconSymbols
+        } for word in alphagram.word_set.all()]
+    }
+
+
+def new_quiz(request):
+    """
+        Creates a new quiz but doesn't create any 'card' models.
+        Card models will only be used for cardbox in future.
+    """
+    body = json.loads(request.raw_post_data)
+    lexicon = Lexicon.objects.get(lexiconName=body['lex'].upper())
+    p_min = int(body['min'])
+    p_max = int(body['max'])
+    length = int(body['length'])
+    min_pk = alphProbToProbPK(p_min, lexicon.pk, length)
+    max_pk = alphProbToProbPK(p_max, lexicon.pk, length)
+    alphs = Alphagram.objects.filter(probability_pk__gte=min_pk,
+                                     probability_pk__lte=max_pk)
+    return response({'questions': [to_python(alph) for alph in alphs]})
+
+
+def load_into_cardbox(request):
     body = json.loads(request.raw_post_data)
     lexicon = Lexicon.objects.get(lexiconName=body['lex'].upper())
     min_pk = alphProbToProbPK(int(body['min']), lexicon.pk,
