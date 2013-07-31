@@ -45,6 +45,7 @@ def create_js_build():
         local("node r.js -o js_build/create_table_wordwalls.js")
         local("node r.js -o js_build/table_wordwalls.js")
         local("node r.js -o js_build/nsc.js")
+        local("node r.js -o js_build/flashcards.js")
         with settings(warn_only=True):
             local("rm static/build/*.gz")
         local("gzip -c static/build/table-main-built.js > "
@@ -53,6 +54,8 @@ def create_js_build():
               "static/build/create-table-main-built.js.gz")
         local("gzip -c static/build/nsc2013-built.js > "
               "static/build/nsc2013-built.js.gz")
+        local("gzip -c static/build/flashcards-built.js > "
+              "static/build/flashcards-built.js.gz")
 
 
 def deploy_js_build():

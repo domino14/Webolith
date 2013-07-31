@@ -149,7 +149,8 @@ INSTALLED_APPS = (
     'misctools',
     'gargoyle',
     'nexus',
-    'nsc2013'
+    'nsc2013',
+    'flashcards'
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
