@@ -20,7 +20,8 @@ requirejs.config({
       exports: 'Backbone'
     },
     bootstrap: {
-      deps: ['jquery']
+      deps: ['jquery'],
+      exports: '$.fn.collapse'
     },
     'json2': {
       exports: 'JSON'
@@ -36,7 +37,8 @@ define([
   'backbone',
   'views/app',
   'router',
-  'csrfAjax'
+  'csrfAjax',
+  'bootstrap'
 ], function (module, $, _, Backbone, App, Router) {
   "use strict";
   var router, app;

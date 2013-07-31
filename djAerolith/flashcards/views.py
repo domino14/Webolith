@@ -10,8 +10,10 @@ from base.models import Lexicon, Alphagram, alphProbToProbPK
 import time
 import logging
 logger = logging.getLogger(__name__)
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def main(request):
     user_cards = Card.objects.filter(user=request.user)
     num_cards = user_cards.count()
@@ -38,6 +40,7 @@ def to_python(alphagram):
     }
 
 
+@login_required
 def new_quiz(request):
     """
         Creates a new quiz but doesn't create any 'card' models.
@@ -55,6 +58,7 @@ def new_quiz(request):
     return response({'questions': [to_python(alph) for alph in alphs]})
 
 
+@login_required
 def load_into_cardbox(request):
     body = json.loads(request.raw_post_data)
     lexicon = Lexicon.objects.get(lexiconName=body['lex'].upper())
@@ -86,6 +90,7 @@ def load_into_cardbox(request):
                      })
 
 
+@login_required
 def get_scheduled_cards(request):
     """
         Gets scheduled cards 100 at a time.
