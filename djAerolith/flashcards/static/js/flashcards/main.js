@@ -54,4 +54,8 @@ define([
   });
   router.on('route:newQuiz', _.bind(app.newQuiz, app));
   router.on('route:continueQuiz', _.bind(app.continueQuiz, app));
+  app.on('quizStarted', function() {
+    // Navigate to the 'continueQuiz' path, but don't trigger.
+    router.navigate('quiz');
+  });
 });

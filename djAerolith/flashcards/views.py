@@ -30,6 +30,8 @@ def to_python(alphagram):
     """
     return {
         'question': alphagram.alphagram,
+        'probability': alphagram.probability,
+        'id': alphagram.probability_pk,
         'answers': [{
             'word': word.word,
             'def': word.definition,
@@ -48,14 +50,27 @@ def new_quiz(request):
     """
     body = json.loads(request.raw_post_data)
     lexicon = Lexicon.objects.get(lexiconName=body['lex'].upper())
-    p_min = int(body['min'])
-    p_max = int(body['max'])
-    length = int(body['length'])
+    try:
+        p_min = int(body['min'])
+        p_max = int(body['max'])
+        length = int(body['length'])
+    except (ValueError, TypeError):
+        return response({'questions': []})
+
     min_pk = alphProbToProbPK(p_min, lexicon.pk, length)
     max_pk = alphProbToProbPK(p_max, lexicon.pk, length)
     alphs = Alphagram.objects.filter(probability_pk__gte=min_pk,
                                      probability_pk__lte=max_pk)
-    return response({'questions': [to_python(alph) for alph in alphs]})
+    questions = [to_python(alph) for alph in alphs]
+    if len(questions) > 0:
+        # Generate a quiz name.
+        quiz_name = '%s %ss (%s to %s)' % (lexicon.lexiconName, length,
+                                           questions[0]['probability'],
+                                           questions[-1]['probability'])
+    else:
+        quiz_name = ''
+    return response({'questions': questions,
+                     'quiz_name': quiz_name})
 
 
 @login_required

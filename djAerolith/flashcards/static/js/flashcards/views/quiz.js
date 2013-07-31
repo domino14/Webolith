@@ -6,9 +6,10 @@ define([
   'text!templates/card_front.html',
   'text!templates/card_back.html',
   'text!templates/card_info.html',
+  'text!templates/quiz_header.html',
   'text!templates/alert.html'
 ], function(Backbone, _, Cards, Mustache, CardFront, CardBack, CardInfo,
-  Alert) {
+  QuizHeader, Alert) {
   "use strict";
   return Backbone.View.extend({
     initialize: function() {
@@ -23,8 +24,11 @@ define([
        */
       this.curIndex = 0;
       this.card = this.$('#card');
-      this.cardInfo = this.$('#info');
+      this.quizInfo = this.$('#header-info');
+      this.cardInfo = this.$('#footer-info');
+      this.alertHolder = this.$('.alert-holder');
       this.quizOver = false;
+      this.quizName = '';
     },
     events: {
       'click .solve': 'showCardBack',
@@ -34,12 +38,13 @@ define([
     },
     /**
      * Resets the quiz to an array of questions.
-     * @param  {<Object>} questions An object containing an array of questions.
+     * @param  {<Object>} questions An array of questions.
      */
-    reset: function(questions) {
-      this.cards.reset(questions.questions);
+    reset: function(questions, quizName) {
+      this.cards.reset(questions);
+      this.quizName = quizName;
       this.curIndex = 0;
-      this.showCurrentCard();
+      this.startQuiz();
     },
     /**
      * Loads quiz from localStorage.
@@ -53,6 +58,15 @@ define([
       }
       this.cards.reset(JSON.parse(progress));
       this.curIndex = parseInt(index, 10);
+      this.quizName = localStorage.getItem('aerolith-cards-quizName');
+      this.startQuiz();
+    },
+    /**
+     * Starts quiz.
+     */
+    startQuiz: function() {
+      this.quizOver = false;
+      this.alertHolder.empty();
       this.showCurrentCard();
     },
     /**
@@ -134,6 +148,9 @@ define([
         numAnswers: numAnswers,
         plural: plural
       }));
+      this.quizInfo.html(Mustache.render(QuizHeader, {
+        quizName: this.quizName
+      }));
     },
     /**
      * End the quiz. This will start quizzing on missed words typically.
@@ -150,7 +167,9 @@ define([
      * Show the quiz is over final dialog.
      */
     showQuizOver: function() {
-      this.$('.alert-holder').html(Mustache.render(Alert, {}));
+      this.alertHolder.html(Mustache.render(Alert, {
+        alert: 'The quiz is over!'
+      }));
       this.quizOver = true;
     },
     /**
@@ -160,10 +179,12 @@ define([
       if (this.quizOver) {
         localStorage.removeItem('aerolith-cards-progress');
         localStorage.removeItem('aerolith-cards-currentIndex');
+        localStorage.removeItem('aerolith-cards-quizName');
       } else {
         localStorage.setItem('aerolith-cards-currentIndex', this.curIndex);
         localStorage.setItem('aerolith-cards-progress',
           JSON.stringify(this.cards));
+        localStorage.setItem('aerolith-cards-quizName', this.quizName);
       }
     }
   });

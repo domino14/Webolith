@@ -1,3 +1,11 @@
 .button-space {
     margin-right: 100px;
 }
+
+.bot-space {
+    margin-bottom: 20px;
+}
+
+.monospace {
+    font-family: monospace;
+}

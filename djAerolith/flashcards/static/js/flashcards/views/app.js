@@ -34,10 +34,8 @@ define([
         max: max,
         length: length,
         lex: lex
-      }), _.bind(function(questions) {
-        this.quiz.reset(questions);
-        this.$('#card-setup').empty();
-      }, this), 'json');
+      }), _.bind(this.startQuiz, this),
+      'json');
     },
     getScheduledCards: function() {
       $.get(SCHEDULED_URL, function(data) {
@@ -48,6 +46,15 @@ define([
     },
     continueQuiz: function() {
       this.quiz.loadFromStorage();
+    },
+    /**
+     * Starts quiz with data.
+     * @param  {Object} data Object with a `questions` key.
+     */
+    startQuiz: function(data) {
+      this.quiz.reset(data.questions, data.quiz_name);
+      this.trigger('quizStarted');
+      this.$('#card-setup').empty();
     }
   });
   return App;
