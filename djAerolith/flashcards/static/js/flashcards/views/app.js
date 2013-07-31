@@ -45,6 +45,9 @@ define([
     },
     newQuiz: function() {
       this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {}));
+    },
+    continueQuiz: function() {
+      this.quiz.loadFromStorage();
     }
   });
   return App;

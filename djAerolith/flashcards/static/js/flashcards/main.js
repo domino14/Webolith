@@ -32,10 +32,12 @@ requirejs.config({
 define([
   'module',
   'jquery',
+  'underscore',
+  'backbone',
   'views/app',
   'router',
   'csrfAjax'
-], function (module, $, App, Router) {
+], function (module, $, _, Backbone, App, Router) {
   "use strict";
   var router, app;
   location.hash = '';
@@ -49,4 +51,5 @@ define([
     root: '/cards'
   });
   router.on('route:newQuiz', _.bind(app.newQuiz, app));
+  router.on('route:continueQuiz', _.bind(app.continueQuiz, app));
 });

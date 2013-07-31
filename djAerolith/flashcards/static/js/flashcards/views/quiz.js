@@ -5,8 +5,10 @@ define([
   'mustache',
   'text!templates/card_front.html',
   'text!templates/card_back.html',
-  'text!templates/card_info.html'
-], function(Backbone, _, Cards, Mustache, CardFront, CardBack, CardInfo) {
+  'text!templates/card_info.html',
+  'text!templates/alert.html'
+], function(Backbone, _, Cards, Mustache, CardFront, CardBack, CardInfo,
+  Alert) {
   "use strict";
   return Backbone.View.extend({
     initialize: function() {
@@ -22,6 +24,7 @@ define([
       this.curIndex = 0;
       this.card = this.$('#card');
       this.cardInfo = this.$('#info');
+      this.quizOver = false;
     },
     events: {
       'click .solve': 'showCardBack',
@@ -39,25 +42,46 @@ define([
       this.showCurrentCard();
     },
     /**
+     * Loads quiz from localStorage.
+     */
+    loadFromStorage: function() {
+      var progress, index;
+      progress = localStorage.getItem('aerolith-cards-progress');
+      index = localStorage.getItem('aerolith-cards-currentIndex');
+      if (!progress) {
+        return;
+      }
+      this.cards.reset(JSON.parse(progress));
+      this.curIndex = parseInt(index, 10);
+      this.showCurrentCard();
+    },
+    /**
      * Shows current card front.
      */
     showCurrentCard: function() {
       var currentCard = this.cards.at(this.curIndex);
+      if (!currentCard) {
+        this.showQuizOver();
+        return;
+      }
       this.card.html(Mustache.render(CardFront, currentCard.toJSON()));
       this.renderCardInfo();
+      this.saveQuizInfo();
     },
     /**
      * Shows the back of the card.
      */
     showCardBack: function() {
       var currentCard = this.cards.at(this.curIndex);
+      if (!currentCard) {
+        return;
+      }
       this.card.html(Mustache.render(CardBack, currentCard.toJSON()));
     },
     /**
      * Mark the current card correct.
      */
     markCorrect: function() {
-      var currentCard = this.cards.at(this.curIndex);
       this.advanceCard();
     },
     /**
@@ -65,6 +89,10 @@ define([
      */
     markMissed: function() {
       var currentCard = this.cards.at(this.curIndex);
+      if (!currentCard) {
+        return;
+      }
+      currentCard.set('missed', true);
       this.advanceCard();
     },
     /**
@@ -74,6 +102,7 @@ define([
       this.curIndex += 1;
       if (this.curIndex >= this.cards.size()) {
         // Out of bounds, quiz done.
+        this.endQuiz();
         return;
       }
       this.showCurrentCard();
@@ -105,6 +134,37 @@ define([
         numAnswers: numAnswers,
         plural: plural
       }));
+    },
+    /**
+     * End the quiz. This will start quizzing on missed words typically.
+     */
+    endQuiz: function() {
+      this.cards.reset(this.cards.where({missed: true}));
+      this.cards.each(function(card) {
+        card.set({missed: false});
+      });
+      this.curIndex = 0;
+      this.showCurrentCard();
+    },
+    /**
+     * Show the quiz is over final dialog.
+     */
+    showQuizOver: function() {
+      this.$('.alert-holder').html(Mustache.render(Alert, {}));
+      this.quizOver = true;
+    },
+    /**
+     * Saves quiz info to localstorage.
+     */
+    saveQuizInfo: function() {
+      if (this.quizOver) {
+        localStorage.removeItem('aerolith-cards-progress');
+        localStorage.removeItem('aerolith-cards-currentIndex');
+      } else {
+        localStorage.setItem('aerolith-cards-currentIndex', this.curIndex);
+        localStorage.setItem('aerolith-cards-progress',
+          JSON.stringify(this.cards));
+      }
     }
   });
 });

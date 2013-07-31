@@ -4,7 +4,8 @@ define([
   "use strict";
   return Backbone.Router.extend({
     routes: {
-      'newquiz': 'newQuiz'
+      'newquiz': 'newQuiz',
+      'quiz': 'continueQuiz'
     }
   });
 });
