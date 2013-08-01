@@ -41,7 +41,7 @@ define([
      * @param  {<Object>} questions An array of questions.
      */
     reset: function(questions, quizName) {
-      this.cards.reset(questions);
+      this.cards.reset(_.shuffle(questions));
       this.quizName = quizName;
       this.curIndex = 0;
       this.startQuiz();
@@ -78,9 +78,13 @@ define([
         this.showQuizOver();
         return;
       }
-      this.card.html(Mustache.render(CardFront, currentCard.toJSON()));
+      this.card.html(Mustache.render(CardFront, {
+        question: currentCard.attributes.question,
+        numAnswers: _.size(currentCard.attributes.answers)
+      }));
       this.renderCardInfo();
       this.saveQuizInfo();
+      this.highlightIfMissed(currentCard);
     },
     /**
      * Shows the back of the card.
@@ -91,11 +95,25 @@ define([
         return;
       }
       this.card.html(Mustache.render(CardBack, currentCard.toJSON()));
+      this.highlightIfMissed(currentCard);
+    },
+    /**
+     * Highlights card in red if it is marked missed.
+     * @param  {Backbone.Model} card
+     */
+    highlightIfMissed: function(card) {
+      if (card.get('missed')) {
+        this.card.addClass('missed-card');
+      } else {
+        this.card.removeClass('missed-card');
+      }
     },
     /**
      * Mark the current card correct.
      */
     markCorrect: function() {
+      var currentCard = this.cards.at(this.curIndex);
+      currentCard.set('missed', false);
       this.advanceCard();
     },
     /**
@@ -135,18 +153,9 @@ define([
      * Render card information.
      */
     renderCardInfo: function() {
-      var numAnswers, plural;
-      numAnswers = _.size(this.cards.at(this.curIndex).get('answers'));
-      if (numAnswers > 1) {
-        plural = 's';
-      } else {
-        plural = '';
-      }
       this.cardInfo.html(Mustache.render(CardInfo, {
         cardNum: this.curIndex + 1,
-        cardCount: this.cards.size(),
-        numAnswers: numAnswers,
-        plural: plural
+        cardCount: this.cards.size()
       }));
       this.quizInfo.html(Mustache.render(QuizHeader, {
         quizName: this.quizName
