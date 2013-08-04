@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from wordwalls.views import searchForAlphagrams
-from wordwalls.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
+from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList, SavedList
 from base.models import Lexicon, Alphagram
 import json
@@ -18,7 +18,8 @@ def createQuiz(request):
                             {'accessedWithGet': True },
                             context_instance=RequestContext(request))
     elif request.method == 'POST':
-        if request.POST['action'] == 'searchParamsFlashcard':
+        action = request.POST.get('action')
+        if action == 'searchParamsFlashcard':
             lexForm = LexiconForm(request.POST)
             fwForm = FindWordsForm(request.POST)   # form bound to the POST data
             if lexForm.is_valid() and fwForm.is_valid():
@@ -33,7 +34,7 @@ def createQuiz(request):
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
 
-        if request.POST['action'] == 'namedListsFlashcard':
+        elif action == 'namedListsFlashcard':
             lexForm = LexiconForm(request.POST)
             nlForm = NamedListForm(request.POST)
             if lexForm.is_valid() and nlForm.is_valid():
@@ -47,7 +48,7 @@ def createQuiz(request):
                                                     mimetype="application/javascript")
                 response['Content-Type'] = 'text/plain; charset=utf-8'
                 return response
-        elif request.POST['action'] == 'savedListsFlashcardEntire' or request.POST['action'] == 'savedListsFlashcardFM':
+        elif action == 'savedListsFlashcardEntire' or action == 'savedListsFlashcardFM':
             lexForm = LexiconForm(request.POST)
             slForm = SavedListForm(request.POST)
             if lexForm.is_valid() and slForm.is_valid():
