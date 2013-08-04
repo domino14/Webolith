@@ -29,12 +29,14 @@ define([
       this.alertHolder = this.$('.alert-holder');
       this.quizOver = false;
       this.quizName = '';
+      this.viewingFront = null;
     },
     events: {
       'click .solve': 'showCardBack',
       'click .correct': 'markCorrect',
       'click .missed': 'markMissed',
-      'click #previous-card': 'previousCard'
+      'click #previous-card': 'previousCard',
+      'click #flip-card': 'flipCard'
     },
     /**
      * Resets the quiz to an array of questions.
@@ -78,6 +80,7 @@ define([
         this.showQuizOver();
         return;
       }
+      this.viewingFront = true;
       this.card.html(Mustache.render(CardFront, {
         question: currentCard.attributes.question,
         numAnswers: _.size(currentCard.attributes.answers)
@@ -94,6 +97,7 @@ define([
       if (!currentCard) {
         return;
       }
+      this.viewingFront = false;
       this.card.html(Mustache.render(CardBack, currentCard.toJSON()));
       this.highlightIfMissed(currentCard);
     },
@@ -148,6 +152,17 @@ define([
         this.curIndex = 0;
       }
       this.showCurrentCard();
+    },
+    /**
+     * Flip card to front or back. Equivalent to clicking solve button when
+     * viewing front.
+     */
+    flipCard: function() {
+      if (this.viewingFront) {
+        this.showCardBack();
+      } else {
+        this.showCurrentCard();
+      }
     },
     /**
      * Render card information.

@@ -46,6 +46,7 @@ define([
     },
     continueQuiz: function() {
       this.quiz.loadFromStorage();
+      this.$('#card-setup').empty();
     },
     /**
      * Starts quiz with data.
