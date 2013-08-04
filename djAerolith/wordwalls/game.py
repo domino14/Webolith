@@ -28,7 +28,7 @@ from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry, SavedList)
 from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
 import re
-from forms import SavedListForm
+from base.forms import SavedListForm
 import wordwalls.settings
 from locks import lonelock
 import logging
