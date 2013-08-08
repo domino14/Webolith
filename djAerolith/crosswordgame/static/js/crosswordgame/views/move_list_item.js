@@ -1,18 +1,20 @@
 define([
-  'backbone'
-], function(Backbone) {
+  'backbone',
+  'text!templates/move.html',
+  'mustache'
+], function(Backbone, MoveTemplate, Mustache) {
+  "use strict";
   return Backbone.View.extend({
     initialize: function() {
 
     },
-    // XXX: use templates
     render: function() {
       var json = this.model.toJSON();
-      this.$el.html(['<P>', json.player, ': ', json.coordinates,
-                     ' ', json.play, ' ',
-                     json.score > 0 ? '+' + json.score : json.score,
-                     ' ', json.totalscore, '</P>'].join(''));
+      if (json.score > 0) {
+        json.score = '+' + json.score;
+      }
+      this.$el.html(Mustache.render(MoveTemplate, json));
       return this;
     }
-  })
+  });
 });
