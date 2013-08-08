@@ -1,32 +1,13 @@
 {% extends "crosswordgame/crossword_base.html" %}
-{% load assets %}
-
-{% block scripts %}
-{% assets "js_crosswordgame_libraries" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-
-{% assets "js_crosswordgame_table" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-
-<script type="text/javascript">
-$(document).ready(function () {
-    App.init({{gamejson|safe}});
-});
-</script>
 
 
-{% endblock %}
+
 {% block content %}
-<div class="row">
-    hi
-</div>
 <div class="row">
     <div class="span6">
         <div id="gameBoard"></div>
     </div>
-    <div class="span6">
+    <div class="span6" id="analysis-area">
         <button class="btn btn-mini" type="button" id="back">Back</button>
         <button class="btn btn-mini" type="button" id="forward">Forward</button>
         <button type="button" class="btn btn-mini" data-toggle="collapse" data-target="#moveList">Move List</button>
@@ -39,4 +20,32 @@ $(document).ready(function () {
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+var require = {
+    config: {
+        'main': {
+            gamejson: {{gamejson|safe}}
+        }
+    }
+}
+</script>
+<script src="/static/lib/require/require-min.js"></script>
+<script>
+require.config({
+    {% if DEBUG_JS %}
+        paths: {
+            'main': '/static/js/crosswordgame/main'
+        }
+    {% else %}
+        urlArgs = 'v={{CURRENT_VERSION}}',
+        paths: {
+            'main': '/static/build/crosswordgame-built'
+        }
+    {% endif %}
+});
+require(['main']);
+</script>
+
+
 {% endblock %}
