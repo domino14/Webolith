@@ -191,10 +191,17 @@ define([
      * Show the quiz is over final dialog.
      */
     showQuizOver: function() {
-      this.alertHolder.html(Mustache.render(Alert, {
-        alert: 'The quiz is over!'
-      }));
+      this.renderAlert('The quiz is over!');
       this.quizOver = true;
+    },
+    /**
+     * Renders an alert.
+     * @param {string} alertText
+     */
+    renderAlert: function(alertText) {
+      this.alertHolder.html(Mustache.render(Alert, {
+        alert: alertText
+      }));
     },
     /**
      * Saves quiz info to localstorage.
