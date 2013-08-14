@@ -58,19 +58,29 @@ define([
       if (this.currentMove < 0) {
         this.currentMove = 0;
       }
-      this.trigger('gcgEventUnrender', this.currentMove);
-      this.getNextRack();
+      // this.trigger('gcgEventUnrender', this.currentMove);
+      // this.getNextRack();
+      this.loadCurrentEvent(true);
     },
     /**
      * Load current event.
+     * @param {boolean} goingBack True if we are going back from a future
+     *                            event to a previous event.
      */
-    loadCurrentEvent: function() {
+    loadCurrentEvent: function(goingBack) {
       var evt;
       evt = this.get('moves').at(this.currentMove - 1);
+      console.log('currentMove', this.currentMove - 1)
+      if (goingBack) {
+        this.trigger('gcgEvent', evt || null, this.currentMove - 1,
+          goingBack);
+        return;
+      }
       if (!evt) {
         return;
       }
-      this.trigger('gcgEvent', evt.get('event'), evt, this.currentMove - 1);
+      this.trigger('gcgEvent', evt, this.currentMove - 1);
+      console.log('gcgEvent trigger', evt.toJSON())
       this.getNextRack();
     },
     /**

@@ -89,9 +89,14 @@ define([
         this.moves[eventNumber].withdraw();
       }
     },
-    handleGCGEvent: function(eventType, event, eventNumber) {
-      var newEvent;
-      newEvent = true;
+    handleGCGEvent: function(event, eventNumber, goingBack) {
+      var eventType;
+      if (goingBack) {
+        console.log('we are going back, undrender', eventNumber + 1)
+        this.unrenderEvent(eventNumber + 1);
+        return;
+      }
+      eventType = event.get('event');
       this.moves[eventNumber] = new Move({
         paper: this.paper,
         tilesize: this.tilesize,
