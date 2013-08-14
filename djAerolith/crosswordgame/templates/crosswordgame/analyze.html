@@ -1,22 +1,30 @@
 {% extends "crosswordgame/crossword_base.html" %}
 
-
+{% block addl_css %}
+<link href="/static/css/crosswordgame/analyze.css" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="span6">
+<div class="row" id="app-view">
+    <div class="span5">
         <div id="gameBoard"></div>
     </div>
-    <div class="span6" id="analysis-area">
-        <button class="btn btn-mini" type="button" id="back">Back</button>
-        <button class="btn btn-mini" type="button" id="forward">Forward</button>
-        <button type="button" class="btn btn-mini" data-toggle="collapse" data-target="#moveList">Move List</button>
+    <div class="span7" id="analysis-area">
+        <div class="row">
+            <button class="btn btn-mini" type="button" id="back">Back</button>
+            <button class="btn btn-mini" type="button" id="forward">Forward</button>
+            <button type="button" class="btn btn-mini" data-toggle="collapse" data-target="#moveList">Move List</button>
 
-        <div id="moveList" class="collapse">
-            <div class="row">
-                <div class="span3" id="player1moves"></div>
-                <div class="span3" id="player2moves"></div>
+            <div id="moveList" class="collapse">
+                <div class="row">
+                    <div class="span3" id="player1moves"></div>
+                    <div class="span3" id="player2moves"></div>
+                </div>
             </div>
+        </div>
+        <div class="row" id="rack-area">
+        </div>
+        <div class="row" id="pool-area">
         </div>
     </div>
 </div>

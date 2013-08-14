@@ -3,11 +3,13 @@
  */
 define([
   'backbone',
+  'underscore',
   'jquery',
   'views/crossword',
+  'views/racks',
   'views/move_list_item',
   'collections/gcg_event_list'
-], function(Backbone, $, Crossword, MoveListItem, GCGEventList) {
+], function(Backbone, _, $, Crossword, RacksView, MoveListItem, GCGEventList) {
   "use strict";
   var BoardView;
 
@@ -22,10 +24,16 @@ define([
       this.moves.on('reset', this.addAllMoves, this);
       this.moves.on('reset', this.render, this);
       this.crosswordView = new Crossword({
-        el: $('#gameBoard'),
-        gameDescription: options.gcg
+        el: this.$('#gameBoard')
       });
       this.moves.reset(options.gcg.moves);
+      this.racksView = new RacksView({
+        el: this.$('#rack-area')
+      });
+      this.crosswordView.on('rack', _.bind(this.racksView.handleRack,
+        this.racksView));
+      // Load the actual game.
+      this.crosswordView.initGame(options.gcg);
     },
 
     addOneMove: function (move) {
@@ -46,13 +54,16 @@ define([
     },
 
     render: function () {
-      console.log('rendering');
       this.crosswordView.render();
     },
 
-    goBack: function() {},
+    goBack: function() {
+      this.crosswordView.goBackMove();
+    },
 
-    goForward: function() {}
+    goForward: function() {
+      this.crosswordView.advanceMove();
+    }
   });
   return BoardView;
 });

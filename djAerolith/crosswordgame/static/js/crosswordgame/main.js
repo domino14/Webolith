@@ -42,8 +42,7 @@ define([
     var app;
     app = new AnalyzeApp({
       gcg: module.config().gamejson,
-      el: $('#analysis-area')
+      el: $('#app-view')
     });
-
   });
 });
