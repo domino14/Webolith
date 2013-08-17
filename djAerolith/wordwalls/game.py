@@ -358,7 +358,8 @@ class WordwallsGame:
                               's': w.lexiconSymbols})
                 answerHash[w.word] = alphagram_str, i
             questions.append({'a': alphagram_str, 'ws': words,
-                              'p': probPKToAlphProb(alphagram_pk)})
+                              'p': probPKToAlphProb(alphagram_pk),
+                              'idx': i})
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answerHash
@@ -552,6 +553,7 @@ class WordwallsGame:
     def doQuizEndActions(self, state, tablenum, wgm):
         state['quizGoing'] = False
         state['LastCorrect'] = ""
+        state['justCreatedFirstMissed'] = False
         # copy missed alphagrams to state['missed']
         missed_indices = set()
         for w in state['answerHash']:
@@ -579,6 +581,8 @@ class WordwallsGame:
         if state['questionIndex'] > wgm.numCurQuestions - 1:
             if not state['goneThruOnce']:
                 state['goneThruOnce'] = True
+                state['justCreatedFirstMissed'] = True
+                logger.debug('Creating first missed list from missed')
                 wgm.firstMissed = wgm.missed
                 wgm.numFirstMissed = wgm.numMissed
 
@@ -662,6 +666,32 @@ class WordwallsGame:
             return r
         elif searchDescription['condition'] == 'probPKList':
             pass
+
+    def mark_missed(self, question_index, tablenum, user):
+        try:
+            question_index = int(question_index)
+        except (ValueError, TypeError):
+            return False
+        wgm = self.getWGM(tablenum)
+        if not wgm:
+            return 'No table #%s exists' % tablenum
+        missed = json.loads(wgm.missed)
+        state = json.loads(wgm.currentGameState)
+        if question_index not in set(missed):
+            missed.append(question_index)
+            wgm.missed = json.dumps(missed)
+            if state.get('justCreatedFirstMissed'):
+                logger.debug('Also adding to first missed count')
+                # Also add to first missed count.
+                first_missed = json.loads(wgm.firstMissed)
+                if question_index not in set(first_missed):
+                    first_missed.append(question_index)
+                    wgm.numFirstMissed += 1
+                    wgm.firstMissed = json.dumps(first_missed)
+
+            wgm.save()
+            return True
+        return False
 
     def guess(self, guessStr, tablenum, user):
         guessStr = guessStr.upper()
