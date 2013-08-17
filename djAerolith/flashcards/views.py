@@ -42,6 +42,40 @@ def to_python(alphagram):
     }
 
 
+def validate_params(min, max, length, lex, max_range=1000):
+    """
+        Validates string parameters min, max, length with lexicon.
+    """
+    try:
+        lexicon = Lexicon.objects.get(lexiconName=lex.upper())
+    except Lexicon.DoesNotExist:
+        return "No such lexicon: %s" % lex
+    try:
+        p_min = int(min)
+        p_max = int(max)
+        length = int(length)
+    except (ValueError, TypeError):
+        return "Probabilities and lengths must be integers."
+    if p_min > p_max:
+        return "Max probability must be bigger than min."
+    if length < 2 or length > 15:
+        return "Length should be between 2 and 15."
+    if p_max - p_min + 1 > 1000:
+        return "You can only fetch 1000 questions at most."
+
+    count = json.loads(lexicon.lengthCounts).get('%s' % length, 0)
+
+    if p_min < 1 or p_min > count:
+        return (
+            'Minimum probability must be between 1 and %s for %s-letter '
+            'words' % (count, length))
+    if p_max < 1 or p_max > count:
+        return (
+            'Maximum probability must be between 1 and %s for %s-letter '
+            'words' % (count, length))
+    return p_min, p_max, length, lexicon
+
+
 @login_required
 def new_quiz(request):
     """
@@ -49,13 +83,11 @@ def new_quiz(request):
         Card models will only be used for cardbox in future.
     """
     body = json.loads(request.raw_post_data)
-    lexicon = Lexicon.objects.get(lexiconName=body['lex'].upper())
-    try:
-        p_min = int(body['min'])
-        p_max = int(body['max'])
-        length = int(body['length'])
-    except (ValueError, TypeError):
-        return response({'questions': []})
+    params = validate_params(body['min'], body['max'], body['length'],
+                             body['lex'])
+    if isinstance(params, basestring):
+        return response(params, status=400)
+    p_min, p_max, length, lexicon = params
 
     min_pk = alphProbToProbPK(p_min, lexicon.pk, length)
     max_pk = alphProbToProbPK(p_max, lexicon.pk, length)

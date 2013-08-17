@@ -611,6 +611,13 @@ def deleteSavedList(savedList, user):
     return profile.wordwallsSaveListSize
 
 
+def mark_missed(request, id):
+    lonelock(WordwallsGameModel, id)
+    wwg = WordwallsGame()
+    marked = wwg.mark_missed(request.POST['idx'], id, request.user)
+    return response({'success': marked})
+
+
 ######################
 # api views
 def api_challengers(request, month, day, year, lex, ch_id):
