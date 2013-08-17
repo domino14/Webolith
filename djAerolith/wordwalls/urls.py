@@ -21,6 +21,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     url(r'^$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
     url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table', name='wordwalls_table'),
+    url(r'^table/(?P<id>\d+)/missed/$', 'wordwalls.views.mark_missed'),
     url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload' ),
     url(r'^api/challengers/(?P<month>\d+)/(?P<day>\d+)/(?P<year>\d+)/(?P<lex>\d+)/(?P<ch_id>\d+)/$',
         'wordwalls.views.api_challengers'),

@@ -329,6 +329,8 @@ define([
         });
         $defsTable.append(wordSolutionView.render().el);
         this.roundTotalAnswers++;
+        this.listenTo(wordSolutionView, 'markMissed', _.bind(this.markMissed,
+          this));
       }, this);
     },
     /**
@@ -405,6 +407,25 @@ define([
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();
       }
+    },
+    /**
+     * Mark an alphagram as missed, at the end of a round.
+     * XXX: Don't use alert, create a better alert system.
+     * @param {number} alphagramIndex
+     * @param {Backbone.View} solutionView The view for this single alphagram.
+     */
+    markMissed: function(alphagramIndex, solutionView) {
+      $.post('missed/', {
+        'idx': alphagramIndex
+      }, _.bind(function(data) {
+        if (data.success === false) {
+          window.alert('Unable to mark this alphagram as missed.');
+        } else if (data.success === true) {
+          solutionView.markMissed();
+        }
+      }, this), 'json').fail(_.bind(function(jqXHR) {
+        window.alert(jqXHR.responseText);
+      }, this));
     },
     /**
      * Moves up the next question to the viewport window. This should be

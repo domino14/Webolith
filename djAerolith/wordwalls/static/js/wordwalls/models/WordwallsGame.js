@@ -47,7 +47,8 @@ define([
           prob: question.p,
           numWords: question.ws.length,
           wordsRemaining: question.ws.length,
-          words: wordCollection
+          words: wordCollection,
+          idx: question.idx
         });
         _.each(question.ws, function(word) {
           /* Add each word to the word collection. */

@@ -35,11 +35,14 @@ define([
         length: length,
         lex: lex
       }), _.bind(this.startQuiz, this),
-      'json');
+      'json').fail(_.bind(this.alertCallback, this));
     },
     getScheduledCards: function() {
       $.get(SCHEDULED_URL, function(data) {
       }, 'json');
+    },
+    alertCallback: function(jqXHR) {
+      this.quiz.renderAlert(jqXHR.responseJSON);
     },
     newQuiz: function() {
       this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {}));
