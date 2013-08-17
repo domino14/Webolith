@@ -117,6 +117,9 @@ define([
      */
     markCorrect: function() {
       var currentCard = this.cards.at(this.curIndex);
+      if (!currentCard) {
+        return;
+      }
       currentCard.set('missed', false);
       this.advanceCard();
     },
