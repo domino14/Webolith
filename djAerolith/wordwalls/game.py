@@ -776,6 +776,7 @@ class WordwallsGame:
                     r = range(min_p, max_p + 1)
                     random.shuffle(r)
                     pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
+                random.shuffle(pks)
                 return pks, challengeName.timeSecs
         return None
 
