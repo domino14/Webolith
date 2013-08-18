@@ -95,7 +95,7 @@ require(['main']);
     <button type="button" id="start" onClick="mixpanel.track('request start');" class="btn btn-primary">Start</button>
     <span id="gameTimer" class="label label-info"> : </span>
     <button type="button" id="giveup" onClick="mixpanel.track('give up');" class="btn btn-danger">Give up</button>
-    <button type="button" id="solutions" onClick="mixpanel.track('show solutions');" class="btn btn-info">Solutions</button>
+    <a data-toggle="modal" href="#solutions_popup" onClick="mixpanel.track('show solutions');" class="btn btn-info">Solutions</a>
 
     <button type="button" id="save" onClick="mixpanel.track('save game');" class="btn btn-warning">Save</button>
     <input type="text" size="20" id="saveListName">
@@ -137,8 +137,8 @@ require(['main']);
   <div id="guesses"></div>
   </div>
 
-  <div id="customize_popup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <div id="customize_popup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-wide">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -149,9 +149,9 @@ require(['main']);
             <ul class="questionList" id="configQL"></ul>
           </div>
           <h3>Tiles:</h3>
-          <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">Don't use tiles</input></span>
-          <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">Sans-serif font</input></span>
-          <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">Bold letters</input></span>
+          <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput"/>Don't use tiles</span>
+          <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput"/>Sans-serif font</span>
+          <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput"/>Bold letters</span>
           <span class="configInputSpan">Tile style:
           <select id="tileStyleSelect" class="configInput">
             <option value="1">Style 1</option>
@@ -163,14 +163,12 @@ require(['main']);
             <option value="7">Style 7</option>
           </select></span>
           <h3>Table:</h3>
-          <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">Don't show green table</input></span>
-          <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">Don't show canvas background</input></span>
-          <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">Show borders around questions</input></span>
-          <div>
-
+          <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput"/>Don't show green table</span>
+          <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput"/>Don't show canvas background</span>
+          <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput"/>Show borders around questions</span>
           <h3>Other:</h3>
-          <span class="configInputSpan">Blank character: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
-          <span class="configInputSpan">Custom tile ordering: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
+          <span class="configInputSpan">Blank character: <input type="text" id="blankCharacter" maxlength="1" class="configInput"/></span>
+          <span class="configInputSpan">Custom tile ordering: <input type="text" id="customTileOrdering" maxlength="27"/></span>
           <BR>
           <span id="prefsInfo"></span>
         </div>
@@ -178,36 +176,53 @@ require(['main']);
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" id="savePrefs">Save changes</button>
         </div>
-      </div> <!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-
-
-
-  <div id="definitions_popup" class="popup_block">
-      <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-      <div id="defs_popup_content">
-      <h2>Nothing to see here</h2>
-      <p>You didn't say the magic word.</p>
       </div>
+    </div>
   </div>
 
-  <div id="addlInfo_popup" class="popup_block">
-      <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-      <H3><center>Challenge results</center></H3>
-      <div id="addlInfo_content">
-      <h2>Nothing to see here</h2>
-      <p>You didn't say the magic word.</p>
+  <div id="solutions_popup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-wide">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Solutions</h4>
+        </div>
+        <div class="modal-body" id="defs-popup-content">
+          <h2>Nothing to see here</h2>
+          <p>You didn't say the magic word.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
+    </div>
   </div>
+
+
+  <div id="challenge_results_popup" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-wide">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Challenge Results</h4>
+        </div>
+        <div class="modal-body" id="challenge_results_content">
+          <h2>Nothing to see here</h2>
+          <p>You didn't say the magic word.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </div>
 {% endblock %}
 
 <div id="netbookBorders">
 </div>
-
-<div id="fade"></div>
-<div id="infoDialog" title=""></div>
 
 </body>
 <script>

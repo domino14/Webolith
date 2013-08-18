@@ -7,11 +7,13 @@ define([
   'views/AlphagramView',
   'views/WordSolutionView',
   'text!templates/solutionsTable.html',
+  'text!templates/viewChallengeResults.html',
   'mustache',
   'ChallengeView',
-  'utils'
+  'utils',
+  'bootstrap'
 ], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
-     SolutionsTable, Mustache, ChallengeView, utils) {
+     SolutionsTable, ViewChallengeResults, Mustache, ChallengeView, utils) {
   "use strict";
   var App;
   App = Backbone.View.extend({
@@ -19,14 +21,11 @@ define([
     events: {
       "click #start": "requestStart",
       "click #giveup": "giveUp",
-      "click #solutions": "showSolutions",
       "click #save": "saveGame",
-      "click #customize": "customize",
       "click #exit": "exit",
       "click #shuffle": "shuffle",
       "click #alphagram": "alphagram",
       'click #customOrder': 'customOrder',
-      "click .dcInfo": "showAddlInfo",
       "keypress #guessText": "readSpecialKeypress"
     },
     initialize: function() {
@@ -55,7 +54,7 @@ define([
       this.$questionsList = this.$("#questions > .questionList");
       this.questionViewsByAlphagram = {};
       this.questionViews = [];
-      this.defsDiv = this.$("#defs_popup_content");
+      this.defsDiv = this.$("#defs-popup-content");
       this.roundTotalAnswers = null;
 //      this.$('.utilityButton').disableSelection();
     },
@@ -138,26 +137,14 @@ define([
         $('#fade').fadeIn();
       }
     },
-    customize: function() {
-      this.fadeInDialog('customize_popup', false);
-    },
-    showAddlInfo: function() {
-      this.fadeInDialog('addlInfo_popup', true);
-    },
-    showSolutions: function() {
-      this.fadeInDialog('definitions_popup', true);
-    },
     handleChallengeEnded: function() {
       this.updateMessages("The challenge has ended!");
       $.post(this.tableUrl, {action: 'getDcData'},
         function(data) {
-          ChallengeView.processDcResults(data, "addlInfo_content");
+          ChallengeView.processDcResults(data, "challenge_results_content");
         },
         'json');
-      this.updateMessages([
-        'Click <a class="softLink dcInfo">here</a> to see current results for ',
-        'this challenge.'
-      ].join(''));
+      this.updateMessages(ViewChallengeResults);
     },
     saveGame: function() {
       var text = this.$("#saveListName").val();

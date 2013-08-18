@@ -21,7 +21,7 @@ define([
       'click .mark-missed': 'markMissedClicked_'
     },
     render: function() {
-      var attrs;
+      var attrs, wrong;
       /*
        * In this view, we only want to show probability / alphagram for
        * the first word in a collection.
@@ -30,6 +30,7 @@ define([
       if (attrs.alphagram) {
         if (attrs.alphagram.attributes.wrong) {
           attrs.wrongAlpha = true;
+          wrong = true;
         }
         attrs.alphagramText = attrs.alphagram.get('alphagram');
       }

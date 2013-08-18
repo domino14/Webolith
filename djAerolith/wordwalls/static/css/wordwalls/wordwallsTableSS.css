@@ -16,6 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
 
+.container {
+    margin-top: 10px;
+}
 body.canvasBg
 {
     background-image:url('../../img/wordwalls/canvas.png');
@@ -35,6 +38,9 @@ div.tableBg
     float: left;
 }
 
+.modal-wide {
+    width: 80%;
+}
 
 #playerRanks
 {
@@ -140,23 +146,6 @@ div#guesses
     color: gray;
 }
 
-table#solutionsTable
-{
-    border-collapse: collapse;
-}
-
-table#solutionsTable td
-{
-    border: 1px dotted;
-}
-
-tr.header td
-{
-    font-weight: 500;
-    background-color: rgb(230, 200, 200);
-    text-align: center;
-}
-
 td.frontHooksCell
 {
     text-align: right;
@@ -204,25 +193,6 @@ ul#questionList:after {
 
 ul#questionList { display : inline-block; } /*IE 6/7 */
 ul#questionList { display : block; }    /* IE6/7 */
-
-
-span#gameTimer
-{
-    display: inline-block;
-    border-color: rgb(0, 0, 0);
-    border-style: solid;
-    background-color: rgb(0, 200, 200);
-    border-width: 2px;
-    margin: 1px;
-    font-family: monospace;
-    font-size: 180%;
-    color: rgb(0, 0, 0);
-    width: 70px;
-
-    text-align: center;
-    height: 30px;
-    line-height: 30px;
-}
 
 /* tiles and chips */
 
@@ -349,6 +319,12 @@ span#horSep1
    width: 50px;
 }
 
+#gameTimer {
+    font-size: 20px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
 span#horSep2
 {
     display: inline-block;
@@ -368,7 +344,6 @@ span#prefsInfo
     border-color: black;
     border: 1px dotted;
     z-index: -10;
-    display: none;
 }
 
 /******/
@@ -378,13 +353,17 @@ span.configInputSpan
     width: 200px;
 }
 
+.configInput {
+    margin-right: 5px !important;
+}
+
 #blankCharacter {
     width: 20px;
     margin-left: 10px;
 }
 
 #customTileOrdering {
-    width: 200px;
+    width: 300px;
 }
 
 .wrongGuess
@@ -396,13 +375,6 @@ span.configInputSpan
 {
     font-size: 125%;
 }
-
-.softLink
-{
-    text-decoration: underline;
-    color: #00f;
-}
-
 #bottomBar
 {
     clear: both;
