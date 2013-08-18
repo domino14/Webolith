@@ -7,8 +7,7 @@ define([
   "underscore",
   "jquery",
   "text!templates/singleSolution.html",
-  "mustache",
-  "jquery_ui"
+  "mustache"
 ], function(Backbone, _, $, SingleSolution, Mustache) {
   "use strict";
   var SolutionView = Backbone.View.extend({

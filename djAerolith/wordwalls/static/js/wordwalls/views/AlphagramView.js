@@ -4,8 +4,7 @@ define([
   'jquery',
   'underscore',
   'text!templates/singleQuestion.html',
-  'mustache',
-  'jquery_ui'   /* Needed for disableSelection */
+  'mustache'
 ], function(Backbone, $, _, QuestionTemplate, Mustache) {
   "use strict";
   var AlphagramView;
@@ -31,7 +30,7 @@ define([
         this.tileOrder.push(i);
       }
       this.naturalTileOrder = _.clone(this.tileOrder);
-      this.$el.disableSelection();
+      //this.$el.disableSelection();
       this.tileSizeMap = {10: 14, 11: 13, 12: 12, 13: 11, 14: 10, 15: 9.5};
       /**
        * A memoized function to avoid recomputing the custom tile ordering

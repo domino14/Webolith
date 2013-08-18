@@ -57,7 +57,7 @@ define([
       this.questionViews = [];
       this.defsDiv = this.$("#defs_popup_content");
       this.roundTotalAnswers = null;
-      this.$('.utilityButton').disableSelection();
+//      this.$('.utilityButton').disableSelection();
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;

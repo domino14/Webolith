@@ -2,8 +2,7 @@
 define([
   'jquery',
   'underscore',
-  'ChallengeView',
-  'jquery_ui'
+  'ChallengeView'
 ], function($, _, ChallengeView) {
   var lengthCounts, maxProb, url, flashcardUrl, dcTimeMap;
 

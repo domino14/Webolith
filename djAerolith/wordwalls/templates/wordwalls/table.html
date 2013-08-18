@@ -27,9 +27,11 @@ To contact the author, please email delsolar at gmail dot com
 {% value_from_settings USE_GA as USE_GA %}
 {% value_from_settings DEBUG_JS as DEBUG_JS %}
 {% load assets %}
-{% assets "css_table" %}
+<!-- {% assets "css_table" %}
     <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
+{% endassets %} -->
+<link href="/static/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/static/css/wordwalls/wordwallsTableSS.css" rel="stylesheet">
 {% if USE_GA %}
 <script type="text/javascript">
 
@@ -88,105 +90,116 @@ require.config({
 });
 require(['main']);
 </script>
+<div class="container">
+  <div id="topBar">
+    <button type="button" id="start" onClick="mixpanel.track('request start');" class="btn btn-primary">Start</button>
+    <span id="gameTimer" class="label label-info"> : </span>
+    <button type="button" id="giveup" onClick="mixpanel.track('give up');" class="btn btn-danger">Give up</button>
+    <button type="button" id="solutions" onClick="mixpanel.track('show solutions');" class="btn btn-info">Solutions</button>
 
-<div id="topBar">
-<span id="start" onClick="mixpanel.track('request start');" class="tableButton">Start</span>
-<span id="gameTimer"> : </span>
-<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">Give up</span>
-<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">Solutions</span>
-
-<span id="save" onClick="mixpanel.track('save game');" class="tableButton">Save</span>
-<input type="text" size="20" id="saveListName">
-<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
-<span id="horSep1"></span>
-<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">Exit</span>
+    <button type="button" id="save" onClick="mixpanel.track('save game');" class="btn btn-warning">Save</button>
+    <input type="text" size="20" id="saveListName">
+    <a data-toggle="modal" href="#customize_popup"  onClick="mixpanel.track('clicked customize');" class="btn btn-warning">Preferences</a>
+    <span id="horSep1"></span>
+    <button type="button" id="exit" onClick="mixpanel.track('clicked exit');" class="btn btn-danger">Exit</button>
 </div>
 
-<div id="encloser">
-    <div id="questions">
-        <ul class="questionList"></ul>
-    </div>
+  <div id="encloser">
+      <div id="questions">
+          <ul class="questionList"></ul>
+      </div>
 
-    <div id="playerRanks">
-    </div>
+      <div id="playerRanks">
+      </div>
 
-    <div id="userBox">
-        <span id="avatarLabel"></span>
-        <span id="usernameLabel">{{username}}</span>
-        <span id="pointsLabelPercent"></span>
-        <span id="pointsLabelFraction"></span>
-        <div id="correctAnswers"></div>
-    </div>
-</div>
+      <div id="userBox">
+          <span id="avatarLabel"></span>
+          <span id="usernameLabel">{{username}}</span>
+          <span id="pointsLabelPercent"></span>
+          <span id="pointsLabelFraction"></span>
+          <div id="correctAnswers"></div>
+      </div>
+  </div>
 
 
 
-<div id="bottomBar">
-<span id="guessLabel">Guess: </span><input type="text" name="Guess" size="15" id="guessText">
-<span id="horSep2"></span>
-<span id="shuffle" class="utilityButton">Shuffle (1)</span>
-<span id="alphagram" class="utilityButton">Alphagram (2)</span>
-<span id="customOrder" class="utilityButton">Custom (3)</span>
-</div>
+  <div id="bottomBar">
+  <span id="guessLabel">Guess: </span><input type="text" name="Guess" size="15" id="guessText">
+  <span id="horSep2"></span>
+  <button type="button" id="shuffle" class="btn btn-info">Shuffle (1)</button>
+  <button type="button" id="alphagram" class="btn btn-info">Alphagram (2)</button>
+  <button type="button" id="customOrder" class="btn btn-info">Custom (3)</button>
+  </div>
 
-<div id="textBar">
-<div id="messages"></div>
-Guesses:
-<div id="guesses"></div>
-</div>
-<div id="customize_popup" class="popup_block customize_popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
+  <div id="textBar">
+  <div id="messages"></div>
+  Guesses:
+  <div id="guesses"></div>
+  </div>
 
-    <div id="customSample">
-    <ul class="questionList" id="configQL">
-    </ul>
-    </div>
-    <BR>
-    <div id="customize_popup_content" style="clear: both;">
-        <h3>Tiles:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">Don't use tiles</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">Sans-serif font</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">Bold letters</input></span>
-        <span class="configInputSpan">Tile style:
-        <select id="tileStyleSelect" class="configInput">
-          <option value="1">Style 1</option>
-          <option value="2">Style 2</option>
-          <option value="3">Style 3</option>
-          <option value="4">Style 4</option>
-          <option value="5">Style 5</option>
-          <option value="6">Style 6</option>
-          <option value="7">Style 7</option>
-        </select></span>
-        <h3>Table:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">Don't show green table</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">Don't show canvas background</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">Show borders around questions</input></span>
-        <div>
-
-        <h3>Other:</h3>
-        <span class="configInputSpan">Blank character: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
-        <span class="configInputSpan">Custom tile ordering: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
-        <BR>
-        <button id="savePrefs">Save preferences</button><span id="prefsInfo"></span>
+  <div id="customize_popup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Customize</h4>
         </div>
-    </div>
-</div>
+        <div class="modal-body">
+          <div id="customSample">
+            <ul class="questionList" id="configQL"></ul>
+          </div>
+          <h3>Tiles:</h3>
+          <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">Don't use tiles</input></span>
+          <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">Sans-serif font</input></span>
+          <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">Bold letters</input></span>
+          <span class="configInputSpan">Tile style:
+          <select id="tileStyleSelect" class="configInput">
+            <option value="1">Style 1</option>
+            <option value="2">Style 2</option>
+            <option value="3">Style 3</option>
+            <option value="4">Style 4</option>
+            <option value="5">Style 5</option>
+            <option value="6">Style 6</option>
+            <option value="7">Style 7</option>
+          </select></span>
+          <h3>Table:</h3>
+          <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">Don't show green table</input></span>
+          <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">Don't show canvas background</input></span>
+          <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">Show borders around questions</input></span>
+          <div>
 
-<div id="definitions_popup" class="popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <div id="defs_popup_content">
-    <h2>Nothing to see here</h2>
-    <p>You didn't say the magic word.</p>
-    </div>
-</div>
+          <h3>Other:</h3>
+          <span class="configInputSpan">Blank character: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
+          <span class="configInputSpan">Custom tile ordering: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
+          <BR>
+          <span id="prefsInfo"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="savePrefs">Save changes</button>
+        </div>
+      </div> <!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
-<div id="addlInfo_popup" class="popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <H3><center>Challenge results</center></H3>
-    <div id="addlInfo_content">
-    <h2>Nothing to see here</h2>
-    <p>You didn't say the magic word.</p>
-    </div>
+
+
+  <div id="definitions_popup" class="popup_block">
+      <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
+      <div id="defs_popup_content">
+      <h2>Nothing to see here</h2>
+      <p>You didn't say the magic word.</p>
+      </div>
+  </div>
+
+  <div id="addlInfo_popup" class="popup_block">
+      <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
+      <H3><center>Challenge results</center></H3>
+      <div id="addlInfo_content">
+      <h2>Nothing to see here</h2>
+      <p>You didn't say the magic word.</p>
+      </div>
+  </div>
 </div>
 {% endblock %}
 

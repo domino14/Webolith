@@ -222,184 +222,7 @@ span#gameTimer
     text-align: center;
     height: 30px;
     line-height: 30px;
-
 }
-
-.tableButton
-{
-    display: inline-block;
-    border-style: outset;
-    border-width: 2px;
-    border-radius: 10px;
-    font-size: 140%;
-    font-weight: 500;
-    padding: 6px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-}
-
-.utilityButton
-{
-    display: inline-block;
-    border-style: outset;
-    border-width: 1px;
-    border-radius: 2px;
-    padding: 2px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-}
-
-.utilityButton:hover
-{
-    background-color: rgb(220, 220, 220);
-}
-
-#start
-{
-    background-color: rgb(0, 220, 0);
-    border-color: rgb(100, 100, 0);
-}
-
-#start:hover
-{
-    background-color: rgb(0, 255, 0);
-    border-color: rgb(0, 0, 255);
-}
-
-#start:active
-{
-    background-color: rgb(0, 180, 0);
-    border-color: rgb(0, 0, 0);
-}
-
-#giveup
-{
-    background-color: rgb(220, 0, 0);
-    border-color: rgb(100, 100, 0);
-}
-
-#giveup:hover
-{
-    background-color: rgb(255, 0, 0);
-    border-color: rgb(0, 0, 0);
-}
-
-#giveup:active
-{
-    background-color: rgb(180, 0, 0);
-    border-color: rgb(100, 100, 0);
-}
-
-#standsit
-{
-    background-color: rgb(220, 130, 0);
-    border-color: rgb(100, 100, 0);
-}
-
-#standsit:hover
-{
-    background-color: rgb(255, 155, 0);
-    border-color: rgb(0, 0, 0);
-}
-
-#standsit:active
-{
-    background-color: rgb(180, 100, 0);
-    border-color: rgb(100, 100, 0);
-}
-
-#solutions
-{
-    background-color: rgb(0, 130, 220);
-    border-color: rgb(100, 100, 0);
-}
-
-#solutions:hover
-{
-    background-color: rgb(0, 150, 250);
-    border-color: rgb(0, 0, 0);
-}
-
-#solutions:active
-{
-    background-color: rgb(0, 100, 150);
-    border-color: rgb(100, 100, 0);
-}
-
-#tablenum
-{
-    border-color: rgb(100, 100, 100);
-    background-color: rgb(200, 200, 200);
-}
-
-#tablenum:hover
-{
-    border-color: rgb(120, 120, 120);
-    background-color: rgb(220, 230, 220);
-}
-
-#tablenum:active
-{
-    border-color: rgb(150, 150, 150);
-    background-color: rgb(250, 250, 250);
-}
-
-#save
-{
-    border-color: rgb(50, 130, 50);
-    background-color: rgb(230, 180, 100);
-}
-
-#save:hover
-{
-    border-color: rgb(80, 80, 150);
-    background-color: rgb(200, 140, 60);
-}
-
-#save:active
-{
-    border-color: rgb(80, 80, 150);
-    background-color: rgb(255, 200, 120);
-}
-
-#exit
-{
-    border-color: rgb(200, 130, 50);
-    background-color: rgb(230, 50, 100);
-}
-
-#exit:hover
-{
-    border-color: rgb(255, 100, 0);
-    background-color: rgb(230, 0, 0);
-}
-
-#exit:active
-{
-    border-color: rgb(255, 100, 0);
-    background-color: rgb(255, 0, 0);
-}
-
-#customize
-{
-    border-color: rgb(50, 50, 50);
-    background-color: rgb(200, 200, 200);
-}
-
-#customize:hover
-{
-    border-color: rgb(70, 70, 70);
-    background-color: rgb(225, 225, 225);
-}
-
-#customize:active
-{
-    border-color: rgb(70, 70, 70);
-    background-color: rgb(250, 250, 250);
-}
-
 
 /* tiles and chips */
 
@@ -494,14 +317,6 @@ span.tilebold
     font-weight: 600;
 }
 
-#Test
-{
-    position: absolute;
-    visibility: hidden;
-    height: auto;
-    width: auto;
-}
-
 span.chip
 {
     float: left;
@@ -556,80 +371,6 @@ span#prefsInfo
     display: none;
 }
 
-/******** definitions popup **********/
-#fade {
-    /* this div covers the entire screen with absolute positioning */
-	display: none;
-	background: #000;
-	position: fixed; left: 0; top: 0;
-	z-index: 10;
-	width: 100%; height: 100%;
-	opacity: .80;
-	z-index: 9999;  /* for some reason this is needed for IE because it is stupid */
-	filter : alpha(opacity=80);
-}
-.popup_block{
-	display: none;
-	background: #fff;
-	padding: 20px;
-	border: 20px solid #bdf;
-	float: left;
-	position: fixed;
-	top: 50%; left: 50%;
-	z-index: 99999;
-	width: 850px;
-	-webkit-box-shadow: 0px 0px 20px #000;
-	-moz-box-shadow: 0px 0px 20px #000;
-	box-shadow: 0px 0px 20px #000;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-
-}
-.customize_popup_block{
-    top: 50%;
-}
-
-div#customize_popup_content
-{
-    height: 300px;
-}
-
-div#addlInfo_content
-{
-    margin-left: 300px;
-    height: 300px;
-    overflow-y: auto;
-}
-
-img.btn_close {
-	float: right;
-	margin: -45px -45px 0 0;
-	background-image:url('../../img/wordwalls/close_pop1.png');
-	background-repeat: no-repeat;
-}
-
-img.btn_close:hover
-{
-    background-image:url('../../img/wordwalls/close_pop2.png');
-    /* this doesn't work */
-}
-
-div#defs_popup_content
-{
-    height: 450px;
-    overflow-y: auto;
-}
-
-/* for IE6 ? IE sucks */
-
-*html #fade {
-	position: absolute;
-}
-*html .popup_block {
-	position: absolute;
-}
-
 /******/
 span.configInputSpan
 {
@@ -646,13 +387,10 @@ span.configInputSpan
     width: 200px;
 }
 
-
-
 .wrongGuess
 {
     color: red;
 }
-
 
 #guessText
 {
