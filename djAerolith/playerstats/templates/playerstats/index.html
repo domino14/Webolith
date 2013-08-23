@@ -2,7 +2,82 @@
 <meta charset="utf-8">
 <head>
 <title>Playa stats</title>
-<link href="stats.css" rel="stylesheet">
+<style>
+@import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
+
+body {
+  font-family: "Helvetica Neue";
+  margin: 40px auto;
+  width: 960px;
+  min-height: 2000px;
+}
+
+
+#charts {
+  padding: 10px 0;
+}
+
+.chart {
+  display: inline-block;
+  height: 151px;
+  margin-bottom: 20px;
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: #ccc;
+}
+
+.background.bar {
+  fill: #ccc;
+}
+
+.foreground.bar {
+  fill: steelblue;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.brush rect.extent {
+  fill: steelblue;
+  fill-opacity: .125;
+}
+
+.brush .resize path {
+  fill: #eee;
+  stroke: #666;
+}
+
+#point-chart {
+  width: 420px;
+}
+
+#date-chart {
+  width: 920px;
+}
+
+#user-chart {
+    width: 420px;
+}
+
+aside {
+  position: absolute;
+  left: 740px;
+  font-size: smaller;
+  width: 220px;
+}
+</style>
+
+
 <script src="/static/lib/crossfilter.js"></script>
 <script src="/static/lib/d3.js"></script>
 <script src="/static/js/playerstats/barchart.js"></script>
@@ -38,6 +113,7 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
             c['Time Remaining'];
     });
     var challenge = crossfilter(challenges),
+        all = challenge.groupAll(),
         date = challenge.dimension(function(d) { return d.Date; }),
         // do i need dates?
         dates = date.group(d3.time.day),
@@ -47,6 +123,9 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
             return Math.floor(pts / 10) * 10;
         }),
         user = challenge.dimension(function(d) { return d.Username; }),
+        users = user.group(function(user) {
+
+        }),
         chName = challenge.dimension(function(d) { return d['Challenge Name']; }),
         lexicon = challenge.dimension(function(d) { return d.Lexicon; }),
         medal = challenge.dimension(function(d) { return d.Medal; });
