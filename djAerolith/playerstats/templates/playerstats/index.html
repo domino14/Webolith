@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<title>Playa stats</title>
+<link href="stats.css" rel="stylesheet">
+<script src="/static/lib/crossfilter.js"></script>
+<script src="/static/lib/d3.js"></script>
+<script src="/static/js/playerstats/barchart.js"></script>
+
+</head>
+
+<body>
+    <div id="charts">
+      <div id="point-chart" class="chart">
+        <div class="title">Points</div>
+      </div>
+      <div id="date-chart" class="chart">
+        <div class="title">Date</div>
+      </div>
+    </div>
+</body>
+
+<script>
+d3.csv("/static/challenges_raw.csv", function(error, challenges) {
+    // Coerce some values to typed values.
+    // Like d3.time.format, but faster.
+    function parseDate(d) {
+        return new Date(d.substring(0, 4), d.substring(5, 7) - 1,
+            d.substring(8, 10));
+    }
+    challenges.forEach(function(c) {
+        c['Date'] = parseDate(c['Date']);
+        c['Max Score'] = +c['Max Score'];
+        c['Score'] = +c['Score'];
+        c['Time Remaining'] = +c['Time Remaining'];
+        // 'points' is a normalized score.
+        c['points'] = Math.floor(100 * c['Score'] / c['Max Score']) +
+            c['Time Remaining'];
+    });
+    var challenge = crossfilter(challenges),
+        date = challenge.dimension(function(d) { return d.Date; }),
+        // do i need dates?
+        dates = date.group(d3.time.day),
+        point = challenge.dimension(function(d) { return d.points; }),
+        // For histogram sake?
+        points = point.group(function(pts) {
+            return Math.floor(pts / 10) * 10;
+        }),
+        user = challenge.dimension(function(d) { return d.Username; }),
+        chName = challenge.dimension(function(d) { return d['Challenge Name']; }),
+        lexicon = challenge.dimension(function(d) { return d.Lexicon; }),
+        medal = challenge.dimension(function(d) { return d.Medal; });
+        timeRemaining = challenge.dimension(function(d) { return d['Time Remaining'];}),
+        timesRem = timeRemaining.group(function(t) {
+            return Math.floor(t / 10) * 10;
+        });
+
+
+  var charts = [
+    barChart()
+        .dimension(point)
+        .group(points)
+      .x(d3.scale.linear()
+        .domain([0, 400])
+        .rangeRound([0, 10 * 42])),
+
+    barChart()
+        .dimension(date)
+        .group(dates)
+        .round(d3.time.day.round)
+      .x(d3.time.scale()
+        .domain([new Date(2011, 5, 10), new Date(2013, 7, 22)])
+        .rangeRound([0, 10 * 90]))
+  ];
+
+  // Given our array of charts, which we assume are in the same order as the
+  // .chart elements in the DOM, bind the charts to the DOM and render them.
+  // We also listen to the chart's brush events to update the display.
+  var chart = d3.selectAll(".chart")
+      .data(charts)
+      .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
+
+  renderAll();
+
+  // Renders the specified chart or list.
+  function render(method) {
+    d3.select(this).call(method);
+  }
+
+  // Whenever the brush moves, re-rendering everything.
+  function renderAll() {
+    chart.each(render);
+    //d3.select("#active").text(formatNumber(all.value()));
+  }
+
+    window.filter = function(filters) {
+    filters.forEach(function(d, i) { charts[i].filter(d); });
+    renderAll();
+  };
+
+  window.reset = function(i) {
+    charts[i].filter(null);
+    renderAll();
+  };
+});
+
+</script>
+
+</html>

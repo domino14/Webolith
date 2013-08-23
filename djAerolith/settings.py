@@ -145,11 +145,10 @@ INSTALLED_APPS = (
     'south',
     'whitleyCards',
     'quackleInterface',
+    'playerstats',
     'crosswordgame',
-    'misctools',
     'gargoyle',
     'nexus',
-    'nsc2013',
     'flashcards'
     #'debug_toolbar',
     #'locking'

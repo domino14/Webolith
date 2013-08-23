@@ -59,6 +59,8 @@ urlpatterns = patterns('',
     (r'^cards/', include('flashcards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
+    (r'^playerstats/', direct_to_template,
+        {'template': 'playerstats/index.html'}),
     ('^nexus/', include(nexus.site.urls))
 )
 
