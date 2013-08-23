@@ -59,8 +59,6 @@ urlpatterns = patterns('',
     (r'^cards/', include('flashcards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
-    (r'^mcc/', direct_to_template, {'template': 'misctools/menstrulator.html'}),
-    (r'^nsc2013/', 'nsc2013.views.main'),
     ('^nexus/', include(nexus.site.urls))
 )
 
