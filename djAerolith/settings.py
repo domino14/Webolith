@@ -146,10 +146,8 @@ INSTALLED_APPS = (
     'whitleyCards',
     'quackleInterface',
     'crosswordgame',
-    'misctools',
     'gargoyle',
     'nexus',
-    'nsc2013',
     'flashcards'
     #'debug_toolbar',
     #'locking'
