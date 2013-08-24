@@ -3,13 +3,14 @@ define([
   'underscore',
   'collections/cards',
   'mustache',
+  'text!templates/card.html',
   'text!templates/card_front.html',
   'text!templates/card_back.html',
   'text!templates/card_info.html',
   'text!templates/quiz_header.html',
   'text!templates/alert.html'
-], function(Backbone, _, Cards, Mustache, CardFront, CardBack, CardInfo,
-  QuizHeader, Alert) {
+], function(Backbone, _, Cards, Mustache, CardTemplate, CardFront, CardBack,
+  CardInfo, QuizHeader, Alert) {
   "use strict";
   return Backbone.View.extend({
     initialize: function() {
@@ -75,42 +76,55 @@ define([
      * Shows current card front.
      */
     showCurrentCard: function() {
-      var currentCard = this.cards.at(this.curIndex);
+      var currentCard;
+      currentCard = this.cards.at(this.curIndex);
       if (!currentCard) {
         this.showQuizOver();
         return;
       }
       this.viewingFront = true;
-      this.card.html(Mustache.render(CardFront, {
-        question: currentCard.attributes.question,
-        numAnswers: _.size(currentCard.attributes.answers)
-      }));
+      this.renderCard(CardFront, currentCard);
       this.renderCardInfo();
       this.saveQuizInfo();
-      this.highlightIfMissed(currentCard);
     },
     /**
      * Shows the back of the card.
      */
     showCardBack: function() {
-      var currentCard = this.cards.at(this.curIndex);
+      var currentCard;
+      currentCard = this.cards.at(this.curIndex);
       if (!currentCard) {
         return;
       }
       this.viewingFront = false;
-      this.card.html(Mustache.render(CardBack, currentCard.toJSON()));
-      this.highlightIfMissed(currentCard);
+      this.renderCard(CardBack, currentCard);
     },
     /**
-     * Highlights card in red if it is marked missed.
-     * @param  {Backbone.Model} card
+     * Actually renders a card side with Mustache.
+     * @param {string} template The template of the side of the card we
+     *                          are rendering.
+     * @param {Card} card The card.
      */
-    highlightIfMissed: function(card) {
-      if (card.get('missed')) {
-        this.card.addClass('missed-card');
-      } else {
-        this.card.removeClass('missed-card');
-      }
+    renderCard: function(template, card) {
+      var partials, attributes;
+      attributes = this.getCardDisplayAttributes(card);
+      partials = {'cardBody': template};
+      this.card.html(Mustache.render(CardTemplate, attributes, partials));
+    },
+    /**
+     * Gets the display attributes for a card. Used as a context for
+     * rendering the card.
+     * @param {Card} card
+     * @return {Object}
+     */
+    getCardDisplayAttributes: function(card) {
+      var attributes;
+      attributes = card.toJSON();
+      attributes.numAnswers = _.size(attributes.answers);
+      attributes.pluralAnswers = attributes.numAnswers > 1;
+      attributes.cardNum = this.curIndex + 1;
+      attributes.cardCount = this.cards.size();
+      return attributes;
     },
     /**
      * Mark the current card correct.
@@ -171,10 +185,7 @@ define([
      * Render card information.
      */
     renderCardInfo: function() {
-      this.cardInfo.html(Mustache.render(CardInfo, {
-        cardNum: this.curIndex + 1,
-        cardCount: this.cards.size()
-      }));
+      this.cardInfo.html(Mustache.render(CardInfo, {}));
       this.quizInfo.html(Mustache.render(QuizHeader, {
         quizName: this.quizName
       }));

@@ -46,9 +46,11 @@ define([
     },
     newQuiz: function() {
       this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {}));
+      this.$('#card-area').hide();
     },
     continueQuiz: function() {
       this.quiz.loadFromStorage();
+      this.$('#card-area').show();
       this.$('#card-setup').empty();
     },
     /**

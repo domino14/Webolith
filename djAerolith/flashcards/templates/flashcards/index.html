@@ -11,18 +11,12 @@
     <meta name="author" content="Cesar Del Solar">
 
     <link href="/static/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px;
-      }
-
-    </style>
     <link href="/static/css/flashcards/cards.css" rel="stylesheet">
   </head>
 
   <body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -47,12 +41,18 @@
         <div id="card-setup"></div>
       </div>
       <div class="row" id="card-area">
-        <div class="col-lg-6">
-            <div id="header-info"></div>
-            <div id="card" class="well"></div>
-            <div id="footer-info"></div>
+        <div class="row">
+          <div class="col-xs-1"></div>
+          <div class="col-lg-5 col-md-6 col-sm-8 col-xs-10 alert-holder"></div>
         </div>
-        <div class="col-lg-4 alert-holder"></div>
+        <div class="row">
+          <div class="col-xs-1"></div>
+          <div class="col-lg-5 col-md-6 col-sm-8 col-xs-10">
+              <div id="header-info"></div>
+              <div id="card"></div>
+              <div id="footer-info"></div>
+          </div>
+        </div>
       </div>
 
     </div> <!-- /container -->

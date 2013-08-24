@@ -1,0 +1,13 @@
+<div class="panel {{#missed}}panel-danger{{/missed}}{{^missed}}panel-default{{/missed}}">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{question}}
+            <span class="pull-right">
+                    <span style="margin-right: 20px;">{{cardNum}} of {{cardCount}}</span>
+                    <span class="label label-default">{{numAnswers}} answer{{#pluralAnswers}}s{{/pluralAnswers}}</span>
+            </span>
+        </h3>
+    </div>
+    <div class="panel-body">
+        {{>cardBody}}
+    </div>
+</div>
