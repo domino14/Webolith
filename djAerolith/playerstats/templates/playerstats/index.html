@@ -2,100 +2,100 @@
 <meta charset="utf-8">
 <head>
 <title>Playa stats</title>
-<style>
-@import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
-
-body {
-  font-family: "Helvetica Neue";
-  margin: 40px auto;
-  width: 960px;
-  min-height: 2000px;
-}
-
-
-#charts {
-  padding: 10px 0;
-}
-
-.chart {
-  display: inline-block;
-  height: 151px;
-  margin-bottom: 20px;
-}
-
-.reset {
-  padding-left: 1em;
-  font-size: smaller;
-  color: #ccc;
-}
-
-.background.bar {
-  fill: #ccc;
-}
-
-.foreground.bar {
-  fill: steelblue;
-}
-
-.axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.axis text {
-  font: 10px sans-serif;
-}
-
-.brush rect.extent {
-  fill: steelblue;
-  fill-opacity: .125;
-}
-
-.brush .resize path {
-  fill: #eee;
-  stroke: #666;
-}
-
-#point-chart {
-  width: 420px;
-}
-
-#date-chart {
-  width: 920px;
-}
-
-#user-chart {
-    width: 420px;
-}
-
-aside {
-  position: absolute;
-  left: 740px;
-  font-size: smaller;
-  width: 220px;
-}
-</style>
-
 
 <script src="/static/lib/crossfilter.js"></script>
 <script src="/static/lib/d3.js"></script>
-<script src="/static/js/playerstats/barchart.js"></script>
-
+<script src="/static/lib/dc.js"></script>
+<script src="/static/js/aerolith/jquery-1.10.1.js"></script>
+<link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/lib/dc.css" rel="stylesheet">
+<style>
+  body {
+    margin-left: 50px;
+    margin-top: 20px;
+  }
+</style>
 </head>
 
 <body>
-    <div id="charts">
-      <div id="point-chart" class="chart">
-        <div class="title">Points</div>
-      </div>
-      <div id="date-chart" class="chart">
-        <div class="title">Date</div>
-      </div>
-    </div>
+<div class="row" style="margin-bottom: 10px;">
+  User: <input type="text" id="userfilter"/>
+  <button class="btn btn-primary" id="user-filter-btn">Filter By User</button>
+</div>
+<div class="row" style="margin-bottom: 10px;">
+  Lexicon: <select id="lexiconfilter"><option></option><option>OWL2</option><option>CSW12</option><option>CSW07</option></select>
+</div>
+<div class="row" style="margin-bottom: 10px;">
+  Challenge:
+  <select id="challengenamefilter">
+    <option></option>
+    <option>Today's 2s</option>
+    <option>Today's 3s</option>
+    <option>Today's 4s</option>
+    <option>Today's 5s</option>
+    <option>Today's 6s</option>
+    <option>Today's 7s</option>
+    <option>Today's 8s</option>
+    <option>Today's 9s</option>
+    <option>Today's 10s</option>
+    <option>Today's 11s</option>
+    <option>Today's 12s</option>
+    <option>Today's 13s</option>
+    <option>Today's 14s</option>
+    <option>Today's 15s</option>
+    <option>Week's Bingo Toughies</option>
+    <option>Blank Bingos</option>
+    <option>Bingo Marathon</option>
+  </select>
+</div>
+<div class="row">
+  <div id="total-points-chart" class="dc-chart">
+    <strong>Total Points</strong>
+    <a class="reset" href="javascript:totalPointsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+    <div class="clearfix"></div>
+  </div>
+<!--   <div id="point-progression-chart" class="dc-chart">
+    <strong>Point progression over time</strong>
+      <a class="reset" href="javascript:pointProgressionChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+    <div class="clearfix"></div>
+  </div> -->
+
+</div>
+<div class="row">
+  <div id="challenges-by-date-chart" class="dc-chart">
+      <strong>Challenges By Date</strong>
+      <a class="reset" href="javascript:challengesByDateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+      <div class="clearfix"></div>
+  </div>
+  <div id="day-of-week-chart" class="dc-chart">
+    <strong>By Day of Week</strong>
+    <a class="reset" href="javascript:dayOfWeekChart.filterAll(); dc.redrawAll();" style="display:none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
+    <div class="clearfix"></div>
+  </div>
+</div>
 </body>
 
 <script>
+var challengesByDateChart = dc.barChart("#challenges-by-date-chart"),
+  totalPointsChart = dc.barChart("#total-points-chart"),
+  dayOfWeekChart = dc.rowChart("#day-of-week-chart");
+//  pointProgressionChart = dc.barChart("#point-progression-chart"),
+function resetUserFilter() {
+  user.filterAll();
+  dc.redrawAll();
+}
+function resetLexiconFilter() {
+  lexicon.filterAll();
+  dc.redrawAll();
+}
+function resetChallengeFilter() {
+  chName.filterAll();
+  dc.redrawAll();
+}
 d3.csv("/static/challenges_raw.csv", function(error, challenges) {
     // Coerce some values to typed values.
     // Like d3.time.format, but faster.
@@ -103,6 +103,7 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
         return new Date(d.substring(0, 4), d.substring(5, 7) - 1,
             d.substring(8, 10));
     }
+
     challenges.forEach(function(c) {
         c['Date'] = parseDate(c['Date']);
         c['Max Score'] = +c['Max Score'];
@@ -116,71 +117,109 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
         all = challenge.groupAll(),
         date = challenge.dimension(function(d) { return d.Date; }),
         // do i need dates?
-        dates = date.group(d3.time.day),
+        dates = date.group(d3.time.month),
         point = challenge.dimension(function(d) { return d.points; }),
         // For histogram sake?
         points = point.group(function(pts) {
-            return Math.floor(pts / 10) * 10;
+            return pts;
         }),
         user = challenge.dimension(function(d) { return d.Username; }),
-        users = user.group(function(user) {
-
+        chName = challenge.dimension(function(d) {
+          return d['Challenge Name'];
         }),
-        chName = challenge.dimension(function(d) { return d['Challenge Name']; }),
-        lexicon = challenge.dimension(function(d) { return d.Lexicon; }),
-        medal = challenge.dimension(function(d) { return d.Medal; });
-        timeRemaining = challenge.dimension(function(d) { return d['Time Remaining'];}),
-        timesRem = timeRemaining.group(function(t) {
-            return Math.floor(t / 10) * 10;
-        });
+        lexicon = challenge.dimension(function(d) {
+          return d.Lexicon;
+        }),
+        dayOfWeek = challenge.dimension(function (d) {
+          var day = d.Date.getDay();
+          switch (day) {
+            case 0:
+              return "0.Sun";
+            case 1:
+              return "1.Mon";
+            case 2:
+              return "2.Tue";
+            case 3:
+              return "3.Wed";
+            case 4:
+              return "4.Thu";
+            case 5:
+              return "5.Fri";
+            case 6:
+              return "6.Sat";
+          }
+        }),
+        dayOfWeekGroup = dayOfWeek.group();
+    // Charts.
+    challengesByDateChart
+      .width(600)
+      .height(250)
+      .margins({top: 10, right: 50, bottom: 30, left: 50})
+      .dimension(date)
+      .group(dates)
+      .elasticY(true)
+      .x(d3.time.scale().domain([new Date(2011, 5, 1), new Date(2012, 9, 1)]))
+      .elasticX(true)
+      .xUnits(d3.time.months)
+      .renderHorizontalGridLines(true)
+      .renderVerticalGridLines(true)
+      .renderTitle(true);
+    totalPointsChart
+      .width(600)
+      .dimension(point)
+      .margins({top: 10, right: 50, bottom: 30, left: 40})
+      .group(points)
+      .elasticY(true)
+      .x(d3.scale.linear().domain([0, 400]))
+      .centerBar(true)
+      .renderHorizontalGridLines(true)
+      .renderVerticalGridLines(true);
+    dayOfWeekChart.width(180)
+      .height(180)
+      .margins({top: 20, left: 10, right: 10, bottom: 20})
+      .group(dayOfWeekGroup)
+      .dimension(dayOfWeek)
+      .colors(['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb'])
+      .label(function (d) {
+          return d.key.split(".")[1];
+      })
+      .title(function (d) {
+          return d.value;
+      })
+      .elasticX(true)
+      .xAxis().ticks(4);
+    dc.renderAll();
+    $('#user-filter-btn').click(function() {
+      var username;
+      username = $('#userfilter').val();
+      if (username) {
+        user.filterExact(username);
+      } else {
+        user.filterAll();
+      }
+      dc.redrawAll();
+    });
+    $('#lexiconfilter').change(function() {
+      var lex;
+      lex = $('#lexiconfilter').val();
+      if (lex) {
+        lexicon.filterExact(lex);
+      } else {
+        lexicon.filterAll();
+      }
+      dc.redrawAll();
+    });
+    $('#challengenamefilter').change(function() {
+      var ch;
+      ch = $('#challengenamefilter').val();
+      if (ch) {
+        chName.filterExact(ch);
+      } else {
+        chName.filterAll();
+      }
+      dc.redrawAll();
+    });
 
-
-  var charts = [
-    barChart()
-        .dimension(point)
-        .group(points)
-      .x(d3.scale.linear()
-        .domain([0, 400])
-        .rangeRound([0, 10 * 42])),
-
-    barChart()
-        .dimension(date)
-        .group(dates)
-        .round(d3.time.day.round)
-      .x(d3.time.scale()
-        .domain([new Date(2011, 5, 10), new Date(2013, 7, 22)])
-        .rangeRound([0, 10 * 90]))
-  ];
-
-  // Given our array of charts, which we assume are in the same order as the
-  // .chart elements in the DOM, bind the charts to the DOM and render them.
-  // We also listen to the chart's brush events to update the display.
-  var chart = d3.selectAll(".chart")
-      .data(charts)
-      .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
-
-  renderAll();
-
-  // Renders the specified chart or list.
-  function render(method) {
-    d3.select(this).call(method);
-  }
-
-  // Whenever the brush moves, re-rendering everything.
-  function renderAll() {
-    chart.each(render);
-    //d3.select("#active").text(formatNumber(all.value()));
-  }
-
-    window.filter = function(filters) {
-    filters.forEach(function(d, i) { charts[i].filter(d); });
-    renderAll();
-  };
-
-  window.reset = function(i) {
-    charts[i].filter(null);
-    renderAll();
-  };
 });
 
 </script>
