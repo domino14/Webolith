@@ -55,17 +55,17 @@
     <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
     <div class="clearfix"></div>
   </div>
-<!--   <div id="point-progression-chart" class="dc-chart">
+  <div id="point-progression-chart" class="dc-chart">
     <strong>Point progression over time</strong>
       <a class="reset" href="javascript:pointProgressionChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
     <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
     <div class="clearfix"></div>
-  </div> -->
+  </div>
 
 </div>
 <div class="row">
   <div id="challenges-by-date-chart" class="dc-chart">
-      <strong>Challenges By Date</strong>
+      <strong>Challenges By Month</strong>
       <a class="reset" href="javascript:challengesByDateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
       <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
       <div class="clearfix"></div>
@@ -82,8 +82,8 @@
 <script>
 var challengesByDateChart = dc.barChart("#challenges-by-date-chart"),
   totalPointsChart = dc.barChart("#total-points-chart"),
-  dayOfWeekChart = dc.rowChart("#day-of-week-chart");
-//  pointProgressionChart = dc.barChart("#point-progression-chart"),
+  dayOfWeekChart = dc.rowChart("#day-of-week-chart"),
+  pointProgressionChart = dc.bubbleChart("#point-progression-chart");
 function resetUserFilter() {
   user.filterAll();
   dc.redrawAll();
@@ -120,8 +120,21 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
         dates = date.group(d3.time.month),
         point = challenge.dimension(function(d) { return d.points; }),
         // For histogram sake?
-        points = point.group(function(pts) {
-            return pts;
+        points = point.group(),
+        pointsByDate = date.group().reduce(function(p, v) {
+          p.date = v.Date;
+          p.challsToday++;
+          p.total += v.points;
+          p.avg = p.total / p.challsToday;
+          return p;
+        }, function(p, v) {
+          p.date = v.Date;
+          p.challsToday--;
+          p.total -= v.points;
+          p.avg = p.challsToday === 0 ? 0 : p.total / p.challsToday;
+          return p;
+        }, function() {
+          return {challsToday: 0, total: 0, avg: 0, date: null}
         }),
         user = challenge.dimension(function(d) { return d.Username; }),
         chName = challenge.dimension(function(d) {
@@ -175,7 +188,6 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
       .renderHorizontalGridLines(true)
       .renderVerticalGridLines(true);
     dayOfWeekChart.width(180)
-      .height(180)
       .margins({top: 20, left: 10, right: 10, bottom: 20})
       .group(dayOfWeekGroup)
       .dimension(dayOfWeek)
@@ -188,6 +200,29 @@ d3.csv("/static/challenges_raw.csv", function(error, challenges) {
       })
       .elasticX(true)
       .xAxis().ticks(4);
+    pointProgressionChart.width(350)
+      .margins({top: 10, right: 50, bottom: 30, left: 40})
+      .elasticX(true)
+      .elasticY(true)
+      .dimension(date)
+      .group(pointsByDate)
+      .valueAccessor(function (d) {
+        return d.value.avg;
+      })
+      .keyAccessor(function(d) {
+        return d.value.date;
+      })
+      .radiusValueAccessor(function(d) {
+        return 0.00001;
+      })
+      .label(function(d) {
+        return null;
+      })
+      .x(d3.time.scale().domain([new Date(2013, 5, 1), new Date(2013, 5, 10)]))
+      .xUnits(d3.time.months)
+      .renderHorizontalGridLines(true)
+      .renderVerticalGridLines(true)
+      .brushOn(true);
     dc.renderAll();
     $('#user-filter-btn').click(function() {
       var username;
