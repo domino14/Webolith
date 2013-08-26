@@ -37,7 +37,8 @@ define([
       'click .correct': 'markCorrect',
       'click .missed': 'markMissed',
       'click #previous-card': 'previousCard',
-      'click #flip-card': 'flipCard'
+      'click #flip-card': 'flipCard',
+      'click #sync': 'sync'
     },
     /**
      * Resets the quiz to an array of questions.
@@ -231,6 +232,12 @@ define([
           JSON.stringify(this.cards));
         localStorage.setItem('aerolith-cards-quizName', this.quizName);
       }
+    },
+    /**
+     * Saves quiz info to remote server. Can fail.
+     */
+    sync: function() {
+
     }
   });
 });
