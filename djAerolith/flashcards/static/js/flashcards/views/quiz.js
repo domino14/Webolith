@@ -43,8 +43,9 @@ define([
       'click #sync': 'sync'
     },
     /**
-     * Resets the quiz to an array of questions.
-     * @param  {<Object>} questions An array of questions.
+     * Resets the quiz to a brand new array of questions.
+     * @param {Array.<Object>} questions An array of questions.
+     * @param {string} quizName The name of the quiz.
      */
     reset: function(questions, quizName) {
       this.cards.reset(_.shuffle(questions));
