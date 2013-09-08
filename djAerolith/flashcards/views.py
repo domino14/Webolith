@@ -24,7 +24,7 @@ def main(request):
                               context_instance=RequestContext(request))
 
 
-def to_python(alphagram):
+def alpha_to_python(alphagram):
     """
         Converts the alphagram model instance to a Python object.
     """
@@ -93,7 +93,7 @@ def new_quiz(request):
     max_pk = alphProbToProbPK(p_max, lexicon.pk, length)
     alphs = Alphagram.objects.filter(probability_pk__gte=min_pk,
                                      probability_pk__lte=max_pk)
-    questions = [to_python(alph) for alph in alphs]
+    questions = [alpha_to_python(alph) for alph in alphs]
     if len(questions) > 0:
         # Generate a quiz name.
         quiz_name = '%s %ss (%s to %s)' % (lexicon.lexiconName, length,
@@ -102,7 +102,8 @@ def new_quiz(request):
     else:
         quiz_name = ''
     return response({'questions': questions,
-                     'quiz_name': quiz_name})
+                     'quiz_name': quiz_name,
+                     'lexicon_name': lexicon.lexiconName})
 
 
 @login_required
