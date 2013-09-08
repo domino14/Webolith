@@ -31,6 +31,8 @@ define([
       this.quizOver = false;
       this.quizName = '';
       this.viewingFront = null;
+      this.goneThruOnce = false;
+      this.firstMissed = null;
     },
     events: {
       'click .solve': 'showCardBack',
@@ -195,7 +197,13 @@ define([
      * End the quiz. This will start quizzing on missed words typically.
      */
     endQuiz: function() {
-      this.cards.reset(this.cards.where({missed: true}));
+      var missedCards;
+      missedCards = this.cards.where({missed: true});
+      if (!this.goneThruOnce) {
+        this.goneThruOnce = true;
+        this.firstMissed = missedCards;
+      }
+      this.cards.reset(missedCards);
       this.cards.each(function(card) {
         card.set({missed: false});
       });
