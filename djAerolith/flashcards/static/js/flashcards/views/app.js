@@ -61,6 +61,7 @@ define([
       this.quiz.reset(data.questions, data.quiz_name);
       this.trigger('quizStarted');
       this.$('#card-setup').empty();
+      this.$('#card-area').show();
     }
   });
   return App;
