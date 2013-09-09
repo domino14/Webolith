@@ -1,7 +1,13 @@
+/**
+ * @fileOverview This has the quiz logic. Views should be dumb, but this
+ * particular one is more than just a view. There's no direct quiz model
+ * attached to this.
+ */
 define([
   'backbone',
   'underscore',
   'collections/cards',
+  'models/word_list',
   'mustache',
   'text!templates/card.html',
   'text!templates/card_front.html',
@@ -9,8 +15,8 @@ define([
   'text!templates/card_info.html',
   'text!templates/quiz_header.html',
   'text!templates/alert.html'
-], function(Backbone, _, Cards, Mustache, CardTemplate, CardFront, CardBack,
-  CardInfo, QuizHeader, Alert) {
+], function(Backbone, _, Cards, WordList, Mustache, CardTemplate, CardFront,
+  CardBack, CardInfo, QuizHeader, Alert) {
   "use strict";
   return Backbone.View.extend({
     initialize: function() {
@@ -24,6 +30,7 @@ define([
        * @type {Number}
        */
       this.curIndex = 0;
+      this.wordList = new WordList();
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
       this.cardInfo = this.$('#footer-info');
@@ -48,7 +55,10 @@ define([
      * @param {string} quizName The name of the quiz.
      */
     reset: function(questions, quizName) {
-      this.cards.reset(_.shuffle(questions));
+      var shuffled;
+      shuffled = _.shuffle(questions);
+      this.cards.reset(shuffled);
+      this.wordList.resetFromQuestionList(questions, quizName);
       this.quizName = quizName;
       this.curIndex = 0;
       this.startQuiz();
