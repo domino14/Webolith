@@ -73,9 +73,13 @@ define([
       if (!progress) {
         return;
       }
-      this.cards.reset(JSON.parse(progress));
+      progress = JSON.parse(progress);
+      this.cards.reset(progress);
       this.curIndex = parseInt(index, 10);
       this.quizName = localStorage.getItem('aerolith-cards-quizName');
+      this.goneThruOnce = localStorage.getItem('aerolith-cards-goneThruOnce');
+      this.wordList.resetFromQuestionList(progress, this.quizName,
+        this.goneThruOnce, this.curIndex);
       this.startQuiz();
     },
     /**
@@ -213,6 +217,9 @@ define([
       if (!this.goneThruOnce) {
         this.goneThruOnce = true;
         this.firstMissed = missedCards;
+        missedCards.each(function(card) {
+          card.set({firstMissed: true});
+        });
       }
       this.cards.reset(missedCards);
       this.cards.each(function(card) {
@@ -245,11 +252,13 @@ define([
         localStorage.removeItem('aerolith-cards-progress');
         localStorage.removeItem('aerolith-cards-currentIndex');
         localStorage.removeItem('aerolith-cards-quizName');
+        localStorage.removeItem('aerolith-cards-goneThruOnce');
       } else {
         localStorage.setItem('aerolith-cards-currentIndex', this.curIndex);
         localStorage.setItem('aerolith-cards-progress',
           JSON.stringify(this.cards));
         localStorage.setItem('aerolith-cards-quizName', this.quizName);
+        localStorage.setItem('aerolith-cards-goneThruOnce', this.goneThruOnce);
       }
     },
     /**

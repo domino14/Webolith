@@ -88,29 +88,56 @@ define([
        * origQuestions.length.
        * @type {Array.<number>}
        */
-      firstMissed: []
+      firstMissed: [],
+      /**
+       * A map of question IDs to alphagram/word/definition/etc. Note that
+       * this does not exist on the backend.
+       */
+      questionMap: {}
     },
     /**
      * Resets from an array of objects representing the cards.
      * @param {Array.<Object>} questions The list of questions.
      * @param {string} quizName The name of the quiz.
+     * @param {boolean} goneThruOnce Have we gone thru the word list at least
+     *                               once?
+     * @param {number=} index The index of the current question.
      */
-    resetFromQuestionList: function(questions, quizName) {
-      var origQuestions, curQuestions;
+    resetFromQuestionList: function(questions, quizName, goneThruOnce, index) {
+      console.log(questions);
+      var origQuestions, curQuestions, missed, firstMissed, questionMap;
       origQuestions = [];
       curQuestions = [];
+      missed = [];
+      firstMissed = [];
+      questionMap = {};
       _.each(questions, function(question, idx) {
         origQuestions.push(question.id);
         curQuestions.push(idx);
+        if (question.missed) {
+          missed.push(idx);
+        }
+        if (question.firstMissed) {
+          firstMissed.push(idx);
+        }
+        questionMap[question.id] = [question.question, question.answers];
       });
       // Set the model variables.
       this.set({
         name: quizName,
         origQuestions: origQuestions,
         curQuestions: curQuestions,
+        missed: missed,
+        firstMissed: firstMissed,
         numAlphagrams: _.size(origQuestions),
-        numCurAlphagrams: _.size(curQuestions)
+        numCurAlphagrams: _.size(curQuestions),
+        numFirstMissed: _.size(firstMissed),
+        numMissed: _.size(missed),
+        goneThruOnce: goneThruOnce,
+        questionMap: questionMap,
+        questionIndex: index || 0
       });
+      console.log('Created list from question list', this.toJSON());
 
     }
   });
