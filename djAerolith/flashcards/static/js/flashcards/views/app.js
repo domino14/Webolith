@@ -58,7 +58,7 @@ define([
      * @param  {Object} data Object with a `questions` key.
      */
     startQuiz: function(data) {
-      this.quiz.reset(data.questions, data.quiz_name);
+      this.quiz.reset(data.list, data.q_map, data.quiz_name);
       this.trigger('quizStarted');
       this.$('#card-setup').empty();
       this.$('#card-area').show();

@@ -1,10 +1,6 @@
 /**
  * @fileOverview The word list model. This model should almost mirror the model
- * for SavedList in wordwalls/models.py.
- *
- * Maybe there should be a todo somewhere to move SavedList out of wordwalls
- * game models since this is the flashcards app that is using it :/ Maybe
- * somewhere like base but we'd have to change the table name / do a migration.
+ * for SavedList in base/models.py.
  */
 define([
   'underscore',
@@ -14,8 +10,15 @@ define([
   "use strict";
   return Backbone.Model.extend({
     initialize: function() {
-      this.quizOver = false;
-      this.curIndex = 0;
+      /**
+       * A map of question IDs to alphagram/word/definition/etc.
+       */
+      this.questionMap = null;
+      /**
+       * A collection of `Card`s.
+       * @type {Backbone.Collection}
+       */
+      this.cards = new Cards();
     },
     // Model variables.
     defaults: {
@@ -23,7 +26,7 @@ define([
        * The name of the lexicon.
        * @type {string}
        */
-      lexiconName: '',
+      lexicon: '',
       /**
        * When this list was last saved.
        * @type {Date}
@@ -88,57 +91,151 @@ define([
        * origQuestions.length.
        * @type {Array.<number>}
        */
-      firstMissed: [],
-      /**
-       * A map of question IDs to alphagram/word/definition/etc. Note that
-       * this does not exist on the backend.
-       */
-      questionMap: {}
+      firstMissed: []
+    },
+
+    /**
+     * Resets the word list to a brand new list, from the server.
+     * Note: This shuffles the questions that come in from the back end.
+     * @param {Object} wordList An object with most of the above keys.
+     * @param  {Object} questionMap An object with a mapping of question id
+     *                              to question object.
+     * @param  {string} quizName The name of the quiz.
+     */
+    reset: function(wordList, questionMap, quizName) {
+      var shuffled;
+      this.set(wordList);
+      shuffled = _.shuffle(this.get('curQuestions'));
+      this.set({
+        curQuestions: shuffled,
+        name: quizName
+      });
+      this.questionMap = questionMap;
+      // Generate "cards".
+      this.cards.reset(this.getQuestions_());
     },
     /**
-     * Resets from an array of objects representing the cards.
-     * @param {Array.<Object>} questions The list of questions.
-     * @param {string} quizName The name of the quiz.
-     * @param {boolean} goneThruOnce Have we gone thru the word list at least
-     *                               once?
-     * @param {number=} index The index of the current question.
+     * Returns an array of current questions.
+     * @return {Array.<Object>}
+     * @private
      */
-    resetFromQuestionList: function(questions, quizName, goneThruOnce, index) {
-      console.log(questions);
-      var origQuestions, curQuestions, missed, firstMissed, questionMap;
-      origQuestions = [];
-      curQuestions = [];
-      missed = [];
-      firstMissed = [];
-      questionMap = {};
-      _.each(questions, function(question, idx) {
-        origQuestions.push(question.id);
-        curQuestions.push(idx);
-        if (question.missed) {
-          missed.push(idx);
+    getQuestions_: function() {
+      var qs, orig, missed;
+      qs = [];
+      orig = this.get('origQuestions');
+      missed = this.get('missed');
+      _.each(this.get('curQuestions'), function(qIndex) {
+        var qId, card;
+        qId = orig[qIndex];
+        card = this.questionMap[qId];
+        console.log(card);
+        // XXX: Another linear search.
+        if (_.indexOf(missed, qIndex) !== -1) {
+          card.missed = true;
         }
-        if (question.firstMissed) {
-          firstMissed.push(idx);
-        }
-        questionMap[question.id] = [question.question, question.answers];
-      });
-      // Set the model variables.
-      this.set({
-        name: quizName,
-        origQuestions: origQuestions,
-        curQuestions: curQuestions,
-        missed: missed,
-        firstMissed: firstMissed,
-        numAlphagrams: _.size(origQuestions),
-        numCurAlphagrams: _.size(curQuestions),
-        numFirstMissed: _.size(firstMissed),
-        numMissed: _.size(missed),
-        goneThruOnce: goneThruOnce,
-        questionMap: questionMap,
-        questionIndex: index || 0
-      });
-      console.log('Created list from question list', this.toJSON());
+        qs.push(card);
+      }, this);
+      return qs;
+    },
+    /**
+     * Saves to local storage. Only saves one word list worth, so this
+     * overwrites whatever was there.
+     */
+    saveStateLocal: function() {
+      localStorage.setItem('aerolith-cards-current-wl', JSON.stringify(this));
+      localStorage.setItem('aerolith-cards-qmap', JSON.stringify(
+        this.questionMap));
+    },
+    /**
+     * Loads word list and question map from local storage.
+     */
+    loadFromLocal: function() {
+      var stored, map;
+      stored = localStorage.getItem('aerolith-cards-current-wl');
+      map = localStorage.getItem('aerolith-cards-qmap');
+      if (stored) {
+        this.set(JSON.parse(stored));
+      }
+      if (map) {
+        this.questionMap = JSON.parse(map);
+      }
+      // Remove any nulls in missed list if they exist.
+      this.set('missed', _.without(this.get('missed'), null));
+      this.cards.reset(this.getQuestions_());
+      console.log('loaded from local', this.toJSON());
+    },
+    /**
+     * Marks the current card missed (or not missed).
+     * @param  {boolean} missed Missed or not.
+     */
+    markCurrentMissed: function(missed) {
+      var curQIndex, curMissed, found, currentCard;
+      curQIndex = this.get('curQuestions')[this.get('questionIndex')];
+      // XXX: Linear search unfortunately.
+      curMissed = this.get('missed');
+      found = _.indexOf(curMissed, curQIndex);
+      if (missed && found === -1) {
+        // Add to missed list.
+        curMissed.push(curQIndex);
+      } else if (!missed && found >= 0) {
+        // Remove from missed list, make null.
+        curMissed[found] = null;
+      }
+      currentCard = this.currentCard();
+      if (!currentCard) {
+        return;
+      }
+      currentCard.set('missed', missed);
+    },
+    advanceCard: function() {
+      // Increase question index.
+      var qIndex;
+      qIndex = this.get('questionIndex');
+      this.set('questionIndex', qIndex + 1);
+      if (qIndex >= this.cards.size()) {
+        this.endQuiz();
+        return;
+      }
+    },
+    previousCard: function() {
+      // Decrease question index.
+      var qIndex;
+      qIndex = this.get('questionIndex');
+      if (qIndex === 0) {
+        return;
+      }
+      this.set('questionIndex', qIndex - 1);
+    },
+    endQuiz: function() {
+      var missedCards;
+      missedCards = this.cards.where({missed: true});
+      if (!this.get('goneThruOnce')) {
+        this.set('goneThruOnce', true);
 
+        // XXX: mark first mised etc.
+      }
+      this.cards.reset(missedCards);
+      this.cards.each(function(card) {
+        card.set({missed: false});
+      });
+      this.set('questionIndex', 0);
+    },
+    /**
+     * Getter for the current question index.
+     * @return {number}
+     */
+    currentIndex: function() {
+      return this.get('questionIndex');
+    },
+    /**
+     * Get the current card.
+     * return {Card}
+     */
+    currentCard: function() {
+      return this.cards.at(this.get('questionIndex'));
+    },
+    numCards: function() {
+      return this.cards.size();
     }
   });
 });

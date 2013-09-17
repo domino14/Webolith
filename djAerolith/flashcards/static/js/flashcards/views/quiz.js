@@ -6,7 +6,6 @@
 define([
   'backbone',
   'underscore',
-  'collections/cards',
   'models/word_list',
   'mustache',
   'text!templates/card.html',
@@ -15,21 +14,11 @@ define([
   'text!templates/card_info.html',
   'text!templates/quiz_header.html',
   'text!templates/alert.html'
-], function(Backbone, _, Cards, WordList, Mustache, CardTemplate, CardFront,
+], function(Backbone, _, WordList, Mustache, CardTemplate, CardFront,
   CardBack, CardInfo, QuizHeader, Alert) {
   "use strict";
   return Backbone.View.extend({
     initialize: function() {
-      /**
-       * A collection of `Card`s.
-       * @type {Backbone.Collection}
-       */
-      this.cards = new Cards();
-      /**
-       * The current index that we are quizzing on in the cards collection.
-       * @type {Number}
-       */
-      this.curIndex = 0;
       this.wordList = new WordList();
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
@@ -38,8 +27,6 @@ define([
       this.quizOver = false;
       this.quizName = '';
       this.viewingFront = null;
-      this.goneThruOnce = false;
-      this.firstMissed = null;
     },
     events: {
       'click .solve': 'showCardBack',
@@ -51,35 +38,22 @@ define([
     },
     /**
      * Resets the quiz to a brand new array of questions.
-     * @param {Array.<Object>} questions An array of questions.
+     * @param {<Object>} wordList A representation of a WordList.
+     * @param {Object} questionMap Maps question indices to definitions/words/
+     *                             etc.
      * @param {string} quizName The name of the quiz.
      */
-    reset: function(questions, quizName) {
-      var shuffled;
-      shuffled = _.shuffle(questions);
-      this.cards.reset(shuffled);
-      this.wordList.resetFromQuestionList(questions, quizName);
+    reset: function(wordList, questionMap, quizName) {
+      this.wordList.reset(wordList, questionMap, quizName);
       this.quizName = quizName;
-      this.curIndex = 0;
       this.startQuiz();
     },
     /**
      * Loads quiz from localStorage.
      */
     loadFromStorage: function() {
-      var progress, index;
-      progress = localStorage.getItem('aerolith-cards-progress');
-      index = localStorage.getItem('aerolith-cards-currentIndex');
-      if (!progress) {
-        return;
-      }
-      progress = JSON.parse(progress);
-      this.cards.reset(progress);
-      this.curIndex = parseInt(index, 10);
-      this.quizName = localStorage.getItem('aerolith-cards-quizName');
-      this.goneThruOnce = localStorage.getItem('aerolith-cards-goneThruOnce');
-      this.wordList.resetFromQuestionList(progress, this.quizName,
-        this.goneThruOnce, this.curIndex);
+      this.wordList.loadFromLocal();
+      this.quizName = this.wordList.get('name');
       this.startQuiz();
     },
     /**
@@ -95,7 +69,7 @@ define([
      */
     showCurrentCard: function() {
       var currentCard;
-      currentCard = this.cards.at(this.curIndex);
+      currentCard = this.wordList.currentCard();
       if (!currentCard) {
         this.showQuizOver();
         return;
@@ -103,14 +77,14 @@ define([
       this.viewingFront = true;
       this.renderCard(CardFront, currentCard);
       this.renderCardInfo();
-      this.saveQuizInfo();
+      this.wordList.saveStateLocal();
     },
     /**
      * Shows the back of the card.
      */
     showCardBack: function() {
       var currentCard;
-      currentCard = this.cards.at(this.curIndex);
+      currentCard = this.wordList.currentCard();
       if (!currentCard) {
         return;
       }
@@ -140,52 +114,36 @@ define([
       attributes = card.toJSON();
       attributes.numAnswers = _.size(attributes.answers);
       attributes.pluralAnswers = attributes.numAnswers > 1;
-      attributes.cardNum = this.curIndex + 1;
-      attributes.cardCount = this.cards.size();
+      attributes.cardNum = this.wordList.currentIndex() + 1;
+      attributes.cardCount = this.wordList.numCards();
       return attributes;
     },
     /**
      * Mark the current card correct.
      */
     markCorrect: function() {
-      var currentCard = this.cards.at(this.curIndex);
-      if (!currentCard) {
-        return;
-      }
-      currentCard.set('missed', false);
+      this.wordList.markCurrentMissed(false);
       this.advanceCard();
     },
     /**
      * Mark missed.
      */
     markMissed: function() {
-      var currentCard = this.cards.at(this.curIndex);
-      if (!currentCard) {
-        return;
-      }
-      currentCard.set('missed', true);
+      this.wordList.markCurrentMissed(true);
       this.advanceCard();
     },
     /**
      * Advance to the next card.
      */
     advanceCard: function() {
-      this.curIndex += 1;
-      if (this.curIndex >= this.cards.size()) {
-        // Out of bounds, quiz done.
-        this.endQuiz();
-        return;
-      }
+      this.wordList.advanceCard();
       this.showCurrentCard();
     },
     /**
      * Show previous card.
      */
     previousCard: function() {
-      this.curIndex -= 1;
-      if (this.curIndex < 0) {
-        this.curIndex = 0;
-      }
+      this.wordList.previousCard();
       this.showCurrentCard();
     },
     /**
@@ -212,20 +170,7 @@ define([
      * End the quiz. This will start quizzing on missed words typically.
      */
     endQuiz: function() {
-      var missedCards;
-      missedCards = this.cards.where({missed: true});
-      if (!this.goneThruOnce) {
-        this.goneThruOnce = true;
-        this.firstMissed = missedCards;
-        missedCards.each(function(card) {
-          card.set({firstMissed: true});
-        });
-      }
-      this.cards.reset(missedCards);
-      this.cards.each(function(card) {
-        card.set({missed: false});
-      });
-      this.curIndex = 0;
+      this.wordList.endQuiz();
       this.showCurrentCard();
     },
     /**
@@ -243,23 +188,6 @@ define([
       this.alertHolder.html(Mustache.render(Alert, {
         alert: alertText
       }));
-    },
-    /**
-     * Saves quiz info to localstorage.
-     */
-    saveQuizInfo: function() {
-      if (this.quizOver) {
-        localStorage.removeItem('aerolith-cards-progress');
-        localStorage.removeItem('aerolith-cards-currentIndex');
-        localStorage.removeItem('aerolith-cards-quizName');
-        localStorage.removeItem('aerolith-cards-goneThruOnce');
-      } else {
-        localStorage.setItem('aerolith-cards-currentIndex', this.curIndex);
-        localStorage.setItem('aerolith-cards-progress',
-          JSON.stringify(this.cards));
-        localStorage.setItem('aerolith-cards-quizName', this.quizName);
-        localStorage.setItem('aerolith-cards-goneThruOnce', this.goneThruOnce);
-      }
     },
     /**
      * Saves quiz info to remote server. Can fail.
