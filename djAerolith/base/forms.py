@@ -1,10 +1,10 @@
 # Forms that are global to a few different apps: wordwalls, flashcards,
 # whitleyCards for example.
 from django import forms
-from base.models import Lexicon
+from base.models import Lexicon, SavedList
 
 from tablegame.models import GenericTableGameModel
-from wordwalls.models import SavedList, NamedList
+from wordwalls.models import NamedList
 
 
 class LexiconForm(forms.Form):

@@ -23,7 +23,7 @@ from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
 from django.template import RequestContext
-from base.models import Lexicon, Alphagram, Word, alphProbToProbPK
+from base.models import Lexicon, Alphagram, Word, alphProbToProbPK, SavedList
 from django.contrib.auth.decorators import login_required
 import json
 from wordwalls.game import WordwallsGame, SearchDescription
@@ -31,8 +31,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from wordwalls.models import (SavedList, DailyChallengeName,
-                              WordwallsGameModel, NamedList)
+from wordwalls.models import (DailyChallengeName, WordwallsGameModel,
+                              NamedList)
 from datetime import date, datetime, timedelta
 import time
 from django.conf import settings
