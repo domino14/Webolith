@@ -20,6 +20,7 @@ define([
   return Backbone.View.extend({
     initialize: function() {
       this.wordList = new WordList();
+      this.listenTo(this.wordList, 'quizEnded', _.bind(this.quizEnded, this));
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
       this.cardInfo = this.$('#footer-info');
@@ -77,7 +78,6 @@ define([
       this.viewingFront = true;
       this.renderCard(CardFront, currentCard);
       this.renderCardInfo();
-      this.wordList.saveStateLocal();
     },
     /**
      * Shows the back of the card.
@@ -167,17 +167,16 @@ define([
       }));
     },
     /**
-     * End the quiz. This will start quizzing on missed words typically.
+     * Gotten from wordList when the quiz has ended. Try to show current card.
      */
-    endQuiz: function() {
-      this.wordList.endQuiz();
+    quizEnded: function() {
       this.showCurrentCard();
     },
     /**
      * Show the quiz is over final dialog.
      */
     showQuizOver: function() {
-      this.renderAlert('The quiz is over!');
+      this.renderAlert('The quiz "' + this.quizName + '" is over!');
       this.quizOver = true;
     },
     /**

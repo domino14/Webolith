@@ -13,7 +13,7 @@ define([
       /**
        * A map of question IDs to alphagram/word/definition/etc.
        */
-      this.questionMap = null;
+      this.questionMap_ = null;
       /**
        * A collection of `Card`s.
        * @type {Backbone.Collection}
@@ -110,7 +110,10 @@ define([
         curQuestions: shuffled,
         name: quizName
       });
-      this.questionMap = questionMap;
+      this.questionMap_ = questionMap;
+      // Save question map in local storage here only.
+      localStorage.setItem('aerolith-cards-qmap', JSON.stringify(
+        this.questionMap_));
       // Generate "cards".
       this.cards.reset(this.getQuestions_());
     },
@@ -120,17 +123,20 @@ define([
      * @private
      */
     getQuestions_: function() {
-      var qs, orig, missed;
+      var qs, orig, missed, missedDict;
       qs = [];
       orig = this.get('origQuestions');
       missed = this.get('missed');
+      missedDict = {};
+      // Store in a hash for faster lookups.
+      _.each(missed, function(qIndex) {
+        missedDict[qIndex] = true;
+      });
       _.each(this.get('curQuestions'), function(qIndex) {
         var qId, card;
         qId = orig[qIndex];
-        card = this.questionMap[qId];
-        console.log(card);
-        // XXX: Another linear search.
-        if (_.indexOf(missed, qIndex) !== -1) {
+        card = _.clone(this.questionMap_[qId]);
+        if (_.has(missedDict, qIndex)) {
           card.missed = true;
         }
         qs.push(card);
@@ -143,8 +149,6 @@ define([
      */
     saveStateLocal: function() {
       localStorage.setItem('aerolith-cards-current-wl', JSON.stringify(this));
-      localStorage.setItem('aerolith-cards-qmap', JSON.stringify(
-        this.questionMap));
     },
     /**
      * Loads word list and question map from local storage.
@@ -157,12 +161,11 @@ define([
         this.set(JSON.parse(stored));
       }
       if (map) {
-        this.questionMap = JSON.parse(map);
+        this.questionMap_ = JSON.parse(map);
       }
       // Remove any nulls in missed list if they exist.
       this.set('missed', _.without(this.get('missed'), null));
       this.cards.reset(this.getQuestions_());
-      console.log('loaded from local', this.toJSON());
     },
     /**
      * Marks the current card missed (or not missed).
@@ -191,11 +194,12 @@ define([
       // Increase question index.
       var qIndex;
       qIndex = this.get('questionIndex');
-      this.set('questionIndex', qIndex + 1);
+      qIndex += 1;
+      this.set('questionIndex', qIndex);
       if (qIndex >= this.cards.size()) {
         this.endQuiz();
-        return;
       }
+      this.saveStateLocal();
     },
     previousCard: function() {
       // Decrease question index.
@@ -205,13 +209,13 @@ define([
         return;
       }
       this.set('questionIndex', qIndex - 1);
+      this.saveStateLocal();
     },
     endQuiz: function() {
       var missedCards;
       missedCards = this.cards.where({missed: true});
       if (!this.get('goneThruOnce')) {
         this.set('goneThruOnce', true);
-
         // XXX: mark first mised etc.
       }
       this.cards.reset(missedCards);
@@ -219,6 +223,9 @@ define([
         card.set({missed: false});
       });
       this.set('questionIndex', 0);
+      this.set('curQuestions', this.get('missed'));
+      this.set('missed', []);
+      this.trigger('quizEnded');
     },
     /**
      * Getter for the current question index.
