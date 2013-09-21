@@ -36,8 +36,8 @@ from wordwalls.models import (DailyChallengeName, WordwallsGameModel,
 from datetime import date, datetime, timedelta
 import time
 from django.conf import settings
-
 import wordwalls.settings
+import base.settings
 import os
 from locks import lonelock
 from django.middleware.csrf import get_token
@@ -113,7 +113,7 @@ def handle_homepage_post(profile, request):
     numAlphas = profile.wordwallsSaveListSize
     limit = 0
     if not profile.member:
-        limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
+        limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
     if 'action' not in request.POST:
         return response({'success': False,
                          'error': 'Your request was not successful. You may '
@@ -433,7 +433,7 @@ def createUserList(upload, filename, lex, user):
 
     profile = user.get_profile()
     numSavedAlphas = profile.wordwallsSaveListSize
-    limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
+    limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
