@@ -16,6 +16,9 @@ define([
       this.quiz = new Quiz({
         el: $('#card-area')
       });
+      this.spinner = this.$('#card-spinner');
+      this.listenTo(this.quiz, 'displaySpinner', _.bind(
+        this.displaySpinner_, this));
     },
     events: {
       'click #load-prob': 'loadByProbability'
@@ -29,6 +32,7 @@ define([
       max = $('#prob-high').val();
       length = $('#word-length').val();
       lex = $('#lexicon').val();
+      this.displaySpinner_(true);
       $.post(NEW_QUIZ_URL, JSON.stringify({
         min: min,
         max: max,
@@ -42,6 +46,7 @@ define([
       }, 'json');
     },
     alertCallback: function(jqXHR) {
+      this.displaySpinner_(false);
       this.quiz.renderAlert(jqXHR.responseJSON);
     },
     newQuiz: function() {
@@ -58,10 +63,23 @@ define([
      * @param  {Object} data Object with a `questions` key.
      */
     startQuiz: function(data) {
+      this.displaySpinner_(false);
       this.quiz.reset(data.list, data.q_map, data.quiz_name);
       this.trigger('quizStarted');
       this.$('#card-setup').empty();
       this.$('#card-area').show();
+    },
+    /**
+     * Displays (or hides) the spinner.
+     * @param {boolean} display
+     * @private
+     */
+    displaySpinner_: function(display) {
+      if (display) {
+        this.spinner.show();
+      } else {
+        this.spinner.hide();
+      }
     }
   });
   return App;
