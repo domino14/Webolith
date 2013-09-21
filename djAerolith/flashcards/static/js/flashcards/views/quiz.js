@@ -182,17 +182,35 @@ define([
     /**
      * Renders an alert.
      * @param {string} alertText
+     * @param {boolean=} ok If this is true, then the alert should be a good
+     *                      color.
      */
-    renderAlert: function(alertText) {
+    renderAlert: function(alertText, ok) {
       this.alertHolder.html(Mustache.render(Alert, {
-        alert: alertText
+        alert: alertText,
+        ok: ok || false,
+        danger: !ok
       }));
     },
     /**
      * Saves quiz info to remote server. Can fail.
      */
     sync: function() {
-
+      this.trigger('displaySpinner', true);
+      this.$('#sync').attr('disabled', true);
+      this.wordList.persistToServer(_.bind(function(data) {
+        this.renderAlert(data, true);
+        this.trigger('displaySpinner', false);
+        this.$('#sync').removeAttr('disabled');
+      }, this),
+      _.bind(function() {
+        this.renderAlert([
+          'Unable to persist to server; perhaps you are not currently ',
+          'connected to the Internet?'
+        ].join(''));
+        this.trigger('displaySpinner', false);
+        this.$('#sync').removeAttr('disabled');
+      }, this));
     }
   });
 });

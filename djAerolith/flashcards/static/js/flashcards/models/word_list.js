@@ -5,9 +5,11 @@
 define([
   'underscore',
   'backbone',
+  'jquery',
   'collections/cards'
-], function(_, Backbone, Cards) {
+], function(_, Backbone, $, Cards) {
   "use strict";
+  var QUIZ_SYNC_URL = '/base/api/saved_list';
   return Backbone.Model.extend({
     initialize: function() {
       /**
@@ -116,6 +118,7 @@ define([
         this.questionMap_));
       // Generate "cards".
       this.cards.reset(this.getQuestions_());
+      this.saveStateLocal_();
     },
     /**
      * Returns an array of current questions.
@@ -147,7 +150,7 @@ define([
      * Saves to local storage. Only saves one word list worth, so this
      * overwrites whatever was there.
      */
-    saveStateLocal: function() {
+    saveStateLocal_: function() {
       localStorage.setItem('aerolith-cards-current-wl', JSON.stringify(this));
     },
     /**
@@ -199,7 +202,7 @@ define([
       if (qIndex >= this.cards.size()) {
         this.endQuiz();
       }
-      this.saveStateLocal();
+      this.saveStateLocal_();
     },
     previousCard: function() {
       // Decrease question index.
@@ -209,7 +212,7 @@ define([
         return;
       }
       this.set('questionIndex', qIndex - 1);
-      this.saveStateLocal();
+      this.saveStateLocal_();
     },
     endQuiz: function() {
       var missedCards;
@@ -243,6 +246,16 @@ define([
     },
     numCards: function() {
       return this.cards.size();
+    },
+    /**
+     * Persists current state to server. Can fail.
+     * @param {Function} success Gets called if this is successful.
+     * @param {Function} fail Gets called if the persist fails.
+     */
+    persistToServer: function(success, fail) {
+      $.post(QUIZ_SYNC_URL, JSON.stringify(this), function(data) {
+        success(data);
+      }, 'json').fail(fail);
     }
   });
 });
