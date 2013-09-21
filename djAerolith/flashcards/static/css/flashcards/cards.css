@@ -13,3 +13,7 @@
 .missed-card {
     background-color: #FFDDDD;
 }
+
+#card-spinner {
+    display: none;
+}
