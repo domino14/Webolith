@@ -12,6 +12,7 @@
 
     <link href="/static/lib/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="/static/css/flashcards/cards.css" rel="stylesheet">
+    <link href="/static/js/aerolith/tablesorter_blue/style.css" rel="stylesheet">
   </head>
 
   <body>
@@ -36,6 +37,8 @@
       </div>
     </div>
     <div class="container" id="app-view">
+      <div class="row">
+        <div id="quiz-selector"></div>
       <div class="row">
         <div id="card-setup"></div>
       </div>
@@ -63,7 +66,8 @@
     var require = {
         config: {
             'main': {
-                'numCards': {{numCards}}
+                'numCards': {{numCards}},
+                'quizzes': "{{savedLists|escapejs}}"
             }
         }
     }

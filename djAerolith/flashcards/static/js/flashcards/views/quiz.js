@@ -99,7 +99,7 @@ define([
      */
     renderCard: function(template, card) {
       var partials, attributes;
-      attributes = this.getCardDisplayAttributes(card);
+      attributes = this.getCardDisplayAttributes_(card);
       partials = {'cardBody': template};
       this.card.html(Mustache.render(CardTemplate, attributes, partials));
     },
@@ -108,8 +108,9 @@ define([
      * rendering the card.
      * @param {Card} card
      * @return {Object}
+     * @private
      */
-    getCardDisplayAttributes: function(card) {
+    getCardDisplayAttributes_: function(card) {
       var attributes;
       attributes = card.toJSON();
       attributes.numAnswers = _.size(attributes.answers);

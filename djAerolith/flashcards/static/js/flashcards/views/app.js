@@ -4,8 +4,9 @@ define([
   'jquery',
   'mustache',
   'views/quiz',
+  'views/quiz_selector',
   'text!templates/new_quiz.html'
-], function(Backbone, _, $, Mustache, Quiz, NewQuizTemplate) {
+], function(Backbone, _, $, Mustache, Quiz, QuizSelector, NewQuizTemplate) {
   "use strict";
   var App, NEW_QUIZ_URL, SCHEDULED_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
@@ -15,6 +16,10 @@ define([
       this.numCards = options.numCards;
       this.quiz = new Quiz({
         el: $('#card-area')
+      });
+      this.quizSelector = new QuizSelector({
+        el: $('#quiz-selector'),
+        quizzes: options.quizzes
       });
       this.spinner = this.$('#card-spinner');
       this.listenTo(this.quiz, 'displaySpinner', _.bind(

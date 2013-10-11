@@ -47,3 +47,31 @@ def savedlist_from_alphas(alphs):
         q_map[alph.pk] = alpha_to_python(alph)
 
     return li, q_map
+
+
+def quizzes_response(quizzes):
+    """
+        Creates a response for quizzes.
+        :quizzes an array of SavedList models.
+    """
+    resp = []
+    for quiz in quizzes:
+        resp.append(quiz_response(quiz))
+    return resp
+
+
+def quiz_response(quiz):
+    """
+        :quiz A SavedList.
+    """
+    return {
+        'lexicon': quiz.lexicon.lexiconName,
+        'lastSaved': quiz.lastSaved.strftime('%b %d, %Y %I:%M %p'),
+        'name': quiz.name,
+        'numAlphagrams': quiz.numAlphagrams,
+        'numCurAlphagrams': quiz.numCurAlphagrams,
+        'numMissed': quiz.numMissed,
+        'numFirstMissed': quiz.numFirstMissed,
+        'goneThruOnce': quiz.goneThruOnce,
+        'questionIndex': quiz.questionIndex
+    }
