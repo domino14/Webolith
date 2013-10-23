@@ -17,6 +17,13 @@ define([
 ], function(Backbone, _, WordList, Mustache, CardTemplate, CardFront,
   CardBack, CardInfo, QuizHeader, Alert) {
   "use strict";
+  var LOAD_ACTIONS;
+  LOAD_ACTIONS = {
+    CONTINUE: 'continue',
+    FIRST_MISSED: 'firstmissed',
+    RESET: 'reset',
+    DELETE: 'delete'
+  };
   return Backbone.View.extend({
     initialize: function() {
       this.wordList = new WordList();
@@ -54,6 +61,35 @@ define([
      */
     loadFromStorage: function() {
       this.wordList.loadFromLocal();
+      this.quizName = this.wordList.get('name');
+      this.startQuiz();
+    },
+    /**
+     * Tells word list model to load from quiz. Asks for confirmation
+     * for destructive actions.
+     * @param {string} action The action, such as continue, first missed.
+     * @param {string} id The id of the quiz.
+     */
+    loadFromRemote: function(action, id) {
+      this.trigger('displaySpinner', true);
+      if (['firstmissed', 'reset', 'delete'].indexOf(action) !== -1) {
+        prompt('are oyu sure')
+      }
+      this.wordList.loadFromRemote(action, id, _.bind(function(result) {
+        this.trigger('displaySpinner', false);
+        if (action === 'delete') {
+          this.renderAlert('Successfully deleted ' + id)
+        }
+
+      }, this), _.bind(function() {
+        this.renderAlert([
+          'Unable to perform action; perhaps you are not currently ',
+          'connected to the Internet?'
+        ].join(''));
+        this.trigger('displaySpinner', false);
+        this.$('#sync').removeAttr('disabled');
+      }, this));
+      return;
       this.quizName = this.wordList.get('name');
       this.startQuiz();
     },

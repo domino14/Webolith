@@ -58,10 +58,29 @@ define([
       this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {}));
       this.$('#card-area').hide();
     },
+    /**
+     * Continue quiz.
+     */
     continueQuiz: function() {
       this.quiz.loadFromStorage();
+      this.showCardArea();
+    },
+    /**
+     * Loads quiz from remote storage.
+     * @param {string} action An action like 'continue'
+     * @param {string} id The id of the quiz.
+     */
+    loadQuiz: function(action, id) {
+      this.quiz.loadFromRemote(action, id);
+      this.showCardArea();
+    },
+    /**
+     * Show only card area.
+     */
+    showCardArea: function() {
       this.$('#card-area').show();
       this.$('#card-setup').empty();
+      this.$('#quiz-selector').hide();
     },
     /**
      * Starts quiz with data.
@@ -71,8 +90,7 @@ define([
       this.displaySpinner_(false);
       this.quiz.reset(data.list, data.q_map, data.quiz_name);
       this.trigger('quizStarted');
-      this.$('#card-setup').empty();
-      this.$('#card-area').show();
+      this.showCardArea();
     },
     /**
      * Displays (or hides) the spinner.

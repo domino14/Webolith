@@ -5,7 +5,9 @@ define([
   return Backbone.Router.extend({
     routes: {
       'newquiz': 'newQuiz',
-      'quiz': 'continueQuiz'
+      'help': 'help',
+      'remote/:action/:id': 'remoteQuizAction',
+      'continue/local': 'continueQuiz'
     }
   });
 });

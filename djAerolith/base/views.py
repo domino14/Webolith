@@ -27,7 +27,7 @@ import json
 
 
 @login_required
-def saved_list(request):
+def saved_list_sync(request):
     body = json.loads(request.raw_post_data)
     replacing = False
     profile = request.user.get_profile()
@@ -72,3 +72,14 @@ def saved_list(request):
         profile.save()
     return response(resp_text)
 
+
+@login_required
+def saved_list(request, id):
+    try:
+        sl = SavedList.objects.get(user=request.user,
+                                   id=id)
+    except SavedList.DoesNotExist:
+        return response('This list does not exist!', status=400)
+    if request.method == 'DELETE':
+        sl.delete()
+        return response('OK')

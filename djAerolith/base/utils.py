@@ -73,5 +73,6 @@ def quiz_response(quiz):
         'numMissed': quiz.numMissed,
         'numFirstMissed': quiz.numFirstMissed,
         'goneThruOnce': quiz.goneThruOnce,
-        'questionIndex': quiz.questionIndex
+        'questionIndex': quiz.questionIndex,
+        'id': quiz.id
     }

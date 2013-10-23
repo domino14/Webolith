@@ -9,7 +9,8 @@ define([
   'collections/cards'
 ], function(_, Backbone, $, Cards) {
   "use strict";
-  var QUIZ_SYNC_URL = '/base/api/saved_list';
+  var QUIZ_API_URL;
+  QUIZ_API_URL = '/base/api/saved_list/';
   return Backbone.Model.extend({
     initialize: function() {
       /**
@@ -151,6 +152,7 @@ define([
      * overwrites whatever was there.
      */
     saveStateLocal_: function() {
+      this.set('lastSaved', new Date().toString());
       localStorage.setItem('aerolith-cards-current-wl', JSON.stringify(this));
     },
     /**
@@ -227,6 +229,7 @@ define([
       });
       this.set('questionIndex', 0);
       this.set('curQuestions', this.get('missed'));
+      this.set('numCurAlphagrams', _.size(this.get('curQuestions')));
       this.set('missed', []);
       this.trigger('quizEnded');
     },
@@ -253,9 +256,39 @@ define([
      * @param {Function} fail Gets called if the persist fails.
      */
     persistToServer: function(success, fail) {
-      $.post(QUIZ_SYNC_URL, JSON.stringify(this), function(data) {
+      $.post(QUIZ_API_URL + 'sync/', JSON.stringify(this), function(data) {
         success(data);
       }, 'json').fail(fail);
+    },
+    /**
+     * Loads quiz from remote storage. Does no confirmation.
+     * @param {string} action The action, such as continue, first missed.
+     * @param {string} id The id of the quiz.
+     * @param {Function} success Success callback.
+     * @param {Function} fail Gets called if list fails to load.
+     */
+    loadFromRemote: function(action, id, success, fail) {
+      var url, type;
+      url = QUIZ_API_URL + id + '/';
+      // continue / firstmissed / reset are GETs as they are idempotent.
+      // If user syncs afterwards, this will be DESTRUCTIVE which is why sync
+      // is a POST.
+      if (action === 'continue') {
+        type = 'GET';
+      } else if (action === 'firstmissed') {
+        type = 'GET';
+      } else if (action === 'reset') {
+        type = 'GET';
+      } else if (action === 'delete') {
+        type = 'DELETE';
+      }
+      $.ajax({
+        url: url,
+        type: type,
+        success: function(result) {
+          success(result);
+        },
+      }).fail(fail);
     }
   });
 });
