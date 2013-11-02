@@ -1,7 +1,5 @@
 import redis
-from django.core.management.base import BaseCommand, CommandError
-from base.models import Lexicon, Word, Alphagram
-import csv
+from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import connection
 import json
@@ -16,7 +14,7 @@ class Command(BaseCommand):
         # First, get all alphagrams.
         cursor = connection.cursor()
         r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
-                        db=0)
+                        db=settings.REDIS_ALPHAGRAMS_DB)
 
         cursor.execute(
             'SELECT alphagram, lexicon_id, probability_pk FROM '
@@ -39,14 +37,18 @@ class Command(BaseCommand):
 
         # Now store all words.
         cursor.execute(
-            'SELECT word, alphagram_id, lexiconSymbols, '
-            'definition, front_hooks, back_hooks FROM base_word WHERE '
-            'lexicon_id in %s' % str(tuple(INCLUDE_LEX)))
+            'SELECT word, alphagram_id, lexiconSymbols, definition, '
+            'front_hooks, back_hooks, base_alphagram.alphagram, '
+            'base_alphagram.probability FROM '
+            'base_word INNER JOIN '
+            'base_alphagram ON '
+            'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
+            'base_word.lexicon_id in %s' % str(tuple(INCLUDE_LEX)))
         print 'Got all words, feeding into redis...'
         # Temporarily consume a bunch of memory?
         rows = cursor.fetchall()
         r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
-                        db=1)
+                        db=settings.REDIS_ALPHAGRAM_SOLUTIONS_DB)
         pipe = r.pipeline()
         rowCounter = 0
         seen_alphas = set()
@@ -61,6 +63,10 @@ class Command(BaseCommand):
             key = '%s' % row[1]  # Index by the alphagram id
             if key not in seen_alphas:
                 pipe.delete(key)  # Delete the list and start over.
+                pipe.rpush(key, json.dumps({
+                    'question': row[6],
+                    'probability': row[7]
+                }))
             seen_alphas.add(key)
             pipe.rpush(key, json.dumps(obj))
             rowCounter += 1
