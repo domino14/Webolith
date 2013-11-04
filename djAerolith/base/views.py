@@ -97,7 +97,7 @@ def saved_list(request, id):
         if action == 'firstmissed':
             pass # XXX: fix
         elif action == 'reset':
-            pass
+            pass # XXX: fix
 
 
 @login_required

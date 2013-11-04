@@ -217,20 +217,26 @@ define([
       this.set('questionIndex', qIndex - 1);
       this.saveStateLocal_();
     },
+    /**
+     * End the quiz, and start quizzing on missed questions.
+     */
     endQuiz: function() {
-      var missedCards;
+      var missedCards, missedIndices;
       missedCards = this.cards.where({missed: true});
+      missedIndices = this.get('missed');
       if (!this.get('goneThruOnce')) {
         this.set('goneThruOnce', true);
-        // XXX: mark first mised etc.
+        // Set first missed.
+        this.set('firstMissed', missedIndices);
+        this.set('numFirstMissed', _.size(missedIndices));
       }
       this.cards.reset(missedCards);
       this.cards.each(function(card) {
         card.set({missed: false});
       });
       this.set('questionIndex', 0);
-      this.set('curQuestions', this.get('missed'));
-      this.set('numCurAlphagrams', _.size(this.get('curQuestions')));
+      this.set('curQuestions', missedIndices);
+      this.set('numCurAlphagrams', _.size(missedIndices));
       this.set('missed', []);
       this.trigger('quizEnded');
     },
