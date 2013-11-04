@@ -28,6 +28,8 @@ define([
     initialize: function() {
       this.wordList = new WordList();
       this.listenTo(this.wordList, 'quizEnded', _.bind(this.quizEnded, this));
+      this.listenTo(this.wordList, 'remoteListLoaded', _.bind(
+        this.remoteListLoaded, this));
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
       this.cardInfo = this.$('#footer-info');
@@ -71,25 +73,32 @@ define([
      * @param {string} id The id of the quiz.
      */
     loadFromRemote: function(action, id) {
-      this.trigger('displaySpinner', true);
-      if (['firstmissed', 'reset', 'delete'].indexOf(action) !== -1) {
-        prompt('are oyu sure')
+      var sure, fail;
+      // XXX: better confirm dialog.
+      sure = window.confirm('You have selected ' + action + '. Are you sure?');
+      if (!sure) {
+        return;
       }
-      this.wordList.loadFromRemote(action, id, _.bind(function(result) {
-        this.trigger('displaySpinner', false);
-        if (action === 'delete') {
-          this.renderAlert('Successfully deleted ' + id)
-        }
-
-      }, this), _.bind(function() {
+      this.trigger('displaySpinner', true);
+      fail = function() {
         this.renderAlert([
           'Unable to perform action; perhaps you are not currently ',
           'connected to the Internet?'
         ].join(''));
         this.trigger('displaySpinner', false);
-        this.$('#sync').removeAttr('disabled');
-      }, this));
-      return;
+      };
+      /*
+       * Don't pass a success callback to loadFromRemote. Instead wordList
+       * should emit signals.
+       */
+      this.wordList.loadFromRemote(action, id, _.bind(fail, this));
+    },
+    /**
+     * Called when a remote list is loaded; see note in loadFromRemote above.
+     * Actually starts the quiz.
+     */
+    remoteListLoaded: function() {
+      this.trigger('displaySpinner', false);
       this.quizName = this.wordList.get('name');
       this.startQuiz();
     },

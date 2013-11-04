@@ -24,6 +24,9 @@ from base.models import SavedList, Lexicon
 from lib.response import response
 import base.settings
 import json
+import logging
+from base.utils import generate_question_map
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -79,7 +82,36 @@ def saved_list(request, id):
         sl = SavedList.objects.get(user=request.user,
                                    id=id)
     except SavedList.DoesNotExist:
-        return response('This list does not exist!', status=400)
+        return response('This list does not exist!', status=404)
     if request.method == 'DELETE':
         sl.delete()
         return response('OK')
+    elif request.method == 'GET':
+        # Check 'action'.
+        action = request.GET.get('action')
+        if action == 'continue':
+            return response(sl.to_python())
+    elif request.method == 'POST':
+        # Check 'action'.
+        action = request.POST.get('action')
+        if action == 'firstmissed':
+            pass # XXX: fix
+        elif action == 'reset':
+            pass
+
+
+@login_required
+def question_map(request):
+    if request.method != 'GET':
+        return response('This endpoint only accepts GET', status=400)
+    try:
+        sl = SavedList.objects.get(user=request.user,
+                                   id=request.GET.get('listId'))
+    except SavedList.DoesNotExist:
+        return response('This list does not exist!', status=404)
+
+    qs = json.loads(sl.origQuestions)
+    logger.debug('Generating question map for %s questions.' % len(qs))
+    map = generate_question_map(qs)
+    logger.debug('Map generated, returning.')
+    return response(map)

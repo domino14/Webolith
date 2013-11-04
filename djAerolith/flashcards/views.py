@@ -11,7 +11,7 @@ import time
 import logging
 logger = logging.getLogger(__name__)
 from django.contrib.auth.decorators import login_required
-from base.utils import savedlist_from_alphas, quizzes_response
+from base.utils import savedlist_from_alpha_pks, quizzes_response
 
 
 @login_required
@@ -77,9 +77,8 @@ def new_quiz(request):
 
     min_pk = alphProbToProbPK(p_min, lexicon.pk, length)
     max_pk = alphProbToProbPK(p_max, lexicon.pk, length)
-    alphs = Alphagram.objects.filter(probability_pk__gte=min_pk,
-                                     probability_pk__lte=max_pk)
-    li, q_map = savedlist_from_alphas(alphs)
+    alpha_pks = range(min_pk, max_pk + 1)
+    li, q_map = savedlist_from_alpha_pks(alpha_pks, lexicon)
     if len(q_map) > 0:
         # Generate a quiz name.
         quiz_name = '%s %ss (%s to %s)' % (lexicon.lexiconName, length,

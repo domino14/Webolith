@@ -138,6 +138,7 @@ class SavedList(models.Model):
         """
         return {
             'lexicon': self.lexicon.lexiconName,
+            'name': self.name,
             'numAlphagrams': self.numAlphagrams,
             'numCurAlphagrams': self.numCurAlphagrams,
             'numFirstMissed': self.numFirstMissed,
@@ -147,7 +148,8 @@ class SavedList(models.Model):
             'origQuestions': json.loads(self.origQuestions),
             'curQuestions': json.loads(self.curQuestions),
             'missed': json.loads(self.missed),
-            'firstMissed': json.loads(self.firstMissed)
+            'firstMissed': json.loads(self.firstMissed),
+            'id': self.pk
         }
 
     def __unicode__(self):

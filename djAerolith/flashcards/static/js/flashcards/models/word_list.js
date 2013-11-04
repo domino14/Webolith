@@ -9,8 +9,9 @@ define([
   'collections/cards'
 ], function(_, Backbone, $, Cards) {
   "use strict";
-  var QUIZ_API_URL;
+  var QUIZ_API_URL, QUESTION_MAP_URL;
   QUIZ_API_URL = '/base/api/saved_list/';
+  QUESTION_MAP_URL = '/base/api/question_map/';
   return Backbone.Model.extend({
     initialize: function() {
       /**
@@ -114,7 +115,7 @@ define([
         name: quizName
       });
       this.questionMap_ = questionMap;
-      // Save question map in local storage here only.
+      // Save question map in local storage.
       localStorage.setItem('aerolith-cards-qmap', JSON.stringify(
         this.questionMap_));
       // Generate "cards".
@@ -264,30 +265,53 @@ define([
      * Loads quiz from remote storage. Does no confirmation.
      * @param {string} action The action, such as continue, first missed.
      * @param {string} id The id of the quiz.
-     * @param {Function} success Success callback.
      * @param {Function} fail Gets called if list fails to load.
      */
-    loadFromRemote: function(action, id, success, fail) {
+    loadFromRemote: function(action, id, fail) {
       var url, type;
       url = QUIZ_API_URL + id + '/';
-      // continue / firstmissed / reset are GETs as they are idempotent.
-      // If user syncs afterwards, this will be DESTRUCTIVE which is why sync
-      // is a POST.
       if (action === 'continue') {
         type = 'GET';
+        // firstmissed and reset have side effects so they are POSTs.
       } else if (action === 'firstmissed') {
-        type = 'GET';
+        type = 'POST';
       } else if (action === 'reset') {
-        type = 'GET';
+        type = 'POST';
       } else if (action === 'delete') {
         type = 'DELETE';
       }
       $.ajax({
         url: url,
         type: type,
-        success: function(result) {
-          success(result);
+        data: action !== 'delete' ? {action: action} : null,
+        dataType: 'json',
+        success: _.bind(function(result) {
+          this.set(result);
+          this.loadQuestionMap_(fail);
+        }, this)
+      }).fail(fail);
+    },
+    /**
+     * Load question map from remote server.
+     * @param {Function} fail The fail callback.
+     */
+    loadQuestionMap_: function(fail) {
+      $.ajax({
+        url: QUESTION_MAP_URL,
+        type: 'GET',
+        data: {
+          listId: this.get('id'),
         },
+        dataType: 'json',
+        success: _.bind(function(result) {
+          this.questionMap_ = result;
+          // Store the questionMap_ in localStorage only on initialize.
+          localStorage.setItem('aerolith-cards-qmap', JSON.stringify(
+            this.questionMap_));
+          // Only after the question map is ready can we set the cards.
+          this.cards.reset(this.getQuestions_());
+          this.trigger('remoteListLoaded');
+        }, this),
       }).fail(fail);
     }
   });

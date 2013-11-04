@@ -2,6 +2,8 @@ from base.models import SavedList
 import json
 import redis
 from django.conf import settings
+import logging
+logger = logging.getLogger(__name__)
 
 
 def alpha_pk_to_python(pk, question, answers):
@@ -39,6 +41,7 @@ def generate_question_map(alphs):
     counter = 0
     results = []
     # Fetch 1000 at a time for speed.
+    logger.debug('Iterating through indices.')
     for pk in alphs:
         pipe.lrange(pk, 0, -1)
         counter += 1
@@ -46,11 +49,13 @@ def generate_question_map(alphs):
             results.extend(pipe.execute())
             pipe = r.pipeline()
     results.extend(pipe.execute())
+    logger.debug('Got %s results' % len(results))
     for idx, result in enumerate(results):
         question = json.loads(result[0])
         # alphs and results are in the same order. (Or they damn better be).
         pk = alphs[idx]
         q_map[pk] = alpha_pk_to_python(pk, question, result[1:])
+    logger.debug('Created map.')
     return q_map
 
 
