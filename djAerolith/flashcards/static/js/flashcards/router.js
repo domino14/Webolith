@@ -7,7 +7,8 @@ define([
       'newquiz': 'newQuiz',
       'help': 'help',
       'remote/:action/:id': 'remoteQuizAction',
-      'continue/local': 'continueQuiz'
+      'continue/local': 'continueQuiz',
+      'continue': 'showQuizList'
     }
   });
 });

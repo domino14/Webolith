@@ -276,15 +276,16 @@ define([
     loadFromRemote: function(action, id, fail) {
       var url, type;
       url = QUIZ_API_URL + id + '/';
-      if (action === 'continue') {
-        type = 'GET';
-        // firstmissed and reset have side effects so they are POSTs.
-      } else if (action === 'firstmissed') {
-        type = 'POST';
-      } else if (action === 'reset') {
-        type = 'POST';
-      } else if (action === 'delete') {
+      if (action === 'delete') {
         type = 'DELETE';
+      } else {
+        type = 'GET';
+      }
+      function shouldShuffle(action) {
+        if (action === 'firstmissed' || action === 'reset') {
+          return true;
+        }
+        return false;
       }
       $.ajax({
         url: url,
@@ -292,6 +293,17 @@ define([
         data: action !== 'delete' ? {action: action} : null,
         dataType: 'json',
         success: _.bind(function(result) {
+          if (action === 'delete') {
+            this.trigger('remoteListDeleted');
+            return;
+          }
+          if (shouldShuffle(action)) {
+            /*
+             * Shuffle current questions only if it's a new quiz, i.e.
+             * not continuing.
+             */
+            result.curQuestions = _.shuffle(result.curQuestions);
+          }
           this.set(result);
           this.loadQuestionMap_(fail);
         }, this)

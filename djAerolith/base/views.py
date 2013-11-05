@@ -36,6 +36,7 @@ def saved_list_sync(request):
     profile = request.user.get_profile()
     saved_alphas = profile.wordwallsSaveListSize
     limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+    logger.debug('Syncing %s' % body)
     orig_qs = body.get('origQuestions')
     # Try getting a saved list with the same name, lexicon, and user.
     try:
@@ -89,16 +90,32 @@ def saved_list(request, id):
     elif request.method == 'GET':
         # Check 'action'.
         action = request.GET.get('action')
+        l_obj = sl.to_python()
         if action == 'continue':
-            return response(sl.to_python())
-    elif request.method == 'POST':
-        # Check 'action'.
-        action = request.POST.get('action')
-        if action == 'firstmissed':
-            pass # XXX: fix
+            pass
+        elif action == 'firstmissed':
+            l_obj = sl.to_python()
+            # Reset the list object to first missed but don't actually save it.
+            # The user sync will take care of any saves.
+            l_obj['questionIndex'] = 0
+            l_obj['curQuestions'] = l_obj['firstMissed']
+            l_obj['numCurAlphagrams'] = l_obj['numFirstMissed']
+            l_obj['numMissed'] = 0
+            l_obj['missed'] = []
         elif action == 'reset':
-            pass # XXX: fix
-
+            l_obj = sl.to_python()
+            # Again, reset will not actually save, so this is a GET. Sync takes
+            # care of saving.
+            l_obj['questionIndex'] = 0
+            l_obj['curQuestions'] = range(l_obj['numAlphagrams'])
+            l_obj['numCurAlphagrams'] = l_obj['numAlphagrams']
+            l_obj['firstMissed'] = []
+            l_obj['numFirstMissed'] = 0
+            l_obj['missed'] = []
+            l_obj['numMissed'] = 0
+            l_obj['goneThruOnce'] = False
+        logger.debug('Returning response %s' % l_obj)
+        return response(l_obj)
 
 @login_required
 def question_map(request):

@@ -60,11 +60,19 @@ define([
       this.$('#quiz-selector').hide();
     },
     /**
-     * Continue quiz.
+     * Continue a local quiz.
      */
     continueQuiz: function() {
       this.quiz.loadFromStorage();
       this.showCardArea();
+    },
+    /**
+     * Show the list of quizzes again and hide everything else.
+     */
+    showQuizList: function() {
+      this.$('#quiz-selector').show();
+      this.$('#card-area').hide();
+      this.$('#card-setup').hide();
     },
     /**
      * Loads quiz from remote storage.

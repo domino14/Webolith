@@ -30,6 +30,8 @@ define([
       this.listenTo(this.wordList, 'quizEnded', _.bind(this.quizEnded, this));
       this.listenTo(this.wordList, 'remoteListLoaded', _.bind(
         this.remoteListLoaded, this));
+      this.listenTo(this.wordList, 'remoteListDeleted', _.bind(
+        this.remoteListDeleted, this));
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
       this.cardInfo = this.$('#footer-info');
@@ -101,6 +103,12 @@ define([
       this.trigger('displaySpinner', false);
       this.quizName = this.wordList.get('name');
       this.startQuiz();
+    },
+    /**
+     * Called when a remote list is deleted.
+     */
+    remoteListDeleted: function() {
+      this.trigger('displaySpinner', false);
     },
     /**
      * Starts quiz.

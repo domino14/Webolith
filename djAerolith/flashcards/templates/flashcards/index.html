@@ -31,20 +31,24 @@
           <ul class="nav navbar-nav">
             <li><a href="#help" data-toggle="modal" data-target="#myModal">Help</a></li>
             <li><a href="#newquiz">New Quiz</a></li>
+            <li><a href="#continue">Continue Quiz</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="container" id="app-view">
       <div class="row">
+        <!-- Contains the list of quizzes to continue from local and server -->
         <div id="quiz-selector"></div>
       </div>
       <div class="row">
+        <!-- The new quiz form -->
         <div id="card-setup"></div>
       </div>
       <div class="row" id="card-spinner">
         <center><img src="/static/img/aerolith/spinner.gif"/></center>
       </div>
+      <!-- The actual card -->
       <div class="row" id="card-area">
         <div class="row">
           <div class="col-xs-1"></div>
