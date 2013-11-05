@@ -5,7 +5,7 @@ from scripts.digoceanssh import get_servers
 from scripts.gen_firewall import gen_firewall
 
 curdir = os.path.dirname(__file__)
-
+print curdir
 
 env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
@@ -83,9 +83,9 @@ def restart_node():
                 run("supervisorctl restart mynode")
 
 
-@roles('prod_sudo')
+@roles('prod')
 def reload_nginx_config():
-    put(os.path.join(curdir, '/config/nginx.conf'),
+    put(os.path.join(curdir, 'config/nginx.conf'),
         "/etc/nginx/nginx.conf", use_sudo=True)
     run("sudo kill -HUP $( cat /var/run/nginx.pid )")
 
