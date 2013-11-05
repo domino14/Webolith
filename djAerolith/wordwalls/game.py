@@ -22,14 +22,14 @@ from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
 import time
-from datetime import date, datetime
+from datetime import date
 import random
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
 from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
 import re
 from base.forms import SavedListForm
-import wordwalls.settings
+import base.settings
 from locks import lonelock
 import logging
 from django.db import IntegrityError
@@ -472,9 +472,9 @@ class WordwallsGame:
             # now check if a list with this name, lexicon, and user exists
             profile = user.get_profile()
             if profile.member:
-                limit = wordwalls.settings.SAVE_LIST_LIMIT_MEMBER
+                limit = base.settings.SAVE_LIST_LIMIT_MEMBER
             else:
-                limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
+                limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
 
             exceededLimitMessage = (
                 'Unable to save list because you have gone over the number '
