@@ -82,11 +82,15 @@ define([
         return;
       }
       this.trigger('displaySpinner', true);
-      fail = function() {
-        this.renderAlert([
-          'Unable to perform action; perhaps you are not currently ',
-          'connected to the Internet?'
-        ].join(''));
+      fail = function(jqXHR) {
+        if (jqXHR.responseJSON) {
+          this.renderAlert(jqXHR.responseJSON);
+        } else {
+          this.renderAlert([
+            'Unable to perform action; perhaps you are not currently ',
+            'connected to the Internet?'
+          ].join(''));
+        }
         this.trigger('displaySpinner', false);
       };
       /*

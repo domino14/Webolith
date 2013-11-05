@@ -95,6 +95,9 @@ def saved_list(request, id):
             pass
         elif action == 'firstmissed':
             l_obj = sl.to_python()
+            if l_obj['goneThruOnce'] == False:
+                return response('Cannot quiz on first missed unless you have '
+                                'gone through the entire quiz.', status=400)
             # Reset the list object to first missed but don't actually save it.
             # The user sync will take care of any saves.
             l_obj['questionIndex'] = 0
