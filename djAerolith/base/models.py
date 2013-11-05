@@ -16,7 +16,9 @@
 
 # To contact the author, please email delsolar at gmail dot com
 from django.db import models
+from django.contrib.auth.models import User
 import string
+import json
 
 
 def alphProbToProbPK(prob, lexId, length):
@@ -109,3 +111,55 @@ class Word(models.Model):
 # database for the different lexica.
 
 ############################
+
+
+class SavedList(models.Model):
+    lexicon = models.ForeignKey(Lexicon)
+    created = models.DateTimeField(auto_now_add=True)
+    lastSaved = models.DateTimeField(auto_now=True, auto_now_add=True)
+    name = models.CharField(max_length=50)
+    user = models.ForeignKey(User)
+
+    numAlphagrams = models.IntegerField()
+    numCurAlphagrams = models.IntegerField()
+    numFirstMissed = models.IntegerField()
+    numMissed = models.IntegerField()
+    goneThruOnce = models.BooleanField()
+    questionIndex = models.IntegerField()
+
+    origQuestions = models.TextField()
+    curQuestions = models.TextField()
+    missed = models.TextField()
+    firstMissed = models.TextField()
+
+    def to_python(self):
+        """
+            Converts to a serializable Python object.
+        """
+        return {
+            'lexicon': self.lexicon.lexiconName,
+            'name': self.name,
+            'numAlphagrams': self.numAlphagrams,
+            'numCurAlphagrams': self.numCurAlphagrams,
+            'numFirstMissed': self.numFirstMissed,
+            'numMissed': self.numMissed,
+            'goneThruOnce': self.goneThruOnce,
+            'questionIndex': self.questionIndex,
+            'origQuestions': json.loads(self.origQuestions),
+            'curQuestions': json.loads(self.curQuestions),
+            'missed': json.loads(self.missed),
+            'firstMissed': json.loads(self.firstMissed),
+            'id': self.pk
+        }
+
+    def __unicode__(self):
+        return "(%s) %s%s (Saved %s)" % (
+            self.lexicon.lexiconName,
+            self.name,
+            '*' if self.goneThruOnce else '',
+            self.lastSaved)
+    # TODO keep track of original alphagrams even in regular list, so it
+    # can be saved separately..
+
+    class Meta:
+        db_table = 'wordwalls_savedlist'

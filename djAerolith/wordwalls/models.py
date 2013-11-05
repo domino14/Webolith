@@ -92,35 +92,6 @@ class DailyChallengeLeaderboardEntry(models.Model):
     # a word just has one alphagram, but an alphagram can 'have' multiple words
 
 
-class SavedList(models.Model):
-    lexicon = models.ForeignKey(Lexicon)
-    created = models.DateTimeField(auto_now_add=True)
-    lastSaved = models.DateTimeField(auto_now=True, auto_now_add=True)
-    name = models.CharField(max_length=50)
-    user = models.ForeignKey(User)
-
-    numAlphagrams = models.IntegerField()
-    numCurAlphagrams = models.IntegerField()
-    numFirstMissed = models.IntegerField()
-    numMissed = models.IntegerField()
-    goneThruOnce = models.BooleanField()
-    questionIndex = models.IntegerField()
-
-    origQuestions = models.TextField()
-    curQuestions = models.TextField()
-    missed = models.TextField()
-    firstMissed = models.TextField()
-
-    def __unicode__(self):
-        return "(%s) %s%s (Saved %s)" % (
-            self.lexicon.lexiconName,
-            self.name,
-            '*' if self.goneThruOnce else '',
-            self.lastSaved)
-    # TODO keep track of original alphagrams even in regular list, so it
-    # can be saved separately..
-
-
 class WordwallsGameModel(GenericTableGameModel, LockableObject):
     # additional fields
     numOrigQuestions = models.IntegerField()

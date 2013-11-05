@@ -23,7 +23,7 @@ from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
 from django.template import RequestContext
-from base.models import Lexicon, Alphagram, Word, alphProbToProbPK
+from base.models import Lexicon, Alphagram, Word, alphProbToProbPK, SavedList
 from django.contrib.auth.decorators import login_required
 import json
 from wordwalls.game import WordwallsGame, SearchDescription
@@ -31,13 +31,13 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from wordwalls.models import (SavedList, DailyChallengeName,
-                              WordwallsGameModel, NamedList)
+from wordwalls.models import (DailyChallengeName, WordwallsGameModel,
+                              NamedList)
 from datetime import date, datetime, timedelta
 import time
 from django.conf import settings
-
 import wordwalls.settings
+import base.settings
 import os
 from locks import lonelock
 from django.middleware.csrf import get_token
@@ -113,7 +113,7 @@ def handle_homepage_post(profile, request):
     numAlphas = profile.wordwallsSaveListSize
     limit = 0
     if not profile.member:
-        limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
+        limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
     if 'action' not in request.POST:
         return response({'success': False,
                          'error': 'Your request was not successful. You may '
@@ -433,7 +433,7 @@ def createUserList(upload, filename, lex, user):
 
     profile = user.get_profile()
     numSavedAlphas = profile.wordwallsSaveListSize
-    limit = wordwalls.settings.SAVE_LIST_LIMIT_NONMEMBER
+    limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"

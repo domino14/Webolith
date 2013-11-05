@@ -1,7 +1,12 @@
+/**
+ * @fileOverview This has the quiz logic. Views should be dumb, but this
+ * particular one is more than just a view. There's no direct quiz model
+ * attached to this.
+ */
 define([
   'backbone',
   'underscore',
-  'collections/cards',
+  'models/word_list',
   'mustache',
   'text!templates/card.html',
   'text!templates/card_front.html',
@@ -9,21 +14,24 @@ define([
   'text!templates/card_info.html',
   'text!templates/quiz_header.html',
   'text!templates/alert.html'
-], function(Backbone, _, Cards, Mustache, CardTemplate, CardFront, CardBack,
-  CardInfo, QuizHeader, Alert) {
+], function(Backbone, _, WordList, Mustache, CardTemplate, CardFront,
+  CardBack, CardInfo, QuizHeader, Alert) {
   "use strict";
+  var LOAD_ACTIONS;
+  LOAD_ACTIONS = {
+    CONTINUE: 'continue',
+    FIRST_MISSED: 'firstmissed',
+    RESET: 'reset',
+    DELETE: 'delete'
+  };
   return Backbone.View.extend({
     initialize: function() {
-      /**
-       * A collection of `Card`s.
-       * @type {Backbone.Collection}
-       */
-      this.cards = new Cards();
-      /**
-       * The current index that we are quizzing on in the cards collection.
-       * @type {Number}
-       */
-      this.curIndex = 0;
+      this.wordList = new WordList();
+      this.listenTo(this.wordList, 'quizEnded', _.bind(this.quizEnded, this));
+      this.listenTo(this.wordList, 'remoteListLoaded', _.bind(
+        this.remoteListLoaded, this));
+      this.listenTo(this.wordList, 'remoteListDeleted', _.bind(
+        this.remoteListDeleted, this));
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
       this.cardInfo = this.$('#footer-info');
@@ -37,32 +45,72 @@ define([
       'click .correct': 'markCorrect',
       'click .missed': 'markMissed',
       'click #previous-card': 'previousCard',
-      'click #flip-card': 'flipCard'
+      'click #flip-card': 'flipCard',
+      'click #sync': 'sync'
     },
     /**
-     * Resets the quiz to an array of questions.
-     * @param  {<Object>} questions An array of questions.
+     * Resets the quiz to a brand new array of questions.
+     * @param {<Object>} wordList A representation of a WordList.
+     * @param {Object} questionMap Maps question indices to definitions/words/
+     *                             etc.
+     * @param {string} quizName The name of the quiz.
      */
-    reset: function(questions, quizName) {
-      this.cards.reset(_.shuffle(questions));
+    reset: function(wordList, questionMap, quizName) {
+      this.wordList.reset(wordList, questionMap, quizName);
       this.quizName = quizName;
-      this.curIndex = 0;
       this.startQuiz();
     },
     /**
      * Loads quiz from localStorage.
      */
     loadFromStorage: function() {
-      var progress, index;
-      progress = localStorage.getItem('aerolith-cards-progress');
-      index = localStorage.getItem('aerolith-cards-currentIndex');
-      if (!progress) {
+      this.wordList.loadFromLocal();
+      this.quizName = this.wordList.get('name');
+      this.startQuiz();
+    },
+    /**
+     * Tells word list model to load from quiz. Asks for confirmation
+     * for destructive actions.
+     * @param {string} action The action, such as continue, first missed.
+     * @param {string} id The id of the quiz.
+     */
+    loadFromRemote: function(action, id) {
+      var sure, fail;
+      // XXX: better confirm dialog.
+      sure = window.confirm('You have selected ' + action + '. Are you sure?');
+      if (!sure) {
         return;
       }
-      this.cards.reset(JSON.parse(progress));
-      this.curIndex = parseInt(index, 10);
-      this.quizName = localStorage.getItem('aerolith-cards-quizName');
+      this.trigger('displaySpinner', true);
+      fail = function() {
+        this.renderAlert([
+          'Unable to perform action; perhaps you are not currently ',
+          'connected to the Internet?'
+        ].join(''));
+        this.trigger('displaySpinner', false);
+      };
+      /*
+       * Don't pass a success callback to loadFromRemote. Instead wordList
+       * should emit signals.
+       */
+      this.wordList.loadFromRemote(action, id, _.bind(fail, this));
+    },
+    /**
+     * Called when a remote list is loaded; see note in loadFromRemote above.
+     * Actually starts the quiz.
+     */
+    remoteListLoaded: function() {
+      this.trigger('displaySpinner', false);
+      this.quizName = this.wordList.get('name');
       this.startQuiz();
+    },
+    /**
+     * Called when a remote list is deleted.
+     * @param {Number} quizId The id of the quiz.
+     */
+    remoteListDeleted: function(quizId) {
+      this.trigger('displaySpinner', false);
+      this.trigger('removeQuiz', quizId);
     },
     /**
      * Starts quiz.
@@ -77,7 +125,7 @@ define([
      */
     showCurrentCard: function() {
       var currentCard;
-      currentCard = this.cards.at(this.curIndex);
+      currentCard = this.wordList.currentCard();
       if (!currentCard) {
         this.showQuizOver();
         return;
@@ -85,14 +133,13 @@ define([
       this.viewingFront = true;
       this.renderCard(CardFront, currentCard);
       this.renderCardInfo();
-      this.saveQuizInfo();
     },
     /**
      * Shows the back of the card.
      */
     showCardBack: function() {
       var currentCard;
-      currentCard = this.cards.at(this.curIndex);
+      currentCard = this.wordList.currentCard();
       if (!currentCard) {
         return;
       }
@@ -107,7 +154,7 @@ define([
      */
     renderCard: function(template, card) {
       var partials, attributes;
-      attributes = this.getCardDisplayAttributes(card);
+      attributes = this.getCardDisplayAttributes_(card);
       partials = {'cardBody': template};
       this.card.html(Mustache.render(CardTemplate, attributes, partials));
     },
@@ -116,58 +163,43 @@ define([
      * rendering the card.
      * @param {Card} card
      * @return {Object}
+     * @private
      */
-    getCardDisplayAttributes: function(card) {
+    getCardDisplayAttributes_: function(card) {
       var attributes;
       attributes = card.toJSON();
       attributes.numAnswers = _.size(attributes.answers);
       attributes.pluralAnswers = attributes.numAnswers > 1;
-      attributes.cardNum = this.curIndex + 1;
-      attributes.cardCount = this.cards.size();
+      attributes.cardNum = this.wordList.currentIndex() + 1;
+      attributes.cardCount = this.wordList.numCards();
       return attributes;
     },
     /**
      * Mark the current card correct.
      */
     markCorrect: function() {
-      var currentCard = this.cards.at(this.curIndex);
-      if (!currentCard) {
-        return;
-      }
-      currentCard.set('missed', false);
+      this.wordList.markCurrentMissed(false);
       this.advanceCard();
     },
     /**
      * Mark missed.
      */
     markMissed: function() {
-      var currentCard = this.cards.at(this.curIndex);
-      if (!currentCard) {
-        return;
-      }
-      currentCard.set('missed', true);
+      this.wordList.markCurrentMissed(true);
       this.advanceCard();
     },
     /**
      * Advance to the next card.
      */
     advanceCard: function() {
-      this.curIndex += 1;
-      if (this.curIndex >= this.cards.size()) {
-        // Out of bounds, quiz done.
-        this.endQuiz();
-        return;
-      }
+      this.wordList.advanceCard();
       this.showCurrentCard();
     },
     /**
      * Show previous card.
      */
     previousCard: function() {
-      this.curIndex -= 1;
-      if (this.curIndex < 0) {
-        this.curIndex = 0;
-      }
+      this.wordList.previousCard();
       this.showCurrentCard();
     },
     /**
@@ -191,46 +223,50 @@ define([
       }));
     },
     /**
-     * End the quiz. This will start quizzing on missed words typically.
+     * Gotten from wordList when the quiz has ended. Try to show current card.
      */
-    endQuiz: function() {
-      this.cards.reset(this.cards.where({missed: true}));
-      this.cards.each(function(card) {
-        card.set({missed: false});
-      });
-      this.curIndex = 0;
+    quizEnded: function() {
       this.showCurrentCard();
     },
     /**
      * Show the quiz is over final dialog.
      */
     showQuizOver: function() {
-      this.renderAlert('The quiz is over!');
+      this.renderAlert('The quiz "' + this.quizName + '" is over!');
       this.quizOver = true;
     },
     /**
      * Renders an alert.
      * @param {string} alertText
+     * @param {boolean=} ok If this is true, then the alert should be a good
+     *                      color.
      */
-    renderAlert: function(alertText) {
+    renderAlert: function(alertText, ok) {
       this.alertHolder.html(Mustache.render(Alert, {
-        alert: alertText
+        alert: alertText,
+        ok: ok || false,
+        danger: !ok
       }));
     },
     /**
-     * Saves quiz info to localstorage.
+     * Saves quiz info to remote server. Can fail.
      */
-    saveQuizInfo: function() {
-      if (this.quizOver) {
-        localStorage.removeItem('aerolith-cards-progress');
-        localStorage.removeItem('aerolith-cards-currentIndex');
-        localStorage.removeItem('aerolith-cards-quizName');
-      } else {
-        localStorage.setItem('aerolith-cards-currentIndex', this.curIndex);
-        localStorage.setItem('aerolith-cards-progress',
-          JSON.stringify(this.cards));
-        localStorage.setItem('aerolith-cards-quizName', this.quizName);
-      }
+    sync: function() {
+      this.trigger('displaySpinner', true);
+      this.$('#sync').attr('disabled', true);
+      this.wordList.persistToServer(_.bind(function(data) {
+        this.renderAlert(data, true);
+        this.trigger('displaySpinner', false);
+        this.$('#sync').removeAttr('disabled');
+      }, this),
+      _.bind(function() {
+        this.renderAlert([
+          'Unable to persist to server; perhaps you are not currently ',
+          'connected to the Internet?'
+        ].join(''));
+        this.trigger('displaySpinner', false);
+        this.$('#sync').removeAttr('disabled');
+      }, this));
     }
   });
 });

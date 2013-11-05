@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from wordwalls.views import searchForAlphagrams
 from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
-from wordwalls.models import NamedList, SavedList
-from base.models import Lexicon, Alphagram
+from wordwalls.models import NamedList
+from base.models import Lexicon, Alphagram, SavedList
 import json
 from django.core.urlresolvers import reverse
 

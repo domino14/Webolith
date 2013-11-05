@@ -59,6 +59,7 @@ urlpatterns = patterns('',
     (r'^cards/', include('flashcards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
+    (r'^base/', include('base.urls')),
     ('^nexus/', include(nexus.site.urls))
 )
 

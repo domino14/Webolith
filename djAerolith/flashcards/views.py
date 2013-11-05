@@ -6,40 +6,26 @@ from current_version import CURRENT_VERSION
 from flashcards.models import Card
 import json
 from datetime import datetime
-from base.models import Lexicon, Alphagram, alphProbToProbPK
+from base.models import Lexicon, Alphagram, alphProbToProbPK, SavedList
 import time
 import logging
 logger = logging.getLogger(__name__)
 from django.contrib.auth.decorators import login_required
+from base.utils import savedlist_from_alpha_pks, quizzes_response
 
 
 @login_required
 def main(request):
     user_cards = Card.objects.filter(user=request.user)
+    quizzes = SavedList.objects.filter(user=request.user)
     num_cards = user_cards.count()
     return render_to_response("flashcards/index.html", {
                               'numCards': num_cards,
+                              'savedLists': json.dumps(
+                                    quizzes_response(quizzes)),
                               'CURRENT_VERSION': CURRENT_VERSION,
                               },
                               context_instance=RequestContext(request))
-
-
-def to_python(alphagram):
-    """
-        Converts the alphagram model instance to a Python object.
-    """
-    return {
-        'question': alphagram.alphagram,
-        'probability': alphagram.probability,
-        'id': alphagram.probability_pk,
-        'answers': [{
-            'word': word.word,
-            'def': word.definition,
-            'f_hooks': word.front_hooks,
-            'b_hooks': word.back_hooks,
-            'symbols': word.lexiconSymbols
-        } for word in alphagram.word_set.all()]
-    }
 
 
 def validate_params(min, max, length, lex, max_range=1000):
@@ -91,17 +77,16 @@ def new_quiz(request):
 
     min_pk = alphProbToProbPK(p_min, lexicon.pk, length)
     max_pk = alphProbToProbPK(p_max, lexicon.pk, length)
-    alphs = Alphagram.objects.filter(probability_pk__gte=min_pk,
-                                     probability_pk__lte=max_pk)
-    questions = [to_python(alph) for alph in alphs]
-    if len(questions) > 0:
+    alpha_pks = range(min_pk, max_pk + 1)
+    li, q_map = savedlist_from_alpha_pks(alpha_pks, lexicon)
+    if len(q_map) > 0:
         # Generate a quiz name.
         quiz_name = '%s %ss (%s to %s)' % (lexicon.lexiconName, length,
-                                           questions[0]['probability'],
-                                           questions[-1]['probability'])
+                                           p_min, p_max)
     else:
         quiz_name = ''
-    return response({'questions': questions,
+    return response({'list': li.to_python(),
+                     'q_map': q_map,
                      'quiz_name': quiz_name})
 
 

@@ -17,7 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from base.models import (Alphagram, alphProbToProbPK, probPKToAlphProb,
-                         alphagrammize, Word)
+                         alphagrammize, Word, SavedList)
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
@@ -25,7 +25,7 @@ import time
 from datetime import date, datetime
 import random
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
-                              DailyChallengeLeaderboardEntry, SavedList)
+                              DailyChallengeLeaderboardEntry)
 from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
 import re
 from base.forms import SavedListForm
