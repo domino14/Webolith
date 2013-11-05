@@ -36,7 +36,7 @@ class Command(BaseCommand):
             rows = cursor.fetchmany(FETCH_MANY_SIZE)
         print
         pipe.execute()
-
+        print 'Executing words query'
         # Now store all words.
         cursor.execute(
             'SELECT word, alphagram_id, lexiconSymbols, definition, '
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             'base_alphagram ON '
             'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
             'base_word.lexicon_id in %s' % str(tuple(INCLUDE_LEX)))
-        rows = cursor.fetchmany(FETCH_MANY_SIZE)
+        rows = cursor.fetchmany(100)
         r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
                         db=settings.REDIS_ALPHAGRAM_SOLUTIONS_DB)
         pipe = r.pipeline()
@@ -75,6 +75,6 @@ class Command(BaseCommand):
                     print ('%s .' % rowCounter),
                     pipe.execute()
                     pipe = r.pipeline()
-            rows = cursor.fetchmany(FETCH_MANY_SIZE)
+            rows = cursor.fetchmany(100)
         print
         pipe.execute()
