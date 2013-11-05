@@ -46,7 +46,7 @@ class Command(BaseCommand):
             'base_alphagram ON '
             'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
             'base_word.lexicon_id in %s' % str(tuple(INCLUDE_LEX)))
-        rows = cursor.fetchmany(100)
+        rows = cursor.fetchmany(FETCH_MANY_SIZE)
         r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
                         db=settings.REDIS_ALPHAGRAM_SOLUTIONS_DB)
         pipe = r.pipeline()
@@ -71,10 +71,11 @@ class Command(BaseCommand):
                 seen_alphas.add(key)
                 pipe.rpush(key, json.dumps(obj))
                 rowCounter += 1
-                if rowCounter % 10000 == 0:
+                if rowCounter % 1000 == 0:
                     print ('%s .' % rowCounter),
                     pipe.execute()
                     pipe = r.pipeline()
-            rows = cursor.fetchmany(100)
+            rows = cursor.fetchmany(FETCH_MANY_SIZE)
         print
         pipe.execute()
+
