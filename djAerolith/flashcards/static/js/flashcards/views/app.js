@@ -24,6 +24,8 @@ define([
       this.spinner = this.$('#card-spinner');
       this.listenTo(this.quiz, 'displaySpinner', _.bind(
         this.displaySpinner_, this));
+      this.listenTo(this.quiz, 'removeQuiz', _.bind(
+        this.quizSelector.removeQuiz, this.quizSelector));
     },
     events: {
       'click #load-prob': 'loadByProbability'
@@ -79,9 +81,11 @@ define([
      * @param {string} action An action like 'continue'
      * @param {string} id The id of the quiz.
      */
-    loadQuiz: function(action, id) {
+    loadRemoteQuiz: function(action, id) {
       this.quiz.loadFromRemote(action, id);
-      this.showCardArea();
+      if (action !== 'delete') {
+        this.showCardArea();
+      }
     },
     /**
      * Show only card area.

@@ -61,5 +61,5 @@ define([
   router.on('route:newQuiz', _.bind(app.newQuiz, app));
   router.on('route:continueQuiz', _.bind(app.continueQuiz, app));
   router.on('route:showQuizList', _.bind(app.showQuizList, app));
-  router.on('route:remoteQuizAction', _.bind(app.loadQuiz, app));
+  router.on('route:remoteQuizAction', _.bind(app.loadRemoteQuiz, app));
 });

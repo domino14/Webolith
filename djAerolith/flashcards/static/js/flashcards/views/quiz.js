@@ -106,9 +106,11 @@ define([
     },
     /**
      * Called when a remote list is deleted.
+     * @param {Number} quizId The id of the quiz.
      */
-    remoteListDeleted: function() {
+    remoteListDeleted: function(quizId) {
       this.trigger('displaySpinner', false);
+      this.trigger('removeQuiz', quizId);
     },
     /**
      * Starts quiz.
