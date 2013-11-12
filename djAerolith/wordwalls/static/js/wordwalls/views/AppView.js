@@ -9,9 +9,10 @@ define([
   'text!templates/solutionsTable.html',
   'mustache',
   'ChallengeView',
+  'wordwalls_tests',
   'utils'
 ], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
-     SolutionsTable, Mustache, ChallengeView, utils) {
+     SolutionsTable, Mustache, ChallengeView, Tester, utils) {
   "use strict";
   var App;
   App = Backbone.View.extend({
@@ -21,6 +22,7 @@ define([
       "click #giveup": "giveUp",
       "click #solutions": "showSolutions",
       "click #save": "saveGame",
+      "click #testWordwalls": "runTests",
       "click #customize": "customize",
       "click #exit": "exit",
       "click #shuffle": "shuffle",
@@ -29,9 +31,11 @@ define([
       "click .dcInfo": "showAddlInfo",
       "keypress #guessText": "readSpecialKeypress"
     },
+    runTests: function() {
+      Tester.runTests();
+    },
     initialize: function() {
       this.guessInput = this.$("#guessText");
-
       this.setupPopupEvent();
       this.wordwallsGame = new Game();
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
@@ -43,6 +47,8 @@ define([
       this.listenTo(this.wordwallsGame, 'saveGame', this.saveGame);
       this.listenTo(this.wordwallsGame, 'challengeEnded',
         this.handleChallengeEnded);
+      this.listenTo(Tester, 'requestStart', _.bind(this.requestStart, this));
+      this.listenTo(Tester, 'testerGuess', _.bind(this.submitGuess, this));
       this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
         this.updateMessages([
           "Autosave is NOT on. To save your progress, type in a name ",
@@ -223,6 +229,7 @@ define([
         }
         if (_.has(data, 'questions')) {
           this.wordwallsGame.processQuestionObj(data.questions);
+          Tester.setQuestionData(data.questions);
         }
         if (_.has(data, 'time')) {
           this.wordwallsGame.set('gameGoing', true);

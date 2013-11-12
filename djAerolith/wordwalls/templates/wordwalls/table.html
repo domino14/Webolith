@@ -127,6 +127,9 @@ require(['main']);
 <span id="shuffle" class="utilityButton">Shuffle (1)</span>
 <span id="alphagram" class="utilityButton">Alphagram (2)</span>
 <span id="customOrder" class="utilityButton">Custom (3)</span>
+{% if user.is_superuser %}
+<span id="testWordwalls" class="utilityButton">Test (4)</span>
+{% endif %}
 </div>
 
 <div id="textBar">
