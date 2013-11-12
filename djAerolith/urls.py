@@ -17,13 +17,12 @@
 # To contact the author, please email delsolar at gmail dot com
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.defaults import *
-from django.conf import settings
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
 from registration_app.forms import RecaptchaRegistrationForm
-from registration.views import register
-from django.views.generic.simple import direct_to_template
+from registration.backends.simple.views import RegistrationView
+
 import nexus
 import gargoyle
 
@@ -31,7 +30,11 @@ admin.autodiscover()
 nexus.autodiscover()
 gargoyle.autodiscover()
 
-import wordwalls.views
+
+class AerolithRegistrationView(RegistrationView):
+    def get_success_url(self, request, user):
+        return "/"
+
 
 urlpatterns = patterns('',
     # Example:
@@ -40,20 +43,16 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^blog/', include('basic.blog.urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^$', 'views.homepage'),
     (r'^old/', 'views.oldhomepage'),
     (r'^about/', 'views.about'),
     (r'^admin/', include(admin.site.urls)),
-    #(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login'),
     (r'^accounts/profile/', include('accounts.urls')),
-    (r'^accounts/register/$', register, {'form_class':RecaptchaRegistrationForm,
-                                        'backend': 'registration.backends.default.DefaultBackend'}),
-    (r'^accounts/', include('registration.backends.default.urls')),
+    (r'^accounts/register/$', AerolithRegistrationView.as_view(
+        form_class=RecaptchaRegistrationForm)),
+    (r'^accounts/', include('registration.backends.simple.urls')),
     (r'^supporter/', 'views.supporter'),
-    #(r'^accounts/confirm/(?P<activation_key>[0-9a-f]+)', 'accounts.views.confirm'),
-    #(r'^accounts/profile/$', 'accounts.views.profile'),
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^cards/', include('flashcards.urls')),

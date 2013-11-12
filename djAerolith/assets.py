@@ -1,7 +1,6 @@
 from django_assets import Bundle, register
 
 baseCss = Bundle('css/aerolith/aerolithStyleSheet.css',
-                'css/blog/blogStyles.css',
                 filters='cssmin',
                 output='css/aerolith/packedBaseSS.css')
 

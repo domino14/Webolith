@@ -7,7 +7,7 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
 {% else %}
 
 {% endif %}
-<form action="{% url accounts_edit_profile %}" method="post">{% csrf_token %}
+<form action="{% url 'accounts_edit_profile' %}" method="post">{% csrf_token %}
 {{ pForm.as_p }}
 <input type="submit" value="Save profile" id="saveProfile"/>
 </form>

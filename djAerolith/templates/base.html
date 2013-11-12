@@ -81,7 +81,7 @@ window.mixpanel.name_tag = function() {};
         <div class="center">
             <div id="logo">
                 <a href="/"><img src="/static/img/aerolith/aerolith_rock.png"
-                    title="{{image_title}}"></a>
+                    title="Aerolith"></a>
             </div>
                 <ul id="navlist">
                 {% if user.username == "" %}
@@ -118,23 +118,6 @@ window.mixpanel.name_tag = function() {};
 
         {% endif %}
 
-        <center><H2>Latest News</H2></center>
-        {% if latestPost %}
-        <div class="postdetail">
-            <H3>{{latestPost.title}}</H3>
-            {% include "blog/post_detail_post_only.html" with object=latestPost %}
-            {% load comments %}
-            {% get_comment_count for latestPost as comment_count %}
-            <a href="{{latestPost.get_absolute_url}}">
-                {% if comment_count > 0 %}
-                    {{comment_count}} comments
-                {% else %}
-                    Add a comment
-                {% endif %}
-                </a>
-        </div>
-
-        {% endif %}
         <script type="text/javascript">
         $(".playlink").button();
         </script>

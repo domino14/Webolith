@@ -134,11 +134,11 @@ var require = {
     'createTableMain': {
       lengthCounts: "{{lengthCounts|escapejs}}",
       dcTimes: "{{dcTimes|escapejs}}",
-      createTableUrl: "{% url wordwalls_create_table %}",
-      createQuizUrl: "{% url flashcards_create_quiz %}",
+      createTableUrl: "{% url 'wordwalls_create_table' %}",
+      createQuizUrl: "{% url 'flashcards_create_quiz' %}",
       defaultLexicon: "{{defaultLexicon.pk}}",
       csrfToken: "{{csrf_token}}",
-      ajaxUploadUrl: "{% url ajax_upload %}",
+      ajaxUploadUrl: "{% url 'ajax_upload' %}",
       chatEnabled: "{{chatEnabled}}",
       socketConnectionToken: "{{connToken}}",
       socketUrl: "{{socketUrl}}"
