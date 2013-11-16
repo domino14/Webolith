@@ -5,7 +5,6 @@ Markdown==2.3.1
 MySQL-python==1.2.3
 South==0.7.3
 cssmin==0.1.4
--e git://github.com/domino14/django-basic-apps.git#egg=django_basic_apps-dev
 django-registration==1.0
 django-tagging==0.3.1
 gargoyle==0.10.8
