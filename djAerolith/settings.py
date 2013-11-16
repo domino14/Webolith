@@ -106,10 +106,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'middleware.session_expiry.SessionIdleTimeout',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-ROOT_URLCONF = 'djAerolith.urls'
+ROOT_URLCONF = 'urls'
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -118,7 +119,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_ROOT, "templates"),
-    os.path.join(PROJECT_ROOT, "blog/templates"),   # overriding some default templates for the blog app
+#    os.path.join(PROJECT_ROOT, "blog/templates"),   # overriding some default templates for the blog app
 )
 
 INSTALLED_APPS = (
@@ -131,8 +132,8 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    'basic.blog',
-    'basic.inlines',
+    #'basic.blog',
+    #'basic.inlines',
     'tagging',
     'base',
     'tablegame',
@@ -169,7 +170,7 @@ DEFAULT_FROM_EMAIL = 'webmaster@aerolith.mailgun.org'
 LOGIN_URL = "/accounts/login"
 
 STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, 'static'),
-                    os.path.join(PROJECT_ROOT, 'blog/static'),
+#                    os.path.join(PROJECT_ROOT, 'blog/static'),
                     )
 
 IGNORABLE_404_ENDS = ('.php', '.cgi')
@@ -178,29 +179,7 @@ IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt'
 SEND_BROKEN_LINK_EMAILS = False
 
 INTERNAL_IPS = ('127.0.0.1',)
-#
-# DEBUG_TOOLBAR_PANELS = (
-#
-#     'debug_toolbar.panels.version.VersionDebugPanel',
-#        'debug_toolbar.panels.timer.TimerDebugPanel',
-#        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-#        'debug_toolbar.panels.headers.HeaderDebugPanel',
-#        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-#        'debug_toolbar.panels.template.TemplateDebugPanel',
-#        'debug_toolbar.panels.sql.SQLDebugPanel',
-#        'debug_toolbar.panels.signals.SignalDebugPanel',
-#        'debug_toolbar.panels.logger.LoggingPanel',
-#
-# )
-#
-# DEBUG_TOOLBAR_CONFIG = {
-#         'INTERCEPT_REDIRECTS': False,
-#    }
 
-# import logging
-# l = logging.getLogger('django.db.backends')
-# l.setLevel(logging.DEBUG)
-# l.addHandler(logging.StreamHandler())
 
 LOGGING = {
     'version': 1,
@@ -287,6 +266,7 @@ REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
 REDIS_SOCKET_TOKEN_DB = 2
 
 
+ALLOWED_HOSTS = ['www.aerolith.org', 'aerolith.org']
 SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 
 # See https://www.github.com/14domino/ujamaa
@@ -294,3 +274,9 @@ SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 UJAMAA_PATH = settings_local.UJAMAA_PATH
 
 RECAPTCHA_SSL = settings_local.RECAPTCHA_SSL
+
+# See SessionIdleTimeout middleware
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
+SESSION_IDLE_TIMEOUT = SESSION_COOKIE_AGE
+# This ensures session won't ever expire in the middle of a quiz.
+# Also ask them to log in once a month.

@@ -6,5 +6,3 @@ pidfile = "gunicorn.pid"
 logfile = "gunicorn.log"
 worker_class = "sync"
 timeout = 30
-#daemon = True
-#loglevel = "debug"

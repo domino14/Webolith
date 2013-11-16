@@ -22,6 +22,11 @@ div#logo {
     float: left;
 }
 
+#content_title {
+    margin-top: 25px;
+    text-align: center;
+    clear: both;
+}
 body {
     margin: 0px 0px 0px 0px;
     background-color: #F9F9F9;
@@ -71,6 +76,8 @@ div#content
 {
     margin-top: 50px;
     margin-bottom: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     overflow: auto;
 /*    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
     font-size: 14px; */
@@ -137,3 +144,4 @@ form label {
 .chatSender {
     font-weight: 800;
 }
+

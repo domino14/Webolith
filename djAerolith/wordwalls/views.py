@@ -39,14 +39,12 @@ from django.conf import settings
 import wordwalls.settings
 import base.settings
 import os
-from locks import lonelock
 from django.middleware.csrf import get_token
 import random
 import logging
 from lib.response import response
 from lib.socket_helper import get_connection_token
 from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
-from djAerolith.views import get_random_title
 from current_version import CURRENT_VERSION
 from wordwalls.utils import UserListParseException
 from gargoyle import gargoyle
@@ -101,7 +99,6 @@ def homepage(request):
         'upload_list_limit': wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
         'dcTimes': json.dumps(dcTimeMap),
         'defaultLexicon': profile.defaultLexicon,
-        'image_title': get_random_title(),
         'connToken': conn_token,
         'chatEnabled': not data.get('disableChat', False),
         'socketUrl': settings.SOCKJS_SERVER,
@@ -279,7 +276,6 @@ def table(request, id):
         if action == "start":
             return start_game(request, id)
         elif action == "guess":
-            lonelock(WordwallsGameModel, id)
             logger.info('%s: guess %s, table %s', request.user.username,
                         request.POST['guess'], id)
 
@@ -287,27 +283,21 @@ def table(request, id):
 
             state = wwg.guess(request.POST['guess'].strip(), id, request.user)
 
-            # wgm2 = WordwallsGameModel.objects.get(pk=id)
-            #             newState = json.loads(wgm2.currentGameState)
             return response({'g': state[0], 'C': state[1]})
         elif action == "gameEnded":
-            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.checkGameEnded(id)
             # 'going' is the opposite of 'game ended'
             return response({'g': not ret})
         elif action == "giveUp":
-            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.giveUp(request.user, id)
             return response({'g': not ret})
         elif action == "save":
-            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.save(request.user, id, request.POST['listname'])
             return response(ret)
         elif action == "giveUpAndSave":
-            lonelock(WordwallsGameModel, id)
             wwg = WordwallsGame()
             ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
             # this shouldn't return a response, because it's not going to be
@@ -363,7 +353,6 @@ def start_game(request, id):
         return response(
             {'serverMsg': 'Unable to start game as this is temporarily '
                           'disabled. Please try again in a few minutes.'})
-    lonelock(WordwallsGameModel, id)
     wwg = WordwallsGame()
     gameReady = wwg.startRequest(request.user, id)
     if not gameReady:
@@ -612,7 +601,6 @@ def deleteSavedList(savedList, user):
 
 
 def mark_missed(request, id):
-    lonelock(WordwallsGameModel, id)
     wwg = WordwallsGame()
     marked = wwg.mark_missed(request.POST['idx'], id, request.user)
     return response({'success': marked})

@@ -18,39 +18,14 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from basic.blog.models import Post, Category
-import random
 from django.contrib.auth.decorators import login_required
 from lib.socket_helper import get_connection_token
 from lib.response import response
 
 
 def homepage(request):
-    # get latest blog post with the "news" category
-
-    try:
-        latestPost = Post.objects.published().filter(
-            categories=Category.objects.get(title="News")
-        ).order_by('-publish')[0]
-    except:
-        latestPost = None
-
-    return render_to_response('base.html', {'latestPost': latestPost,
-                                            'image_title': get_random_title()},
+    return render_to_response('base.html', {},
                               context_instance=RequestContext(request))
-
-
-def get_random_title():
-    return random.choice(
-        ["Infinite improbability drive activated. Please, stay and try the "
-         "challenges",
-         "You're turning into a penguin. Stop it.",
-         "On no account allow a Vogon to read poetry at you.",
-         "DON'T PANIC",
-         "Once you know what the question actually is, you'll know what the "
-         "answer means",
-         "Please do not press this button again."
-         ])
 
 
 def supporter(request):

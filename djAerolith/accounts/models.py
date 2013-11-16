@@ -17,8 +17,10 @@
 # To contact the author, please email delsolar at gmail dot com
 from django.db import models
 from django.contrib.auth.models import User
-from registration.signals import user_activated
+from registration.signals import user_registered
 from base.models import Lexicon
+import logging
+logger = logging.getLogger(__name__)
 
 
 def getLexicon():
@@ -63,15 +65,12 @@ class AerolithProfile(models.Model):
         return "Profile for " + self.user.username
 
 
-def userActivatedHandler(sender, **kwargs):
-    for key in kwargs:
-        if key == 'user':
-            #print "User: ", kwargs[key].username, "activated!"
-            profile = AerolithProfile()
-            profile.user = kwargs[key]
-            profile.save()
+def user_registered_handler(sender, user, request, **kwargs):
+    profile = AerolithProfile()
+    profile.user = user
+    profile.save()
 
-user_activated.connect(userActivatedHandler)
+user_registered.connect(user_registered_handler)
 
 
     # specific tables

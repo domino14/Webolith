@@ -9,9 +9,10 @@ define([
   'text!templates/solutionsTable.html',
   'mustache',
   'ChallengeView',
+  'wordwalls_tests',
   'utils'
 ], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
-     SolutionsTable, Mustache, ChallengeView, utils) {
+     SolutionsTable, Mustache, ChallengeView, Tester, utils) {
   "use strict";
   var App;
   App = Backbone.View.extend({
@@ -21,6 +22,7 @@ define([
       "click #giveup": "giveUp",
       "click #solutions": "showSolutions",
       "click #save": "saveGame",
+      "click #testWordwalls": "enableTester_",
       "click #customize": "customize",
       "click #exit": "exit",
       "click #shuffle": "shuffle",
@@ -29,9 +31,15 @@ define([
       "click .dcInfo": "showAddlInfo",
       "keypress #guessText": "readSpecialKeypress"
     },
+    /**
+     * Enable the wordwalls tester. Please don't use this if you somehow
+     * see it.
+     */
+    enableTester_: function() {
+      Tester.setEnabled();
+    },
     initialize: function() {
       this.guessInput = this.$("#guessText");
-
       this.setupPopupEvent();
       this.wordwallsGame = new Game();
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
@@ -43,6 +51,7 @@ define([
       this.listenTo(this.wordwallsGame, 'saveGame', this.saveGame);
       this.listenTo(this.wordwallsGame, 'challengeEnded',
         this.handleChallengeEnded);
+
       this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
         this.updateMessages([
           "Autosave is NOT on. To save your progress, type in a name ",
@@ -58,6 +67,17 @@ define([
       this.defsDiv = this.$("#defs_popup_content");
       this.roundTotalAnswers = null;
       this.$('.utilityButton').disableSelection();
+      this.setupTesterEvents();
+    },
+    /**
+     * Setup the events for the wordwalls tester.
+     */
+    setupTesterEvents: function() {
+      this.listenTo(Tester, 'testerGuess', _.bind(this.submitGuess, this));
+      this.listenTo(Tester, 'msg', _.bind(function(msg) {
+        this.updateMessages(msg);
+      }, this));
+      this.listenTo(Tester, 'endGame', _.bind(this.processTimerExpired, this));
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;
@@ -98,6 +118,10 @@ define([
           return;   // ignore
         }
         this.guessInput.val("");
+        if (Tester.getEnabled()) {
+          Tester.submitCommand(guessText);
+          return;
+        }
         this.submitGuess(guessText);
       } else if (keyCode === 49) {
         // 1 -- shuffle
@@ -223,6 +247,7 @@ define([
         }
         if (_.has(data, 'questions')) {
           this.wordwallsGame.processQuestionObj(data.questions);
+          Tester.setQuestionData(data.questions);
         }
         if (_.has(data, 'time')) {
           this.wordwallsGame.set('gameGoing', true);
