@@ -22,7 +22,7 @@ define([
       "click #giveup": "giveUp",
       "click #solutions": "showSolutions",
       "click #save": "saveGame",
-      "click #testWordwalls": "runTests",
+      "click #testWordwalls": "enableTester_",
       "click #customize": "customize",
       "click #exit": "exit",
       "click #shuffle": "shuffle",
@@ -31,8 +31,12 @@ define([
       "click .dcInfo": "showAddlInfo",
       "keypress #guessText": "readSpecialKeypress"
     },
-    runTests: function() {
-      Tester.runTests();
+    /**
+     * Enable the wordwalls tester. Please don't use this if you somehow
+     * see it.
+     */
+    enableTester_: function() {
+      Tester.setEnabled();
     },
     initialize: function() {
       this.guessInput = this.$("#guessText");
@@ -47,8 +51,7 @@ define([
       this.listenTo(this.wordwallsGame, 'saveGame', this.saveGame);
       this.listenTo(this.wordwallsGame, 'challengeEnded',
         this.handleChallengeEnded);
-      this.listenTo(Tester, 'requestStart', _.bind(this.requestStart, this));
-      this.listenTo(Tester, 'testerGuess', _.bind(this.submitGuess, this));
+
       this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
         this.updateMessages([
           "Autosave is NOT on. To save your progress, type in a name ",
@@ -64,6 +67,17 @@ define([
       this.defsDiv = this.$("#defs_popup_content");
       this.roundTotalAnswers = null;
       this.$('.utilityButton').disableSelection();
+      this.setupTesterEvents();
+    },
+    /**
+     * Setup the events for the wordwalls tester.
+     */
+    setupTesterEvents: function() {
+      this.listenTo(Tester, 'testerGuess', _.bind(this.submitGuess, this));
+      this.listenTo(Tester, 'msg', _.bind(function(msg) {
+        this.updateMessages(msg);
+      }, this));
+      this.listenTo(Tester, 'endGame', _.bind(this.processTimerExpired, this));
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;
@@ -104,6 +118,10 @@ define([
           return;   // ignore
         }
         this.guessInput.val("");
+        if (Tester.getEnabled()) {
+          Tester.submitCommand(guessText);
+          return;
+        }
         this.submitGuess(guessText);
       } else if (keyCode === 49) {
         // 1 -- shuffle

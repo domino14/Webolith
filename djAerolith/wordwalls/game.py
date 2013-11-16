@@ -268,7 +268,7 @@ class WordwallsGame:
         return wgm.pk   # this is a table number id!
 
     def getDcId(self, tablenum):
-        wgm = self.getWGM(tablenum)
+        wgm = self.getWGM(tablenum, lock=False)
         if not wgm:
             return 0
         state = json.loads(wgm.currentGameState)
@@ -279,7 +279,7 @@ class WordwallsGame:
     # no 'request' needed multiplayer will have timed starts - every
     # minute or so
     def startRequest(self, user, tablenum):
-        wgm = self.getWGM(tablenum)
+        wgm = self.getWGM(tablenum, lock=False)
         if not wgm:
             return False
         # check if the player that sent the request is actually in the table.
@@ -378,9 +378,18 @@ class WordwallsGame:
         # internal function; not meant to be called by the outside
         return (state['quizStartTime'] + state['timerSecs']) < time.time()
 
-    def getWGM(self, tablenum):
+    def getWGM(self, tablenum, lock=True):
+        """
+            Get word game model.
+            :lock Should lock if this is a write operation. This is because
+            the object can be updated simultaneously from various places :/
+        """
         try:
-            wgm = WordwallsGameModel.objects.get(pk=tablenum)
+            if lock:
+                wgm = WordwallsGameModel.objects.select_for_update().get(
+                    pk=tablenum)
+            else:
+                wgm = WordwallsGameModel.objects.get(pk=tablenum)
         except WordwallsGameModel.DoesNotExist:
             return None
         return wgm
@@ -428,7 +437,7 @@ class WordwallsGame:
         return False
 
     def getAddParams(self, tablenum):
-        wgm = self.getWGM(tablenum)
+        wgm = self.getWGM(tablenum, lock=False)
         if not wgm:
             return {}
 
@@ -482,8 +491,8 @@ class WordwallsGame:
                 'by becoming a supporter!' % limit)
             profileModified = False
             try:
-                sl = SavedList.objects.get(lexicon=wgm.lexicon,
-                                           name=listname, user=user)
+                sl = SavedList.objects.select_for_update().get(
+                    lexicon=wgm.lexicon, name=listname, user=user)
                 oldNumAlphas = sl.numAlphagrams
                 sl.origQuestions = wgm.origQuestions
                 sl.missed = wgm.missed
@@ -598,6 +607,7 @@ class WordwallsGame:
             # doesn't exist
             lb = DailyChallengeLeaderboard(
                 challenge=dc, maxScore=state['numAnswersThisRound'])
+            # XXX: 500 here, integrity error, very rare.
             lb.save()
         wgm = WordwallsGameModel.objects.get(pk=tablenum)
         # Now create an entry; if one exists, don't modify it, just return.
@@ -627,6 +637,7 @@ class WordwallsGame:
             lbe = DailyChallengeLeaderboardEntry(
                 user=wgm.host, score=score, board=lb,
                 timeRemaining=timeRemaining, qualifyForAward=qualifyForAward)
+            # XXX: 500 here, integrity error, much more common than lb.save
             lbe.save()
             if (len(state['answerHash']) > 0 and dc.name.name in
                     ("Today's 7s", "Today's 8s")):
@@ -647,15 +658,19 @@ class WordwallsGame:
 
         for alpha in missedAlphas:
             try:
-                dcmb = DailyChallengeMissedBingos.objects.get(
-                    challenge=dc, alphagram=alpha)
+                dcmb = DailyChallengeMissedBingos.objects.get(challenge=dc,
+                                                              alphagram=alpha)
                 dcmb.numTimesMissed += 1
             except DailyChallengeMissedBingos.DoesNotExist:
                 # if it doesn't exist, we must create it
                 dcmb = DailyChallengeMissedBingos(
                     challenge=dc, alphagram=alpha, numTimesMissed=1)
-
-            dcmb.save()
+            try:
+                dcmb.save()
+            except IntegrityError:
+                # If there is an integrity error, this means that it tried to
+                # create dcmb twice in two different threads.
+                pass   # ????
 
     def getPkIndices(self, searchDescription):
         if searchDescription['condition'] == 'probPKRange':
@@ -726,7 +741,7 @@ class WordwallsGame:
         return state['quizGoing'], state.get('LastCorrect', '')
 
     def permit(self, user, tablenum):
-        wgm = self.getWGM(tablenum)
+        wgm = self.getWGM(tablenum, lock=False)
         if not wgm:
             return False
         if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:

@@ -6,21 +6,40 @@ define([
   var Tester;
   Tester = {};
   Tester.questionData = null;
-  Tester.enabled = false;
-  Tester.runTests = function() {
-    Tester.trigger('requestStart');
-    Tester.enabled = true;
+  Tester.enabled_ = false;
+  /**
+   * Enable the tester.
+   */
+  Tester.setEnabled = function() {
+    Tester.enabled_ = true;
+    Tester.trigger('msg', 'Tester has been enabled.');
+  };
+  /**
+   * Is the tester enabled?
+   * @return {boolean} Enabled.
+   */
+  Tester.getEnabled = function() {
+    return Tester.enabled_;
   };
   Tester.setQuestionData = function(data) {
     Tester.questionData = data;
-    if (!Tester.enabled) {
-      return;
+
+  };
+  /**
+   * Send a command to the tester.
+   * @param  {string} command
+   */
+  Tester.submitCommand = function(command) {
+    Tester.trigger('msg', 'Processing as tester command: ' + command);
+    if (command === 'solveall') {
+      _.delay(function() {
+        Tester.guess();
+      }, 0);
     }
-    window.console.log(
-      'Got question data, will start guessing in two seconds.');
-    _.delay(function() {
-      Tester.guess();
-    }, 2000);
+    if (command === 'guessend') {
+      Tester.trigger('testerGuess', Tester.questionData[0].ws[0].w);
+      Tester.trigger('endGame');
+    }
   };
   /*
    * Quickly guesses ALL answers. This can be used for testing database
