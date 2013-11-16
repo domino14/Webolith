@@ -76,6 +76,8 @@ div#content
 {
     margin-top: 50px;
     margin-bottom: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     overflow: auto;
 /*    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
     font-size: 14px; */
