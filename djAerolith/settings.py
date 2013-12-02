@@ -266,7 +266,7 @@ REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
 REDIS_SOCKET_TOKEN_DB = 2
 
 
-ALLOWED_HOSTS = ['www.aerolith.org', 'aerolith.org']
+ALLOWED_HOSTS = ['.aerolith.org', '.scrabblemaster.com']
 SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 
 # See https://www.github.com/14domino/ujamaa
