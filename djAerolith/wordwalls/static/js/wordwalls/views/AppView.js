@@ -267,6 +267,10 @@ define([
     render: function() {},
     updateTimeDisplay: function(currentTimer) {
       var mins, secs, pad, text, originalTimer;
+      if (currentTimer < 0) {
+        // Don't show a negative time.
+        return;
+      }
       originalTimer = currentTimer;
       currentTimer = Math.round(currentTimer);
       mins = Math.floor(currentTimer / 60);

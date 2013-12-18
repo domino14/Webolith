@@ -179,11 +179,19 @@ IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt'
 SEND_BROKEN_LINK_EMAILS = False
 
 INTERNAL_IPS = ('127.0.0.1',)
+from logging_filters import skip_suspicious_operations
+
 
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'skip_suspicious_operations': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_suspicious_operations,
+        },
+    },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s'
@@ -214,6 +222,7 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
+            'filters': ['skip_suspicious_operations']
         }
     },
     'loggers': {
