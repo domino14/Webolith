@@ -111,7 +111,7 @@ class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge)
     alphagram = models.ForeignKey(Alphagram)
-    numTimesMissed = models.IntegerField()
+    numTimesMissed = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ("challenge", "alphagram")

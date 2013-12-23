@@ -30,7 +30,6 @@ from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
 import re
 from base.forms import SavedListForm
 import base.settings
-from locks import lonelock
 import logging
 from django.db import IntegrityError
 import os
@@ -469,96 +468,96 @@ class WordwallsGame(object):
             ret['info'] = 'Please enter a valid list name!'
             return ret
 
-        if (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
-                user in wgm.inTable.all()):
-            state = json.loads(wgm.currentGameState)
-            if state['quizGoing']:
-                # TODO actually should check if time ran out
-                # this seems like an arbitrary limitation but it makes
-                # things a lot easier. we can change this later.
-                ret['info'] = ('You can only save the game at the end of '
-                               'a round.')
-                return ret
+        if not (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
+                    user in wgm.inTable.all()):
+            ret['info'] = 'Your game must be a single player game!'
+            return ret
 
-            # now check if a list with this name, lexicon, and user exists
-            profile = user.get_profile()
-            if profile.member:
-                limit = base.settings.SAVE_LIST_LIMIT_MEMBER
-            else:
-                limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+        state = json.loads(wgm.currentGameState)
+        if state['quizGoing']:
+            # TODO actually should check if time ran out
+            # this seems like an arbitrary limitation but it makes
+            # things a lot easier. we can change this later.
+            ret['info'] = ('You can only save the game at the end of '
+                           'a round.')
+            return ret
 
-            exceededLimitMessage = (
-                'Unable to save list because you have gone over the number '
-                'of total alphagrams limit (%d). You can increase this limit '
-                'by becoming a supporter!' % limit)
-            profileModified = False
-            try:
-                sl = SavedList.objects.select_for_update().get(
-                    lexicon=wgm.lexicon, name=listname, user=user)
-                oldNumAlphas = sl.numAlphagrams
-                sl.origQuestions = wgm.origQuestions
-                sl.missed = wgm.missed
-                sl.numMissed = wgm.numMissed
-                sl.curQuestions = wgm.curQuestions
-                sl.numCurAlphagrams = wgm.numCurQuestions
-                sl.firstMissed = wgm.firstMissed
-                sl.numFirstMissed = wgm.numFirstMissed
-                sl.questionIndex = state['questionIndex']
-                sl.name = listname
-                sl.numAlphagrams = wgm.numOrigQuestions
-                sl.goneThruOnce = state['goneThruOnce']
-                ret['info'] = ('A list with that name and lexicon already '
-                               'existed, and has been overwritten.')
-                # TODO too bad?
-                if sl.numAlphagrams != oldNumAlphas:
-                    # The number of total alphagrams in all lists for
-                    # this user has changed.
-                    if (profile.wordwallsSaveListSize - oldNumAlphas +
-                            sl.numAlphagrams > limit):
-                        ret['info'] = exceededLimitMessage
-                        return ret
-                    profile.wordwallsSaveListSize = (
-                        profile.wordwallsSaveListSize - oldNumAlphas +
-                        sl.numAlphagrams)
-                    profileModified = True
-            except SavedList.DoesNotExist:
-                sl = SavedList(
-                    lexicon=wgm.lexicon, name=listname, user=user,
-                    numAlphagrams=wgm.numOrigQuestions,
-                    origQuestions=wgm.origQuestions,
-                    missed=wgm.missed,
-                    numMissed=wgm.numMissed,
-                    curQuestions=wgm.curQuestions,
-                    numCurAlphagrams=wgm.numCurQuestions,
-                    numFirstMissed=wgm.numFirstMissed,
-                    firstMissed=wgm.firstMissed,
-                    questionIndex=state['questionIndex'],
-                    goneThruOnce=state['goneThruOnce'])
+        # now check if a list with this name, lexicon, and user exists
+        profile = user.get_profile()
+        if profile.member:
+            limit = base.settings.SAVE_LIST_LIMIT_MEMBER
+        else:
+            limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
 
-                if (profile.wordwallsSaveListSize + wgm.numOrigQuestions >
-                        limit):
+        exceededLimitMessage = (
+            'Unable to save list because you have gone over the number '
+            'of total alphagrams limit (%d). You can increase this limit '
+            'by becoming a supporter!' % limit)
+        profileModified = False
+        try:
+            sl = SavedList.objects.select_for_update().get(
+                lexicon=wgm.lexicon, name=listname, user=user)
+            oldNumAlphas = sl.numAlphagrams
+            sl.origQuestions = wgm.origQuestions
+            sl.missed = wgm.missed
+            sl.numMissed = wgm.numMissed
+            sl.curQuestions = wgm.curQuestions
+            sl.numCurAlphagrams = wgm.numCurQuestions
+            sl.firstMissed = wgm.firstMissed
+            sl.numFirstMissed = wgm.numFirstMissed
+            sl.questionIndex = state['questionIndex']
+            sl.name = listname
+            sl.numAlphagrams = wgm.numOrigQuestions
+            sl.goneThruOnce = state['goneThruOnce']
+            ret['info'] = ('A list with that name and lexicon already '
+                           'existed, and has been overwritten.')
+            # TODO too bad?
+            if sl.numAlphagrams != oldNumAlphas:
+                # The number of total alphagrams in all lists for
+                # this user has changed.
+                if (profile.wordwallsSaveListSize - oldNumAlphas +
+                        sl.numAlphagrams > limit):
                     ret['info'] = exceededLimitMessage
                     return ret
-
-                profile.wordwallsSaveListSize += wgm.numOrigQuestions
+                profile.wordwallsSaveListSize = (
+                    profile.wordwallsSaveListSize - oldNumAlphas +
+                    sl.numAlphagrams)
                 profileModified = True
+        except SavedList.DoesNotExist:
+            sl = SavedList(
+                lexicon=wgm.lexicon, name=listname, user=user,
+                numAlphagrams=wgm.numOrigQuestions,
+                origQuestions=wgm.origQuestions,
+                missed=wgm.missed,
+                numMissed=wgm.numMissed,
+                curQuestions=wgm.curQuestions,
+                numCurAlphagrams=wgm.numCurQuestions,
+                numFirstMissed=wgm.numFirstMissed,
+                firstMissed=wgm.firstMissed,
+                questionIndex=state['questionIndex'],
+                goneThruOnce=state['goneThruOnce'])
 
-            try:
-                sl.save()
-                ret['success'] = True
-                ret['listname'] = listname
-                state['saveName'] = listname
-                wgm.currentGameState = json.dumps(state)
-                wgm.save()
-                if profileModified:
-                    profile.save()
+            if (profile.wordwallsSaveListSize + wgm.numOrigQuestions >
+                    limit):
+                ret['info'] = exceededLimitMessage
+                return ret
 
-                return ret
-            except:
-                ret['info'] = 'Could not save for some other reason!'
-                return ret
-        else:
-            ret['info'] = 'Your game must be a single player game!'
+            profile.wordwallsSaveListSize += wgm.numOrigQuestions
+            profileModified = True
+
+        try:
+            sl.save()
+            ret['success'] = True
+            ret['listname'] = listname
+            state['saveName'] = listname
+            wgm.currentGameState = json.dumps(state)
+            wgm.save()
+            if profileModified:
+                profile.save()
+
+            return ret
+        except:
+            ret['info'] = 'Could not save for some other reason!'
             return ret
 
     def doQuizEndActions(self, state, tablenum, wgm):
@@ -646,6 +645,31 @@ class WordwallsGame(object):
                 # if the user missed some 7s or 8s
                 self.addDCMissedBingos(state, dc, wgm)
 
+    def add_dc_missed_bingo(self, challenge, alphagram):
+        """
+            Adds a Daily Challenge Missed Bingo in a thread-safe manner.
+        """
+        try:
+            dcmb = DailyChallengeMissedBingos.objects.select_for_update.get(
+                challenge=challenge,
+                alphagram=alphagram)
+            dcmb.numTimesMissed += 1
+        except DailyChallengeMissedBingos.DoesNotExist:
+            dcmb = DailyChallengeMissedBingos(challenge=challenge,
+                                              alphagram=alphagram)
+            dcmb.numTimesMissed = 1
+        try:
+            dcmb.save()
+        except IntegrityError:
+            logger.exception('Caught MissedBingos IntegrityError')
+            # It means another thread created it (in the except above).
+            # We should start over, but now that we know the object exists,
+            # we can use select_for_update without fear.
+            dcmb = DailyChallengeMissedBingos.objects.select_for_update.get(
+                challenge=challenge, alphagram=alphagram)
+            dcmb.numTimesMissed += 1
+            dcmb.save()
+
     def addDCMissedBingos(self, state, dc, wgm):
         origQsObj = json.loads(wgm.origQuestions)
         missedAlphas = set()
@@ -653,26 +677,8 @@ class WordwallsGame(object):
             alphaPk = origQsObj[state['answerHash'][missed][1]]
             missedAlphas.add(Alphagram.objects.get(pk=alphaPk))
 
-        lonelock(DailyChallenge, dc.pk)
-        # Always lock the daily challenge missed bingos list here
-        # because of the += 1 below.
-        # Will be unlocked on db disconnect.
-
         for alpha in missedAlphas:
-            try:
-                dcmb = DailyChallengeMissedBingos.objects.get(challenge=dc,
-                                                              alphagram=alpha)
-                dcmb.numTimesMissed += 1
-            except DailyChallengeMissedBingos.DoesNotExist:
-                # if it doesn't exist, we must create it
-                dcmb = DailyChallengeMissedBingos(
-                    challenge=dc, alphagram=alpha, numTimesMissed=1)
-            try:
-                dcmb.save()
-            except IntegrityError:
-                # If there is an integrity error, this means that it tried to
-                # create dcmb twice in two different threads.
-                pass   # ????
+            self.add_dc_missed_bingo(dc, alpha)
 
     def getPkIndices(self, searchDescription):
         if searchDescription['condition'] == 'probPKRange':
