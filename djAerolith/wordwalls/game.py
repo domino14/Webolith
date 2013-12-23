@@ -37,7 +37,9 @@ import os
 logger = logging.getLogger(__name__)
 
 
-class WordwallsGame:
+class WordwallsGame(object):
+    # XXX: don't duplicate WordList/SavedList logic / fields here. Instead
+    # the wordwalls game model should maybe have a foreign key to a list.
     def createGameModelInstance(self, host, playerType, lex,
                                 numOrigQuestions,
                                 origQuestionsStr,
