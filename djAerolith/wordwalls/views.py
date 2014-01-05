@@ -23,7 +23,7 @@ from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
 from django.template import RequestContext
-from base.models import Lexicon, Alphagram, Word, alphProbToProbPK, SavedList
+from base.models import Lexicon, alphProbToProbPK, SavedList
 from django.contrib.auth.decorators import login_required
 import json
 from wordwalls.game import WordwallsGame, SearchDescription
@@ -31,9 +31,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from wordwalls.models import (DailyChallengeName, WordwallsGameModel,
-                              NamedList)
-from datetime import date, datetime, timedelta
+from wordwalls.models import (DailyChallengeName, NamedList)
+from datetime import date, datetime
 import time
 from django.conf import settings
 import wordwalls.settings
@@ -280,7 +279,7 @@ def handle_homepage_post(profile, request):
         'getDcResults': get_dc_results,
         'getSavedListList': get_saved_lists,
         'getNamedListList': get_named_lists,
-        'getSavedListNumAlphas': lambda x: response({'na': numAlphas,
+        'getSavedListNumAlphas': lambda x, y: response({'na': numAlphas,
                                                      'l': limit}),
         'challengeSubmit': challenge_submit,
         'searchParamsSubmit': search_params_submit,
