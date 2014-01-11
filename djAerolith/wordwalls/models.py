@@ -20,7 +20,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from base.models import Lexicon, Alphagram
 from tablegame.models import GenericTableGameModel
-from locks import LockableObject
 
 
 class DailyChallengeName(models.Model):
@@ -92,8 +91,9 @@ class DailyChallengeLeaderboardEntry(models.Model):
     # a word just has one alphagram, but an alphagram can 'have' multiple words
 
 
-class WordwallsGameModel(GenericTableGameModel, LockableObject):
-    # additional fields
+class WordwallsGameModel(GenericTableGameModel):
+    # Additional fields.
+    # XXX: we should get rid of these and use SavedList.
     numOrigQuestions = models.IntegerField()
     origQuestions = models.TextField()
 

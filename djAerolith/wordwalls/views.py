@@ -23,7 +23,7 @@ from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
 from django.template import RequestContext
-from base.models import Lexicon, Alphagram, Word, alphProbToProbPK, SavedList
+from base.models import Lexicon, alphProbToProbPK, SavedList
 from django.contrib.auth.decorators import login_required
 import json
 from wordwalls.game import WordwallsGame, SearchDescription
@@ -31,9 +31,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from wordwalls.models import (DailyChallengeName, WordwallsGameModel,
-                              NamedList)
-from datetime import date, datetime, timedelta
+from wordwalls.models import (DailyChallengeName, NamedList)
+from datetime import date, datetime
 import time
 from django.conf import settings
 import wordwalls.settings
@@ -106,6 +105,164 @@ def homepage(request):
         context_instance=ctx)
 
 
+def get_dc_results(user, post):
+    """
+        Gets daily challenge results and returns it to querier.
+        :post The request.POST dictionary.
+    """
+    lex = post.get('lexicon')
+    try:
+        ch_name = DailyChallengeName.objects.get(name=post.get('chName'))
+    except DailyChallengeName.DoesNotExist:
+        raise Http404
+    try:
+        ch_date = datetime.strptime(post.get('date'), '%m/%d/%Y').date()
+    except (ValueError, TypeError):
+        ch_date = date.today()
+    return response(getLeaderboardData(lex, ch_name, ch_date))
+
+
+def get_saved_lists(user, post):
+    """
+        Gets a list of saved lists.
+    """
+    lex = post.get('lexicon')
+    lt = getSavedListList(lex, user)
+    return response(lt)
+
+
+def get_named_lists(user, post):
+    """
+        Gets a list of "named" lists; these are the default lists that
+        come with Aerolith.
+    """
+    lex = post.get('lexicon')
+    lt = getNamedListList(lex)
+    return response(lt)
+
+
+def challenge_submit(user, post):
+    """
+        Called when a challenge is submitted.
+    """
+    lexForm = LexiconForm(post)
+    dcForm = DailyChallengesForm(post)
+    if not(lexForm.is_valid() and dcForm.is_valid()):
+        return response({'success': False,
+                         'error': 'No challenge was selected.'})
+    lex = Lexicon.objects.get(
+        lexiconName=lexForm.cleaned_data['lexicon'])
+    wwg = WordwallsGame()
+    challengeName = DailyChallengeName.objects.get(
+        name=dcForm.cleaned_data['challenge'])
+    chDate = dcForm.cleaned_data['challengeDate']
+    if not chDate or chDate > date.today():
+        chDate = date.today()
+
+    tablenum = wwg.initializeByDailyChallenge(
+        user, lex, challengeName, chDate)
+    if tablenum == 0:
+        return response({'success': False,
+                         'error': 'Challenge does not exist.'})
+
+    return response(
+        {'url': reverse('wordwalls_table',
+                        args=(tablenum,)),
+         'success': True})
+
+
+def search_params_submit(user, post):
+    """
+        Called when user submits a search params query.
+    """
+    lexForm = LexiconForm(post)
+    timeForm = TimeForm(post)
+    fwForm = FindWordsForm(post)
+    # form bound to the POST data
+    if not (lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid()):
+        return response({'success': False,
+                         'error': 'There was something wrong with your '
+                                  'search parameters or time selection.'})
+    lex = Lexicon.objects.get(
+        lexiconName=lexForm.cleaned_data['lexicon'])
+    quizTime = int(
+        round(timeForm.cleaned_data['quizTime'] * 60))
+    alphasSearchDescription = searchForAlphagrams(
+        fwForm.cleaned_data, lex)
+    wwg = WordwallsGame()
+    tablenum = wwg.initializeBySearchParams(
+        user, alphasSearchDescription,
+        fwForm.cleaned_data['playerMode'], quizTime)
+
+    return response({'url': reverse('wordwalls_table',
+                                    args=(tablenum,)),
+                     'success': True})
+
+
+def saved_lists_submit(user, post):
+    lexForm = LexiconForm(post)
+    timeForm = TimeForm(post)
+    slForm = SavedListForm(post)
+    if not (lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid()):
+        return response({'success': False,
+                         'error': 'Please check that you have selected '
+                                  'a word list and a time greater than '
+                                  '1 minute.'})
+
+
+    lex = Lexicon.objects.get(
+        lexiconName=lexForm.cleaned_data['lexicon'])
+    quizTime = int(
+        round(timeForm.cleaned_data['quizTime'] * 60))
+    wwg = WordwallsGame()
+    tablenum = wwg.initializeBySavedList(
+        lex, user, slForm.cleaned_data['wordList'],
+        slForm.cleaned_data['listOption'], quizTime)
+    if tablenum == 0:
+        raise Http404
+    return response({'url': reverse('wordwalls_table',
+                                    args=(tablenum,)),
+                     'success': True})
+
+
+def saved_list_delete(user, post):
+    lexForm = LexiconForm(post)
+    slForm = SavedListForm(post)
+    if not (lexForm.is_valid() and slForm.is_valid()):
+        return response({'success': False,
+                         'error': 'You did not select a list to delete.'})
+    deletedListPk = slForm.cleaned_data['wordList'].pk
+    deleteSavedList(slForm.cleaned_data['wordList'], user)
+    return response({'deleted': True,
+                     'wordList': deletedListPk})
+
+
+def named_lists_submit(user, post):
+    lexForm = LexiconForm(post)
+    timeForm = TimeForm(post)
+    nlForm = NamedListForm(post)
+    if not (lexForm.is_valid() and timeForm.is_valid() and nlForm.is_valid()):
+        return response({'success': False,
+                         'error': 'Please check that you have selected a '
+                                  'list and that your quiz time is greater '
+                                  'than 1 minute.'})
+
+
+    lex = Lexicon.objects.get(
+        lexiconName=lexForm.cleaned_data['lexicon'])
+    quizTime = int(
+        round(timeForm.cleaned_data['quizTime'] * 60))
+    wwg = WordwallsGame()
+    tablenum = wwg.initializeByNamedList(
+        lex, user, nlForm.cleaned_data['namedList'],
+        quizTime)
+    if tablenum == 0:
+        raise Http404
+    return response({'url': reverse('wordwalls_table',
+                                    args=(tablenum,)),
+                    'success': True})
+
+
 def handle_homepage_post(profile, request):
     numAlphas = profile.wordwallsSaveListSize
     limit = 0
@@ -117,154 +274,21 @@ def handle_homepage_post(profile, request):
                                   'be using an incompatible browser, please '
                                   'upgrade it.'})
     logger.debug(request.POST)
-    if request.POST['action'] == 'getDcResults':
-        try:
-            lex = request.POST['lexicon']
-            chName = DailyChallengeName.objects.get(
-                name=request.POST['chName'])
-            try:
-                chDate = datetime.strptime(request.POST['date'],
-                                           '%m/%d/%Y').date()
-            except:
-                chDate = date.today()
+    # Call one of various functions depending on action.
+    actions_dict = {
+        'getDcResults': get_dc_results,
+        'getSavedListList': get_saved_lists,
+        'getNamedListList': get_named_lists,
+        'getSavedListNumAlphas': lambda x, y: response({'na': numAlphas,
+                                                     'l': limit}),
+        'challengeSubmit': challenge_submit,
+        'searchParamsSubmit': search_params_submit,
+        'savedListsSubmit': saved_lists_submit,
+        'savedListDelete': saved_list_delete,
+        'namedListsSubmit': named_lists_submit
+    }
+    return actions_dict[request.POST['action']](request.user, request.POST)
 
-            leaderboardData = getLeaderboardData(lex, chName, chDate)
-            return response(leaderboardData)
-        except:
-            raise Http404
-    elif request.POST['action'] == 'getSavedListList':
-        # gets a list of saved lists!
-        try:
-            lex = request.POST['lexicon']
-            lt = getSavedListList(lex, request.user)
-            return response(lt)
-        except:
-            raise Http404
-    elif request.POST['action'] == 'getNamedListList':
-        # gets a list of saved lists!
-        try:
-            lex = request.POST['lexicon']
-            lt = getNamedListList(lex)
-            return response(lt)
-        except:
-            raise Http404
-
-    elif request.POST['action'] == 'getSavedListNumAlphas':
-        return response({'na': numAlphas, 'l': limit})
-
-    elif request.POST['action'] == 'challengeSubmit':
-        lexForm = LexiconForm(request.POST)
-        dcForm = DailyChallengesForm(request.POST)
-        if lexForm.is_valid() and dcForm.is_valid():
-            lex = Lexicon.objects.get(
-                lexiconName=lexForm.cleaned_data['lexicon'])
-            wwg = WordwallsGame()
-            challengeName = DailyChallengeName.objects.get(
-                name=dcForm.cleaned_data['challenge'])
-            chDate = dcForm.cleaned_data['challengeDate']
-            if not chDate or chDate > date.today():
-                chDate = date.today()
-
-            tablenum = wwg.initializeByDailyChallenge(
-                request.user, lex, challengeName, chDate)
-            if tablenum == 0:
-                return response({'success': False,
-                                 'error': 'Challenge does not exist.'})
-            else:
-                return response(
-                    {'url': reverse('wordwalls_table',
-                                    args=(tablenum,)),
-                     'success': True})
-        return response({'success': False,
-                         'error': 'No challenge was selected.'})
-
-    elif request.POST['action'] == 'searchParamsSubmit':
-        lexForm = LexiconForm(request.POST)
-        timeForm = TimeForm(request.POST)
-        fwForm = FindWordsForm(request.POST)
-        # form bound to the POST data
-        if (lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid()):
-            lex = Lexicon.objects.get(
-                lexiconName=lexForm.cleaned_data['lexicon'])
-            quizTime = int(
-                round(timeForm.cleaned_data['quizTime'] * 60))
-            alphasSearchDescription = searchForAlphagrams(
-                fwForm.cleaned_data, lex)
-            wwg = WordwallsGame()
-            tablenum = wwg.initializeBySearchParams(
-                request.user, alphasSearchDescription,
-                fwForm.cleaned_data['playerMode'], quizTime)
-
-            return response({'url': reverse('wordwalls_table',
-                                            args=(tablenum,)),
-                             'success': True})
-        return response({'success': False,
-                         'error': 'There was something wrong with your '
-                                  'search parameters or time selection.'})
-
-    elif request.POST['action'] == 'savedListsSubmit':
-        lexForm = LexiconForm(request.POST)
-        timeForm = TimeForm(request.POST)
-        slForm = SavedListForm(request.POST)
-        if (lexForm.is_valid() and timeForm.is_valid() and
-                slForm.is_valid()):
-            lex = Lexicon.objects.get(
-                lexiconName=lexForm.cleaned_data['lexicon'])
-            quizTime = int(
-                round(timeForm.cleaned_data['quizTime'] * 60))
-            wwg = WordwallsGame()
-            tablenum = wwg.initializeBySavedList(
-                lex, request.user, slForm.cleaned_data['wordList'],
-                slForm.cleaned_data['listOption'], quizTime)
-            if tablenum == 0:
-                raise Http404
-            else:
-                return response({'url': reverse('wordwalls_table',
-                                                args=(tablenum,)),
-                                 'success': True})
-        return response({'success': False,
-                         'error': 'Please check that you have selected '
-                                  'a word list and a time greater than '
-                                  '1 minute.'})
-
-    elif request.POST['action'] == 'savedListDelete':
-        lexForm = LexiconForm(request.POST)
-        slForm = SavedListForm(request.POST)
-        if lexForm.is_valid() and slForm.is_valid():
-            deletedListPk = slForm.cleaned_data['wordList'].pk
-            deleteSavedList(slForm.cleaned_data['wordList'],
-                            request.user)
-
-            return response({'deleted': True,
-                             'wordList': deletedListPk})
-        return response({'success': False,
-                         'error': 'You did not select a list to delete.'})
-
-    elif request.POST['action'] == 'namedListsSubmit':
-        lexForm = LexiconForm(request.POST)
-        timeForm = TimeForm(request.POST)
-        nlForm = NamedListForm(request.POST)
-        if (lexForm.is_valid() and timeForm.is_valid() and
-                nlForm.is_valid()):
-            lex = Lexicon.objects.get(
-                lexiconName=lexForm.cleaned_data['lexicon'])
-            quizTime = int(
-                round(timeForm.cleaned_data['quizTime'] * 60))
-            wwg = WordwallsGame()
-            tablenum = wwg.initializeByNamedList(
-                lex, request.user, nlForm.cleaned_data['namedList'],
-                quizTime)
-            if tablenum == 0:
-                raise Http404
-            else:
-                return response({'url': reverse('wordwalls_table',
-                                                args=(tablenum,)),
-                                'success': True})
-
-        return response({'success': False,
-                         'error': 'Please check that you have selected a '
-                                  'list and that your quiz time is greater '
-                                  'than 1 minute.'})
 
 @login_required
 def table(request, id):
@@ -549,43 +573,37 @@ def pretty_date(now, time):
 def getSavedListList(lex, user):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
-    except:
-        return None
+    except Lexicon.DoesNotExist:
+        return []
 
-    try:
-        qset = SavedList.objects.filter(
-            lexicon=lex_object, user=user).order_by('-lastSaved')
-        retData = []
-        now = datetime.now()
-        for sl in qset:
-            retData.append({'name': sl.name,
-                            'lastSaved': pretty_date(now, sl.lastSaved),
-                            'lexicon': sl.lexicon.lexiconName,
-                            'goneThruOnce': sl.goneThruOnce,
-                            'pk': sl.pk,
-                            'numAlphas': sl.numAlphagrams})
+    qset = SavedList.objects.filter(
+        lexicon=lex_object, user=user).order_by('-lastSaved')
+    retData = []
+    now = datetime.now()
+    for sl in qset:
+        retData.append({'name': sl.name,
+                        'lastSaved': pretty_date(now, sl.lastSaved),
+                        'lexicon': sl.lexicon.lexiconName,
+                        'goneThruOnce': sl.goneThruOnce,
+                        'pk': sl.pk,
+                        'numAlphas': sl.numAlphagrams})
 
-        return retData
-    except:
-        return None
+    return retData
 
 
 def getNamedListList(lex):
     try:
         lex_object = Lexicon.objects.get(lexiconName=lex)
-    except:
-        return None
-    try:
-        qset = NamedList.objects.filter(lexicon=lex_object).order_by('pk')
-        retData = []
-        for nl in qset:
-            retData.append({'name': nl.name,
-                            'lexicon': nl.lexicon.lexiconName,
-                            'numAlphas': nl.numQuestions, 'pk': nl.pk})
+    except Lexicon.DoesNotExist:
+        return []
+    qset = NamedList.objects.filter(lexicon=lex_object).order_by('pk')
+    retData = []
+    for nl in qset:
+        retData.append({'name': nl.name,
+                        'lexicon': nl.lexicon.lexiconName,
+                        'numAlphas': nl.numQuestions, 'pk': nl.pk})
 
-        return retData
-    except:
-        return None
+    return retData
 
 
 def deleteSavedList(savedList, user):
@@ -606,82 +624,4 @@ def mark_missed(request, id):
     return response({'success': marked})
 
 
-######################
-# api views
-def api_challengers(request, month, day, year, lex, ch_id):
-    # the people who have done daily challenges
-    # used to test a certain pull api :P
-    rows = challengers(month, day, year, lex, ch_id)
-    return HttpResponse(json.dumps({"table": rows}))
 
-
-def api_challengers_days_from_today(request, days, lex, ch_id):
-    day = date.today() - timedelta(days=int(days))
-    rows = challengers(day.month, day.day, day.year, lex, ch_id)
-    return HttpResponse(json.dumps({"table": rows}))
-
-
-def api_num_tables_created(request):
-    allGames = WordwallsGameModel.objects.all().reverse()[:1]
-    numTables = allGames[0].pk
-    return HttpResponse(
-        json.dumps({"number": numTables, "timestamp": time.time()}))
-
-
-def api_random_toughie(request):
-    from wordwalls.management.commands.genMissedBingoChalls import (
-        challengeDateFromReqDate)
-    # from the PREVIOUS toughies challenge
-    chdate = challengeDateFromReqDate(date.today()) - timedelta(days=7 * 20)
-    dc = DailyChallenge.objects.get(
-        lexicon=Lexicon.objects.get(pk=4),
-        date=chdate,
-        name=DailyChallengeName.objects.get(
-            name=DailyChallengeName.WEEKS_BINGO_TOUGHIES))
-    alphs = json.loads(dc.alphagrams)
-
-    alpha = Alphagram.objects.get(pk=random.choice(alphs))
-    words = Word.objects.filter(alphagram=alpha)
-    wordString = " ".join([word.word for word in words])
-    alphaString = alpha.alphagram
-    html = """
-    <script>
-    $("#toughie").hover(function() {
-        $(this).text("%s");
-    },
-    function() {
-        $(this).text("%s");
-    });</script>
-    <div id="toughie" style="font-size: 32px;">%s</div>
-    """ % (wordString, alphaString, alphaString)
-
-    alphagram = json.dumps({"html": html})
-
-    return HttpResponse(alphagram)
-# api views helpers
-
-
-def challengers(month, day, year, lex, ch_id):
-    rows = [['User', 'Score', 'Time remaining']]
-    try:
-        lex = Lexicon.objects.get(pk=lex).lexiconName
-        chName = DailyChallengeName.objects.get(pk=ch_id)
-        chDate = date(day=int(day), month=int(month), year=int(year))
-
-        data = getLeaderboardData(lex, chName, chDate)
-    except:
-        import traceback
-        print traceback.format_exc()
-
-    try:
-        maxScore = data['maxScore']
-        for entry in data['entries']:
-            user = entry['user']
-            score = '%.1f%%' % (
-                100 * (float(entry['score']) / float(maxScore)))
-            tr = entry['tr']
-            rows.append([user, score, tr])
-
-    except:
-        pass
-    return rows

@@ -18,11 +18,16 @@
 
 from django.conf.urls.defaults import *
 
+
 urlpatterns = patterns('',
-    url(r'^$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
-    url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table', name='wordwalls_table'),
-    url(r'^table/(?P<id>\d+)/missed/$', 'wordwalls.views.mark_missed'),
-    url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload' ),
-    url(r'^api/', include('wordwalls.api_urls')),
+    url(r'^challengers/(?P<month>\d+)/(?P<day>\d+)/(?P<year>\d+)/(?P<lex>\d+)'
+          '/(?P<ch_id>\d+)/$',
+        'wordwalls.api.api_challengers'),
+    url(r'^challengers_days_from_today/(?P<days>\d+)/(?P<lex>\d+)/'
+        '(?P<ch_id>\d+)/$',
+        'wordwalls.api.api_challengers_days_from_today'),
+    url(r'^random_toughie/$', 'wordwalls.api.api_random_toughie'),
+    url(r'^num_tables_created/$', 'wordwalls.api.api_num_tables_created'),
+    url(r'^configure/$', 'wordwalls.api.configure')
    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
     )
