@@ -650,7 +650,7 @@ class WordwallsGame(object):
             Adds a Daily Challenge Missed Bingo in a thread-safe manner.
         """
         try:
-            dcmb = DailyChallengeMissedBingos.objects.select_for_update.get(
+            dcmb = DailyChallengeMissedBingos.objects.select_for_update().get(
                 challenge=challenge,
                 alphagram=alphagram)
             dcmb.numTimesMissed += 1
@@ -665,7 +665,7 @@ class WordwallsGame(object):
             # It means another thread created it (in the except above).
             # We should start over, but now that we know the object exists,
             # we can use select_for_update without fear.
-            dcmb = DailyChallengeMissedBingos.objects.select_for_update.get(
+            dcmb = DailyChallengeMissedBingos.objects.select_for_update().get(
                 challenge=challenge, alphagram=alphagram)
             dcmb.numTimesMissed += 1
             dcmb.save()
