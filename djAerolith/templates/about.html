@@ -4,28 +4,11 @@
 
 {% block content %}
 <H3>About</H3>
-<P>
-Aerolith 2.0 is a web-based word study tool which will hopefully expand into a general word-game-related site. It was written by Cesar Del Solar in Python (with Django) and Javascript and is hosted on an AWS micro instance (free (mostly) for a year, woohoo!). It was mostly designed for use with the freely available Chrome browser, but will also work on most modern browsers, such as Firefox and IE8+. It may even work in IE6, but I certainly don't recommend using that.</P>
-<P>
-Right now the only app is "Wordwalls". This is basically the same thing as the desktop Aerolith version. You get walls of scrambled words and you must decipher them all before time runs out!!1 Some have suggested a similarity to a program called Jumbletime. I guess no one ever thought of quizzing on multiple items at a time before them.</P>
-<H3>History</H3>
-<P>
-Aerolith 2.0 started as a desktop program and was released shortly before the Dayton Players Championship in 2007. Coincidentally, I also lost like 3000 games there and my rating went negative for a while. Then I threw my clipboard after James won because Mike Whiteoak beat me. In any case, most of the reason I developed the original version was to learn socket programming and get the experience of actually releasing a worthwhile app out to the world. Surprisingly, the application is still running well and seldom crashes, but the code was not the best, and every time I wanted to add something new, it kludged up everything even more. I entertained the idea of doing a complete rewrite, but that could not get rid of some inherent shortcomings of a desktop-based application. For example, the development and deployment process is always painful, because every change requires compilation, test, and release on several different platforms. Users would have to redownload the app if I made any significant changes. There are ways to make an automatically updating application, yes, but it kind of feels like the desktop app model is being obsoleted. Also, there are many things I wanted to do like keep track of missed words over weeks that would require huge rewrites and refactors and that can be done with significantly less lines in an MVC (Model-View-Controller) based framework and with an awesome language like Python.</P>
-<P>
-In any case, at some point in February I got a huge inspiration to write this app for the web after visiting some <a href="http://www.leftronic.com">friends</a> who had founded a web startup. I knew nothing about web apps, web programming, or anything past the simplest of HTML, and had actually even been resistant to learn about these technologies since I had heard things like:
-<UL>
-    <LI>Javascript is evil</LI>
-    <LI>There are three thousand different browsers and everyone implements everything differently (I'm looking at you, IE)</LI>
-    <LI>There are no sockets, writing a real-time web app is a nightmare</LI>
-</UL>
-I finally decided to buckle up and read a Javascript book in a weekend. It turns out that a lot of my fears are unfounded; nowadays even IE seems to comply with most standards, and jQuery is an AWESOME library that makes Javascript much less painful (even though it still sucks). Then I downloaded Django and got started on the demo poll app. I paid many visits to various freenode chatrooms such as #jquery, #javascript, #css, #django, asking the simplest of noob questions. One particularly helpful person called me a "petulant newbie" on #jquery after it became clear I had no idea how closures worked. Eventually I was able to figure it out by continually prodding people in the chatroom who kept referring me to enormous bodies of documentation (no, I am not reading 300 pages to figure out how to use 'floats' in css) and telling me to RTFM. Ah, to be one of the intelligentsia. </P>
-<P>Which brings us to my humble attempt to translate Aerolith for the web. I made a few sacrifices; multiplayer of any sort is not supported yet (no sockets makes this harder) but I will figure it out and add a multiplayer mode before I take down the desktop version of Aerolith, which by the way will always be open-source to allow people to hack on it/host it somewhere else if they want. I will also add many cool ideas that would have been extremely difficult to implement in a desktop app environment. I've added a 'supporters' mode which will give supporters perks for donating, such as unlimited saved lists, and many other things that maybe people can help me think of. One of the realizations I came to while coding this is that I actually enjoy coding greatly, and originally I was upset that it was hurting my Scrabble game that I'm not studying and instead coding, but then I figured out that since I love doing this stuff, that that makes me happy too! Also, I will eventually start studying again, but I have time to do that later after I've made an Aerolith empire of word games and cool apps.</P>
-<H3>Links:</H3>
-<UL>
-    <LI><a href="https://github.com/domino14/Webolith">The Github page for Aerolith 2.0</a> Contains source and a wiki</LI>
-    <LI><a href="/old">The old Aerolith site</a></LI>
-    <LI><a href="http://www.djangoproject.com">Django, the wonderful framework this site is built on</a></LI>
-    <LI><a href="https://www.pivotaltracker.com/projects/240953">The Pivotal Tracker site for this project</a></LI>
-</UL>
+<P>Aerolith is a web app written by Cesar Del Solar. Its main goal is to provide a fun and fast-paced way to learn words quickly. It is particularly popular among <a href="http://www.scrabbleplayers.org/" target="_blank">tournament Scrabble</a> players but you can also use it for Boggle, Words with Friends, or any other word game! We even have some people that just like anagramming for fun and have gotten freakishly good.</P>
+<P>The main program, Wordwalls, is quite simple. We present you with a challenge once a day where 50 scrambled words are shown to you and you must solve them as quickly as possible. You can also upload your own word lists, play some prepared lists of useful words, or search by probability.</P>
+<P>The following video shows you the basics and how to get started.</P>
+<iframe width="560" height="315" src="//www.youtube.com/embed/I5lOgTCNj9s" frameborder="0" allowfullscreen></iframe>
+<H3>About Cesar</H3>
+Cesar likes programming, playing Scrabble, guitar, ukulele, running, and probably a few more things.
 
 {% endblock %}
