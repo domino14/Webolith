@@ -17,6 +17,11 @@
 
     <link href="/static/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/lib/bootstrap/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <link href="/static/css/aerolith/aerolith.css" rel="stylesheet">
+
+    <script src="/static/js/aerolith/jquery-1.10.1.min.js"></script>
+    <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+
     {% if USE_GA %}
     <script type="text/javascript">
 
@@ -81,33 +86,28 @@
       </div>
     </div>
     {% endblock navbar %}
+    <div id="content_title">
     {% block content_title %}
     {% endblock %}
+    </div>
     <div class="container">
       {% block content %}
+        <div class="row">
         {% if user.username == "" %}
         <p>Welcome to Aerolith 2.0! Please <a href="/accounts/login">log in</a>, or <a href="/accounts/register">register</a> if you are new to this site.</p>
         <p style="font-size: 75%;"><a href="/accounts/password/reset">Forget your password?</a></p>
         {% else %}
         Welcome back, {{user}}! Here are some things you can do: <BR><BR>
-        <a href="wordwalls" class="playlink">Play WordWalls</a><BR>
-
+        <a href="wordwalls" class="btn btn-primary">Play WordWalls</a><BR>
         {% endif %}
-
-        <script type="text/javascript">
-        $(".playlink").button();
-        </script>
+        </div>
         {% if USE_FB %}
-        <P></P>
-        <center>
+        <div class="row" style="margin-top: 25px;">
         <iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FAerolithorg%2F187993161284057&amp;width=300&amp;height=290&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=false&amp;header=true&amp;appId=17369129469" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:290px;" allowTransparency="true"></iframe>
-        </center>
+        </div>
         {% endif %}
       {% endblock %}
     </div> <!-- /container -->
-
-    <script src="/static/js/aerolith/jquery-1.10.1.min.js"></script>
-    <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 
 
     {% if USE_UV %}

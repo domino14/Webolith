@@ -3,16 +3,49 @@
 
 {% block content %}
 {% if profile.member %}
+<div class="row">
 You are currently a supporter; your membership expires on {{profile.membershipExpiry}}.
+</div>
 {% else %}
 
 {% endif %}
-<form action="{% url 'accounts_edit_profile' %}" method="post">{% csrf_token %}
+<!-- <form action="{% url 'accounts_edit_profile' %}" method="post">{% csrf_token %}
 {{ pForm.as_p }}
-<input type="submit" value="Save profile" id="saveProfile"/>
+</form> -->
+
+<form class="form-horizontal" role="form" method="post" action="{% url 'accounts_edit_profile' %}" style="margin-top: 20px;">{% csrf_token %}
+  <div class="form-group">
+    <label for="input-lexicon" class="col-sm-2 control-label">Default Lexicon</label>
+    <div class="col-sm-10">
+      {{ pForm.defaultLexicon }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="input-profile" class="col-sm-2 control-label">Your profile:</label>
+    <div class="col-sm-10">
+      {{ pForm.profileText }}
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="disableChat" id="id_disableChat"> Disable chat
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Save Profile</button>
+    </div>
+  </div>
 </form>
 
-<p style="font-size: 75%;">
+
+
+
+<p>
     <a href="/accounts/password/change">Password change form</a>
 </p>
 <script type="text/javascript">

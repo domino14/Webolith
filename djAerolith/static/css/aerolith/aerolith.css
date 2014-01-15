@@ -1,0 +1,36 @@
+div.footer-wrapper {
+    padding: 5px 15px;
+    margin: 20px 0;
+    position: relative;
+    width: 100%;
+    background-image: url('/static/img/aerolith/wide_rectangles.png');
+}
+div#copyright {
+    float: left;
+    padding-top: 10px;
+}
+div#mixpanel {
+    padding-left: 750px;
+}
+
+
+.medalCount {
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    font-size: 175%;
+}
+
+.medal-row {
+    margin-bottom: 20px;
+}
+
+#content_title {
+    margin-top: 25px;
+    text-align: center;
+    clear: both;
+}
+
+.errorlist {
+    color: red;
+}
