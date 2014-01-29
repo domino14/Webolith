@@ -26,6 +26,9 @@ div#dcResultsDiv
     overflow-y: auto;
 }
 
+select#id_challenge {
+    width: 300px;
+}
 select#id_wordList
 {
     width: 450px;
