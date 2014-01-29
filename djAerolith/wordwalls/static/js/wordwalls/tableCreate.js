@@ -3,7 +3,7 @@ define([
   'jquery',
   'underscore',
   'ChallengeView',
-  'jquery_ui'
+  'bootstrap'
 ], function($, _, ChallengeView) {
   var lengthCounts, maxProb, url, flashcardUrl, dcTimeMap;
 
@@ -25,9 +25,10 @@ define([
 
   function challengeChangeEventHandler() {
     // If this isn't the challenge tab, don't run this code.
+    /* XXX: FIX
     if ($("#listTabs").tabs('option', 'active') !== 0) {
       return;
-    }
+    }*/
     challengeChanged();
   }
 
@@ -74,9 +75,11 @@ define([
     _.each(lengthCounts, function(lex, index) {
       lengthCounts[index] = $.parseJSON(lex);
     });
+    /* XXX: FIX
     $("#listTabs").tabs({
       beforeActivate: tabSelected
     }).css('display', 'block');
+    */
     /* set up event handlers */
     $('#id_lexicon').change(function() {
       success = changeMaxProb();

@@ -31,4 +31,6 @@ class DailyChallengesForm(forms.Form):
     challengeDate = forms.DateField(label='Date', required=False)
     challenge = forms.ModelChoiceField(
         queryset=DailyChallengeName.objects.all(),
-        label='Challenge', widget=forms.Select(attrs={'size': '18'}))
+        label='Challenge',
+        widget=forms.Select(attrs={'size': '18',
+                                   'class': 'form-control'}))

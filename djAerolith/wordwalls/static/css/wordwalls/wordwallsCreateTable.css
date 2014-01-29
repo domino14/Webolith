@@ -17,60 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 To contact the author, please email delsolar at gmail dot com*/
 
 
-label
-{
-    display: inline-block;
-}
-
-td#dcFormCell
-{
-    width: 200px;
-    height: 300px;
-    vertical-align: top;
-}
-
-td#dcResultsCell
-{
-    width: 350px;
-    max-height: 300px;
-}
-
-td.dcResultsTableCell
-{
-    text-align: center;
-}
-
-td.dcResultsTableHeader
-{
-    align: center;
-    background-color: rgb(220, 220, 220);
-    border-style: dotted;
-    border-width: 1px;
-    border-color: rgb(0, 0, 0);
-    text-align: center;
-}
 
 
 div#dcResultsDiv
 {
     width: 330px;
-    height: 300px;
-
-    border-top-width: 2px;
-    border-top-style: dotted;
-    border-top-color: rgb(0, 128, 255);
-
+    height: 350px;
     overflow-y: auto;
-}
-
-div.showHelp
-{
-    width:150px;
-}
-
-div.help
-{
-    color: rgb(80, 80, 120);
 }
 
 select#id_wordList
@@ -86,12 +39,6 @@ select#id_namedList
 span#savedListWarning
 {
     color: red;
-}
-
-#listTabs
-{
-    width: 600px;
-    float: left;
 }
 
 #lobby {
@@ -137,19 +84,4 @@ span#savedListWarning
 #id_challenge
 {
     width: 175px;
-}
-
-#content {
-    margin-top: 0px !important;
-}
-#commonForm {
-    margin-bottom: 10px;
-}
-#commonForm p {
-    display: inline;
-    margin-right: 30px;
-}
-
-.input-small {
-    width: 30px;
 }

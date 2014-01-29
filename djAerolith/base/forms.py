@@ -11,7 +11,7 @@ class LexiconForm(forms.Form):
     lexicon = forms.ModelChoiceField(
         queryset=Lexicon.objects.exclude(lexiconName="CSW07"),
         label='Lexicon',
-        widget=forms.Select(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label=None)
 
 

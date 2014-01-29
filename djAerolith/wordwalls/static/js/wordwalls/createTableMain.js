@@ -9,7 +9,7 @@ requirejs.config({
    */
   paths: {
     jquery: '../../../../static/js/aerolith/jquery-1.10.1',
-    jquery_ui: '../../../../static/js/aerolith/jquery-ui-1.10.2.custom.min',
+    bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
     underscore: '../../../../static/lib/underscore-1.4.4',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
     fileUploader: '../../../../static/js/aerolith/fileuploader',
@@ -23,7 +23,10 @@ requirejs.config({
     underscore: {
       exports: '_'
     },
-    jquery_ui: ['jquery'],
+    bootstrap: {
+      deps: ['jquery'],
+      exports: '$.fn.tab'
+    },
     fileUploader: {
       exports: 'qq'
     },
@@ -45,7 +48,7 @@ define([
   'socket',
   'chat',
   'csrfAjax',
-  'jquery_ui'
+  'bootstrap'
 ], function (module, $, TableCreate, fileUploader, Socket, Chat) {
   "use strict";
   $(function() {
@@ -73,11 +76,12 @@ define([
     $(".formSubmitButton").button();
     // Disable time select since daily challenges are selected.
     $("#id_quizTime").prop('disabled', true);
-    $("#id_challengeDate").datepicker({
+    /* XXX: FIX
+      $("#id_challengeDate").datepicker({
       minDate: new Date(2011, 5, 14),
       maxDate: 0,
       showButtonPanel: true
-    });
+    });*/
     uploader = new fileUploader.FileUploader({
       action: tableCreateParams.ajaxUploadUrl,
       element: $('#file-uploader')[0],
