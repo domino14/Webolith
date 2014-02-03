@@ -159,10 +159,11 @@ class WordwallsGame(object):
         return wgm.pk   # the table number
 
     def initializeBySearchParams(self, user, alphasSearchDescription,
-                                 playerType, timeSecs):
+                                 timeSecs):
         pkIndices = self.getPkIndices(alphasSearchDescription)
         wgm = self.createGameModelInstance(
-            user, playerType, alphasSearchDescription['lexicon'],
+            user, GenericTableGameModel.SINGLEPLAYER_GAME,
+            alphasSearchDescription['lexicon'],
             len(pkIndices),
             json.dumps(pkIndices),
             len(pkIndices),

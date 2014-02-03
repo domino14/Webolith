@@ -17,12 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 To contact the author, please email delsolar at gmail dot com*/
 
 
-
+.showHelp {
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
 div#dcResultsDiv
 {
     width: 330px;
-    height: 350px;
+    height: 420px;
     overflow-y: auto;
 }
 
@@ -87,4 +91,12 @@ span#savedListWarning
 #id_challenge
 {
     width: 175px;
+}
+.tab-pane {
+    margin-top: 10px;
+}
+
+#numAlphasInfo {
+    text-align: center;
+    margin-bottom: 20px;
 }

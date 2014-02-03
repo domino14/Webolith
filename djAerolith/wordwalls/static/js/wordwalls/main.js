@@ -2,7 +2,7 @@
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.10.1',
+    jquery: '../../../../static/js/aerolith/jquery-1.11.0',
     jquery_ui: '../../../../static/js/aerolith/jquery-ui-1.10.2.custom.min',
     underscore: '../../../../static/lib/underscore-1.4.4',
     backbone: '../../../../static/lib/backbone-1.0.0',

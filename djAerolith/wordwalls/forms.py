@@ -32,5 +32,5 @@ class DailyChallengesForm(forms.Form):
     challenge = forms.ModelChoiceField(
         queryset=DailyChallengeName.objects.all(),
         label='Challenge',
-        widget=forms.Select(attrs={'size': '18',
+        widget=forms.Select(attrs={'size': '12',
                                    'class': 'form-control'}))

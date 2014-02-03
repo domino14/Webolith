@@ -8,7 +8,7 @@ requirejs.config({
    * work properly.
    */
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.10.1',
+    jquery: '../../../../static/js/aerolith/jquery-1.11.0',
     bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
     underscore: '../../../../static/lib/underscore-1.4.4',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
@@ -17,7 +17,8 @@ requirejs.config({
     text: '../../../../static/lib/require/text',
     sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
     json2: '../../../../static/js/aerolith/json2',
-    backbone: '../../../../static/lib/backbone-1.0.0'
+    backbone: '../../../../static/lib/backbone-1.0.0',
+    datepicker: '../../../../static/lib/bootstrap-datepicker'
   },
   shim: {
     underscore: {
@@ -36,6 +37,9 @@ requirejs.config({
     backbone: {
       deps: ['underscore', 'jquery', 'json2'],
       exports: 'Backbone'
+    },
+    datepicker: {
+      deps: ['bootstrap']
     }
   }
 });
@@ -47,12 +51,20 @@ define([
   'fileUploader',
   'socket',
   'chat',
+  'mustache',
+  'text!templates/help/challenges.html',
+  'text!templates/help/search_params.html',
+  'text!templates/help/saved_lists.html',
+  'text!templates/help/named_lists.html',
   'csrfAjax',
-  'bootstrap'
-], function (module, $, TableCreate, fileUploader, Socket, Chat) {
+  'bootstrap',
+  'datepicker'
+], function (module, $, TableCreate, fileUploader, Socket, Chat,
+  Mustache,
+  ChallengesHelp, SearchParamsHelp, SavedListsHelp, NamedListsHelp) {
   "use strict";
   $(function() {
-    var tableCreateParams, labelSize, uploader, s, c;
+    var tableCreateParams, uploader, s, c;
     /* Load bootstrapped params from backend. */
     tableCreateParams = module.config();
     // Remove CSW07
@@ -62,26 +74,31 @@ define([
     TableCreate.initializeTableCreatePage(
       tableCreateParams.lengthCounts, tableCreateParams.dcTimes,
       tableCreateParams.createTableUrl, tableCreateParams.createQuizUrl);
-    labelSize = '130px';
-    $("label[for='id_wordLength']").width(labelSize);
-    $("label[for='id_probabilityMin']").width(labelSize);
-    $("label[for='id_probabilityMax']").width(labelSize);
-    $("label[for='id_playerMode']").width(labelSize);
-
-    $(".help").hide();
-    $(".showHelp").click(function(){
-      $(this).next(".help").toggle("slow");
+    $('.help-question-marks').tooltip();
+    $('#help-challenges').click(function() {
+      showModalMessage('Today\'s Challenges Help', ChallengesHelp);
     });
-    $(".showHelp").button();
-    $(".formSubmitButton").button();
+    $('#help-search-params').click(function() {
+      showModalMessage('Search Params Help', SearchParamsHelp);
+    });
+    $('#help-named-lists').click(function() {
+      showModalMessage('Aerolith Lists Help', NamedListsHelp);
+    });
+    $('#help-saved-lists').click(function() {
+      showModalMessage('Saved Lists Help',
+        Mustache.render(SavedListsHelp, {
+          'upload_list_limit': tableCreateParams.uploadListLimit
+        }));
+    });
+
     // Disable time select since daily challenges are selected.
     $("#id_quizTime").prop('disabled', true);
-    /* XXX: FIX
-      $("#id_challengeDate").datepicker({
-      minDate: new Date(2011, 5, 14),
-      maxDate: 0,
-      showButtonPanel: true
-    });*/
+    $("#id_challengeDate").datepicker({
+      startDate: new Date(2011, 5, 14),
+      todayBtn: "linked",
+      todayHighlight: true,
+      autoclose: true
+    });
     uploader = new fileUploader.FileUploader({
       action: tableCreateParams.ajaxUploadUrl,
       element: $('#file-uploader')[0],
@@ -111,6 +128,7 @@ define([
 
       }
     });
+    $('.qq-upload-button').addClass('btn btn-info');
     if (tableCreateParams.chatEnabled === 'True' && false) {
       s = new Socket();
       s.setUrl(tableCreateParams.socketUrl);
@@ -122,7 +140,13 @@ define([
       s.setToken(tableCreateParams.socketConnectionToken);
       s.connect();
     } else {
-      $('#listTabs').css({'width': '900px'});
     }
+    function showModalMessage(title, message) {
+      $("#msg-content").html(message);
+      $("#msg-title").html(title);
+      $("#msg-modal").modal();
+    }
+
+
   });
 });

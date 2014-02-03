@@ -1,0 +1,15 @@
+Aerolith is an easy to use word study program
+-  for games such as boggle, scrabble, words with friends
+-
+simply, create an account and you're ready to begin
+
+when you begin, you can choose the american or world english dictionary
+-
+
+there are 4 different play modes:
+  - challenges of the day - which include lists of words sorted by word legnth, words with blanks
+ - search by probabiliy - which includes words that commonly appear in games
+ - pre-made lists that include words that are high scoring, everyday words, or words with many vowels or consonants
+ - lastly, saved word lists - which are lists of words that you have previously played, or upload your own custom lists
+
+let's play a quick game:

@@ -18,22 +18,24 @@ class LexiconForm(forms.Form):
 class FindWordsForm(forms.Form):
     wlList = tuple([(repr(l), repr(l)) for l in range(2, 16)])
 
-    wordLength = forms.ChoiceField(choices=wlList, label='Word Length')
+    wordLength = forms.ChoiceField(
+        choices=wlList, label='Word Length',
+        widget=forms.Select(attrs={'class': 'form-control'}))
     probabilityMin = forms.IntegerField(max_value=250000, min_value=1,
                                         label='Min probability (at least 1)')
     probabilityMax = forms.IntegerField(max_value=250000, min_value=1,
                                         label='Max probability')
 
-    PLAYERMODE_SINGLE = 1
-    PLAYERMODE_MULTI = 2
+    # PLAYERMODE_SINGLE = 1
+    # PLAYERMODE_MULTI = 2
 
-    playerChoices = (
-        (GenericTableGameModel.SINGLEPLAYER_GAME, "Single player"),
-        #(GenericTableGame.MULTIPLAYER_GAME, "Multi player"),
-    )
+    # playerChoices = (
+    #     (GenericTableGameModel.SINGLEPLAYER_GAME, "Single player"),
+    #     #(GenericTableGame.MULTIPLAYER_GAME, "Multi player"),
+    # )
 
-    playerMode = forms.ChoiceField(choices=playerChoices,
-                                   label="Number of players")
+    # playerMode = forms.ChoiceField(choices=playerChoices,
+    #                                label="Number of players")
 
     def clean(self):
         try:
@@ -94,11 +96,13 @@ class SavedListForm(forms.Form):
 
     listOption = forms.TypedChoiceField(
         choices=listOptions, label='Quiz options',
-        widget=forms.Select(), coerce=int)
+        widget=forms.Select(attrs={'class': 'form-control'}), coerce=int)
 
-    wordList = WordListChoiceField(label='List choice',
-                                   queryset=SavedList.objects.none(),
-                                   widget=forms.Select(attrs={'size': '10'}))
+    wordList = WordListChoiceField(
+        label='List choice',
+        queryset=SavedList.objects.none(),
+        widget=forms.Select(attrs={'size': '10',
+                                   'class': 'form-control'}))
 
 
 class NamedListChoiceField(forms.ModelChoiceField):
@@ -114,6 +118,8 @@ class NamedListChoiceField(forms.ModelChoiceField):
 
 
 class NamedListForm(forms.Form):
-    namedList = NamedListChoiceField(label='List choice',
-                                     queryset=NamedList.objects.none(),
-                                     widget=forms.Select(attrs={'size': '15'}))
+    namedList = NamedListChoiceField(
+        label='List choice',
+        queryset=NamedList.objects.none(),
+        widget=forms.Select(attrs={'size': '15',
+                                   'class': 'form-control'}))

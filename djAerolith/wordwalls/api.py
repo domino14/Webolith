@@ -28,8 +28,6 @@ def configure(request):
         profile = request.user.get_profile()
         profile.customWordwallsStyle = json.dumps(saveObj)
         profile.save()
-        # Backbone needs JSON to be returned back to not raise
-        # an error :/
         return response("Ok")
 
     return HttpResponseForbidden("Cannot save preferences.")

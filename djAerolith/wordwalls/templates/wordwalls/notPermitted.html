@@ -1,22 +1,5 @@
 {% extends "base.html" %}
 
-{% load assets %}
-
-{% block ss %}
-{% assets "css_table_create" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
-{% assets "base_css" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
-{% assets "jquery_css" %}
-   <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
-{% endblock %}
-
 {% load gargoyle_tags %}
 {% block title %}WordWalls - table {{tablenum}}{% endblock %}
 {% block jquery_js %}{% endblock %}

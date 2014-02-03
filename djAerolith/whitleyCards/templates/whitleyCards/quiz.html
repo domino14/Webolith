@@ -4,26 +4,39 @@
 
 {% load assets %}
 {% load value_from_settings %}
-
+<script type="text/javascript" src="/static/js/aerolith/jquery-1.11.0.js"></script>
 {% assets "js_quiz" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
+
+
 <p style="color:gray">Flashcards programmed by David Whitley and adapted by Cesar Del Solar, based on code at Ottawa Scrabble Club website by Chris Ten Den</p>
 <div>
     <div id="messages"></div>
-    <form name="game" onSubmit="solve(); return false;">
-        <font face="verdana" style="font-size:15px;">
-            <input type="text" name="word">
-            <input type="button" onClick="completeSolve();" value="Solve">
-            <input type="button" onClick="forceReveal();" value="Hint">
-            <input type="button" onClick="toggleHints();" value="Auto">
-            <input type="button" onClick="changeSpeed(-1);" value="-">
-            <input type="button" onClick="changeSpeed(1);" value="+">
+    <form name="game" onSubmit="solve(); return false;" class="form-inline" role="form">
+            <div class="form-group">
+                <input type="text" name="word" class="form-control">
+            </div>
+            <P></P>
+            <div class="form-group">
+                <input type="button" class="form-control" onClick="completeSolve();" value="Solve">
+            </div>
+            <div class="form-group">
+            <input type="button" class="form-control" onClick="forceReveal();" value="Hint">
+            </div>
+            <div class="form-group">
+            <input type="button" class="form-control" onClick="toggleHints();" value="Auto">
+            </div>
+            <div class="form-group">
+                <input type="button" class="form-control" onClick="changeSpeed(-1);" value="-">
+            </div>
+            <div class="form-group">
+                <input type="button" class="form-control" onClick="changeSpeed(1);" value="+">
+            </div>
             <span id="speed"><font color='gray'>5 |||||</font></span>
-        </font>
     </form>
     <span id="question" style="font-family:'scramble','Lucida Console',monospace; font-size:36px; height:36px;"></span>
-    <div id="progress" style="font-family:'verdana'; font-size:15px; height:20px; color:gray">&nbsp;</div>
+    <div id="progress" class="text-muted" style="font-family:'verdana'; font-size:15px; height:20px;">&nbsp;</div>
     <div id="hints" style="font-family:'scramble','Lucida Console',monospace; font-size:36px;height:40px;"></div>
     <div id="variants" style="font-family:'scramble','Lucida Console',monospace; font-size:24px; min-height:25px;"></div>
     <div id="trace"></div>

@@ -3,10 +3,15 @@ define([
   'jquery',
   'underscore',
   'ChallengeView',
+  'mustache',
+  'text!templates/saved_list_option.html',
+  'text!templates/named_list_option.html',
   'bootstrap'
-], function($, _, ChallengeView) {
-  var lengthCounts, maxProb, url, flashcardUrl, dcTimeMap;
-
+], function($, _, ChallengeView, Mustache, SavedListOption, NamedListOption) {
+  "use strict";
+  var lengthCounts, maxProb, url, flashcardUrl, dcTimeMap, currentlyShownTab;
+  // The tab that is currently shown. We always default to daily challenges.
+  currentlyShownTab = 0;
   function changeMaxProb() {
     var lex, curLength;
     lex = $('#id_lexicon option:selected').text();
@@ -25,10 +30,9 @@ define([
 
   function challengeChangeEventHandler() {
     // If this isn't the challenge tab, don't run this code.
-    /* XXX: FIX
-    if ($("#listTabs").tabs('option', 'active') !== 0) {
+    if (currentlyShownTab !== 0) {
       return;
-    }*/
+    }
     challengeChanged();
   }
 
@@ -52,12 +56,10 @@ define([
       $("#id_quizTime").val(dcTimeMap[cVal]/60.0);
     }
   }
-
-  function tabSelected(event, ui) {
-    /* this function gets triggered when the user selects a tab from
+  /* this function gets triggered when the user selects a tab from
     the list types */
-    if (ui.newTab.index() === 0) {
-        /* today's challenges. disable time select */
+  function tabSelected(target) {
+    if ($(target).data('index') === 0) {
       $("#id_quizTime").prop('disabled', true);
       challengeChanged();
     } else {
@@ -75,11 +77,13 @@ define([
     _.each(lengthCounts, function(lex, index) {
       lengthCounts[index] = $.parseJSON(lex);
     });
-    /* XXX: FIX
-    $("#listTabs").tabs({
-      beforeActivate: tabSelected
-    }).css('display', 'block');
-    */
+    $('#main-tab-nav li').on('click', function(e) {
+      if (e.target.tagName === 'SPAN') {
+        tabSelected($(e.target).parent());
+      } else {
+        tabSelected(e.target);
+      }
+    });
     /* set up event handlers */
     $('#id_lexicon').change(function() {
       success = changeMaxProb();
@@ -112,7 +116,6 @@ define([
     // show results label with selected challenge on load
     challengeChanged();
     changeMaxProb();
-    initializeButtons();
     $('#id_listOption').change(savedListOptionChangeHandler);
     $('#id_wordList').change(savedListChangeHandler);
     savedListOptionChangeHandler();
@@ -133,21 +136,13 @@ define([
     requestSavedListInfo();
   }
 
-  function initializeButtons() {
-    $('#savedListsSubmit').button();
-    $('#savedListsFlashcardEntire').button();
-    $('#savedListsFlashcardFM').button();
-    $('#savedListsSubmit').button();
-    $('#savedListsFlashcardEntire').button();
-    $('#savedListsFlashcardFM').button();
-  }
-
   function savedListOptionChangeHandler() {
     var optionName;
     optionName = $('#id_listOption option:selected').text();
-    $('#savedListsSubmit').button('option', 'label', 'Play!').button('enable');
-    $('#savedListsFlashcardEntire').button('enable');
-    $('#savedListsFlashcardFM').button('enable');
+    $('#savedListsSubmit').text('Play!').prop('disabled', false).removeClass(
+      'btn-danger').addClass('btn-success');
+    $('#savedListsFlashcardEntire').prop('disabled', false);
+    $('#savedListsFlashcardFM').prop('disabled', false);
     if (optionName === "Continue list") {
       $('#savedListWarning').text("");
     } else if (optionName === "Restart list") {
@@ -159,11 +154,12 @@ define([
       $('#savedListWarning').text("");
       dimIfListUnfinished("#savedListsSubmit");
     } else if (optionName === "Delete list") {
-      $('#savedListsSubmit').button('option', 'label', 'Delete selected list');
+      $('#savedListsSubmit').text('Delete selected list').removeClass(
+        'btn-info').addClass('btn-danger');
       $('#savedListWarning').text(
         "This will delete the selected list! Make sure you want to do this!");
-      $('#savedListsFlashcardEntire').button('disable');
-      $('#savedListsFlashcardFM').button('disable');
+      $('#savedListsFlashcardEntire').prop('disabled', true);
+      $('#savedListsFlashcardFM').prop('disabled', true);
     }
     dimIfListUnfinished("#savedListsFlashcardFM");
   }
@@ -178,12 +174,12 @@ define([
   }
 
   function dimIfListUnfinished(selector) {
-    if ($('#id_wordList option:selected').attr('goneThruOnce') !== "true") {
+    if ($('#id_wordList option:selected').data('gonethruonce') !== true) {
       /* list has NOT been gone thru at least once. So going thru first
         missed should not work! */
-      $(selector).button('disable');
+      $(selector).prop('disabled', true);
     } else {
-      $(selector).button('enable');
+      $(selector).prop('disabled', false);
     }
   }
 
@@ -222,17 +218,13 @@ define([
     } else {
       options = [];
       for (i = 0; i < data.length; i++) {
-        options.push('<option value=', '"', data[i].pk, '"');
-        if (data[i].goneThruOnce) {
-          options.push(' goneThruOnce="true"');
-        }
-        options.push('>', data[i].name,
-          ' (last saved ', data[i].lastSaved, ')');
-        if (data[i].goneThruOnce) {
-          options.push(' *');
-        }
-        options.push(' -- ', data[i].numAlphas, " total alphagrams");
-        options.push('</option>');
+        options.push(Mustache.render(SavedListOption, {
+          listId: data[i].pk,
+          goneThruOnce: data[i].goneThruOnce,
+          listName: data[i].name,
+          lastSaved: data[i].lastSaved,
+          numAlphas: data[i].numAlphas
+        }));
       }
       $("#id_wordList").html(options.join(''));
     }
@@ -245,10 +237,11 @@ define([
     } else {
       options = [];
       for (i = 0; i < data.length; i++) {
-        options.push('<option value=', '"', data[i].pk, '">',
-          data[i].name);
-        options.push(' -- ', data[i].numAlphas, " total alphagrams");
-        options.push('</option>');
+        options.push(Mustache.render(NamedListOption, {
+          listId: data[i].pk,
+          listName: data[i].name,
+          numAlphas: data[i].numAlphas
+        }));
       }
       $("#id_namedList").html(options.join(''));
     }
@@ -265,12 +258,12 @@ define([
             data.l,
             ". You can increase this by becoming a supporter!"
           ].join('');
-          $("#numAlphasInfo").text([
-              "You have ", data.na,
-              " alphagrams over all your saved lists. ",
-              addlText
-            ].join(''));
         }
+        $("#numAlphasInfo").text([
+            "You have ", data.na,
+            " alphagrams over all your saved lists. ",
+            addlText
+          ].join(''));
       }, 'json');
   }
 
@@ -286,12 +279,9 @@ define([
   }
 
   function showError(error) {
-    $("#infoDialog").html("<P>" + error + "</P>").attr(
-        "title", "Error");
-    $("#infoDialog").dialog({
-      height: 140,
-      modal: true
-    }).show();
+    $("#msg-content").html("<P>" + error + "</P>");
+    $("#msg-title").html("Error");
+    $("#msg-modal").modal();
   }
 
   function challengeSubmitClicked() {
@@ -311,7 +301,6 @@ define([
       wordLength: $("#id_wordLength").val(),
       probabilityMin: $("#id_probabilityMin").val(),
       probabilityMax: $("#id_probabilityMax").val(),
-      playerMode: $("#id_playerMode").val()
     }, wwRedirect, 'json');
   }
 
@@ -322,7 +311,6 @@ define([
       wordLength: $("#id_wordLength").val(),
       probabilityMin: $("#id_probabilityMin").val(),
       probabilityMax: $("#id_probabilityMax").val(),
-      playerMode: $("#id_playerMode").val()
     }, wwRedirect, 'json');
   }
 
