@@ -36,6 +36,7 @@ import os
 logger = logging.getLogger(__name__)
 
 
+
 class WordwallsGame(object):
     # XXX: don't duplicate WordList/SavedList logic / fields here. Instead
     # the wordwalls game model should maybe have a foreign key to a list.
@@ -801,7 +802,16 @@ class WordwallsGame(object):
                     random.shuffle(r)
                     pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
                 return pks, challengeName.timeSecs
+            elif challengeName.name in (DailyChallengeName.COMMON_SHORT,
+                                        DailyChallengeName.COMMON_LONG):
+                questions = self.generate_common_words(lex, challengeName.name)
+                random.shuffle(questions)
+                return questions, challengeName.timeSecs
         return None
+
+    def generate_common_words(self, ch_name):
+        f = open(COMMON_WORDS_DIR + '/common_short.txt')
+
 
     def generate_blank_bingos(self, lex, ch_date):
         """
