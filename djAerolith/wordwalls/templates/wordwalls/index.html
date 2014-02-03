@@ -1,24 +1,9 @@
 {% extends "base.html" %}
 
-{% load assets %}
-
 {% block ss %}
-{% assets "css_table_create" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
-{% assets "css_fileuploader" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
-{% assets "base_css" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
-{% assets "jquery_css" %}
-   <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
-
+    <link href="/static/css/wordwalls/wordwallsCreateTable.css" rel="stylesheet">
+    <link href="/static/css/aerolith/datepicker3.css" rel="stylesheet">
+    <link href="/static/css/aerolith/fileuploader.css" rel="stylesheet">
 {% endblock %}
 {% block title %}Wordwalls - select list{% endblock %}
 
@@ -26,94 +11,175 @@
 {% block content %}
 <P></P>
 <div id="commonForm">
-    {{lexForm.as_p}}
-    {{timeForm.as_p}}
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <label for="id_lexicon" class="col-sm-2 control-label">Lexicon</label>
+      <div class="col-sm-2">
+        {{lexForm.lexicon}}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="id_quizTime" class="col-sm-2 control-label">Time (minutes):</label>
+      <div class="col-sm-2">
+          <input id="id_quizTime" name="quizTime" type="text" value="4" class="form-control">
+      </div>
+    </div>
+  </form>
 </div>
 
-<div id="listTabs" style="display:none;">
-    <ul>
-        <li><a href="#tabs-1">Today's Challenges</a></li>
-        <li><a href="#tabs-2">Search</a></li>
-        <li><a href="#tabs-3">Saved List</a></li>
-        <li><a href="#tabs-4">Named List</a></li>
+<div class="row">
+  <div class="col-sm-2">
+    <form class="form-horizontal" role="form">
+      <div class="form-group">
+        <label class="col-sm-12 control-label">Select a quiz type</label>
+      </div>
+    </form>
+  </div>
+  <div class="col-sm-8">
+    <ul class="nav nav-pills" id="main-tab-nav">
+      <li class="active"><a href="#today" data-toggle="tab" data-index="0">Today's Challenges <span class="glyphicon glyphicon-question-sign help-question-marks" data-toggle="tooltip" data-placement="top" title="Click me for help" id="help-challenges"></span></a></li>
+      <li><a href="#search" data-toggle="tab" data-index="1">Probability Search <span class="glyphicon glyphicon-question-sign help-question-marks" data-toggle="tooltip" data-placement="top" title="Click me for help" id="help-search-params"></span></a></li>
+      <li><a href="#named-list" data-toggle="tab" data-index="3">Aerolith Lists <span class="glyphicon glyphicon-question-sign help-question-marks" data-toggle="tooltip" data-placement="top" title="Click me for help" id="help-named-lists"></span></a></li>
+      <li><a href="#saved-list" data-toggle="tab" data-index="2">My Saved Lists <span class="glyphicon glyphicon-question-sign help-question-marks" data-toggle="tooltip" data-placement="top" title="Click me for help" id="help-saved-lists"></span></a></li>
     </ul>
-    <div id="tabs-1">
-        <div id="showChallengesHelp" class="showHelp">
-        Click for help
+  </div>
+</div>
+<div class="tab-content">
+    <div class="tab-pane active" id="today">
+      <div class="row">
+        <div class="col-sm-6">
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label for="id_challengeDate" class="col-sm-2 col-sm-offset-2 control-label">Date</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="id_challengeDate" name="challengeDate">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="id_challenge" class="col-sm-2 col-sm-offset-2 control-label">Challenge</label>
+              <div class="col-sm-6">
+                {{dcForm.challenge}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-2">
+                <button type="button" class="formSubmitButton btn btn-success" id="challengeSubmit">Play!</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div id="challengesHelp" class="help">
-        {% include "wordwalls/help_templates/challenges.html" %}
+        <div class="col-sm-4">
+          <span id="dcResultsLabel"></span><BR>
+          <div id="dcResultsDiv"></div>
         </div>
-        <table id="challengesLayout">
-        <tr>
-            <td id="dcFormCell">
-                {{ dcForm.as_p}}
-                <button class="formSubmitButton" id="challengeSubmit">Play!</button>
-            </td>
-            <td id="dcResultsCell">
-                <span id="dcResultsLabel"></span><BR>
-                <div id="dcResultsDiv"></div>
-            </td>
-        </tr>
-        </table>
-
+      </div>
     </div>
 
-    <div id="tabs-2">
-        <div id="showSearchParamsHelp" class="showHelp">
-        Click for help
+    <div class="tab-pane" id="search">
+      <div class="row">
+        <div class="col-sm-6">
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label for="id_wordLength" class="col-sm-4 control-label">Word Length</label>
+              <div class="col-sm-4">
+                {{fwForm.wordLength}}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="id_probabilityMin" class="col-sm-4 control-label">Min Probability (at least 1)</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" id="id_probabilityMin" name="probabilityMin">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="id_probabilityMax" class="col-sm-4 control-label">Max Probability</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" id="id_probabilityMax" name="probabilityMax">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-2">
+                <button type="button" class="formSubmitButton btn btn-success" id="searchParamsSubmit">Play!</button>
+              </div>
+              <div class="col-sm-1">or</div>
+              <div class="col-sm-2">
+                <button type="button" class="formSubmitButton btn btn-info" id="searchParamsFlashcard">Flashcard</button>
+              </div>
+            </div>
+          </form>
         </div>
-
-        <div id="searchParamsHelp" class="help">
-        {% include "wordwalls/help_templates/search_params.html" %}
-        </div>
-
-        {{ fwForm.as_p }}
-        <button class="formSubmitButton" id="searchParamsSubmit">Play!</button>
-        <span style="width:100px;display:inline-block;text-align:center;">or</span>
-        <button class="formSubmitButton" id="searchParamsFlashcard">Flashcard</button>
+      </div>
     </div>
 
-    <div id ="tabs-3">
-        <div id="showSavedListHelp" class="showHelp">
-        Click for help
+    <div class="tab-pane" id="saved-list">
+        <div class="row">
+          <div id="numAlphasInfo" class="text-muted"></div>
         </div>
 
-        <div id="savedListHelp" class="help">
-            {% include "wordwalls/help_templates/saved_list.html" %}
+        <div class="row">
+          <div class="col-sm-12">
+            <form class="form-horizontal" role="form">
+              <div class="form-group">
+                <label for="id_listOption" class="col-sm-2 control-label">Quiz Options</label>
+                <div class="col-sm-3">
+                  {{slForm.listOption}}
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="id_wordList" class="col-sm-2 control-label">List choice</label>
+                <div class="col-sm-6">
+                  {{slForm.wordList}}
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-1">
+                  <button type="button" class="formSubmitButton btn btn-success" id="savedListsSubmit">Play!</button>
+                </div>
+                <div class="col-sm-2">
+                  <button type="button" class="formSubmitButton btn btn-info" id="savedListsFlashcardEntire">Flashcard entire list</button>
+                </div>
+                <div class="col-sm-2">
+                  <button type="button" class="formSubmitButton btn btn-info" id="savedListsFlashcardFM">Flashcard first missed</button>
+                </div>
+
+              </div>
+
+            </form>
+          </div>
         </div>
-        <div id="numAlphasInfo"></div>
-            {{ slForm.as_p }}
+
         <span id="savedListWarning"></span>
-
-        <button class="formSubmitButton" id="savedListsSubmit">Play!</button>
-        <span style="width:100px;display:inline-block;text-align:center;">or</span>
-        <button class="formSubmitButton" id="savedListsFlashcardEntire">Flashcard entire list</button>
-        <button class="formSubmitButton" id="savedListsFlashcardFM">Flashcard first missed</button>
-        <br>
         <H3>Or upload a new list:</H3>
 
         <div id="file-uploader">
-            <noscript>
-                <p>Please enable JavaScript to use file uploader.</p>
-            </noscript>
         </div>
         <div id="file-upload-msgs">
         </div>
     </div>
 
-    <div id ="tabs-4">
-        <div id="showNamedListHelp" class="showHelp">
-        Click for help
+    <div class="tab-pane" id="named-list">
+      <div class="row">
+        <div class="col-sm-6">
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label for="id_wordLength" class="col-sm-4 control-label">List choice</label>
+              <div class="col-sm-4">
+                {{nlForm.namedList}}
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-2">
+                <button type="button" class="formSubmitButton btn btn-success" id="namedListsSubmit">Play!</button>
+              </div>
+              <div class="col-sm-1">or</div>
+              <div class="col-sm-2">
+                <button type="button" class="formSubmitButton btn btn-info" id="namedListsFlashcard">Flashcard</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div id="namedListHelp" class="help">
-        {% include "wordwalls/help_templates/named_list.html" %}
-        </div>
-
-        {{ nlForm.as_p }}
-        <button class="formSubmitButton" id="namedListsSubmit">Play!</button>
-        <span style="width:100px;display:inline-block;text-align:center;">or</span>
-        <button class="formSubmitButton" id="namedListsFlashcard">Flashcard</button>
+      </div>
     </div>
 </div>
 
@@ -125,7 +191,17 @@
 {% endif %}
 </div>
 
-<div id="infoDialog" title="">
+<div class="modal fade bs-modal-sm" id="msg-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="msg-title"></h4>
+      </div>
+      <div class="modal-body" id="msg-content">
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -141,7 +217,8 @@ var require = {
       ajaxUploadUrl: "{% url 'ajax_upload' %}",
       chatEnabled: "{{chatEnabled}}",
       socketConnectionToken: "{{connToken}}",
-      socketUrl: "{{socketUrl}}"
+      socketUrl: "{{socketUrl}}",
+      uploadListLimit: "{{upload_list_limit}}"
     }
   }
 }

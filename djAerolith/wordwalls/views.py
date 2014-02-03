@@ -192,7 +192,7 @@ def search_params_submit(user, post):
     wwg = WordwallsGame()
     tablenum = wwg.initializeBySearchParams(
         user, alphasSearchDescription,
-        fwForm.cleaned_data['playerMode'], quizTime)
+        quizTime)
 
     return response({'url': reverse('wordwalls_table',
                                     args=(tablenum,)),

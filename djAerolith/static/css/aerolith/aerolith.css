@@ -1,0 +1,42 @@
+div#footer {
+    border-top: 1px solid #ddd;
+    margin-top: 60px;
+    line-height: 60px;
+  height: 60px;
+}
+
+div#copyright {
+    float: left;
+}
+div#mixpanel {
+    padding-left: 750px;
+}
+
+.push {
+    margin-bottom: 20px;
+}
+
+.medalCount {
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    font-size: 175%;
+}
+
+.medal-row {
+    margin-bottom: 20px;
+}
+
+#content_title {
+    margin-top: 25px;
+    text-align: center;
+    clear: both;
+}
+
+.errorlist {
+    color: red;
+}
+
+body {
+    background-image: url('/static/img/aerolith/hexellence.png');
+}

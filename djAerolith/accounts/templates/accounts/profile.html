@@ -12,35 +12,75 @@
 
 {% load markup %}
 {% block content %}
-<div id="profile">
-  <H2>Profile</H2>
-{{profile.profile|markdown:"safe"}}
-</div>
-<div id="awards">
-    <H2>Award Case</H2>
-{% if wwMedals.medals.Platinum %}<P><img src="{{STATIC_URL}}img/aerolith/platinum_star_32x32.png">
-                                        <span class="medalCount">{{wwMedals.medals.Platinum}}</span></P>{% endif %}
-{% if wwMedals.medals.GoldStar %}<P><img src="{{STATIC_URL}}img/aerolith/gold_star_32x32.png">
-<span class="medalCount">{{wwMedals.medals.GoldStar}}</span></P>{% endif %}
-{% if wwMedals.medals.Gold %}<P><img src="{{STATIC_URL}}img/aerolith/gold_medal_32x32.png">
-                                         <span class="medalCount">{{wwMedals.medals.Gold}}</span></P>{% endif %}
-{% if wwMedals.medals.Silver %}<P><img src="{{STATIC_URL}}img/aerolith/silver_medal_32x32.png">
-                                         <span class="medalCount">{{wwMedals.medals.Silver}}</span></P>{% endif %}
-{% if wwMedals.medals.Bronze %}<P><img src="{{STATIC_URL}}img/aerolith/bronze_medal_32x32.png">
-                                         <span class="medalCount">{{wwMedals.medals.Bronze}}</span></P>{% endif %}
+<div class="row">
+    <div class="col-sm-9">
+        <div id="profile">
+          <H2>Profile</H2>
+        {{profile.profile|markdown:"safe"}}
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div id="awards" class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">Award Case</h2>
+            </div>
+            <div class="panel-body">
+                {% if wwMedals.medals.Platinum %}
+                    <div class="row medal-row">
+                        <div class="col-xs-1 col-sm-3">
+                            <img src="{{STATIC_URL}}img/aerolith/platinum_star_32x32.png">
+                        </div>
+                        <div class="col-xs-1 col-sm-3">
+                            <span class="medalCount">{{wwMedals.medals.Platinum}}</span>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if wwMedals.medals.GoldStar %}
+                    <div class="row medal-row">
+                        <div class="col-xs-1 col-sm-3">
+                            <img src="{{STATIC_URL}}img/aerolith/gold_star_32x32.png">
+                        </div>
+                        <div class="col-xs-1 col-sm-3">
+
+                            <span class="medalCount">{{wwMedals.medals.GoldStar}}</span>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if wwMedals.medals.Gold %}
+
+                    <div class="row medal-row">
+                        <div class="col-xs-1 col-sm-3">
+                            <img src="{{STATIC_URL}}img/aerolith/gold_medal_32x32.png">
+                        </div>
+                        <div class="col-xs-1 col-sm-3">
+
+                            <span class="medalCount">{{wwMedals.medals.Gold}}</span>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if wwMedals.medals.Silver %}
+                <div class="row medal-row">
+                        <div class="col-xs-1 col-sm-3">
+                            <img src="{{STATIC_URL}}img/aerolith/silver_medal_32x32.png">
+                        </div>
+                        <div class="col-xs-1 col-sm-3">
+                            <span class="medalCount">{{wwMedals.medals.Silver}}</span>
+                        </div>
+                    </div>{% endif %}
+                {% if wwMedals.medals.Bronze %}
+                <div class="row medal-row">
+                        <div class="col-xs-1 col-sm-3">
+                            <img src="{{STATIC_URL}}img/aerolith/bronze_medal_32x32.png">
+                        </div>
+                        <div class="col-xs-1 col-sm-3">
+                            <span class="medalCount">{{wwMedals.medals.Bronze}}</span>
+                        </div>
+                    </div>{% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
 
 {% comment %} Aerolith 2.0: A web-based word game website
 Copyright (C) 2011 Cesar Del Solar
