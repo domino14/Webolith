@@ -9,10 +9,6 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
 {% else %}
 
 {% endif %}
-<!-- <form action="{% url 'accounts_edit_profile' %}" method="post">{% csrf_token %}
-{{ pForm.as_p }}
-</form> -->
-
 <form class="form-horizontal" role="form" method="post" action="{% url 'accounts_edit_profile' %}" style="margin-top: 20px;">{% csrf_token %}
   <div class="form-group">
     <label for="input-lexicon" class="col-sm-2 control-label">Default Lexicon</label>
@@ -60,7 +56,6 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
     $('#id_disableChat').prop('checked', addlData.disableChat);
   });
   $("#id_profileText").css({'height': '300px', 'width': '500px'});
-  $("#saveProfile").button();
 </script>
 
 {% endblock %}
