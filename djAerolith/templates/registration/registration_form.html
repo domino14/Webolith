@@ -65,8 +65,7 @@ Please enter your registration information here.
   <div class="form-group">
     <label class="col-sm-2 control-label">Are you human?</label>
     <div class="col-sm-6">
-    <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={% value_from_settings RECAPTCHA_PUBLIC_KEY %}
-"></script>
+      {{form.recaptcha}}
     </div>
   </div>
   <div class="form-group">
