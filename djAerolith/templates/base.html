@@ -15,11 +15,15 @@
     <meta name="description" content="Aerolith word study game for Scrabble, Boggle, Words With Friends, etc.">
     <meta name="author" content="Cesar Del Solar">
 
-    <link href="/static/lib/bootstrap/css/bootstrap-cosmo.min.css" rel="stylesheet"><!--
-    <link href="/static/lib/bootstrap/css/bootstrap-glyphicons.css" rel="stylesheet">-->
+    <link href="/static/lib/bootstrap/css/bootstrap-cosmo.min.css" rel="stylesheet">
     <link href="/static/css/aerolith/aerolith.css" rel="stylesheet">
     {% block ss %}
     {% endblock %}
+
+    {% block jquery_js %}
+    <script type="text/javascript" src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
+    {% endblock %}
+
     {% if USE_GA %}
     <script type="text/javascript">
 
