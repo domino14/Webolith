@@ -25,22 +25,8 @@ To contact the author, please email delsolar at gmail dot com*/
 
 div#dcResultsDiv
 {
-    width: 330px;
-    height: 420px;
+    height: 350px;
     overflow-y: auto;
-}
-
-select#id_challenge {
-    width: 300px;
-}
-select#id_wordList
-{
-    width: 450px;
-}
-
-select#id_namedList
-{
-    width: 450px;
 }
 
 span#savedListWarning
@@ -88,10 +74,6 @@ span#savedListWarning
     margin-top: 5px;
 }
 
-#id_challenge
-{
-    width: 175px;
-}
 .tab-pane {
     margin-top: 10px;
 }
