@@ -16,31 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
 
-
-.showHelp {
-    margin-left: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
 div#dcResultsDiv
 {
-    width: 330px;
-    height: 420px;
+    height: 350px;
     overflow-y: auto;
-}
-
-select#id_challenge {
-    width: 300px;
-}
-select#id_wordList
-{
-    width: 450px;
-}
-
-select#id_namedList
-{
-    width: 450px;
 }
 
 span#savedListWarning
@@ -88,10 +67,6 @@ span#savedListWarning
     margin-top: 5px;
 }
 
-#id_challenge
-{
-    width: 175px;
-}
 .tab-pane {
     margin-top: 10px;
 }
