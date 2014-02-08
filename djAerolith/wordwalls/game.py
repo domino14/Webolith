@@ -25,16 +25,22 @@ import time
 from datetime import date
 import random
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
-                              DailyChallengeLeaderboardEntry)
-from wordwalls.models import DailyChallengeMissedBingos, DailyChallengeName
+                              DailyChallengeLeaderboardEntry,
+                              DailyChallengeMissedBingos, DailyChallengeName,
+                              NamedList)
 import re
 from base.forms import SavedListForm
 import base.settings
 import logging
 from django.db import IntegrityError
 import os
+from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
+                                                         FRIENDLY_COMMON_LONG)
 logger = logging.getLogger(__name__)
 
+
+COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
+COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
 
 
 class WordwallsGame(object):
@@ -790,7 +796,7 @@ class WordwallsGame(object):
                 random.shuffle(pks)
                 return pks, challengeName.timeSecs
             elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
-                questions = self.generate_blank_bingos(lex, chDate)
+                questions = self.generate_blank_bingos_challenge(lex, chDate)
                 random.shuffle(questions)
                 return questions, challengeName.timeSecs
             elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
@@ -804,16 +810,22 @@ class WordwallsGame(object):
                 return pks, challengeName.timeSecs
             elif challengeName.name in (DailyChallengeName.COMMON_SHORT,
                                         DailyChallengeName.COMMON_LONG):
-                questions = self.generate_common_words(lex, challengeName.name)
+                questions = self.generate_common_words_challenge(
+                    challengeName.name)
                 random.shuffle(questions)
                 return questions, challengeName.timeSecs
         return None
 
-    def generate_common_words(self, ch_name):
-        f = open(COMMON_WORDS_DIR + '/common_short.txt')
+    def generate_common_words_challenge(self, ch_name):
+        """Generate the common words challenges. Only for OWL2 right now."""
+        if ch_name == DailyChallengeName.COMMON_SHORT:
+            pks = json.loads(COMMON_SHORT_NAMED_LIST.questions)
+        elif ch_name == DailyChallengeName.COMMON_LONG:
+            pks = json.loads(COMMON_LONG_NAMED_LIST.questions)
+        random.shuffle(pks)
+        return pks[:50]
 
-
-    def generate_blank_bingos(self, lex, ch_date):
+    def generate_blank_bingos_challenge(self, lex, ch_date):
         """
             Reads the previously generated blank bingo files for lex.
         """

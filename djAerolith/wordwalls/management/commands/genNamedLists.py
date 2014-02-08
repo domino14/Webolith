@@ -30,6 +30,8 @@ friendlyNumberMap = {
 LIST_GRANULARITY = 1000
 COMMON_WORDS_DIR = 'base/misc/'
 OWL2_LEX_INDEX = 4
+FRIENDLY_COMMON_SHORT = 'Common Short Words (8 or fewer letters)'
+FRIENDLY_COMMON_LONG = 'Common Long Words (greater than 8 letters)'
 
 
 def get_alphagrams(min_pk, max_pk):
@@ -217,10 +219,8 @@ def createNamedLists(lex):
 
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
-    create_common_words_list('common_short.txt',
-                             'Common Short Words (8 or fewer letters)')
-    create_common_words_list('common_long.txt',
-                             'Common Long Words (greater than 8 letters)')
+    create_common_words_list('common_short.txt', FRIENDLY_COMMON_SHORT)
+    create_common_words_list('common_long.txt', FRIENDLY_COMMON_LONG)
 
 
 def create_common_words_list(lname, friendly_name):
@@ -252,6 +252,5 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         NamedList.objects.all().delete()
-        create_common_words_lists()
         for lex in Lexicon.objects.filter(lexiconName__in=['OWL2', 'CSW12']):
             createNamedLists(lex)
