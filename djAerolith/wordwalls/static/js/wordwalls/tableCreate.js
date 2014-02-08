@@ -9,7 +9,8 @@ define([
   'bootstrap'
 ], function($, _, ChallengeView, Mustache, SavedListOption, NamedListOption) {
   "use strict";
-  var lengthCounts, maxProb, url, flashcardUrl, dcTimeMap, currentlyShownTab;
+  var lengthCounts, maxProb, url, flashcardUrl, dcTimeMap, currentlyShownTab,
+    defaultChallengeList;
   // The tab that is currently shown. We always default to daily challenges.
   currentlyShownTab = 0;
   function changeMaxProb() {
@@ -36,25 +37,38 @@ define([
     challengeChanged();
   }
 
+  function challengeLexiconChanged() {
+    var lexName;
+    lexName = $('#id_lexicon option:selected').text();
+    if (lexName === 'CSW12') {
+      $('#id_challenge option[value="18"]').remove();
+      $('#id_challenge option[value="19"]').remove();
+    } else if (lexName === 'OWL2') {
+      $('#id_challenge').html(defaultChallengeList);
+    }
+    challengeChangeEventHandler();
+  }
+
   function challengeChanged() {
     var date, cVal, cName, lexName, lblText;
+    lexName = $('#id_lexicon option:selected').text();
+    cName = $('#id_challenge option:selected').text();
     date = $('#id_challengeDate').val();
     cVal = $('#id_challenge option:selected').val();
     if (cVal === "") {
       // this is the ----- text
       $('#dcResultsLabel').text('Select a challenge to view leaderboard');
       $("#id_quizTime").val(0);
-    } else {
-      cName = $('#id_challenge option:selected').text();
-      lexName = $('#id_lexicon option:selected').text();
-      lblText = '(' + lexName + ') ' + cName + ' leaderboard';
-      if (date) {
-        lblText += ' (' + date + ')';
-      }
-      $('#dcResultsLabel').text(lblText);
-      getDcResults();
-      $("#id_quizTime").val(dcTimeMap[cVal]/60.0);
+      return;
     }
+    lblText = '(' + lexName + ') ' + cName + ' leaderboard';
+    if (date) {
+      lblText += ' (' + date + ')';
+    }
+    $('#dcResultsLabel').text(lblText);
+    getDcResults();
+    $("#id_quizTime").val(dcTimeMap[cVal]/60.0);
+
   }
   /* this function gets triggered when the user selects a tab from
     the list types */
@@ -109,10 +123,11 @@ define([
         $(this).val(maxProb);
       }
     });
+    defaultChallengeList = $('#id_challenge').html();
     /* event handlers - today's challenges */
     $('#id_challengeDate').change(challengeChangeEventHandler);
     $('#id_challenge').change(challengeChangeEventHandler);
-    $('#id_lexicon').change(challengeChangeEventHandler);
+    $('#id_lexicon').change(challengeLexiconChanged);
     // show results label with selected challenge on load
     challengeChanged();
     changeMaxProb();

@@ -77,7 +77,7 @@
     "fields": {
       "name": "Today's 10s",
       "timeSecs": 330,
-      "orderPriority": 1
+      "orderPriority": 3
 
     }
   },
@@ -151,6 +151,24 @@
     "fields": {
       "name": "Bingo Marathon",
       "timeSecs": 480,
+      "orderPriority": 2
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 18,
+    "fields": {
+      "name": "Common Words (short)",
+      "timeSecs": 300,
+      "orderPriority": 0
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 19,
+    "fields": {
+      "name": "Common Words (long)",
+      "timeSecs": 360,
       "orderPriority": 2
     }
   }
