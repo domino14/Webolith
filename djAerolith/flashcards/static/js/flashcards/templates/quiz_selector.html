@@ -41,39 +41,39 @@
         <P>Quizzes that have been played through at least once are in <span class="text-muted">gray</span> below.</P>
         <P>All times are in US Pacific.</P>
         <div class="table-responsive">
-            <table id="quizzes-table" class="tablesorter">
+            <table id="quizzes-table" class="table">
                 <thead>
                 <tr>
+                    <th>Action</th>
                     <th>Name</th>
                     <th>Lexicon</th>
                     <th>Progress</th>
                     <th>Total questions</th>
                     <th>Last Saved</th>
-                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 {{#quizzes}}
                 <tr>
+                    <td><!-- Single button -->
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            Play <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" role="menu">
+                            <li><a href="#remote/continue/{{id}}">Continue</a></li>
+                            <li><a href="#remote/firstmissed/{{id}}">First missed</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#remote/reset/{{id}}">Reset and start over</a></li>
+                            <li><a href="#remote/delete/{{id}}"><span class="text-danger">Delete</span></a></li>
+                          </ul>
+                        </div>
+                    </td>
                     <td><span{{#goneThruOnce}} class="text-muted"{{/goneThruOnce}}>{{name}}</span></td>
                     <td>{{lexicon}}</td>
                     <td><span class="text-warning">{{questionIndex}}</span> / {{numCurAlphagrams}}</td>
                     <td>{{numAlphagrams}}</td>
                     <td>{{lastSaved}}</td>
-                    <td><!-- Single button -->
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                        Play <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#remote/continue/{{id}}">Continue</a></li>
-                        <li><a href="#remote/firstmissed/{{id}}">First missed</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#remote/reset/{{id}}">Reset and start over</a></li>
-                        <li><a href="#remote/delete/{{id}}"><span class="text-danger">Delete</span></a></li>
-                      </ul>
-                    </div>
-                    </td>
                 </tr>
                 {{/quizzes}}
                 </tbody>
