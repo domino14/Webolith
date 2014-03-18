@@ -31,29 +31,34 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def saved_list_sync(request):
+    """
+    Accept a POST of a new saved list.
+    """
+    if request.method != 'POST':
+        return response('This endpoint only accepts a POST.', status=400)
     body = json.loads(request.raw_post_data)
-    replacing = False
     profile = request.user.get_profile()
     saved_alphas = profile.wordwallsSaveListSize
     limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
     logger.debug('Syncing %s' % body)
     orig_qs = body.get('origQuestions')
     # Try getting a saved list with the same name, lexicon, and user.
-    try:
-        sl = SavedList.objects.get(user=request.user,
-                                   lexicon__lexiconName=body.get('lexicon'),
-                                   name=body.get('name'))
-        replacing = True
-    except SavedList.DoesNotExist:
-        sl = SavedList()
-        sl.user = request.user
-        sl.lexicon = Lexicon.objects.get(lexiconName=body.get('lexicon'))
-        sl.name = body.get('name')
-        if (saved_alphas + len(orig_qs)) > limit and not profile.member:
-            return response(
-                'This list would exceed your total list size limit. You can '
-                'remove this limit by upgrading your membership!',
-                status=400)
+    sl = SavedList.objects.filter(user=request.user,
+                                  lexicon__lexiconName=body.get('lexicon'),
+                                  name=body.get('name'))
+    if len(sl):
+        return response('A list by that name already exists. Please remove '
+                        'that saved list and try again.', status=400)
+
+    sl = SavedList()
+    sl.user = request.user
+    sl.lexicon = Lexicon.objects.get(lexiconName=body.get('lexicon'))
+    sl.name = body.get('name')
+    if (saved_alphas + len(orig_qs)) > limit and not profile.member:
+        return response(
+            'This list would exceed your total list size limit. You can '
+            'remove this limit by upgrading your membership!',
+            status=400)
     sl.numAlphagrams = body.get('numAlphagrams')
     sl.numCurAlphagrams = body.get('numCurAlphagrams')
     sl.numFirstMissed = body.get('numFirstMissed')
@@ -66,15 +71,9 @@ def saved_list_sync(request):
     sl.firstMissed = json.dumps(body.get('firstMissed'))
 
     sl.save()
-    if replacing:
-        resp_text = ('Found a list with name "%s" for lexicon %s, '
-                     'replaced.' % (sl.name, sl.lexicon))
-    else:
-        resp_text = 'Saving a new list with name "%s" for lexicon %s' % (
-            sl.name, sl.lexicon)
-        profile.wordwallsSaveListSize += len(orig_qs)
-        profile.save()
-    return response(resp_text)
+    profile.wordwallsSaveListSize += len(orig_qs)
+    profile.save()
+    return response(sl.to_python())
 
 
 @login_required
@@ -83,9 +82,13 @@ def saved_list(request, id):
         sl = SavedList.objects.get(user=request.user,
                                    id=id)
     except SavedList.DoesNotExist:
-        return response('This list does not exist!', status=404)
+        return response('This list does not exist on the server!', status=404)
     if request.method == 'DELETE':
+        profile = request.user.get_profile()
+        saved_alphas = profile.wordwallsSaveListSize
+        profile.wordwallsSaveListSize = saved_alphas - sl.numAlphagrams
         sl.delete()
+        profile.save()
         return response('OK')
     elif request.method == 'GET':
         # Check 'action'.
@@ -95,7 +98,7 @@ def saved_list(request, id):
             pass
         elif action == 'firstmissed':
             l_obj = sl.to_python()
-            if l_obj['goneThruOnce'] == False:
+            if l_obj['goneThruOnce'] is False:
                 return response('Cannot quiz on first missed unless you have '
                                 'gone through the entire quiz.', status=400)
             # Reset the list object to first missed but don't actually save it.
@@ -119,6 +122,33 @@ def saved_list(request, id):
             l_obj['goneThruOnce'] = False
         logger.debug('Returning response %s' % l_obj)
         return response(l_obj)
+    elif request.method == 'PUT':
+        # Edit a saved list.
+        return edit_saved_list(request, sl)
+
+
+def edit_saved_list(request, sl):
+    """
+    A helper function (not a view) that saves an already existing list
+    with new data and returns an HTTP response.
+    """
+    body = json.loads(request.raw_post_data)
+    orig_qs = body.get('origQuestions')
+    if sl.numAlphagrams != body.get('numAlphagrams'):
+        return response('The alphagrams for this list do not match.',
+                        status=400)
+    sl.numCurAlphagrams = body.get('numCurAlphagrams')
+    sl.numFirstMissed = body.get('numFirstMissed')
+    sl.numMissed = body.get('numMissed')
+    sl.goneThruOnce = body.get('goneThruOnce')
+    sl.questionIndex = body.get('questionIndex')
+    sl.origQuestions = json.dumps(orig_qs)
+    sl.curQuestions = json.dumps(body.get('curQuestions'))
+    sl.missed = json.dumps(body.get('missed'))
+    sl.firstMissed = json.dumps(body.get('firstMissed'))
+    sl.save()
+    return response(sl.to_python())
+
 
 @login_required
 def question_map(request):

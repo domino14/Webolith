@@ -18,6 +18,7 @@ define([
   ACTION_RESET = 'reset';
   ACTION_DELETE = 'delete';
   return Backbone.Model.extend({
+    urlRoot: QUIZ_API_URL,
     initialize: function() {
       /**
        * A map of question IDs to alphagram/word/definition/etc.
@@ -273,9 +274,15 @@ define([
      * @param {Function} fail Gets called if the persist fails.
      */
     persistToServer: function(success, fail) {
-      $.post(QUIZ_API_URL + 'sync/', JSON.stringify(this), function(data) {
-        success(data);
-      }, 'json').fail(fail);
+      this.save(this.toJSON(), {
+        success: success,
+        error: fail,
+        wait: true
+      }).complete(_.bind(function() {
+        // Also save locally on completion of remote sync.
+        this.saveStateLocal_();
+      }, this));
+
     },
     /**
      * Loads quiz from remote storage. Does no confirmation.
@@ -328,7 +335,7 @@ define([
         url: QUESTION_MAP_URL,
         type: 'GET',
         data: {
-          listId: this.get('id'),
+          listId: this.get('id')
         },
         dataType: 'json',
         success: _.bind(function(result) {
@@ -339,7 +346,7 @@ define([
           // Only after the question map is ready can we set the cards.
           this.cards.reset(this.getQuestions_());
           this.trigger('remoteListLoaded');
-        }, this),
+        }, this)
       }).fail(fail);
     }
   });
