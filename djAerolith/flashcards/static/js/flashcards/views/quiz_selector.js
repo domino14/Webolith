@@ -27,7 +27,9 @@ define([
       };
       this.$el.html(Mustache.render(QuizSelectorTemplate, context));
       // Sort descending on time.
-      this.$('#quizzes-table').tablesorter({sortList: [[5,1]]});
+      if (this.quizzes.size()) {
+        this.$('#quizzes-table').tablesorter({sortList: [[5,1]]});
+      }
     },
     addAll: function() {
       /*
