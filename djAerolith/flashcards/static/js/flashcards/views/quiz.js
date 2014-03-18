@@ -272,11 +272,14 @@ define([
         this.trigger('listPersisted', this.wordList);
       }, this),
       _.bind(function(model, jqXHR) {
-        /*this.renderAlert([
-          'Unable to persist to server; perhaps you are not currently ',
-          'connected to the Internet?'
-        ].join(''));*/
-        this.renderAlert(jqXHR.responseJSON);
+        if (jqXHR.responseJSON) {
+          this.renderAlert(jqXHR.responseJSON);
+        } else {
+          this.renderAlert([
+            'Unable to persist to server; perhaps you are not currently ',
+            'connected to the Internet?'
+          ].join(''));
+        }
         this.trigger('displaySpinner', false);
         this.$('#sync').removeAttr('disabled');
       }, this));
