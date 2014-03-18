@@ -146,6 +146,9 @@ define([
         var qId, card;
         qId = orig[qIndex];
         card = _.clone(this.questionMap_[qId]);
+        if (!card) {
+          return;
+        }
         if (_.has(missedDict, qIndex)) {
           card.missed = true;
         }
@@ -194,6 +197,8 @@ define([
       } else if (!missed && found >= 0) {
         // Remove from missed list, make null.
         curMissed[found] = null;
+        // But actually remove this element entirely. Is there a faster way?
+        this.set('missed', _.without(curMissed, null));
       }
       currentCard = this.currentCard();
       if (!currentCard) {
