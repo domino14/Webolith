@@ -7,7 +7,7 @@ define([
       'newquiz': 'newQuiz',
       'help': 'help',
       'remote/:action/:id': 'remoteQuizAction',
-      'continue/local': 'continueQuiz',
+      'continue/local': 'continueLocalQuiz',
       'continue': 'showQuizList'
     }
   });

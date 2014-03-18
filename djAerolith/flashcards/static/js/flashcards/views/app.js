@@ -26,6 +26,8 @@ define([
         this.displaySpinner_, this));
       this.listenTo(this.quiz, 'removeQuiz', _.bind(
         this.quizSelector.removeQuiz, this.quizSelector));
+      this.listenTo(this.quiz, 'listPersisted', _.bind(
+        this.quizSelector.addToRemotes, this.quizSelector));
     },
     events: {
       'click #load-prob': 'loadByProbability'
@@ -57,7 +59,7 @@ define([
       this.quiz.renderAlert(jqXHR.responseJSON);
     },
     newQuiz: function() {
-      this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {}));
+      this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {})).show();
       this.$('#card-area').hide();
       this.$('#quiz-selector').hide();
     },
@@ -73,6 +75,7 @@ define([
      */
     showQuizList: function() {
       this.$('#quiz-selector').show();
+      this.quizSelector.render();
       this.$('#card-area').hide();
       this.$('#card-setup').hide();
     },
