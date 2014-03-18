@@ -41,25 +41,14 @@ define([
   'underscore',
   'backbone',
   'views/app',
-  'router',
   'csrfAjax',
   'bootstrap'
-], function (module, $, _, Backbone, App, Router) {
+], function (module, $, _, Backbone, App) {
   "use strict";
-  var router, app;
-  location.hash = '';
+  var app;
   app = new App({
     el: $('#app-view'),
     numCards: module.config().numCards,
     quizzes: JSON.parse(module.config().quizzes)
   });
-
-  router = new Router();
-  Backbone.history.start({
-    root: '/cards'
-  });
-  router.on('route:newQuiz', _.bind(app.newQuiz, app));
-  router.on('route:continueQuiz', _.bind(app.continueQuiz, app));
-  router.on('route:showQuizList', _.bind(app.showQuizList, app));
-  router.on('route:remoteQuizAction', _.bind(app.loadRemoteQuiz, app));
 });

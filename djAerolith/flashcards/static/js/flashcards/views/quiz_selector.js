@@ -19,13 +19,17 @@ define([
     },
     render: function() {
       var context;
+      // Reload local wordlist.
+      this.localList.loadFromLocal();
       context = {
         local: this.localList.toJSON(),
         quizzes: this.quizzes.toJSON()
       };
       this.$el.html(Mustache.render(QuizSelectorTemplate, context));
       // Sort descending on time.
-      this.$('#quizzes-table').tablesorter({sortList: [[4,1]]});
+      if (this.quizzes.size()) {
+        this.$('#quizzes-table').tablesorter({sortList: [[5,1]]});
+      }
     },
     addAll: function() {
       /*
@@ -46,7 +50,21 @@ define([
     removeQuiz: function(quizId) {
       this.quizzes.remove(this.quizzes.get(quizId));
       this.render();
+    },
+    /**
+     * Adds the word list to the remote quiz list. This is so that the
+     * user doesn't have to refresh after finishing a quiz, to see the
+     * most recently persisted quiz in the list.
+     * @param {Object} wordList The word list.
+     */
+    addToRemotes: function(wordList) {
+      var quiz = this.quizzes.get(wordList);
+      if (!quiz) {
+        this.quizzes.add(wordList);
+      } else {
+        quiz.set(wordList.toJSON());
+      }
+      this.render();
     }
-
   });
 });

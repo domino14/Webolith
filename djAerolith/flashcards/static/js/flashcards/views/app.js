@@ -3,16 +3,19 @@ define([
   'underscore',
   'jquery',
   'mustache',
+  'router',
   'views/quiz',
   'views/quiz_selector',
   'text!templates/new_quiz.html'
-], function(Backbone, _, $, Mustache, Quiz, QuizSelector, NewQuizTemplate) {
+], function(Backbone, _, $, Mustache, Router, Quiz, QuizSelector,
+    NewQuizTemplate) {
   "use strict";
   var App, NEW_QUIZ_URL, SCHEDULED_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
   SCHEDULED_URL = '/cards/api/scheduled';
   App = Backbone.View.extend({
     initialize: function(options) {
+      var router;
       this.numCards = options.numCards;
       this.quiz = new Quiz({
         el: $('#card-area')
@@ -26,6 +29,18 @@ define([
         this.displaySpinner_, this));
       this.listenTo(this.quiz, 'removeQuiz', _.bind(
         this.quizSelector.removeQuiz, this.quizSelector));
+      this.listenTo(this.quiz, 'listPersisted', _.bind(
+        this.quizSelector.addToRemotes, this.quizSelector));
+      // Set up router.
+      location.hash = '';
+      router = new Router();
+      Backbone.history.start({
+        root: '/cards'
+      });
+      router.on('route:newQuiz', _.bind(this.newQuiz, this));
+      router.on('route:continueLocalQuiz', _.bind(this.continueQuiz, this));
+      router.on('route:showQuizList', _.bind(this.showQuizList, this));
+      router.on('route:remoteQuizAction', _.bind(this.loadRemoteQuiz, this));
     },
     events: {
       'click #load-prob': 'loadByProbability'
@@ -57,7 +72,7 @@ define([
       this.quiz.renderAlert(jqXHR.responseJSON);
     },
     newQuiz: function() {
-      this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {}));
+      this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {})).show();
       this.$('#card-area').hide();
       this.$('#quiz-selector').hide();
     },
@@ -73,6 +88,7 @@ define([
      */
     showQuizList: function() {
       this.$('#quiz-selector').show();
+      this.quizSelector.render();
       this.$('#card-area').hide();
       this.$('#card-setup').hide();
     },

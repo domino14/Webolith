@@ -13,9 +13,10 @@ define([
   'text!templates/card_back.html',
   'text!templates/card_info.html',
   'text!templates/quiz_header.html',
+  'text!templates/save_success.html',
   'text!templates/alert.html'
 ], function(Backbone, _, WordList, Mustache, CardTemplate, CardFront,
-  CardBack, CardInfo, QuizHeader, Alert) {
+  CardBack, CardInfo, QuizHeader, SaveSuccess, Alert) {
   "use strict";
   var LOAD_ACTIONS;
   LOAD_ACTIONS = {
@@ -256,18 +257,29 @@ define([
      * Saves quiz info to remote server. Can fail.
      */
     sync: function() {
+      var isNew;
       this.trigger('displaySpinner', true);
       this.$('#sync').attr('disabled', true);
-      this.wordList.persistToServer(_.bind(function(data) {
-        this.renderAlert(data, true);
+      isNew = this.wordList.isNew();
+      this.wordList.persistToServer(_.bind(function() {
+        this.renderAlert(Mustache.render(SaveSuccess, {
+          isNew: isNew,
+          name: this.wordList.get('name'),
+          lexicon: this.wordList.get('lexicon')
+        }), true);
         this.trigger('displaySpinner', false);
         this.$('#sync').removeAttr('disabled');
+        this.trigger('listPersisted', this.wordList);
       }, this),
-      _.bind(function() {
-        this.renderAlert([
-          'Unable to persist to server; perhaps you are not currently ',
-          'connected to the Internet?'
-        ].join(''));
+      _.bind(function(model, jqXHR) {
+        if (jqXHR.responseJSON) {
+          this.renderAlert(jqXHR.responseJSON);
+        } else {
+          this.renderAlert([
+            'Unable to persist to server; perhaps you are not currently ',
+            'connected to the Internet?'
+          ].join(''));
+        }
         this.trigger('displaySpinner', false);
         this.$('#sync').removeAttr('disabled');
       }, this));
