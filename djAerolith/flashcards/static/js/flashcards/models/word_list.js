@@ -11,7 +11,7 @@ define([
   "use strict";
   var QUIZ_API_URL, QUESTION_MAP_URL, ACTION_FIRST_MISSED, ACTION_CONTINUE,
     ACTION_RESET, ACTION_DELETE;
-  QUIZ_API_URL = '/base/api/saved_list/';
+  QUIZ_API_URL = '/base/api/saved_list';
   QUESTION_MAP_URL = '/base/api/question_map/';
   ACTION_FIRST_MISSED = 'firstmissed';
   ACTION_CONTINUE = 'continue';
