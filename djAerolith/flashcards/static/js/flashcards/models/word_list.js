@@ -249,6 +249,7 @@ define([
       this.set('curQuestions', missedIndices);
       this.set('numCurAlphagrams', _.size(missedIndices));
       this.set('missed', []);
+      this.set('numMissed', 0);
       this.trigger('quizEnded');
     },
     /**

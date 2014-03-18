@@ -222,7 +222,10 @@ define([
      * Render card information.
      */
     renderCardInfo: function() {
-      this.cardInfo.html(Mustache.render(CardInfo, {}));
+      this.cardInfo.html(Mustache.render(CardInfo, {
+        missed: _.size(this.wordList.get('missed')),
+        total: _.size(this.wordList.get('curQuestions'))
+      }));
       this.quizInfo.html(Mustache.render(QuizHeader, {
         quizName: this.quizName
       }));
