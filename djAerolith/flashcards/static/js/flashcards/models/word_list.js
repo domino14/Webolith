@@ -9,14 +9,15 @@ define([
   'collections/cards'
 ], function(_, Backbone, $, Cards) {
   "use strict";
-  var QUIZ_API_URL, QUESTION_MAP_URL, ACTION_FIRST_MISSED, ACTION_CONTINUE,
-    ACTION_RESET, ACTION_DELETE;
+  var QUIZ_API_URL, QUESTION_MAP_URL, Actions;
   QUIZ_API_URL = '/base/api/saved_list';
   QUESTION_MAP_URL = '/base/api/question_map/';
-  ACTION_FIRST_MISSED = 'firstmissed';
-  ACTION_CONTINUE = 'continue';
-  ACTION_RESET = 'reset';
-  ACTION_DELETE = 'delete';
+  Actions = {
+    FIRST_MISSED: 'firstmissed',
+    CONTINUE: 'continue',
+    RESET: 'reset',
+    DELETE: 'delete'
+  };
   return Backbone.Model.extend({
     urlRoot: QUIZ_API_URL,
     initialize: function() {
@@ -293,14 +294,14 @@ define([
      */
     loadFromRemote: function(action, id, fail) {
       var url, type;
-      url = QUIZ_API_URL + id + '/';
-      if (action === ACTION_DELETE) {
+      url = QUIZ_API_URL + '/' + id;
+      if (action === Actions.DELETE) {
         type = 'DELETE';
       } else {
         type = 'GET';
       }
       function shouldShuffle(action) {
-        if (action === ACTION_FIRST_MISSED || action === ACTION_RESET) {
+        if (action === Actions.FIRST_MISSED || action === Actions.RESET) {
           return true;
         }
         return false;
@@ -308,10 +309,10 @@ define([
       $.ajax({
         url: url,
         type: type,
-        data: action !== ACTION_DELETE ? {action: action} : null,
+        data: action !== Actions.DELETE ? {action: action} : null,
         dataType: 'json',
         success: _.bind(function(result) {
-          if (action === ACTION_DELETE) {
+          if (action === Actions.DELETE) {
             this.trigger('remoteListDeleted', id);
             return;
           }

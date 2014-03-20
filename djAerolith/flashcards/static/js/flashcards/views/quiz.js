@@ -18,13 +18,6 @@ define([
 ], function(Backbone, _, WordList, Mustache, CardTemplate, CardFront,
   CardBack, CardInfo, QuizHeader, SaveSuccess, Alert) {
   "use strict";
-  var LOAD_ACTIONS;
-  LOAD_ACTIONS = {
-    CONTINUE: 'continue',
-    FIRST_MISSED: 'firstmissed',
-    RESET: 'reset',
-    DELETE: 'delete'
-  };
   return Backbone.View.extend({
     initialize: function() {
       this.wordList = new WordList();
