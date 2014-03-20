@@ -7,6 +7,7 @@ define([
   'backbone',
   'underscore',
   'models/word_list',
+  'views/prev_cards',
   'mustache',
   'text!templates/card.html',
   'text!templates/card_front.html',
@@ -15,7 +16,7 @@ define([
   'text!templates/quiz_header.html',
   'text!templates/save_success.html',
   'text!templates/alert.html'
-], function(Backbone, _, WordList, Mustache, CardTemplate, CardFront,
+], function(Backbone, _, WordList, PrevCards, Mustache, CardTemplate, CardFront,
   CardBack, CardInfo, QuizHeader, SaveSuccess, Alert) {
   "use strict";
   return Backbone.View.extend({
@@ -33,6 +34,10 @@ define([
       this.quizOver = false;
       this.quizName = '';
       this.viewingFront = null;
+      this.prevCards = new PrevCards({
+        el: this.$('#prev-card-info'),
+        model: this.wordList
+      });
     },
     events: {
       'click .solve': 'showCardBack',
@@ -117,6 +122,7 @@ define([
       this.quizOver = false;
       this.alertHolder.empty();
       this.showCurrentCard();
+      this.prevCards.render();
     },
     /**
      * Shows current card front.
@@ -192,6 +198,7 @@ define([
     advanceCard: function() {
       this.wordList.advanceCard();
       this.showCurrentCard();
+      this.prevCards.render();
     },
     /**
      * Show previous card.
@@ -199,6 +206,7 @@ define([
     previousCard: function() {
       this.wordList.previousCard();
       this.showCurrentCard();
+      this.prevCards.render();
     },
     /**
      * Flip card to front or back. Equivalent to clicking solve button when
