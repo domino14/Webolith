@@ -56,7 +56,7 @@ class Command(BaseCommand):
                     profile = lbes[i].user.get_profile()
                     try:
                         userMedals = json.loads(profile.wordwallsMedals)
-                    except TypeError:
+                    except (TypeError, ValueError):
                         userMedals = {'medals': {}}
                     if 'medals' not in userMedals:
                         userMedals = {'medals': {}}
