@@ -132,6 +132,7 @@ define([
       currentCard = this.wordList.currentCard();
       if (!currentCard) {
         this.showQuizOver();
+        this.renderCardInfo();
         return;
       }
       this.viewingFront = true;
