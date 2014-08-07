@@ -15,13 +15,18 @@ define([
      * @param  {Backbone.Model} wordList An instance of the WordList model.
      */
     render: function() {
-      var context, currentIndex, i;
+      var context, currentIndex, i, card, attrs;
       currentIndex = this.model.get('questionIndex');
       context = [];
       for (i = currentIndex - 1;
            i >= _.max([currentIndex - NUM_PREV_CARDS, 0]);
            i--) {
-        context.push(this.model.cards.at(i).attributes);
+        card = this.model.cards.at(i);
+        if (card) {
+          attrs = card.attributes;
+          attrs.numAnswers = attrs.answers.length;
+          context.push(card.attributes);
+        }
       }
       this.$el.html(Mustache.render(PreviousCards, {'cards': context}));
       return this;
