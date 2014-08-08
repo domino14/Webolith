@@ -1,4 +1,4 @@
-Aerolith 2.0 is a word study website - Copyright 2007, 2008, 2009, 2010, 2011, 2012, 2013 Cesar Del Solar
+Aerolith 2.0 is a word study website - Copyright 2007-2014 Cesar Del Solar
 
 =======
 
