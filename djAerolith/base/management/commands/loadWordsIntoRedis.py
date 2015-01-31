@@ -8,6 +8,7 @@ import json
 INCLUDE_LEX = [4, 6]        # 4 - OWL2, 6 - CSW12
 FETCH_MANY_SIZE = 1000
 
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         # Deal with raw db query rather than the ORM as it's much slower.

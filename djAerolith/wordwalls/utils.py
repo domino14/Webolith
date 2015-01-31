@@ -1,10 +1,7 @@
 import wordwalls.settings
 from base.models import alphagrammize
-import redis
 import logging
-from base.models import Alphagram
 logger = logging.getLogger(__name__)
-from django.conf import settings
 import time
 from django.db import connection
 FETCH_MANY_SIZE = 1000

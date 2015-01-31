@@ -1,9 +1,9 @@
 from base.models import SavedList
 import json
-import redis
-from django.conf import settings
 import logging
 logger = logging.getLogger(__name__)
+from django.db import connection
+FETCH_MANY_SIZE = 1000
 
 
 def alpha_pk_to_python(pk, question, answers):
@@ -35,27 +35,34 @@ def generate_question_map(alphs):
         Generates a question map from a list of alphagram pks.
     """
     q_map = {}
-    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
-                    db=settings.REDIS_ALPHAGRAM_SOLUTIONS_DB)
-    pipe = r.pipeline()
-    counter = 0
-    results = []
-    # Fetch 1000 at a time for speed.
-    logger.debug('Iterating through indices.')
-    for pk in alphs:
-        pipe.lrange(pk, 0, -1)
-        counter += 1
-        if counter % 1000 == 0:
-            results.extend(pipe.execute())
-            pipe = r.pipeline()
-    results.extend(pipe.execute())
-    logger.debug('Got %s results' % len(results))
-    for idx, result in enumerate(results):
-        question = json.loads(result[0])
-        # alphs and results are in the same order. (Or they damn better be).
-        pk = alphs[idx]
-        q_map[pk] = alpha_pk_to_python(pk, question, result[1:])
-    logger.debug('Created map.')
+    # XXX: Database-specific code for speed. This might work with Postgres too.
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
+        'back_hooks, base_alphagram.alphagram, base_alphagram.probability '
+        'FROM base_word INNER JOIN base_alphagram ON '
+        'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
+        'base_alphagram.probability_pk in %s' % str(tuple(alphs))
+    )
+    rows = cursor.fetchmany(FETCH_MANY_SIZE)
+    while rows:
+        for row in rows:
+            alph_pk = row[1]
+            if alph_pk not in q_map:
+                q_map[alph_pk] = {
+                    'question': row[6],
+                    'probability': row[7],
+                    'id': alph_pk,
+                    'answers': []
+                }
+            q_map[alph_pk]['answers'].append({
+                'word': row[0],
+                'def': row[3],
+                'f_hooks': row[4],
+                'b_hooks': row[5],
+                'symbols': row[2]
+            })
+        rows = cursor.fetchmany(FETCH_MANY_SIZE)
     return q_map
 
 
