@@ -12,7 +12,7 @@ markup==0.2
 gunicorn==19.2.1
 paramiko==1.7.7.1
 pycrypto==2.3
-python-dateutil==2.0
+python-dateutil==2.4.0
 recaptcha-client==1.0.6
 webassets==0.5
 wsgiref==0.1.2
