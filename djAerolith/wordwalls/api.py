@@ -12,7 +12,7 @@ from wordwalls.views import getLeaderboardData
 
 
 def configure(request):
-    prefs = json.loads(request.raw_post_data)
+    prefs = json.loads(request.body)
     if request.method == "POST":
         saveObj = {'tc': {}, 'bc': {}}
         saveObj['tc'] = {'on': prefs['tilesOn'],

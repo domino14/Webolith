@@ -10,13 +10,13 @@
 
 {% endblock %}
 
-{% load markup %}
+{% load aerolith_markup %}
 {% block content %}
 <div class="row">
     <div class="col-sm-9">
         <div id="profile">
           <H2>Profile</H2>
-        {{profile.profile|markdown:"safe"}}
+        {{profile.profile|my_markdown:"safe"}}
         </div>
     </div>
     <div class="col-sm-3">

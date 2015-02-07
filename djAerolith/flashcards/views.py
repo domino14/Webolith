@@ -66,7 +66,7 @@ def new_quiz(request):
         Creates a new quiz but doesn't create any 'card' models.
         Card models will only be used for cardbox in future.
     """
-    body = json.loads(request.raw_post_data)
+    body = json.loads(request.body)
     params = validate_params(body['min'], body['max'], body['length'],
                              body['lex'])
     if isinstance(params, basestring):
@@ -90,7 +90,7 @@ def new_quiz(request):
 
 # @login_required
 # def load_into_cardbox(request):
-#     body = json.loads(request.raw_post_data)
+#     body = json.loads(request.body)
 #     lexicon = Lexicon.objects.get(lexiconName=body['lex'].upper())
 #     min_pk = alphProbToProbPK(int(body['min']), lexicon.pk,
 #                               int(body['length']))

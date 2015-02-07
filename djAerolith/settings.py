@@ -129,7 +129,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.comments',
-    'django.contrib.markup',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     #'basic.blog',
@@ -148,7 +147,6 @@ INSTALLED_APPS = (
     'quackleInterface',
     'crosswordgame',
     'gargoyle',
-    'nexus',
     'flashcards'
     #'debug_toolbar',
     #'locking'
@@ -289,3 +287,5 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 SESSION_IDLE_TIMEOUT = SESSION_COOKIE_AGE
 # This ensures session won't ever expire in the middle of a quiz.
 # Also ask them to log in once a month.
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
