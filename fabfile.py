@@ -18,7 +18,7 @@ env.roledefs = {
 
 @roles('prod')
 def deploy_prod():
-    with cd("Webolith"):
+    with cd("webolith"):
         run("git pull")
         with cd("djAerolith"):
             # Deploy JS build.
@@ -61,12 +61,12 @@ def deploy_js_build():
         with cd("static"):
             run("mkdir build")
     put(os.path.join(curdir, 'djAerolith', 'static/build/*.gz'),
-        '/home/ubuntu/Webolith/djAerolith/static/build/')
+        '/home/ubuntu/webolith/djAerolith/static/build/')
 
 
 @roles('prod')
 def prod_fixtures():
-    with cd("Webolith"):
+    with cd("webolith"):
         with cd("djAerolith"):
             with prefix("workon aeroenv"):
                 run("python manage.py loaddata dcNames")
@@ -74,7 +74,7 @@ def prod_fixtures():
 
 @roles('prod')
 def restart_node():
-    with cd("Webolith"):
+    with cd("webolith"):
         run("git pull")
         with cd("node"):
             with prefix("workon aeroenv"):
