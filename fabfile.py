@@ -9,8 +9,9 @@ print curdir
 
 env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
-    'prod': ['ubuntu@192.241.203.184'],
-    'prod_redis': ['ubuntu@192.241.203.24'],
+    'prod': [
+        #'ubuntu@192.241.203.184',
+        'ubuntu@104.236.137.163'],
     'prod_db': ['ubuntu@192.241.203.48']
 
 }
@@ -95,7 +96,7 @@ def deploy_firewalls():
     execute(deploy_all_firewalls, servers)
 
 
-@roles('prod', 'prod_db', 'prod_redis')
+@roles('prod', 'prod_db')
 def deploy_all_firewalls(servers):
     secGroup = None
     if env.host_string in env.roledefs['prod']:
