@@ -270,7 +270,6 @@ class WordwallsGame(object):
             numFirstMissed,
             firstMissedStr,
             **addlParams)
-
         wgm.save()
         wgm.inTable.add(user)
 

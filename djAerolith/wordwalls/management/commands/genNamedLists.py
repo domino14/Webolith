@@ -6,8 +6,8 @@ from wordwalls.models import NamedList
 import json
 import time
 import re
-import redis
 from django.conf import settings
+from django.db import connection
 
 
 friendlyNumberMap = {
@@ -36,19 +36,18 @@ FRIENDLY_COMMON_LONG = 'Common Long Words (greater than 8 letters)'
 
 def get_alphagrams(min_pk, max_pk):
     """
-    Get all alphagrams between min and max pk through a fast Redis query.
+    Get all alphagrams between min and max pk through a fast query.
 
     Returns a list of tuples: (pk, alphagram).
 
     """
-    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
-                    db=settings.REDIS_ALPHAGRAM_SOLUTIONS_DB)
-    pipe = r.pipeline()
-    for p in range(min_pk, max_pk+1):
-        pipe.lrange(p, 0, -1)
-    alphas = pipe.execute()
-    return [(pk + min_pk, json.loads(a[0]).get('question'))
-            for pk, a in enumerate(alphas)]
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT probability_pk, alphagram FROM base_alphagram WHERE '
+        'probability_pk BETWEEN %s and %s' % (min_pk, max_pk)
+    )
+    rows = cursor.fetchall()
+    return rows
 
 
 def get_words(min_alpha_pk, max_alpha_pk):
@@ -59,18 +58,34 @@ def get_words(min_alpha_pk, max_alpha_pk):
     hash containing lexicon info, the word, etc.
 
     """
-    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
-                    db=settings.REDIS_ALPHAGRAM_SOLUTIONS_DB)
-    pipe = r.pipeline()
-    for p in range(min_alpha_pk, max_alpha_pk+1):
-        pipe.lrange(p, 0, -1)
-    alphas = pipe.execute()
     ret_list = []
-    for pk, info in enumerate(alphas):
-        # The words are in elements info[1:]
-        ret_list.append(
-            (pk + min_alpha_pk,
-             [json.loads(i) for i in info[1:]]))
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
+        'back_hooks, base_alphagram.alphagram, base_alphagram.probability '
+        'FROM base_word INNER JOIN base_alphagram ON '
+        'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
+        'base_alphagram.probability_pk BETWEEN %s and %s '
+        'ORDER BY alphagram_id' % (min_alpha_pk, max_alpha_pk)
+    )
+    rows = cursor.fetchall()
+    last_alpha_id = None
+    cur_words = []
+    for row in rows:
+        alpha_id = row[1]
+        if alpha_id != last_alpha_id and last_alpha_id is not None:
+            # Alphagram changed, append current word set and start a new one.
+            ret_list.append((last_alpha_id, cur_words))
+            cur_words = []
+        cur_words.append({
+                         'symbols': row[2],
+                         'def': row[3],
+                         'f_hooks': row[4],
+                         'b_hooks': row[5],
+                         'word': row[0]
+                         })
+        last_alpha_id = alpha_id
+    ret_list.append((last_alpha_id, cur_words))
     return ret_list
 
 
@@ -228,15 +243,17 @@ def create_common_words_list(lname, friendly_name):
     words = f.read()
     f.close()
     words = words.split('\n')
-    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT,
-                    db=settings.REDIS_ALPHAGRAMS_DB)
-    pipe = r.pipeline()
-    for word in words:
-        alpha = alphagrammize(word)
-        pipe.get('%s:%s' % (alpha, OWL2_LEX_INDEX))
-    pks = pipe.execute()
-
-    pks = [int(pk) for pk in pks]
+    alphs = set([alphagrammize(word) for word in words])
+    cursor = connection.cursor()
+    cursor.execute(
+        'SELECT probability_pk FROM base_alphagram '
+        'WHERE lexicon_id = %s AND alphagram in %s' %
+        (OWL2_LEX_INDEX, str(tuple(alphs)))
+    )
+    rows = cursor.fetchall()
+    pks = []
+    for row in rows:
+        pks.append(row[0])
     nl = NamedList(lexicon=Lexicon.objects.get(lexiconName='OWL2'),
                    numQuestions=len(pks),
                    wordLength=0,
