@@ -18,11 +18,10 @@
 
 # Create your views here.
 from django.http import Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
-from django.template import RequestContext
 from base.models import Lexicon, alphProbToProbPK, SavedList
 from django.contrib.auth.decorators import login_required
 import json
@@ -38,7 +37,6 @@ from django.conf import settings
 import wordwalls.settings
 import base.settings
 import os
-from django.middleware.csrf import get_token
 import random
 import logging
 from lib.response import response
@@ -73,36 +71,34 @@ def homepage(request):
 
     lengthCounts = dict([(l.lexiconName, l.lengthCounts)
                         for l in Lexicon.objects.all()])
-
-    ctx = RequestContext(request, {'csrf_token': get_token(request)})
     # Create a random token for socket connection and store in Redis
     # temporarily.
-    conn_token = get_connection_token(request.user)
+    # conn_token = get_connection_token(request.user)
     profile = request.user.get_profile()
     try:
         data = json.loads(profile.additional_data)
     except (TypeError, ValueError):
         data = {}
-    return render_to_response(
+    return render(
+        request,
         'wordwalls/index.html',
         {'fwForm': fwForm,
-        'dcForm': dcForm,
-        'challengeTypes': [(n.pk, n.name) for n in
-                           DailyChallengeName.objects.all()],
-        'ulForm': ulForm,
-        'slForm': slForm,
-        'lexForm': lexForm,
-        'timeForm': timeForm,
-        'nlForm': nlForm,
-        'lengthCounts': json.dumps(lengthCounts),
-        'upload_list_limit': wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
-        'dcTimes': json.dumps(dcTimeMap),
-        'defaultLexicon': profile.defaultLexicon,
-        'connToken': conn_token,
-        'chatEnabled': not data.get('disableChat', False),
-        'socketUrl': settings.SOCKJS_SERVER,
-        'CURRENT_VERSION': CURRENT_VERSION},
-        context_instance=ctx)
+         'dcForm': dcForm,
+         'challengeTypes': [(n.pk, n.name) for n in
+                            DailyChallengeName.objects.all()],
+         'ulForm': ulForm,
+         'slForm': slForm,
+         'lexForm': lexForm,
+         'timeForm': timeForm,
+         'nlForm': nlForm,
+         'lengthCounts': json.dumps(lengthCounts),
+         'upload_list_limit': wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
+         'dcTimes': json.dumps(dcTimeMap),
+         'defaultLexicon': profile.defaultLexicon,
+         # 'connToken': conn_token,
+         'chatEnabled': not data.get('disableChat', False),
+         'socketUrl': settings.SOCKJS_SERVER,
+         'CURRENT_VERSION': CURRENT_VERSION})
 
 
 def get_dc_results(user, post):
@@ -209,7 +205,6 @@ def saved_lists_submit(user, post):
                                   'a word list and a time greater than '
                                   '1 minute.'})
 
-
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
     quizTime = int(
@@ -247,7 +242,6 @@ def named_lists_submit(user, post):
                                   'list and that your quiz time is greater '
                                   'than 1 minute.'})
 
-
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
     quizTime = int(
@@ -280,7 +274,7 @@ def handle_homepage_post(profile, request):
         'getSavedListList': get_saved_lists,
         'getNamedListList': get_named_lists,
         'getSavedListNumAlphas': lambda x, y: response({'na': numAlphas,
-                                                     'l': limit}),
+                                                        'l': limit}),
         'challengeSubmit': challenge_submit,
         'searchParamsSubmit': search_params_submit,
         'savedListsSubmit': saved_lists_submit,
@@ -358,18 +352,17 @@ def table(request, id):
             except:
                 pass
 
-            return render_to_response('wordwalls/table.html',
-                                      {'tablenum': id,
-                                       'username': request.user.username,
-                                       'addParams': json.dumps(params),
-                                       'avatarUrl': profile.avatarUrl,
-                                       'CURRENT_VERSION': CURRENT_VERSION
-                                       },
-                                      context_instance=RequestContext(request))
+            return render(request, 'wordwalls/table.html',
+                          {'tablenum': id,
+                           'username': request.user.username,
+                           'addParams': json.dumps(params),
+                           'avatarUrl': profile.avatarUrl,
+                           'CURRENT_VERSION': CURRENT_VERSION
+                           })
+
         else:
-            return render_to_response('wordwalls/notPermitted.html',
-                                      {'tablenum': id},
-                                      context_instance=RequestContext(request))
+            return render(request, 'wordwalls/notPermitted.html',
+                          {'tablenum': id})
 
 
 def start_game(request, id):
@@ -552,7 +545,7 @@ def pretty_date(now, time):
         if second_diff < 60:
             return str(second_diff) + " seconds ago"
         if second_diff < 120:
-            return  "a minute ago"
+            return "a minute ago"
         if second_diff < 3600:
             return str(second_diff / 60) + " minutes ago"
         if second_diff < 7200:
@@ -622,6 +615,3 @@ def mark_missed(request, id):
     wwg = WordwallsGame()
     marked = wwg.mark_missed(request.POST['idx'], id, request.user)
     return response({'success': marked})
-
-
-

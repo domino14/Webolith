@@ -1,11 +1,10 @@
 import wordwalls.settings
 from base.models import alphagrammize
-import redis
 import logging
-from base.models import Alphagram
 logger = logging.getLogger(__name__)
-from django.conf import settings
 import time
+from django.db import connection
+FETCH_MANY_SIZE = 1000
 
 
 class UserListParseException(Exception):
@@ -30,37 +29,23 @@ def get_alphas_from_words(file_contents):
 
 
 def get_pks_from_alphas(alphas, lex_id):
-    pk_list = []
-    r = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
-    pipe = r.pipeline()
-    start = time.time()
-    for alphagram in alphas:
-        key = '%s:%s' % (alphagram, lex_id)
-        pipe.get(key)
-    try:
-        pk_list_copy = pipe.execute()
-    except redis.exceptions.ConnectionError:
-        # Fall-back to database and log an error.
-        logger.error("Redis seems to be down!")
-        pk_list_copy = get_pks_from_alphas_orm(alphas, lex_id)
-    addl_msg = ""
-
-    for pk in pk_list_copy:
-        if pk:
-            pk_list.append(int(pk))
-        else:
-            addl_msg = ("Could not process all your alphagrams. "
-                        "(Did you choose the right lexicon?)")
-    logger.debug("Elapsed %s" % (time.time() - start))
-    return pk_list, addl_msg
+    return get_pks_from_alphas_db(alphas, lex_id), ''
 
 
-def get_pks_from_alphas_orm(alphas, lex_id):
+def get_pks_from_alphas_db(alphas, lex_id):
     logger.debug('Falling back to database..')
     start = time.time()
     pks = []
-    for alpha in alphas:
-        alpha_inst = Alphagram.objects.get(alphagram=alpha, lexicon__pk=lex_id)
-        pks.append(alpha_inst.probability_pk)
-    logger.debug("Elapsed -- %s" % (time.time() - start))
+    cursor = connection.cursor()
+    # XXX: Could this be vulnerable to SQL injection? The alphagrams are
+    # actually alphagrams :P
+    cursor.execute(
+        'SELECT probability_pk FROM base_alphagram WHERE '
+        'alphagram IN %s AND lexicon_id = %s' % (str(tuple(alphas)), lex_id))
+    rows = cursor.fetchmany(FETCH_MANY_SIZE)
+    while rows:
+        for row in rows:
+            pks.append(row[0])
+        rows = cursor.fetchmany(FETCH_MANY_SIZE)
+    logger.debug("DB - Elapsed %s" % (time.time() - start))
     return pks

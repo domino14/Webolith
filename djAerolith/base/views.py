@@ -25,6 +25,7 @@ from lib.response import response
 import base.settings
 import json
 import logging
+import time
 from base.utils import generate_question_map
 logger = logging.getLogger(__name__)
 
@@ -161,7 +162,8 @@ def question_map(request):
         return response('This list does not exist!', status=404)
 
     qs = json.loads(sl.origQuestions)
+    t1 = time.time()
     logger.debug('Generating question map for %s questions.' % len(qs))
     map = generate_question_map(qs)
-    logger.debug('Map generated, returning.')
+    logger.debug('Map generated, returning. Time: %s s.' % (time.time() - t1))
     return response(map)
