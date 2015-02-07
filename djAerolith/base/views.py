@@ -37,7 +37,7 @@ def saved_list_sync(request):
     """
     if request.method != 'POST':
         return response('This endpoint only accepts a POST.', status=400)
-    body = json.loads(request.raw_post_data)
+    body = json.loads(request.body)
     profile = request.user.get_profile()
     saved_alphas = profile.wordwallsSaveListSize
     limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
@@ -133,7 +133,7 @@ def edit_saved_list(request, sl):
     A helper function (not a view) that saves an already existing list
     with new data and returns an HTTP response.
     """
-    body = json.loads(request.raw_post_data)
+    body = json.loads(request.body)
     orig_qs = body.get('origQuestions')
     if sl.numAlphagrams != body.get('numAlphagrams'):
         return response('The alphagrams for this list do not match.',

@@ -16,18 +16,16 @@
 
 # To contact the author, please email delsolar at gmail dot com
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.backends.simple.views import RegistrationView
 
-import nexus
 import gargoyle
 
 admin.autodiscover()
-nexus.autodiscover()
 gargoyle.autodiscover()
 
 
@@ -58,8 +56,7 @@ urlpatterns = patterns('',
     (r'^cards/', include('flashcards.urls')),
     (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
-    (r'^base/', include('base.urls')),
-    ('^nexus/', include(nexus.site.urls))
+    (r'^base/', include('base.urls'))
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
