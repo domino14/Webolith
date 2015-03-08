@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Aerolith 2.0: A web-based word game website
 # Copyright (C) 2011 Cesar Del Solar
 #
@@ -16,7 +17,6 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-#!/usr/bin/env python
 import os, sys
 
 if __name__ == "__main__":
