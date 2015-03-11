@@ -43,9 +43,9 @@ def create_js_build():
         Uses r.js to generate a build.
     """
     with lcd(os.path.join(curdir, 'djAerolith')):
-        local("node r.js -o js_build/create_table_wordwalls.js")
-        local("node r.js -o js_build/table_wordwalls.js")
-        local("node r.js -o js_build/flashcards.js")
+        local("nodejs r.js -o js_build/create_table_wordwalls.js")
+        local("nodejs r.js -o js_build/table_wordwalls.js")
+        local("nodejs r.js -o js_build/flashcards.js")
         with settings(warn_only=True):
             local("rm static/build/*.gz")
         local("gzip -c static/build/table-main-built.js > "
