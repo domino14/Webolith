@@ -236,6 +236,8 @@ void LexiconMap::createMap()
                                     "Collins 2012 International English Word List"));
     /* my lexicon indices are 4 and 5 because that's the way they first got made, and if I change them now
        in production it'll screw everything up (saved lists) */
+    map.insert("America", LexiconInfo("America", "America.txt", englishLetterDist,
+                                    "America.trie", "America_r.trie", 7, "I am America, and so can you."));
 
    /* map.insert("FISE", LexiconInfo("FISE", "fise.txt", spanishLetterDist, "fise.trie", "fise-r.trie"));
     map.insert("OSPD4+LWL", LexiconInfo("OSPD4+LWL", "ospd4-lwl.txt", englishLetterDist,

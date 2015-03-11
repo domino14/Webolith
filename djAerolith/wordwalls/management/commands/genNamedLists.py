@@ -218,6 +218,20 @@ def create_wl_lists(i, lex):
 
         nl.save()
 
+    if lex.lexiconName == 'America':
+        pks = get_pks_by_word_condition(
+            minProbPk, maxProbPk,
+            lambda w: (w.get('symbols') == '+'))
+
+        nl = NamedList(lexicon=lex,
+                       numQuestions=len(pks),
+                       wordLength=i,
+                       isRange=False,
+                       questions=json.dumps(pks),
+                       name='America ' + friendlyNumberMap[i] + ' not in OWL2')
+
+        nl.save()
+
 
 def createNamedLists(lex):
     """Create the lists for every word length, given a lexicon."""
@@ -269,5 +283,6 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         NamedList.objects.all().delete()
-        for lex in Lexicon.objects.filter(lexiconName__in=['OWL2', 'CSW12']):
+        for lex in Lexicon.objects.filter(
+                lexiconName__in=['OWL2', 'CSW12', 'America']):
             createNamedLists(lex)

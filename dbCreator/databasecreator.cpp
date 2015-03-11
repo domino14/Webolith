@@ -100,10 +100,11 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
     bool updateCSWPoundSigns = (lexiconName == "CSW07");
     bool updateCSWPlusSigns = (lexiconName == "CSW12");
+    bool updateAmericaPlusSigns = (lexiconName == "America");
     /* update lexicon symbols if this is CSW (compare to OWL2)*/
-    LexiconInfo* lexInfoAmerica = &(lexiconMap->map["OWL2"]);
+    LexiconInfo* lexInfoOWL2 = &(lexiconMap->map["OWL2"]);
     LexiconInfo* lexInfoCSW07 = &(lexiconMap->map["CSW07"]);
-
+    LexiconInfo* lexInfoAmerica = &(lexiconMap->map["America"]);
     QTextStream in(&file);
     QHash <QString, QString> definitionsHash;
     QStringList dummy;
@@ -163,7 +164,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 
         if (wordLength <= 15)
             probs[wordLength]++;
-        
+
         int encodedProb = LexiconUtilities::encodeProbIndex(probs[wordLength], wordLength, lexIndex);
         alphStream << alphs[i].alphagram << ","
                 << lexIndex << ","
@@ -176,13 +177,15 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             QString backHooks = lexInfo->dawg.findHooks(word.toAscii());
             QString frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
             QString lexSymbols = "";
-            if ( (updateCSWPoundSigns||updateCSWPlusSigns) && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
+            if ( (updateCSWPoundSigns||updateCSWPlusSigns) && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
                 lexSymbols = "#";
-	    if ( (updateCSWPlusSigns) && lexInfoCSW07 && !lexInfoCSW07->dawg.findWord(word.toAscii()))
+            if ( (updateCSWPlusSigns) && lexInfoCSW07 && !lexInfoCSW07->dawg.findWord(word.toAscii()))
+                lexSymbols += "+";
+            if (updateAmericaPlusSigns && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
                 lexSymbols += "+";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
                         << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
-                        << frontHooks << "," << backHooks << endl;    
+                        << frontHooks << "," << backHooks << endl;
             wordIndex++;
         }
     }
