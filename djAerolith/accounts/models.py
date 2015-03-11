@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def getLexicon():
-    return Lexicon.objects.get(lexiconName='OWL2')
+    return Lexicon.objects.get(lexiconName='America')
 
 
 class AerolithProfile(models.Model):
