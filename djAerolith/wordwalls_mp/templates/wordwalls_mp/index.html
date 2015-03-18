@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block ss %}
+
+{% endblock %}
+{% block title %}Wordwalls - Multiplayer{% endblock %}
+
+{% block jquery_js %}{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+
+<div class="lobby">
+    <div class="tables"></div>
+</div>
+
+
+<script>
+var require = {
+  config: {
+
+  }
+}
+</script>
+<script src="/static/lib/require/require-min.js"></script>
+<script>
+require.config({
+    {% if DEBUG_JS %}
+        paths: {
+            "main": "/static/js/wordwalls_mp/main"
+        }
+
+    {% else %}
+        urlArgs: 'v={{CURRENT_VERSION}}',
+        paths: {
+            "main": "/static/build/wordwalls-mp-built"
+        }
+    {% endif %}
+});
+require(["main"]);
+</script>
+
+
+
+
+{% endblock %}

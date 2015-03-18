@@ -147,7 +147,8 @@ INSTALLED_APPS = (
     'quackleInterface',
     'crosswordgame',
     'gargoyle',
-    'flashcards'
+    'flashcards',
+    'wordwalls_mp'
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -273,7 +274,7 @@ REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
 REDIS_SOCKET_TOKEN_DB = 2
 
 
-ALLOWED_HOSTS = ['.aerolith.org', '*']
+ALLOWED_HOSTS = ['.aerolith.org']
 SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 
 # See https://www.github.com/14domino/ujamaa
