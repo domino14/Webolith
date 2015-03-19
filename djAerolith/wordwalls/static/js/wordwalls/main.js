@@ -32,7 +32,7 @@ define([
   'jquery',
   'underscore',
   'models/Configure',
-  'views/ConfigureView',
+  'views/configure',
   'views/AppView',
   'backbone',
   'csrfAjax'
