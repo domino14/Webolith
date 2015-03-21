@@ -35,9 +35,17 @@ define([
    * @type {number}
    */
   NUM_COLUMNS = 4;
-
+  /**
+   * @type {number}
+   */
   TILE_HEIGHT = 18;
+  /**
+   * @type {number}
+   */
   TILE_WIDTH = 18;
+  /**
+   * @type {number}
+   */
   FIRST_TILE_SPACING = 2;
   /**
    * Table is the view that controls everything about the table. It may have
@@ -49,7 +57,7 @@ define([
       svg = this.svg_();
       svg.attr('width', TABLE_WIDTH).attr('height', TABLE_HEIGHT);
       this.answerMap = {};
-      this.guessInput = this.$()
+      this.questions = [];
     },
 
     /**
@@ -69,14 +77,21 @@ define([
      * @param {Array.<Object>} questions
      */
     setQuestions: function(questions) {
-      _.each(questions, function(question) {
+      this.questions = questions;
+      _.each(questions, function(question, index) {
         _.each(question.words, function(wordObj) {
-          this.answerMap[wordObj.word.toLowerCase()] = question;
+          this.answerMap[wordObj.word.toLowerCase()] = {
+            q: question,
+            i: index
+          };
         }, this);
       }, this);
-      this.showQuestions_(questions);
+      this.showQuestions_();
     },
-    showQuestions_: function(questions) {
+    /**
+     * Show the questions in this.questions.
+     */
+    showQuestions_: function() {
       var svg, question;
       function xTranslate(i) {
         return (i % NUM_COLUMNS) * (TABLE_WIDTH / 4);
@@ -85,10 +100,9 @@ define([
       function yTranslate(i) {
         return Math.floor(i / NUM_COLUMNS) * QUESTION_HEIGHT;
       }
-      this.questions = questions;
       svg = this.svg_();
       question = svg.selectAll('g.question')
-        .data(questions);
+        .data(this.questions);
       question.enter().append('g').attr('class', 'question');
       question.exit().remove();
       question.attr('transform', function(d, i) {
@@ -148,7 +162,10 @@ define([
       var circle, circleText;
       circle = question.selectAll('circle')
         .data(function(d) {
-          return [_.size(d.words)];
+          if (d.wordsRemaining > 0) {
+            return [d.wordsRemaining];
+          }
+          return [];
         });
       circle.enter().append('circle');
       circle
@@ -158,7 +175,10 @@ define([
         .attr('fill', '#ff0000');
       circleText = question.selectAll('text.chip')
         .data(function(d) {
-          return [_.size(d.words)];
+          if (d.wordsRemaining > 0) {
+            return [d.wordsRemaining];
+          }
+          return [];
         });
       circleText.enter().append('text').attr('class', 'chip');
       circleText
@@ -173,8 +193,24 @@ define([
       circle.exit().remove();
       circleText.exit().remove();
     },
+    /**
+     * Handle a guess.
+     * @param  {string} guess
+     */
     recordGuess: function(guess) {
-      console.log(guess, this.answerMap[guess.toLowerCase()]);
+      var answer, question;
+      guess = guess.toLowerCase();
+      if (!_.has(this.answerMap, guess)) {
+        return;
+      }
+      answer = this.answerMap[guess];
+      question = this.questions[answer.i];
+      question.wordsRemaining--;
+      if (question.wordsRemaining === 0) {
+        question.alphagram = '';
+      }
+      delete this.answerMap[guess];
+      this.showQuestions_();
     }
 
   });
