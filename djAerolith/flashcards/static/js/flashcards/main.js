@@ -2,10 +2,10 @@
 requirejs.config({
   baseUrl: '/static/js/flashcards',
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.10.1',
+    jquery: '../../../../static/js/aerolith/jquery-1.11.2',
     bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
-    underscore: '../../../../static/lib/underscore-1.4.4',
-    backbone: '../../../../static/lib/backbone-1.0.0',
+    underscore: '../../../../static/lib/underscore-1.8.2',
+    backbone: '../../../../static/lib/backbone-1.1.2',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
@@ -13,13 +13,6 @@ requirejs.config({
     tablesorter: '../../../../static/js/aerolith/jquery.tablesorter'
   },
   shim: {
-    underscore: {
-      exports: '_'  // ^_^
-    },
-    backbone: {
-      deps: ['underscore', 'jquery', 'json2'],
-      exports: 'Backbone'
-    },
     bootstrap: {
       deps: ['jquery'],
       exports: '$.fn.collapse'

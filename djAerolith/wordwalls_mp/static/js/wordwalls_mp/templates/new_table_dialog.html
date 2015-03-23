@@ -1,0 +1,42 @@
+<div>
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <label class="col-md-3 control-label">Lexicon</label>
+
+      <select class="form-control col-md-8" id="lexicon-selection" name="lexicon">
+        <option value="America" selected="selected">America</option>
+        <option value="CSW12">CSW12</option>
+      </select>
+    </div>
+  </form>
+</div>
+
+
+<div role="tabpanel">
+  <ul class="nav nav-tabs list-select" role="tablist">
+    <li role="presentation" class="active"><a data-toggle="tab" role="tab" href="#named-lists" data-listtype="namedLists">Named Lists</a></li>
+    <li role="presentation"><a data-toggle="tab" role="tab" href="#saved-lists" data-listtype="savedLists">Saved Lists</a></li>
+    <li role="presentation"><a data-toggle="tab" role="tab" href="#search" data-listtype="wordSearch">Word Search</a></li>
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="named-lists">
+      <div class="row">
+        <div class="col-md-12">
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="col-md-3 control-label">List choice</label>
+              <div class="col-md-8">
+                <select class="form-control" id="id_namedList" name="named_list" size="10">
+                  <option value="" selected="selected">---------</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="saved-lists">Saved List search</div>
+    <div role="tabpanel" class="tab-pane" id="search">Another type of search</div>
+  </div>
+</div>

@@ -8,13 +8,13 @@ requirejs.config({
    * work properly.
    */
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.11.0',
+    jquery: '../../../../static/js/aerolith/jquery-1.11.2',
     bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
-    underscore: '../../../../static/lib/underscore-1.4.4',
+    underscore: '../../../../static/lib/underscore-1.8.2',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
-    backbone: '../../../../static/lib/backbone-1.0.0',
+    backbone: '../../../../static/lib/backbone-1.1.2',
     d3: '../../../../static/lib/d3.v3',
     // Models from wordwalls.
     alphagram: '../../../../static/js/wordwalls/models/alphagram',
@@ -22,16 +22,9 @@ requirejs.config({
     configureModel: '../../../../static/js/wordwalls/models/configure'
   },
   shim: {
-    underscore: {
-      exports: '_'
-    },
     bootstrap: {
       deps: ['jquery'],
       exports: '$.fn.tab'
-    },
-    backbone: {
-      deps: ['underscore', 'jquery'],
-      exports: 'Backbone'
     }
   }
 });
@@ -40,7 +33,8 @@ define([
   'module',
   'jquery',
   'views/app',
-  'bootstrap'
+  'bootstrap',
+  'csrfAjax'
 ], function (module, $, App) {
   "use strict";
   $(function() {

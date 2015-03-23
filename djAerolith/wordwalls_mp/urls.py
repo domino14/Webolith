@@ -21,4 +21,6 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns(
     '',
     url(r'^$', 'wordwalls_mp.views.main', name='wordwalls_mp_main'),
+    url(r'^api/named_lists/$', 'wordwalls_mp.api.named_lists'),
+    url(r'^api/create_table/$', 'wordwalls_mp.api.create_table')
 )

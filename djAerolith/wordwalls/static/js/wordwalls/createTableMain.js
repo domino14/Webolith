@@ -8,22 +8,19 @@ requirejs.config({
    * work properly.
    */
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.11.0',
+    jquery: '../../../../static/js/aerolith/jquery-1.11.2',
     bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
-    underscore: '../../../../static/lib/underscore-1.4.4',
+    underscore: '../../../../static/lib/underscore-1.8.2',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
     fileUploader: '../../../../static/js/aerolith/fileuploader',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
     sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
     json2: '../../../../static/js/aerolith/json2',
-    backbone: '../../../../static/lib/backbone-1.0.0',
+    backbone: '../../../../static/lib/backbone-1.1.2',
     datepicker: '../../../../static/lib/bootstrap-datepicker'
   },
   shim: {
-    underscore: {
-      exports: '_'
-    },
     bootstrap: {
       deps: ['jquery'],
       exports: '$.fn.tab'
@@ -33,10 +30,6 @@ requirejs.config({
     },
     'json2': {
       exports: 'JSON'
-    },
-    backbone: {
-      deps: ['underscore', 'jquery', 'json2'],
-      exports: 'Backbone'
     },
     datepicker: {
       deps: ['bootstrap']

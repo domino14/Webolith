@@ -19,10 +19,14 @@ define([
       this.$tables = this.$('.tables');
     },
     events: {
-      'click .join': 'joinTable'
+      'click .join': 'joinTable',
+      'click .new-table': 'newTable'
     },
     joinTable: function(e) {
       this.trigger('joinTable', e.target.dataset.tableid);
+    },
+    newTable: function() {
+      this.trigger('newTable');
     },
     render: function() {
 

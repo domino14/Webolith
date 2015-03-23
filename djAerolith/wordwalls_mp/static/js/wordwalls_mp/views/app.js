@@ -1,11 +1,13 @@
+/* global JSON */
 define([
   'backbone',
   'underscore',
   'jquery',
   'views/lobby',
   'views/table',
+  'views/new_table_dialog',
   'collections/lobby_tables'
-], function(Backbone, _, $, Lobby, TableView, Tables) {
+], function(Backbone, _, $, Lobby, TableView, NewTableDialog, Tables) {
   "use strict";
   var App, testTables, testQuestions;
   App = Backbone.View.extend({
@@ -18,10 +20,16 @@ define([
       });
       tables.reset(testTables);
       this.listenTo(this.lobby, 'joinTable', _.bind(this.joinTable, this));
+      this.listenTo(this.lobby, 'newTable', _.bind(this.newTable, this));
       this.table = new TableView({
         el: $('.table-main')
       });
       this.table.loadQuestions(testQuestions);
+      this.newTableDialog = new NewTableDialog({
+        el: $('#new-table-modal')
+      });
+      this.listenTo(this.newTableDialog, 'createTable', _.bind(this.createTable,
+        this));
     },
     /**
      * A signal handler.
@@ -29,6 +37,23 @@ define([
     joinTable: function(tableId) {
       this.lobby.hide();
       this.table.show();
+    },
+    /**
+     * The "new table" button was clicked, to bring up the dialog.
+     */
+    newTable: function() {
+      this.newTableDialog.render();
+    },
+    /**
+     * Create table.
+     * @param {Object} triggerObj Object with info about table to create.
+     */
+    createTable: function(triggerObj) {
+      $.post('/wordwalls_mp/api/create_table/', JSON.stringify(triggerObj),
+        _.bind(this.handleTableCreate, this), 'json');
+    },
+    handleTableCreate: function() {
+
     }
   });
 
