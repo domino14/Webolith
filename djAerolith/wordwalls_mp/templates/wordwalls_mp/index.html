@@ -47,7 +47,8 @@
 var require = {
   config: {
     'main': {
-      'nlFormSelect': '{{nlForm.namedList|escapejs}}'
+      'firebaseToken': '{{firebaseToken}}',
+      'firebaseURL': '{{firebaseURL}}'
     }
   }
 };
@@ -59,7 +60,6 @@ require.config({
         paths: {
             "main": "/static/js/wordwalls_mp/main"
         }
-
     {% else %}
         urlArgs: 'v={{CURRENT_VERSION}}',
         paths: {

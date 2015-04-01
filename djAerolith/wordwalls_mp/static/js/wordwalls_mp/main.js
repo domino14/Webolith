@@ -16,6 +16,7 @@ requirejs.config({
     text: '../../../../static/lib/require/text',
     backbone: '../../../../static/lib/backbone-1.1.2',
     d3: '../../../../static/lib/d3.v3',
+    firebase: '../../../../static/lib/firebase-2.2.1',
     // Models from wordwalls.
     alphagram: '../../../../static/js/wordwalls/models/alphagram',
     word: '../../../../static/js/wordwalls/models/word',
@@ -25,6 +26,9 @@ requirejs.config({
     bootstrap: {
       deps: ['jquery'],
       exports: '$.fn.tab'
+    },
+    firebase: {
+      exports: 'Firebase'
     }
   }
 });
@@ -39,6 +43,9 @@ define([
   "use strict";
   $(function() {
     var app;
-    app = new App();
+    app = new App({
+      firebaseToken: module.config().firebaseToken,
+      firebaseURL: module.config().firebaseURL
+    });
   });
 });

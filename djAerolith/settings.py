@@ -290,3 +290,4 @@ SESSION_IDLE_TIMEOUT = SESSION_COOKIE_AGE
 # Also ask them to log in once a month.
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 FIREBASE_SECRET_TOKEN = settings_local.FIREBASE_SECRET_TOKEN
+FIREBASE_URL = settings_local.FIREBASE_URL

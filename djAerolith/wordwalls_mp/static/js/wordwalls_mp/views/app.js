@@ -6,12 +6,14 @@ define([
   'views/lobby',
   'views/table',
   'views/new_table_dialog',
+  'controllers/comm_controller',
   'collections/lobby_tables'
-], function(Backbone, _, $, Lobby, TableView, NewTableDialog, Tables) {
+], function(Backbone, _, $, Lobby, TableView, NewTableDialog, CommController,
+    Tables) {
   "use strict";
   var App, testTables, testQuestions;
   App = Backbone.View.extend({
-    initialize: function() {
+    initialize: function(options) {
       var tables;
       tables = new Tables();
       this.lobby = new Lobby({
@@ -30,6 +32,8 @@ define([
       });
       this.listenTo(this.newTableDialog, 'createTable', _.bind(this.createTable,
         this));
+      this.commController = new CommController(options.firebaseToken,
+        options.firebaseURL);
     },
     /**
      * A signal handler.
@@ -52,8 +56,8 @@ define([
       $.post('/wordwalls_mp/api/create_table/', JSON.stringify(triggerObj),
         _.bind(this.handleTableCreate, this), 'json');
     },
-    handleTableCreate: function() {
-
+    handleTableCreate: function(data) {
+      console.log(data)
     }
   });
 
