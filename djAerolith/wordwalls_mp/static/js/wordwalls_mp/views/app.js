@@ -57,7 +57,7 @@ define([
         _.bind(this.handleTableCreate, this), 'json');
     },
     handleTableCreate: function(data) {
-      console.log(data)
+      this.commController
     }
   });
 

@@ -17,6 +17,7 @@ requirejs.config({
     backbone: '../../../../static/lib/backbone-1.1.2',
     d3: '../../../../static/lib/d3.v3',
     firebase: '../../../../static/lib/firebase-2.2.1',
+    firechat: '../../../../static/lib/firechat',
     // Models from wordwalls.
     alphagram: '../../../../static/js/wordwalls/models/alphagram',
     word: '../../../../static/js/wordwalls/models/word',
@@ -29,6 +30,10 @@ requirejs.config({
     },
     firebase: {
       exports: 'Firebase'
+    },
+    firechat: {
+      deps: ['firebase'],
+      exports: 'Firechat'
     }
   }
 });

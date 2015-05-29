@@ -5,8 +5,9 @@
 define([
   'backbone',
   'underscore',
-  'firebase'
-], function(Backbone, _, Firebase) {
+  'firebase',
+  'firechat'
+], function(Backbone, _, Firebase, Firechat) {
   "use strict";
   var CommController, CCP;
   /**
@@ -16,7 +17,9 @@ define([
     this.firebaseURL = url;
     this.firebaseToken = token;
     this.firebaseRef = new Firebase(url);
-    this.firebaseRef.authWithCustomToken(token, this.authHandler);
+    this.chat_ = new Firechat(this.firebaseRef);
+    this.firebaseRef.authWithCustomToken(token, _.bind(this.authHandler, this));
+    //this.firebaseRef.onAuth(_.bind(this.onAuth, this));
   };
   CCP = CommController.prototype;
 
@@ -24,9 +27,21 @@ define([
     if (error) {
       console.log("Login Failed!", error);
     } else {
-      console.log("Authenticated successfully with payload:", authData);
+      console.log('authData', authData)
+      this.chat_.setUser(authData.auth.uid, authData.auth.username, _.bind(
+      function(user) {
+        this.user = user;
+        console.log('set User', this.user)
+    }, this));
     }
   };
+  // XXX: why can't I use authHandler above?
+  // CCP.onAuth = function(authData) {
+  //   this.chat_.setUser(authData.auth.uid, authData.auth.username, _.bind(
+  //     function(user) {
+  //       this.user = user;
+  //   }, this));
+  // };
   _.extend(CommController, Backbone.Events);
   return CommController;
 });
