@@ -98,13 +98,13 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     if (lexInfo->lexiconName == "FISE") lessThan = SPANISH_LESS_THAN;
     else lessThan = ENGLISH_LESS_THAN;
 
-    bool updateCSWPoundSigns = (lexiconName == "CSW07");
-    bool updateCSWPlusSigns = (lexiconName == "CSW12");
+    bool updateCSWPoundSigns = (lexiconName == "CSW12");
     bool updateAmericaPlusSigns = (lexiconName == "America");
+    bool updateAmericaDollarSigns = (lexiconName == "America");
     /* update lexicon symbols if this is CSW (compare to OWL2)*/
     LexiconInfo* lexInfoOWL2 = &(lexiconMap->map["OWL2"]);
-    LexiconInfo* lexInfoCSW07 = &(lexiconMap->map["CSW07"]);
     LexiconInfo* lexInfoAmerica = &(lexiconMap->map["America"]);
+    LexiconInfo* lexInfoCSW12 = &(lexiconMap->map["CSW12"]);
     QTextStream in(&file);
     QHash <QString, QString> definitionsHash;
     QStringList dummy;
@@ -177,12 +177,12 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             QString backHooks = lexInfo->dawg.findHooks(word.toAscii());
             QString frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
             QString lexSymbols = "";
-            if ( (updateCSWPoundSigns||updateCSWPlusSigns) && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
+            if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
                 lexSymbols = "#";
-            if ( (updateCSWPlusSigns) && lexInfoCSW07 && !lexInfoCSW07->dawg.findWord(word.toAscii()))
-                lexSymbols += "+";
             if (updateAmericaPlusSigns && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
                 lexSymbols += "+";
+            if (updateAmericaDollarSigns && lexInfoCSW12 && !lexInfoCSW12->dawg.findWord(word.toAscii()))
+                lexSymbols += "$";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
                         << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
                         << frontHooks << "," << backHooks << endl;
