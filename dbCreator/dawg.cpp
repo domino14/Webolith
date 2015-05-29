@@ -125,17 +125,20 @@ void Dawg::printDawg()
 
 QString Dawg::findHooks(QString word)
 {
-    QString hooks;
+    QStringList hooks;
     int node = findPartialWord(word);
 
     if (node != NULL_NODE)
     {
         /* traverse thru children*/
         int child = nodes.at(node).child;
-        if (child == NULL_NODE) return hooks;
+        if (child == NULL_NODE) {
+            hooks.sort();
+            return hooks.join("");
+        }
         if (child != NULL_NODE && nodes.at(child).endOfWord)
         {
-            hooks += nodes.at(child).letter;
+            hooks.append(nodes.at(child).letter);
         }
 
         int nextsibling = nodes.at(child).sibling;
@@ -144,14 +147,15 @@ QString Dawg::findHooks(QString word)
         {
             if (nodes.at(nextsibling).endOfWord)
             {
-                hooks += nodes.at(nextsibling).letter;
+                hooks.append(nodes.at(nextsibling).letter);
             }
             nextsibling = nodes.at(nextsibling).sibling;
         }
 
 
     }
-    return hooks;
+    hooks.sort();
+    return hooks.join("");
 
 }
 
