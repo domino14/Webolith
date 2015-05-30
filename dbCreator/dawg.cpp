@@ -126,6 +126,11 @@ void Dawg::printDawg()
 QString Dawg::findHooks(QString word)
 {
     QStringList hooks;
+    bool innerHook = findWord(word.left(word.size() - 1));
+    if (innerHook) {
+        hooks.append("-"/*"·"*/);
+    }
+
     int node = findPartialWord(word);
 
     if (node != NULL_NODE)
