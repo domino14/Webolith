@@ -1,6 +1,6 @@
 <dl>
 {{#answers}}
-    <dt><span class="text-info">{{f_hooks}}</span> {{word}} <span class="text-info">{{b_hooks}}</span></dt>
+    <dt><span class="text-info">{{f_hooks}}</span> {{#f_inner}}<span class="text-muted">&middot;</span>{{/f_inner}}{{word}}{{#b_inner}}<span class="text-muted">&middot;</span>{{/b_inner}} <span class="text-muted">{{symbols}}</span> <span class="text-info">{{b_hooks}}</span></dt>
     <dd>{{def}}</dd>
 {{/answers}}
 </dl>

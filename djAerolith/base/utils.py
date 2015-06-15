@@ -6,30 +6,6 @@ from django.db import connection
 FETCH_MANY_SIZE = 1000
 
 
-def alpha_pk_to_python(pk, question, answers):
-    """
-        Converts the alphagram pk to a Python object.
-        Requires the Redis db of words / alphagrams.
-
-        :pk The pk of the question
-        :question A question object.
-        :answers A list of json dumps of answer objects.
-    """
-    answers = [json.loads(answer) for answer in answers]
-    return {
-        'question': question['question'],
-        'probability': question['probability'],
-        'id': pk,
-        'answers': [{
-            'word': word['word'],
-            'def': word['def'],
-            'f_hooks': word['f_hooks'],
-            'b_hooks': word['b_hooks'],
-            'symbols': word['symbols']
-        } for word in answers]
-    }
-
-
 def generate_question_map(alphs):
     """
         Generates a question map from a list of alphagram pks.
@@ -39,7 +15,8 @@ def generate_question_map(alphs):
     cursor = connection.cursor()
     cursor.execute(
         'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
-        'back_hooks, base_alphagram.alphagram, base_alphagram.probability '
+        'back_hooks, inner_front_hook, inner_back_hook, '
+        'base_alphagram.alphagram, base_alphagram.probability '
         'FROM base_word INNER JOIN base_alphagram ON '
         'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
         'base_alphagram.probability_pk in %s' % str(tuple(alphs))
@@ -50,8 +27,8 @@ def generate_question_map(alphs):
             alph_pk = row[1]
             if alph_pk not in q_map:
                 q_map[alph_pk] = {
-                    'question': row[6],
-                    'probability': row[7],
+                    'question': row[8],
+                    'probability': row[9],
                     'id': alph_pk,
                     'answers': []
                 }
@@ -60,7 +37,9 @@ def generate_question_map(alphs):
                 'def': row[3],
                 'f_hooks': row[4],
                 'b_hooks': row[5],
-                'symbols': row[2]
+                'symbols': row[2],
+                'f_inner': row[6],
+                'b_inner': row[7]
             })
         rows = cursor.fetchmany(FETCH_MANY_SIZE)
     return q_map

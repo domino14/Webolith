@@ -174,8 +174,8 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
         for (int j = 0; j < alphs[i].words.length(); j++)
         {
             QString word = alphs[i].words[j];
-            QString backHooks = lexInfo->dawg.findHooks(word.toAscii());
-            QString frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
+            QPair<bool, QString> backHooks = lexInfo->dawg.findHooks(word.toAscii());
+            QPair<bool, QString> frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
             QString lexSymbols = "";
             if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
                 lexSymbols = "#";
@@ -185,7 +185,8 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
                 lexSymbols += "$";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
                         << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
-                        << frontHooks << "," << backHooks << endl;
+                        << frontHooks.second << "," << backHooks.second << ","
+                        << frontHooks.first << "," << backHooks.first << endl;
             wordIndex++;
         }
     }
