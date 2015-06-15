@@ -13,7 +13,9 @@ define([
         backHooks: null,
         lexiconSymbol: null,
         alphagram: null,
-        prob: null
+        prob: null,
+        innerFrontHook: false,
+        innerBackHook: false
       };
     }
   });

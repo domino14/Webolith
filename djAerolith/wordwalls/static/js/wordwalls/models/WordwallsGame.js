@@ -59,7 +59,9 @@ define([
             lexiconSymbol: word.s,
             definition: word.d,
             alphagram: questionModel,
-            prob: question.p
+            prob: question.p,
+            innerFrontHook: word.ifh,
+            innerBackHook: word.ibh
           });
           wordCollection.add(wordModel);
           this.wrongWordsHash[word.w] = wordModel;
