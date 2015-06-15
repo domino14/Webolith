@@ -33,8 +33,10 @@ class DailyChallengeName(models.Model):
     name = models.CharField(max_length=32)
     timeSecs = models.IntegerField(default=0)
     orderPriority = models.IntegerField(default=1)
+
     def __unicode__(self):
         return self.name
+
     class Meta:
         ordering = ['orderPriority', 'id']
 

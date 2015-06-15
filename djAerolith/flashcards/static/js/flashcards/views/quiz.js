@@ -179,6 +179,7 @@ define([
       attributes.cardCount = this.wordList.numCards();
       return attributes;
     },
+
     /**
      * Mark the current card correct.
      */

@@ -93,6 +93,8 @@ class Word(models.Model):
     definition = models.CharField(max_length=512)
     front_hooks = models.CharField(max_length=26)
     back_hooks = models.CharField(max_length=26)
+    inner_front_hook = models.BooleanField(default=False)
+    inner_back_hook = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.word + ": " + self.definition

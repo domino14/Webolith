@@ -363,7 +363,8 @@ class WordwallsGame(object):
             for w in word_set:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
-                              's': w.lexiconSymbols})
+                              's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
+                              'ibh': w.inner_back_hook})
                 answerHash[w.word] = alphagram_str, i
             questions.append({'a': alphagram_str, 'ws': words,
                               'p': probPKToAlphProb(alphagram_pk),

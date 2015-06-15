@@ -47,7 +47,7 @@ public:
     bool findWord(QString wordToFind);
     void checkDawg(QString wordlist);
     int findPartialWord(QString wordToFind);
-    QString findHooks(QString word);
+    QPair<bool, QString> findHooks(QString word);
 private:
     QVector <DawgNode> nodes;
 };
