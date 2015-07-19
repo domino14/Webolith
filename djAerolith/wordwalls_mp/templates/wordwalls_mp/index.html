@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block ss %}
+
+{% endblock %}
+{% block title %}Wordwalls - Multiplayer{% endblock %}
+
+{% block jquery_js %}{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+
+<div class="lobby">
+    <button class="btn btn-primary new-table" data-toggle="modal" data-target="#new-table-modal">New table</button>
+    <div class="tables" style="margin-top: 10px;"></div>
+    <div class="lobby-chat"></div>
+</div>
+<div class="table-main">
+    <div class="table-controls"></div>
+    <svg class="table-svg"></svg>
+    <div class="input-group">
+        <span class="input-group-addon" id="guess-addon">Guess:</span>
+        <input type="text" class="form-control guess-text" aria-describedby="guess-addon">
+    </div>
+    <div class="table-chat"></div>
+</div>
+<div class="modal fade" id="new-table-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal-label">Create new table</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary create-table">Create Table</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+var require = {
+  config: {
+    'main': {
+      'firebaseToken': '{{firebaseToken}}',
+      'firebaseURL': '{{firebaseURL}}'
+    }
+  }
+};
+</script>
+<script src="/static/lib/require/require-min.js"></script>
+<script>
+require.config({
+    {% if DEBUG_JS %}
+        paths: {
+            "main": "/static/js/wordwalls_mp/main"
+        }
+    {% else %}
+        urlArgs: 'v={{CURRENT_VERSION}}',
+        paths: {
+            "main": "/static/build/wordwalls-mp-built"
+        }
+    {% endif %}
+});
+require(["main"]);
+</script>
+
+
+
+
+{% endblock %}

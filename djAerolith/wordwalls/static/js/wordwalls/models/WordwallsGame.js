@@ -72,6 +72,20 @@ define([
       }, this);
       this.numAlphagramsLeft = this.questionCollection.length;
       this.trigger('gotQuestionData', this.questionCollection);
+      // var copy = [];
+      // this.questionCollection.each(function(question) {
+      //   var qtj = question.toJSON();
+      //   var wordsCopy = [];
+      //   qtj.words.each(function(word) {
+      //     var wtj = _.clone(word.toJSON());
+      //     delete wtj.alphagram;
+      //     wordsCopy.push(wtj);
+      //   });
+      //   qtj.words = wordsCopy;
+      //   copy.push(qtj);
+      // });
+      // console.log(copy)
+      // console.log(JSON.stringify(copy));
     },
     /**
      * Start interval timer.

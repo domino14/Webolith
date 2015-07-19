@@ -147,7 +147,8 @@ INSTALLED_APPS = (
     'quackleInterface',
     'crosswordgame',
     'gargoyle',
-    'flashcards'
+    'flashcards',
+    'wordwalls_mp'
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -273,7 +274,7 @@ REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
 REDIS_SOCKET_TOKEN_DB = 2
 
 
-ALLOWED_HOSTS = ['.aerolith.org', '*']
+ALLOWED_HOSTS = ['.aerolith.org']
 SOCKJS_SERVER = settings_local.SOCKJS_SERVER
 
 # See https://www.github.com/14domino/ujamaa
@@ -288,4 +289,5 @@ SESSION_IDLE_TIMEOUT = SESSION_COOKIE_AGE
 # This ensures session won't ever expire in the middle of a quiz.
 # Also ask them to log in once a month.
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-
+FIREBASE_SECRET_TOKEN = settings_local.FIREBASE_SECRET_TOKEN
+FIREBASE_URL = settings_local.FIREBASE_URL

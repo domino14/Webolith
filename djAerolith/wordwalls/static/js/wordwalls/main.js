@@ -2,10 +2,10 @@
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   paths: {
-    jquery: '../../../../static/js/aerolith/jquery-1.11.0',
+    jquery: '../../../../static/js/aerolith/jquery-1.11.2',
     jquery_ui: '../../../../static/js/aerolith/jquery-ui-1.10.2.custom.min',
-    underscore: '../../../../static/lib/underscore-1.4.4',
-    backbone: '../../../../static/lib/backbone-1.0.0',
+    underscore: '../../../../static/lib/underscore-1.8.2',
+    backbone: '../../../../static/lib/backbone-1.1.2',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
@@ -32,7 +32,7 @@ define([
   'jquery',
   'underscore',
   'models/Configure',
-  'views/ConfigureView',
+  'views/configure',
   'views/AppView',
   'backbone',
   'csrfAjax'
