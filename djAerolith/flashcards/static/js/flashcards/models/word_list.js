@@ -6,8 +6,9 @@ define([
   'underscore',
   'backbone',
   'jquery',
-  'collections/cards'
-], function(_, Backbone, $, Cards) {
+  'collections/cards',
+  'jiff'
+], function(_, Backbone, $, Cards, jiff) {
   "use strict";
   var QUIZ_API_URL, QUESTION_MAP_URL, Actions;
   QUIZ_API_URL = '/base/api/saved_list';

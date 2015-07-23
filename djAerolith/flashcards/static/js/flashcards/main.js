@@ -10,7 +10,8 @@ requirejs.config({
     text: '../../../../static/lib/require/text',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
     json2: '../../../../static/js/aerolith/json2',
-    tablesorter: '../../../../static/js/aerolith/jquery.tablesorter'
+    tablesorter: '../../../../static/js/aerolith/jquery.tablesorter',
+    jiff: '../../../../static/lib/jiff'
   },
   shim: {
     underscore: {
