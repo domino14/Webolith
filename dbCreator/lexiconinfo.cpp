@@ -236,8 +236,8 @@ void LexiconMap::createMap()
        in production it'll screw everything up (saved lists) */
     map.insert("America", LexiconInfo("America", "America.txt", englishLetterDist,
                                     "America.trie", "America_r.trie", 7, "I am America, and so can you."));
-    //map.insert("CSW15", LexiconInfo("CSW15", "CSW15.txt", englishLetterDist, "CSW15.trie", "CSW15_r.trie", 8,
-    //                                "Collins 2015 International English Word List"));
+    map.insert("CSW15", LexiconInfo("CSW15", "CSW15.txt", englishLetterDist, "CSW15.trie", "CSW15_r.trie", 8,
+                                    "Collins 2015 International English Word List"));
    /* map.insert("FISE", LexiconInfo("FISE", "fise.txt", spanishLetterDist, "fise.trie", "fise-r.trie"));
     map.insert("OSPD4+LWL", LexiconInfo("OSPD4+LWL", "ospd4-lwl.txt", englishLetterDist,
                                         "ospd4-lwl.trie", "ospd4-lwl-r.trie"));*/
