@@ -22,6 +22,10 @@ import json
 
 
 def alphProbToProbPK(prob, lexId, length):
+    # XXX: THIS ONLY ALLOWS FOR LEXICON INDICES FROM 0 to 3
+    # (Terrible oversight)
+    # Everything else may result in weird collisions. This needs to be
+    # reworked!!
     return prob + (lexId << 24) + (length << 26)
 
 
