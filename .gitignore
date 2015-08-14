@@ -19,3 +19,7 @@ djAerolith/static/build/*
 dump.rdb
 scripts/digoceanssh.py
 scripts/gen_firewall.py
+dbCreator/*.o
+dbCreator/Makefile
+dbCreator/moc_*
+dbCreator/dbCreator

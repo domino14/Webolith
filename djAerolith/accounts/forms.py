@@ -17,11 +17,11 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from django import forms
-from base.models import Lexicon
+from base.models import Lexicon, EXCLUDED_LEXICA
 
 
 class ProfileEditForm(forms.Form):
-    lexiconChoices = Lexicon.objects.exclude(lexiconName="CSW07")
+    lexiconChoices = Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA)
     defaultLexicon = forms.ModelChoiceField(
         queryset=lexiconChoices,
         label='Default Lexicon',

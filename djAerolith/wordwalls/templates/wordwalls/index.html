@@ -10,7 +10,9 @@
 {% block jquery_js %}{% endblock %}
 {% block content %}
 <P></P>
+
 <div id="commonForm">
+
   <form class="form-horizontal" role="form">
     <div class="form-group">
       <label for="id_lexicon" class="col-md-2 control-label">Lexicon</label>
@@ -18,7 +20,10 @@
         {{lexForm.lexicon}}
       </div>
     </div>
-
+    <div class="form-group csw-license-div-holder">
+      <label class="col-md-2"></label>
+      <div class="col-md-6">The Collins Official Scrabble Words 2015 (CSW15) is copyright of HarperCollins Publishers 2015 and used with permission.</div>
+    </div>
     <div class="form-group">
       <label for="id_quizTime" class="col-md-2 control-label">Time (minutes):</label>
       <div class="col-md-2">

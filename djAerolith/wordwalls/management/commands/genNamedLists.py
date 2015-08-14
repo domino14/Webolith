@@ -193,35 +193,10 @@ def create_wl_lists(i, lex):
                        name='Eights with 5 or more vowels')
         nl.save()
 
-    if lex.lexiconName == 'CSW12':
-        pks = get_pks_by_word_condition(
-            minProbPk, maxProbPk,
-            lambda w: (w.get('symbols') == '#+'))
-
-        nl = NamedList(lexicon=lex,
-                       numQuestions=len(pks),
-                       wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(pks),
-                       name='CSW12 ' + friendlyNumberMap[i] + ' not in CSW07')
-
-        nl.save()
-
-        pks = get_pks_by_word_condition(
-            minProbPk, maxProbPk,
-            lambda w: ('#' in w.get('symbols')))
-
-        nl = NamedList(lexicon=lex, numQuestions=len(pks), wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(pks),
-                       name='CSW12 ' + friendlyNumberMap[i] + ' not in OWL2')
-
-        nl.save()
-
     if lex.lexiconName == 'America':
         pks = get_pks_by_word_condition(
             minProbPk, maxProbPk,
-            lambda w: (w.get('symbols') == '+'))
+            lambda w: ('+' in w.get('symbols')))
 
         nl = NamedList(lexicon=lex,
                        numQuestions=len(pks),
@@ -229,6 +204,48 @@ def create_wl_lists(i, lex):
                        isRange=False,
                        questions=json.dumps(pks),
                        name='America ' + friendlyNumberMap[i] + ' not in OWL2')
+
+        nl.save()
+
+        pks = get_pks_by_word_condition(
+            minProbPk, maxProbPk,
+            lambda w: ('$' in w.get('symbols')))
+
+        nl = NamedList(
+            lexicon=lex,
+            numQuestions=len(pks),
+            wordLength=i,
+            isRange=False,
+            questions=json.dumps(pks),
+            name='America ' + friendlyNumberMap[i] + ' not in CSW15')
+
+        nl.save()
+
+    if lex.lexiconName == 'CSW15':
+        pks = get_pks_by_word_condition(
+            minProbPk, maxProbPk,
+            lambda w: ('+' in w.get('symbols')))
+
+        nl = NamedList(lexicon=lex,
+                       numQuestions=len(pks),
+                       wordLength=i,
+                       isRange=False,
+                       questions=json.dumps(pks),
+                       name='CSW15 ' + friendlyNumberMap[i] + ' not in CSW12')
+
+        nl.save()
+
+        pks = get_pks_by_word_condition(
+            minProbPk, maxProbPk,
+            lambda w: ('#' in w.get('symbols')))
+
+        nl = NamedList(
+            lexicon=lex,
+            numQuestions=len(pks),
+            wordLength=i,
+            isRange=False,
+            questions=json.dumps(pks),
+            name='CSW15 ' + friendlyNumberMap[i] + ' not in America')
 
         nl.save()
 
@@ -284,5 +301,5 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         NamedList.objects.all().delete()
         for lex in Lexicon.objects.filter(
-                lexiconName__in=['OWL2', 'CSW12', 'America']):
+                lexiconName__in=['OWL2', 'CSW12', 'America', 'CSW15']):
             createNamedLists(lex)

@@ -98,13 +98,15 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     if (lexInfo->lexiconName == "FISE") lessThan = SPANISH_LESS_THAN;
     else lessThan = ENGLISH_LESS_THAN;
 
-    bool updateCSWPoundSigns = (lexiconName == "CSW12");
+    bool updateCSWPoundSigns = (lexiconName == "CSW12" || lexiconName == "CSW15");
+    bool updateCSWPlusSigns = (lexiconName == "CSW15");
     bool updateAmericaPlusSigns = (lexiconName == "America");
     bool updateAmericaDollarSigns = (lexiconName == "America");
-    /* update lexicon symbols if this is CSW (compare to OWL2)*/
+    /* update lexicon symbols if this is CSW (compare to America)*/
     LexiconInfo* lexInfoOWL2 = &(lexiconMap->map["OWL2"]);
     LexiconInfo* lexInfoAmerica = &(lexiconMap->map["America"]);
     LexiconInfo* lexInfoCSW12 = &(lexiconMap->map["CSW12"]);
+    LexiconInfo* lexInfoCSW15 = &(lexiconMap->map["CSW15"]);
     QTextStream in(&file);
     QHash <QString, QString> definitionsHash;
     QStringList dummy;
@@ -181,7 +183,9 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
                 lexSymbols = "#";
             if (updateAmericaPlusSigns && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
                 lexSymbols += "+";
-            if (updateAmericaDollarSigns && lexInfoCSW12 && !lexInfoCSW12->dawg.findWord(word.toAscii()))
+	    if (updateCSWPlusSigns && lexInfoCSW12 && !lexInfoCSW12->dawg.findWord(word.toAscii()))
+	        lexSymbols += "+";
+            if (updateAmericaDollarSigns && lexInfoCSW15 && !lexInfoCSW15->dawg.findWord(word.toAscii()))
                 lexSymbols += "$";
             wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
                         << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","

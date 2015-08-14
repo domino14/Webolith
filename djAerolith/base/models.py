@@ -20,8 +20,14 @@ from django.contrib.auth.models import User
 import string
 import json
 
+# XXX: Include CSW12 here after Sept 1.
+EXCLUDED_LEXICA = ['OWL2', 'CSW07']
 
 def alphProbToProbPK(prob, lexId, length):
+    # XXX: THIS ONLY ALLOWS FOR LEXICON INDICES FROM 0 to 3
+    # (Terrible oversight)
+    # Everything else may result in weird collisions. This needs to be
+    # reworked!!
     return prob + (lexId << 24) + (length << 26)
 
 

@@ -64,16 +64,18 @@ define([
   ChallengesHelp, SearchParamsHelp, SavedListsHelp, NamedListsHelp) {
   "use strict";
   $(function() {
-    var tableCreateParams, uploader, s, c;
+    var tableCreateParams, uploader, s, c, app;
     /* Load bootstrapped params from backend. */
     tableCreateParams = module.config();
-    // Remove CSW07
-    $("#id_lexicon option[value='5']").remove();
     $("#id_lexicon option[value='" + tableCreateParams.defaultLexicon +
       "']").prop('selected', true);
-    TableCreate.initializeTableCreatePage(
-      tableCreateParams.lengthCounts, tableCreateParams.dcTimes,
-      tableCreateParams.createTableUrl, tableCreateParams.createQuizUrl);
+    app = new TableCreate({
+      lengthCounts: tableCreateParams.lengthCounts,
+      dcTimes: tableCreateParams.dcTimes,
+      createTableUrl: tableCreateParams.createTableUrl,
+      createQuizUrl: tableCreateParams.createQuizUrl,
+      el: $('.container')
+    });
     $('.help-question-marks').tooltip();
     $('#help-challenges').click(function() {
       showModalMessage('Today\'s Challenges Help', ChallengesHelp);
@@ -106,8 +108,8 @@ define([
       onComplete: function(id, fileName, responseJSON) {
         if (responseJSON.success ){
           $("#file-upload-msgs").text("Success! " + responseJSON.msg);
-          TableCreate.requestSavedListInfo();
-          TableCreate.savedListLexiconChanged();  // to reload lists
+          app.requestSavedListInfo();
+          app.savedListLexiconChanged();  // to reload lists
           mixpanel.track('Uploaded list');
         } else {
           mixpanel.track('Upload list error');
