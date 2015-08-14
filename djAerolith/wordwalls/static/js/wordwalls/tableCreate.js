@@ -27,14 +27,10 @@ define([
       }, this);
 
       this.defaultChallengeList = $('#id_challenge').html();
-
       this.requestSavedListInfo();
-      this.challengeChanged();
-      this.changeMaxProb();
       this.savedListOptionChangeHandler();
       this.savedListChangeHandler();
-      this.savedListLexiconChanged();
-      this.namedListLexiconChanged();
+      this.lexiconChanged();
     },
     events: {
       'click #main-tab-nav li': 'tabClicked',
@@ -42,8 +38,8 @@ define([
       'change #id_wordLength': 'wordLengthChanged',
       'change #id_probabilityMin': 'minProbabilityChanged',
       'change #id_probabilityMax': 'maxProbabilityChanged',
-      'change #id_challengeDate': 'challengeChangeEventHandler',
-      'change #id_challenge': 'challengeChangeEventHandler',
+      'change #id_challengeDate': 'challengeChanged',
+      'change #id_challenge': 'challengeChanged',
       'change #id_listOption': 'savedListOptionChangeHandler',
       'change #id_wordList': 'savedListChangeHandler',
       'click #challengeSubmit': 'challengeSubmitClicked',
@@ -75,6 +71,7 @@ define([
         $("#id_quizTime").prop('disabled', false);
         $("#id_quizTime").val(4);
       }
+      this.currentTab = $(target).data('index');
     },
     /**
      * Event handler for change of lexicon.
@@ -125,10 +122,6 @@ define([
       }
     },
 
-
-    challengeChangeEventHandler: function() {
-      this.challengeChanged();
-    },
     challengeChanged: function() {
       var date, cVal, cName, lexName, lblText;
       lexName = $('#id_lexicon option:selected').text();
@@ -153,13 +146,15 @@ define([
     challengeLexiconChanged: function() {
       var lexName;
       lexName = $('#id_lexicon option:selected').text();
-      if (lexName === 'CSW12' || lexName === 'CSW15') {
+      if (lexName !== 'OWL2') {
         $('#id_challenge option[value="18"]').remove();
         $('#id_challenge option[value="19"]').remove();
-      } else if (lexName === 'OWL2') {
+      } else {
         $('#id_challenge').html(this.defaultChallengeList);
       }
-      this.challengeChangeEventHandler();
+      if (this.currentTab === 0) {
+        this.challengeChanged();
+      }
     },
 
     savedListOptionChangeHandler: function() {
@@ -222,7 +217,7 @@ define([
         lexicon: $('#id_lexicon').val(),
         challenge: $('#id_challenge').val(),
         challengeDate: $('#id_challengeDate').val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
     searchParamsSubmitClicked: function() {
@@ -233,7 +228,7 @@ define([
         wordLength: $("#id_wordLength").val(),
         probabilityMin: $("#id_probabilityMin").val(),
         probabilityMax: $("#id_probabilityMax").val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
     namedListsSubmitClicked: function() {
@@ -242,7 +237,7 @@ define([
         lexicon: $('#id_lexicon').val(),
         quizTime: $("#id_quizTime").val(),
         namedList: $("#id_namedList").val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
     savedListsSubmitClicked: function() {
@@ -255,14 +250,14 @@ define([
           quizTime: $("#id_quizTime").val(),
           listOption: $("#id_listOption").val(),
           wordList: $("#id_wordList").val()
-        }, this.wwRedirect, 'json');
+        }, _.bind(this.wwRedirect, this), 'json');
       } else {
         $.post(this.commandUrl, {
           action: 'savedListDelete',
           lexicon: $('#id_lexicon').val(),
           listOption: $("#id_listOption").val(),  /*todo redundancy, dry */
           wordList: $("#id_wordList").val()
-        }, this.savedListDelete, 'json');
+        }, _.bind(this.savedListDelete, this), 'json');
       }
     },
 
@@ -273,7 +268,7 @@ define([
         wordLength: $("#id_wordLength").val(),
         probabilityMin: $("#id_probabilityMin").val(),
         probabilityMax: $("#id_probabilityMax").val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
 
@@ -282,7 +277,7 @@ define([
         action: 'namedListsFlashcard',
         lexicon: $('#id_lexicon').val(),
         namedList: $("#id_namedList").val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
 
@@ -292,7 +287,7 @@ define([
         lexicon: $('#id_lexicon').val(),
         listOption: $('#id_listOption').val(),
         wordList: $("#id_wordList").val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
     savedListsFlashcardFMClicked: function() {
@@ -301,7 +296,7 @@ define([
         lexicon: $('#id_lexicon').val(),
         listOption: $('#id_listOption').val(),
         wordList: $("#id_wordList").val()
-      }, this.wwRedirect, 'json');
+      }, _.bind(this.wwRedirect, this), 'json');
     },
 
     savedListDelete: function(data) {
@@ -330,7 +325,7 @@ define([
         lexicon: $('#id_lexicon option:selected').text(),
         chName: $('#id_challenge option:selected').text(),
         date: $('#id_challengeDate').val()
-      }, this.populateDcResults, 'json');
+      }, _.bind(this.populateDcResults, this), 'json');
     },
 
     populateDcResults: function(data) {
@@ -341,14 +336,14 @@ define([
       $.post(this.commandUrl, {
         action: 'getSavedListList',
         lexicon: $('#id_lexicon option:selected').text()
-      }, this.processSavedListResults, 'json');
+      }, _.bind(this.processSavedListResults, this), 'json');
     },
 
     namedListLexiconChanged: function() {
       $.post(this.commandUrl, {
         action: 'getNamedListList',
         lexicon: $('#id_lexicon option:selected').text()
-      }, this.processNamedListResults, 'json');
+      }, _.bind(this.processNamedListResults, this), 'json');
     },
 
     processSavedListResults: function(data) {
