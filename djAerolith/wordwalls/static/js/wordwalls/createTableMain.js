@@ -67,8 +67,6 @@ define([
     var tableCreateParams, uploader, s, c;
     /* Load bootstrapped params from backend. */
     tableCreateParams = module.config();
-    // Remove CSW07
-    $("#id_lexicon option[value='5']").remove();
     $("#id_lexicon option[value='" + tableCreateParams.defaultLexicon +
       "']").prop('selected', true);
     TableCreate.initializeTableCreatePage(

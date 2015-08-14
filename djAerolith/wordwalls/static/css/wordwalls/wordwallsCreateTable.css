@@ -75,3 +75,7 @@ span#savedListWarning
     text-align: center;
     margin-bottom: 20px;
 }
+
+.csw-license-div-holder {
+    display: none;
+}

@@ -1,15 +1,14 @@
 # Forms that are global to a few different apps: wordwalls, flashcards,
 # whitleyCards for example.
 from django import forms
-from base.models import Lexicon, SavedList
-
-from tablegame.models import GenericTableGameModel
+from base.models import Lexicon, SavedList, EXCLUDED_LEXICA
 from wordwalls.models import NamedList
 
 
 class LexiconForm(forms.Form):
     lexicon = forms.ModelChoiceField(
-        queryset=Lexicon.objects.exclude(lexiconName="CSW07"),
+        # XXX: Add CSW12 below after Sept 1.
+        queryset=Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA),
         label='Lexicon',
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label=None)

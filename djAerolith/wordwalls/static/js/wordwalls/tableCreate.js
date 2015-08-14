@@ -40,7 +40,7 @@ define([
   function challengeLexiconChanged() {
     var lexName;
     lexName = $('#id_lexicon option:selected').text();
-    if (lexName === 'CSW12') {
+    if (lexName === 'CSW12' || lexName === 'CSW15') {
       $('#id_challenge option[value="18"]').remove();
       $('#id_challenge option[value="19"]').remove();
     } else if (lexName === 'OWL2') {
@@ -105,6 +105,8 @@ define([
         $("#id_wordLength").val("");
       }
     });
+    // XXX WTF? This shouldn't work, attaching multiple change handlers
+    // to same dropdown, right?
     $('#id_wordLength').change(function() {
       success = changeMaxProb();
       if (!success) {
@@ -224,6 +226,13 @@ define([
       action: 'getNamedListList',
       lexicon: $('#id_lexicon option:selected').text()
     }, processNamedListResults, 'json');
+    // XXX: This needs to get fixed. I'm overwriting all the change
+    // handlers, how embarrassing.
+    if ($('#id_lexicon').val() === '1') {
+      $('.csw-license-div-holder').show();
+    } else {
+      $('.csw-license-div-holder').hide();
+    }
   }
 
   function processSavedListResults(data) {
