@@ -1,25 +1,33 @@
-import os, popen2, time
-from datetime import datetime
+import os
+import popen2
+import time
 from optparse import make_option
-
+import logging
+logger = logging.getLogger(__name__)
 from django.core.management.base import BaseCommand, CommandError
-from django.core.mail import EmailMessage
 from django.conf import settings
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
 
-# example: python manage.py backup -e base_word -e base_alphagram -c --email delsolar@gmail.com
+# example: python manage.py backup -e base_word -e base_alphagram -c
 
 # Based on: http://www.djangosnippets.org/snippets/823/
 # Based on: http://www.yashh.com/blog/2008/sep/05/django-database-backup-view/
+
+
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--email', default=None, dest='email',
-            help='Sends email with attached dump file'),
-        make_option('--compress', '-c', action='store_true', default=False, dest='compress',
-            help='Compress dump file'),
-        make_option('--directory', '-d', action='append', default=[], dest='directories',
-            help='Compress dump file'),
-        make_option('--exclude-tables', '-e', action='append', default=[], dest='excludeTables',
-            help='Exclude tables')
+                    help='Sends email with attached dump file'),
+        make_option('--compress', '-c', action='store_true', default=False,
+                    dest='compress',
+                    help='Compress dump file'),
+        make_option('--directory', '-d', action='append', default=[],
+                    dest='directories',
+                    help='Compress dump file'),
+        make_option('--exclude-tables', '-e', action='append', default=[],
+                    dest='excludeTables',
+                    help='Exclude tables')
     )
     help = "Backup database. Only Mysql and Postgresql engines are implemented"
 
@@ -27,12 +35,9 @@ class Command(BaseCommand):
         return time.strftime('%Y%m%d-%H%M%S')
 
     def handle(self, *args, **options):
-        self.email = options.get('email')
         self.compress = options.get('compress')
         self.directories = options.get('directories')
         self.excludeTables = options.get('excludeTables')
-
-        from django.db import connection
 
         self.engine = settings.DATABASES['default']['ENGINE']
         self.db = settings.DATABASES['default']['NAME']
@@ -40,55 +45,48 @@ class Command(BaseCommand):
         self.passwd = settings.DATABASES['default']['PASSWORD']
         self.host = settings.DATABASES['default']['HOST']
         self.port = settings.DATABASES['default']['PORT']
-        
+
         backup_dir = 'backups'
         if not os.path.exists(backup_dir):
             os.makedirs(backup_dir)
 
-        outfile = os.path.join(backup_dir, 'backup_%s.sql' % self._time_suffix())
+        outfile = os.path.join(backup_dir, 'backup_%s.sql' %
+                               self._time_suffix())
 
         # Doing backup
         if self.engine == 'django.db.backends.mysql':
-            print 'Doing Mysql backup to database %s into %s' % (self.db, outfile)
+            logger.debug('Doing Mysql backup to database %s into %s', self.db,
+                         outfile)
             self.do_mysql_backup(outfile)
-        elif self.engine in ('django.db.backends.postgresql_psycopg2', 'django.db.backends.postgresql'):
-            print 'Doing Postgresql backup to database %s into %s' % (self.db, outfile)
+        elif self.engine in ('django.db.backends.postgresql_psycopg2',
+                             'django.db.backends.postgresql'):
+            logger.debug('Doing Postgresql backup to database %s into %s',
+                         self.db, outfile)
             self.do_postgresql_backup(outfile)
         else:
-            raise CommandError('Backup in %s engine not implemented' % self.engine)
+            raise CommandError('Backup in %s engine not implemented' %
+                               self.engine)
 
         # Compressing backup
         if self.compress:
             compressed_outfile = outfile + '.gz'
-            print 'Compressing backup file %s to %s' % (outfile, compressed_outfile)
+            logger.debug('Compressing backup file %s to %s', outfile,
+                         compressed_outfile)
             self.do_compress(outfile, compressed_outfile)
             outfile = compressed_outfile
 
-        # Backuping directoris
-        dir_outfiles = []
-        for directory in self.directories:
-            dir_outfile = os.path.join(backup_dir, '%s_%s.tar.gz' % (os.path.basename(directory), self._time_suffix()))
-            dir_outfiles.append(dir_outfile)
-            print("Compressing '%s' to '%s'" % (directory, dir_outfile))
-            self.compress_dir(directory, dir_outfile)
-
-        # Sending mail with backups
-        if self.email:
-            print "Sending e-mail with backups to '%s'" % self.email
-            self.sendmail(settings.SERVER_EMAIL, [self.email], dir_outfiles + [outfile])
+        self.upload_to_s3(outfile)
 
     def compress_dir(self, directory, outfile):
         os.system('tar -czf %s %s' % (outfile, directory))
 
-    def sendmail(self, address_from, addresses_to, attachements):
-        subject = "Your DB-backup for " + datetime.now().strftime("%d %b %Y")
-        body = "Timestamp of the backup is " + datetime.now().strftime("%d %b %Y")
-
-        email = EmailMessage(subject, body, address_from, addresses_to)
-        email.content_subtype = 'html'
-        for attachement in attachements:
-            email.attach_file(attachement)
-        email.send()
+    def upload_to_s3(self, filename, bucket='aerolith-backups'):
+        conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
+                            settings.AWS_SECRET_ACCESS_KEY)
+        s3_bucket = conn.get_bucket(bucket, validate=False)
+        k = Key(s3_bucket)
+        k.key = filename
+        k.set_contents_from_filename(filename)
 
     def do_compress(self, infile, outfile):
         os.system('gzip --stdout %s > %s' % (infile, outfile))
@@ -104,13 +102,13 @@ class Command(BaseCommand):
             args += ["--host=%s" % self.host]
         if self.port:
             args += ["--port=%s" % self.port]
-        
+
         if len(self.excludeTables) > 0:
             for table in self.excludeTables:
-                args += ["--ignore-table=%s" % (self.db + '.' + table)]    
-            
+                args += ["--ignore-table=%s" % (self.db + '.' + table)]
+
         args += [self.db]
-        
+
         os.system('mysqldump %s > %s' % (' '.join(args), outfile))
 
     def do_postgresql_backup(self, outfile):
@@ -130,4 +128,7 @@ class Command(BaseCommand):
             pipe.tochild.write('%s\n' % self.passwd)
             pipe.tochild.close()
 
-# mysqldump -u dave -ppassword -h localhost --ignore-table=my_db_name.my_table_name my_db_name   use --ignore-table multiple times
+# mysqldump -u dave -ppassword -h localhost
+# --ignore-table=my_db_name.my_table_name my_db_name
+
+# use --ignore-table multiple times
