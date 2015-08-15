@@ -19,3 +19,4 @@ webassets==0.10.1
 redis==2.7.2
 supervisor==3.0b1
 pystache
+boto

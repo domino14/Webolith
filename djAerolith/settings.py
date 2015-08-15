@@ -289,3 +289,5 @@ SESSION_IDLE_TIMEOUT = SESSION_COOKIE_AGE
 # Also ask them to log in once a month.
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
+AWS_ACCESS_KEY_ID = settings_local.AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = settings_local.AWS_SECRET_ACCESS_KEY
