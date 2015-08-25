@@ -33,6 +33,7 @@ div.tableBg
     height: 355px;
     padding-top: 15px;
     float: left;
+    margin-bottom: 5px;
 }
 
 
@@ -50,6 +51,7 @@ div.tableBg
     margin-top: 10px;
     float: right;
 }
+
 
 #avatarLabel
 {
@@ -95,8 +97,9 @@ div.tableBg
 #correctAnswers
 {
     width: 150px;
-    height: 115px;
-    border-style: inset;
+    height: 110px;
+    border-style: groove;
+    background-color: white;
     border-width: 1px;
     overflow-y: auto;
     font-size: 80%;
@@ -115,29 +118,41 @@ div.tableBg
     width: 875px;
 }
 
+#chat-input {
+    clear: both;
+    display: inline-block;
+    margin-bottom: 5px;
+    width: 698px;
+    border: 1px;
+    border-style: groove;
+    font-size: 115%;
+}
+
 div#messages
 {
     float: left;
     width: 700px;
-    height: 100px;
-    border-style: inset;
+    height: 105px;
+    border-style: groove;
     border-width: 1px;
     margin-right: 25px;
     overflow-y: auto;
     font-size: 80%;
+    background-color: white;
 }
 
 div#guesses
 {
     float: left;
     width: 120px;
-    height: 80px;
+    height: 85px;
     margin-top: 0px;
-    border-style: inset;
+    border-style: groove;
     border-width: 1px;
     overflow-y: hidden;
     font-size: 80%;
     color: gray;
+    background-color: white;
 }
 
 table#solutionsTable
@@ -242,13 +257,15 @@ span#gameTimer
 .utilityButton
 {
     display: inline-block;
-    border-style: outset;
-    border-width: 1px;
+    border-style: groove;
+    border-width: 2px;
     border-radius: 2px;
     padding: 2px;
     height: 20px;
     line-height: 20px;
     text-align: center;
+    background-color: white;
+
 }
 
 .utilityButton:hover
@@ -553,7 +570,7 @@ span#prefsInfo
     border-color: black;
     border: 1px dotted;
     z-index: -10;
-    display: none;
+   /* display: none;*/
 }
 
 /******** definitions popup **********/
@@ -656,6 +673,7 @@ span.configInputSpan
 
 #guessText
 {
+    border-style: groove;
     font-size: 125%;
 }
 

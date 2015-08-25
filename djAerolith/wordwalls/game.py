@@ -303,6 +303,12 @@ class WordwallsGame(object):
         return {'error': message}
 
     def startQuiz(self, tablenum, user):
+        """
+        The main function that starts a quiz. Keeps track of the current
+        state of the quizzed-on list, and does various things if we are
+        quizzing on missed words, etc.
+
+        """
         wgm = self.getWGM(tablenum)
         if not wgm:
             return self.createErrorMessage("That table does not exist.")
@@ -361,10 +367,7 @@ class WordwallsGame(object):
                 word_set = [Word.objects.get(pk=word_pk) for word_pk in
                             origQuestionsObj[i]['a']]
             for w in word_set:
-                words.append({'w': w.word, 'd': w.definition,
-                              'fh': w.front_hooks, 'bh': w.back_hooks,
-                              's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
-                              'ibh': w.inner_back_hook})
+                words.append(w.to_dict())
                 answerHash[w.word] = alphagram_str, i
             questions.append({'a': alphagram_str, 'ws': words,
                               'p': probPKToAlphProb(alphagram_pk),

@@ -105,6 +105,18 @@ class Word(models.Model):
     def __unicode__(self):
         return self.word + ": " + self.definition
 
+    def to_dict(self):
+        return {
+            'w': self.word,
+            'd': self.definition,
+            'fh': self.front_hooks,
+            'bh': self.back_hooks,
+            's': self.lexiconSymbols,
+            'ifh': self.inner_front_hook,
+            'ibh': self.inner_back_hook
+        }
+
+
 # these models for words allow for separating words from alphagrams from
 # lexica however let's not make it too confusing -- we should stick to
 # creating a new word for each lexicon even if it already exists in

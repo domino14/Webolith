@@ -4,10 +4,10 @@ from datetime import date, timedelta
 from wordwalls.models import (WordwallsGameModel,
                               DailyChallenge,
                               DailyChallengeName)
-from base.models import Lexicon, Alphagram, Word
+from base.models import Lexicon, Alphagram, Word, probPKToAlphProb
 import time
 import random
-from lib.response import response
+from lib.response import response, bad_request
 from wordwalls.views import getLeaderboardData
 
 
@@ -111,3 +111,39 @@ def challengers(month, day, year, lex, ch_id):
     except:
         pass
     return rows
+
+
+# View
+def questions(request, tablenum):
+    """
+    Get a list of questions and answers for a table. Disregards state,
+    just return the questions/answers in origQuestions.
+
+    """
+    try:
+        wgm = WordwallsGameModel.objects.get(pk=tablenum)
+    except WordwallsGameModel.DoesNotExist:
+        return bad_request('That table does not exist.')
+
+    orig_questions = json.loads(wgm.origQuestions)
+    if len(orig_questions) > 1000:
+        return bad_request('This API only works for tables with fewer than '
+                           '1000 questions.')
+    questions = []
+    for q in orig_questions:
+        words = []
+        if type(q) is int:
+            a = Alphagram.objects.get(pk=q)
+            alphagram_str = a.alphagram
+            alphagram_pk = a.pk
+            word_set = a.word_set.all()
+        elif type(q) is dict:
+            alphagram_str = q['q']
+            alphagram_pk = None
+            word_set = [Word.objects.get(pk=word_pk) for word_pk in q['a']]
+
+        for w in word_set:
+            words.append(w.to_dict())
+        questions.append({'a': alphagram_str, 'ws': words,
+                          'p': probPKToAlphProb(alphagram_pk)})
+    return response({'count': len(questions), 'questions': questions})

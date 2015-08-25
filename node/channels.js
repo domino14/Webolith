@@ -1,9 +1,9 @@
-/* global require, exports, console */
+/* global require, exports, console, JSON */
 var _ = require('underscore');
 
 (function() {
   // The channel/realm manager.
-
+  "use strict";
   var ChannelMap, ChannelManager, connectionHash;
   ChannelMap = {};
   connectionHash = {};

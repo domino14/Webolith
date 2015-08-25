@@ -1,4 +1,4 @@
-/*global require, console, process*/
+/*global require, console, process, JSON */
 var https = require('https'),
   http = require('http'),
   sockjs = require('sockjs'),
@@ -22,6 +22,7 @@ sockServer = sockjs.createServer();
 
 redisClient = redis.createClient(redisPort, redisHost);
 sockServer.on('connection', function(conn) {
+  "use strict";
   console.log(conn);
   if (_.isNull(conn)) {
     return;
@@ -49,6 +50,7 @@ server.listen(9999, '0.0.0.0');
  * @param  {Object} connection A sockjs connection object.
  */
 function handleMessage(message, connection) {
+  "use strict";
   var msgObj;
   try {
     msgObj = JSON.parse(message);
@@ -69,6 +71,7 @@ function handleMessage(message, connection) {
  * @param  {Object} connection Connection object.
  */
 function handleTokenMessage(token, connection) {
+  "use strict";
   // This is a connection token. Verify that it exists in redis.
   redisClient.select(REDIS_TOKEN_DB, function(err) {
     if (err) {
@@ -100,9 +103,11 @@ function handleTokenMessage(token, connection) {
  * @param  {Object} connection The user connection.
  */
 function handleChatMessage(chat, channel, connection) {
+  "use strict";
   channels.manager.broadcastToChannel('chat', chat, channel, connection);
 }
 // Prevent node crashes.
 process.on('uncaughtException', function(err) {
+  "use strict";
   console.error(err.stack);
 });

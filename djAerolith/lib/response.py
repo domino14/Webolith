@@ -8,3 +8,7 @@ def response(obj, status=200):
                         content_type="application/javascript; charset=utf-8",
                         status=status)
     return resp
+
+
+def bad_request(error_text):
+    return response({'error': error_text}, 400)
