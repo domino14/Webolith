@@ -728,32 +728,33 @@ class WordwallsGame(object):
         guessStr = guessStr.upper()
         wgm = self.getWGM(tablenum)
         if not wgm:
-            return (False, '')
+            return
         state = json.loads(wgm.currentGameState)
-        if state['quizGoing']:
-            if self.didTimerRunOut(state):
-                state['timeRemaining'] = 0
-                self.doQuizEndActions(state, tablenum, wgm)
-                # also sets state['LastCorrect'] to ''
+        if not state['quizGoing']:
+            return
+        # Otherwise, let's process the guess.
+        if self.didTimerRunOut(state):
+            state['timeRemaining'] = 0
+            self.doQuizEndActions(state, tablenum, wgm)
+            # also sets state['LastCorrect'] to ''
+        else:
+            if guessStr not in state['answerHash']:
+                state['LastCorrect'] = ""
             else:
-                if guessStr not in state['answerHash']:
-                    state['LastCorrect'] = ""
-                else:
-                    alpha = state['answerHash'][guessStr]
-                    # state['answerHash'] is modified here
-                    del state['answerHash'][guessStr]
-                    if len(state['answerHash']) == 0:
-                        timeRemaining = (state['quizStartTime'] +
-                                         state['timerSecs']) - time.time()
-                        if timeRemaining < 0:
-                            timeRemaining = 0
-                        state['timeRemaining'] = timeRemaining
-                        self.doQuizEndActions(state, tablenum, wgm)
-                    state['LastCorrect'] = alpha[0]
+                alpha = state['answerHash'][guessStr]
+                # state['answerHash'] is modified here
+                del state['answerHash'][guessStr]
+                if len(state['answerHash']) == 0:
+                    timeRemaining = (state['quizStartTime'] +
+                                     state['timerSecs']) - time.time()
+                    if timeRemaining < 0:
+                        timeRemaining = 0
+                    state['timeRemaining'] = timeRemaining
+                    self.doQuizEndActions(state, tablenum, wgm)
+                state['LastCorrect'] = alpha[0]
 
             wgm.currentGameState = json.dumps(state)
             wgm.save()
-
         return state['quizGoing'], state.get('LastCorrect', '')
 
     def permit(self, user, tablenum):

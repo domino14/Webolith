@@ -39,7 +39,7 @@ import base.settings
 import os
 import random
 import logging
-from lib.response import response
+from lib.response import response, StatusCode
 from lib.socket_helper import get_connection_token
 from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
 from current_version import CURRENT_VERSION
@@ -300,7 +300,9 @@ def table(request, id):
             wwg = WordwallsGame()
 
             state = wwg.guess(request.POST['guess'].strip(), id, request.user)
-
+            if state is None:
+                return response('Quiz is already over.',
+                                status=StatusCode.BAD_REQUEST)
             return response({'g': state[0], 'C': state[1]})
         elif action == "gameEnded":
             wwg = WordwallsGame()

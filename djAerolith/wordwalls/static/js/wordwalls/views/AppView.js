@@ -402,7 +402,9 @@ define([
         action: "guess",
         guess: guessText
       }, _.bind(this.processGuessResponse, this, ucGuess),
-      'json');
+      'json').fail(_.bind(function(jqXHR) {
+        this.updateMessages(jqXHR.responseJSON);
+      }, this));
     },
     /**
      * Processes a back-end response to a guess.
