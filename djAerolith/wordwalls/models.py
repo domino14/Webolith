@@ -114,6 +114,7 @@ class WordwallsGameModel(GenericTableGameModel):
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge)
+    # This will need to change to an integer, and need to add a lexicon.
     alphagram = models.ForeignKey(Alphagram)
     numTimesMissed = models.IntegerField(default=0)
 

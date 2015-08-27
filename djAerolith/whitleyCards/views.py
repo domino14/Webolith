@@ -4,12 +4,14 @@ from lib.response import response
 from wordwalls.views import searchForAlphagrams
 from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList
-from base.models import Lexicon, Alphagram, SavedList
+from base.models import Lexicon, SavedList
 import json
 from django.core.urlresolvers import reverse
 import logging
 logger = logging.getLogger(__name__)
 QUIZ_CHUNK_SIZE = 1000
+
+# TODO XXX This will not work.
 
 
 @login_required

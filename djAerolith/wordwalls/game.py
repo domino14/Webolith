@@ -16,8 +16,8 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import (Alphagram, alphProbToProbPK, probPKToAlphProb,
-                         alphagrammize, Word, SavedList)
+from base.models import (alphProbToProbPK, probPKToAlphProb,
+                         alphagrammize, SavedList)
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json

@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from wordwalls.models import (WordwallsGameModel,
                               DailyChallenge,
                               DailyChallengeName)
-from base.models import Lexicon, Alphagram, Word
+from base.models import Lexicon
 import time
 import random
 from lib.response import response
@@ -67,7 +67,7 @@ def api_random_toughie(request):
     except DailyChallenge.DoesNotExist:
         return response({"error": "No such daily challenge."})
     alphs = json.loads(dc.alphagrams)
-
+    # XXX TODO - fix this; get from sqlite database.
     alpha = Alphagram.objects.get(pk=random.choice(alphs))
     words = Word.objects.filter(alphagram=alpha)
     wordString = " ".join([word.word for word in words])

@@ -60,9 +60,6 @@ private:
     QString followDefinitionLinks(QString definition, QHash<QString, QString>& defHash, bool useFollow, int maxDepth);
     QString getSubDefinition(const QString& word, const QString& pos, QHash<QString, QString>& defHash);
 
-    QTextStream alphStream, wordStream, lexStream;
-    QFile alphFile, wordFile, lexFile;
-    int wordIndex;
     QString escapeStr(QString str);
     QString stringifyArray(int*);
 signals:

@@ -19,6 +19,8 @@
 #include "utilities.h"
 #include "databasecreator.h"
 #include <iostream>
+#include <QtSql>
+
 bool probLessThan(const Alph &a1, const Alph &a2)
 {
     return a1.combinations > a2.combinations;
@@ -26,30 +28,12 @@ bool probLessThan(const Alph &a1, const Alph &a2)
 
 DatabaseCreator::DatabaseCreator(LexiconMap* lexiconMap)
 {
-
-    alphFile.setFileName("alphs.txt");
-    wordFile.setFileName("words.txt");
-    lexFile.setFileName("lex.txt");
-
-    alphFile.open(QIODevice::WriteOnly);
-    wordFile.open(QIODevice::WriteOnly);
-    lexFile.open(QIODevice::WriteOnly);
-
-    alphStream.setDevice(&alphFile);
-    wordStream.setDevice(&wordFile);
-    lexStream.setDevice(&lexFile);
-
     this->lexiconMap = lexiconMap;
     qDebug() << "In db creator";
-    wordIndex = 1;
-
 }
 
 DatabaseCreator::~DatabaseCreator()
 {
-    alphFile.close();
-    wordFile.close();
-    lexFile.close();
 }
 
 
@@ -81,6 +65,14 @@ QString DatabaseCreator::reverse(QString word)
 
 void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    QSqlDatabase::removeDatabase(lexiconName + ".db");
+    db.setDatabaseName(lexiconName + ".db");
+
+    if (!db.open()) {
+        qDebug() << "Unable to open database for " << lexiconName;
+        return;
+    }
     qDebug() << lexiconName.toAscii().constData() << ": Loading word graphs...";
     QTime time;
     time.start();
@@ -156,47 +148,77 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     for (int i = 0; i < 16; i++)
         probs[i] = 0;
     int lexIndex = lexInfo->lexiconIndex;
+    QSqlQuery query;
+    query.exec("create table alphagrams (probability int primary key, "
+               "alphagram varchar(20), length int)");
+    query.exec("create table words (word varchar(20), alphagram int, "
+               "lexicon_symbols varchar(5), definition varchar(512), "
+               "front_hooks varchar(26), back_hooks varchar(26), "
+               "inner_front_hook int, inner_back_hook int)");
+    query.exec("create index word_index on words(word)");
+    query.exec("create index alphagram_index on words(alphagram)");
+
+    QString alphagramInsertQuery = "INSERT INTO alphagrams (probability, "
+                                   "alphagram, length) VALUES(?, ?, ?)";
+    QString wordInsertQuery = "INSERT INTO words (word, alphagram, "
+                              "lexicon_symbols, definition, front_hooks, "
+                              "back_hooks, inner_front_hook, inner_back_hook) "
+                              "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
     for (int i = 0; i < alphs.size(); i++)
     {
         int wordLength = alphs[i].alphagram.length();
 
         progress++;
         if (progress%1000 == 0)
-            emit setProgressValue(progress); // this is gonna be a little behind because of alphagrams.. it's ok
+            emit setProgressValue(progress);
+        // this is gonna be a little behind because of alphagrams.. it's ok
 
         if (wordLength <= 15)
             probs[wordLength]++;
 
-        int encodedProb = LexiconUtilities::encodeProbIndex(probs[wordLength], wordLength, lexIndex);
-        alphStream << alphs[i].alphagram << ","
-                << lexIndex << ","
-                << probs[wordLength] << ","
-                << encodedProb << ","
-                << wordLength << endl;
+        query.prepare(alphagramInsertQuery);
+        query.bindValue(0, probs[wordLength]);
+        query.bindValue(1, alphs[i].alphagram);
+        query.bindValue(2, wordLength);
+        query.exec();
         for (int j = 0; j < alphs[i].words.length(); j++)
         {
             QString word = alphs[i].words[j];
             QPair<bool, QString> backHooks = lexInfo->dawg.findHooks(word.toAscii());
             QPair<bool, QString> frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
             QString lexSymbols = "";
-            if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
+            if (updateCSWPoundSigns && lexInfoAmerica &&
+                    !lexInfoAmerica->dawg.findWord(word.toAscii())) {
                 lexSymbols = "#";
-            if (updateAmericaPlusSigns && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
+            }
+            if (updateAmericaPlusSigns && lexInfoOWL2 &&
+                    !lexInfoOWL2->dawg.findWord(word.toAscii())) {
                 lexSymbols += "+";
-	    if (updateCSWPlusSigns && lexInfoCSW12 && !lexInfoCSW12->dawg.findWord(word.toAscii()))
-	        lexSymbols += "+";
-            if (updateAmericaDollarSigns && lexInfoCSW15 && !lexInfoCSW15->dawg.findWord(word.toAscii()))
+            }
+            if (updateCSWPlusSigns && lexInfoCSW12 &&
+                    !lexInfoCSW12->dawg.findWord(word.toAscii())) {
+                lexSymbols += "+";
+            }
+            if (updateAmericaDollarSigns && lexInfoCSW15 &&
+                    !lexInfoCSW15->dawg.findWord(word.toAscii())) {
                 lexSymbols += "$";
-            wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
-                        << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
-                        << frontHooks.second << "," << backHooks.second << ","
-                        << frontHooks.first << "," << backHooks.first << endl;
-            wordIndex++;
+            }
+            query.prepare(wordInsertQuery);
+            query.bindValue(0, alphs[i].words[j]);
+            query.bindValue(1, probs[wordLength]);
+            query.bindValue(2, lexSymbols);
+            query.bindValue(3, definitionsHash[word]);
+            query.bindValue(4, frontHooks.second);
+            query.bindValue(5, backHooks.second);
+            query.bindValue(6, frontHooks.first);
+            query.bindValue(7, backHooks.first);
+            query.exec();
         }
     }
 
-    lexStream <<   lexIndex << "," <<   lexInfo->lexiconName << "," << escapeStr(lexInfo->descriptiveName)
-            << "," << escapeStr(stringifyArray(probs)) << endl;
+    // lexStream <<   lexIndex << "," <<   lexInfo->lexiconName << "," << escapeStr(lexInfo->descriptiveName)
+    //         << "," << escapeStr(stringifyArray(probs)) << endl;
 
     qDebug() << "Created text files in" << time.elapsed() << "for lexicon" << lexiconName;
 

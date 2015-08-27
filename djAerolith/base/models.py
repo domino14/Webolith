@@ -60,50 +60,50 @@ class Lexicon(models.Model):
 # manager stuff:
 
 
-class AlphagramManager(models.Manager):
-    def get_by_natural_key(self, alphagram, lexicon):
-        return self.get(alphagram=alphagram, lexicon=lexicon)
+# class AlphagramManager(models.Manager):
+#     def get_by_natural_key(self, alphagram, lexicon):
+#         return self.get(alphagram=alphagram, lexicon=lexicon)
 
 
-class Alphagram(models.Model):
-    objects = AlphagramManager()
+# class Alphagram(models.Model):
+#     objects = AlphagramManager()
 
-    alphagram = models.CharField(max_length=15, db_index=True)
-    lexicon = models.ForeignKey(Lexicon)
-    probability = models.IntegerField()
-    probability_pk = models.IntegerField(primary_key=True)
-    length = models.IntegerField()
+#     alphagram = models.CharField(max_length=15, db_index=True)
+#     lexicon = models.ForeignKey(Lexicon)
+#     probability = models.IntegerField()
+#     probability_pk = models.IntegerField(primary_key=True)
+#     length = models.IntegerField()
 
-    def __unicode__(self):
-        return self.alphagram
+#     def __unicode__(self):
+#         return self.alphagram
 
-    def natural_key(self):
-        return (self.alphagram, self.lexicon)
+#     def natural_key(self):
+#         return (self.alphagram, self.lexicon)
 
-    class Meta:
-        unique_together = (('alphagram', 'lexicon'),
-                           ('probability', 'length', 'lexicon')
-                           )
+#     class Meta:
+#         unique_together = (('alphagram', 'lexicon'),
+#                            ('probability', 'length', 'lexicon')
+#                            )
 
 
-class Word(models.Model):
-    word = models.CharField(max_length=15, db_index=True)
-    alphagram = models.ForeignKey(Alphagram)
-    lexicon = models.ForeignKey(Lexicon)
-    lexiconSymbols = models.CharField(max_length=5)
-    # A word can only have one lexicon, even though e.g. 'PAN' could be
-    # in multiple lexica (csw, owl2, fise, etc). This makes it much
-    # simpler to keep the lexicon-specific definition, front hooks, back
-    # hooks, etc. in this table and it makes more sense (see notes
-    # below)
-    definition = models.CharField(max_length=512)
-    front_hooks = models.CharField(max_length=26)
-    back_hooks = models.CharField(max_length=26)
-    inner_front_hook = models.BooleanField(default=False)
-    inner_back_hook = models.BooleanField(default=False)
+# class Word(models.Model):
+#     word = models.CharField(max_length=15, db_index=True)
+#     alphagram = models.ForeignKey(Alphagram)
+#     lexicon = models.ForeignKey(Lexicon)
+#     lexiconSymbols = models.CharField(max_length=5)
+#     # A word can only have one lexicon, even though e.g. 'PAN' could be
+#     # in multiple lexica (csw, owl2, fise, etc). This makes it much
+#     # simpler to keep the lexicon-specific definition, front hooks, back
+#     # hooks, etc. in this table and it makes more sense (see notes
+#     # below)
+#     definition = models.CharField(max_length=512)
+#     front_hooks = models.CharField(max_length=26)
+#     back_hooks = models.CharField(max_length=26)
+#     inner_front_hook = models.BooleanField(default=False)
+#     inner_back_hook = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return self.word + ": " + self.definition
+#     def __unicode__(self):
+#         return self.word + ": " + self.definition
 
 # these models for words allow for separating words from alphagrams from
 # lexica however let's not make it too confusing -- we should stick to
