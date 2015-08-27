@@ -110,8 +110,6 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
         wordCount++;
     }
     in.seek(0);
-    emit setProgressRange(0, wordCount*3);   // 1 accounts for reading the words, 2 accounts for alph, 3 for fixing defs
-    emit setProgressValue(0);
     int progress = 0;
     while (!in.atEnd())
     {
@@ -120,16 +118,16 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
         if (line.length() > 0)
         {
             progress++;
-            if (progress%1000 == 0)
-                emit setProgressValue(progress);
             QString word = line.section(' ', 0, 0).toUpper();
             QString definition = line.section(' ', 1);
             definitionsHash.insert(word, definition);
 
 
             QString alphagram = LexiconUtilities::alphagrammize(word, lessThan);
-            if (!alphagramsHash.contains(alphagram))
-                alphagramsHash.insert(alphagram, Alph(dummy, lexInfo->combinations(alphagram), alphagram));
+            if (!alphagramsHash.contains(alphagram)) {
+                alphagramsHash.insert(alphagram, 
+                    Alph(dummy, lexInfo->combinations(alphagram), alphagram));
+            }
 
             alphagramsHash[alphagram].words << word;
 
@@ -137,11 +135,13 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     }
 
     /* now sort alphagramsHash by probability/length */
-    qDebug() << lexiconName.toAscii().constData() << ": Sorting by probability...";
+    qDebug() << lexiconName.toAscii().constData() << 
+        ": Sorting by probability...";
     QList <Alph> alphs = alphagramsHash.values();
     qSort(alphs.begin(), alphs.end(), probLessThan);
 
-    qDebug() << lexiconName.toAscii().constData() << ": Creating alphagrams...";
+    qDebug() << lexiconName.toAscii().constData() << 
+        ": Creating alphagrams...";
 
     updateDefinitions(definitionsHash, progress);
     int probs[16];
@@ -149,12 +149,14 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
         probs[i] = 0;
     int lexIndex = lexInfo->lexiconIndex;
     QSqlQuery query;
-    query.exec("create table alphagrams (probability int primary key, "
+    query.exec("create table alphagrams (probability int, "
                "alphagram varchar(20), length int)");
-    query.exec("create table words (word varchar(20), alphagram int, "
+    query.exec("create table words (word varchar(20), alphagram varchar(20), "
                "lexicon_symbols varchar(5), definition varchar(512), "
                "front_hooks varchar(26), back_hooks varchar(26), "
                "inner_front_hook int, inner_back_hook int)");
+    query.exec("create index alpha_index on alphagrams(alphagram)");
+    query.exec("create index prob_index on alphagrams(probability, length)");
     query.exec("create index word_index on words(word)");
     query.exec("create index alphagram_index on words(alphagram)");
 
@@ -164,15 +166,16 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
                               "lexicon_symbols, definition, front_hooks, "
                               "back_hooks, inner_front_hook, inner_back_hook) "
                               "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-
+    db.transaction();
+    progress = 0;
     for (int i = 0; i < alphs.size(); i++)
     {
         int wordLength = alphs[i].alphagram.length();
 
         progress++;
-        if (progress%1000 == 0)
-            emit setProgressValue(progress);
-        // this is gonna be a little behind because of alphagrams.. it's ok
+        if (progress%1000 == 0) {
+            qDebug() << progress << "...";
+        }
 
         if (wordLength <= 15)
             probs[wordLength]++;
@@ -206,7 +209,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             }
             query.prepare(wordInsertQuery);
             query.bindValue(0, alphs[i].words[j]);
-            query.bindValue(1, probs[wordLength]);
+            query.bindValue(1, alphs[i].alphagram);
             query.bindValue(2, lexSymbols);
             query.bindValue(3, definitionsHash[word]);
             query.bindValue(4, frontHooks.second);
@@ -216,11 +219,12 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
             query.exec();
         }
     }
-
+    db.commit();
     // lexStream <<   lexIndex << "," <<   lexInfo->lexiconName << "," << escapeStr(lexInfo->descriptiveName)
     //         << "," << escapeStr(stringifyArray(probs)) << endl;
 
-    qDebug() << "Created text files in" << time.elapsed() << "for lexicon" << lexiconName;
+    qDebug() << "Created database in" << time.elapsed() / 1000.0
+        << "s for lexicon" <<  lexiconName;
 
 
     emit setProgressValue(0);
@@ -309,7 +313,8 @@ void DatabaseCreator::sqlListMaker(QString queryString, QString listName, quint8
 
 }*/
 
-void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, int progress)
+void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, 
+                                        int progress)
 {
     QHashIterator<QString, QString> hashIterator(defHash);
     while (hashIterator.hasNext())
@@ -335,7 +340,9 @@ void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, int pr
 
 }
 
-QString DatabaseCreator::followDefinitionLinks(QString definition, QHash<QString, QString>& defHash, bool useFollow, int maxDepth)
+QString DatabaseCreator::followDefinitionLinks(QString definition, 
+                                               QHash<QString, QString>& defHash, 
+                                               bool useFollow, int maxDepth)
 {
     /* this code is basically taken from Michael Thelen's CreateDatabaseThread.cpp, part of Zyzzyva, which is
        GPLed software, source code available at http://www.zyzzyva.net, copyright Michael Thelen. */
@@ -397,7 +404,9 @@ QString DatabaseCreator::followDefinitionLinks(QString definition, QHash<QString
     return newDefinition;
 }
 
-QString DatabaseCreator::getSubDefinition(const QString& word, const QString& pos, QHash<QString, QString>& defHash)
+QString DatabaseCreator::getSubDefinition(const QString& word, 
+                                          const QString& pos, 
+                                          QHash<QString, QString>& defHash)
 {
     if (!defHash.contains(word))
         return QString();
