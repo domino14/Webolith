@@ -45,6 +45,5 @@ int main(int argc, char *argv[])
 
     dbCreator.createLexiconDatabases(args);
 
-    //return a.exec();
     return 0;
 }

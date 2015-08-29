@@ -25,9 +25,9 @@
 struct Alph
 {
     QStringList words;
-    int combinations;
+    double combinations;
     QString alphagram;
-    Alph(QStringList w, int c, QString alph)
+    Alph(QStringList w, double c, QString alph)
     {
         alphagram = alph; words = w; combinations = c;
     }
@@ -39,7 +39,6 @@ struct Alph
 
 class DatabaseCreator : public QObject
 {
-    Q_OBJECT
 public:
     DatabaseCreator(LexiconMap* lexiconMap);
     void createLexiconDatabases(QStringList dbsToCreate);
@@ -56,18 +55,12 @@ private:
     void createLexiconDatabase(QString lexiconName);
     /*void sqlListMaker(QString queryString, QString listName, quint8 wordLength,
                       QSqlDatabase& db, SqlListMakerQueryTypes queryType = PROBABILITY_QUERY);*/
-    void updateDefinitions(QHash<QString, QString>& defHash, int progress);
-    QString followDefinitionLinks(QString definition, QHash<QString, QString>& defHash, bool useFollow, int maxDepth);
-    QString getSubDefinition(const QString& word, const QString& pos, QHash<QString, QString>& defHash);
-
-    QString escapeStr(QString str);
-    QString stringifyArray(int*);
-signals:
-    void setProgressMessage(QString);
-    void setProgressValue(int);
-    void setProgressRange(int, int);
-    void createdDatabase(QString);
-    void doneCreatingDBs();
+    void updateDefinitions(QHash<QString, QString>& defHash);
+    QString followDefinitionLinks(QString definition,
+                                  QHash<QString, QString>& defHash,
+                                  bool useFollow, int maxDepth);
+    QString getSubDefinition(const QString& word, const QString& pos,
+                             QHash<QString, QString>& defHash);
 
 };
 
