@@ -146,7 +146,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     for (int i = 0; i < 16; i++)
         probs[i] = 0;
     int lexIndex = lexInfo->lexiconIndex;
-    QSqlQuery query;
+    QSqlQuery query("", db);
     query.exec("create table alphagrams (probability int, "
                "alphagram varchar(20), length int, combinations int)");
     query.exec("create table words (word varchar(20), alphagram varchar(20), "
