@@ -1,6 +1,6 @@
 /**
  * @fileOverview The word list model. This model should almost mirror the model
- * for SavedList in base/models.py.
+ * for WordList in base/models.py.
  */
 define([
   'underscore',

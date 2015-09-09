@@ -17,7 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from base.models import (alphProbToProbPK, probPKToAlphProb,
-                         alphagrammize, SavedList)
+                         alphagrammize, WordList)
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
@@ -48,50 +48,103 @@ except NamedList.DoesNotExist:
 
 
 class WordwallsGame(object):
-    # XXX: don't duplicate WordList/SavedList logic / fields here. Instead
-    # the wordwalls game model should maybe have a foreign key to a list.
-    def createGameModelInstance(self, host, playerType, lex,
-                                numOrigQuestions,
-                                origQuestionsStr,
-                                numCurQuestions,
-                                curQuestionsStr,
-                                numMissed,
-                                missedStr,
-                                numFirstMissed,
-                                firstMissedStr,
-                                **StateKwargs):
-        state = {'answerHash': {},
-                 'questionIndex': 0,
-                 'questionsToPull': 50,
-                 'quizGoing': False,
-                 'quizStartTime': 0,
-                 'numAnswersThisRound': 0,
-                 'goneThruOnce': False,
-                 'gameType': 'regular'}
+    def _initial_state(self):
+        """ Return an initial state object, for a brand new game. """
+        return {
+            'answerHash': {},
+            'questionIndex': 0,
+            'questionsToPull': 50,
+            'quizGoing': False,
+            'quizStartTime': 0,
+            'numAnswersThisRound': 0,
+            'goneThruOnce': False,
+            'gameType': 'regular'
+        }
 
-        for param in StateKwargs:
-            state[param] = StateKwargs[param]
-
+    def create_game_instance(self, host, lex, word_list, **state_kwargs):
+        state = self._initial_state()
+        for param in state_kwargs:
+            state[param] = state_kwargs[param]
         wgm = WordwallsGameModel(
-            host=host,
-            currentGameState=json.dumps(state),
+            host=host, currentGameState=json.dumps(state),
             gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
-            playerType=playerType,
+            playerType=GenericTableGameModel.SINGLEPLAYER_GAME,
             lexicon=lex,
-            numOrigQuestions=numOrigQuestions,
-            origQuestions=origQuestionsStr,
-            curQuestions=curQuestionsStr,  # range(len(indices))
-            numCurQuestions=numCurQuestions,
-            missed=missedStr,
-            numMissed=numMissed,
-            firstMissed=firstMissedStr,
-            numFirstMissed=numFirstMissed)
-
+            word_list=word_list)
         return wgm
+
+    def create_word_list(self, num_orig_questions, orig_questions_str,
+                         num_cur_questions, cur_questions_str, num_missed,
+                         missed_str, num_first_missed, first_missed_str,
+                         lexicon, user):
+        """
+        Creates a word list with the given parameters. This word list
+        should be treated as temporary unless it is saved. It will need
+        to be cleaned up with the rest of the models.
+
+        """
+        wl = WordList(
+            lexicon=lexicon,
+            name='',   # Fix?
+            user=user,
+            numAlphagrams=num_orig_questions,
+            numCurAlphagrams=num_cur_questions,
+            numFirstMissed=num_first_missed,
+            numMissed=num_missed,
+            goneThruOnce=False,
+            questionIndex=0,
+            origQuestions=orig_questions_str,
+            curQuestions=cur_questions_str,
+            missed=missed_str,
+            firstMissed=first_missed_str,
+            is_temporary=True
+        )
+        wl.save()
+        return wl
+
+    # def createGameModelInstance(self, host, playerType, lex,
+    #                             numOrigQuestions,
+    #                             origQuestionsStr,
+    #                             numCurQuestions,
+    #                             curQuestionsStr,
+    #                             numMissed,
+    #                             missedStr,
+    #                             numFirstMissed,
+    #                             firstMissedStr,
+    #                             **StateKwargs):
+    #     state = {'answerHash': {},
+    #              'questionIndex': 0,
+    #              'questionsToPull': 50,
+    #              'quizGoing': False,
+    #              'quizStartTime': 0,
+    #              'numAnswersThisRound': 0,
+    #              'goneThruOnce': False,
+    #              'gameType': 'regular'}
+
+    #     for param in StateKwargs:
+    #         state[param] = StateKwargs[param]
+
+    #     wgm = WordwallsGameModel(
+    #         host=host,
+    #         currentGameState=json.dumps(state),
+    #         gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
+    #         playerType=playerType,
+    #         lexicon=lex,
+    #         numOrigQuestions=numOrigQuestions,
+    #         origQuestions=origQuestionsStr,
+    #         curQuestions=curQuestionsStr,  # range(len(indices))
+    #         numCurQuestions=numCurQuestions,
+    #         missed=missedStr,
+    #         numMissed=numMissed,
+    #         firstMissed=firstMissedStr,
+    #         numFirstMissed=numFirstMissed)
+
+    #     return wgm
 
     def getDc(self, chDate, chLex, chName):
         """
-            Gets a challenge with date, lex, name.
+        Gets a challenge with date, lex, name.
+
         """
         dc = DailyChallenge.objects.get(date=chDate, lexicon=chLex,
                                         name=chName)

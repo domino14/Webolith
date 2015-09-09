@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from base.models import SavedList
+from base.models import WordList
 from wordwalls.models import (
     DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry,
     DailyChallengeName)
@@ -49,7 +49,7 @@ class WordwallsGameAdmin(admin.ModelAdmin):
 admin.site.register(WordwallsGameModel, WordwallsGameAdmin)
 
 
-class WordwallsSavedListAdmin(admin.ModelAdmin):
+class WordwallsWordListAdmin(admin.ModelAdmin):
     fields = ['user', 'name', 'lexicon', 'created', 'lastSaved',
               'numAlphagrams', 'goneThruOnce', 'missed', 'firstMissed',
               'origQuestions', 'curQuestions']
@@ -62,7 +62,7 @@ class DailyChallengeMissedBingosAdmin(admin.ModelAdmin):
     readonly_fields = ('challenge', 'alphagram', 'numTimesMissed')
 
 
-admin.site.register(SavedList, WordwallsSavedListAdmin)
+admin.site.register(WordList, WordwallsWordListAdmin)
 admin.site.register(DailyChallengeMissedBingos,
                     DailyChallengeMissedBingosAdmin)
 admin.site.register(DailyChallengeLeaderboard, DailyChallengeLeaderboardAdmin)

@@ -1,13 +1,12 @@
 # Forms that are global to a few different apps: wordwalls, flashcards,
 # whitleyCards for example.
 from django import forms
-from base.models import Lexicon, SavedList, EXCLUDED_LEXICA
+from base.models import Lexicon, WordList, EXCLUDED_LEXICA
 from wordwalls.models import NamedList
 
 
 class LexiconForm(forms.Form):
     lexicon = forms.ModelChoiceField(
-        # XXX: Add CSW12 below after Sept 1.
         queryset=Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA),
         label='Lexicon',
         widget=forms.Select(attrs={'class': 'form-control'}),
@@ -75,7 +74,7 @@ class WordListChoiceField(forms.ModelChoiceField):
             return None
 
         try:
-            sl = SavedList.objects.get(pk=value)
+            sl = WordList.objects.get(pk=value)
         except:
             return None
         return sl
@@ -99,7 +98,7 @@ class SavedListForm(forms.Form):
 
     wordList = WordListChoiceField(
         label='List choice',
-        queryset=SavedList.objects.none(),
+        queryset=WordList.objects.none(),
         widget=forms.Select(attrs={'size': '10',
                                    'class': 'form-control'}))
 

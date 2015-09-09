@@ -22,7 +22,7 @@ from django.shortcuts import render
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
-from base.models import Lexicon, alphProbToProbPK, SavedList
+from base.models import Lexicon, alphProbToProbPK, WordList
 from django.contrib.auth.decorators import login_required
 import json
 from wordwalls.game import WordwallsGame, SearchDescription
@@ -423,11 +423,11 @@ def ajax_upload(request):
 def createUserList(upload, filename, lex, user):
     filename_stripped, extension = os.path.splitext(filename)
     try:
-        SavedList.objects.get(name=filename_stripped, user=user, lexicon=lex)
+        WordList.objects.get(name=filename_stripped, user=user, lexicon=lex)
         # uh oh, it exists!
         return (False, "A list by the name %s already exists for this "
                        "lexicon! Please rename your file." % filename_stripped)
-    except:
+    except WordList.DoesNotExist:
         pass
     t1 = time.time()
     try:
@@ -449,12 +449,12 @@ def createUserList(upload, filename, lex, user):
     logger.info('elapsed time: %f', time.time() - t1)
     logger.info('user: %s, filename: %s', user.username, filename)
 
-    sl = SavedList(lexicon=lex, name=filename_stripped, user=user,
-                   numAlphagrams=numAlphagrams, numCurAlphagrams=numAlphagrams,
-                   numFirstMissed=0, numMissed=0, goneThruOnce=False,
-                   questionIndex=0, origQuestions=json.dumps(pkList),
-                   curQuestions=json.dumps(range(numAlphagrams)),
-                   missed=json.dumps([]), firstMissed=json.dumps([]))
+    sl = WordList(lexicon=lex, name=filename_stripped, user=user,
+                  numAlphagrams=numAlphagrams, numCurAlphagrams=numAlphagrams,
+                  numFirstMissed=0, numMissed=0, goneThruOnce=False,
+                  questionIndex=0, origQuestions=json.dumps(pkList),
+                  curQuestions=json.dumps(range(numAlphagrams)),
+                  missed=json.dumps([]), firstMissed=json.dumps([]))
     try:
         sl.save()
     except:
@@ -567,7 +567,7 @@ def getSavedListList(lex, user):
     except Lexicon.DoesNotExist:
         return []
 
-    qset = SavedList.objects.filter(
+    qset = WordList.objects.filter(
         lexicon=lex_object, user=user).order_by('-lastSaved')
     retData = []
     now = datetime.now()

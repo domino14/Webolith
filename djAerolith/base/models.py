@@ -21,7 +21,7 @@ import string
 import json
 
 # XXX: Include CSW12 here after Sept 1.
-EXCLUDED_LEXICA = ['OWL2', 'CSW07']
+EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
 
 def alphProbToProbPK(prob, lexId, length):
     # XXX: THIS ONLY ALLOWS FOR LEXICON INDICES FROM 0 to 3
@@ -121,7 +121,7 @@ class Lexicon(models.Model):
 ############################
 
 
-class SavedList(models.Model):
+class WordList(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
@@ -139,6 +139,9 @@ class SavedList(models.Model):
     curQuestions = models.TextField()
     missed = models.TextField()
     firstMissed = models.TextField()
+    # If this word list is temporary, it should be cleaned up when its
+    # parent (the game table) gets deleted.
+    is_temporary = models.BooleanField()
 
     def to_python(self):
         """
@@ -170,4 +173,7 @@ class SavedList(models.Model):
     # can be saved separately..
 
     class Meta:
+        # XXX: This will be removed once we move over to Postgres or
+        # something. We should rename this database table properly
+        # (or even do it prior to that).
         db_table = 'wordwalls_savedlist'

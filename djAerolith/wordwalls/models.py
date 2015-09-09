@@ -18,7 +18,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from base.models import Lexicon, Alphagram
+from base.models import Lexicon, Alphagram, WordList
 from tablegame.models import GenericTableGameModel
 
 
@@ -98,6 +98,7 @@ class DailyChallengeLeaderboardEntry(models.Model):
 class WordwallsGameModel(GenericTableGameModel):
     # Additional fields.
     # XXX: we should get rid of these and use SavedList.
+    # Remove these after migration.
     numOrigQuestions = models.IntegerField()
     origQuestions = models.TextField()
 
@@ -109,6 +110,9 @@ class WordwallsGameModel(GenericTableGameModel):
 
     numFirstMissed = models.IntegerField()
     firstMissed = models.TextField()
+
+    # Removed above, just keep below.
+    word_list = models.ForeignKey(WordList)
 
 
 class DailyChallengeMissedBingos(models.Model):

@@ -4,7 +4,7 @@ from lib.response import response
 from wordwalls.views import searchForAlphagrams
 from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList
-from base.models import Lexicon, SavedList
+from base.models import Lexicon, WordList
 import json
 from django.core.urlresolvers import reverse
 import logging
@@ -166,7 +166,7 @@ def namedListPk(request, nlpk):
 
 
 def getQuizChunkFromSavedList(slpk, minIndex, option):
-    sl = SavedList.objects.get(pk=slpk)
+    sl = WordList.objects.get(pk=slpk)
     if option == SavedListForm.RESTART_LIST_CHOICE:
         questions = json.loads(sl.origQuestions)
         data = getQuizChunkByIndices(questions, minIndex)

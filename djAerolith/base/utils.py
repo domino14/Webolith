@@ -1,4 +1,4 @@
-from base.models import SavedList
+from base.models import WordList
 import json
 import logging
 logger = logging.getLogger(__name__)
@@ -47,13 +47,13 @@ def generate_question_map(alphs):
 
 def savedlist_from_alpha_pks(alphs, lexicon):
     """
-        Creates a SavedList instance from a list of Alphagram pks (indices)
+        Creates a WordList instance from a list of Alphagram pks (indices)
         but *does not save it*.
     """
     num_alphas = len(alphs)
     if num_alphas == 0:
         raise Exception("No alphagrams provided.")
-    li = SavedList()
+    li = WordList()
     li.lexicon = lexicon
     li.numAlphagrams = num_alphas
     li.numCurAlphagrams = num_alphas
@@ -72,7 +72,7 @@ def savedlist_from_alpha_pks(alphs, lexicon):
 def quizzes_response(quizzes):
     """
         Creates a response for quizzes.
-        :quizzes an array of SavedList models.
+        :quizzes an array of WordList models.
     """
     resp = []
     for quiz in quizzes:
@@ -82,7 +82,7 @@ def quizzes_response(quizzes):
 
 def quiz_response(quiz):
     """
-        :quiz A SavedList.
+        :quiz A WordList.
     """
     return {
         'lexicon': quiz.lexicon.lexiconName,
@@ -96,3 +96,6 @@ def quiz_response(quiz):
         'questionIndex': quiz.questionIndex,
         'id': quiz.id
     }
+
+
+def

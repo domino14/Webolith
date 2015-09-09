@@ -20,7 +20,7 @@
 
 
 from django.contrib.auth.decorators import login_required
-from base.models import SavedList, Lexicon
+from base.models import WordList, Lexicon
 from lib.response import response
 import base.settings
 import json
@@ -44,14 +44,14 @@ def saved_list_sync(request):
     logger.debug('Syncing %s' % body)
     orig_qs = body.get('origQuestions')
     # Try getting a saved list with the same name, lexicon, and user.
-    sl = SavedList.objects.filter(user=request.user,
-                                  lexicon__lexiconName=body.get('lexicon'),
-                                  name=body.get('name'))
+    sl = WordList.objects.filter(user=request.user,
+                                 lexicon__lexiconName=body.get('lexicon'),
+                                 name=body.get('name'))
     if len(sl):
         return response('A list by that name already exists. Please remove '
                         'that saved list and try again.', status=400)
 
-    sl = SavedList()
+    sl = WordList()
     sl.user = request.user
     sl.lexicon = Lexicon.objects.get(lexiconName=body.get('lexicon'))
     sl.name = body.get('name')
@@ -80,9 +80,8 @@ def saved_list_sync(request):
 @login_required
 def saved_list(request, id):
     try:
-        sl = SavedList.objects.get(user=request.user,
-                                   id=id)
-    except SavedList.DoesNotExist:
+        sl = WordList.objects.get(user=request.user, id=id)
+    except WordList.DoesNotExist:
         return response('This list does not exist on the server!', status=404)
     if request.method == 'DELETE':
         profile = request.user.aerolithprofile
@@ -156,9 +155,9 @@ def question_map(request):
     if request.method != 'GET':
         return response('This endpoint only accepts GET', status=400)
     try:
-        sl = SavedList.objects.get(user=request.user,
-                                   id=request.GET.get('listId'))
-    except SavedList.DoesNotExist:
+        sl = WordList.objects.get(user=request.user,
+                                  id=request.GET.get('listId'))
+    except WordList.DoesNotExist:
         return response('This list does not exist!', status=404)
 
     qs = json.loads(sl.origQuestions)
