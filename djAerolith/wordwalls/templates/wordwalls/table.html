@@ -26,10 +26,7 @@ To contact the author, please email delsolar at gmail dot com
 {% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
 {% value_from_settings DEBUG_JS as DEBUG_JS %}
-{% load assets %}
-{% assets "css_table" %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet" type="text/css">
-{% endassets %}
+<link href="/static/css/wordwalls/wordwallsTableSS.css" rel="stylesheet">
 {% if USE_GA %}
 <script type="text/javascript">
 

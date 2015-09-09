@@ -25,7 +25,7 @@ def configure(request):
                          'showCanvas': prefs['showCanvas'],
                          'showBorders': prefs['showBorders']}
 
-        profile = request.user.get_profile()
+        profile = request.user.aerolithprofile
         profile.customWordwallsStyle = json.dumps(saveObj)
         profile.save()
         return response("Ok")

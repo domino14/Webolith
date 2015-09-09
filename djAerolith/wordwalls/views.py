@@ -64,7 +64,7 @@ def homepage(request):
     ulForm = UserListForm()
     slForm = SavedListForm()
     nlForm = NamedListForm()
-    profile = request.user.get_profile()
+    profile = request.user.aerolithprofile
 
     if request.method == 'POST':
         return handle_homepage_post(profile, request)
@@ -74,7 +74,7 @@ def homepage(request):
     # Create a random token for socket connection and store in Redis
     # temporarily.
     # conn_token = get_connection_token(request.user)
-    profile = request.user.get_profile()
+    profile = request.user.aerolithprofile
     try:
         data = json.loads(profile.additional_data)
     except (TypeError, ValueError):
@@ -323,7 +323,7 @@ def table(request, id):
             logger.debug("Give up and saving returned: %s" % ret)
             return response(ret)
         elif action == "savePrefs":
-            profile = request.user.get_profile()
+            profile = request.user.aerolithprofile
             profile.customWordwallsStyle = request.POST['prefs']
             profile.save()
             return response({'success': True})
@@ -345,7 +345,7 @@ def table(request, id):
             # Add styling params from user's profile (for styling table
             # tiles, backgrounds, etc)
             try:
-                profile = request.user.get_profile()
+                profile = request.user.aerolithprofile
                 style = profile.customWordwallsStyle
                 if style != "":
                     params['style'] = style
@@ -437,7 +437,7 @@ def createUserList(upload, filename, lex, user):
     except UserListParseException as e:
         return (False, str(e))
 
-    profile = user.get_profile()
+    profile = user.aerolithprofile
     numSavedAlphas = profile.wordwallsSaveListSize
     limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
 
@@ -605,7 +605,7 @@ def deleteSavedList(savedList, user):
 
     numAlphagrams = savedList.numAlphagrams
     savedList.delete()
-    profile = user.get_profile()
+    profile = user.aerolithprofile
     profile.wordwallsSaveListSize -= numAlphagrams
     profile.save()
     return profile.wordwallsSaveListSize

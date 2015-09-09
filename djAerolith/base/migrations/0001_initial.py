@@ -1,97 +1,81 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-        
-        # Adding model 'Lexicon'
-        db.create_table('base_lexicon', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('lexiconName', self.gf('django.db.models.fields.CharField')(max_length=12)),
-            ('lexiconDescription', self.gf('django.db.models.fields.CharField')(max_length=64)),
-            ('lengthCounts', self.gf('django.db.models.fields.CharField')(max_length=256)),
-        ))
-        db.send_create_signal('base', ['Lexicon'])
-
-        # Adding model 'Alphagram'
-        db.create_table('base_alphagram', (
-            ('alphagram', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('lexicon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['base.Lexicon'])),
-            ('probability', self.gf('django.db.models.fields.IntegerField')()),
-            ('probability_pk', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
-            ('length', self.gf('django.db.models.fields.IntegerField')()),
-        ))
-        db.send_create_signal('base', ['Alphagram'])
-
-        # Adding unique constraint on 'Alphagram', fields ['alphagram', 'lexicon']
-        db.create_unique('base_alphagram', ['alphagram', 'lexicon_id'])
-
-        # Adding unique constraint on 'Alphagram', fields ['probability', 'length', 'lexicon']
-        db.create_unique('base_alphagram', ['probability', 'length', 'lexicon_id'])
-
-        # Adding model 'Word'
-        db.create_table('base_word', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('word', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('alphagram', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['base.Alphagram'])),
-            ('lexicon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['base.Lexicon'])),
-            ('lexiconSymbols', self.gf('django.db.models.fields.CharField')(max_length=5)),
-            ('definition', self.gf('django.db.models.fields.CharField')(max_length=512)),
-            ('front_hooks', self.gf('django.db.models.fields.CharField')(max_length=26)),
-            ('back_hooks', self.gf('django.db.models.fields.CharField')(max_length=26)),
-        ))
-        db.send_create_signal('base', ['Word'])
+from django.db import models, migrations
+from django.conf import settings
 
 
-    def backwards(self, orm):
-        
-        # Removing unique constraint on 'Alphagram', fields ['probability', 'length', 'lexicon']
-        db.delete_unique('base_alphagram', ['probability', 'length', 'lexicon_id'])
+class Migration(migrations.Migration):
 
-        # Removing unique constraint on 'Alphagram', fields ['alphagram', 'lexicon']
-        db.delete_unique('base_alphagram', ['alphagram', 'lexicon_id'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Deleting model 'Lexicon'
-        db.delete_table('base_lexicon')
-
-        # Deleting model 'Alphagram'
-        db.delete_table('base_alphagram')
-
-        # Deleting model 'Word'
-        db.delete_table('base_word')
-
-
-    models = {
-        'base.alphagram': {
-            'Meta': {'unique_together': "(('alphagram', 'lexicon'), ('probability', 'length', 'lexicon'))", 'object_name': 'Alphagram'},
-            'alphagram': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'length': ('django.db.models.fields.IntegerField', [], {}),
-            'lexicon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['base.Lexicon']"}),
-            'probability': ('django.db.models.fields.IntegerField', [], {}),
-            'probability_pk': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'})
-        },
-        'base.lexicon': {
-            'Meta': {'object_name': 'Lexicon'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'lengthCounts': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'lexiconDescription': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
-            'lexiconName': ('django.db.models.fields.CharField', [], {'max_length': '12'})
-        },
-        'base.word': {
-            'Meta': {'object_name': 'Word'},
-            'alphagram': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['base.Alphagram']"}),
-            'back_hooks': ('django.db.models.fields.CharField', [], {'max_length': '26'}),
-            'definition': ('django.db.models.fields.CharField', [], {'max_length': '512'}),
-            'front_hooks': ('django.db.models.fields.CharField', [], {'max_length': '26'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'lexicon': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['base.Lexicon']"}),
-            'lexiconSymbols': ('django.db.models.fields.CharField', [], {'max_length': '5'}),
-            'word': ('django.db.models.fields.CharField', [], {'max_length': '15'})
-        }
-    }
-
-    complete_apps = ['base']
+    operations = [
+        migrations.CreateModel(
+            name='Alphagram',
+            fields=[
+                ('alphagram', models.CharField(max_length=15, db_index=True)),
+                ('probability', models.IntegerField()),
+                ('probability_pk', models.IntegerField(serialize=False, primary_key=True)),
+                ('length', models.IntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Lexicon',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('lexiconName', models.CharField(max_length=12)),
+                ('lexiconDescription', models.CharField(max_length=64)),
+                ('lengthCounts', models.CharField(max_length=256)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='SavedList',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('lastSaved', models.DateTimeField(auto_now=True)),
+                ('name', models.CharField(max_length=50)),
+                ('numAlphagrams', models.IntegerField()),
+                ('numCurAlphagrams', models.IntegerField()),
+                ('numFirstMissed', models.IntegerField()),
+                ('numMissed', models.IntegerField()),
+                ('goneThruOnce', models.BooleanField()),
+                ('questionIndex', models.IntegerField()),
+                ('origQuestions', models.TextField()),
+                ('curQuestions', models.TextField()),
+                ('missed', models.TextField()),
+                ('firstMissed', models.TextField()),
+                ('lexicon', models.ForeignKey(to='base.Lexicon')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'db_table': 'wordwalls_savedlist',
+            },
+        ),
+        migrations.CreateModel(
+            name='Word',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('word', models.CharField(max_length=15, db_index=True)),
+                ('lexiconSymbols', models.CharField(max_length=5)),
+                ('definition', models.CharField(max_length=512)),
+                ('front_hooks', models.CharField(max_length=26)),
+                ('back_hooks', models.CharField(max_length=26)),
+                ('inner_front_hook', models.BooleanField(default=False)),
+                ('inner_back_hook', models.BooleanField(default=False)),
+                ('alphagram', models.ForeignKey(to='base.Alphagram')),
+                ('lexicon', models.ForeignKey(to='base.Lexicon')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='alphagram',
+            name='lexicon',
+            field=models.ForeignKey(to='base.Lexicon'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='alphagram',
+            unique_together=set([('probability', 'length', 'lexicon'), ('alphagram', 'lexicon')]),
+        ),
+    ]

@@ -28,7 +28,7 @@ def getLexicon():
 
 
 class AerolithProfile(models.Model):
-    user = models.ForeignKey(User, unique=True)
+    user = models.OneToOneField(User)
 
     coins = models.IntegerField(default=0)
     profile = models.CharField(max_length=2000, blank=True)

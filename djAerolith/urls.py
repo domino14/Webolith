@@ -26,7 +26,6 @@ from django.contrib.auth import views as auth_views
 
 import gargoyle
 
-admin.autodiscover()
 gargoyle.autodiscover()
 
 
@@ -42,7 +41,6 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^comments/', include('django.contrib.comments.urls')),
     (r'^$', 'views.homepage'),
     (r'^old/', 'views.oldhomepage'),
     (r'^about/', 'views.about'),

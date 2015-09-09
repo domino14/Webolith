@@ -33,13 +33,14 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'djAerolith',                      # Or path to database file if using sqlite3.
+        'NAME': settings_local.sql_db_name,                      # Or path to database file if using sqlite3.
         'USER': settings_local.sqlUser,                      # Not used with sqlite3.
         'PASSWORD': settings_local.sqlPw,                  # Not used with sqlite3.
         'HOST': settings_local.SQL_HOST,                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'OPTIONS': {"init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED" } ,
         # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
+        'ATOMIC_REQUESTS': True
     }
 }
 
@@ -105,7 +106,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'middleware.session_expiry.SessionIdleTimeout',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
@@ -128,26 +128,22 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'django.contrib.comments',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     #'basic.blog',
     #'basic.inlines',
-    'tagging',
     'base',
     'tablegame',
     'wordwalls',
-    'registration',
     'accounts',
     'django.contrib.staticfiles',
     'gunicorn',
-    'django_assets',
-    'south',
     'whitleyCards',
     'quackleInterface',
     'crosswordgame',
     'gargoyle',
-    'flashcards'
+    'flashcards',
+    'registration'
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -155,8 +151,6 @@ INSTALLED_APPS = (
 )
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
-
-AUTH_PROFILE_MODULE = 'accounts.AerolithProfile'
 
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
@@ -262,7 +256,6 @@ try:
 except AttributeError:
     pass
 
-ASSETS_DEBUG = settings_local.ASSETS_DEBUG
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
 RECAPTCHA_PRIVATE_KEY = settings_local.RECAPTCHA_PRIVATE_KEY
 

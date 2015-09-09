@@ -61,7 +61,7 @@ class DailyChallenge(models.Model):
 
 
 class DailyChallengeLeaderboard(models.Model):
-    challenge = models.ForeignKey(DailyChallenge, unique=True)
+    challenge = models.OneToOneField(DailyChallenge)
     maxScore = models.IntegerField()
     medalsAwarded = models.BooleanField(default=False)
 
