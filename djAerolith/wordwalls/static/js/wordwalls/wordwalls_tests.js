@@ -1,3 +1,8 @@
+/**
+ * @fileOverview The Tester is a semi-automatic tester mainly used for
+ * testing multithreading/rapid solving. Should use with a multi-threaded
+ * server such as gunicorn.
+ */
 define([
   'backbone',
   'underscore'
