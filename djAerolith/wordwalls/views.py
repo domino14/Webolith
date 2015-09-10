@@ -368,8 +368,8 @@ def table(request, id):
 def start_game(request, id):
     if gargoyle.is_active('disable_games', request):
         return response(
-            {'serverMsg': 'Unable to start game as this is temporarily '
-                          'disabled. Please try again in a few minutes.'})
+            {'serverMsg': 'The Aerolith server is currently undergoing '
+                          'maintenance. Please try again in a few minutes.'})
     wwg = WordwallsGame()
     gameReady = wwg.startRequest(request.user, id)
     if not gameReady:
