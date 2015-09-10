@@ -491,7 +491,7 @@ class WordwallsGame(object):
             return ret
 
         # now check if a list with this name, lexicon, and user exists
-        profile = user.get_profile()
+        profile = user.aerolithprofile
         if profile.member:
             limit = base.settings.SAVE_LIST_LIMIT_MEMBER
         else:

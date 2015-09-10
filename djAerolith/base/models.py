@@ -124,7 +124,7 @@ class Word(models.Model):
 class SavedList(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     created = models.DateTimeField(auto_now_add=True)
-    lastSaved = models.DateTimeField(auto_now=True, auto_now_add=True)
+    lastSaved = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=50)
     user = models.ForeignKey(User)
 

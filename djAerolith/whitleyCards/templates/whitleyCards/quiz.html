@@ -2,11 +2,8 @@
 
 {% block content %}
 
-{% load assets %}
 {% load value_from_settings %}
-{% assets "js_quiz" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
+<script type="text/javascript" src="/static/js/whitleyCards/quiz.js"></script>
 
 
 <p style="color:gray">Flashcards programmed by David Whitley and adapted by Cesar Del Solar, based on code at Ottawa Scrabble Club website by Chris Ten Den</p>

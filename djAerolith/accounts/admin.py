@@ -19,9 +19,11 @@ from django.contrib import admin
 from accounts.models import AerolithProfile
 from django import forms
 
+
 class ProfileAdminForm(forms.ModelForm):
     class Meta:
         model = AerolithProfile
+        fields = '__all__'
         widgets = {
             'profile': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
             'customWordwallsStyle': forms.Textarea(
@@ -35,4 +37,3 @@ class AerolithProfileAdmin(admin.ModelAdmin):
     form = ProfileAdminForm
 
 admin.site.register(AerolithProfile, AerolithProfileAdmin)
-

@@ -53,7 +53,7 @@ class Command(BaseCommand):
                     except IndexError:
                         break
                     lbes[i].save()
-                    profile = lbes[i].user.get_profile()
+                    profile = lbes[i].user.aerolithprofile
                     try:
                         userMedals = json.loads(profile.wordwallsMedals)
                     except (TypeError, ValueError):

@@ -38,7 +38,7 @@ def saved_list_sync(request):
     if request.method != 'POST':
         return response('This endpoint only accepts a POST.', status=400)
     body = json.loads(request.body)
-    profile = request.user.get_profile()
+    profile = request.user.aerolithprofile
     saved_alphas = profile.wordwallsSaveListSize
     limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
     logger.debug('Syncing %s' % body)
@@ -85,7 +85,7 @@ def saved_list(request, id):
     except SavedList.DoesNotExist:
         return response('This list does not exist on the server!', status=404)
     if request.method == 'DELETE':
-        profile = request.user.get_profile()
+        profile = request.user.aerolithprofile
         saved_alphas = profile.wordwallsSaveListSize
         profile.wordwallsSaveListSize = saved_alphas - sl.numAlphagrams
         sl.delete()
