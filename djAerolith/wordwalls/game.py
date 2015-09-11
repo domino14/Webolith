@@ -741,7 +741,7 @@ class WordwallsGame(object):
             state['timeRemaining'] = 0
             logger.info('Timer ran out, end quiz.')
             self.doQuizEndActions(state, tablenum, wgm)
-            # also sets state['LastCorrect'] to ''
+            # Save state back to game.
         else:
             if guessStr not in state['answerHash']:
                 state['LastCorrect'] = ""
