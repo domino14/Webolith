@@ -286,19 +286,14 @@ def handle_homepage_post(profile, request):
 
 @login_required
 def table(request, id):
-    logger.info("request: %s", request.method)
-
     if request.method == 'POST':
         action = request.POST['action']
-        logger.info('action %s', action)
+        logger.debug('user=%s, action=%s, table=%s', request.user, action, id)
         if action == "start":
             return start_game(request, id)
         elif action == "guess":
-            logger.info('%s: guess %s, table %s', request.user.username,
-                        request.POST['guess'], id)
-
+            logger.debug('guess=%s', request.POST['guess'])
             wwg = WordwallsGame()
-
             state = wwg.guess(request.POST['guess'].strip(), id, request.user)
             if state is None:
                 return response('Quiz is already over.',
