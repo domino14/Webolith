@@ -73,6 +73,26 @@ class WordwallsGame(object):
             word_list=word_list)
         return wgm
 
+    def initialize_word_list(self, alphagrams, lexicon, user):
+        """
+        Initializes a word list with the given array of alphagrams and
+        returns it.
+
+        """
+        num_questions = len(alphagrams)
+        return self.create_word_list(
+            num_orig_questions=num_questions,
+            orig_questions_string=json.dumps(alphagrams),
+            num_cur_questions=num_questions,
+            cur_questions_str=json.dumps(range(num_questions)),
+            num_missed=0,
+            missed_str=json.dumps([]),
+            num_first_missed=0,
+            first_missed_str=json.dumps([]),
+            lexicon=lexicon,
+            user=user
+        )
+
     def create_word_list(self, num_orig_questions, orig_questions_str,
                          num_cur_questions, cur_questions_str, num_missed,
                          missed_str, num_first_missed, first_missed_str,
@@ -85,7 +105,7 @@ class WordwallsGame(object):
         """
         wl = WordList(
             lexicon=lexicon,
-            name='',   # Fix?
+            name='Temporary',   # Fix?
             user=user,
             numAlphagrams=num_orig_questions,
             numCurAlphagrams=num_cur_questions,
@@ -102,46 +122,7 @@ class WordwallsGame(object):
         wl.save()
         return wl
 
-    # def createGameModelInstance(self, host, playerType, lex,
-    #                             numOrigQuestions,
-    #                             origQuestionsStr,
-    #                             numCurQuestions,
-    #                             curQuestionsStr,
-    #                             numMissed,
-    #                             missedStr,
-    #                             numFirstMissed,
-    #                             firstMissedStr,
-    #                             **StateKwargs):
-    #     state = {'answerHash': {},
-    #              'questionIndex': 0,
-    #              'questionsToPull': 50,
-    #              'quizGoing': False,
-    #              'quizStartTime': 0,
-    #              'numAnswersThisRound': 0,
-    #              'goneThruOnce': False,
-    #              'gameType': 'regular'}
-
-    #     for param in StateKwargs:
-    #         state[param] = StateKwargs[param]
-
-    #     wgm = WordwallsGameModel(
-    #         host=host,
-    #         currentGameState=json.dumps(state),
-    #         gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
-    #         playerType=playerType,
-    #         lexicon=lex,
-    #         numOrigQuestions=numOrigQuestions,
-    #         origQuestions=origQuestionsStr,
-    #         curQuestions=curQuestionsStr,  # range(len(indices))
-    #         numCurQuestions=numCurQuestions,
-    #         missed=missedStr,
-    #         numMissed=numMissed,
-    #         firstMissed=firstMissedStr,
-    #         numFirstMissed=numFirstMissed)
-
-    #     return wgm
-
-    def getDc(self, chDate, chLex, chName):
+    def get_dc(self, chDate, chLex, chName):
         """
         Gets a challenge with date, lex, name.
 
@@ -155,126 +136,105 @@ class WordwallsGame(object):
         random.shuffle(qs)
         return qs, secs, dc
 
-    def initializeByDailyChallenge(self, user, challengeLex, challengeName,
-                                   challengeDate):
-        # Does a daily challenge exist with this name and the current
-        # date? If not, create it.
+    def initialize_daily_challenge(self, user, ch_lex, ch_name, ch_date):
+        """
+        Initializes a WordwallsGame daily challenge.
+
+        """
+
+        # Does a daily challenge exist with this name and date?
+        # If not, create it.
         today = date.today()
-        qualifyForAward = False
-        if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+        qualify_for_award = False
+        if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
             # Repeat on Tuesday at midnight local time (ie beginning of
             # the day, 0:00) Tuesday is an isoweekday of 2. Find the
             # nearest Tuesday back in time. isoweekday goes from 1 to 7.
             from wordwalls.management.commands.genMissedBingoChalls import (
                 challengeDateFromReqDate)
-            chDate = challengeDateFromReqDate(challengeDate)
-            if chDate == challengeDateFromReqDate(today):
-                qualifyForAward = True
+            ch_date = challengeDateFromReqDate(ch_date)
+            if ch_date == challengeDateFromReqDate(today):
+                qualify_for_award = True
         # otherwise, it's not a 'bingo toughies', but a regular challenge.
         else:
-            chDate = challengeDate
-            if chDate == today:
-                qualifyForAward = True
+            if ch_date == today:
+                qualify_for_award = True
 
-        try:
-            qs, secs, dc = self.getDc(
-                chDate, challengeLex, challengeName)
-        except DailyChallenge.DoesNotExist:
-            # does not exist!
-            try:
-                ret = self.generateDailyChallengePks(challengeName,
-                                                     challengeLex,
-                                                     chDate)
-            except IOError:
-                return 0
-            if ret:
-                qs, secs = ret
-                dc = DailyChallenge(date=chDate, lexicon=challengeLex,
-                                    name=challengeName, seconds=secs,
-                                    alphagrams=json.dumps(qs))
-                try:
-                    dc.save()
-                except IntegrityError:
-                    logger.exception("Caught integrity error")
-                    # This happens rarely if the DC gets generated twice
-                    # in very close proximity.
-                    qs, secs, dc = self.getDc(chDate, challengeLex,
-                                              challengeName)
-            else:
-                return 0
-        num_questions = len(qs)
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME, challengeLex,
-            num_questions,
-            json.dumps(qs),
-            num_questions,
-            json.dumps(range(num_questions)),
-            0,
-            json.dumps([]),
-            0,
-            json.dumps([]),
-            gameType='challenge',
-            challengeId=dc.pk,
-            timerSecs=secs,
-            qualifyForAward=qualifyForAward,
-            questionsToPull=num_questions)
+        ret = self.get_or_create_dc(ch_date, ch_lex, ch_name)
+        if ret is None:
+            return 0
+        qs, secs, dc = ret
+        wl = self.initialize_word_list(qs, ch_lex, user)
+        wgm = self.create_game_instance(user, ch_lex, wl,
+                                        # Extra parameters to be put in 'state'
+                                        gameType='challenge',
+                                        challengeId=dc.pk,
+                                        timerSecs=secs,
+                                        qualifyForAward=qualify_for_award)
         wgm.save()
         wgm.inTable.add(user)
         return wgm.pk   # the table number
 
-    def initializeBySearchParams(self, user, alphasSearchDescription,
-                                 timeSecs):
-        pkIndices = self.getPkIndices(alphasSearchDescription)
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME,
-            alphasSearchDescription['lexicon'],
-            len(pkIndices),
-            json.dumps(pkIndices),
-            len(pkIndices),
-            json.dumps(range(len(pkIndices))),
-            0,
-            json.dumps([]),
-            0,
-            json.dumps([]),
-            timerSecs=timeSecs)
+    def get_or_create_dc(self, ch_date, ch_lex, ch_name):
+        """
+        Get, or create, a daily challenge with the given parameters.
+
+        """
+        try:
+            qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
+        except DailyChallenge.DoesNotExist:
+            try:
+                ret = self.generate_dc_pks(ch_name, ch_lex, ch_date)
+                if not ret:
+                    return None
+            except IOError:
+                return None
+
+            qs, secs = ret
+            dc = DailyChallenge(date=ch_date, lexicon=ch_lex,
+                                name=ch_name, seconds=secs,
+                                alphagrams=json.dumps(qs))
+            try:
+                dc.save()
+            except IntegrityError:
+                logger.exception("Caught integrity error")
+                # This happens rarely if the DC gets generated twice
+                # in very close proximity.
+                qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
+
+        return qs, secs, dc
+
+    def initialize_by_search_params(self, user, alphasSearchDescription,
+                                    timeSecs):
+        pk_indices = self.get_pk_indices(alphasSearchDescription)
+        lexicon = alphasSearchDescription['lexicon']
+        wl = self.initialize_word_list(pk_indices, lexicon, user)
+        wgm = self.create_game_instance(user, lexicon, wl, timerSecs=timeSecs)
         wgm.save()
         wgm.inTable.add(user)
         return wgm.pk   # this is a table number id!
 
-    def initializeByNamedList(self, lex, user, namedList, secs):
-        addlParams = {}
-        addlParams['timerSecs'] = secs
+    def initialize_by_named_list(self, lex, user, namedList, secs):
         pks = json.loads(namedList.questions)
         if namedList.isRange:
             pks = range(pks[0], pks[1] + 1)
-        if len(pks) != namedList.numQuestions:
-            raise
         random.shuffle(pks)
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME, lex,
-            namedList.numQuestions,
-            json.dumps(pks),
-            namedList.numQuestions,
-            json.dumps(range(len(pks))),
-            0,
-            json.dumps([]),
-            0,
-            json.dumps([]),
-            **addlParams)
+        wl = self.initialize_word_list(pks, lex, user)
+        wgm = self.create_game_instance(user, lex, wl, timerSecs=secs)
         wgm.save()
         wgm.inTable.add(user)
         return wgm.pk
 
-    def initializeBySavedList(self, lex, user, savedList, listOption, secs):
-        # First of all, return 0 if the user and the saved list don't
-        # match. TODO test this.
+    def initialize_by_saved_list(self, lex, user, savedList, listOption, secs):
         if savedList.user != user:
+            logger.warning('Saved list user does not match user %s %s',
+                           savedList.user, user)
             return 0
 
         if (listOption == SavedListForm.FIRST_MISSED_CHOICE and
                 savedList.goneThruOnce is False):
-            logger.info('error, first missed list only valid if player has '
-                        'gone thru list once')
+            logger.error('error, first missed list only valid if player has '
+                         'gone thru list once')
             return 0    # Can't do a 'first missed' list if we haven't gone
                         # through it once!
 
@@ -332,7 +292,7 @@ class WordwallsGame(object):
 
         return wgm.pk   # this is a table number id!
 
-    def getDcId(self, tablenum):
+    def get_dc_id(self, tablenum):
         wgm = self.getWGM(tablenum, lock=False)
         if not wgm:
             return 0
@@ -748,7 +708,7 @@ class WordwallsGame(object):
         for alpha in missedAlphas:
             self.add_dc_missed_bingo(dc, alpha)
 
-    def getPkIndices(self, searchDescription):
+    def get_pk_indices(self, searchDescription):
         if searchDescription['condition'] == 'probPKRange':
             minP = searchDescription['min']
             maxP = searchDescription['max']
@@ -831,7 +791,13 @@ class WordwallsGame(object):
             return False
         return True
 
-    def generateDailyChallengePks(self, challengeName, lex, chDate):
+    def generate_dc_pks(self, challengeName, lex, chDate):
+        """
+        Generate the alphagram PKs for a daily challenge.
+        Returns:
+            A tuple (pks, time_secs)
+
+        """
         # capture number. first try to match to today's lists
         m = re.match("Today's (?P<length>[0-9]+)s",
                      challengeName.name)
@@ -850,33 +816,33 @@ class WordwallsGame(object):
             r = r[:50]  # just the first 50 elements for the daily challenge
             pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
             return pks, challengeName.timeSecs
-        else:
-            if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-                from wordwalls.management.commands.genMissedBingoChalls import(
-                    genPks)
-                mbs = genPks(lex, chDate)
-                pks = [mb[0] for mb in mbs]
-                random.shuffle(pks)
-                return pks, challengeName.timeSecs
-            elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
-                questions = self.generate_blank_bingos_challenge(lex, chDate)
-                random.shuffle(questions)
-                return questions, challengeName.timeSecs
-            elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
-                pks = []
-                for lgt in (7, 8):
-                    min_p = 1
-                    max_p = json.loads(lex.lengthCounts)[str(lgt)]
-                    r = range(min_p, max_p + 1)
-                    random.shuffle(r)
-                    pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
-                return pks, challengeName.timeSecs
-            elif challengeName.name in (DailyChallengeName.COMMON_SHORT,
-                                        DailyChallengeName.COMMON_LONG):
-                questions = self.generate_common_words_challenge(
-                    challengeName.name)
-                random.shuffle(questions)
-                return questions, challengeName.timeSecs
+        # There was no match, check other possible challenge names.
+        if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+            from wordwalls.management.commands.genMissedBingoChalls import(
+                genPks)
+            mbs = genPks(lex, chDate)
+            pks = [mb[0] for mb in mbs]
+            random.shuffle(pks)
+            return pks, challengeName.timeSecs
+        elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
+            questions = self.generate_blank_bingos_challenge(lex, chDate)
+            random.shuffle(questions)
+            return questions, challengeName.timeSecs
+        elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
+            pks = []
+            for lgt in (7, 8):
+                min_p = 1
+                max_p = json.loads(lex.lengthCounts)[str(lgt)]
+                r = range(min_p, max_p + 1)
+                random.shuffle(r)
+                pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
+            return pks, challengeName.timeSecs
+        elif challengeName.name in (DailyChallengeName.COMMON_SHORT,
+                                    DailyChallengeName.COMMON_LONG):
+            questions = self.generate_common_words_challenge(
+                challengeName.name)
+            random.shuffle(questions)
+            return questions, challengeName.timeSecs
         return None
 
     def generate_common_words_challenge(self, ch_name):
@@ -911,9 +877,10 @@ class WordwallsGame(object):
         return bingos
 
 
-class SearchDescription:
+class SearchDescription(object):
     @staticmethod
-    def probPkIndexRange(minP, maxP, lex):
-        return {"condition": "probPKRange",
-                "min": minP, "max": maxP,
+    def prob_pk_index_range(min_p, max_p, length, lex):
+        return {"condition": "prob_range",
+                "length": length,
+                "min": min_p, "max": max_p,
                 "lexicon": lex}

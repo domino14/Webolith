@@ -155,8 +155,7 @@ def challenge_submit(user, post):
     if not chDate or chDate > date.today():
         chDate = date.today()
 
-    tablenum = wwg.initializeByDailyChallenge(
-        user, lex, challengeName, chDate)
+    tablenum = wwg.initialize_daily_challenge(user, lex, challengeName, chDate)
     if tablenum == 0:
         return response({'success': False,
                          'error': 'Challenge does not exist.'})
@@ -181,17 +180,12 @@ def search_params_submit(user, post):
                                   'search parameters or time selection.'})
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
-    quizTime = int(
-        round(timeForm.cleaned_data['quizTime'] * 60))
-    alphasSearchDescription = searchForAlphagrams(
-        fwForm.cleaned_data, lex)
+    quiz_time = int(round(timeForm.cleaned_data['quizTime'] * 60))
+    search = searchForAlphagrams(fwForm.cleaned_data, lex)
     wwg = WordwallsGame()
-    tablenum = wwg.initializeBySearchParams(
-        user, alphasSearchDescription,
-        quizTime)
+    tablenum = wwg.initialize_by_search_params(user, search, quiz_time)
 
-    return response({'url': reverse('wordwalls_table',
-                                    args=(tablenum,)),
+    return response({'url': reverse('wordwalls_table', args=(tablenum,)),
                      'success': True})
 
 
@@ -210,7 +204,7 @@ def saved_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
-    tablenum = wwg.initializeBySavedList(
+    tablenum = wwg.initialize_by_saved_list(
         lex, user, slForm.cleaned_data['wordList'],
         slForm.cleaned_data['listOption'], quizTime)
     if tablenum == 0:
@@ -247,7 +241,7 @@ def named_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
-    tablenum = wwg.initializeByNamedList(
+    tablenum = wwg.initialize_by_named_list(
         lex, user, nlForm.cleaned_data['namedList'],
         quizTime)
     if tablenum == 0:
@@ -327,7 +321,7 @@ def table(request, id):
             return response({'success': True})
         elif action == "getDcData":
             wwg = WordwallsGame()
-            dcId = wwg.getDcId(id)
+            dcId = wwg.get_dc_id(id)
             if dcId > 0:
                 leaderboardData = getLeaderboardDataDcInstance(
                     DailyChallenge.objects.get(pk=dcId))
@@ -338,29 +332,24 @@ def table(request, id):
         permitted = wwg.permit(request.user, id)
         if gargoyle.is_active('disable_games', request):
             permitted = False
-        if permitted:
-            params = wwg.getAddParams(id)
-            # Add styling params from user's profile (for styling table
-            # tiles, backgrounds, etc)
-            try:
-                profile = request.user.aerolithprofile
-                style = profile.customWordwallsStyle
-                if style != "":
-                    params['style'] = style
-            except:
-                pass
-
-            return render(request, 'wordwalls/table.html',
-                          {'tablenum': id,
-                           'username': request.user.username,
-                           'addParams': json.dumps(params),
-                           'avatarUrl': profile.avatarUrl,
-                           'CURRENT_VERSION': CURRENT_VERSION
-                           })
-
-        else:
+        if not permitted:
             return render(request, 'wordwalls/notPermitted.html',
                           {'tablenum': id})
+        params = wwg.getAddParams(id)
+        # Add styling params from user's profile (for styling table
+        # tiles, backgrounds, etc)
+        profile = request.user.aerolithprofile
+        style = profile.customWordwallsStyle
+        if style != "":
+            params['style'] = style
+
+        return render(request, 'wordwalls/table.html',
+                      {'tablenum': id,
+                       'username': request.user.username,
+                       'addParams': json.dumps(params),
+                       'avatarUrl': profile.avatarUrl,
+                       'CURRENT_VERSION': CURRENT_VERSION
+                       })
 
 
 def start_game(request, id):
@@ -467,11 +456,11 @@ def createUserList(upload, filename, lex, user):
 
 
 def searchForAlphagrams(data, lex):
-    """ searches for alphagrams using form data """
+    """ Searches for alphagrams using form data """
     length = int(data['wordLength'])
-    minP = alphProbToProbPK(data['probabilityMin'], lex.pk, length)
-    maxP = alphProbToProbPK(data['probabilityMax'], lex.pk, length)
-    return SearchDescription.probPkIndexRange(minP, maxP, lex)
+    return SearchDescription.prob_pk_index_range(data['probabilityMin'],
+                                                 data['probabilityMax'],
+                                                 length, lex)
 
 
 def getLeaderboardDataDcInstance(dc):
