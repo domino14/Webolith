@@ -39,8 +39,12 @@ from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
 logger = logging.getLogger(__name__)
 
 
-COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
-COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
+try:
+    COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
+    COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
+except NamedList.DoesNotExist:
+    COMMON_SHORT_NAMED_LIST = None
+    COMMON_LONG_NAMED_LIST = None
 
 
 class WordwallsGame(object):
