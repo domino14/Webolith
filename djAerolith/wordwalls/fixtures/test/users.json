@@ -1,0 +1,20 @@
+[
+{
+  "fields": {
+    "username": "cesar",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2015-09-11T18:48:28",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$5cHND8kcbqKH$Km2cwWEV1e4HVKAeoBP81LQropa/U1UZgSQ3xbWW3AQ=",
+    "email": "delsolar@gmail.com",
+    "date_joined": "2011-06-02T22:46:57"
+  },
+  "model": "auth.user",
+  "pk": 1
+}
+]
