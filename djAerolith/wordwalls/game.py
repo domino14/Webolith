@@ -39,8 +39,12 @@ from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
 logger = logging.getLogger(__name__)
 
 
-COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
-COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
+try:
+    COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
+    COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
+except NamedList.DoesNotExist:
+    COMMON_SHORT_NAMED_LIST = None
+    COMMON_LONG_NAMED_LIST = None
 
 
 class WordwallsGame(object):
@@ -309,6 +313,7 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
+            logger.debug('The quiz is going, state %s', state)
             return self.createErrorMessage("The quiz is currently running.")
                 # the quiz is running right now; do not attempt to start again
         startMessage = ""
@@ -463,7 +468,8 @@ class WordwallsGame(object):
             return {'success': False}
 
     def save(self, user, tablenum, listname):
-        logger.info("called save")
+        logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
+                     user, tablenum, listname)
         ret = {'success': False}
         wgm = self.getWGM(tablenum)
         if not wgm:
@@ -477,17 +483,18 @@ class WordwallsGame(object):
             return ret
 
         if not (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
-                    user in wgm.inTable.all()):
+                user in wgm.inTable.all()):
             ret['info'] = 'Your game must be a single player game!'
             return ret
-
         state = json.loads(wgm.currentGameState)
+        logger.debug('state=%s', state)
         if state['quizGoing']:
             # TODO actually should check if time ran out
             # this seems like an arbitrary limitation but it makes
             # things a lot easier. we can change this later.
             ret['info'] = ('You can only save the game at the end of '
                            'a round.')
+            logger.error('Unable to save, quiz is going.')
             return ret
 
         # now check if a list with this name, lexicon, and user exists
@@ -731,12 +738,14 @@ class WordwallsGame(object):
             return
         state = json.loads(wgm.currentGameState)
         if not state['quizGoing']:
+            logger.info('Guess came in after quiz ended.')
             return
         # Otherwise, let's process the guess.
         if self.didTimerRunOut(state):
             state['timeRemaining'] = 0
+            logger.info('Timer ran out, end quiz.')
             self.doQuizEndActions(state, tablenum, wgm)
-            # also sets state['LastCorrect'] to ''
+            # Save state back to game.
         else:
             if guessStr not in state['answerHash']:
                 state['LastCorrect'] = ""
@@ -753,8 +762,8 @@ class WordwallsGame(object):
                     self.doQuizEndActions(state, tablenum, wgm)
                 state['LastCorrect'] = alpha[0]
 
-            wgm.currentGameState = json.dumps(state)
-            wgm.save()
+        wgm.currentGameState = json.dumps(state)
+        wgm.save()
         return state['quizGoing'], state.get('LastCorrect', '')
 
     def permit(self, user, tablenum):

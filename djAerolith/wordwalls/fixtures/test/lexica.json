@@ -1,0 +1,38 @@
+[
+{
+  "fields": {
+    "lexiconDescription": "Collins 2015 International English Word List",
+    "lengthCounts": "{\"2\":92,\"3\":878,\"4\":3491,\"5\":8654,\"6\":16999,\"7\":27437,\"8\":36327,\"9\":38795,\"10\":34881,\"11\":27862,\"12\":20437,\"13\":14061,\"14\":9251,\"15\":5846}",
+    "lexiconName": "CSW15"
+  },
+  "model": "base.lexicon",
+  "pk": 1
+},
+{
+  "fields": {
+    "lexiconDescription": "North American 2006 Official Word List 2006",
+    "lengthCounts": "{\"2\":77,\"3\":732,\"4\":2737,\"5\":6495,\"6\":12353,\"7\":20134,\"8\":26563,\"9\":27270,\"10\":21597,\"11\":15886,\"12\":11293,\"13\":7701,\"14\":5034,\"15\":3147}",
+    "lexiconName": "OWL2"
+  },
+  "model": "base.lexicon",
+  "pk": 4
+},
+{
+  "fields": {
+    "lexiconDescription": "Collins 2012 International English Word List",
+    "lengthCounts": "{\"2\":92,\"3\":865,\"4\":3443,\"5\":8517,\"6\":16668,\"7\":26797,\"8\":35335,\"9\":37873,\"10\":34177,\"11\":27304,\"12\":20041,\"13\":13779,\"14\":9081,\"15\":5736}",
+    "lexiconName": "CSW12"
+  },
+  "model": "base.lexicon",
+  "pk": 6
+},
+{
+  "fields": {
+    "lexiconDescription": "I am America, and so can you.",
+    "lengthCounts": "{\"2\":78,\"3\":765,\"4\":2844,\"5\":6797,\"6\":12932,\"7\":21063,\"8\":27962,\"9\":28291,\"10\":22347,\"11\":16645,\"12\":11944,\"13\":8207,\"14\":5380,\"15\":3371}",
+    "lexiconName": "America"
+  },
+  "model": "base.lexicon",
+  "pk": 7
+}
+]
