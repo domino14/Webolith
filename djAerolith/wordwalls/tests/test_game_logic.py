@@ -8,6 +8,8 @@ from wordwalls.game import WordwallsGame, SearchDescription
 from django.test.client import Client
 from base.models import Lexicon, alphProbToProbPK
 from django.contrib.auth.models import User
+import mock
+import json
 
 
 class WordwallsGameLogicTest(TestCase):
@@ -45,5 +47,16 @@ class WordwallsGameLogicTest(TestCase):
         self.assertTrue(going)
         self.assertEqual(last_correct, '')
 
-    def test_quiz_ends_after_time(self):
-        pass
+    @mock.patch.object(WordwallsGame, 'didTimerRunOut')
+    def test_quiz_ends_after_time(self, timer_ran_out):
+        # Mock timer running out by the time the guess comes in.
+        timer_ran_out.return_value = True
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.startQuiz(table_id, user)
+        going, last_correct = wwg.guess('CATS', table_id, user)
+        self.assertFalse(going)
+        self.assertEqual(last_correct, '')
+        wgm = wwg.getWGM(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertFalse(state['quizGoing'])

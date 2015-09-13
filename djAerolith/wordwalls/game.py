@@ -762,8 +762,8 @@ class WordwallsGame(object):
                     self.doQuizEndActions(state, tablenum, wgm)
                 state['LastCorrect'] = alpha[0]
 
-            wgm.currentGameState = json.dumps(state)
-            wgm.save()
+        wgm.currentGameState = json.dumps(state)
+        wgm.save()
         return state['quizGoing'], state.get('LastCorrect', '')
 
     def permit(self, user, tablenum):
