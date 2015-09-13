@@ -18,10 +18,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 import string
+import random
 import json
 
 # XXX: Include CSW12 here after Sept 1.
 EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
+
 
 def alphProbToProbPK(prob, lexId, length):
     # XXX: THIS ONLY ALLOWS FOR LEXICON INDICES FROM 0 to 3
@@ -141,7 +143,46 @@ class WordList(models.Model):
     firstMissed = models.TextField()
     # If this word list is temporary, it should be cleaned up when its
     # parent (the game table) gets deleted.
-    is_temporary = models.BooleanField()
+    is_temporary = models.BooleanField(default=False)
+
+    def initialize_list(self, alphagrams, lexicon, user, shuffle=False,
+                        name='Temporary'):
+        """
+        Initialize a list with the passed in alphagrams. Saves it back
+        to the database.
+
+        """
+        num_questions = len(alphagrams)
+        if shuffle:
+            random.shuffle(alphagrams)
+        self.lexicon = lexicon
+        self.name = name
+        self.user = user
+        self.numAlphagrams = num_questions
+        self.numCurAlphagrams = num_questions
+        self.numFirstMissed = 0
+        self.firstMissed = 0
+        self.goneThruOnce = False
+        self.questionIndex = 0
+        self.origQuestions = json.dumps(alphagrams)
+        self.curQuestions = json.dumps(range(num_questions))
+        self.missed = json.dumps([])
+        self.firstMissed = json.dumps([])
+        self.save()
+
+    def restart_list(self, shuffle=False):
+        """ Restart this list; save it back to the database. """
+        self.initialize_list(json.loads(self.origQuestions),
+                             self.lexicon, self.user, shuffle)
+
+    def set_to_first_missed(self):
+        """ Set this list to quiz on first missed questions; save. """
+        self.curQuestions = self.firstMissed
+        self.numCurAlphagrams = self.numFirstMissed
+        self.questionIndex = 0
+        self.missed = json.dumps([])
+        self.numMissed = 0
+        self.save()
 
     def to_python(self):
         """

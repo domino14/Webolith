@@ -358,12 +358,8 @@ def start_game(request, id):
             {'serverMsg': 'The Aerolith server is currently undergoing '
                           'maintenance. Please try again in a few minutes.'})
     wwg = WordwallsGame()
-    gameReady = wwg.startRequest(request.user, id)
-    if not gameReady:
-        return response({"serverMsg": request.user.username})
-    else:
-        quizParams = wwg.startQuiz(id, request.user)
-        return response(quizParams)
+    quizParams = wwg.start_quiz(id, request.user)
+    return response(quizParams)
 
 
 def ajax_upload(request):

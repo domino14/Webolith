@@ -79,56 +79,17 @@ class WordwallsGame(object):
         returns it.
 
         """
-        num_questions = len(alphagrams)
-        return self.create_word_list(
-            num_orig_questions=num_questions,
-            orig_questions_string=json.dumps(alphagrams),
-            num_cur_questions=num_questions,
-            cur_questions_str=json.dumps(range(num_questions)),
-            num_missed=0,
-            missed_str=json.dumps([]),
-            num_first_missed=0,
-            first_missed_str=json.dumps([]),
-            lexicon=lexicon,
-            user=user
-        )
-
-    def create_word_list(self, num_orig_questions, orig_questions_str,
-                         num_cur_questions, cur_questions_str, num_missed,
-                         missed_str, num_first_missed, first_missed_str,
-                         lexicon, user):
-        """
-        Creates a word list with the given parameters. This word list
-        should be treated as temporary unless it is saved. It will need
-        to be cleaned up with the rest of the models.
-
-        """
-        wl = WordList(
-            lexicon=lexicon,
-            name='Temporary',   # Fix?
-            user=user,
-            numAlphagrams=num_orig_questions,
-            numCurAlphagrams=num_cur_questions,
-            numFirstMissed=num_first_missed,
-            numMissed=num_missed,
-            goneThruOnce=False,
-            questionIndex=0,
-            origQuestions=orig_questions_str,
-            curQuestions=cur_questions_str,
-            missed=missed_str,
-            firstMissed=first_missed_str,
-            is_temporary=True
-        )
-        wl.save()
+        wl = WordList()
+        wl.initialize_list(alphagrams, lexicon, user)
         return wl
 
-    def get_dc(self, chDate, chLex, chName):
+    def get_dc(self, ch_date, ch_lex, ch_name):
         """
         Gets a challenge with date, lex, name.
 
         """
-        dc = DailyChallenge.objects.get(date=chDate, lexicon=chLex,
-                                        name=chName)
+        dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex,
+                                        name=ch_name)
         # pull out its indices
 
         qs = json.loads(dc.alphagrams)
@@ -172,7 +133,6 @@ class WordwallsGame(object):
                                         timerSecs=secs,
                                         qualifyForAward=qualify_for_award)
         wgm.save()
-        wgm.inTable.add(user)
         return wgm.pk   # the table number
 
     def get_or_create_dc(self, ch_date, ch_lex, ch_name):
@@ -211,7 +171,6 @@ class WordwallsGame(object):
         wl = self.initialize_word_list(pk_indices, lexicon, user)
         wgm = self.create_game_instance(user, lexicon, wl, timerSecs=timeSecs)
         wgm.save()
-        wgm.inTable.add(user)
         return wgm.pk   # this is a table number id!
 
     def initialize_by_named_list(self, lex, user, namedList, secs):
@@ -222,119 +181,71 @@ class WordwallsGame(object):
         wl = self.initialize_word_list(pks, lex, user)
         wgm = self.create_game_instance(user, lex, wl, timerSecs=secs)
         wgm.save()
-        wgm.inTable.add(user)
         return wgm.pk
 
-    def initialize_by_saved_list(self, lex, user, savedList, listOption, secs):
-        if savedList.user != user:
+    def initialize_by_saved_list(self, lex, user, saved_list, list_option,
+                                 secs):
+        if saved_list.user != user:
+            # Maybe this isn't a big deal.
             logger.warning('Saved list user does not match user %s %s',
-                           savedList.user, user)
+                           saved_list.user, user)
             return 0
 
-        if (listOption == SavedListForm.FIRST_MISSED_CHOICE and
-                savedList.goneThruOnce is False):
-            logger.error('error, first missed list only valid if player has '
-                         'gone thru list once')
+        if (list_option == SavedListForm.FIRST_MISSED_CHOICE and
+                saved_list.goneThruOnce is False):
+            logger.warning('error, first missed list only valid if player has '
+                           'gone thru list once')
             return 0    # Can't do a 'first missed' list if we haven't gone
                         # through it once!
 
-        addlParams = {}
-        origQuestionsStr = savedList.origQuestions
-        goneThruOnce = savedList.goneThruOnce
-        if listOption == SavedListForm.RESTART_LIST_CHOICE:
-            # reset quiz to just original questions
-            addlParams['questionIndex'] = 0
-            curQuestionsStr = json.dumps(range(savedList.numAlphagrams))
-            numCurQuestions = savedList.numAlphagrams
-            firstMissedStr = json.dumps([])
-            numFirstMissed = 0
-            missedStr = json.dumps([])
-            numMissed = 0
-            goneThruOnce = False
-            #TODO shuffle origQuestions
-        else:
-        # add the other keys that the state variable needs.
-            if listOption == SavedListForm.FIRST_MISSED_CHOICE:
-                curQuestionsStr = savedList.firstMissed
-                # TODO maybe keep track of this length in database
-                numCurQuestions = savedList.numFirstMissed
-                firstMissedStr = savedList.firstMissed
-                numFirstMissed = savedList.numFirstMissed
+        self.maybe_modify_word_list(saved_list, list_option)
+        wgm = self.create_game_instance(user, lex, saved_list,
+                                        saveName=saved_list.name,
+                                        goneThruOnce=saved_list.gone_thru_once,
+                                        timerSecs=secs)
 
-                addlParams['questionIndex'] = 0
-                numMissed = 0
-                missedStr = json.dumps([])
-            else:   # continue list
-                curQuestionsStr = savedList.curQuestions
-                numCurQuestions = savedList.numCurAlphagrams
-                firstMissedStr = savedList.firstMissed
-                numFirstMissed = savedList.numFirstMissed
-                missedStr = savedList.missed
-                numMissed = savedList.numMissed
-                addlParams['questionIndex'] = savedList.questionIndex
-
-        addlParams['saveName'] = savedList.name
-        addlParams['goneThruOnce'] = goneThruOnce
-        addlParams['timerSecs'] = secs
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME, lex,
-            savedList.numAlphagrams,
-            origQuestionsStr,
-            numCurQuestions,
-            curQuestionsStr,
-            numMissed,
-            missedStr,
-            numFirstMissed,
-            firstMissedStr,
-            **addlParams)
         wgm.save()
-        wgm.inTable.add(user)
-
         return wgm.pk   # this is a table number id!
 
+    def maybe_modify_word_list(self, word_list, list_option):
+        """
+        Modifies the passed-in word list based on the options. If the
+        user chose to continue, does not modify word list.
+
+        """
+
+        if list_option == SavedListForm.RESTART_LIST_CHOICE:
+            word_list.restart_list(shuffle=True)
+        elif list_option == SavedListForm.FIRST_MISSED_CHOICE:
+            word_list.set_to_first_missed()
+        # Otherwise, if the user chose to continue, no changes need to
+        # be made.
+
     def get_dc_id(self, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
+        wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return 0
         state = json.loads(wgm.currentGameState)
         return state.get('challengeId', 0)
 
-    # startRequest may be not used at all until later. for now we only
-    # have two types of games: single player will start right away with
-    # no 'request' needed multiplayer will have timed starts - every
-    # minute or so
-    def startRequest(self, user, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
-        if not wgm:
-            return False
-        # check if the player that sent the request is actually in the table.
-        if user in wgm.inTable.all():
-            #print user, "sent start request!"
-            #if user not in wgm.playing.all():
-            #    wgm.playing.add(user)
-            return True
-        else:
-            return False
-
-    def createErrorMessage(self, message):
+    def create_error_message(self, message):
         return {'error': message}
 
-    def startQuiz(self, tablenum, user):
-        wgm = self.getWGM(tablenum)
+    def start_quiz(self, tablenum, user):
+        wgm = self.get_wgm(tablenum)
         if not wgm:
-            return self.createErrorMessage("That table does not exist.")
+            return self.create_error_message("That table does not exist.")
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
             logger.debug('The quiz is going, state %s', state)
-            return self.createErrorMessage("The quiz is currently running.")
+            return self.create_error_message("The quiz is currently running.")
                 # the quiz is running right now; do not attempt to start again
-        startMessage = ""
-        curQuestionsObj = json.loads(wgm.curQuestions)
-        origQuestionsObj = json.loads(wgm.origQuestions)
-
-        if state['questionIndex'] > wgm.numCurQuestions - 1:
-            startMessage += "Now quizzing on missed list.\r\n"
+        start_message = ""
+        word_list = wgm.word_list
+        # Modifying - right here.
+        if state['questionIndex'] > word_list.numCurAlphagrams - 1:
+            start_message += "Now quizzing on missed list.\r\n"
             curQuestionsObj = json.loads(wgm.missed)
             wgm.curQuestions = wgm.missed
             wgm.numCurQuestions = len(curQuestionsObj)
@@ -347,7 +258,7 @@ class WordwallsGame(object):
         if wgm.numCurQuestions == 0:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
-            return self.createErrorMessage(
+            return self.create_error_message(
                 "The quiz is done. Please exit the table and have a nice day!")
         qs = curQuestionsObj[
             state['questionIndex']:state['questionIndex'] +
@@ -405,7 +316,7 @@ class WordwallsGame(object):
         # internal function; not meant to be called by the outside
         return (state['quizStartTime'] + state['timerSecs']) < time.time()
 
-    def getWGM(self, tablenum, lock=True):
+    def get_wgm(self, tablenum, lock=True):
         """
             Get word game model.
             :lock Should lock if this is a write operation. This is because
@@ -425,7 +336,7 @@ class WordwallsGame(object):
         # Called when javascript tells the server that time ran out on
         # its end. TODO think about what happens if javascript tells the
         # server too early
-        wgm = self.getWGM(tablenum)
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return False
 
@@ -446,11 +357,10 @@ class WordwallsGame(object):
             return False
 
     def giveUp(self, user, tablenum):
-        wgm = self.getWGM(tablenum)
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return False
-        if (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
-                user in wgm.inTable.all()):
+        if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
             state = json.loads(wgm.currentGameState)
             if state['quizGoing'] is False:
                 logger.info("the quiz isn't going. can't give up.")
@@ -464,7 +374,7 @@ class WordwallsGame(object):
         return False
 
     def getAddParams(self, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
+        wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return {}
 
@@ -484,7 +394,7 @@ class WordwallsGame(object):
         logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
                      user, tablenum, listname)
         ret = {'success': False}
-        wgm = self.getWGM(tablenum)
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             ret['info'] = 'That table does not exist!'
             return ret
@@ -495,8 +405,7 @@ class WordwallsGame(object):
             ret['info'] = 'Please enter a valid list name!'
             return ret
 
-        if not (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
-                user in wgm.inTable.all()):
+        if not wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
             ret['info'] = 'Your game must be a single player game!'
             return ret
         state = json.loads(wgm.currentGameState)
@@ -507,7 +416,7 @@ class WordwallsGame(object):
             # things a lot easier. we can change this later.
             ret['info'] = ('You can only save the game at the end of '
                            'a round.')
-            logger.error('Unable to save, quiz is going.')
+            logger.warning('Unable to save, quiz is going.')
             return ret
 
         # now check if a list with this name, lexicon, and user exists
@@ -723,7 +632,7 @@ class WordwallsGame(object):
             question_index = int(question_index)
         except (ValueError, TypeError):
             return False
-        wgm = self.getWGM(tablenum)
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return 'No table #%s exists' % tablenum
         missed = json.loads(wgm.missed)
@@ -746,7 +655,7 @@ class WordwallsGame(object):
 
     def guess(self, guessStr, tablenum, user):
         guessStr = guessStr.upper()
-        wgm = self.getWGM(tablenum)
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return
         state = json.loads(wgm.currentGameState)
@@ -780,7 +689,7 @@ class WordwallsGame(object):
         return state['quizGoing'], state.get('LastCorrect', '')
 
     def permit(self, user, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
+        wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return False
         if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:

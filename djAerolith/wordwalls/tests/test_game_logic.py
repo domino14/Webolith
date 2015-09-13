@@ -57,6 +57,6 @@ class WordwallsGameLogicTest(TestCase):
         going, last_correct = wwg.guess('CATS', table_id, user)
         self.assertFalse(going)
         self.assertEqual(last_correct, '')
-        wgm = wwg.getWGM(table_id)
+        wgm = wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertFalse(state['quizGoing'])
