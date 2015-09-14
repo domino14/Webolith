@@ -52,7 +52,6 @@ class WordwallsGame(object):
         """ Return an initial state object, for a brand new game. """
         return {
             'answerHash': {},
-            'questionIndex': 0,
             'questionsToPull': 50,
             'quizGoing': False,
             'quizStartTime': 0,
@@ -244,41 +243,67 @@ class WordwallsGame(object):
         start_message = ""
         word_list = wgm.word_list
         # Modifying - right here.
-        if state['questionIndex'] > word_list.numCurAlphagrams - 1:
+        if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += "Now quizzing on missed list.\r\n"
-            curQuestionsObj = json.loads(wgm.missed)
-            wgm.curQuestions = wgm.missed
-            wgm.numCurQuestions = len(curQuestionsObj)
-            wgm.missed = json.dumps([])
-            wgm.numMissed = 0
-
-            state['questionIndex'] = 0
+            word_list.set_to_missed()
             state['quizGoing'] = False
 
-        if wgm.numCurQuestions == 0:
+        if word_list.numCurAlphagrams == 0:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return self.create_error_message(
                 "The quiz is done. Please exit the table and have a nice day!")
-        qs = curQuestionsObj[
-            state['questionIndex']:state['questionIndex'] +
-            state['questionsToPull']]
 
-        startMessage += "These are questions %d through %d of %d." % (
-            state['questionIndex'] + 1, len(qs) + state['questionIndex'],
-            wgm.numCurQuestions)
+        cur_questions_obj = json.loads(word_list.curQuestions)
+        idx = word_list.questionIndex
+        num_qs_per_round = state['questionsToPull']
+        qs = cur_questions_obj[idx:(idx + num_qs_per_round)]
 
-        state['questionIndex'] += state['questionsToPull']
+        start_message += "These are questions %d through %d of %d." % (
+            idx + 1, len(qs) + idx, word_list.numCurAlphagrams)
 
-        qsSet = set(qs)
-        if len(qsSet) != len(qs):
-            logger.info("Question set is not unique!!")
+        word_list.questionIndex += num_qs_per_round
 
-        questions = []
+        qs_set = set(qs)
+        if len(qs_set) != len(qs):
+            logger.error("Question set is not unique!!")
+
         answerHash = {}
+        questions = self.load_questions(qs,
+                                        json.loads(word_list.origQuestions))
+        state['quizGoing'] = True   # start quiz
+        state['quizStartTime'] = time.time()
+        state['answerHash'] = answerHash
+        state['numAnswersThisRound'] = len(answerHash)
+        wgm.currentGameState = json.dumps(state)
+        wgm.save()
+
+        ret = {'questions': questions,
+               'time': state['timerSecs'],
+               'gameType': state['gameType'],
+               'serverMsg': start_message}
+
+        return ret
+
+    def load_questions(self, qs, orig_questions):
+        """
+        Turn the qs array into an array of full question objects, ready
+        for the front-end.
+
+        Params:
+            - qs: An array of indices into oriq_questions
+            - orig_questions: An array of question "objects":
+                - An "object" can be a regular integer alphagram pk
+                (deprecated when we migrate)
+                - An object can be a dict {'q': 'ABC?',
+                                           'a': [word_pk1, word_pk2, ...]}
+                Migration will turn them all into dicts:
+                {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+
+        """
         for i in qs:
             words = []
-            if type(origQuestionsObj[i]) == int:
+            if type(orig_questions[i]) == int:
                 a = Alphagram.objects.get(pk=origQuestionsObj[i])
                 alphagram_str = a.alphagram
                 alphagram_pk = a.pk
@@ -298,19 +323,7 @@ class WordwallsGame(object):
             questions.append({'a': alphagram_str, 'ws': words,
                               'p': probPKToAlphProb(alphagram_pk),
                               'idx': i})
-        state['quizGoing'] = True   # start quiz
-        state['quizStartTime'] = time.time()
-        state['answerHash'] = answerHash
-        state['numAnswersThisRound'] = len(answerHash)
-        wgm.currentGameState = json.dumps(state)
-        wgm.save()
 
-        ret = {'questions': questions,
-               'time': state['timerSecs'],
-               'gameType': state['gameType'],
-               'serverMsg': startMessage}
-
-        return ret
 
     def didTimerRunOut(self, state):
         # internal function; not meant to be called by the outside

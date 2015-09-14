@@ -184,6 +184,14 @@ class WordList(models.Model):
         self.numMissed = 0
         self.save()
 
+    def set_to_missed(self):
+        """ Set this list to start quizzing on the missed questions; save. """
+        self.curQuestions = self.missed
+        self.numCurAlphagrams = self.numMissed
+        self.missed = json.dumps([])
+        self.numMissed = 0
+        self.save()
+
     def to_python(self):
         """
             Converts to a serializable Python object.
