@@ -17,7 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from base.models import (alphProbToProbPK, probPKToAlphProb,
-                         alphagrammize, WordList)
+                         alphagrammize, WordList, Alphagram, Word)
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
@@ -36,7 +36,9 @@ from django.db import IntegrityError
 import os
 from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
                                                          FRIENDLY_COMMON_LONG)
+from lib.word_db_helper import WordDB
 logger = logging.getLogger(__name__)
+
 
 
 try:
@@ -268,13 +270,13 @@ class WordwallsGame(object):
         if len(qs_set) != len(qs):
             logger.error("Question set is not unique!!")
 
-        answerHash = {}
-        questions = self.load_questions(qs,
-                                        json.loads(word_list.origQuestions))
+        questions, answer_hash = self.load_questions(
+            qs, json.loads(word_list.origQuestions), word_list.version,
+            word_list.lexicon)
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
-        state['answerHash'] = answerHash
-        state['numAnswersThisRound'] = len(answerHash)
+        state['answerHash'] = answer_hash
+        state['numAnswersThisRound'] = len(answer_hash)
         wgm.currentGameState = json.dumps(state)
         wgm.save()
 
@@ -285,45 +287,70 @@ class WordwallsGame(object):
 
         return ret
 
-    def load_questions(self, qs, orig_questions):
+    def load_questions(self, qs, orig_questions, version, lexicon):
         """
         Turn the qs array into an array of full question objects, ready
         for the front-end.
 
         Params:
             - qs: An array of indices into oriq_questions
-            - orig_questions: An array of question "objects":
-                - An "object" can be a regular integer alphagram pk
-                (deprecated when we migrate)
-                - An object can be a dict {'q': 'ABC?',
-                                           'a': [word_pk1, word_pk2, ...]}
-                Migration will turn them all into dicts:
-                {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+            - orig_questions: An array of question alphagrams.
+            - version: The version of the word list. This parameter
+                should probably be deprecated after migration.
 
         """
+        questions = []
+        answer_hash = {}
+        db = WordDB(lexicon.lexiconName)
         for i in qs:
             words = []
-            if type(orig_questions[i]) == int:
-                a = Alphagram.objects.get(pk=origQuestionsObj[i])
-                alphagram_str = a.alphagram
-                alphagram_pk = a.pk
-                word_set = a.word_set.all()
-            elif type(origQuestionsObj[i]) == dict:
-                # This is a direct alphagram, usually a blank alphagram.
-                alphagram_str = origQuestionsObj[i]['q']
-                alphagram_pk = None
-                word_set = [Word.objects.get(pk=word_pk) for word_pk in
-                            origQuestionsObj[i]['a']]
+            alphagram_str, word_set, prob = self.convert_word_list_alphagram(
+                orig_questions[i], version, db)
             for w in word_set:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
                               's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
                               'ibh': w.inner_back_hook})
-                answerHash[w.word] = alphagram_str, i
-            questions.append({'a': alphagram_str, 'ws': words,
-                              'p': probPKToAlphProb(alphagram_pk),
+                answer_hash[w.word] = alphagram_str, i
+            questions.append({'a': alphagram_str, 'ws': words, 'p': prob,
                               'idx': i})
+        return questions, answer_hash
 
+    def convert_word_list_alphagram(self, alpha, version, db):
+        """
+        Word lists save an array of "alphagrams" in the origQuestions
+        field. Each of these can be in various formats.
+
+            - An "alphagram" can be a regular integer alphagram pk
+                (deprecated when we migrate)
+                - An alphagram can be a dict {'q': 'ABC?',
+                                              'a': [word_pk1, word_pk2, ...]}
+                Migration will turn them all into dicts:
+                {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+        """
+        if version == 1:
+            # Deprecated version.
+            if type(alpha) == int:
+                # Deprecated; remove after migration.
+                a = Alphagram.objects.get(pk=alpha)
+                alphagram_str = a.alphagram
+                alphagram_pk = a.pk
+                word_set = a.word_set.all()
+            elif type(alpha) == dict:
+                # This is either an "old" or "new" dictionary.
+                # This is a direct alphagram, usually a blank alphagram.
+                alphagram_str = alpha['q']
+                alphagram_pk = None
+                word_set = [Word.objects.get(pk=word_pk) for word_pk in
+                            alpha['a']]
+
+            return alphagram_str, word_set, probPKToAlphProb(alphagram_pk)
+        # Otherwise, we're at version 2. But do the check anyhow.
+        elif version == 2:
+            # Just a dictionary; see docstring for this function.
+            alphagram_str = alpha['q']
+            word_set = [db.get_word_data(word) for word in alpha['a']]
+            return alphagram_str, word_set, db.probability(alphagram_str)
 
     def didTimerRunOut(self, state):
         # internal function; not meant to be called by the outside

@@ -29,3 +29,10 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
 - wordwalls/api.py
 
 
+### Process
+- Deploy 1 - Keep Word, Alphagram, but all new code must not use them,
+    or if using them must do an "in-place" migration to new code.
+    Then, run scripts to migrate all remaining lists/data to new way.
+    DB Migrations 101 basically.
+- Deploy 2 - Remove Word, Alphagram and run migration to remove them
+    from the database.

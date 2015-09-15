@@ -62,50 +62,50 @@ class Lexicon(models.Model):
 # manager stuff:
 
 
-# class AlphagramManager(models.Manager):
-#     def get_by_natural_key(self, alphagram, lexicon):
-#         return self.get(alphagram=alphagram, lexicon=lexicon)
+class AlphagramManager(models.Manager):
+    def get_by_natural_key(self, alphagram, lexicon):
+        return self.get(alphagram=alphagram, lexicon=lexicon)
 
 
-# class Alphagram(models.Model):
-#     objects = AlphagramManager()
+class Alphagram(models.Model):
+    objects = AlphagramManager()
 
-#     alphagram = models.CharField(max_length=15, db_index=True)
-#     lexicon = models.ForeignKey(Lexicon)
-#     probability = models.IntegerField()
-#     probability_pk = models.IntegerField(primary_key=True)
-#     length = models.IntegerField()
+    alphagram = models.CharField(max_length=15, db_index=True)
+    lexicon = models.ForeignKey(Lexicon)
+    probability = models.IntegerField()
+    probability_pk = models.IntegerField(primary_key=True)
+    length = models.IntegerField()
 
-#     def __unicode__(self):
-#         return self.alphagram
+    def __unicode__(self):
+        return self.alphagram
 
-#     def natural_key(self):
-#         return (self.alphagram, self.lexicon)
+    def natural_key(self):
+        return (self.alphagram, self.lexicon)
 
-#     class Meta:
-#         unique_together = (('alphagram', 'lexicon'),
-#                            ('probability', 'length', 'lexicon')
-#                            )
+    class Meta:
+        unique_together = (('alphagram', 'lexicon'),
+                           ('probability', 'length', 'lexicon')
+                           )
 
 
-# class Word(models.Model):
-#     word = models.CharField(max_length=15, db_index=True)
-#     alphagram = models.ForeignKey(Alphagram)
-#     lexicon = models.ForeignKey(Lexicon)
-#     lexiconSymbols = models.CharField(max_length=5)
-#     # A word can only have one lexicon, even though e.g. 'PAN' could be
-#     # in multiple lexica (csw, owl2, fise, etc). This makes it much
-#     # simpler to keep the lexicon-specific definition, front hooks, back
-#     # hooks, etc. in this table and it makes more sense (see notes
-#     # below)
-#     definition = models.CharField(max_length=512)
-#     front_hooks = models.CharField(max_length=26)
-#     back_hooks = models.CharField(max_length=26)
-#     inner_front_hook = models.BooleanField(default=False)
-#     inner_back_hook = models.BooleanField(default=False)
+class Word(models.Model):
+    word = models.CharField(max_length=15, db_index=True)
+    alphagram = models.ForeignKey(Alphagram)
+    lexicon = models.ForeignKey(Lexicon)
+    lexiconSymbols = models.CharField(max_length=5)
+    # A word can only have one lexicon, even though e.g. 'PAN' could be
+    # in multiple lexica (csw, owl2, fise, etc). This makes it much
+    # simpler to keep the lexicon-specific definition, front hooks, back
+    # hooks, etc. in this table and it makes more sense (see notes
+    # below)
+    definition = models.CharField(max_length=512)
+    front_hooks = models.CharField(max_length=26)
+    back_hooks = models.CharField(max_length=26)
+    inner_front_hook = models.BooleanField(default=False)
+    inner_back_hook = models.BooleanField(default=False)
 
-#     def __unicode__(self):
-#         return self.word + ": " + self.definition
+    def __unicode__(self):
+        return self.word + ": " + self.definition
 
 # these models for words allow for separating words from alphagrams from
 # lexica however let's not make it too confusing -- we should stick to
@@ -123,7 +123,7 @@ class Lexicon(models.Model):
 ############################
 
 
-class WordList(models.Model):
+class SavedList(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
@@ -144,6 +144,8 @@ class WordList(models.Model):
     # If this word list is temporary, it should be cleaned up when its
     # parent (the game table) gets deleted.
     is_temporary = models.BooleanField(default=False)
+    # XXX: Change default to 2 after migration.
+    version = models.IntegerField(default=1)
 
     def initialize_list(self, alphagrams, lexicon, user, shuffle=False,
                         name='Temporary'):
@@ -168,6 +170,7 @@ class WordList(models.Model):
         self.curQuestions = json.dumps(range(num_questions))
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])
+        self.version = 2
         self.save()
 
     def restart_list(self, shuffle=False):
@@ -209,6 +212,7 @@ class WordList(models.Model):
             'curQuestions': json.loads(self.curQuestions),
             'missed': json.loads(self.missed),
             'firstMissed': json.loads(self.firstMissed),
+            'version': self.version,
             'id': self.pk
         }
 
@@ -218,11 +222,16 @@ class WordList(models.Model):
             self.name,
             '*' if self.goneThruOnce else '',
             self.lastSaved)
-    # TODO keep track of original alphagrams even in regular list, so it
-    # can be saved separately..
 
     class Meta:
         # XXX: This will be removed once we move over to Postgres or
         # something. We should rename this database table properly
         # (or even do it prior to that).
         db_table = 'wordwalls_savedlist'
+
+
+class WordList(SavedList):
+    # XXX: we are using this instead of the badly-named "SavedList"
+    # in all of our code. These names should be interchangeable.
+    class Meta:
+        proxy = True

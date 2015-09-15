@@ -112,7 +112,8 @@ class WordwallsGameModel(GenericTableGameModel):
     firstMissed = models.TextField()
 
     # Removed above, just keep below.
-    word_list = models.ForeignKey(WordList)
+    # XXX: Remove null after migration.
+    word_list = models.ForeignKey(WordList, null=True)
 
 
 class DailyChallengeMissedBingos(models.Model):
