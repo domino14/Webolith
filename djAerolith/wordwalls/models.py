@@ -99,17 +99,17 @@ class WordwallsGameModel(GenericTableGameModel):
     # Additional fields.
     # XXX: we should get rid of these and use SavedList.
     # Remove these after migration.
-    numOrigQuestions = models.IntegerField()
-    origQuestions = models.TextField()
+    numOrigQuestions = models.IntegerField(blank=True, null=True)
+    origQuestions = models.TextField(blank=True, null=True)
 
-    numCurQuestions = models.IntegerField()
-    curQuestions = models.TextField()
+    numCurQuestions = models.IntegerField(blank=True, null=True)
+    curQuestions = models.TextField(blank=True, null=True)
 
-    numMissed = models.IntegerField()
-    missed = models.TextField()
+    numMissed = models.IntegerField(blank=True, null=True)
+    missed = models.TextField(blank=True, null=True)
 
-    numFirstMissed = models.IntegerField()
-    firstMissed = models.TextField()
+    numFirstMissed = models.IntegerField(blank=True, null=True)
+    firstMissed = models.TextField(blank=True, null=True)
 
     # Removed above, just keep below.
     # XXX: Remove null after migration.
@@ -119,12 +119,13 @@ class WordwallsGameModel(GenericTableGameModel):
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge)
-    # This will need to change to an integer, and need to add a lexicon.
-    alphagram = models.ForeignKey(Alphagram)
+    # Phase out this column soon.
+    alphagram = models.ForeignKey(Alphagram, null=True)
+    alphagram_string = models.CharField(max_length=15, default='')
     numTimesMissed = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = ("challenge", "alphagram")
+        unique_together = ("challenge", "alphagram_string")
 
     def __unicode__(self):
         return "%s, %s, %d" % (self.challenge.__unicode__(),

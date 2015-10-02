@@ -22,10 +22,11 @@ from django.shortcuts import render
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
-from base.models import Lexicon, alphProbToProbPK, WordList
+from base.models import Lexicon, WordList
 from django.contrib.auth.decorators import login_required
 import json
-from wordwalls.game import WordwallsGame, SearchDescription
+from wordwalls.game import WordwallsGame
+from lib.word_searches import SearchDescription
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
@@ -35,7 +36,6 @@ from datetime import date, datetime
 import time
 from django.conf import settings
 import wordwalls.settings
-import base.settings
 import os
 import random
 import logging
@@ -255,7 +255,7 @@ def handle_homepage_post(profile, request):
     numAlphas = profile.wordwallsSaveListSize
     limit = 0
     if not profile.member:
-        limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+        limit = settings.SAVE_LIST_LIMIT_NONMEMBER
     if 'action' not in request.POST:
         return response({'success': False,
                          'error': 'Your request was not successful. You may '
@@ -296,12 +296,12 @@ def table(request, id):
             return response({'g': state[0], 'C': state[1]})
         elif action == "gameEnded":
             wwg = WordwallsGame()
-            ret = wwg.checkGameEnded(id)
+            ret = wwg.check_game_ended(id)
             # 'going' is the opposite of 'game ended'
             return response({'g': not ret})
         elif action == "giveUp":
             wwg = WordwallsGame()
-            ret = wwg.giveUp(request.user, id)
+            ret = wwg.give_up(request.user, id)
             return response({'g': not ret})
         elif action == "save":
             wwg = WordwallsGame()
@@ -309,7 +309,8 @@ def table(request, id):
             return response(ret)
         elif action == "giveUpAndSave":
             wwg = WordwallsGame()
-            ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
+            ret = wwg.give_up_and_save(request.user, id,
+                                       request.POST['listname'])
             # this shouldn't return a response, because it's not going to be
             # caught by the javascript
             logger.debug("Give up and saving returned: %s" % ret)
@@ -335,7 +336,7 @@ def table(request, id):
         if not permitted:
             return render(request, 'wordwalls/notPermitted.html',
                           {'tablenum': id})
-        params = wwg.getAddParams(id)
+        params = wwg.get_add_params(id)
         # Add styling params from user's profile (for styling table
         # tiles, backgrounds, etc)
         profile = request.user.aerolithprofile
@@ -422,7 +423,7 @@ def createUserList(upload, filename, lex, user):
 
     profile = user.aerolithprofile
     numSavedAlphas = profile.wordwallsSaveListSize
-    limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+    limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
@@ -454,9 +455,9 @@ def createUserList(upload, filename, lex, user):
 def searchForAlphagrams(data, lex):
     """ Searches for alphagrams using form data """
     length = int(data['wordLength'])
-    return SearchDescription.prob_pk_index_range(data['probabilityMin'],
-                                                 data['probabilityMax'],
-                                                 length, lex)
+    return SearchDescription.probability_range(data['probabilityMin'],
+                                               data['probabilityMax'],
+                                               length, lex)
 
 
 def getLeaderboardDataDcInstance(dc):

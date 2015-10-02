@@ -22,11 +22,11 @@
 from django.contrib.auth.decorators import login_required
 from base.models import WordList, Lexicon
 from lib.response import response
-import base.settings
 import json
 import logging
 import time
 from base.utils import generate_question_map
+from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +40,7 @@ def saved_list_sync(request):
     body = json.loads(request.body)
     profile = request.user.aerolithprofile
     saved_alphas = profile.wordwallsSaveListSize
-    limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+    limit = settings.SAVE_LIST_LIMIT_NONMEMBER
     logger.debug('Syncing %s' % body)
     orig_qs = body.get('origQuestions')
     # Try getting a saved list with the same name, lexicon, and user.

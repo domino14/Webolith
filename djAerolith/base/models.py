@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 import string
 import random
 import json
-
+import uuid
 # XXX: Include CSW12 here after Sept 1.
 EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
 
@@ -143,12 +143,14 @@ class SavedList(models.Model):
     firstMissed = models.TextField()
     # If this word list is temporary, it should be cleaned up when its
     # parent (the game table) gets deleted.
+    # This defaults to False for compatibility with prior rows, but
+    # in initialize_list we should set it to True. The only function
+    # that should set it back to False is a save.
     is_temporary = models.BooleanField(default=False)
     # XXX: Change default to 2 after migration.
     version = models.IntegerField(default=1)
 
-    def initialize_list(self, alphagrams, lexicon, user, shuffle=False,
-                        name='Temporary'):
+    def initialize_list(self, alphagrams, lexicon, user, shuffle=False):
         """
         Initialize a list with the passed in alphagrams. Saves it back
         to the database.
@@ -158,12 +160,12 @@ class SavedList(models.Model):
         if shuffle:
             random.shuffle(alphagrams)
         self.lexicon = lexicon
-        self.name = name
+        self.name = uuid.uuid4().hex
         self.user = user
         self.numAlphagrams = num_questions
         self.numCurAlphagrams = num_questions
         self.numFirstMissed = 0
-        self.firstMissed = 0
+        self.numMissed = 0
         self.goneThruOnce = False
         self.questionIndex = 0
         self.origQuestions = json.dumps(alphagrams)
@@ -171,6 +173,7 @@ class SavedList(models.Model):
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])
         self.version = 2
+        self.is_temporary = True
         self.save()
 
     def restart_list(self, shuffle=False):
@@ -191,6 +194,7 @@ class SavedList(models.Model):
         """ Set this list to start quizzing on the missed questions; save. """
         self.curQuestions = self.missed
         self.numCurAlphagrams = self.numMissed
+        self.questionIndex = 0
         self.missed = json.dumps([])
         self.numMissed = 0
         self.save()
@@ -213,7 +217,8 @@ class SavedList(models.Model):
             'missed': json.loads(self.missed),
             'firstMissed': json.loads(self.firstMissed),
             'version': self.version,
-            'id': self.pk
+            'id': self.pk,
+            'temporary': self.is_temporary
         }
 
     def __unicode__(self):
@@ -228,6 +233,7 @@ class SavedList(models.Model):
         # something. We should rename this database table properly
         # (or even do it prior to that).
         db_table = 'wordwalls_savedlist'
+        unique_together = ('lexicon', 'name', 'user')
 
 
 class WordList(SavedList):

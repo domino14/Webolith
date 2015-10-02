@@ -36,3 +36,6 @@ class WordDBTest(TestCase):
     def test_alphagram_not_found(self):
         alpha = self.db.get_alphagram_data('ABCDEFGH')
         self.assertTrue(alpha is None)
+
+    def test_probability(self):
+        self.assertEqual(self.db.probability('AEINRST'), 11)
