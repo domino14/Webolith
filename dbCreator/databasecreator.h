@@ -25,9 +25,9 @@
 struct Alph
 {
     QStringList words;
-    double combinations;
+    int combinations;
     QString alphagram;
-    Alph(QStringList w, double c, QString alph)
+    Alph(QStringList w, int c, QString alph)
     {
         alphagram = alph; words = w; combinations = c;
     }
@@ -36,6 +36,37 @@ struct Alph
     }
 
 };
+
+/**
+ * This is a terrible hack for words longer than 10 letters where the
+ * combinations exceeds MAX_INT32.
+ * Why don't we use this everywhere? Because qSort does not sort the
+ * alphagrams into the same order, when combinations are equal, if
+ * we switch between quint64 and int. And we can't change old orders
+ * now because it would corrupt old lists. However, for 11-letter long
+ * and longer words, the probability ordering was already screwed up,
+ * (https://github.com/domino14/Webolith/issues/108)
+ * so it's fine to "corrupt" those lists, which are also very unlikely
+ * (people don't study 11s and beyond).
+ */
+struct AlphQuint64
+{
+    QStringList words;
+    quint64 combinations;
+    QString alphagram;
+    AlphQuint64(QStringList w, quint64 c, QString alph)
+    {
+        alphagram = alph; words = w; combinations = c;
+    }
+    AlphQuint64()
+    {
+    }
+
+};
+
+Q_DECLARE_METATYPE(Alph)
+Q_DECLARE_METATYPE(AlphQuint64)
+
 
 class DatabaseCreator : public QObject
 {
