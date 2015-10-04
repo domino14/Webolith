@@ -26,7 +26,7 @@ class WordDBTest(TestCase):
         alpha = self.db.get_alphagram_data('AEINRST')
         self.assertEqual(alpha.alphagram, 'AEINRST')
         self.assertEqual(alpha.length, 7)
-        self.assertEqual(alpha.probability, 11)
+        self.assertEqual(alpha.probability, 9)
         self.assertEqual(alpha.combinations, 3006072)
 
     def test_word_not_found(self):
@@ -38,4 +38,4 @@ class WordDBTest(TestCase):
         self.assertTrue(alpha is None)
 
     def test_probability(self):
-        self.assertEqual(self.db.probability('AEINRST'), 11)
+        self.assertEqual(self.db.probability('AEINRST'), 9)
