@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 A class mostly to test the logic for wordwalls/game.py
 
@@ -6,7 +8,6 @@ A class mostly to test the logic for wordwalls/game.py
 from django.test import TestCase
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
-from django.test.client import Client
 from base.models import Lexicon
 from django.contrib.auth.models import User
 import mock
@@ -22,10 +23,8 @@ class WordwallsBasicLogicTest(TestCase):
                 # might need them to test backwards compatibility.
                 # 'test/alphagrams.json',
                 # 'test/words.json',
-                'test/users.json']
-
-    def setUp(self):
-        self.client = Client()
+                'test/users.json',
+                'test/profiles.json']
 
     def setup_quiz(self, p_min=10, p_max=90, length=8):
         """
@@ -44,9 +43,13 @@ class WordwallsBasicLogicTest(TestCase):
         params - an object that looks like {'numAlphagrams': 11, ...}
         """
         for param, value in params.iteritems():
-            self.assertEqual(getattr(word_list, param), value,
-                             msg='Not equal: %s (%s, %s)' % (word_list, param,
-                                                             value))
+            self.assertEqual(
+                getattr(word_list, param), value,
+                msg='Not equal: %s (%s, %s != %s)' % (
+                    word_list,
+                    param,
+                    repr(value),
+                    repr(getattr(word_list, param))))
 
     def test_quiz_params_correct(self):
         table_id, user = self.setup_quiz()
@@ -260,7 +263,6 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
 
         # And try to start the quiz again.
         params = wwg.start_quiz(table_id, user)
-        logger.debug('params at the end are %s', params)
         self.assertTrue('quiz is done' in params['error'])
         wgm = wwg.get_wgm(table_id)
         word_list = wgm.word_list
@@ -268,6 +270,19 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             'numAlphagrams': 11, 'numCurAlphagrams': 0,
             'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': True
+        })
+
+        # Try saving the word list.
+        LIST_NAME = 'my cool lišt'.decode('utf8')
+        resp = wwg.save(user, table_id, LIST_NAME)
+        self.assertTrue(resp['success'])
+        self.assertEqual(resp['listname'], LIST_NAME)
+        wgm = wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 0,
+            'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
+            'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
         })
 
 

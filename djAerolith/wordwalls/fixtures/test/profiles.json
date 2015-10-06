@@ -1,0 +1,21 @@
+[
+{
+  "fields": {
+    "profile": "I programmed Aerolith and am a Django ninja.\r\n\r\n#### Aerolith Github page:\r\n\r\n[https://github.com/domino14/Webolith](https://github.com/domino14/Webolith) -- feel free to fork/contribute!\r\n\r\n#### Cross-tables:\r\n\r\n[http://cross-tables.com/results.php?p=13509](http://cross-tables.com/results.php?p=13509)\r\n\r\n<3\r\n\r\n### HEY HEY",
+    "rating": 0,
+    "customWordwallsStyle": "{\"tc\": {\"on\": true, \"selection\": \"1\", \"bold\": false, \"customOrder\": \"AEIOUDGLNRTFHVWYBCMPJKQXZS?\", \"blankCharacter\": \"?\", \"font\": \"mono\"}, \"bc\": {\"showTable\": true, \"showBorders\": false, \"showCanvas\": true}}",
+    "wordwallsSaveListSize": 55781,
+    "membershipExpiry": "2025-02-10T21:16:36",
+    "avatarUrl": null,
+    "coins": 0,
+    "membershipType": 3,
+    "member": true,
+    "user": 1,
+    "defaultLexicon": 1,
+    "wordwallsMedals": "{\"medals\": {\"Bronze\": 3, \"Silver\": 4, \"Gold\": 4}}",
+    "additional_data": "{\"disableChat\": false}"
+  },
+  "model": "accounts.aerolithprofile",
+  "pk": 1
+}
+]
