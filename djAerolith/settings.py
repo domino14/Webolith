@@ -18,27 +18,32 @@
 
 # Django settings for djAerolith project.
 import os
-import re
 import settings_local   # this file is not shared on vcs
 DEBUG = settings_local.DEBUG
 TEMPLATE_DEBUG = DEBUG
 DEBUG_JS = settings_local.DEBUG_JS
 
 ADMINS = (
-     ('Cesar Del Solar', 'delsolar@gmail.com'),
+    ('Cesar Del Solar', 'delsolar@gmail.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': settings_local.sql_db_name,                      # Or path to database file if using sqlite3.
-        'USER': settings_local.sqlUser,                      # Not used with sqlite3.
-        'PASSWORD': settings_local.sqlPw,                  # Not used with sqlite3.
-        'HOST': settings_local.SQL_HOST,                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-        'OPTIONS': {"init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED" } ,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': settings_local.sql_db_name,
+        'USER': settings_local.sqlUser,
+        'PASSWORD': settings_local.sqlPw,
+        'HOST': settings_local.SQL_HOST,
+        'PORT': '',
+        'TEST': {
+            'CHARSET': 'utf8',
+            'COLLATION': 'utf8_general_ci',
+        },
+        'OPTIONS': {
+            "init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
+        },
         # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
         'ATOMIC_REQUESTS': True
     }

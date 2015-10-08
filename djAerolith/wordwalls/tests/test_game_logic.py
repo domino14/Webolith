@@ -174,8 +174,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             'questionIndex': 0, 'is_temporary': True
         })
 
-    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    def test_missed_behavior(self):
+    def round_1(self):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
         wwg = WordwallsGame()
         # Let's guess some of the words from the 5-15 range
@@ -202,19 +201,10 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             for w in words_to_guess:
                 wwg.guess(w, table_id, user)
             wwg.give_up(user, table_id)
+        return table_id, user
 
-        wgm = wwg.get_wgm(table_id)
-        word_list = wgm.word_list
-        self.assert_wl(word_list, {
-            'numAlphagrams': 11, 'numCurAlphagrams': 11,
-            'numFirstMissed': 6, 'numMissed': 6, 'goneThruOnce': True,
-            'questionIndex': 15, 'is_temporary': True
-        })
-        qs = json.loads(word_list.origQuestions)
-        self.assertEqual(len(qs), 11)
-
-        # Now start the quiz again. Should get missed words.
-
+    def round_2(self, table_id, user):
+        wwg = WordwallsGame()
         words_to_guess = [
             'AEROLITE',
             'IDOLATER', 'TAILORED',
@@ -235,9 +225,30 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
                 wwg.guess(w, table_id, user)
             wwg.give_up(user, table_id)
 
+    def round_3(self, table_id, user):
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, user)
+        self.assertEqual(len(params['questions']), 2)
+        for w in ['ANEROIDS', 'ANODISER', 'ELATERIN', 'ENTAILER', 'TREENAIL']:
+            wwg.guess(w, table_id, user)
+
+    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+    def test_missed_behavior(self):
+        wwg = WordwallsGame()
+        table_id, user = self.round_1()
         wgm = wwg.get_wgm(table_id)
         word_list = wgm.word_list
-
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 11,
+            'numFirstMissed': 6, 'numMissed': 6, 'goneThruOnce': True,
+            'questionIndex': 15, 'is_temporary': True
+        })
+        qs = json.loads(word_list.origQuestions)
+        self.assertEqual(len(qs), 11)
+        # Now start the quiz again. Should get missed words.
+        self.round_2(table_id, user)
+        wgm = wwg.get_wgm(table_id)
+        word_list = wgm.word_list
         self.assert_wl(word_list, {
             'numAlphagrams': 11, 'numCurAlphagrams': 6,
             'numFirstMissed': 6, 'numMissed': 2, 'goneThruOnce': True,
@@ -248,11 +259,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
         self.assertEqual(len(qs), 11)
 
         # Finally, let's solve the final two alphagrams.
-        params = wwg.start_quiz(table_id, user)
-        self.assertEqual(len(params['questions']), 2)
-        for w in ['ANEROIDS', 'ANODISER', 'ELATERIN', 'ENTAILER', 'TREENAIL']:
-            wwg.guess(w, table_id, user)
-
+        self.round_3(table_id, user)
         wgm = wwg.get_wgm(table_id)
         word_list = wgm.word_list
         self.assert_wl(word_list, {
@@ -273,10 +280,64 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
         })
 
         # Try saving the word list.
-        LIST_NAME = 'my cool lišt'.decode('utf8')
+        LIST_NAME = u'my cool lišt'
         resp = wwg.save(user, table_id, LIST_NAME)
         self.assertTrue(resp['success'])
         self.assertEqual(resp['listname'], LIST_NAME)
+        wgm = wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 0,
+            'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
+            'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
+        })
+
+    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+    def test_save_before_finish(self):
+
+        wwg = WordwallsGame()
+        table_id, user = self.round_1()
+        # Try saving the word list.
+        LIST_NAME = u'my cooł lįšt'
+        resp = wwg.save(user, table_id, LIST_NAME)
+        self.assertTrue(resp['success'])
+        self.assertEqual(resp['listname'], LIST_NAME)
+        wgm = wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 11,
+            'numFirstMissed': 6, 'numMissed': 6, 'goneThruOnce': True,
+            'questionIndex': 15, 'is_temporary': False, 'name': LIST_NAME
+        })
+
+        qs = json.loads(word_list.origQuestions)
+        self.assertEqual(len(qs), 11)
+        # Now start the quiz again. Should get missed words.
+        self.round_2(table_id, user)
+        wgm = wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 6,
+            'numFirstMissed': 6, 'numMissed': 2, 'goneThruOnce': True,
+            'questionIndex': 10, 'is_temporary': False, 'name': LIST_NAME
+        })
+
+        qs = json.loads(word_list.origQuestions)
+        self.assertEqual(len(qs), 11)
+
+        # Finally, let's solve the final two alphagrams.
+        self.round_3(table_id, user)
+        wgm = wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 2,
+            'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
+            'questionIndex': 5, 'is_temporary': False, 'name': LIST_NAME
+        })
+
+        # And try to start the quiz again.
+        params = wwg.start_quiz(table_id, user)
+        self.assertTrue('quiz is done' in params['error'])
         wgm = wwg.get_wgm(table_id)
         word_list = wgm.word_list
         self.assert_wl(word_list, {

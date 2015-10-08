@@ -477,6 +477,8 @@ class WordwallsGame(object):
         # Maybe we want a way to "save as" another list; think about
         # a list copy.
         word_list.name = listname
+        logger.debug('Saving word_list, name is %s (%s)', word_list.name,
+                     type(word_list.name))
         if make_permanent_list:
             word_list.is_temporary = False
             profile = user.aerolithprofile
