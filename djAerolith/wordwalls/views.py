@@ -45,6 +45,7 @@ from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
 from current_version import CURRENT_VERSION
 from wordwalls.utils import UserListParseException
 from gargoyle import gargoyle
+from wordwalls.challenges import toughies_challenge_date
 
 
 dcTimeMap = {}
@@ -495,9 +496,7 @@ def getLeaderboardData(lex, chName, challengeDate):
         return None
 
     if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-        from wordwalls.management.commands.genMissedBingoChalls import (
-            challengeDateFromReqDate)
-        chdate = challengeDateFromReqDate(challengeDate)
+        chdate = toughies_challenge_date(challengeDate)
     else:
         chdate = challengeDate
     try:

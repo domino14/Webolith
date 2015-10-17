@@ -6,9 +6,13 @@ A class mostly to test the logic for wordwalls/game.py
 """
 
 from django.test import TestCase
+from django.core import serializers
+from base.forms import SavedListForm
+from datetime import date
 from wordwalls.game import WordwallsGame
+from wordwalls.models import DailyChallengeName
 from lib.word_searches import SearchDescription
-from base.models import Lexicon
+from base.models import Lexicon, WordList
 from django.contrib.auth.models import User
 import mock
 import json
@@ -24,7 +28,8 @@ class WordwallsBasicLogicTest(TestCase):
                 # 'test/alphagrams.json',
                 # 'test/words.json',
                 'test/users.json',
-                'test/profiles.json']
+                'test/profiles.json',
+                'test/word_lists.json']
 
     def setup_quiz(self, p_min=10, p_max=90, length=8):
         """
@@ -294,7 +299,6 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
     def test_save_before_finish(self):
-
         wwg = WordwallsGame()
         table_id, user = self.round_1()
         # Try saving the word list.
@@ -346,28 +350,320 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
         })
 
+    def test_cant_overwrite_list(self):
+        table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
+        wwg = WordwallsGame()
+        # Try saving the word list.
+        LIST_NAME = u'This is my list.'
+        resp = wwg.save(user, table_id, LIST_NAME)
+        self.assertFalse(resp['success'])
 
-class WordwallsSavedListModesTest(TestCase):
+
+class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
     """
     Test modes of saved list such as missed, first missed, continue,
     restart.
 
     """
 
+    def setUp(self):
+        self.user = User.objects.get(username='cesar')
+        self.lex = Lexicon.objects.get(lexiconName='America')
+        self.wwg = WordwallsGame()
 
-class WordwallsChallengeBehaviorTest(TestCase):
+    def test_firstmissed_not_allowed(self):
+        LIST_NAME = "i live in a giant bucket"
+        word_list = WordList.objects.get(name=LIST_NAME)
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.FIRST_MISSED_CHOICE,
+            240)
+        self.assertEqual(table_id, 0)
+
+    def test_restart_unfinished_list(self):
+        LIST_NAME = "i live in a giant bucket"
+        word_list = WordList.objects.get(name=LIST_NAME)
+        questions = set(json.dumps(q)
+                        for q in json.loads(word_list.origQuestions))
+        # Try restarting the list.
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.RESTART_LIST_CHOICE,
+            240)
+        word_list = WordList.objects.get(name=LIST_NAME)
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 11,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
+        })
+        orig_questions = set(json.dumps(q)
+                             for q in json.loads(word_list.origQuestions))
+        # Make sure old questions == new questions
+        self.assertEqual(orig_questions, questions)
+        # Start the quiz and make sure we got all 11 questions
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 11)
+
+    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+    def test_continue_unfinished_list(self):
+        LIST_NAME = "i live in a giant bucket"
+        word_list = WordList.objects.get(name=LIST_NAME)
+        # Continue the list.
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.CONTINUE_LIST_CHOICE,
+            240)
+        word_list = WordList.objects.get(name=LIST_NAME)
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 11,
+            'numFirstMissed': 0, 'numMissed': 3, 'goneThruOnce': False,
+            'questionIndex': 10, 'is_temporary': False, 'name': LIST_NAME
+        })
+        # Start the quiz; we should only get one question.
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 1)
+        self.assertEqual(params['questions'][0]['a'], 'AEIORSTU')
+        # Miss it.
+        gave_up = wwg.give_up(self.user, table_id)
+        self.assertTrue(gave_up)
+        word_list = WordList.objects.get(name=LIST_NAME)
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 11,
+            'numFirstMissed': 4, 'numMissed': 4, 'goneThruOnce': True,
+            'questionIndex': 15, 'is_temporary': False, 'name': LIST_NAME,
+        })
+        self.assertEqual(set([0, 2, 3, 10]),
+                         set(json.loads(word_list.firstMissed)))
+
+    def test_firstmissed_allowed(self):
+        LIST_NAME = u'list the sécond'
+        word_list = WordList.objects.get(name=LIST_NAME)
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.FIRST_MISSED_CHOICE,
+            240)
+        self.assertNotEqual(table_id, 0)
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 6)
+        self.assertEqual(
+            set([q['a'] for q in params['questions']]),
+            set(['AEEILORT', 'AEEILNRT', 'ADEINOST', 'ADEINORS', 'AEILNOST',
+                'ADEILORT']))
+
+    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+    def test_continue_gonethru_list(self):
+        LIST_NAME = u'list the sécond'
+        word_list = WordList.objects.get(name=LIST_NAME)
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.CONTINUE_LIST_CHOICE,
+            240)
+        self.assertNotEqual(table_id, 0)
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 1)
+        self.assertEqual(params['questions'][0]['a'], 'ADEILORT')
+        # Miss it.
+        gave_up = wwg.give_up(self.user, table_id)
+        self.assertTrue(gave_up)
+        word_list = WordList.objects.get(name=LIST_NAME)
+        self.assert_wl(word_list, {
+            'numAlphagrams': 11, 'numCurAlphagrams': 6,
+            'numFirstMissed': 6, 'numMissed': 1, 'goneThruOnce': True,
+            'questionIndex': 10, 'is_temporary': False, 'name': LIST_NAME
+        })
+
+    def test_continue_finished_list(self):
+        """ Continue a list that is tested through all the way."""
+        LIST_NAME = u'This is my list.'
+        word_list = WordList.objects.get(name=LIST_NAME)
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.CONTINUE_LIST_CHOICE,
+            240)
+        self.assertNotEqual(table_id, 0)
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertTrue('quiz is done' in params['error'])
+
+    def test_can_save_loaded_list(self):
+        """ Can we save a list we just loaded? """
+        LIST_NAME = u'list the sécond'
+        num_lists_before = WordList.objects.filter(user=self.user).count()
+        word_list = WordList.objects.get(name=LIST_NAME)
+        table_id = self.wwg.initialize_by_saved_list(
+            self.lex, self.user, word_list, SavedListForm.CONTINUE_LIST_CHOICE,
+            240)
+        self.assertNotEqual(table_id, 0)
+        wwg = WordwallsGame()
+        resp = wwg.save(self.user, table_id, LIST_NAME)
+        self.assertTrue(resp['success'])
+        self.assertEqual(resp['listname'], LIST_NAME)
+        self.assertEqual(num_lists_before,
+                         WordList.objects.filter(user=self.user).count())
+
+
+def blank_bingo_loader(challenge_date, length, lexicon_name):
+    if length == 7:
+        return """
+RLAKEA? KRAALED
+RDNRGE? GRANDER GRINDER GNARRED REGRIND
+WATEED? DEWATER TARWEED SWEATED WATERED TWEAKED
+TESFEA? FEATEST FEASTED DEFEATS DEAFEST FEASTER AFREETS
+INISDC? INDICTS INCISED INDICES DISCING
+DIFTEU? FRUITED FEUDIST
+CGPPAI? CAPPING
+DSIOGE? GOODIES DINGOES DOGGIES
+ELPOFR? PROFILE FLOPPER
+ALOLIC? LOGICAL LOCHIAL
+BDTEAA? DATABLE ABLATED
+NFTAEN? INFANTE
+RRIILE? ROILIER GIRLIER
+GAREGE? ENGAGER RAGGEES REGAUGE REGGAES
+ISTOMI? MIOTICS MITOSIS SOMITIC
+ERGYOA? VOYAGER ORANGEY
+IORLAB? BIPOLAR LABROID GARBOIL PARBOIL ORBITAL KILOBAR BOLIVAR BAILORS
+ATHDRS? HARDSET HARDEST TRASHED DEARTHS HATREDS THREADS
+LAISOI? LIAISON SIALOID
+AOPTHE? POTHEAD TEASHOP PHONATE PHAETON TAPHOLE PHORATE APOTHEM
+ETTANL? TETANAL TALENTS LATENTS GANTLET FLATTEN LATTENS MANTLET
+AROEIR? ARMOIRE HOARIER
+ADSLYI? DISPLAY SHADILY STAIDLY LADYISH DIALYSE
+ARHIV?? HAVARTI HRYVNIA HAVIOUR ARCHIVE VARNISH CHIVARI HAVIORS HEAVIER
+ODYOU?? DUOPOLY
+        """
+    elif length == 8:
+        return """
+AEOTZIL? THIAZOLE TOTALIZE TRIAZOLE
+ORSNENI? INFERNOS IRONNESS ENVIRONS REUNIONS RAISONNE INTONERS EINKORNS NEGRONIS NONSKIER TERNIONS
+GDINAOZ? AGONIZED
+ETAOGIN? NEGATION LEGATION GELATION
+AAITLDT? DILATANT DILATATE
+MIAELHI? LITHEMIA HEMIOLIA
+DTITNRA? DRATTING NITRATED
+CNVSINE? CONNIVES
+MAEETER? EMEERATE METERAGE PERMEATE RETEAMED AMEERATE EMERITAE METAMERE
+NORAOTL? ORTOLANS COLORANT
+LAAMNDS? LADANUMS LANDMASS MANDALAS DALESMAN LANDSMAN MANDOLAS LEADSMAN
+RLSLAOZ? ZORILLAS
+GEISNIN? INDIGENS INBEINGS SINGEING ENISLING SKEINING ENSILING VEININGS RESINING SINEWING GINNIEST
+SHDIAPO? HAPLOIDS SHIPLOAD SCAPHOID HAPKIDOS
+NEESOFT? FELSTONE SOFTENED RESOFTEN SOFTENER OFTENEST
+TIAISAC? SCIATICA ACTINIAS
+ICTIRAS? SCIMITAR ARTISTIC TRIACIDS TRIBASIC TRIADICS TRIASSIC CARDITIS RACHITIS AORISTIC
+ATOERPN? PROTEANS COPARENT ATROPINE PRONATED PORTANCE OPERANTS PRONATES PATENTOR
+ONETSEX? EXTENSOR
+NABORGT? BORATING TABORING ABORTING
+DWSCBRI? COWBIRDS BAWDRICS
+DTKEEOP? POCKETED
+EORNADE? OLEANDER ENDEAVOR ENAMORED RELOANED RENEGADO DEMEANOR REASONED AERODYNE
+EUAEQT?? BEQUEATH EQUISETA MAQUETTE COEQUATE ADEQUATE
+RBRHIO?? HORRIBLY HORRIBLE BIRROTCH
+        """
+
+
+class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
     """
     Test challenge behavior. Create challenges, quiz on them, leaderboards,
     etc.
 
     """
+    fixtures = ['test/lexica.json',
+                'test/users.json',
+                'test/profiles.json',
+                'dcNames.json']
+
+    def setUp(self):
+        self.user = User.objects.get(username='cesar')
+        self.lex = Lexicon.objects.get(lexiconName='OWL2')
+        self.wwg = WordwallsGame()
+
+    def test_length_challenge(self):
+        """ Test a regular challenge by word length (Today's 6s). """
+        challenge = DailyChallengeName.objects.get(name="Today's 6s")
+        table_id = self.wwg.initialize_daily_challenge(
+            self.user, self.lex, challenge, date.today())
+        wgm = self.wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertTrue(state['qualifyForAward'])
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 50, 'numCurAlphagrams': 50,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        questions = json.loads(word_list.origQuestions)
+        for q in questions:
+            self.assertEqual(len(q['q']), 6, msg=q)
+        self.assertEqual(
+            len(set([q['q'] for q in questions])), 50)
+
+    def test_bingo_marathon_challenge(self):
+        """ Test bingo marathon challenge. """
+        challenge = DailyChallengeName.objects.get(name='Bingo Marathon')
+        table_id = self.wwg.initialize_daily_challenge(
+            self.user, self.lex, challenge, date.today())
+        wgm = self.wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertTrue(state['qualifyForAward'])
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 100, 'numCurAlphagrams': 100,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        questions = json.loads(word_list.origQuestions)
+        # Check there are 50 7s and 50 8s
+        num_7s = 0
+        num_8s = 0
+        for q in questions:
+            if len(q['q']) == 7:
+                num_7s += 1
+            elif len(q['q']) == 8:
+                num_8s += 1
+        self.assertEqual(num_7s, 50)
+        self.assertEqual(num_8s, 50)
+        self.assertEqual(
+            len(set([q['q'] for q in questions])), 100)
+
+    @mock.patch('wordwalls.challenges.get_blank_bingos_content',
+                side_effect=blank_bingo_loader)
+    def test_blank_bingos(self, mock_content):
+        """ Test blank bingos. (This comment is unnecessary, right?)"""
+        challenge = DailyChallengeName.objects.get(name='Blank Bingos')
+        table_id = self.wwg.initialize_daily_challenge(
+            self.user, self.lex, challenge, date.today())
+        wgm = self.wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertTrue(state['qualifyForAward'])
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 50, 'numCurAlphagrams': 50,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        questions = json.loads(word_list.origQuestions)
+        logger.debug('Questions: %s', questions)
+        self.assertEqual(
+            len(set([q['q'] for q in questions])), 50)
+
+    def test_toughies(self):
+        """ Test the toughies / missed bingo challenge generator. """
 
 
-class WordwallsMissedBingosTest(TestCase):
+class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
     """
     Missed bingos.
 
     """
+    fixtures = ['test/lexica.json',
+                'test/users.json',
+                'test/profiles.json',
+                'dcNames.json',
+                'test/daily_challenge.json',
+                'test/daily_challenge_leaderboard.json',
+                'test/daily_challenge_leaderboard_entry.json',
+                'test/daily_challenge_missed_bingos.json']
+
+    def test_load_missed_bingos(self):
+        pass
 
 
 class WordwallsMigrationTest(TestCase):
@@ -375,3 +671,6 @@ class WordwallsMigrationTest(TestCase):
     Make sure we can migrate old lists to new lists, or similar.
 
     """
+
+class WordwallsNamedListTest(TestCase):
+    """ "Named" lists. """

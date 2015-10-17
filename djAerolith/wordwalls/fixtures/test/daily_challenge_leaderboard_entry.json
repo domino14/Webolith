@@ -1,0 +1,4154 @@
+[
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 60,
+    "board": 40054,
+    "user": 2379
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623188
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 50,
+    "board": 40055,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623189
+},
+{
+  "fields": {
+    "timeRemaining": 90,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 1298
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623204
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 59,
+    "board": 40054,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623206
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40055,
+    "user": 1298
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623207
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 10,
+    "board": 40054,
+    "user": 4826
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623236
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 59,
+    "board": 40054,
+    "user": 1837
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623250
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40055,
+    "user": 1837
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623251
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 42,
+    "board": 40054,
+    "user": 4627
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623255
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 28,
+    "board": 40055,
+    "user": 4627
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623257
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40055,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623261
+},
+{
+  "fields": {
+    "timeRemaining": 156,
+    "additionalData": "{\"medal\": \"Silver\"}",
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623262
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 60,
+    "board": 40054,
+    "user": 699
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623267
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 25,
+    "board": 40054,
+    "user": 73
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623275
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40054,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623277
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40054,
+    "user": 782
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623284
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 8,
+    "board": 40055,
+    "user": 4508
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623298
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40054,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623303
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 17,
+    "board": 40054,
+    "user": 4508
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623304
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40055,
+    "user": 782
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623306
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40054,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623307
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 37,
+    "board": 40055,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623309
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40055,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623311
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 28,
+    "board": 40054,
+    "user": 1198
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623327
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 18,
+    "board": 40054,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623328
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 44,
+    "board": 40054,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623330
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 8,
+    "board": 40055,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623331
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 13,
+    "board": 40054,
+    "user": 3727
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623332
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 14,
+    "board": 40054,
+    "user": 4830
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623336
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 40,
+    "board": 40055,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623343
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40054,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623346
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40054,
+    "user": 4113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623356
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 39,
+    "board": 40054,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623358
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 56,
+    "board": 40054,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623361
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40055,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623362
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40055,
+    "user": 4113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623365
+},
+{
+  "fields": {
+    "timeRemaining": 14,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623374
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 48,
+    "board": 40055,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623376
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 24,
+    "board": 40054,
+    "user": 4738
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623382
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40055,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623385
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 0,
+    "board": 40054,
+    "user": 4868
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623398
+},
+{
+  "fields": {
+    "timeRemaining": 171,
+    "additionalData": "{\"medal\": \"Gold\"}",
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623410
+},
+{
+  "fields": {
+    "timeRemaining": 8,
+    "additionalData": "{\"medal\": \"Silver\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40055,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623415
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40055,
+    "user": 2742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623420
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 54,
+    "board": 40054,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623436
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 35,
+    "board": 40055,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623440
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40054,
+    "user": 1767
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623447
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 29,
+    "board": 40055,
+    "user": 1767
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623451
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40054,
+    "user": 3208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623453
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 22,
+    "board": 40055,
+    "user": 3208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623455
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40055,
+    "user": 1198
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623456
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40054,
+    "user": 25
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623458
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40054,
+    "user": 36
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623483
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 5,
+    "board": 40055,
+    "user": 4830
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623484
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40055,
+    "user": 36
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623486
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40054,
+    "user": 4400
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623487
+},
+{
+  "fields": {
+    "timeRemaining": 106,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 39
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623493
+},
+{
+  "fields": {
+    "timeRemaining": 69,
+    "additionalData": "{\"medal\": \"Gold\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40055,
+    "user": 39
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623497
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 10,
+    "board": 40054,
+    "user": 564
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623503
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40054,
+    "user": 47
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623506
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 16,
+    "board": 40055,
+    "user": 47
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623513
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 51,
+    "board": 40054,
+    "user": 4175
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623517
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 23,
+    "board": 40054,
+    "user": 4860
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623520
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40054,
+    "user": 1840
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623527
+},
+{
+  "fields": {
+    "timeRemaining": 121,
+    "additionalData": "{\"medal\": \"Bronze\"}",
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623534
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 56,
+    "board": 40055,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623536
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 38,
+    "board": 40054,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623546
+},
+{
+  "fields": {
+    "timeRemaining": 33,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623554
+},
+{
+  "fields": {
+    "timeRemaining": 28,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623555
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 36,
+    "board": 40055,
+    "user": 4175
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623556
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40055,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623557
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 50,
+    "board": 40055,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623559
+},
+{
+  "fields": {
+    "timeRemaining": 89,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 541
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623578
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": "{\"medal\": \"Bronze\"}",
+    "qualifyForAward": true,
+    "score": 57,
+    "board": 40055,
+    "user": 541
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623579
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 39,
+    "board": 40054,
+    "user": 2207
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623585
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 5,
+    "board": 40054,
+    "user": 4930
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623589
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 23,
+    "board": 40055,
+    "user": 2207
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623598
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40054,
+    "user": 693
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623605
+},
+{
+  "fields": {
+    "timeRemaining": 4,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40054,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623606
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40055,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623608
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 50,
+    "board": 40079,
+    "user": 4627
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623616
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 34,
+    "board": 40082,
+    "user": 4627
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623619
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40079,
+    "user": 1298
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623621
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40079,
+    "user": 2379
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623624
+},
+{
+  "fields": {
+    "timeRemaining": 30,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623631
+},
+{
+  "fields": {
+    "timeRemaining": 97,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623632
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 65,
+    "board": 40079,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623674
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40082,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623675
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 29,
+    "board": 40079,
+    "user": 73
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623688
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40079,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623695
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40082,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623698
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 62,
+    "board": 40079,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623706
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 48,
+    "board": 40082,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623709
+},
+{
+  "fields": {
+    "timeRemaining": 123,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623720
+},
+{
+  "fields": {
+    "timeRemaining": 65,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623723
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 12,
+    "board": 40079,
+    "user": 4193
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623730
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40079,
+    "user": 4901
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623737
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40079,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623740
+},
+{
+  "fields": {
+    "timeRemaining": 142,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623743
+},
+{
+  "fields": {
+    "timeRemaining": 98,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623746
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 30,
+    "board": 40082,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623748
+},
+{
+  "fields": {
+    "timeRemaining": 58,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623761
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40079,
+    "user": 2407
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623763
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40079,
+    "user": 1198
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623769
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 50,
+    "board": 40082,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623770
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 25,
+    "board": 40079,
+    "user": 2441
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623772
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 16,
+    "board": 40079,
+    "user": 693
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623775
+},
+{
+  "fields": {
+    "timeRemaining": 143,
+    "additionalData": null,
+    "qualifyForAward": false,
+    "score": 61,
+    "board": 40054,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623786
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": false,
+    "score": 52,
+    "board": 40055,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623788
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 17,
+    "board": 40079,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623793
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 14,
+    "board": 40082,
+    "user": 693
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623795
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 11,
+    "board": 40082,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623814
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 23,
+    "board": 40079,
+    "user": 4465
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623817
+},
+{
+  "fields": {
+    "timeRemaining": 103,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623832
+},
+{
+  "fields": {
+    "timeRemaining": 120,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623833
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40082,
+    "user": 1298
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623840
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 63,
+    "board": 40079,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623847
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40079,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623850
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40082,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623853
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40079,
+    "user": 4932
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623854
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 40,
+    "board": 40082,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623855
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 36,
+    "board": 40079,
+    "user": 4860
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623858
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40079,
+    "user": 1840
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623873
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 42,
+    "board": 40082,
+    "user": 1840
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623880
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 42,
+    "board": 40082,
+    "user": 188
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623889
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 59,
+    "board": 40079,
+    "user": 188
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623894
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40079,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623896
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40082,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623898
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40082,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623910
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 59,
+    "board": 40079,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623914
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40082,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623916
+},
+{
+  "fields": {
+    "timeRemaining": 163,
+    "additionalData": "{\"medal\": \"Gold\"}",
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623939
+},
+{
+  "fields": {
+    "timeRemaining": 161,
+    "additionalData": "{\"medal\": \"Silver\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623940
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40079,
+    "user": 4400
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623941
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 59,
+    "board": 40079,
+    "user": 699
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623951
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40082,
+    "user": 4901
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623962
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40082,
+    "user": 2742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623975
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 15,
+    "board": 40079,
+    "user": 564
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623976
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40079,
+    "user": 2742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623977
+},
+{
+  "fields": {
+    "timeRemaining": 52,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623978
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 57,
+    "board": 40082,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623981
+},
+{
+  "fields": {
+    "timeRemaining": 58,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623988
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 56,
+    "board": 40082,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 623990
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40079,
+    "user": 3240
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624007
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 16,
+    "board": 40079,
+    "user": 4933
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624020
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40079,
+    "user": 782
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624021
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 11,
+    "board": 40079,
+    "user": 4826
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624025
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 63,
+    "board": 40079,
+    "user": 4175
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624031
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40079,
+    "user": 2207
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624032
+},
+{
+  "fields": {
+    "timeRemaining": 159,
+    "additionalData": "{\"medal\": \"Bronze\"}",
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 39
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624034
+},
+{
+  "fields": {
+    "timeRemaining": 154,
+    "additionalData": "{\"medal\": \"Bronze\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 39
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624035
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 65,
+    "board": 40079,
+    "user": 25
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624036
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40079,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624037
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 22,
+    "board": 40082,
+    "user": 3972
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624042
+},
+{
+  "fields": {
+    "timeRemaining": 160,
+    "additionalData": "{\"medal\": \"Silver\"}",
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 42
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624046
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 36,
+    "board": 40079,
+    "user": 3972
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624047
+},
+{
+  "fields": {
+    "timeRemaining": 185,
+    "additionalData": "{\"medal\": \"Gold\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 42
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624049
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40079,
+    "user": 4113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624052
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 9,
+    "board": 40079,
+    "user": 4830
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624059
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40079,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624068
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 28,
+    "board": 40082,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624075
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 33,
+    "board": 40082,
+    "user": 3240
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624077
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 48,
+    "board": 40079,
+    "user": 3208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624096
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 17,
+    "board": 40079,
+    "user": 4020
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624098
+},
+{
+  "fields": {
+    "timeRemaining": 30,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 1837
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624104
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 57,
+    "board": 40082,
+    "user": 1837
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624108
+},
+{
+  "fields": {
+    "timeRemaining": 71,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 67,
+    "board": 40079,
+    "user": 541
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624109
+},
+{
+  "fields": {
+    "timeRemaining": 51,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40082,
+    "user": 541
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624111
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40082,
+    "user": 4175
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624116
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 13,
+    "board": 40082,
+    "user": 4020
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624119
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 34,
+    "board": 40106,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624137
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 40,
+    "board": 40108,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624139
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 57,
+    "board": 40106,
+    "user": 2379
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624162
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 26,
+    "board": 40106,
+    "user": 73
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624184
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 37,
+    "board": 40106,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624189
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 26,
+    "board": 40108,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624194
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 51,
+    "board": 40106,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624196
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40108,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624199
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 63,
+    "board": 40108,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624208
+},
+{
+  "fields": {
+    "timeRemaining": 162,
+    "additionalData": "{\"medal\": \"Bronze\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624209
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 18,
+    "board": 40106,
+    "user": 4826
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624223
+},
+{
+  "fields": {
+    "timeRemaining": 6,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 699
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624226
+},
+{
+  "fields": {
+    "timeRemaining": 77,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 18
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624235
+},
+{
+  "fields": {
+    "timeRemaining": 1,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40108,
+    "user": 18
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624240
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 56,
+    "board": 40106,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624247
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 44,
+    "board": 40108,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624253
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40106,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624258
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 60,
+    "board": 40108,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624260
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 31,
+    "board": 40106,
+    "user": 1198
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624263
+},
+{
+  "fields": {
+    "timeRemaining": 194,
+    "additionalData": "{\"medal\": \"Gold\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 42
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624268
+},
+{
+  "fields": {
+    "timeRemaining": 133,
+    "additionalData": "{\"medal\": \"Bronze\"}",
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40108,
+    "user": 42
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624269
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 30,
+    "board": 40106,
+    "user": 4901
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624273
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 11,
+    "board": 40106,
+    "user": 3727
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624278
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40106,
+    "user": 3364
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624285
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40106,
+    "user": 735
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624286
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 24,
+    "board": 40108,
+    "user": 3364
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624297
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40106,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624319
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 34,
+    "board": 40108,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624324
+},
+{
+  "fields": {
+    "timeRemaining": 2,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624328
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40108,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624343
+},
+{
+  "fields": {
+    "timeRemaining": 23,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624345
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 13,
+    "board": 40106,
+    "user": 4276
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624349
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 63,
+    "board": 40108,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624352
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 19,
+    "board": 40106,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624357
+},
+{
+  "fields": {
+    "timeRemaining": 76,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624375
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 50,
+    "board": 40106,
+    "user": 2876
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624377
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40108,
+    "user": 1198
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624378
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40108,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624380
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40108,
+    "user": 2876
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624382
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 8,
+    "board": 40108,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624388
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40106,
+    "user": 4400
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624395
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 26,
+    "board": 40106,
+    "user": 4933
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624399
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 39,
+    "board": 40106,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624414
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 31,
+    "board": 40108,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624416
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40106,
+    "user": 25
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624418
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40108,
+    "user": 735
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624421
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": false,
+    "score": 0,
+    "board": 40054,
+    "user": 4196
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624424
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": false,
+    "score": 0,
+    "board": 40079,
+    "user": 4196
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624425
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 0,
+    "board": 40106,
+    "user": 4196
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624426
+},
+{
+  "fields": {
+    "timeRemaining": 113,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624442
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40106,
+    "user": 2407
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624443
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 51,
+    "board": 40108,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624444
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40106,
+    "user": 4020
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624445
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 9,
+    "board": 40108,
+    "user": 4020
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624448
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 18,
+    "board": 40108,
+    "user": 47
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624452
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 31,
+    "board": 40106,
+    "user": 4738
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624470
+},
+{
+  "fields": {
+    "timeRemaining": 173,
+    "additionalData": "{\"medal\": \"Silver\"}",
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 39
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624476
+},
+{
+  "fields": {
+    "timeRemaining": 139,
+    "additionalData": "{\"medal\": \"Silver\"}",
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40108,
+    "user": 39
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624478
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 39,
+    "board": 40106,
+    "user": 1767
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624481
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40108,
+    "user": 1767
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624482
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40106,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624484
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 61,
+    "board": 40108,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624490
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 34,
+    "board": 40108,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624492
+},
+{
+  "fields": {
+    "timeRemaining": 121,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624494
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 14,
+    "board": 40106,
+    "user": 564
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624496
+},
+{
+  "fields": {
+    "timeRemaining": 154,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624503
+},
+{
+  "fields": {
+    "timeRemaining": 145,
+    "additionalData": "{\"medal\": \"Gold\"}",
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40108,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624504
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 28,
+    "board": 40108,
+    "user": 4400
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624508
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40106,
+    "user": 4175
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624513
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40108,
+    "user": 4175
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624514
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40108,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624518
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40106,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624520
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 29,
+    "board": 40106,
+    "user": 2100
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624524
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 37,
+    "board": 40106,
+    "user": 3208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624532
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": false,
+    "score": 32,
+    "board": 40079,
+    "user": 2890
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624533
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": false,
+    "score": 22,
+    "board": 40082,
+    "user": 3208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624536
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 19,
+    "board": 40108,
+    "user": 3208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624540
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 36,
+    "board": 40108,
+    "user": 188
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624542
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 54,
+    "board": 40106,
+    "user": 188
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624548
+},
+{
+  "fields": {
+    "timeRemaining": 74,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 541
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624554
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 63,
+    "board": 40108,
+    "user": 541
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624555
+},
+{
+  "fields": {
+    "timeRemaining": 64,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624581
+},
+{
+  "fields": {
+    "timeRemaining": 57,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40108,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624582
+},
+{
+  "fields": {
+    "timeRemaining": 126,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 58,
+    "board": 40106,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624595
+},
+{
+  "fields": {
+    "timeRemaining": 91,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 64,
+    "board": 40108,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624596
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40128,
+    "user": 2379
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624605
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40128,
+    "user": 4627
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624618
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 15,
+    "board": 40134,
+    "user": 4627
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624619
+},
+{
+  "fields": {
+    "timeRemaining": 139,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624625
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40134,
+    "user": 3906
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624626
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 39,
+    "board": 40128,
+    "user": 2890
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624669
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40128,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624681
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40134,
+    "user": 3323
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624684
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 16,
+    "board": 40128,
+    "user": 3727
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624707
+},
+{
+  "fields": {
+    "timeRemaining": 157,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624710
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 54,
+    "board": 40134,
+    "user": 113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624712
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 54,
+    "board": 40128,
+    "user": 699
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624718
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40134,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624732
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40128,
+    "user": 4561
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624734
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 25,
+    "board": 40128,
+    "user": 3364
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624741
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 31,
+    "board": 40128,
+    "user": 1198
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624746
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 11,
+    "board": 40134,
+    "user": 3364
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624758
+},
+{
+  "fields": {
+    "timeRemaining": 67,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624760
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40128,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624762
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40134,
+    "user": 2208
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624767
+},
+{
+  "fields": {
+    "timeRemaining": 192,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624772
+},
+{
+  "fields": {
+    "timeRemaining": 159,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 56,
+    "board": 40134,
+    "user": 2780
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624773
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 8,
+    "board": 40134,
+    "user": 4210
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624776
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 13,
+    "board": 40128,
+    "user": 4901
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624790
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40128,
+    "user": 735
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624799
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40134,
+    "user": 735
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624801
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40128,
+    "user": 4679
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624815
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 36,
+    "board": 40128,
+    "user": 131
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624816
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 17,
+    "board": 40128,
+    "user": 4276
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624817
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40128,
+    "user": 1705
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624832
+},
+{
+  "fields": {
+    "timeRemaining": 96,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624836
+},
+{
+  "fields": {
+    "timeRemaining": 153,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624839
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40134,
+    "user": 1765
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624841
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40134,
+    "user": 610
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624844
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40134,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624846
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 0,
+    "board": 40128,
+    "user": 4196
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624848
+},
+{
+  "fields": {
+    "timeRemaining": 154,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 1298
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624873
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 19,
+    "board": 40134,
+    "user": 1298
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624874
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 54,
+    "board": 40128,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624876
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 35,
+    "board": 40134,
+    "user": 4283
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624879
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40134,
+    "user": 42
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624889
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 35,
+    "board": 40128,
+    "user": 1439
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624895
+},
+{
+  "fields": {
+    "timeRemaining": 208,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 42
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624898
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 15,
+    "board": 40128,
+    "user": 4287
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624900
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 8,
+    "board": 40134,
+    "user": 1439
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624904
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 47,
+    "board": 40128,
+    "user": 1862
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624914
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 42,
+    "board": 40134,
+    "user": 1862
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624917
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 23,
+    "board": 40128,
+    "user": 564
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624918
+},
+{
+  "fields": {
+    "timeRemaining": 84,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624920
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40134,
+    "user": 1742
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624921
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 7,
+    "board": 40128,
+    "user": 4738
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624931
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 38,
+    "board": 40128,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624933
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 24,
+    "board": 40134,
+    "user": 1989
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624934
+},
+{
+  "fields": {
+    "timeRemaining": 95,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 1837
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624935
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 53,
+    "board": 40134,
+    "user": 1837
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624936
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 54,
+    "board": 40128,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624950
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40134,
+    "user": 23
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624954
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 28,
+    "board": 40128,
+    "user": 1544
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624959
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 46,
+    "board": 40134,
+    "user": 1705
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624960
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 3,
+    "board": 40128,
+    "user": 25
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624964
+},
+{
+  "fields": {
+    "timeRemaining": 109,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 55,
+    "board": 40128,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624965
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40128,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624974
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 31,
+    "board": 40134,
+    "user": 1778
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 624979
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40128,
+    "user": 4035
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625000
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40128,
+    "user": 3240
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625001
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 35,
+    "board": 40134,
+    "user": 188
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625004
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40128,
+    "user": 2100
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625005
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40128,
+    "user": 188
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625007
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 39,
+    "board": 40128,
+    "user": 1767
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625018
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40134,
+    "user": 3240
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625020
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 52,
+    "board": 40128,
+    "user": 1968
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625026
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 45,
+    "board": 40128,
+    "user": 3845
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625028
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 25,
+    "board": 40128,
+    "user": 1407
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625030
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40134,
+    "user": 3845
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625032
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 10,
+    "board": 40128,
+    "user": 4830
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625043
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 36,
+    "board": 40128,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625051
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 26,
+    "board": 40134,
+    "user": 4458
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625053
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 43,
+    "board": 40128,
+    "user": 2207
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625054
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 44,
+    "board": 40128,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625059
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 50,
+    "board": 40128,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625061
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 49,
+    "board": 40128,
+    "user": 1840
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625063
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 32,
+    "board": 40134,
+    "user": 1975
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625066
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 40,
+    "board": 40134,
+    "user": 1824
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625068
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 38,
+    "board": 40134,
+    "user": 1840
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625069
+},
+{
+  "fields": {
+    "timeRemaining": 9,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 56,
+    "board": 40134,
+    "user": 4917
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625070
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 41,
+    "board": 40128,
+    "user": 4113
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625071
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 20,
+    "board": 40128,
+    "user": 693
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625085
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 40,
+    "board": 40128,
+    "user": 4400
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625088
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 34,
+    "board": 40128,
+    "user": 1859
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625098
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 21,
+    "board": 40134,
+    "user": 2207
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625100
+},
+{
+  "fields": {
+    "timeRemaining": 0,
+    "additionalData": null,
+    "qualifyForAward": true,
+    "score": 19,
+    "board": 40128,
+    "user": 4020
+  },
+  "model": "wordwalls.dailychallengeleaderboardentry",
+  "pk": 625104
+}
+]

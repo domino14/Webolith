@@ -9,6 +9,7 @@ import time
 import random
 from lib.response import response
 from wordwalls.views import getLeaderboardData
+from wordwalls.challenges import toughies_challenge_date
 
 
 def configure(request):
@@ -54,13 +55,11 @@ def api_num_tables_created(request):
 
 
 def api_random_toughie(request):
-    from wordwalls.management.commands.genMissedBingoChalls import (
-        challengeDateFromReqDate)
     # from the PREVIOUS toughies challenge
-    chdate = challengeDateFromReqDate(date.today()) - timedelta(days=7 * 20)
+    chdate = toughies_challenge_date(date.today()) - timedelta(days=7 *2)
     try:
         dc = DailyChallenge.objects.get(
-            lexicon=Lexicon.objects.get(pk=4),
+            lexicon=Lexicon.objects.get(pk=7),
             date=chdate,
             name=DailyChallengeName.objects.get(
                 name=DailyChallengeName.WEEKS_BINGO_TOUGHIES))

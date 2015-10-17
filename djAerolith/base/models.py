@@ -150,7 +150,8 @@ class SavedList(models.Model):
     # XXX: Change default to 2 after migration.
     version = models.IntegerField(default=1)
 
-    def initialize_list(self, alphagrams, lexicon, user, shuffle=False):
+    def initialize_list(self, alphagrams, lexicon, user, shuffle=False,
+                        keep_old_name=False):
         """
         Initialize a list with the passed in alphagrams. Saves it back
         to the database.
@@ -160,7 +161,9 @@ class SavedList(models.Model):
         if shuffle:
             random.shuffle(alphagrams)
         self.lexicon = lexicon
-        self.name = uuid.uuid4().hex
+        if not keep_old_name:
+            self.name = uuid.uuid4().hex
+            self.is_temporary = True
         self.user = user
         self.numAlphagrams = num_questions
         self.numCurAlphagrams = num_questions
@@ -173,13 +176,13 @@ class SavedList(models.Model):
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])
         self.version = 2
-        self.is_temporary = True
         self.save()
 
     def restart_list(self, shuffle=False):
         """ Restart this list; save it back to the database. """
         self.initialize_list(json.loads(self.origQuestions),
-                             self.lexicon, self.user, shuffle)
+                             self.lexicon, self.user, shuffle,
+                             keep_old_name=True)
 
     def set_to_first_missed(self):
         """ Set this list to quiz on first missed questions; save. """

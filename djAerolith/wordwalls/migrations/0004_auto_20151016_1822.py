@@ -23,6 +23,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='dailychallengemissedbingos',
-            unique_together=set([('challenge', 'alphagram_string')]),
+            unique_together=set([]),
         ),
     ]

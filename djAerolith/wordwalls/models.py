@@ -119,18 +119,20 @@ class WordwallsGameModel(GenericTableGameModel):
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge)
-    # Phase out this column soon.
+    # XXX: Phase out this column soon.
     alphagram = models.ForeignKey(Alphagram, null=True)
     alphagram_string = models.CharField(max_length=15, default='')
     numTimesMissed = models.IntegerField(default=0)
 
-    class Meta:
-        unique_together = ("challenge", "alphagram_string")
+    # XXX: Add a unique_together on alphagram_string and challenge later,
+    # after the migration is complete.
 
     def __unicode__(self):
-        return "%s, %s, %d" % (self.challenge.__unicode__(),
-                               self.alphagram.alphagram,
-                               self.numTimesMissed)
+        return "%s, %s, %d" % (
+            self.challenge.__unicode__(),
+            self.alphagram.alphagram if self.alphagram else
+            self.alphagram_string,
+            self.numTimesMissed)
 
 
 class NamedList(models.Model):

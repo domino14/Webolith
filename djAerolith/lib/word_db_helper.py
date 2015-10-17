@@ -10,6 +10,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+class BadInput(Exception):
+    pass
+
+
 class Word(object):
     def __init__(self, word, alphagram, definition, front_hooks, back_hooks,
                  inner_front_hook, inner_back_hook, lexiconSymbols):
@@ -107,10 +111,21 @@ class WordDB(object):
         row = c.fetchone()
         return row[0]
 
-    def alphagrams_by_probability(self, probability_min, probability_max,
-                                  length):
+    def _alphagrams(self, c):
+        """ Returns a list of alphagrams fetched by cursor `c`."""
+        alphagrams = []
+        rows = c.fetchall()
+        for row in rows:
+            alphagrams.append(Alphagram(alphagram=row[0],
+                                        probability=row[1],
+                                        combinations=row[2],
+                                        length=len(row[0])))
+        return alphagrams
+
+    def alphagrams_by_probability_range(self, probability_min, probability_max,
+                                        length):
         """
-        Gets a list of Alphagrams by probability.
+        Gets a list of Alphagrams by probability range.
 
         """
         c = self.conn.cursor()
@@ -118,11 +133,37 @@ class WordDB(object):
                   'FROM alphagrams WHERE length = ? AND '
                   'probability BETWEEN ? AND ?',
                   (length, probability_min, probability_max))
-        rows = c.fetchall()
-        alphagrams = []
-        for row in rows:
-            alphagrams.append(Alphagram(alphagram=row[0],
-                                        probability=row[1],
-                                        combinations=row[2],
-                                        length=length))
-        return alphagrams
+        return self._alphagrams(c)
+
+    def alphagrams_by_probability_list(self, p_list, length):
+        """ Gets a list of alphagrams for a list of probabilities."""
+        # We're doing straight %-interpolation here so let's verify
+        # p_list is a list of integers. Don't want to do SQL-injection.
+        for p in p_list:
+            if type(p) is not int:
+                raise BadInput("Every probability must be an integer. %s" %
+                               p_list)
+        # Generate IN string.
+        in_string = str(tuple(p_list))
+        c = self.conn.cursor()
+        c.execute('SELECT alphagram, probability, combinations '
+                  'FROM alphagrams WHERE length = ? AND '
+                  'probability IN %s' % in_string, (length,))
+
+        return self._alphagrams(c)
+
+    def get_alph_words(self, alphagrams):
+        """
+        A helper function to return an entire structure, a list of
+        alphagrams and words.
+
+        {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+
+        """
+        ret = []
+        for alphagram in alphagrams:
+            obj = {'q': alphagram.alphagram, 'a': []}
+            obj['a'] = [word.word for word in
+                        self.get_words_for_alphagram(alphagram.alphagram)]
+            ret.append(obj)
+        return ret

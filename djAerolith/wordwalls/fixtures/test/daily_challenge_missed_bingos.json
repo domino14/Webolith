@@ -1,0 +1,3548 @@
+[
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 24,
+    "alphagram": 587209179
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312898
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 25,
+    "alphagram": 654320896
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312899
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 21,
+    "alphagram": 654332992
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312900
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 18,
+    "alphagram": 654337380
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312901
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 19,
+    "alphagram": 654314177
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312902
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 18,
+    "alphagram": 654317452
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312903
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 23,
+    "alphagram": 654336111
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312904
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 19,
+    "alphagram": 654313878
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312905
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 11,
+    "alphagram": 654317559
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312906
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 16,
+    "alphagram": 587208067
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312921
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 26,
+    "alphagram": 587204708
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312922
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 17,
+    "alphagram": 654316292
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312923
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 23,
+    "alphagram": 654328711
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312924
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 7,
+    "alphagram": 654323307
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312925
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 16,
+    "alphagram": 654329518
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312926
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 18,
+    "alphagram": 654319983
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312927
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 15,
+    "alphagram": 654338548
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312928
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 5,
+    "alphagram": 654327222
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312929
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 19,
+    "alphagram": 654325243
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312930
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 19,
+    "alphagram": 654332060
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312931
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 13,
+    "alphagram": 587214101
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312988
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 14,
+    "alphagram": 587222406
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312989
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 23,
+    "alphagram": 587206407
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312990
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 23,
+    "alphagram": 587210178
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312991
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 20,
+    "alphagram": 587204756
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312992
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 10,
+    "alphagram": 587221934
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312993
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 15,
+    "alphagram": 587212694
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312994
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 11,
+    "alphagram": 587209112
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312995
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 15,
+    "alphagram": 587204765
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312996
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 29,
+    "alphagram": 587208862
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312997
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 17,
+    "alphagram": 587216033
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312998
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 16,
+    "alphagram": 587205284
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 312999
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 18,
+    "alphagram": 587218471
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313000
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 20,
+    "alphagram": 587204266
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313001
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 23,
+    "alphagram": 587206151
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313002
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 24,
+    "alphagram": 587209646
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313003
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 23,
+    "alphagram": 587207727
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313004
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 28,
+    "alphagram": 587215664
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313005
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 21,
+    "alphagram": 587219504
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313006
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 13,
+    "alphagram": 587211448
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313007
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 12,
+    "alphagram": 587215548
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313008
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 20,
+    "alphagram": 587222974
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313009
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 14,
+    "alphagram": 587202625
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313010
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 5,
+    "alphagram": 587207106
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313011
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 20,
+    "alphagram": 587205189
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313012
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 7,
+    "alphagram": 587220813
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313013
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 15,
+    "alphagram": 587221327
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313014
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 31,
+    "alphagram": 587216724
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313015
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 16,
+    "alphagram": 587210970
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313016
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 17,
+    "alphagram": 587220834
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313017
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 11,
+    "alphagram": 587204455
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313018
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 23,
+    "alphagram": 587222635
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313019
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 18,
+    "alphagram": 587207404
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313020
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 7,
+    "alphagram": 587209709
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313021
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 24,
+    "alphagram": 587215470
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313022
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 11,
+    "alphagram": 587205999
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313023
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 6,
+    "alphagram": 587207411
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313024
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 21,
+    "alphagram": 587209332
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313025
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 27,
+    "alphagram": 587212661
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313026
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 14,
+    "alphagram": 587207031
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313027
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 19,
+    "alphagram": 587208341
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313028
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 24,
+    "alphagram": 587220045
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313052
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 17,
+    "alphagram": 654313611
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313053
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 14,
+    "alphagram": 654313357
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313054
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 13,
+    "alphagram": 654314588
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313055
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 5,
+    "alphagram": 587211622
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313056
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 11,
+    "alphagram": 654322693
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313057
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 15,
+    "alphagram": 654332934
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313058
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 16,
+    "alphagram": 654318861
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313059
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 14,
+    "alphagram": 654318961
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313060
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 5,
+    "alphagram": 654332720
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313061
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 10,
+    "alphagram": 654332081
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313062
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 13,
+    "alphagram": 654320435
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313063
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 9,
+    "alphagram": 654334901
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313064
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 14,
+    "alphagram": 654327866
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313065
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 20,
+    "alphagram": 654337341
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313066
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 3,
+    "alphagram": 654324034
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313067
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 16,
+    "alphagram": 654329539
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313068
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 22,
+    "alphagram": 654316647
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313069
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 14,
+    "alphagram": 654326376
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313070
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 8,
+    "alphagram": 654320753
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313071
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 5,
+    "alphagram": 654328690
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313072
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 22,
+    "alphagram": 654319352
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313073
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 7,
+    "alphagram": 654320128
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313074
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 7,
+    "alphagram": 654337539
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313075
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 7,
+    "alphagram": 654326800
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313076
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 6,
+    "alphagram": 654316319
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313077
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 5,
+    "alphagram": 654312582
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313078
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 8,
+    "alphagram": 654324911
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313079
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 4,
+    "alphagram": 654334648
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313080
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 5,
+    "alphagram": 654320196
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313081
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 7,
+    "alphagram": 654336246
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313082
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 12,
+    "alphagram": 654324479
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313083
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 9,
+    "alphagram": 654320418
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313084
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 4,
+    "alphagram": 587219081
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313085
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 3,
+    "alphagram": 654337672
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313086
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 7,
+    "alphagram": 587207435
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313087
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 5,
+    "alphagram": 587210672
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313088
+},
+{
+  "fields": {
+    "challenge": 40233,
+    "numTimesMissed": 3,
+    "alphagram": 587223279
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313089
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "numTimesMissed": 3,
+    "alphagram": 654328309
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313091
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 31,
+    "alphagram": 587208642
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313097
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 32,
+    "alphagram": 587202691
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313098
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 23,
+    "alphagram": 587211431
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313099
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 14,
+    "alphagram": 587222920
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313100
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 30,
+    "alphagram": 587203913
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313101
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 16,
+    "alphagram": 587211946
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313102
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 16,
+    "alphagram": 587204199
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313103
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 25,
+    "alphagram": 587215549
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313104
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 31,
+    "alphagram": 587211283
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313105
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 9,
+    "alphagram": 587216342
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313106
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 24,
+    "alphagram": 587212919
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313107
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 32,
+    "alphagram": 587203096
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313108
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 35,
+    "alphagram": 587213721
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313109
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 24,
+    "alphagram": 587211898
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313110
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 25,
+    "alphagram": 587208218
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313111
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 27,
+    "alphagram": 587217927
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313112
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 18,
+    "alphagram": 654317457
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313113
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 7,
+    "alphagram": 654335894
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313114
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 9,
+    "alphagram": 654324251
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313115
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 14,
+    "alphagram": 654312993
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313116
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 18,
+    "alphagram": 654312739
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313117
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 19,
+    "alphagram": 654321839
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313118
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 9,
+    "alphagram": 654329521
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313119
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 10,
+    "alphagram": 654337074
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313120
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 17,
+    "alphagram": 654317107
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313121
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 17,
+    "alphagram": 654328892
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313122
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 3,
+    "alphagram": 654311749
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313123
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 17,
+    "alphagram": 654314915
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313124
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 14,
+    "alphagram": 654324089
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313125
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 9,
+    "alphagram": 654327644
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313126
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 14,
+    "alphagram": 654337886
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313127
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 13,
+    "alphagram": 654328031
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313128
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 2,
+    "alphagram": 654337383
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313129
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 20,
+    "alphagram": 654325868
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313130
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 22,
+    "alphagram": 654329718
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313131
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 14,
+    "alphagram": 654334073
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313132
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 9,
+    "alphagram": 654316282
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313133
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 9,
+    "alphagram": 654313980
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313134
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 8,
+    "alphagram": 654331901
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313135
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 18,
+    "alphagram": 587202735
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313136
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 15,
+    "alphagram": 587216146
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313137
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 28,
+    "alphagram": 587209171
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313138
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 36,
+    "alphagram": 587210175
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313139
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 25,
+    "alphagram": 587203804
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313140
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 17,
+    "alphagram": 587215551
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313141
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 22,
+    "alphagram": 587222192
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313216
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 12,
+    "alphagram": 654328692
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313217
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 17,
+    "alphagram": 654322271
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313218
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 21,
+    "alphagram": 587208321
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313226
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 15,
+    "alphagram": 587211140
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313227
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 9,
+    "alphagram": 587214114
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313228
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 10,
+    "alphagram": 587206950
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313229
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 22,
+    "alphagram": 587204779
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313230
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 17,
+    "alphagram": 587202867
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313231
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 11,
+    "alphagram": 587212496
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313232
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 13,
+    "alphagram": 587207517
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313233
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 19,
+    "alphagram": 587209907
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313234
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 14,
+    "alphagram": 587203315
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313235
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 20,
+    "alphagram": 587208948
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313236
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 27,
+    "alphagram": 587209596
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313237
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 17,
+    "alphagram": 587208552
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313240
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 6,
+    "alphagram": 654326786
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313241
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 17,
+    "alphagram": 654324357
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313242
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 14,
+    "alphagram": 654314509
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313243
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 12,
+    "alphagram": 654324509
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313244
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 13,
+    "alphagram": 654311590
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313245
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 18,
+    "alphagram": 654314455
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313246
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 6,
+    "alphagram": 654314997
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313247
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 14,
+    "alphagram": 654336086
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313250
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 16,
+    "alphagram": 587222409
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313255
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 9,
+    "alphagram": 587219213
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313256
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 8,
+    "alphagram": 587207085
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313257
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 11,
+    "alphagram": 587214154
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313258
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 19,
+    "alphagram": 587206486
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313259
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 16,
+    "alphagram": 587214830
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313260
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 8,
+    "alphagram": 587222142
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313261
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 17,
+    "alphagram": 654314006
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313262
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 16,
+    "alphagram": 654316712
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313263
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 8,
+    "alphagram": 587219514
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313265
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 8,
+    "alphagram": 587211138
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313266
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 6,
+    "alphagram": 587216790
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313267
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 3,
+    "alphagram": 587213360
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313268
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 8,
+    "alphagram": 587215815
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313269
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 3,
+    "alphagram": 587222096
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313270
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 6,
+    "alphagram": 654327180
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313271
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 5,
+    "alphagram": 654321085
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313272
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 1,
+    "alphagram": 654333251
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313273
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 2,
+    "alphagram": 654337241
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313274
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 1,
+    "alphagram": 654329180
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313275
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 3,
+    "alphagram": 654334311
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313276
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 1,
+    "alphagram": 654338535
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313277
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 6,
+    "alphagram": 654324520
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313278
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 5,
+    "alphagram": 654327441
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313279
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 8,
+    "alphagram": 654313934
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313280
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "numTimesMissed": 2,
+    "alphagram": 587207049
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313290
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "numTimesMissed": 1,
+    "alphagram": 654332496
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313292
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 13,
+    "alphagram": 587207074
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313293
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 4,
+    "alphagram": 587216771
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313294
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 22,
+    "alphagram": 587212516
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313295
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 23,
+    "alphagram": 587204805
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313296
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 29,
+    "alphagram": 587210888
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313297
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 22,
+    "alphagram": 587215788
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313298
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 5,
+    "alphagram": 587210668
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313299
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 5,
+    "alphagram": 587217677
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313300
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 29,
+    "alphagram": 587220367
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313301
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 18,
+    "alphagram": 587218162
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313302
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 19,
+    "alphagram": 587210111
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313303
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 25,
+    "alphagram": 587212825
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313304
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 19,
+    "alphagram": 587212661
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313305
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 12,
+    "alphagram": 587208029
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313306
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 21,
+    "alphagram": 587217687
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313307
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 13,
+    "alphagram": 587216632
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313308
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 20,
+    "alphagram": 587211300
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313309
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 4,
+    "alphagram": 587221484
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313310
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 19,
+    "alphagram": 587209631
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313311
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 12,
+    "alphagram": 587202613
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313312
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 16,
+    "alphagram": 587215391
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313313
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 16,
+    "alphagram": 654317312
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313314
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 17,
+    "alphagram": 654324290
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313315
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 24,
+    "alphagram": 654332779
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313316
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 17,
+    "alphagram": 654331286
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313317
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 20,
+    "alphagram": 654320871
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313318
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 16,
+    "alphagram": 654315852
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313319
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654313866
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313320
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 21,
+    "alphagram": 654324139
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313321
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 23,
+    "alphagram": 654314444
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313322
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654314703
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313323
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 22,
+    "alphagram": 654326779
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313324
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 15,
+    "alphagram": 654333168
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313325
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 19,
+    "alphagram": 654316881
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313326
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654313714
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313327
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 22,
+    "alphagram": 654319723
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313328
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 12,
+    "alphagram": 654336852
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313329
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 18,
+    "alphagram": 654315766
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313330
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654312347
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313331
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 12,
+    "alphagram": 654313930
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313332
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 11,
+    "alphagram": 587205511
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313419
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 17,
+    "alphagram": 587207440
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313420
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 22,
+    "alphagram": 587208854
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313421
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 13,
+    "alphagram": 587210653
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313422
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 19,
+    "alphagram": 587221280
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313423
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 23,
+    "alphagram": 587209264
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313424
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 19,
+    "alphagram": 587207968
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313425
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 19,
+    "alphagram": 587213380
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313426
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 22,
+    "alphagram": 587220550
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313427
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 12,
+    "alphagram": 587203015
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313428
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 14,
+    "alphagram": 587203428
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313429
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 14,
+    "alphagram": 587215072
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313430
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 12,
+    "alphagram": 587220720
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313431
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 8,
+    "alphagram": 587221625
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313432
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 13,
+    "alphagram": 587217414
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313433
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 16,
+    "alphagram": 654317330
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313434
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 11,
+    "alphagram": 654313178
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313435
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 10,
+    "alphagram": 654317866
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313436
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 12,
+    "alphagram": 654321328
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313437
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 9,
+    "alphagram": 654320453
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313438
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 18,
+    "alphagram": 654323528
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313439
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 20,
+    "alphagram": 654327011
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313440
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654333018
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313441
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 16,
+    "alphagram": 654336736
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313442
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 18,
+    "alphagram": 654313571
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313443
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654312038
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313444
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654316268
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313445
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 13,
+    "alphagram": 654321661
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313446
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 11,
+    "alphagram": 654328017
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313447
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 5,
+    "alphagram": 654337462
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313448
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 10,
+    "alphagram": 587214724
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313450
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 7,
+    "alphagram": 587218704
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313451
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 3,
+    "alphagram": 587217297
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313452
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 8,
+    "alphagram": 587203859
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313453
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 11,
+    "alphagram": 587219103
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313454
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 6,
+    "alphagram": 587211317
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313455
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 9,
+    "alphagram": 587223588
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313456
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 7,
+    "alphagram": 587213287
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313457
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 9,
+    "alphagram": 654320262
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313467
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 5,
+    "alphagram": 654329090
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313468
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 5,
+    "alphagram": 587221774
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313469
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 4,
+    "alphagram": 587219274
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313470
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 3,
+    "alphagram": 587218254
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313471
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 6,
+    "alphagram": 654326145
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313473
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 6,
+    "alphagram": 654339288
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313474
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 7,
+    "alphagram": 654328030
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313475
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 4,
+    "alphagram": 654338026
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313476
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 4,
+    "alphagram": 654318190
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313477
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 8,
+    "alphagram": 654315503
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313478
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 7,
+    "alphagram": 654334333
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313479
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 4,
+    "alphagram": 654312602
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313482
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 5,
+    "alphagram": 654320315
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313483
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 3,
+    "alphagram": 654337779
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313484
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 6,
+    "alphagram": 654314870
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313485
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 2,
+    "alphagram": 587220528
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313487
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 2,
+    "alphagram": 587220527
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313488
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "numTimesMissed": 1,
+    "alphagram": 587221177
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313489
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "numTimesMissed": 1,
+    "alphagram": 654323759
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313491
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 40,
+    "alphagram": 587215536
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313492
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 30,
+    "alphagram": 587222355
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313493
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 14,
+    "alphagram": 587214592
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313528
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 37,
+    "alphagram": 587221506
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313529
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 33,
+    "alphagram": 587220644
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313530
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 31,
+    "alphagram": 587203847
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313531
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 37,
+    "alphagram": 587219276
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313532
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 22,
+    "alphagram": 587211731
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313533
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 28,
+    "alphagram": 587221747
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313534
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 31,
+    "alphagram": 587222875
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313535
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 27,
+    "alphagram": 587222719
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313536
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 10,
+    "alphagram": 654334338
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313537
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 14,
+    "alphagram": 654333315
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313538
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 6,
+    "alphagram": 654315141
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313539
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 10,
+    "alphagram": 654323211
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313540
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 11,
+    "alphagram": 654334606
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313541
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 11,
+    "alphagram": 654318095
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313542
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 5,
+    "alphagram": 654335000
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313543
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 7,
+    "alphagram": 654338435
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313544
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 9,
+    "alphagram": 654339220
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313545
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 17,
+    "alphagram": 654314902
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313546
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 16,
+    "alphagram": 654312985
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313547
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 9,
+    "alphagram": 654315160
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313548
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 22,
+    "alphagram": 654326596
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313549
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 20,
+    "alphagram": 654316454
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313550
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 12,
+    "alphagram": 654336427
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313551
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 19,
+    "alphagram": 654327980
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313552
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 15,
+    "alphagram": 654328497
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313553
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 4,
+    "alphagram": 654334774
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313554
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 19,
+    "alphagram": 654317112
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313555
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 13,
+    "alphagram": 654337337
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313556
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 15,
+    "alphagram": 654337474
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313557
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 23,
+    "alphagram": 654319115
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313558
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 1,
+    "alphagram": 654320708
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313559
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 6,
+    "alphagram": 654312779
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313560
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 8,
+    "alphagram": 654337101
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313561
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 11,
+    "alphagram": 654332750
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313562
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 20,
+    "alphagram": 654334925
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313563
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 11,
+    "alphagram": 654315473
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313564
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 6,
+    "alphagram": 654332248
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313565
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 20,
+    "alphagram": 654331355
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313566
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 10,
+    "alphagram": 654316127
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313567
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 10,
+    "alphagram": 654313191
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313568
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 12,
+    "alphagram": 654336362
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313569
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 26,
+    "alphagram": 654332013
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313570
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 7,
+    "alphagram": 654331460
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313571
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 9,
+    "alphagram": 654313204
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313572
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 21,
+    "alphagram": 654313589
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313573
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 6,
+    "alphagram": 654338301
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313574
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 15,
+    "alphagram": 654319914
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313615
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 32,
+    "alphagram": 587219099
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313637
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 7,
+    "alphagram": 587218577
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313638
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 25,
+    "alphagram": 587217781
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313639
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 19,
+    "alphagram": 587211544
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313640
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 28,
+    "alphagram": 587206521
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313641
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 25,
+    "alphagram": 587209311
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313642
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 29,
+    "alphagram": 587212894
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313643
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 29,
+    "alphagram": 587217572
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313644
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 9,
+    "alphagram": 587219843
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313647
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 28,
+    "alphagram": 587210118
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313648
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 10,
+    "alphagram": 587205641
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313649
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 17,
+    "alphagram": 587221396
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313650
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 17,
+    "alphagram": 587218137
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313651
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 13,
+    "alphagram": 587217309
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313652
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 18,
+    "alphagram": 587211038
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313653
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 14,
+    "alphagram": 587220899
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313654
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 18,
+    "alphagram": 587220647
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313655
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 14,
+    "alphagram": 587208497
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313656
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 19,
+    "alphagram": 587202612
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313657
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 28,
+    "alphagram": 587208124
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313658
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 10,
+    "alphagram": 587212102
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313659
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 16,
+    "alphagram": 587216102
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313660
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 8,
+    "alphagram": 587207015
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313661
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 23,
+    "alphagram": 587208169
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313662
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 14,
+    "alphagram": 587219827
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313663
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 21,
+    "alphagram": 587203711
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313664
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 7,
+    "alphagram": 587214989
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313667
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 16,
+    "alphagram": 587212312
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313668
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 13,
+    "alphagram": 587223374
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313669
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 12,
+    "alphagram": 587208530
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313670
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 4,
+    "alphagram": 654333579
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313672
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 5,
+    "alphagram": 654330394
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313673
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 8,
+    "alphagram": 654330565
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313674
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 4,
+    "alphagram": 654335923
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313675
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 8,
+    "alphagram": 654316485
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313676
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 13,
+    "alphagram": 654317392
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313677
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 9,
+    "alphagram": 654312798
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313678
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 6,
+    "alphagram": 654336106
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313679
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 10,
+    "alphagram": 654322796
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313680
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 9,
+    "alphagram": 654323965
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313681
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 7,
+    "alphagram": 587210023
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313682
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 7,
+    "alphagram": 587219322
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313683
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "numTimesMissed": 2,
+    "alphagram": 654328965
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313684
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 9,
+    "alphagram": 587207069
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313685
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 9,
+    "alphagram": 587219259
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313686
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 5,
+    "alphagram": 587221830
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313687
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 8,
+    "alphagram": 587217994
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313688
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 5,
+    "alphagram": 587207654
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313689
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 4,
+    "alphagram": 587220615
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313690
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "numTimesMissed": 6,
+    "alphagram": 587204590
+  },
+  "model": "wordwalls.dailychallengemissedbingos",
+  "pk": 313691
+}
+]

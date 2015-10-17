@@ -16,14 +16,14 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import (alphProbToProbPK, probPKToAlphProb,
-                         alphagrammize, WordList, Alphagram, Word)
+from base.models import WordList, Alphagram, Word, probPKToAlphProb
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
 import time
 from datetime import date
 import random
+from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
                               DailyChallengeMissedBingos, DailyChallengeName,
@@ -33,19 +33,10 @@ from base.forms import SavedListForm
 from django.conf import settings
 import logging
 from django.db import IntegrityError
-import os
-from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
-                                                         FRIENDLY_COMMON_LONG)
 from lib.word_db_helper import WordDB
 from lib.word_searches import alphagrams_array
 logger = logging.getLogger(__name__)
-
-try:
-    COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
-    COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
-except NamedList.DoesNotExist:
-    COMMON_SHORT_NAMED_LIST = None
-    COMMON_LONG_NAMED_LIST = None
+from wordwalls.challenges import generate_dc_questions
 
 
 class WordwallsGame(object):
@@ -110,10 +101,8 @@ class WordwallsGame(object):
             # Repeat on Tuesday at midnight local time (ie beginning of
             # the day, 0:00) Tuesday is an isoweekday of 2. Find the
             # nearest Tuesday back in time. isoweekday goes from 1 to 7.
-            from wordwalls.management.commands.genMissedBingoChalls import (
-                challengeDateFromReqDate)
-            ch_date = challengeDateFromReqDate(ch_date)
-            if ch_date == challengeDateFromReqDate(today):
+            ch_date = toughies_challenge_date(ch_date)
+            if ch_date == toughies_challenge_date(today):
                 qualify_for_award = True
         # otherwise, it's not a 'bingo toughies', but a regular challenge.
         else:
@@ -143,7 +132,7 @@ class WordwallsGame(object):
             qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
         except DailyChallenge.DoesNotExist:
             try:
-                ret = self.generate_dc_pks(ch_name, ch_lex, ch_date)
+                ret = generate_dc_questions(ch_name, ch_lex, ch_date)
                 if not ret:
                     return None
             except IOError:
@@ -313,6 +302,8 @@ class WordwallsGame(object):
                               's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
                               'ibh': w.inner_back_hook})
                 answer_hash[w.word] = alphagram_str, i
+            # XXX: It is inconsistent that we use 'a' here and 'q' in
+            # the actual saved list. Fix soon.
             questions.append({'a': alphagram_str, 'ws': words, 'p': prob,
                               'idx': i})
         return questions, answer_hash
@@ -328,6 +319,10 @@ class WordwallsGame(object):
                                               'a': [word_pk1, word_pk2, ...]}
                 Migration will turn them all into dicts:
                 {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+
+        This function turns into an alphagram, whatever form it is, into
+        a string, a set of words, and a probability for the alphagram, and
+        returns these.
         """
         if version == 1:
             # Deprecated version.
@@ -710,88 +705,3 @@ class WordwallsGame(object):
         if user != wgm.host:    # single player, return false!
             return False
         return True
-
-    def generate_dc_pks(self, challengeName, lex, chDate):
-        """
-        Generate the alphagram PKs for a daily challenge.
-        Returns:
-            A tuple (pks, time_secs)
-
-        """
-        # capture number. first try to match to today's lists
-        m = re.match("Today's (?P<length>[0-9]+)s",
-                     challengeName.name)
-
-        if m:
-            wordLength = int(m.group('length'))
-            if wordLength < 2 or wordLength > 15:
-                return None   # someone is trying to break my server >:(
-            logger.info('Generating daily challenges %s %d', lex, wordLength)
-            minP = 1
-            # lengthCounts is a dictionary of strings as keys
-            maxP = json.loads(lex.lengthCounts)[repr(wordLength)]
-
-            r = range(minP, maxP + 1)
-            random.shuffle(r)
-            r = r[:50]  # just the first 50 elements for the daily challenge
-            pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
-            return pks, challengeName.timeSecs
-        # There was no match, check other possible challenge names.
-        if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-            from wordwalls.management.commands.genMissedBingoChalls import(
-                genPks)
-            mbs = genPks(lex, chDate)
-            pks = [mb[0] for mb in mbs]
-            random.shuffle(pks)
-            return pks, challengeName.timeSecs
-        elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
-            questions = self.generate_blank_bingos_challenge(lex, chDate)
-            random.shuffle(questions)
-            return questions, challengeName.timeSecs
-        elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
-            pks = []
-            for lgt in (7, 8):
-                min_p = 1
-                max_p = json.loads(lex.lengthCounts)[str(lgt)]
-                r = range(min_p, max_p + 1)
-                random.shuffle(r)
-                pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
-            return pks, challengeName.timeSecs
-        elif challengeName.name in (DailyChallengeName.COMMON_SHORT,
-                                    DailyChallengeName.COMMON_LONG):
-            questions = self.generate_common_words_challenge(
-                challengeName.name)
-            random.shuffle(questions)
-            return questions, challengeName.timeSecs
-        return None
-
-    def generate_common_words_challenge(self, ch_name):
-        """Generate the common words challenges. Only for OWL2 right now."""
-        if ch_name == DailyChallengeName.COMMON_SHORT:
-            pks = json.loads(COMMON_SHORT_NAMED_LIST.questions)
-        elif ch_name == DailyChallengeName.COMMON_LONG:
-            pks = json.loads(COMMON_LONG_NAMED_LIST.questions)
-        random.shuffle(pks)
-        return pks[:50]
-
-    def generate_blank_bingos_challenge(self, lex, ch_date):
-        """
-            Reads the previously generated blank bingo files for lex.
-        """
-        start = time.time()
-        bingos = []
-        for length in (7, 8):
-            filename = ch_date.strftime("%Y-%m-%d") + "-%s-%ss.txt" % (
-                lex.lexiconName, length)
-            path = os.path.join(os.getenv("HOME"), 'blanks', filename)
-            f = open(path, 'rb')
-            for line in f:
-                qas = line.split()
-                # Look up pks for words.
-                words = qas[1:]
-                word_pks = [Word.objects.get(word=word, lexicon=lex).pk for
-                            word in words]
-                bingos.append({'q': alphagrammize(qas[0]), 'a': word_pks})
-            f.close()
-        logger.debug("Elapsed: %s" % (time.time() - start))
-        return bingos

@@ -1,0 +1,71 @@
+[
+  {
+    "fields": {
+      "lexicon": 7,
+      "name": "This is my list.",
+      "created": "2015-10-08T09:04:34",
+      "numAlphagrams": 11,
+      "numFirstMissed": 6,
+      "lastSaved": "2015-10-08T09:04:34",
+      "missed": "[]",
+      "curQuestions": "[]",
+      "version": 2,
+      "user": 1,
+      "numCurAlphagrams": 0,
+      "origQuestions": "[{\"q\": \"ADEINOST\", \"a\": [\"ASTONIED\", \"SEDATION\"]}, {\"q\": \"ADEIORST\", \"a\": [\"ASTEROID\"]}, {\"q\": \"AEIORSTU\", \"a\": [\"OUTRAISE\", \"SAUTOIRE\"]}, {\"q\": \"ADEEINRT\", \"a\": [\"DETAINER\", \"RETAINED\"]}, {\"q\": \"AEEILNRT\", \"a\": [\"ELATERIN\", \"ENTAILER\", \"TREENAIL\"]}, {\"q\": \"AEEILORT\", \"a\": [\"AEROLITE\"]}, {\"q\": \"ADEILORT\", \"a\": [\"IDOLATER\", \"TAILORED\"]}, {\"q\": \"AEILNORS\", \"a\": [\"AILERONS\", \"ALIENORS\"]}, {\"q\": \"ADEILNOT\", \"a\": [\"DELATION\"]}, {\"q\": \"AEILNOST\", \"a\": [\"ELATIONS\", \"INSOLATE\", \"TOENAILS\"]}, {\"q\": \"ADEINORS\", \"a\": [\"ANEROIDS\", \"ANODISER\"]}]",
+      "is_temporary": false,
+      "goneThruOnce": true,
+      "numMissed": 0,
+      "firstMissed": "[0, 4, 9, 5, 6, 10]",
+      "questionIndex": 0
+    },
+    "model": "base.wordlist",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "lexicon": 7,
+      "name": "list the sécond",
+      "created": "2015-10-08T09:06:48",
+      "numAlphagrams": 11,
+      "numFirstMissed": 6,
+      "lastSaved": "2015-10-08T09:06:48",
+      "missed": "[]",
+      "curQuestions": "[0, 1, 3, 4, 8, 10]",
+      "version": 2,
+      "user": 1,
+      "numCurAlphagrams": 6,
+      "origQuestions": "[{\"q\": \"AEEILORT\", \"a\": [\"AEROLITE\"]}, {\"q\": \"AEEILNRT\", \"a\": [\"ELATERIN\", \"ENTAILER\", \"TREENAIL\"]}, {\"q\": \"ADEILNOT\", \"a\": [\"DELATION\"]}, {\"q\": \"ADEINOST\", \"a\": [\"ASTONIED\", \"SEDATION\"]}, {\"q\": \"ADEINORS\", \"a\": [\"ANEROIDS\", \"ANODISER\"]}, {\"q\": \"ADEIORST\", \"a\": [\"ASTEROID\"]}, {\"q\": \"ADEEINRT\", \"a\": [\"DETAINER\", \"RETAINED\"]}, {\"q\": \"AEIORSTU\", \"a\": [\"OUTRAISE\", \"SAUTOIRE\"]}, {\"q\": \"AEILNOST\", \"a\": [\"ELATIONS\", \"INSOLATE\", \"TOENAILS\"]}, {\"q\": \"AEILNORS\", \"a\": [\"AILERONS\", \"ALIENORS\"]}, {\"q\": \"ADEILORT\", \"a\": [\"IDOLATER\", \"TAILORED\"]}]",
+      "is_temporary": false,
+      "goneThruOnce": true,
+      "numMissed": 0,
+      "firstMissed": "[0, 1, 3, 4, 8, 10]",
+      "questionIndex": 5
+    },
+    "model": "base.wordlist",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "lexicon": 7,
+      "name": "i live in a giant bucket",
+      "created": "2015-10-08T09:19:40",
+      "numAlphagrams": 11,
+      "numFirstMissed": 0,
+      "lastSaved": "2015-10-08T09:19:40",
+      "missed": "[0, 2, 3]",
+      "curQuestions": "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]",
+      "version": 2,
+      "user": 1,
+      "numCurAlphagrams": 11,
+      "origQuestions": "[{\"q\": \"ADEINORS\", \"a\": [\"ANEROIDS\", \"ANODISER\"]}, {\"q\": \"ADEILNOT\", \"a\": [\"DELATION\"]}, {\"q\": \"ADEINOST\", \"a\": [\"ASTONIED\", \"SEDATION\"]}, {\"q\": \"AEEILNRT\", \"a\": [\"ELATERIN\", \"ENTAILER\", \"TREENAIL\"]}, {\"q\": \"ADEIORST\", \"a\": [\"ASTEROID\"]}, {\"q\": \"AEILNORS\", \"a\": [\"AILERONS\", \"ALIENORS\"]}, {\"q\": \"ADEEINRT\", \"a\": [\"DETAINER\", \"RETAINED\"]}, {\"q\": \"AEEILORT\", \"a\": [\"AEROLITE\"]}, {\"q\": \"ADEILORT\", \"a\": [\"IDOLATER\", \"TAILORED\"]}, {\"q\": \"AEILNOST\", \"a\": [\"ELATIONS\", \"INSOLATE\", \"TOENAILS\"]}, {\"q\": \"AEIORSTU\", \"a\": [\"OUTRAISE\", \"SAUTOIRE\"]}]",
+      "is_temporary": false,
+      "goneThruOnce": false,
+      "numMissed": 3,
+      "firstMissed": "[]",
+      "questionIndex": 10
+    },
+    "model": "base.wordlist",
+    "pk": 3
+  }
+]

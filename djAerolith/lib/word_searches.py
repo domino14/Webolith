@@ -15,6 +15,12 @@ class SearchDescription(object):
                 "min": min_p, "max": max_p,
                 "lexicon": lex}
 
+    @staticmethod
+    def probabilities(p_list, length, lex):
+        return {"condition": "probabilities",
+                "length": length,
+                "lexicon": lex}
+
 
 def alphagrams_array(search_description):
     """
@@ -34,11 +40,5 @@ def alphagrams_array(search_description):
 
 
 def alphagrams_for_prob_range(db, min_p, max_p, length):
-    ret = []
-    alphagrams = db.alphagrams_by_probability(min_p, max_p, length)
-    for alphagram in alphagrams:
-        obj = {'q': alphagram.alphagram, 'a': []}
-        obj['a'] = [word.word for word in
-                    db.get_words_for_alphagram(alphagram.alphagram)]
-        ret.append(obj)
-    return ret
+    alphagrams = db.alphagrams_by_probability_range(min_p, max_p, length)
+    return db.get_alph_words(alphagrams)

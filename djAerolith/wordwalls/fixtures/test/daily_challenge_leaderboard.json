@@ -1,0 +1,74 @@
+[
+{
+  "fields": {
+    "challenge": 40233,
+    "maxScore": 61,
+    "medalsAwarded": true
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40054
+},
+{
+  "fields": {
+    "challenge": 40234,
+    "maxScore": 58,
+    "medalsAwarded": true
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40055
+},
+{
+  "fields": {
+    "challenge": 40256,
+    "maxScore": 67,
+    "medalsAwarded": true
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40079
+},
+{
+  "fields": {
+    "challenge": 40260,
+    "maxScore": 58,
+    "medalsAwarded": true
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40082
+},
+{
+  "fields": {
+    "challenge": 40279,
+    "maxScore": 58,
+    "medalsAwarded": true
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40106
+},
+{
+  "fields": {
+    "challenge": 40287,
+    "maxScore": 64,
+    "medalsAwarded": true
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40108
+},
+{
+  "fields": {
+    "challenge": 40307,
+    "maxScore": 55,
+    "medalsAwarded": false
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40128
+},
+{
+  "fields": {
+    "challenge": 40313,
+    "maxScore": 56,
+    "medalsAwarded": false
+  },
+  "model": "wordwalls.dailychallengeleaderboard",
+  "pk": 40134
+}
+]
