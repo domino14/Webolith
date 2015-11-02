@@ -172,6 +172,8 @@ def get_alphagram_for_dcmb(mb):
 
 def generate_toughies_challenge(lexicon, requested_date):
     challenge_date = toughies_challenge_date(requested_date)
+    logger.debug('Creating toughies challenge for date: %s, chdate: %s',
+                 requested_date, challenge_date)
     min_date = challenge_date - timedelta(days=7)
     max_date = challenge_date - timedelta(days=1)
     logger.debug('Generating toughies challenge for date range: %s to %s',

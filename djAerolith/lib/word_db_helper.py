@@ -155,15 +155,23 @@ class WordDB(object):
     def get_alph_words(self, alphagrams):
         """
         A helper function to return an entire structure, a list of
-        alphagrams and words.
+        alphagrams and words, given a list of alphagrams.
 
         {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+
+        param:
+            - alphagrams - A list of alphagram objects, or strings.
+            This function handles both cases.
 
         """
         ret = []
         for alphagram in alphagrams:
-            obj = {'q': alphagram.alphagram, 'a': []}
+            if hasattr(alphagram, 'alphagram'):
+                alph_string = alphagram.alphagram
+            else:
+                alph_string = alphagram
+            obj = {'q': alph_string, 'a': []}
             obj['a'] = [word.word for word in
-                        self.get_words_for_alphagram(alphagram.alphagram)]
+                        self.get_words_for_alphagram(alph_string)]
             ret.append(obj)
         return ret

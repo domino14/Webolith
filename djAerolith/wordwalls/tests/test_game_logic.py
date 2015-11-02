@@ -652,8 +652,33 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
     """
     Missed bingos.
 
+    We have one basic case here. It is easiest to test given a good text
+    editor; we can search for "board": {some integer} in the leaderboard
+    entry json, for example, to quickly find the total number of people
+    who did that challenge, etc.
+
+    The answers below are a little bit off from the count, because
+    we throw away leaderboard entries where "qualifyForAward" is false.
+
+    For this case, we got Monday, Tuesday, Wednesday, Thursday. We throw
+    away the first two (Monday 7s and 8s) since the "missed bingo"
+    challenge week starts on Tuesday.
+
+    challenge 40256, leaderboard 40079, answers: 54   Tues  7s
+    challenge 40260, leaderboard 40082, answers: 34   Tues  8s
+    challenge 40279, leaderboard 40106, answers: 47   Wed   7s
+    challenge 40287, leaderboard 40108, answers: 34   Wed   8s
+    challenge 40307, leaderboard 40128, answers: 58   Thurs 7s
+    challenge 40313, leaderboard 40134, answers: 33   Thurs 8s
+
     """
     fixtures = ['test/lexica.json',
+                # Eventually get rid of these two, because they are
+                # replaced by sqlite, but for now we test for backwards
+                # compatibility, since we are doing an in-place
+                # migration.
+                'test/alphagrams.json',
+                'test/words.json',
                 'test/users.json',
                 'test/profiles.json',
                 'dcNames.json',
@@ -662,8 +687,46 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
                 'test/daily_challenge_leaderboard_entry.json',
                 'test/daily_challenge_missed_bingos.json']
 
+    expected_missed_bingos = set([
+        'ADEEIKKS', 'DEIILMMS', 'ACIORRTT', 'ACELOPRT', 'AFIIMNPR',
+        'ALMOOPRS', 'AACEOSST', 'BDEEILNR', 'HIMORSST', 'EHOORSST',
+        'AGHNORST', 'ACCILRSY', 'ACCDEILY', 'ACIIRSTT', 'DEHKLNOU',
+        'AADGMNOP', 'AEORRRST', 'CIILNOPS', 'AAGIMNOS', 'ADILMOSY',
+        'ADEIMSTY', 'DEELLORW', 'EGIILNRS', 'AACEEHRT', 'EEILNOSV',
+
+        'AABLLOR', 'FIOPRST', 'AEHIMSS', 'ACCDHIL', 'ACEHRRX',
+        'CEHNOSU', 'ACHHIRS', 'AEGILNR', 'EIMORST', 'EGMORSU',
+        'ACCEIST', 'AELMMSY', 'EEINSTV', 'LLOSTUY', 'ACEIRTT',
+        'AAAKLMY', 'BIMNOSU', 'AALOPRS', 'CIKNPSY', 'BDNOORU',
+        'AEHMPTY', 'ACCILST', 'AEGIKPR', 'ENNORSU', 'ACIRTUY'
+    ])
+
+    def setUp(self):
+        self.user = User.objects.get(username='cesar')
+        self.lex = Lexicon.objects.get(lexiconName='America')
+        self.wwg = WordwallsGame()
+
     def test_load_missed_bingos(self):
-        pass
+        challenge = DailyChallengeName.objects.get(
+            name="Week's Bingo Toughies")
+        table_id = self.wwg.initialize_daily_challenge(
+            self.user, self.lex, challenge, date(2015, 10, 20))
+        wgm = self.wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        # This test is run more than a week afterwards, for all time,
+        # so it does not qualify for an award anymore. We should maybe
+        # mock time to make it clear it's at least a week after 2015/10/19
+        self.assertFalse(state['qualifyForAward'])
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 50, 'numCurAlphagrams': 50,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        questions = json.loads(word_list.origQuestions)
+        # logger.debug('Questions: %s', questions)
+        self.assertEqual(set([q['q'] for q in questions]),
+                         self.expected_missed_bingos)
 
 
 class WordwallsMigrationTest(TestCase):
@@ -671,6 +734,7 @@ class WordwallsMigrationTest(TestCase):
     Make sure we can migrate old lists to new lists, or similar.
 
     """
+
 
 class WordwallsNamedListTest(TestCase):
     """ "Named" lists. """
