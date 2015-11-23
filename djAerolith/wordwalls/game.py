@@ -534,7 +534,7 @@ class WordwallsGame(object):
                     len(missed_indices), len(missed))
         if state['gameType'] == 'challenge':
             state['gameType'] = 'challengeOver'
-            self.create_challenge_leaderboard_entries(state, tablenum, wgm)
+            self.create_challenge_leaderboard_entry(state, tablenum)
 
         # check if we've gone thru the quiz once.
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
@@ -546,7 +546,12 @@ class WordwallsGame(object):
                 word_list.numFirstMissed = word_list.numMissed
         word_list.save()
 
-    def create_challenge_leaderboard_entries(self, state, tablenum, wgm):
+    def create_challenge_leaderboard_entry(self, state, tablenum):
+        """
+        Create a challenge leaderboard entry for this particular game
+        state and table number.
+
+        """
         # First create a leaderboard if one doesn't exist for this challenge.
         try:
             dc = DailyChallenge.objects.get(pk=state['challengeId'])
@@ -579,15 +584,11 @@ class WordwallsGame(object):
             else:
                 # Else, nothing would write it into the state.
                 timeRemaining = 0
-
-            if 'qualifyForAward' in state:
-                qualifyForAward = state['qualifyForAward']
-            else:
-                qualifyForAward = False     # i suppose this shouldn't happen
+            qualify_for_award = state.get('qualifyForAward', False)
 
             lbe = DailyChallengeLeaderboardEntry(
                 user=wgm.host, score=score, board=lb,
-                timeRemaining=timeRemaining, qualifyForAward=qualifyForAward)
+                timeRemaining=timeRemaining, qualifyForAward=qualify_for_award)
             # XXX: 500 here, integrity error, much more common than lb.save
             lbe.save()
             if (len(state['answerHash']) > 0 and dc.name.name in
