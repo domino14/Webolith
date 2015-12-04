@@ -23,6 +23,7 @@ import json
 import time
 from datetime import date
 import random
+import uuid
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
@@ -217,6 +218,36 @@ class WordwallsGame(object):
     def create_error_message(self, message):
         return {'error': message}
 
+    def migrate_table_word_list(self, wgm, state):
+        """
+        Migrate from a WGM list to an actual word list. This function is
+        temporary and should be deleted a few days after deployment.
+
+        Migrate to the V1 version. This will eventually also be migrated
+        to the V2 version, but let's make this simple for now.
+        """
+        word_list = WordList.objects.create(
+            lexicon=wgm.lexicon,
+            name=uuid.uuid4().hex,
+            is_temporary=True,
+            user=wgm.host,
+            numAlphagrams=wgm.numOrigQuestions,
+            numCurAlphagrams=wgm.numCurQuestions,
+            numFirstMissed=wgm.numFirstMissed,
+            numMissed=wgm.numMissed,
+            goneThruOnce=state['goneThruOnce'],
+            questionIndex=state['questionIndex'],
+            origQuestions=wgm.origQuestions,
+            curQuestions=wgm.curQuestions,
+            missed=wgm.missed,
+            firstMissed=wgm.firstMissed,
+            version=1,
+            alphagrams=wgm.origQuestions,
+        )
+        wgm.word_list = word_list
+        wgm.save()
+        return word_list
+
     def start_quiz(self, tablenum, user):
         wgm = self.get_wgm(tablenum)
         if not wgm:
@@ -229,6 +260,14 @@ class WordwallsGame(object):
                 # the quiz is running right now; do not attempt to start again
         start_message = ""
         word_list = wgm.word_list
+        if not word_list:
+            if 'saveName' in state:
+                wgm.word_list = WordList.objects.get(name=state['saveName'],
+                                                     lexicon=wgm.lexicon,
+                                                     user=wgm.host)
+                wgm.save()
+            # TODO: also check to see if table is attached to a saved list.
+            word_list = self.migrate_table_word_list(wgm, state)
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += "Now quizzing on missed list.\r\n"
@@ -315,10 +354,10 @@ class WordwallsGame(object):
 
             - An "alphagram" can be a regular integer alphagram pk
                 (deprecated when we migrate)
-                - An alphagram can be a dict {'q': 'ABC?',
-                                              'a': [word_pk1, word_pk2, ...]}
-                Migration will turn them all into dicts:
-                {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
+            - An alphagram can be a dict {'q': 'ABC?',
+                                          'a': [word_pk1, word_pk2, ...]}
+        Migration will turn them all into dicts:
+        {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
 
         This function turns into an alphagram, whatever form it is, into
         a string, a set of words, and a probability for the alphagram, and

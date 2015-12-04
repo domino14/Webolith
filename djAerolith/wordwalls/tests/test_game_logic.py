@@ -734,6 +734,27 @@ class WordwallsMigrationTest(TestCase):
     Make sure we can migrate old lists to new lists, or similar.
 
     """
+    def test_migrate_ongoing_game_no_save(self):
+        """
+        Migrate an on-going game that has no saved list attached to it.
+
+        """
+        pass
+
+    def test_migrate_ongoing_game_saved(self):
+        """
+        Migrate an on-going game with a saved list attached to it.
+
+        """
+        pass
+
+    def test_migrate_wordlist_version_inplace(self):
+        """
+        This is kind of similar to the above, maybe rewrite. We need
+        a migration function to migrate word lists en masse.
+
+        """
+        pass
 
 
 class WordwallsNamedListTest(TestCase):

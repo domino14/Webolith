@@ -23,6 +23,8 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
     + wordwalls_savedlist
     + wordwalls_wordwallsgamemodel
         * For this one it might be better to tie it to a savedlist.
+        * We need to take into account games that are ongoing and 
+        migrate them in-place to temporary word lists.
     
 ### Lower priority
 - whitleyCards/views.py
