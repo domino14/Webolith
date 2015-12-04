@@ -6,7 +6,6 @@ A class mostly to test the logic for wordwalls/game.py
 """
 
 from django.test import TestCase
-from django.core import serializers
 from base.forms import SavedListForm
 from datetime import date
 from wordwalls.game import WordwallsGame
@@ -23,10 +22,6 @@ logger = logging.getLogger(__name__)
 
 class WordwallsBasicLogicTest(TestCase):
     fixtures = ['test/lexica.json',
-                # These are replaced by the sqlite databases but we
-                # might need them to test backwards compatibility.
-                # 'test/alphagrams.json',
-                # 'test/words.json',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json']
@@ -734,19 +729,56 @@ class WordwallsMigrationTest(TestCase):
     Make sure we can migrate old lists to new lists, or similar.
 
     """
+    fixtures = ['test/lexica.json',
+                # These are replaced by the sqlite databases but we
+                # need them here to test backwards compatibility.
+                'test/alphagrams.json',
+                'test/words.json',
+                'test/users.json',
+                'test/profiles.json',
+                'test/word_lists.json',
+                'test/wordwallsgamemodel.json']
+
     def test_migrate_ongoing_game_no_save(self):
         """
         Migrate an on-going game that has no saved list attached to it.
 
         """
-        pass
+        wwg = WordwallsGame()
+        table_id = 633827
+        user = User.objects.get(username='cesar')
+        lexicon = Lexicon.objects.get(lexiconName='America')
+        params = wwg.start_quiz(table_id, user)
+        self.assertEqual(len(params['questions']), 15)
+        wgm = wwg.get_wgm(table_id)
+        self.assertEqual(wgm.word_list.lexicon, lexicon)
+        self.assertEqual(wgm.word_list.questionIndex, 50)
+        self.assertEqual(wgm.word_list.numCurAlphagrams, 15)
+        self.assertTrue(wgm.word_list.is_temporary)
+        self.assertEqual(len(wgm.word_list.name), 32)
+        self.assertTrue(wgm.word_list.goneThruOnce)
+        self.assertEqual(wgm.word_list.version, 1)
 
     def test_migrate_ongoing_game_saved(self):
         """
         Migrate an on-going game with a saved list attached to it.
 
         """
-        pass
+        wwg = WordwallsGame()
+        table_id = 633828
+        user = User.objects.get(username='cesar')
+        lexicon = Lexicon.objects.get(lexiconName='America')
+        params = wwg.start_quiz(table_id, user)
+        self.assertEqual(len(params['questions']), 2)
+        wgm = wwg.get_wgm(table_id)
+        self.assertEqual(wgm.word_list.lexicon, lexicon)
+        self.assertEqual(wgm.word_list.questionIndex, 50)
+        self.assertEqual(wgm.word_list.numCurAlphagrams, 2)
+        self.assertFalse(wgm.word_list.is_temporary)
+        self.assertEqual(wgm.word_list.name, '8s_2_53')
+        self.assertEqual(wgm.word_list.numAlphagrams, 52)
+        self.assertFalse(wgm.word_list.goneThruOnce)
+        self.assertEqual(wgm.word_list.version, 1)
 
     def test_migrate_wordlist_version_inplace(self):
         """

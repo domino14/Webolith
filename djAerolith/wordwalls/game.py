@@ -241,8 +241,7 @@ class WordwallsGame(object):
             curQuestions=wgm.curQuestions,
             missed=wgm.missed,
             firstMissed=wgm.firstMissed,
-            version=1,
-            alphagrams=wgm.origQuestions,
+            version=1
         )
         wgm.word_list = word_list
         wgm.save()
