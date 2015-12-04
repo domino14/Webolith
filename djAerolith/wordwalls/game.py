@@ -260,13 +260,16 @@ class WordwallsGame(object):
         start_message = ""
         word_list = wgm.word_list
         if not word_list:
+            # XXX: Remove this after migrations. Actually, remove whole
+            # if statement. :P
             if 'saveName' in state:
                 wgm.word_list = WordList.objects.get(name=state['saveName'],
                                                      lexicon=wgm.lexicon,
                                                      user=wgm.host)
                 wgm.save()
-            # TODO: also check to see if table is attached to a saved list.
-            word_list = self.migrate_table_word_list(wgm, state)
+                word_list = wgm.word_list
+            else:
+                word_list = self.migrate_table_word_list(wgm, state)
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += "Now quizzing on missed list.\r\n"
@@ -495,6 +498,7 @@ class WordwallsGame(object):
         # If we are continuing a word list, just save the progress.
         return self.save_word_list_result(
             wgm.word_list, listname, state, wgm, user,
+            # XXX: This condition is a bit confusing, but seems right:
             make_permanent_list=wgm.word_list.is_temporary)
 
     def save_word_list_result(self, word_list, listname, state, wgm, user,
