@@ -70,23 +70,23 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             alph_words += db.get_alph_words(
                 db.alphagrams_by_probability_list(r[:50], lgt))
         return alph_words, challenge_name.timeSecs
-    elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
-                                 DailyChallengeName.COMMON_LONG):
-        questions = generate_common_words_challenge(
-            challenge_name.name)
-        random.shuffle(questions)
-        return questions, challenge_name.timeSecs
+    # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
+    #                              DailyChallengeName.COMMON_LONG):
+    #     questions = generate_common_words_challenge(
+    #         challenge_name.name)
+    #     random.shuffle(questions)
+    #     return questions, challenge_name.timeSecs
     return None
 
 
-def generate_common_words_challenge(ch_name):
-    """Generate the common words challenges. Only for OWL2 right now."""
-    if ch_name == DailyChallengeName.COMMON_SHORT:
-        pks = json.loads(COMMON_SHORT_NAMED_LIST.questions)
-    elif ch_name == DailyChallengeName.COMMON_LONG:
-        pks = json.loads(COMMON_LONG_NAMED_LIST.questions)
-    random.shuffle(pks)
-    return pks[:50]
+# def generate_common_words_challenge(ch_name):
+#     """Generate the common words challenges. Only for OWL2 right now."""
+#     if ch_name == DailyChallengeName.COMMON_SHORT:
+#         pks = json.loads(COMMON_SHORT_NAMED_LIST.questions)
+#     elif ch_name == DailyChallengeName.COMMON_LONG:
+#         pks = json.loads(COMMON_LONG_NAMED_LIST.questions)
+#     random.shuffle(pks)
+#     return pks[:50]
 
 
 def generate_blank_bingos_challenge(lex, ch_date):

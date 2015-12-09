@@ -15,6 +15,7 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
 
     - genNamedLists.py
     - wordwalls/utils.py, see `get_pks_from_alphas_db`
+    - base/utils.py
 
 - Data!
     + wordwalls_dailychallenge
@@ -30,11 +31,29 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
 - whitleyCards/views.py
 - wordwalls/api.py
 
-
 ### Process
-- Deploy 1 - Keep Word, Alphagram, but all new code must not use them,
-    or if using them must do an "in-place" migration to new code.
-    Then, run scripts to migrate all remaining lists/data to new way.
-    DB Migrations 101 basically.
+
+No in-place migrations. This will take a very long time to write all the
+cases. Instead, take the app down, migrate everything, and bring
+it back up. It should be only a couple hours of downtime at most, can
+do it on a Sunday afternoon/evening with warning.
+
+- Write migration scripts and test thoroughly. Run on a database dump.
+- Repeat until satisfied.
+- Announce downtime a few days in advance at least.
+- Take app down. 
+- Make a database backup!
+- Deploy 1 - Keep Word, Alphagram, but all new code must not use them.
+- Run all migration scripts:
+    - Migrate Daily Challenge; all daily challenges must be migrated to
+    use alphagrams.
+    - All Daily Challenge Missed Bingos must be migrated to use 
+    alphagram_string
+    - All Named Lists must be migrated to use alphagrams and answers.
+    - All Saved Lists must be migrated to version 2.
+    - All games in progress must be migrated to use a word_list for the
+    WordwallsGameMode.
+
 - Deploy 2 - Remove Word, Alphagram and run migration to remove them
     from the database.
+- Bring app back up.

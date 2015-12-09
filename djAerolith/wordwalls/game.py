@@ -81,8 +81,6 @@ class WordwallsGame(object):
         """
         dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex,
                                         name=ch_name)
-        # pull out its indices
-
         qs = json.loads(dc.alphagrams)
         secs = dc.seconds
         random.shuffle(qs)
@@ -380,7 +378,8 @@ class WordwallsGame(object):
                 alphagram_pk = None
                 word_set = [Word.objects.get(pk=word_pk) for word_pk in
                             alpha['a']]
-
+            else:
+                raise Exception('Type is wrong; %s %s' % (type(alpha), alpha))
             return alphagram_str, word_set, probPKToAlphProb(alphagram_pk)
         # Otherwise, we're at version 2. But do the check anyhow.
         elif version == 2:
