@@ -216,35 +216,6 @@ class WordwallsGame(object):
     def create_error_message(self, message):
         return {'error': message}
 
-    def migrate_table_word_list(self, wgm, state):
-        """
-        Migrate from a WGM list to an actual word list. This function is
-        temporary and should be deleted a few days after deployment.
-
-        Migrate to the V1 version. This will eventually also be migrated
-        to the V2 version, but let's make this simple for now.
-        """
-        word_list = WordList.objects.create(
-            lexicon=wgm.lexicon,
-            name=uuid.uuid4().hex,
-            is_temporary=True,
-            user=wgm.host,
-            numAlphagrams=wgm.numOrigQuestions,
-            numCurAlphagrams=wgm.numCurQuestions,
-            numFirstMissed=wgm.numFirstMissed,
-            numMissed=wgm.numMissed,
-            goneThruOnce=state['goneThruOnce'],
-            questionIndex=state['questionIndex'],
-            origQuestions=wgm.origQuestions,
-            curQuestions=wgm.curQuestions,
-            missed=wgm.missed,
-            firstMissed=wgm.firstMissed,
-            version=1
-        )
-        wgm.word_list = word_list
-        wgm.save()
-        return word_list
-
     def start_quiz(self, tablenum, user):
         wgm = self.get_wgm(tablenum)
         if not wgm:
@@ -257,17 +228,17 @@ class WordwallsGame(object):
                 # the quiz is running right now; do not attempt to start again
         start_message = ""
         word_list = wgm.word_list
-        if not word_list:
-            # XXX: Remove this after migrations. Actually, remove whole
-            # if statement. :P
-            if 'saveName' in state:
-                wgm.word_list = WordList.objects.get(name=state['saveName'],
-                                                     lexicon=wgm.lexicon,
-                                                     user=wgm.host)
-                wgm.save()
-                word_list = wgm.word_list
-            else:
-                word_list = self.migrate_table_word_list(wgm, state)
+        # if not word_list:
+        #     # XXX: Remove this after migrations. Actually, remove whole
+        #     # if statement. :P
+        #     if 'saveName' in state:
+        #         wgm.word_list = WordList.objects.get(name=state['saveName'],
+        #                                              lexicon=wgm.lexicon,
+        #                                              user=wgm.host)
+        #         wgm.save()
+        #         word_list = wgm.word_list
+        #     else:
+        #         word_list = self.migrate_table_word_list(wgm, state)
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += "Now quizzing on missed list.\r\n"
@@ -295,8 +266,7 @@ class WordwallsGame(object):
             logger.error("Question set is not unique!!")
 
         questions, answer_hash = self.load_questions(
-            qs, json.loads(word_list.origQuestions), word_list.version,
-            word_list.lexicon)
+            qs, json.loads(word_list.origQuestions), word_list.lexicon)
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answer_hash
@@ -311,7 +281,7 @@ class WordwallsGame(object):
 
         return ret
 
-    def load_questions(self, qs, orig_questions, version, lexicon):
+    def load_questions(self, qs, orig_questions, lexicon):
         """
         Turn the qs array into an array of full question objects, ready
         for the front-end.
@@ -333,8 +303,8 @@ class WordwallsGame(object):
         db = WordDB(lexicon.lexiconName)
         for i in qs:
             words = []
-            alphagram_str, word_set, prob = self.convert_word_list_alphagram(
-                orig_questions[i], version, db)
+            alphagram_str, word_set, prob = self.get_question(
+                orig_questions[i], db)
             for w in word_set:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
@@ -347,46 +317,10 @@ class WordwallsGame(object):
                               'idx': i})
         return questions, answer_hash
 
-    def convert_word_list_alphagram(self, alpha, version, db):
-        """
-        Word lists save an array of "alphagrams" in the origQuestions
-        field. Each of these can be in various formats.
-
-            - An "alphagram" can be a regular integer alphagram pk
-                (deprecated when we migrate)
-            - An alphagram can be a dict {'q': 'ABC?',
-                                          'a': [word_pk1, word_pk2, ...]}
-        Migration will turn them all into dicts:
-        {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
-
-        This function turns into an alphagram, whatever form it is, into
-        a string, a set of words, and a probability for the alphagram, and
-        returns these.
-        """
-        if version == 1:
-            # Deprecated version.
-            if type(alpha) == int:
-                # Deprecated; remove after migration.
-                a = Alphagram.objects.get(pk=alpha)
-                alphagram_str = a.alphagram
-                alphagram_pk = a.pk
-                word_set = a.word_set.all()
-            elif type(alpha) == dict:
-                # This is either an "old" or "new" dictionary.
-                # This is a direct alphagram, usually a blank alphagram.
-                alphagram_str = alpha['q']
-                alphagram_pk = None
-                word_set = [Word.objects.get(pk=word_pk) for word_pk in
-                            alpha['a']]
-            else:
-                raise Exception('Type is wrong; %s %s' % (type(alpha), alpha))
-            return alphagram_str, word_set, probPKToAlphProb(alphagram_pk)
-        # Otherwise, we're at version 2. But do the check anyhow.
-        elif version == 2:
-            # Just a dictionary; see docstring for this function.
-            alphagram_str = alpha['q']
-            word_set = [db.get_word_data(word) for word in alpha['a']]
-            return alphagram_str, word_set, db.probability(alphagram_str)
+    def get_question(alpha, db):
+        alphagram_str = alpha['q']
+        word_set = [db.get_word_data(word) for word in alpha['a']]
+        return alphagram_str, word_set, db.probability(alphagram_str)
 
     def did_timer_run_out(self, state):
         # internal function; not meant to be called by the outside
