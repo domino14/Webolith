@@ -1,16 +1,18 @@
 """Generate the "named" default Aerolith lists."""
 
-from django.core.management.base import NoArgsCommand
-from base.models import Lexicon, Alphagram, alphProbToProbPK, alphagrammize
-from wordwalls.models import NamedList
 import json
 import time
 import re
-from django.conf import settings
+
+from django.core.management.base import NoArgsCommand
 from django.db import connection
 
+from base.models import Lexicon, alphagrammize
+from wordwalls.models import NamedList
+from lib.word_db_helper import WordDB
 
-friendlyNumberMap = {
+
+friendly_number_map = {
     2: 'Twos',
     3: 'Threes',
     4: 'Fours',
@@ -34,218 +36,158 @@ FRIENDLY_COMMON_SHORT = 'Common Short Words (8 or fewer letters)'
 FRIENDLY_COMMON_LONG = 'Common Long Words (greater than 8 letters)'
 
 
-def get_alphagrams(min_pk, max_pk):
-    """
-    Get all alphagrams between min and max pk through a fast query.
-
-    Returns a list of tuples: (pk, alphagram).
-
-    """
-    cursor = connection.cursor()
-    cursor.execute(
-        'SELECT probability_pk, alphagram FROM base_alphagram WHERE '
-        'probability_pk BETWEEN %s and %s' % (min_pk, max_pk)
-    )
-    rows = cursor.fetchall()
-    return rows
+class Condition(object):
+    WORD = 'word'
+    ALPHAGRAM = 'alphagram'
 
 
-def get_words(min_alpha_pk, max_alpha_pk):
-    """
-    Get all words corresponding to alphagrams between min and max pk.
+def get_questions_by_condition(db, min_prob, max_prob, length, condition,
+                               condition_type='alphagram'):
+    """ Get all questions that match the condition."""
+    qs = []
 
-    Returns a list of tuples: (pk, [word1..wordn]), where a word is a
-    hash containing lexicon info, the word, etc.
+    to_filter = db.get_questions_for_probability_range(min_prob, max_prob,
+                                                       length)
+    for q in to_filter:
+        if condition_type == Condition.ALPHAGRAM:
+            test = condition(q['q'])
+        elif condition_type == Condition.WORD:
+            test = any(condition(word) for word in q['a'])
+        if test:
+            # print 'passed test', q, q['q'], q['a'][0].word
+            to_append = q
+            to_append['a'] = [word.word for word in to_append['a']]
+            qs.append(to_append)
 
-    """
-    ret_list = []
-    cursor = connection.cursor()
-    cursor.execute(
-        'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
-        'back_hooks, base_alphagram.alphagram, base_alphagram.probability '
-        'FROM base_word INNER JOIN base_alphagram ON '
-        'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
-        'base_alphagram.probability_pk BETWEEN %s and %s '
-        'ORDER BY alphagram_id' % (min_alpha_pk, max_alpha_pk)
-    )
-    rows = cursor.fetchall()
-    last_alpha_id = None
-    cur_words = []
-    for row in rows:
-        alpha_id = row[1]
-        if alpha_id != last_alpha_id and last_alpha_id is not None:
-            # Alphagram changed, append current word set and start a new one.
-            ret_list.append((last_alpha_id, cur_words))
-            cur_words = []
-        cur_words.append({
-                         'symbols': row[2],
-                         'def': row[3],
-                         'f_hooks': row[4],
-                         'b_hooks': row[5],
-                         'word': row[0]
-                         })
-        last_alpha_id = alpha_id
-    ret_list.append((last_alpha_id, cur_words))
-    return ret_list
+    return qs
 
 
-def get_pks_by_condition(min_pk, max_pk, condition):
-    """
-    Get all alphagram pks that match the condition.
-
-    Returns a list of pks.
-
-    """
-    pks = []
-    alphas = get_alphagrams(min_pk, max_pk)
-    for a in alphas:
-        pk, alpha = a
-        if condition(alpha):
-            pks.append(pk)
-    return pks
-
-
-def get_pks_by_word_condition(min_alpha_pk, max_alpha_pk, condition):
-    """
-    Get all alphagram pks where at least one word matches the condition.
-
-    Returns a list of pks.
-
-    """
-    pks = []
-    words = get_words(min_alpha_pk, max_alpha_pk)
-    for w in words:
-        pk, word_list = w
-        if any(condition(word) for word in word_list):
-            pks.append(pk)
-    return pks
-
-
-def create_wl_lists(i, lex):
+def create_wl_lists(i, lex, db):
     """Create word lists for words with length `i`."""
 
-    lengthCounts = json.loads(lex.lengthCounts)
-    numForThisLength = lengthCounts[str(i)]
-    minProbPk = alphProbToProbPK(1, lex.pk, i)
-    maxProbPk = alphProbToProbPK(numForThisLength, lex.pk, i)
-
+    length_counts = json.loads(lex.lengthCounts)
+    num_for_this_length = length_counts[str(i)]
+    min_prob = 1
+    max_prob = num_for_this_length
     nl = NamedList(lexicon=lex,
-                   numQuestions=numForThisLength,
+                   numQuestions=num_for_this_length,
                    wordLength=i,
                    isRange=True,
-                   questions=json.dumps([minProbPk, maxProbPk]),
-                   name='The ' + friendlyNumberMap[i])
+                   questions=json.dumps([1, num_for_this_length]),
+                   name='The ' + friendly_number_map[i])
     nl.save()
     if i >= 7 and i <= 8:
         # create 'every x' list
-        for p in range(1, numForThisLength+1, LIST_GRANULARITY):
-            minP = alphProbToProbPK(p, lex.pk, i)
-            maxP = alphProbToProbPK(
-                min(p + LIST_GRANULARITY - 1, numForThisLength), lex.pk, i)
-
+        for p in range(1, num_for_this_length+1, LIST_GRANULARITY):
+            min_p = p
+            max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
             nl = NamedList(
                 lexicon=lex,
-                numQuestions=maxP - minP + 1,
+                numQuestions=max_p - min_p + 1,
                 wordLength=i,
                 isRange=True,
-                questions=json.dumps([minP, maxP]),
-                name='%s (%s to %s)' % (friendlyNumberMap[i], p,
-                                        min(p + LIST_GRANULARITY - 1,
-                                            numForThisLength)))
+                questions=json.dumps([min_p, max_p]),
+                name='{} ({} to {})'.format(friendly_number_map[i], p, max_p))
             nl.save()
 
     print 'JQXZ', i
     if i >= 4 and i <= 8:
-        pks = get_pks_by_condition(
-            minProbPk, maxProbPk,
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
             lambda a: re.search(r'[JQXZ]', a))
         nl = NamedList(lexicon=lex,
-                       numQuestions=len(pks),
+                       numQuestions=len(qs),
                        wordLength=i,
                        isRange=False,
-                       questions=json.dumps(pks),
-                       name='JQXZ ' + friendlyNumberMap[i])
+                       questions=json.dumps(qs),
+                       name='JQXZ ' + friendly_number_map[i])
         nl.save()
 
     if i == 7:
         # 4+ vowel 7s
-        pks = get_pks_by_condition(
-            minProbPk, maxProbPk,
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
             lambda a: (len(re.findall(r'[AEIOU]', a)) >= 4))
         nl = NamedList(lexicon=lex,
-                       numQuestions=len(pks),
+                       numQuestions=len(qs),
                        wordLength=i,
                        isRange=False,
-                       questions=json.dumps(pks),
+                       questions=json.dumps(qs),
                        name='Sevens with 4 or more vowels')
         nl.save()
 
     if i == 8:
         # 5+ vowel 8s
-        pks = get_pks_by_condition(
-            minProbPk, maxProbPk,
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
             lambda a: (len(re.findall(r'[AEIOU]', a)) >= 5))
         nl = NamedList(lexicon=lex,
-                       numQuestions=len(pks),
+                       numQuestions=len(qs),
                        wordLength=i,
                        isRange=False,
-                       questions=json.dumps(pks),
+                       questions=json.dumps(qs),
                        name='Eights with 5 or more vowels')
         nl.save()
 
     if lex.lexiconName == 'America':
-        pks = get_pks_by_word_condition(
-            minProbPk, maxProbPk,
-            lambda w: ('+' in w.get('symbols')))
-
-        nl = NamedList(lexicon=lex,
-                       numQuestions=len(pks),
-                       wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(pks),
-                       name='America ' + friendlyNumberMap[i] + ' not in OWL2')
-
-        nl.save()
-
-        pks = get_pks_by_word_condition(
-            minProbPk, maxProbPk,
-            lambda w: ('$' in w.get('symbols')))
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
+            lambda w: ('+' in w.lexiconSymbols),
+            condition_type=Condition.WORD)
 
         nl = NamedList(
             lexicon=lex,
-            numQuestions=len(pks),
+            numQuestions=len(qs),
             wordLength=i,
             isRange=False,
-            questions=json.dumps(pks),
-            name='America ' + friendlyNumberMap[i] + ' not in CSW15')
+            questions=json.dumps(qs),
+            name='America {} not in OWL2'.format(friendly_number_map[i]))
+
+        nl.save()
+
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
+            lambda w: ('$' in w.lexiconSymbols),
+            condition_type=Condition.WORD)
+
+        nl = NamedList(
+            lexicon=lex,
+            numQuestions=len(qs),
+            wordLength=i,
+            isRange=False,
+            questions=json.dumps(qs),
+            name='America {} not in CSW15'.format(friendly_number_map[i]))
 
         nl.save()
 
     if lex.lexiconName == 'CSW15':
-        pks = get_pks_by_word_condition(
-            minProbPk, maxProbPk,
-            lambda w: ('+' in w.get('symbols')))
-
-        nl = NamedList(lexicon=lex,
-                       numQuestions=len(pks),
-                       wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(pks),
-                       name='CSW15 ' + friendlyNumberMap[i] + ' not in CSW12')
-
-        nl.save()
-
-        pks = get_pks_by_word_condition(
-            minProbPk, maxProbPk,
-            lambda w: ('#' in w.get('symbols')))
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
+            lambda w: ('+' in w.lexiconSymbols),
+            condition_type=Condition.WORD)
 
         nl = NamedList(
             lexicon=lex,
-            numQuestions=len(pks),
+            numQuestions=len(qs),
             wordLength=i,
             isRange=False,
-            questions=json.dumps(pks),
-            name='CSW15 ' + friendlyNumberMap[i] + ' not in America')
+            questions=json.dumps(qs),
+            name='CSW15 {} not in CSW12'.format(friendly_number_map[i]))
+
+        nl.save()
+
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
+            lambda w: ('#' in w.lexiconSymbols),
+            condition_type=Condition.WORD)
+
+        nl = NamedList(
+            lexicon=lex,
+            numQuestions=len(qs),
+            wordLength=i,
+            isRange=False,
+            questions=json.dumps(qs),
+            name='CSW15 {} not in America'.format(friendly_number_map[i]))
 
         nl.save()
 
@@ -254,8 +196,9 @@ def createNamedLists(lex):
     """Create the lists for every word length, given a lexicon."""
     # create lists for every word length
     t1 = time.time()
+    db = WordDB(lex.lexiconName)
     for i in range(2, 16):
-        create_wl_lists(i, lex)
+        create_wl_lists(i, lex, db)
 
     if lex.lexiconName == 'OWL2':
         create_common_words_lists()
@@ -265,6 +208,7 @@ def createNamedLists(lex):
 
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
+    return
     create_common_words_list('common_short.txt', FRIENDLY_COMMON_SHORT)
     create_common_words_list('common_long.txt', FRIENDLY_COMMON_LONG)
 

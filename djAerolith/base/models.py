@@ -15,13 +15,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from django.db import models
-from django.contrib.auth.models import User
+
 import string
 import random
 import json
 import uuid
-# XXX: Include CSW12 here after Sept 1.
+
+from django.db import models
+from django.contrib.auth.models import User
+
+from base.validators import word_list_format_validator
 EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
 
 
@@ -137,7 +140,7 @@ class SavedList(models.Model):
     goneThruOnce = models.BooleanField()
     questionIndex = models.IntegerField()
 
-    origQuestions = models.TextField()
+    origQuestions = models.TextField(validators=[word_list_format_validator])
     curQuestions = models.TextField()
     missed = models.TextField()
     firstMissed = models.TextField()

@@ -88,6 +88,44 @@ class WordDB(object):
                               lexiconSymbols=row[0], alphagram=alphagram))
         return words
 
+    def get_questions_for_probability_range(self, probability_min,
+                                            probability_max, length):
+        """
+        Use a single query to return alphagrams and words for a
+        probability range, fully populated. This makes this more
+        efficient than calling `get_words_for_alphagram` above
+        repeatedly.
+
+        """
+        ret = []
+        c = self.conn.cursor()
+
+        c.execute("""
+            SELECT lexicon_symbols, definition, front_hooks, back_hooks,
+            inner_front_hook, inner_back_hook, word, words.alphagram FROM words
+            INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
+            WHERE alphagrams.length = ? AND
+            alphagrams.probability BETWEEN ? and ?
+            ORDER BY alphagrams.probability
+
+        """, (length, probability_min, probability_max))
+        rows = c.fetchall()
+        last_alphagram = None
+        cur_words = []
+        for row in rows:
+            alpha = row[7]
+            if alpha != last_alphagram and last_alphagram is not None:
+                ret.append({'q': last_alphagram, 'a': cur_words})
+                cur_words = []
+            cur_words.append(Word(word=row[6], definition=row[1],
+                             front_hooks=row[2], back_hooks=row[3],
+                             inner_front_hook=row[4], inner_back_hook=row[5],
+                             lexiconSymbols=row[0], alphagram=alpha))
+            last_alphagram = alpha
+        ret.append({'q': last_alphagram, 'a': cur_words})
+
+        return ret
+
     def get_alphagram_data(self, alphagram):
         c = self.conn.cursor()
         c.execute('SELECT probability, combinations, length FROM alphagrams '
@@ -122,12 +160,16 @@ class WordDB(object):
                                         length=len(row[0])))
         return alphagrams
 
+    def alphagrams_by_length(self, length):
+        """ Get a list of alphagrams by word length. """
+        c = self.conn.cursor()
+        c.execute('SELECT alphagram, probability, combinations '
+                  'FROM alphagrams WHERE length = ?', (length,))
+        return self._alphagrams(c)
+
     def alphagrams_by_probability_range(self, probability_min, probability_max,
                                         length):
-        """
-        Gets a list of Alphagrams by probability range.
-
-        """
+        """ Get a list of Alphagrams by probability range. """
         c = self.conn.cursor()
         c.execute('SELECT alphagram, probability, combinations '
                   'FROM alphagrams WHERE length = ? AND '
@@ -152,7 +194,7 @@ class WordDB(object):
 
         return self._alphagrams(c)
 
-    def get_alph_words(self, alphagrams):
+    def get_questions(self, alphagrams):
         """
         A helper function to return an entire structure, a list of
         alphagrams and words, given a list of alphagrams.

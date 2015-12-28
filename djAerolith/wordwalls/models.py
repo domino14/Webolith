@@ -18,7 +18,9 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+
 from base.models import Lexicon, Alphagram, WordList
+from base.validators import word_list_format_validator
 from tablegame.models import GenericTableGameModel
 
 
@@ -140,6 +142,5 @@ class NamedList(models.Model):
     name = models.CharField(max_length=50, default='')
     numQuestions = models.IntegerField()
     wordLength = models.IntegerField()
-    # is a range of alphagram pk indices, or if False it is a list of indices
     isRange = models.BooleanField()
-    questions = models.TextField(default='')  # json string
+    questions = models.TextField(validators=[word_list_format_validator])

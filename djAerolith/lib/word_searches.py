@@ -41,4 +41,4 @@ def alphagrams_array(search_description):
 
 def alphagrams_for_prob_range(db, min_p, max_p, length):
     alphagrams = db.alphagrams_by_probability_range(min_p, max_p, length)
-    return db.get_alph_words(alphagrams)
+    return db.get_questions(alphagrams)

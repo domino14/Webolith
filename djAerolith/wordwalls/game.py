@@ -228,17 +228,6 @@ class WordwallsGame(object):
                 # the quiz is running right now; do not attempt to start again
         start_message = ""
         word_list = wgm.word_list
-        # if not word_list:
-        #     # XXX: Remove this after migrations. Actually, remove whole
-        #     # if statement. :P
-        #     if 'saveName' in state:
-        #         wgm.word_list = WordList.objects.get(name=state['saveName'],
-        #                                              lexicon=wgm.lexicon,
-        #                                              user=wgm.host)
-        #         wgm.save()
-        #         word_list = wgm.word_list
-        #     else:
-        #         word_list = self.migrate_table_word_list(wgm, state)
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += "Now quizzing on missed list.\r\n"
@@ -317,7 +306,7 @@ class WordwallsGame(object):
                               'idx': i})
         return questions, answer_hash
 
-    def get_question(alpha, db):
+    def get_question(self, alpha, db):
         alphagram_str = alpha['q']
         word_set = [db.get_word_data(word) for word in alpha['a']]
         return alphagram_str, word_set, db.probability(alphagram_str)
