@@ -5,8 +5,12 @@ alphagram sqlite dbs.
 """
 import sqlite3
 import os
-from django.conf import settings
 import logging
+import json
+import random
+
+from django.conf import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -15,8 +19,9 @@ class BadInput(Exception):
 
 
 class Word(object):
-    def __init__(self, word, alphagram, definition, front_hooks, back_hooks,
-                 inner_front_hook, inner_back_hook, lexiconSymbols):
+    def __init__(self, word, alphagram=None, definition=None, front_hooks=None,
+                 back_hooks=None, inner_front_hook=None, inner_back_hook=None,
+                 lexiconSymbols=None):
         self.word = word
         self.alphagram = alphagram
         # Disallow None, to keep compatibility with old code.
@@ -36,6 +41,52 @@ class Alphagram(object):
         self.probability = probability
         self.length = length
         self.combinations = combinations
+
+
+class Questions(object):
+    def __init__(self):
+        self.questions = []
+
+    def append(self, question):
+        self.questions.append(question)
+
+    def extend(self, questions):
+        self.questions.extend(questions.questions)
+
+    def size(self):
+        return len(self.questions)
+
+    def shuffle(self):
+        random.shuffle(self.questions)
+
+    def clear(self, question):
+        self.questions = []
+
+    def to_python(self):
+        return [q.to_python() for q in self.questions]
+
+    def to_json(self):
+        return json.dumps(self.to_python())
+
+
+class Question(object):
+    def __init__(self, alphagram, answers):
+        """
+        alphagram - A string
+        answers - A list of Word objects. see word_db_helper.py
+
+        """
+        self.alphagram = alphagram
+        self.answers = answers
+
+    def set_answers_from_word_list(self, word_list):
+        self.answers = []
+        for word in word_list:
+            self.answers.append(Word(word=word))
+
+    def to_python(self):
+        return {'q': self.alphagram,
+                'a': [w.word for w in self.answers]}
 
 
 class WordDB(object):
@@ -69,6 +120,22 @@ class WordDB(object):
                         alphagram=row[6])
         return None
 
+    def get_words_data(self, words):
+        """ Gets data for the words passed in. """
+        c = self.conn.cursor()
+        c.execute(""" SELECT lexicon_symbols, definition, front_hooks,
+                  back_hooks, inner_front_hook, inner_back_hook, alphagram,
+                  word FROM words WHERE word IN (%s) ORDER BY word""" %
+                  ','.join('?' * len(words)), words)
+        rows = c.fetchall()
+        words = []
+        for row in rows:
+            words.append(Word(word=row[7], definition=row[1],
+                              front_hooks=row[2], back_hooks=row[3],
+                              inner_front_hook=row[4], inner_back_hook=row[5],
+                              lexiconSymbols=row[0], alphagram=row[6]))
+        return words
+
     def get_words_for_alphagram(self, alphagram):
         """
         Gets a list of words for an alphagram.
@@ -97,7 +164,7 @@ class WordDB(object):
         repeatedly.
 
         """
-        ret = []
+        ret = Questions()
         c = self.conn.cursor()
 
         c.execute("""
@@ -115,15 +182,14 @@ class WordDB(object):
         for row in rows:
             alpha = row[7]
             if alpha != last_alphagram and last_alphagram is not None:
-                ret.append({'q': last_alphagram, 'a': cur_words})
+                ret.append(Question(last_alphagram, cur_words))
                 cur_words = []
             cur_words.append(Word(word=row[6], definition=row[1],
                              front_hooks=row[2], back_hooks=row[3],
                              inner_front_hook=row[4], inner_back_hook=row[5],
                              lexiconSymbols=row[0], alphagram=alpha))
             last_alphagram = alpha
-        ret.append({'q': last_alphagram, 'a': cur_words})
-
+        ret.append(Question(last_alphagram, cur_words))
         return ret
 
     def get_alphagram_data(self, alphagram):
@@ -199,21 +265,18 @@ class WordDB(object):
         A helper function to return an entire structure, a list of
         alphagrams and words, given a list of alphagrams.
 
-        {'q': 'ABC?', 'a': ['CABS', 'SCAB', ...]}
-
         param:
             - alphagrams - A list of alphagram objects, or strings.
             This function handles both cases.
 
         """
-        ret = []
+        ret = Questions()
         for alphagram in alphagrams:
             if hasattr(alphagram, 'alphagram'):
                 alph_string = alphagram.alphagram
             else:
                 alph_string = alphagram
-            obj = {'q': alph_string, 'a': []}
-            obj['a'] = [word.word for word in
-                        self.get_words_for_alphagram(alph_string)]
-            ret.append(obj)
+            question = Question(alph_string,
+                                self.get_words_for_alphagram(alph_string))
+            ret.append(question)
         return ret

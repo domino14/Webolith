@@ -35,7 +35,7 @@ from django.conf import settings
 import logging
 from django.db import IntegrityError
 from lib.word_db_helper import WordDB
-from lib.word_searches import alphagrams_array
+from lib.word_searches import word_search
 logger = logging.getLogger(__name__)
 from wordwalls.challenges import generate_dc_questions
 
@@ -64,14 +64,18 @@ class WordwallsGame(object):
             word_list=word_list)
         return wgm
 
-    def initialize_word_list(self, alphagrams, lexicon, user):
+    def initialize_word_list(self, questions, lexicon, user):
         """
-        Initializes a word list with the given array of alphagrams and
+        Initializes a word list with the given questions and
         returns it.
+
+        questions - An instance of Questions.
+        lexicon - An instance of base.Lexicon
+        user - The user.
 
         """
         wl = WordList()
-        wl.initialize_list(alphagrams, lexicon, user, shuffle=True)
+        wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True)
         return wl
 
     def get_dc(self, ch_date, ch_lex, ch_name):
@@ -140,7 +144,7 @@ class WordwallsGame(object):
             qs, secs = ret
             dc = DailyChallenge(date=ch_date, lexicon=ch_lex,
                                 name=ch_name, seconds=secs,
-                                alphagrams=json.dumps(qs))
+                                alphagrams=qs.to_json())
             try:
                 dc.save()
             except IntegrityError:
@@ -153,7 +157,7 @@ class WordwallsGame(object):
 
     def initialize_by_search_params(self, user, search_description, time_secs):
         lexicon = search_description['lexicon']
-        wl = self.initialize_word_list(alphagrams_array(search_description),
+        wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
         wgm = self.create_game_instance(user, lexicon, wl, timerSecs=time_secs)
         wgm.save()
@@ -228,6 +232,9 @@ class WordwallsGame(object):
                 # the quiz is running right now; do not attempt to start again
         start_message = ""
         word_list = wgm.word_list
+
+        if not word_list:
+            raise Exception('Did not migrate word list for this table.')
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += "Now quizzing on missed list.\r\n"
@@ -308,7 +315,7 @@ class WordwallsGame(object):
 
     def get_question(self, alpha, db):
         alphagram_str = alpha['q']
-        word_set = [db.get_word_data(word) for word in alpha['a']]
+        word_set = db.get_words_data(alpha['a'])
         return alphagram_str, word_set, db.probability(alphagram_str)
 
     def did_timer_run_out(self, state):

@@ -22,6 +22,40 @@ class WordDBTest(TestCase):
         self.assertTrue('party' in word.definition)
         self.assertEqual(word.alphagram, 'AEIPRSTT')
 
+    def test_words_data_single(self):
+        words = self.db.get_words_data(['PARTIEST'])
+        self.assertEqual(len(words), 1)
+        self.assertEqual(words[0].word, 'PARTIEST')
+        self.assertEqual(words[0].lexiconSymbols, '+$')
+        self.assertEqual(words[0].front_hooks, '')
+        self.assertEqual(words[0].back_hooks, '')
+        self.assertEqual(words[0].inner_front_hook, True)
+        self.assertEqual(words[0].inner_back_hook, True)
+        self.assertTrue('party' in words[0].definition)
+        self.assertEqual(words[0].alphagram, 'AEIPRSTT')
+
+    def test_words_data_multiple(self):
+        words = self.db.get_words_data(['PARTIEST', 'GAMODEME'])
+        self.assertEqual(len(words), 2)
+
+        self.assertEqual(words[0].alphagram, 'ADEEGMMO')
+        self.assertEqual(words[0].word, 'GAMODEME')
+        self.assertEqual(words[0].lexiconSymbols, '')
+        self.assertEqual(words[0].front_hooks, '')
+        self.assertEqual(words[0].back_hooks, 'S')
+        self.assertEqual(words[0].inner_front_hook, False)
+        self.assertEqual(words[0].inner_back_hook, False)
+        self.assertTrue('organisms' in words[0].definition)
+
+        self.assertEqual(words[1].word, 'PARTIEST')
+        self.assertEqual(words[1].lexiconSymbols, '+$')
+        self.assertEqual(words[1].front_hooks, '')
+        self.assertEqual(words[1].back_hooks, '')
+        self.assertEqual(words[1].inner_front_hook, True)
+        self.assertEqual(words[1].inner_back_hook, True)
+        self.assertTrue('party' in words[1].definition)
+        self.assertEqual(words[1].alphagram, 'AEIPRSTT')
+
     def test_alphagram_data(self):
         alpha = self.db.get_alphagram_data('AEINRST')
         self.assertEqual(alpha.alphagram, 'AEINRST')

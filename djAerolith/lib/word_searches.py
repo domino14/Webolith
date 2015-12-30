@@ -22,7 +22,7 @@ class SearchDescription(object):
                 "lexicon": lex}
 
 
-def alphagrams_array(search_description):
+def word_search(search_description):
     """
     Gets an array of alphagrams in format:
 
@@ -34,11 +34,11 @@ def alphagrams_array(search_description):
     db = WordDB(search_description['lexicon'].lexiconName)
 
     if search_description['condition'] == 'probability_range':
-        return alphagrams_for_prob_range(db, search_description['min'],
-                                         search_description['max'],
-                                         search_description['length'])
+        return questions_for_prob_range(db, search_description['min'],
+                                        search_description['max'],
+                                        search_description['length'])
 
 
-def alphagrams_for_prob_range(db, min_p, max_p, length):
+def questions_for_prob_range(db, min_p, max_p, length):
     alphagrams = db.alphagrams_by_probability_range(min_p, max_p, length)
     return db.get_questions(alphagrams)

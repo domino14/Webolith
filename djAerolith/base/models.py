@@ -153,16 +153,17 @@ class SavedList(models.Model):
     # XXX: Change default to 2 after migration.
     version = models.IntegerField(default=1)
 
-    def initialize_list(self, alphagrams, lexicon, user, shuffle=False,
+    def initialize_list(self, questions, lexicon, user, shuffle=False,
                         keep_old_name=False):
         """
-        Initialize a list with the passed in alphagrams. Saves it back
+        Initialize a list with the passed in questions. Saves it back
         to the database.
 
+        questions - A list of {'q': 'abc', 'a': [...]} objects.
         """
-        num_questions = len(alphagrams)
+        num_questions = len(questions)
         if shuffle:
-            random.shuffle(alphagrams)
+            random.shuffle(questions)
         self.lexicon = lexicon
         if not keep_old_name:
             self.name = uuid.uuid4().hex
@@ -174,7 +175,7 @@ class SavedList(models.Model):
         self.numMissed = 0
         self.goneThruOnce = False
         self.questionIndex = 0
-        self.origQuestions = json.dumps(alphagrams)
+        self.origQuestions = json.dumps(questions)
         self.curQuestions = json.dumps(range(num_questions))
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])

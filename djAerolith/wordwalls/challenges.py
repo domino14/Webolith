@@ -2,21 +2,24 @@
 Helper functions for generating challenges.
 
 """
+import json
+from datetime import timedelta
+import random
+import os
+import re
+import logging
+
 from base.models import alphagrammize
 from wordwalls.models import (DailyChallengeName, NamedList, DailyChallenge,
                               DailyChallengeMissedBingos,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-import json
-from datetime import timedelta
-import random
-import os
-from lib.word_db_helper import WordDB
-import re
-import logging
-logger = logging.getLogger(__name__)
 from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
                                                          FRIENDLY_COMMON_LONG)
+from lib.word_db_helper import WordDB, Question, Questions
+
+logger = logging.getLogger(__name__)
+
 try:
     COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
     COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
@@ -30,8 +33,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     Generate the questions for a daily challenge.
     Returns:
         A tuple (questions, time_secs)
-        questions is an array of `question`, which looks like:
-            {'q': 'ABC', 'a': ['CAB', ...]}
+        questions is of type Questions
 
     """
     db = WordDB(lex.lexiconName)
@@ -58,17 +60,17 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         return db.get_questions(alphagrams), challenge_name.timeSecs
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
         questions = generate_blank_bingos_challenge(lex, challenge_date)
-        random.shuffle(questions)
+        questions.shuffle()
         return questions, challenge_name.timeSecs
     elif challenge_name.name == DailyChallengeName.BINGO_MARATHON:
-        questions = []
+        questions = Questions()
         for lgt in (7, 8):
             min_p = 1
             max_p = json.loads(lex.lengthCounts)[str(lgt)]
             r = range(min_p, max_p + 1)
             random.shuffle(r)
-            questions += db.get_questions(
-                db.alphagrams_by_probability_list(r[:50], lgt))
+            questions.extend(db.get_questions(
+                db.alphagrams_by_probability_list(r[:50], lgt)))
         return questions, challenge_name.timeSecs
     # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
     #                              DailyChallengeName.COMMON_LONG):
@@ -93,7 +95,7 @@ def generate_blank_bingos_challenge(lex, ch_date):
     """
     Reads the previously generated blank bingo files for lex.
     """
-    bingos = []
+    bingos = Questions()
     for length in (7, 8):
         contents = get_blank_bingos_content(ch_date, length, lex.lexiconName)
         for line in contents.split('\n'):
@@ -102,7 +104,9 @@ def generate_blank_bingos_challenge(lex, ch_date):
                 continue
             qas = line.split()
             words = ' '.join(qas[1:])
-            bingos.append({'q': alphagrammize(qas[0]), 'a': words.split()})
+            question = Question(alphagrammize(qas[0]), [])
+            question.set_answers_from_word_list(words.split())
+            bingos.append(question)
     return bingos
 
 
@@ -121,6 +125,8 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     Generate a list of toughies given a challenge name. We only store info
     about 7s and 8s now so it would only give us those...
 
+    Returns:
+        A list of alphagram strings.
     """
     # Find all challenges matching these parameters
     challenges = DailyChallenge.objects.filter(lexicon=lex).filter(
