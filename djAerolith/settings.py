@@ -144,8 +144,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'gunicorn',
     'whitleyCards',
-    'quackleInterface',
-    'crosswordgame',
     'gargoyle',
     'flashcards',
     'registration'

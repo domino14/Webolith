@@ -156,7 +156,8 @@ class WordDB(object):
         return words
 
     def get_questions_for_probability_range(self, probability_min,
-                                            probability_max, length):
+                                            probability_max, length,
+                                            order=True):
         """
         Use a single query to return alphagrams and words for a
         probability range, fully populated. This makes this more
@@ -166,16 +167,17 @@ class WordDB(object):
         """
         ret = Questions()
         c = self.conn.cursor()
-
-        c.execute("""
+        query = """
             SELECT lexicon_symbols, definition, front_hooks, back_hooks,
             inner_front_hook, inner_back_hook, word, words.alphagram FROM words
             INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
             WHERE alphagrams.length = ? AND
             alphagrams.probability BETWEEN ? and ?
-            ORDER BY alphagrams.probability
 
-        """, (length, probability_min, probability_max))
+        """
+        if order:
+            query = query + "ORDER BY alphagrams.probability"
+        c.execute(query, (length, probability_min, probability_max))
         rows = c.fetchall()
         last_alphagram = None
         cur_words = []

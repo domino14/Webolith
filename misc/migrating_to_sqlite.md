@@ -9,9 +9,10 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
 
         Also, old daily challenges, etc etc. Lots of data to migrate.
 
-    - genNamedLists.py
+    x genNamedLists.py
     - wordwalls/utils.py, see `get_pks_from_alphas_db`
     - base/utils.py
+    x Write script to auto-delete old lists when tables are cleaned up.
 
 - Data!
     + wordwalls_dailychallenge
@@ -19,9 +20,7 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
     + wordwalls_namedlist
     + wordwalls_savedlist
     + wordwalls_wordwallsgamemodel
-        * For this one it might be better to tie it to a savedlist.
-        * We need to take into account games that are ongoing and 
-        migrate them in-place to temporary word lists.
+        * tie it to a saved list.
     
 ### Lower priority
 - whitleyCards/views.py

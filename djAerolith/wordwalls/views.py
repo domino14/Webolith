@@ -27,6 +27,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
+from lib.word_db_helper import WordDB
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
@@ -41,7 +42,7 @@ import random
 import logging
 from lib.response import response, StatusCode
 from lib.socket_helper import get_connection_token
-from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
+from wordwalls.utils import get_alphas_from_words
 from current_version import CURRENT_VERSION
 from wordwalls.utils import UserListParseException
 from gargoyle import gargoyle
@@ -365,92 +366,78 @@ def start_game(request, id):
 
 
 def ajax_upload(request):
-    if request.method == "POST":
-        lexForm = LexiconForm(request.GET)
-        if lexForm.is_valid():
-            lex = Lexicon.objects.get(
-                lexiconName=lexForm.cleaned_data['lexicon'])
-        else:
-            raise Http404("Bad lexicon")
-        if request.is_ajax():
-            # the file is stored raw in the request
-            upload = request
-            # AJAX Upload will pass the filename in the querystring if
-            # it is the "advanced" ajax upload
-            try:
-                filename = request.GET['qqfile']
-            except KeyError:
-                return HttpResponseBadRequest("AJAX request not valid")
-            # Not an ajax upload, so it was the "basic" iframe version
-            # with submission via form
-        else:
-            if len(request.FILES) == 1:
-                # FILES is a dictionary in Django but Ajax Upload gives
-                # the uploaded file an ID based on a random number, so
-                # it cannot be guessed here in the code. Rather than
-                # editing Ajax Upload to pass the ID in the querystring,
-                # observe that each upload is a separate request, so
-                # FILES should only have one entry. Thus, we can just
-                # grab the first (and only) value in the dict.
-                upload = request.FILES.values()[0]
-            else:
-                raise Http404("Bad Upload")
-            filename = upload.name
+    if request.method != "POST":
+        return response('This endpoint only accepts POST',
+                        StatusCode.BAD_REQUEST)
 
-      # save the file
-        success, msg = createUserList(upload, filename, lex, request.user)
+    lex_form = LexiconForm(request.POST)
 
-        # let Ajax Upload know whether we saved it or not
+    if lex_form.is_valid():
+        lex = Lexicon.objects.get(
+            lexiconName=lex_form.cleaned_data['lexicon'])
+    else:
+        logger.debug(lex_form.errors)
+        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
 
-        ret_json = {'success': success,
-                    'msg': msg}
-        return HttpResponse(json.dumps(ret_json))
+    uploaded_file = request.FILES['file']
+    if uploaded_file.multiple_chunks():
+        return response('Your file is too big.', StatusCode.BAD_REQUEST)
+
+    filename = uploaded_file.name
+    file_contents = uploaded_file.read()
+    # save the file
+    success, msg = create_user_list(file_contents, filename, lex,
+                                    request.user)
+    if not success:
+        return response(msg, StatusCode.BAD_REQUEST)
+    return response(msg)
 
 
-def createUserList(upload, filename, lex, user):
+def create_user_list(contents, filename, lex, user):
+    """
+    Creates a user list from file contents, a filename, a lexicon,
+    and a user. Checks to see if the user can create more lists.
+
+    """
     filename_stripped, extension = os.path.splitext(filename)
     try:
         WordList.objects.get(name=filename_stripped, user=user, lexicon=lex)
         # uh oh, it exists!
-        return (False, "A list by the name %s already exists for this "
-                       "lexicon! Please rename your file." % filename_stripped)
+        return (
+            False,
+            "A list by the name {} already exists for this "
+            "lexicon! Please rename your file.".format(filename_stripped))
     except WordList.DoesNotExist:
         pass
     t1 = time.time()
     try:
-        alphaSet = get_alphas_from_words(upload)
+        alpha_set = get_alphas_from_words(contents)
     except UserListParseException as e:
         return (False, str(e))
 
     profile = user.aerolithprofile
-    numSavedAlphas = profile.wordwallsSaveListSize
+    num_saved_alphas = profile.wordwallsSaveListSize
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
-    if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
+    if (num_saved_alphas + len(alpha_set)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
+    db = WordDB(lex.lexiconName)
 
-    pkList, addlMsg = get_pks_from_alphas(alphaSet, lex.pk)
-    numAlphagrams = len(pkList)
-    random.shuffle(pkList)
-    logger.info('number of uploaded alphagrams: %d', numAlphagrams)
+    questions = db.get_questions(alpha_set)
+    num_alphagrams = questions.size()
+
+    logger.info('number of uploaded alphagrams: %d', num_alphagrams)
     logger.info('elapsed time: %f', time.time() - t1)
     logger.info('user: %s, filename: %s', user.username, filename)
 
-    sl = WordList(lexicon=lex, name=filename_stripped, user=user,
-                  numAlphagrams=numAlphagrams, numCurAlphagrams=numAlphagrams,
-                  numFirstMissed=0, numMissed=0, goneThruOnce=False,
-                  questionIndex=0, origQuestions=json.dumps(pkList),
-                  curQuestions=json.dumps(range(numAlphagrams)),
-                  missed=json.dumps([]), firstMissed=json.dumps([]))
-    try:
-        sl.save()
-    except:
-        return False, "Unable to save list!"
-
-    profile.wordwallsSaveListSize += numAlphagrams
+    wl = WordList()
+    wl.name = filename_stripped
+    wl.initialize_list(questions.to_python(), lex, user, shuffle=True,
+                       keep_old_name=True)
+    profile.wordwallsSaveListSize += num_alphagrams
     profile.save()
 
-    return True, addlMsg
+    return True, ''
 
 
 def searchForAlphagrams(data, lex):

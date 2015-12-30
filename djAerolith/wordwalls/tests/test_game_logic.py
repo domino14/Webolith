@@ -9,18 +9,20 @@ from django.test import TestCase
 from base.forms import SavedListForm
 from datetime import date
 from wordwalls.game import WordwallsGame
-from wordwalls.models import DailyChallengeName
+from wordwalls.models import DailyChallengeName, NamedList
+from wordwalls.tests.mixins import WordListAssertMixin
 from lib.word_searches import SearchDescription
 from base.models import Lexicon, WordList
 from django.contrib.auth.models import User
 import mock
+import re
 import json
 from django.test.utils import override_settings
 import logging
 logger = logging.getLogger(__name__)
 
 
-class WordwallsBasicLogicTest(TestCase):
+class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
     fixtures = ['test/lexica.json',
                 'test/users.json',
                 'test/profiles.json',
@@ -36,20 +38,6 @@ class WordwallsBasicLogicTest(TestCase):
         search = SearchDescription.probability_range(p_min, p_max, length, lex)
         table_id = wwg.initialize_by_search_params(user, search, 240)
         return table_id, user
-
-    def assert_wl(self, word_list, params):
-        """
-        Assert that the word list params are as stated.
-        params - an object that looks like {'numAlphagrams': 11, ...}
-        """
-        for param, value in params.iteritems():
-            self.assertEqual(
-                getattr(word_list, param), value,
-                msg='Not equal: %s (%s, %s != %s)' % (
-                    word_list,
-                    param,
-                    repr(value),
-                    repr(getattr(word_list, param))))
 
     def test_quiz_params_correct(self):
         table_id, user = self.setup_quiz()
@@ -789,5 +777,76 @@ class WordwallsMigrationTest(TestCase):
     #     pass
 
 
-class WordwallsNamedListTest(TestCase):
+class WordwallsNamedListTest(TestCase, WordListAssertMixin):
     """ "Named" lists. """
+    fixtures = ['test/lexica.json',
+                'test/users.json',
+                'test/profiles.json',
+                'test/word_lists.json',
+                'test/wordwallsgamemodel.json',
+                'test/named_lists.json']
+
+    def setUp(self):
+        self.user = User.objects.get(username='cesar')
+        self.lex = Lexicon.objects.get(lexiconName='America')
+        self.wwg = WordwallsGame()
+
+    def test_range_list_short(self):
+        table_id = self.wwg.initialize_by_named_list(
+            self.lex, self.user, NamedList.objects.get(pk=3143), 240)
+        self.assertNotEqual(table_id, 0)
+        wgm = self.wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 1000, 'numCurAlphagrams': 1000,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        orig_questions = set(json.dumps(q)
+                             for q in json.loads(word_list.origQuestions))
+        self.assertEqual(len(orig_questions), 1000)
+        # Start the quiz.
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 50)
+
+    def test_range_list_long(self):
+        table_id = self.wwg.initialize_by_named_list(
+            self.lex, self.user, NamedList.objects.get(pk=3099), 240)
+        self.assertNotEqual(table_id, 0)
+        wgm = self.wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 21063, 'numCurAlphagrams': 21063,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        orig_questions = set(json.dumps(q)
+                             for q in json.loads(word_list.origQuestions))
+        self.assertEqual(len(orig_questions), 21063)
+        # Start the quiz.
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 50)
+
+    def test_individual_alphas(self):
+        table_id = self.wwg.initialize_by_named_list(
+            self.lex, self.user, NamedList.objects.get(pk=3092), 240)
+        self.assertNotEqual(table_id, 0)
+        wgm = self.wwg.get_wgm(table_id)
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 691, 'numCurAlphagrams': 691,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        orig_questions = set(json.dumps(q)
+                             for q in json.loads(word_list.origQuestions))
+        self.assertEqual(len(orig_questions), 691)
+        # Start the quiz.
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 50)
+        logger.debug(params['questions'])
+        self.assertNotEqual(re.search(r'[JQXZ]', params['questions'][0]['a']),
+                            None)

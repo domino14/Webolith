@@ -163,12 +163,18 @@ class WordwallsGame(object):
         wgm.save()
         return wgm.pk   # this is a table number id!
 
-    def initialize_by_named_list(self, lex, user, namedList, secs):
-        pks = json.loads(namedList.questions)
-        if namedList.isRange:
-            pks = range(pks[0], pks[1] + 1)
-        random.shuffle(pks)
-        wl = self.initialize_word_list(pks, lex, user)
+    def initialize_by_named_list(self, lex, user, named_list, secs):
+        qs = json.loads(named_list.questions)
+        db = WordDB(lex.lexiconName)
+        if named_list.isRange:
+            questions = db.get_questions_for_probability_range(
+                qs[0], qs[1], named_list.wordLength, order=False)
+            wl = self.initialize_word_list(questions, lex, user)
+        else:
+            # Initialize word list directly.
+            wl = WordList()
+            wl.initialize_list(qs, lex, user, shuffle=True)
+
         wgm = self.create_game_instance(user, lex, wl, timerSecs=secs)
         wgm.save()
         return wgm.pk

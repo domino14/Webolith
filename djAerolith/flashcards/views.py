@@ -3,7 +3,6 @@ from django.db import IntegrityError
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from current_version import CURRENT_VERSION
-from flashcards.models import Card
 import json
 from base.models import Lexicon, alphProbToProbPK, WordList
 import logging
