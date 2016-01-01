@@ -33,16 +33,17 @@ logger = logging.getLogger(__name__)
 @login_required
 def saved_list_sync(request):
     """
-    Accept a POST of a new saved list.
+    Accept a POST of a NEW saved list.
     """
     if request.method != 'POST':
         return response('This endpoint only accepts a POST.', status=400)
     body = json.loads(request.body)
     profile = request.user.aerolithprofile
-    saved_alphas = profile.wordwallsSaveListSize
+    num_saved_alphas = profile.wordwallsSaveListSize
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
     logger.debug('Syncing %s' % body)
     orig_qs = body.get('origQuestions')
+
     # Try getting a saved list with the same name, lexicon, and user.
     sl = WordList.objects.filter(user=request.user,
                                  lexicon__lexiconName=body.get('lexicon'),
@@ -51,27 +52,29 @@ def saved_list_sync(request):
         return response('A list by that name already exists. Please remove '
                         'that saved list and try again.', status=400)
 
-    sl = WordList()
-    sl.user = request.user
-    sl.lexicon = Lexicon.objects.get(lexiconName=body.get('lexicon'))
-    sl.name = body.get('name')
-    if (saved_alphas + len(orig_qs)) > limit and not profile.member:
+    if (num_saved_alphas + len(orig_qs)) > limit and not profile.member:
         return response(
             'This list would exceed your total list size limit. You can '
             'remove this limit by upgrading your membership!',
             status=400)
-    sl.numAlphagrams = body.get('numAlphagrams')
-    sl.numCurAlphagrams = body.get('numCurAlphagrams')
-    sl.numFirstMissed = body.get('numFirstMissed')
-    sl.numMissed = body.get('numMissed')
-    sl.goneThruOnce = body.get('goneThruOnce')
-    sl.questionIndex = body.get('questionIndex')
-    sl.origQuestions = json.dumps(orig_qs)
-    sl.curQuestions = json.dumps(body.get('curQuestions'))
-    sl.missed = json.dumps(body.get('missed'))
-    sl.firstMissed = json.dumps(body.get('firstMissed'))
 
-    sl.save()
+    sl = WordList.objects.create(
+        user=request.user,
+        lexicon=Lexicon.objects.get(lexiconName=body.get('lexicon')),
+        name=body.get('name'),
+        numAlphagrams=body.get('numAlphagrams'),
+        numCurAlphagrams=body.get('numCurAlphagrams'),
+        numFirstMissed=body.get('numFirstMissed'),
+        numMissed=body.get('numMissed'),
+        goneThruOnce=body.get('goneThruOnce'),
+        questionIndex=body.get('questionIndex'),
+        origQuestions=json.dumps(orig_qs),
+        curQuestions=json.dumps(body.get('curQuestions')),
+        missed=json.dumps(body.get('missed')),
+        firstMissed=json.dumps(body.get('firstMissed')),
+        is_temporary=False,
+        version=2
+    )
     profile.wordwallsSaveListSize += len(orig_qs)
     profile.save()
     return response(sl.to_python())
@@ -102,7 +105,7 @@ def saved_list(request, id):
                 return response('Cannot quiz on first missed unless you have '
                                 'gone through the entire quiz.', status=400)
             # Reset the list object to first missed but don't actually save it.
-            # The user sync will take care of any saves.
+            # The user sync or PUT will take care of any saves.
             l_obj['questionIndex'] = 0
             l_obj['curQuestions'] = l_obj['firstMissed']
             l_obj['numCurAlphagrams'] = l_obj['numFirstMissed']
@@ -110,8 +113,8 @@ def saved_list(request, id):
             l_obj['missed'] = []
         elif action == 'reset':
             l_obj = sl.to_python()
-            # Again, reset will not actually save, so this is a GET. Sync takes
-            # care of saving.
+            # Again, reset will not actually save, so this is a GET.
+            # Sync or PUT take care of saving.
             l_obj['questionIndex'] = 0
             l_obj['curQuestions'] = range(l_obj['numAlphagrams'])
             l_obj['numCurAlphagrams'] = l_obj['numAlphagrams']
@@ -163,6 +166,6 @@ def question_map(request):
     qs = json.loads(sl.origQuestions)
     t1 = time.time()
     logger.debug('Generating question map for %s questions.' % len(qs))
-    map = generate_question_map(qs)
+    q_map = generate_question_map(qs)
     logger.debug('Map generated, returning. Time: %s s.' % (time.time() - t1))
-    return response(map)
+    return response(q_map)

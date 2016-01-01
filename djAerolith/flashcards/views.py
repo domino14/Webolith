@@ -1,5 +1,4 @@
 from lib.response import response
-from django.db import IntegrityError
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from current_version import CURRENT_VERSION
@@ -13,11 +12,9 @@ from base.utils import savedlist_from_alpha_pks, quizzes_response
 
 @login_required
 def main(request):
-    user_cards = Card.objects.filter(user=request.user)
     quizzes = WordList.objects.filter(user=request.user)
-    num_cards = user_cards.count()
     return render_to_response("flashcards/index.html", {
-                              'numCards': num_cards,
+                              'numCards': 0,
                               'savedLists': json.dumps(quizzes_response(
                                                        quizzes)),
                               'CURRENT_VERSION': CURRENT_VERSION,

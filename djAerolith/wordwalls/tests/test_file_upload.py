@@ -5,6 +5,7 @@ Test file upload and list creation.
 
 import os
 import logging
+import gzip
 
 from django.test import TestCase
 from django.conf import settings
@@ -48,4 +49,23 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
         f.close()
 
     def test_create_giant_list(self):
-        filename = 'the_9s.txt'
+        filename = 'america_9s.txt.gz'
+        path = os.path.join(settings.PROJECT_ROOT, 'wordwalls', 'tests',
+                            'files', filename)
+        user = User.objects.get(username='cesar')
+        with gzip.open(path, 'rb') as f:
+            contents = f.read()
+        create_user_list(contents, 'america_9s.txt',
+                         Lexicon.objects.get(lexiconName='America'), user)
+        logger.debug(WordList.objects.all())
+        wl = WordList.objects.get(name='america_9s')
+        self.assert_wl(wl, {
+            'numAlphagrams': 28291, 'numCurAlphagrams': 28291,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': False
+        })
+
+        # Check that it added to total. 55781 is the old value, in
+        # profiles.json
+        self.assertEqual(user.aerolithprofile.wordwallsSaveListSize,
+                         55781 + 28291)

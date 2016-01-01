@@ -16,7 +16,7 @@ from wordwalls.models import (DailyChallengeName, NamedList, DailyChallenge,
                               DailyChallengeLeaderboardEntry)
 from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
                                                          FRIENDLY_COMMON_LONG)
-from lib.word_db_helper import WordDB, Question, Questions
+from lib.word_db_helper import WordDB, Question, Questions, Alphagram
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +104,7 @@ def generate_blank_bingos_challenge(lex, ch_date):
                 continue
             qas = line.split()
             words = ' '.join(qas[1:])
-            question = Question(alphagrammize(qas[0]), [])
+            question = Question(Alphagram(alphagrammize(qas[0])), [])
             question.set_answers_from_word_list(words.split())
             bingos.append(question)
     return bingos
@@ -160,7 +160,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     # Sort by difficulty in reverse order (most difficult first)
     alphs = sorted(mb_dict.items(), key=lambda x: x[1][1], reverse=True)[:num]
     # And just return the alphagram portion.
-    return [a[0] for a in alphs]
+    return [Alphagram(a[0]) for a in alphs]
 
 
 def get_alphagram_for_dcmb(mb):

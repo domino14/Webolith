@@ -36,11 +36,17 @@ class Word(object):
 
 
 class Alphagram(object):
-    def __init__(self, alphagram, probability, length, combinations):
+    def __init__(self, alphagram, probability=None, combinations=None):
         self.alphagram = alphagram
         self.probability = probability
-        self.length = length
+        self.length = len(alphagram)
         self.combinations = combinations
+
+    def __eq__(self, other):
+        return self.alphagram == other.alphagram
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class Questions(object):
@@ -68,15 +74,36 @@ class Questions(object):
     def to_json(self):
         return json.dumps(self.to_python())
 
+    def set_from_json(self, json_string):
+        """
+        Set Questions from a JSON string. Useful when loading from a
+        word list or challenge. We will be missing meta info as this
+        only loads words and alphagram strings.
+
+        See Question.to_python for format.
+
+        """
+        qs = json.loads(json_string)
+        self.clear()
+        for q in qs:
+            question = Question()
+            question.set_from_obj(q)
+            self.append(question)
+
 
 class Question(object):
     def __init__(self, alphagram, answers):
         """
-        alphagram - A string
+        alphagram - An Alphagram object.
         answers - A list of Word objects. see word_db_helper.py
 
         """
+        if not isinstance(alphagram, Alphagram):
+            raise Exception('Not an instance of Alphagram')
         self.alphagram = alphagram
+        for answer in answers:
+            if not isinstance(answer, Word):
+                raise Exception('Not an instance of Word')
         self.answers = answers
 
     def set_answers_from_word_list(self, word_list):
@@ -85,8 +112,12 @@ class Question(object):
             self.answers.append(Word(word=word))
 
     def to_python(self):
-        return {'q': self.alphagram,
+        return {'q': self.alphagram.alphagram,
                 'a': [w.word for w in self.answers]}
+
+    def set_from_obj(self, obj):
+        self.alphagram = Alphagram(obj['q'])
+        self.set_answers_from_word_list(obj['a'])
 
 
 class WordDB(object):
@@ -139,6 +170,7 @@ class WordDB(object):
     def get_words_for_alphagram(self, alphagram):
         """
         Gets a list of words for an alphagram.
+            - alphagram: A string.
 
         """
         c = self.conn.cursor()
@@ -155,53 +187,14 @@ class WordDB(object):
                               lexiconSymbols=row[0], alphagram=alphagram))
         return words
 
-    def get_questions_for_probability_range(self, probability_min,
-                                            probability_max, length,
-                                            order=True):
-        """
-        Use a single query to return alphagrams and words for a
-        probability range, fully populated. This makes this more
-        efficient than calling `get_words_for_alphagram` above
-        repeatedly.
-
-        """
-        ret = Questions()
-        c = self.conn.cursor()
-        query = """
-            SELECT lexicon_symbols, definition, front_hooks, back_hooks,
-            inner_front_hook, inner_back_hook, word, words.alphagram FROM words
-            INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
-            WHERE alphagrams.length = ? AND
-            alphagrams.probability BETWEEN ? and ?
-
-        """
-        if order:
-            query = query + "ORDER BY alphagrams.probability"
-        c.execute(query, (length, probability_min, probability_max))
-        rows = c.fetchall()
-        last_alphagram = None
-        cur_words = []
-        for row in rows:
-            alpha = row[7]
-            if alpha != last_alphagram and last_alphagram is not None:
-                ret.append(Question(last_alphagram, cur_words))
-                cur_words = []
-            cur_words.append(Word(word=row[6], definition=row[1],
-                             front_hooks=row[2], back_hooks=row[3],
-                             inner_front_hook=row[4], inner_back_hook=row[5],
-                             lexiconSymbols=row[0], alphagram=alpha))
-            last_alphagram = alpha
-        ret.append(Question(last_alphagram, cur_words))
-        return ret
-
     def get_alphagram_data(self, alphagram):
         c = self.conn.cursor()
-        c.execute('SELECT probability, combinations, length FROM alphagrams '
+        c.execute('SELECT probability, combinations FROM alphagrams '
                   'WHERE alphagram = ?', (alphagram,))
         row = c.fetchone()
         if row:
             return Alphagram(alphagram=alphagram, probability=row[0],
-                             combinations=row[1], length=row[2])
+                             combinations=row[1])
         return None
 
     def probability(self, alphagram):
@@ -224,8 +217,7 @@ class WordDB(object):
         for row in rows:
             alphagrams.append(Alphagram(alphagram=row[0],
                                         probability=row[1],
-                                        combinations=row[2],
-                                        length=len(row[0])))
+                                        combinations=row[2]))
         return alphagrams
 
     def alphagrams_by_length(self, length):
@@ -262,23 +254,82 @@ class WordDB(object):
 
         return self._alphagrams(c)
 
+    def get_questions_for_probability_range(self, probability_min,
+                                            probability_max, length,
+                                            order=True):
+        """
+        Use a single query to return alphagrams and words for a
+        probability range, fully populated. This makes this more
+        efficient than calling `get_words_for_alphagram` above
+        repeatedly.
+
+        """
+        c = self.conn.cursor()
+        query = """
+            SELECT lexicon_symbols, definition, front_hooks, back_hooks,
+            inner_front_hook, inner_back_hook, word, words.alphagram,
+            alphagrams.probability, alphagrams.combinations FROM words
+            INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
+            WHERE alphagrams.length = ? AND
+            alphagrams.probability BETWEEN ? and ?
+
+        """
+        if order:
+            query = query + "ORDER BY alphagrams.probability"
+        c.execute(query, (length, probability_min, probability_max))
+        rows = c.fetchall()
+        return self.process_question_query(rows)
+
     def get_questions(self, alphagrams):
         """
         A helper function to return an entire structure, a list of
         alphagrams and words, given a list of alphagrams.
 
         param:
-            - alphagrams - A list of alphagram objects, or strings.
-            This function handles both cases.
+            - alphagrams - A list of alphagram objects.
 
         """
         ret = Questions()
-        for alphagram in alphagrams:
-            if hasattr(alphagram, 'alphagram'):
-                alph_string = alphagram.alphagram
-            else:
-                alph_string = alphagram
-            question = Question(alph_string,
-                                self.get_words_for_alphagram(alph_string))
-            ret.append(question)
+        c = self.conn.cursor()
+        # Handle in 1000-alphagram chunks.
+
+        idx = 0
+        CHUNK_SIZE = 10000
+        while idx < len(alphagrams):
+            these_alphagrams = alphagrams[idx:idx+CHUNK_SIZE]
+            num_alphas = len(these_alphagrams)
+            query = """
+            SELECT lexicon_symbols, definition, front_hooks, back_hooks,
+            inner_front_hook, inner_back_hook, word, words.alphagram,
+            alphagrams.probability, alphagrams.combinations FROM words
+            INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
+            WHERE alphagrams.alphagram IN (%s) """ % ','.join('?' * num_alphas)
+
+            idx += CHUNK_SIZE
+
+            c.execute(query, [a.alphagram for a in these_alphagrams])
+
+            rows = c.fetchall()
+
+            qs = self.process_question_query(rows)
+            ret.extend(qs)
         return ret
+
+    def process_question_query(self, rows):
+        """ Process a query consisting of rows. Return a Questions object. """
+        qs = Questions()
+        last_alphagram = None
+        cur_words = []
+        for row in rows:
+            alpha = Alphagram(row[7], row[8], row[9])
+            if last_alphagram is not None and alpha != last_alphagram:
+                qs.append(Question(last_alphagram, cur_words))
+                cur_words = []
+            cur_words.append(Word(word=row[6], definition=row[1],
+                             front_hooks=row[2], back_hooks=row[3],
+                             inner_front_hook=row[4],
+                             inner_back_hook=row[5],
+                             lexiconSymbols=row[0], alphagram=alpha))
+            last_alphagram = alpha
+        qs.append(Question(last_alphagram, cur_words))
+        return qs

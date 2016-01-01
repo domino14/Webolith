@@ -34,7 +34,7 @@ from base.forms import SavedListForm
 from django.conf import settings
 import logging
 from django.db import IntegrityError
-from lib.word_db_helper import WordDB
+from lib.word_db_helper import WordDB, Questions
 from lib.word_searches import word_search
 logger = logging.getLogger(__name__)
 from wordwalls.challenges import generate_dc_questions
@@ -85,7 +85,8 @@ class WordwallsGame(object):
         """
         dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex,
                                         name=ch_name)
-        qs = json.loads(dc.alphagrams)
+        qs = Questions()
+        qs.set_from_json(dc.alphagrams)
         secs = dc.seconds
         random.shuffle(qs)
         return qs, secs, dc
@@ -287,6 +288,8 @@ class WordwallsGame(object):
         """
         Turn the qs array into an array of full question objects, ready
         for the front-end.
+
+        # XXX: SPEED UP THIS FUNCTION. Should be one single DB query.
 
         Params:
             - qs: An array of indices into oriq_questions

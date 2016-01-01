@@ -42,9 +42,9 @@ import random
 import logging
 from lib.response import response, StatusCode
 from lib.socket_helper import get_connection_token
-from wordwalls.utils import get_alphas_from_words
+from base.utils import get_alphas_from_words
 from current_version import CURRENT_VERSION
-from wordwalls.utils import UserListParseException
+from base.utils import UserListParseException
 from gargoyle import gargoyle
 from wordwalls.challenges import toughies_challenge_date
 
@@ -411,7 +411,8 @@ def create_user_list(contents, filename, lex, user):
         pass
     t1 = time.time()
     try:
-        alpha_set = get_alphas_from_words(contents)
+        alphas = get_alphas_from_words(
+            contents, wordwalls.settings.UPLOAD_FILE_LINE_LIMIT)
     except UserListParseException as e:
         return (False, str(e))
 
@@ -419,11 +420,11 @@ def create_user_list(contents, filename, lex, user):
     num_saved_alphas = profile.wordwallsSaveListSize
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
-    if (num_saved_alphas + len(alpha_set)) > limit and not profile.member:
+    if (num_saved_alphas + len(alphas)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
     db = WordDB(lex.lexiconName)
 
-    questions = db.get_questions(alpha_set)
+    questions = db.get_questions(alphas)
     num_alphagrams = questions.size()
 
     logger.info('number of uploaded alphagrams: %d', num_alphagrams)

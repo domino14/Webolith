@@ -1,48 +1,78 @@
-from base.models import WordList
 import json
 import logging
+
+from base.models import WordList, alphagrammize
+from lib.word_db_helper import WordDB, Alphagram
+
 logger = logging.getLogger(__name__)
-from django.db import connection
 FETCH_MANY_SIZE = 1000
 
 
-def generate_question_map(alphs):
+class UserListParseException(Exception):
+    pass
+
+
+def get_alphas_from_words(contents, max_words):
     """
-        Generates a question map from a list of alphagram pks.
+    Get all the alphagrams from the given words. Return a list of
+    Alphagram objects.
+
     """
+    line_number = 0
+    alpha_set = set()
+    for line in contents.split('\n'):
+        word = line.strip()
+        if len(word) > 15:
+            raise UserListParseException("List contains non-word elements")
+        line_number += 1
+        if line_number > max_words:
+            raise UserListParseException(
+                "List contains more words than the current allowed per-file "
+                "limit of {}".format(max_words))
+        if len(word) > 1:
+            alpha_set.add(alphagrammize(word))
+    return [Alphagram(a) for a in alpha_set]
+
+
+def generate_question_map(lexicon, alphs):
+    """ Generate a question map from a list of alphagrams. """
+    db = WordDB(lexicon.lexiconName)
     q_map = {}
+
+    db.get_questions(alphs)
+
     # XXX: Database-specific code for speed. This might work with Postgres too.
-    cursor = connection.cursor()
-    cursor.execute(
-        'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
-        'back_hooks, inner_front_hook, inner_back_hook, '
-        'base_alphagram.alphagram, base_alphagram.probability '
-        'FROM base_word INNER JOIN base_alphagram ON '
-        'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
-        'base_alphagram.probability_pk in %s' % str(tuple(alphs))
-    )
-    rows = cursor.fetchmany(FETCH_MANY_SIZE)
-    while rows:
-        for row in rows:
-            alph_pk = row[1]
-            if alph_pk not in q_map:
-                q_map[alph_pk] = {
-                    'question': row[8],
-                    'probability': row[9],
-                    'id': alph_pk,
-                    'answers': []
-                }
-            q_map[alph_pk]['answers'].append({
-                'word': row[0],
-                'def': row[3],
-                'f_hooks': row[4],
-                'b_hooks': row[5],
-                'symbols': row[2],
-                'f_inner': row[6],
-                'b_inner': row[7]
-            })
-        rows = cursor.fetchmany(FETCH_MANY_SIZE)
-    return q_map
+    # cursor = connection.cursor()
+    # cursor.execute(
+    #     'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
+    #     'back_hooks, inner_front_hook, inner_back_hook, '
+    #     'base_alphagram.alphagram, base_alphagram.probability '
+    #     'FROM base_word INNER JOIN base_alphagram ON '
+    #     'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
+    #     'base_alphagram.probability_pk in %s' % str(tuple(alphs))
+    # )
+    # rows = cursor.fetchmany(FETCH_MANY_SIZE)
+    # while rows:
+    #     for row in rows:
+    #         alph_pk = row[1]
+    #         if alph_pk not in q_map:
+    #             q_map[alph_pk] = {
+    #                 'question': row[8],
+    #                 'probability': row[9],
+    #                 'id': alph_pk,
+    #                 'answers': []
+    #             }
+    #         q_map[alph_pk]['answers'].append({
+    #             'word': row[0],
+    #             'def': row[3],
+    #             'f_hooks': row[4],
+    #             'b_hooks': row[5],
+    #             'symbols': row[2],
+    #             'f_inner': row[6],
+    #             'b_inner': row[7]
+    #         })
+    #     rows = cursor.fetchmany(FETCH_MANY_SIZE)
+    # return q_map
 
 
 def savedlist_from_alpha_pks(alphs, lexicon):
@@ -65,7 +95,7 @@ def savedlist_from_alpha_pks(alphs, lexicon):
     li.curQuestions = json.dumps(range(num_alphas))
     li.missed = json.dumps([])
     li.firstMissed = json.dumps([])
-    q_map = generate_question_map(alphs)
+    q_map = generate_question_map(lexicon, alphs)
     return li, q_map
 
 
