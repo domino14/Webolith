@@ -16,3 +16,4 @@ supervisor==3.0b1
 pystache
 boto
 mock
+jsonschema

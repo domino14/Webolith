@@ -18,15 +18,18 @@
 
 # Create your views here.
 
-
-from django.contrib.auth.decorators import login_required
-from base.models import WordList, Lexicon
-from lib.response import response
 import json
 import logging
 import time
-from base.utils import generate_question_map_from_alphagrams
+
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.conf import settings
+
+from base.models import WordList, Lexicon
+from lib.response import response
+from base.utils import generate_question_map_from_alphagrams
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +61,7 @@ def saved_list_sync(request):
             'remove this limit by upgrading your membership!',
             status=400)
 
-    sl = WordList.objects.create(
+    sl = WordList(
         user=request.user,
         lexicon=Lexicon.objects.get(lexiconName=body.get('lexicon')),
         name=body.get('name'),
@@ -75,6 +78,11 @@ def saved_list_sync(request):
         is_temporary=False,
         version=2
     )
+    try:
+        sl.full_clean()
+    except ValidationError as e:
+        return response('Your saved list is improperly formatted: %s', e)
+    sl.save()
     profile.wordwallsSaveListSize += len(orig_qs)
     profile.save()
     return response(sl.to_python())

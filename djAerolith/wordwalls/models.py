@@ -20,7 +20,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from base.models import Lexicon, Alphagram, WordList
-from base.validators import word_list_format_validator
+from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
 
 
@@ -143,4 +143,4 @@ class NamedList(models.Model):
     numQuestions = models.IntegerField()
     wordLength = models.IntegerField()
     isRange = models.BooleanField()
-    questions = models.TextField(validators=[word_list_format_validator])
+    questions = models.TextField(validators=[named_list_format_validator])

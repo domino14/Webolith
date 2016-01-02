@@ -9,7 +9,7 @@ from django.db import connection
 
 from base.models import Lexicon, alphagrammize
 from wordwalls.models import NamedList
-from lib.word_db_helper import WordDB
+from lib.word_db_helper import WordDB, Questions
 
 
 friendly_number_map = {
@@ -43,23 +43,41 @@ class Condition(object):
 
 def get_questions_by_condition(db, min_prob, max_prob, length, condition,
                                condition_type='alphagram'):
-    """ Get all questions that match the condition."""
-    qs = []
+    """
+    Get all questions that match the condition. Return a to_python
+    representation, ready for saving into the list.
+
+    """
+    qs = Questions()
 
     to_filter = db.get_questions_for_probability_range(min_prob, max_prob,
                                                        length)
-    for q in to_filter:
+    for q in to_filter.questions_array():
         if condition_type == Condition.ALPHAGRAM:
-            test = condition(q['q'])
+            test = condition(q.alphagram.alphagram)
         elif condition_type == Condition.WORD:
-            test = any(condition(word) for word in q['a'])
+            test = any(condition(word) for word in q.answers)
         if test:
             # print 'passed test', q, q['q'], q['a'][0].word
-            to_append = q
-            to_append['a'] = [word.word for word in to_append['a']]
-            qs.append(to_append)
+            qs.append(q)
 
-    return qs
+    return qs.to_python()
+
+
+def create_named_list(lexicon, num_questions, word_length, is_range,
+                      questions, name):
+    if num_questions == 0:
+        print ">> Not creating empty list " + name
+        return
+
+    nl = NamedList(lexicon=lexicon,
+                   numQuestions=num_questions,
+                   wordLength=word_length,
+                   isRange=is_range,
+                   questions=questions,
+                   name=name)
+    nl.full_clean()
+    nl.save()
 
 
 def create_wl_lists(i, lex, db):
@@ -69,127 +87,73 @@ def create_wl_lists(i, lex, db):
     num_for_this_length = length_counts[str(i)]
     min_prob = 1
     max_prob = num_for_this_length
-    nl = NamedList(lexicon=lex,
-                   numQuestions=num_for_this_length,
-                   wordLength=i,
-                   isRange=True,
-                   questions=json.dumps([1, num_for_this_length]),
-                   name='The ' + friendly_number_map[i])
-    nl.save()
+    create_named_list(lex, num_for_this_length, i, True,
+                      json.dumps([1, num_for_this_length]),
+                      'The ' + friendly_number_map[i])
     if i >= 7 and i <= 8:
         # create 'every x' list
         for p in range(1, num_for_this_length+1, LIST_GRANULARITY):
             min_p = p
             max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
-            nl = NamedList(
-                lexicon=lex,
-                numQuestions=max_p - min_p + 1,
-                wordLength=i,
-                isRange=True,
-                questions=json.dumps([min_p, max_p]),
-                name='{} ({} to {})'.format(friendly_number_map[i], p, max_p))
-            nl.save()
+            create_named_list(
+                lex, max_p - min_p + 1, i, True, json.dumps([min_p, max_p]),
+                '{} ({} to {})'.format(friendly_number_map[i], p, max_p))
 
-    print 'JQXZ', i
     if i >= 4 and i <= 8:
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda a: re.search(r'[JQXZ]', a))
-        nl = NamedList(lexicon=lex,
-                       numQuestions=len(qs),
-                       wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(qs),
-                       name='JQXZ ' + friendly_number_map[i])
-        nl.save()
+        create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                          'JQXZ ' + friendly_number_map[i])
 
     if i == 7:
         # 4+ vowel 7s
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda a: (len(re.findall(r'[AEIOU]', a)) >= 4))
-        nl = NamedList(lexicon=lex,
-                       numQuestions=len(qs),
-                       wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(qs),
-                       name='Sevens with 4 or more vowels')
-        nl.save()
-
+        create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                          'Sevens with 4 or more vowels')
     if i == 8:
         # 5+ vowel 8s
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda a: (len(re.findall(r'[AEIOU]', a)) >= 5))
-        nl = NamedList(lexicon=lex,
-                       numQuestions=len(qs),
-                       wordLength=i,
-                       isRange=False,
-                       questions=json.dumps(qs),
-                       name='Eights with 5 or more vowels')
-        nl.save()
+        create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                          'Eights with 5 or more vowels')
 
     if lex.lexiconName == 'America':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('+' in w.lexiconSymbols),
             condition_type=Condition.WORD)
-
-        nl = NamedList(
-            lexicon=lex,
-            numQuestions=len(qs),
-            wordLength=i,
-            isRange=False,
-            questions=json.dumps(qs),
-            name='America {} not in OWL2'.format(friendly_number_map[i]))
-
-        nl.save()
+        create_named_list(
+            lex, len(qs), i, False, json.dumps(qs),
+            'America {} not in OWL2'.format(friendly_number_map[i]))
 
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('$' in w.lexiconSymbols),
             condition_type=Condition.WORD)
-
-        nl = NamedList(
-            lexicon=lex,
-            numQuestions=len(qs),
-            wordLength=i,
-            isRange=False,
-            questions=json.dumps(qs),
-            name='America {} not in CSW15'.format(friendly_number_map[i]))
-
-        nl.save()
+        create_named_list(
+            lex, len(qs), i, False, json.dumps(qs),
+            'America {} not in CSW15'.format(friendly_number_map[i]))
 
     if lex.lexiconName == 'CSW15':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('+' in w.lexiconSymbols),
             condition_type=Condition.WORD)
-
-        nl = NamedList(
-            lexicon=lex,
-            numQuestions=len(qs),
-            wordLength=i,
-            isRange=False,
-            questions=json.dumps(qs),
-            name='CSW15 {} not in CSW12'.format(friendly_number_map[i]))
-
-        nl.save()
+        create_named_list(
+            lex, len(qs), i, False, json.dumps(qs),
+            'CSW15 {} not in CSW12'.format(friendly_number_map[i]))
 
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('#' in w.lexiconSymbols),
             condition_type=Condition.WORD)
-
-        nl = NamedList(
-            lexicon=lex,
-            numQuestions=len(qs),
-            wordLength=i,
-            isRange=False,
-            questions=json.dumps(qs),
-            name='CSW15 {} not in America'.format(friendly_number_map[i]))
-
-        nl.save()
+        create_named_list(
+            lex, len(qs), i, False, json.dumps(qs),
+            'CSW15 {} not in America'.format(friendly_number_map[i]))
 
 
 def createNamedLists(lex):
