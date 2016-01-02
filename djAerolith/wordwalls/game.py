@@ -326,11 +326,6 @@ class WordwallsGame(object):
                                 'p': q.alphagram.probability, 'idx': i})
         return ret_q_array, answer_hash
 
-    def get_question(self, alpha, db):
-        alphagram_str = alpha['q']
-        word_set = db.get_words_data(alpha['a'])
-        return alphagram_str, word_set, db.probability(alphagram_str)
-
     def did_timer_run_out(self, state):
         # internal function; not meant to be called by the outside
         return (state['quizStartTime'] + state['timerSecs']) < time.time()

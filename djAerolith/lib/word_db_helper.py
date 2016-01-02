@@ -137,6 +137,7 @@ class WordDB(object):
         self.conn = sqlite3.connect(os.path.join(settings.WORD_DB_LOCATION,
                                     '%s.db' % lexicon_name))
 
+    # XXX: Only used by tests.
     def get_word_data(self, word):
         """
         Gets data for the word passed in.
@@ -154,6 +155,7 @@ class WordDB(object):
                         alphagram=row[6])
         return None
 
+    # XXX: Only used by tests.
     def get_words_data(self, words):
         """ Gets data for the words passed in. """
         c = self.conn.cursor()
@@ -170,26 +172,7 @@ class WordDB(object):
                               lexiconSymbols=row[0], alphagram=row[6]))
         return words
 
-    def get_words_for_alphagram(self, alphagram):
-        """
-        Gets a list of words for an alphagram.
-            - alphagram: A string.
-
-        """
-        c = self.conn.cursor()
-        c.execute('SELECT lexicon_symbols, definition, front_hooks, '
-                  'back_hooks, inner_front_hook, inner_back_hook, '
-                  'word FROM words WHERE alphagram = ?', (alphagram,))
-        rows = c.fetchall()
-        words = []
-        # Why am I writing my own ORM?
-        for row in rows:
-            words.append(Word(word=row[6], definition=row[1],
-                              front_hooks=row[2], back_hooks=row[3],
-                              inner_front_hook=row[4], inner_back_hook=row[5],
-                              lexiconSymbols=row[0], alphagram=alphagram))
-        return words
-
+    # XXX: Only used by tests.
     def get_alphagram_data(self, alphagram):
         c = self.conn.cursor()
         c.execute('SELECT probability, combinations FROM alphagrams '
@@ -200,6 +183,7 @@ class WordDB(object):
                              combinations=row[1])
         return None
 
+    # XXX: Only used by tests.
     def probability(self, alphagram):
         """
         Gets the probability for the alphagram. Returns None if the
@@ -222,13 +206,6 @@ class WordDB(object):
                                         probability=row[1],
                                         combinations=row[2]))
         return alphagrams
-
-    def alphagrams_by_length(self, length):
-        """ Get a list of alphagrams by word length. """
-        c = self.conn.cursor()
-        c.execute('SELECT alphagram, probability, combinations '
-                  'FROM alphagrams WHERE length = ?', (length,))
-        return self._alphagrams(c)
 
     def alphagrams_by_probability_range(self, probability_min, probability_max,
                                         length):
