@@ -17,35 +17,34 @@
 # To contact the author, please email delsolar at gmail dot com
 
 # Create your views here.
+
+import json
+import time
+import os
+import logging
+from datetime import date, datetime
+
 from django.http import Http404
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from gargoyle import gargoyle
+
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
 from base.models import Lexicon, WordList
-from django.contrib.auth.decorators import login_required
-import json
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
 from lib.word_db_helper import WordDB
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseBadRequest
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
-                              DailyChallengeLeaderboardEntry)
-from wordwalls.models import (DailyChallengeName, NamedList)
-from datetime import date, datetime
-import time
-from django.conf import settings
+                              DailyChallengeLeaderboardEntry,
+                              DailyChallengeName, NamedList)
 import wordwalls.settings
-import os
-import random
-import logging
 from lib.response import response, StatusCode
-from lib.socket_helper import get_connection_token
-from base.utils import get_alphas_from_words
+from base.utils import get_alphas_from_words, UserListParseException
 from current_version import CURRENT_VERSION
-from base.utils import UserListParseException
-from gargoyle import gargoyle
 from wordwalls.challenges import toughies_challenge_date
 
 

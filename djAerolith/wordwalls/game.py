@@ -16,25 +16,23 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import WordList, Alphagram, Word, probPKToAlphProb
+from base.models import WordList
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import WordwallsGameModel
 import json
 import time
 from datetime import date
 import random
-import uuid
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeMissedBingos, DailyChallengeName,
-                              NamedList)
+                              DailyChallengeMissedBingos, DailyChallengeName)
 import re
 from base.forms import SavedListForm
 from django.conf import settings
 import logging
 from django.db import IntegrityError
-from lib.word_db_helper import WordDB, Questions
+from lib.word_db_helper import WordDB, Questions, Alphagram
 from lib.word_searches import word_search
 logger = logging.getLogger(__name__)
 from wordwalls.challenges import generate_dc_questions
@@ -289,8 +287,6 @@ class WordwallsGame(object):
         Turn the qs array into an array of full question objects, ready
         for the front-end.
 
-        # XXX: SPEED UP THIS FUNCTION. Should be one single DB query.
-
         Params:
             - qs: An array of indices into oriq_questions
             - orig_questions: An array of question alphagrams.
@@ -303,24 +299,32 @@ class WordwallsGame(object):
                 answer_hash: {'word': (alphagram, idx), ...}
 
         """
-        questions = []
-        answer_hash = {}
         db = WordDB(lexicon.lexiconName)
+        alphagrams_to_fetch = []
+        index_map = {}
         for i in qs:
+            alphagrams_to_fetch.append(orig_questions[i])
+            index_map[orig_questions[i]['q']] = i
+
+        alphagrams_to_fetch = [Alphagram(obj['q'])
+                               for obj in alphagrams_to_fetch]
+        questions = db.get_questions(alphagrams_to_fetch)
+        answer_hash = {}
+        ret_q_array = []
+
+        for q in questions.questions_array():
             words = []
-            alphagram_str, word_set, prob = self.get_question(
-                orig_questions[i], db)
-            for w in word_set:
+            alphagram_str = q.alphagram.alphagram
+            i = index_map[alphagram_str]
+            for w in q.answers:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
                               's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
                               'ibh': w.inner_back_hook})
                 answer_hash[w.word] = alphagram_str, i
-            # XXX: It is inconsistent that we use 'a' here and 'q' in
-            # the actual saved list. Fix soon.
-            questions.append({'a': alphagram_str, 'ws': words, 'p': prob,
-                              'idx': i})
-        return questions, answer_hash
+            ret_q_array.append({'a': alphagram_str, 'ws': words,
+                                'p': q.alphagram.probability, 'idx': i})
+        return ret_q_array, answer_hash
 
     def get_question(self, alpha, db):
         alphagram_str = alpha['q']

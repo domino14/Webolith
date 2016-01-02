@@ -154,7 +154,7 @@ class SavedList(models.Model):
     version = models.IntegerField(default=1)
 
     def initialize_list(self, questions, lexicon, user, shuffle=False,
-                        keep_old_name=False):
+                        keep_old_name=False, save=True):
         """
         Initialize a list with the passed in questions. Saves it back
         to the database.
@@ -180,7 +180,8 @@ class SavedList(models.Model):
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])
         self.version = 2
-        self.save()
+        if save:
+            self.save()
 
     def restart_list(self, shuffle=False):
         """ Restart this list; save it back to the database. """

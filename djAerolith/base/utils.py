@@ -1,4 +1,3 @@
-import json
 import logging
 
 from base.models import WordList, alphagrammize
@@ -34,69 +33,53 @@ def get_alphas_from_words(contents, max_words):
     return [Alphagram(a) for a in alpha_set]
 
 
-def generate_question_map(lexicon, alphs):
-    """ Generate a question map from a list of alphagrams. """
-    db = WordDB(lexicon.lexiconName)
+def generate_question_map(questions):
+    """ Generate a question map from a Questions object. """
     q_map = {}
 
-    db.get_questions(alphs)
-
-    # XXX: Database-specific code for speed. This might work with Postgres too.
-    # cursor = connection.cursor()
-    # cursor.execute(
-    #     'SELECT word, alphagram_id, lexiconSymbols, definition, front_hooks, '
-    #     'back_hooks, inner_front_hook, inner_back_hook, '
-    #     'base_alphagram.alphagram, base_alphagram.probability '
-    #     'FROM base_word INNER JOIN base_alphagram ON '
-    #     'base_word.alphagram_id = base_alphagram.probability_pk WHERE '
-    #     'base_alphagram.probability_pk in %s' % str(tuple(alphs))
-    # )
-    # rows = cursor.fetchmany(FETCH_MANY_SIZE)
-    # while rows:
-    #     for row in rows:
-    #         alph_pk = row[1]
-    #         if alph_pk not in q_map:
-    #             q_map[alph_pk] = {
-    #                 'question': row[8],
-    #                 'probability': row[9],
-    #                 'id': alph_pk,
-    #                 'answers': []
-    #             }
-    #         q_map[alph_pk]['answers'].append({
-    #             'word': row[0],
-    #             'def': row[3],
-    #             'f_hooks': row[4],
-    #             'b_hooks': row[5],
-    #             'symbols': row[2],
-    #             'f_inner': row[6],
-    #             'b_inner': row[7]
-    #         })
-    #     rows = cursor.fetchmany(FETCH_MANY_SIZE)
-    # return q_map
+    for q in questions.questions_array():
+        q_map[q.alphagram.alphagram] = {
+            'question': q.alphagram.alphagram,
+            'probability': q.alphagram.probability,
+            'answers': []
+        }
+        for a in q.answers:
+            q_map[q.alphagram.alphagram]['answers'].append({
+                'word': a.word,
+                'def': a.definition,
+                'f_hooks': a.front_hooks,
+                'b_hooks': a.back_hooks,
+                'symbols': a.lexiconSymbols,
+                'f_inner': a.inner_front_hook,
+                'b_inner': a.inner_back_hook
+            })
+    return q_map
 
 
-def savedlist_from_alpha_pks(alphs, lexicon):
+def generate_question_map_from_alphagrams(lexicon, alph_objects):
     """
-        Creates a WordList instance from a list of Alphagram pks (indices)
-        but *does not save it*.
+    Generate a question map from a list of {'q': ..., 'a': [..]} objects.
+
     """
-    num_alphas = len(alphs)
-    if num_alphas == 0:
-        raise Exception("No alphagrams provided.")
-    li = WordList()
-    li.lexicon = lexicon
-    li.numAlphagrams = num_alphas
-    li.numCurAlphagrams = num_alphas
-    li.numFirstMissed = 0
-    li.numMissed = 0
-    li.goneThruOnce = False
-    li.questionIndex = 0
-    li.origQuestions = json.dumps(alphs)
-    li.curQuestions = json.dumps(range(num_alphas))
-    li.missed = json.dumps([])
-    li.firstMissed = json.dumps([])
-    q_map = generate_question_map(lexicon, alphs)
-    return li, q_map
+    db = WordDB(lexicon.lexiconName)
+    alphagrams = [Alphagram(obj['q']) for obj in alph_objects]
+    questions = db.get_questions(alphagrams)
+    return generate_question_map(questions)
+
+
+def savedlist_from_probabilities(lexicon, p_min, p_max, length):
+    """
+    Creates a WordList instance from a list of Alphagram pks (indices)
+    but *does not save it*.
+    """
+    db = WordDB(lexicon.lexiconName)
+    questions = db.get_questions_for_probability_range(p_min, p_max, length)
+
+    wl = WordList()
+    wl.initialize_list(questions.to_python(), lexicon, None, shuffle=True,
+                       save=False)
+    q_map = generate_question_map(questions)
+    return wl, q_map
 
 
 def quizzes_response(quizzes):

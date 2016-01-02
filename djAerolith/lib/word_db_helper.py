@@ -53,6 +53,9 @@ class Questions(object):
     def __init__(self):
         self.questions = []
 
+    def questions_array(self):
+        return self.questions
+
     def append(self, question):
         self.questions.append(question)
 
@@ -286,7 +289,7 @@ class WordDB(object):
         alphagrams and words, given a list of alphagrams.
 
         param:
-            - alphagrams - A list of alphagram objects.
+            - alphagrams - A list of Alphagram objects.
 
         """
         ret = Questions()

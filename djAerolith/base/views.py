@@ -25,7 +25,7 @@ from lib.response import response
 import json
 import logging
 import time
-from base.utils import generate_question_map
+from base.utils import generate_question_map_from_alphagrams
 from django.conf import settings
 logger = logging.getLogger(__name__)
 
@@ -163,9 +163,8 @@ def question_map(request):
     except WordList.DoesNotExist:
         return response('This list does not exist!', status=404)
 
-    qs = json.loads(sl.origQuestions)
     t1 = time.time()
-    logger.debug('Generating question map for %s questions.' % len(qs))
-    q_map = generate_question_map(qs)
+    q_map = generate_question_map_from_alphagrams(sl.lexicon,
+                                                  json.loads(sl.origQuestions))
     logger.debug('Map generated, returning. Time: %s s.' % (time.time() - t1))
     return response(q_map)
