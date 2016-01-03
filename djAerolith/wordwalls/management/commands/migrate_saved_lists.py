@@ -34,4 +34,5 @@ class Command(BaseCommand):
             question_struct = migrate_alphagrams(questions, cursor)
             word_list.origQuestions = json.dumps(question_struct)
             word_list.version = 2
+            word_list.full_clean()
             word_list.save()

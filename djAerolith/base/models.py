@@ -28,20 +28,6 @@ from base.validators import word_list_format_validator
 EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
 
 
-def alphProbToProbPK(prob, lexId, length):
-    # XXX: THIS ONLY ALLOWS FOR LEXICON INDICES FROM 0 to 3
-    # (Terrible oversight)
-    # Everything else may result in weird collisions. This needs to be
-    # reworked!!
-    return prob + (lexId << 24) + (length << 26)
-
-
-def probPKToAlphProb(probPk):
-    if probPk:
-        return probPk & ((1 << 24) - 1)
-    return None
-
-
 def alphagrammize(word):
     # Replace blank with something lexically bigger than the largest letter.
     # This seems like a hack.
@@ -70,6 +56,7 @@ class AlphagramManager(models.Manager):
         return self.get(alphagram=alphagram, lexicon=lexicon)
 
 
+# XXX: Remove after migration.
 class Alphagram(models.Model):
     objects = AlphagramManager()
 
@@ -91,6 +78,7 @@ class Alphagram(models.Model):
                            )
 
 
+# XXX: Remove after migration.
 class Word(models.Model):
     word = models.CharField(max_length=15, db_index=True)
     alphagram = models.ForeignKey(Alphagram)

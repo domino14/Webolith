@@ -21,7 +21,7 @@ def migrate_table_word_list(wgm, state):
     Migrate to the V1 version. This will eventually also be migrated
     to the V2 version, but let's make this simple for now.
     """
-    word_list = WordList.objects.create(
+    word_list = WordList(
         lexicon=wgm.lexicon,
         name=uuid.uuid4().hex,
         is_temporary=True,

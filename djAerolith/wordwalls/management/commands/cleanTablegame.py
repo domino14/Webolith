@@ -23,8 +23,8 @@ class Command(BaseCommand):
         print "Found", numObjs, "objects to delete"
         if numObjs > 0:
             for wgm in wgms:
-                if wgm.word_list.is_temporary:
+                print "Delete", wgm
+                if wgm.word_list and wgm.word_list.is_temporary:
+                    print "-- Delete", wgm.word_list
                     wgm.word_list.delete()
                 wgm.delete()
-
-            print "Deleted!"
