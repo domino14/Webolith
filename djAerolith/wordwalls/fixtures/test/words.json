@@ -28768,5 +28768,170 @@
   },
   "model": "base.word",
   "pk": 862684
+},
+{
+  "fields": {
+    "definition": "LOBEFIN, a bony fish [n]",
+    "lexicon": 7,
+    "alphagram": 654316621,
+    "lexiconSymbols": "",
+    "inner_back_hook": true,
+    "front_hooks": "",
+    "back_hooks": "",
+    "inner_front_hook": false,
+    "word": "LOBEFINS"
+  },
+  "model": "base.word",
+  "pk": 533373
+},
+{
+  "fields": {
+    "definition": "ANGINA, a disease marked by spasmodic attacks of intense pain [n]",
+    "lexicon": 7,
+    "alphagram": 587209682,
+    "lexiconSymbols": "",
+    "inner_back_hook": true,
+    "front_hooks": "",
+    "back_hooks": "",
+    "inner_front_hook": false,
+    "word": "ANGINAS"
+  },
+  "model": "base.word",
+  "pk": 573943
+},
+{
+  "fields": {
+    "definition": "ANGINA, a disease marked by spasmodic attacks of intense pain [adj]",
+    "lexicon": 7,
+    "alphagram": 587209685,
+    "lexiconSymbols": "",
+    "inner_back_hook": true,
+    "front_hooks": "",
+    "back_hooks": "",
+    "inner_front_hook": false,
+    "word": "ANGINAL"
+  },
+  "model": "base.word",
+  "pk": 573947
+},
+{
+  "fields": {
+    "definition": "a supply chest used in a logging camp [n WANIGANS]",
+    "lexicon": 7,
+    "alphagram": 587213715,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "S",
+    "inner_front_hook": false,
+    "word": "WANIGAN"
+  },
+  "model": "base.word",
+  "pk": 582824
+},
+{
+  "fields": {
+    "definition": "an aquatic bird [n ANHINGAS]",
+    "lexicon": 7,
+    "alphagram": 587213716,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "S",
+    "inner_front_hook": false,
+    "word": "ANHINGA"
+  },
+  "model": "base.word",
+  "pk": 582825
+},
+{
+  "fields": {
+    "definition": "a whole number [n INTEGERS]",
+    "lexicon": 7,
+    "alphagram": 587202814,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "S",
+    "inner_front_hook": false,
+    "word": "INTEGER"
+  },
+  "model": "base.word",
+  "pk": 541526
+},
+{
+  "fields": {
+    "definition": "TREE, to drive up a tree (a tall, woody plant) [v]",
+    "lexicon": 7,
+    "alphagram": 587202814,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "",
+    "inner_front_hook": false,
+    "word": "TREEING"
+  },
+  "model": "base.word",
+  "pk": 541527
+},
+{
+  "fields": {
+    "definition": "a type of cart [n TIPCARTS]",
+    "lexicon": 7,
+    "alphagram": 587212969,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "S",
+    "inner_front_hook": false,
+    "word": "TIPCART"
+  },
+  "model": "base.word",
+  "pk": 581054
+},
+{
+  "fields": {
+    "definition": "GOSPEL, the message concerning Christ, the kingdom of God, and salvation [n]",
+    "lexicon": 7,
+    "alphagram": 587217164,
+    "lexiconSymbols": "",
+    "inner_back_hook": true,
+    "front_hooks": "",
+    "back_hooks": "",
+    "inner_front_hook": false,
+    "word": "GOSPELS"
+  },
+  "model": "base.word",
+  "pk": 590824
+},
+{
+  "fields": {
+    "definition": "a trap for catching rats [n RATTRAPS]",
+    "lexicon": 7,
+    "alphagram": 587217533,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "S",
+    "inner_front_hook": false,
+    "word": "RATTRAP"
+  },
+  "model": "base.word",
+  "pk": 591859
+},
+{
+  "fields": {
+    "definition": "ZLOTY, a monetary unit of Poland [n]",
+    "lexicon": 7,
+    "alphagram": 587222511,
+    "lexiconSymbols": "",
+    "inner_back_hook": false,
+    "front_hooks": "",
+    "back_hooks": "",
+    "inner_front_hook": false,
+    "word": "ZLOTYCH"
+  },
+  "model": "base.word",
+  "pk": 610036
 }
 ]
