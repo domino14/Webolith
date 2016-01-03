@@ -119,6 +119,7 @@ class WordwallsGame(object):
         wgm = self.create_game_instance(user, ch_lex, wl,
                                         # Extra parameters to be put in 'state'
                                         gameType='challenge',
+                                        questionsToPull=qs.size(),
                                         challengeId=dc.pk,
                                         timerSecs=secs,
                                         qualifyForAward=qualify_for_award)

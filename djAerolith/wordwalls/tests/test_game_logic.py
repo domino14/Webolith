@@ -605,6 +605,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         self.assertEqual(num_8s, 50)
         self.assertEqual(
             len(set([q['q'] for q in questions])), 100)
+        params = self.wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 100)
 
     @mock.patch('wordwalls.challenges.get_blank_bingos_content',
                 side_effect=blank_bingo_loader)

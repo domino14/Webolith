@@ -13,7 +13,7 @@ from wordwalls.models import NamedList
 from base.models import Lexicon, WordList
 logger = logging.getLogger(__name__)
 
-QUIZ_CHUNK_SIZE = 10
+QUIZ_CHUNK_SIZE = 5000
 
 
 @login_required
