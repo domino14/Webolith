@@ -156,10 +156,19 @@ class SavedList(models.Model):
     def initialize_list(self, questions, lexicon, user, shuffle=False,
                         keep_old_name=False, save=True):
         """
-        Initialize a list with the passed in questions. Saves it back
-        to the database.
+        Initialize a list with the passed in questions. Optionally saves
+        it to the database.
 
         questions - A list of {'q': 'abc', 'a': [...]} objects.
+        lexicon - The lexicon.
+        user - The user. If save is False, this value is ignored.
+        shuffle - Whether to shuffle the questions.
+        keep_old_name - If False, generate a new name and set as a
+            temporary word list.
+        save - Save the word list to the database. If this is False,
+            we can just use this as an object that we can dump to JSON.
+            This is used for the API in base/views.py.
+
         """
         num_questions = len(questions)
         if shuffle:
@@ -168,7 +177,6 @@ class SavedList(models.Model):
         if not keep_old_name:
             self.name = uuid.uuid4().hex
             self.is_temporary = True
-        self.user = user
         self.numAlphagrams = num_questions
         self.numCurAlphagrams = num_questions
         self.numFirstMissed = 0
@@ -181,6 +189,7 @@ class SavedList(models.Model):
         self.firstMissed = json.dumps([])
         self.version = 2
         if save:
+            self.user = user
             self.save()
 
     def restart_list(self, shuffle=False):

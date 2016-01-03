@@ -72,8 +72,8 @@ def new_quiz(request):
     li, q_map = savedlist_from_probabilities(lexicon, p_min, p_max, length)
     if len(q_map) > 0:
         # Generate a quiz name.
-        quiz_name = '%s %ss (%s to %s)' % (lexicon.lexiconName, length,
-                                           p_min, p_max)
+        quiz_name = '{} {}s ({} to {})'.format(lexicon.lexiconName, length,
+                                               p_min, p_max)
     else:
         quiz_name = ''
     return response({'list': li.to_python(),

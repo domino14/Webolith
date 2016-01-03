@@ -142,9 +142,12 @@ def edit_saved_list(request, sl):
     """
     A helper function (not a view) that saves an already existing list
     with new data and returns an HTTP response.
+
+    Note: We do not save the original alphagrams here. These should be
+    assumed to never change after an initial sync.
+
     """
     body = json.loads(request.body)
-    orig_qs = body.get('origQuestions')
     if sl.numAlphagrams != body.get('numAlphagrams'):
         return response('The alphagrams for this list do not match.',
                         status=400)
@@ -153,16 +156,26 @@ def edit_saved_list(request, sl):
     sl.numMissed = body.get('numMissed')
     sl.goneThruOnce = body.get('goneThruOnce')
     sl.questionIndex = body.get('questionIndex')
-    sl.origQuestions = json.dumps(orig_qs)
     sl.curQuestions = json.dumps(body.get('curQuestions'))
     sl.missed = json.dumps(body.get('missed'))
     sl.firstMissed = json.dumps(body.get('firstMissed'))
+    try:
+        sl.full_clean()
+    except ValidationError as e:
+        return response(str(e), status=400)
     sl.save()
     return response(sl.to_python())
 
 
 @login_required
 def question_map(request):
+    """
+    Stand-alone endpoint for loading a question map. This is usually
+    called after the user makes a request to load a remote quiz.
+
+    XXX: Maybe should not be two endpoints. See new_quiz in flashcards.views
+
+    """
     if request.method != 'GET':
         return response('This endpoint only accepts GET', status=400)
     try:

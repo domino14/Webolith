@@ -15,6 +15,8 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
     x base/utils.py
     x base/views.py
     x Write script to auto-delete old lists when tables are cleaned up.
+    x Need to fix flashcards front end to take into account new format of
+        question maps and word lists. 
 
 - Data!
     + wordwalls_dailychallenge
@@ -23,9 +25,6 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
     + wordwalls_savedlist
     + wordwalls_wordwallsgamemodel
         * tie it to a saved list.
-    
-- Need to fix flashcards front end to take into account new format of
-    question maps and word lists. >.<
 
 ### Lower priority
 - whitleyCards/views.py
