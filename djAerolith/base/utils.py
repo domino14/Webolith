@@ -62,9 +62,8 @@ def generate_question_map_from_alphagrams(lexicon, alph_objects):
 
     """
     db = WordDB(lexicon.lexiconName)
-    alphagrams = [Alphagram(obj['q']) for obj in alph_objects]
-    questions = db.get_questions(alphagrams)
-    return generate_question_map(questions)
+    return generate_question_map(
+        db.get_questions_from_alph_objects(alph_objects))
 
 
 def savedlist_from_probabilities(lexicon, p_min, p_max, length):

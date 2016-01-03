@@ -1,37 +1,35 @@
 import json
-from django.http import HttpResponseForbidden
 from datetime import date, timedelta
+import time
+
 from wordwalls.models import (WordwallsGameModel,
                               DailyChallenge,
                               DailyChallengeName)
 from base.models import Lexicon
-import time
-import random
-from lib.response import response
+from lib.response import response, StatusCode
 from wordwalls.views import getLeaderboardData
-from wordwalls.challenges import toughies_challenge_date
 
 
 def configure(request):
+    if request.method != "POST":
+        return response("Must use POST.", StatusCode.FORBIDDEN)
+
     prefs = json.loads(request.body)
-    if request.method == "POST":
-        saveObj = {'tc': {}, 'bc': {}}
-        saveObj['tc'] = {'on': prefs['tilesOn'],
-                         'font': prefs['font'],
-                         'selection': prefs['tileSelection'],
-                         'bold': prefs['bold'],
-                         'blankCharacter': prefs['blankCharacter'],
-                         'customOrder': prefs['customOrder']}
-        saveObj['bc'] = {'showTable': prefs['showTable'],
-                         'showCanvas': prefs['showCanvas'],
-                         'showBorders': prefs['showBorders']}
+    saveObj = {'tc': {}, 'bc': {}}
+    saveObj['tc'] = {'on': prefs['tilesOn'],
+                     'font': prefs['font'],
+                     'selection': prefs['tileSelection'],
+                     'bold': prefs['bold'],
+                     'blankCharacter': prefs['blankCharacter'],
+                     'customOrder': prefs['customOrder']}
+    saveObj['bc'] = {'showTable': prefs['showTable'],
+                     'showCanvas': prefs['showCanvas'],
+                     'showBorders': prefs['showBorders']}
 
-        profile = request.user.aerolithprofile
-        profile.customWordwallsStyle = json.dumps(saveObj)
-        profile.save()
-        return response("Ok")
-
-    return HttpResponseForbidden("Cannot save preferences.")
+    profile = request.user.aerolithprofile
+    profile.customWordwallsStyle = json.dumps(saveObj)
+    profile.save()
+    return response("OK")
 
 
 # api views
@@ -52,37 +50,6 @@ def api_num_tables_created(request):
     allGames = WordwallsGameModel.objects.all().reverse()[:1]
     numTables = allGames[0].pk
     return response({"number": numTables, "timestamp": time.time()})
-
-
-def api_random_toughie(request):
-    # from the PREVIOUS toughies challenge
-    chdate = toughies_challenge_date(date.today()) - timedelta(days=7 *2)
-    try:
-        dc = DailyChallenge.objects.get(
-            lexicon=Lexicon.objects.get(pk=7),
-            date=chdate,
-            name=DailyChallengeName.objects.get(
-                name=DailyChallengeName.WEEKS_BINGO_TOUGHIES))
-    except DailyChallenge.DoesNotExist:
-        return response({"error": "No such daily challenge."})
-    alphs = json.loads(dc.alphagrams)
-    # XXX TODO - fix this; get from sqlite database.
-    alpha = Alphagram.objects.get(pk=random.choice(alphs))
-    words = Word.objects.filter(alphagram=alpha)
-    wordString = " ".join([word.word for word in words])
-    alphaString = alpha.alphagram
-    html = """
-    <script>
-    $("#toughie").hover(function() {
-        $(this).text("%s");
-    },
-    function() {
-        $(this).text("%s");
-    });</script>
-    <div id="toughie" style="font-size: 32px;">%s</div>
-    """ % (wordString, alphaString, alphaString)
-
-    return response({"html": html})
 
 
 # api views helpers

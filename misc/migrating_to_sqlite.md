@@ -18,7 +18,7 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
     x Need to fix flashcards front end to take into account new format of
         question maps and word lists. 
 
-- Data!
+- Data! Scripts to migrate all these have been written.
     + wordwalls_dailychallenge
     + wordwalls_dailychallengemissedbingos
     + wordwalls_namedlist
@@ -28,7 +28,7 @@ Migrating the word/alphagram model to stand-alone SQLITE databases.
 
 ### Lower priority
 - whitleyCards/views.py
-- wordwalls/api.py
+x wordwalls/api.py -- Removed a function; update this later/write proper API.
 
 ### Process
 

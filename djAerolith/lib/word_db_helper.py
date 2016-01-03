@@ -260,6 +260,17 @@ class WordDB(object):
         rows = c.fetchall()
         return self.process_question_query(rows)
 
+    def get_questions_from_alph_objects(self, alph_objects):
+        """
+        See get_questions, but instead of Alphagram objects, the
+        parameter alph_objects looks like:
+        [{"q": ..., "a": [...]}, ...]
+
+        """
+        alphagrams = [Alphagram(obj['q']) for obj in alph_objects]
+        questions = self.get_questions(alphagrams)
+        return questions
+
     def get_questions(self, alphagrams):
         """
         A helper function to return an entire structure, a list of
