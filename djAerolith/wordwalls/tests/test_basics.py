@@ -17,23 +17,3 @@ class ChallengeDatesTestCase(unittest.TestCase):
                          date(2012, 1, 3))  # sat, prev tues
         self.assertEqual(toughies_challenge_date(date(2012, 1, 2)),
                          date(2011, 12, 27))  # mon, prev tuesday
-
-
-# class TableTest(TestCase):
-#     # blah this doesn't work.
-#     def setup(self):
-#         user = User.objects.create_user('testuser', 'testuser@aerolith.org',
-#                                         'secret')
-#         user.save()
-#         self.client.login(username="testuser", password="secret")
-
-#     def test_create_table_searchparams(self):
-#         response = self.client.post(
-#             '/wordwalls', {'searchParamsSubmit': 'Play!',
-#                            'wordLength': '7',
-#                            'quizTime': '4',
-#                            'lexicon': 'OWL2',
-#                            'probabilityMin': '1001',
-#                            'probabilityMax': '1500',
-#                            'playerMode': 1}, follow=True)
-#         print response

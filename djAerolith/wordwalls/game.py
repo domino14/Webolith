@@ -85,8 +85,8 @@ class WordwallsGame(object):
                                         name=ch_name)
         qs = Questions()
         qs.set_from_json(dc.alphagrams)
+        qs.shuffle()
         secs = dc.seconds
-        random.shuffle(qs)
         return qs, secs, dc
 
     def initialize_daily_challenge(self, user, ch_lex, ch_name, ch_date):

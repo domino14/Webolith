@@ -68,7 +68,7 @@ class Questions(object):
     def shuffle(self):
         random.shuffle(self.questions)
 
-    def clear(self, question):
+    def clear(self):
         self.questions = []
 
     def to_python(self):
@@ -95,18 +95,13 @@ class Questions(object):
 
 
 class Question(object):
-    def __init__(self, alphagram, answers):
+    def __init__(self, alphagram=None, answers=[]):
         """
         alphagram - An Alphagram object.
         answers - A list of Word objects. see word_db_helper.py
 
         """
-        if not isinstance(alphagram, Alphagram):
-            raise Exception('Not an instance of Alphagram')
         self.alphagram = alphagram
-        for answer in answers:
-            if not isinstance(answer, Word):
-                raise Exception('Not an instance of Word')
         self.answers = answers
 
     def set_answers_from_word_list(self, word_list):

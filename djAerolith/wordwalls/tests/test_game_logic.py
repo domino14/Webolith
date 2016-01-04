@@ -9,7 +9,7 @@ from django.test import TestCase
 from base.forms import SavedListForm
 from datetime import date
 from wordwalls.game import WordwallsGame
-from wordwalls.models import DailyChallengeName, NamedList
+from wordwalls.models import DailyChallengeName, NamedList, DailyChallenge
 from wordwalls.tests.mixins import WordListAssertMixin
 from lib.word_searches import SearchDescription
 from base.models import Lexicon, WordList
@@ -551,7 +551,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
     fixtures = ['test/lexica.json',
                 'test/users.json',
                 'test/profiles.json',
-                'dcNames.json']
+                'dcNames.json',
+                'test/daily_challenge.json']
 
     def setUp(self):
         self.user = User.objects.get(username='cesar')
@@ -560,9 +561,12 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
 
     def test_length_challenge(self):
         """ Test a regular challenge by word length (Today's 6s). """
+        num_challenges = DailyChallenge.objects.count()
         challenge = DailyChallengeName.objects.get(name="Today's 6s")
         table_id = self.wwg.initialize_daily_challenge(
             self.user, self.lex, challenge, date.today())
+        # Assert that it created a challenge.
+        self.assertEqual(num_challenges + 1, DailyChallenge.objects.count())
         wgm = self.wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertTrue(state['qualifyForAward'])
@@ -629,8 +633,31 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         self.assertEqual(
             len(set([q['q'] for q in questions])), 50)
 
-    def test_toughies(self):
-        """ Test the toughies / missed bingo challenge generator. """
+    def test_play_old_challenge(self):
+        """ Play an old challenge instead of creating a new one. """
+        num_challenges = DailyChallenge.objects.count()
+        challenge = DailyChallengeName.objects.get(name="Bingo Marathon")
+        table_id = self.wwg.initialize_daily_challenge(
+            self.user, Lexicon.objects.get(lexiconName='CSW15'),
+            challenge, date(2015, 12, 8))
+        # Assert that it did not create an additional challenge.
+        self.assertEqual(num_challenges, DailyChallenge.objects.count())
+        wgm = self.wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertFalse(state['qualifyForAward'])
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 100, 'numCurAlphagrams': 100,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        questions = json.loads(word_list.origQuestions)
+        for q in questions:
+            self.assertTrue(len(q['q']) in (7, 8), msg=q)
+        self.assertEqual(
+            len(set([q['q'] for q in questions])), 100)
+        params = self.wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 100)
 
 
 class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
