@@ -32,6 +32,10 @@ class Command(BaseCommand):
                 print idx, "..."
             questions = json.loads(word_list.origQuestions)
             question_struct = migrate_alphagrams(questions, cursor)
+            if len(question_struct) == 0:
+                print 'Trying to save an empty list. Deleting instead.'
+                word_list.delete()
+                continue
             word_list.origQuestions = json.dumps(question_struct)
             word_list.version = 2
             word_list.full_clean()

@@ -18,10 +18,12 @@ FETCH_MANY_SIZE = 1000
 
 def migrate_table_word_list(wgm, state):
     """
+    Create a new, temporary word list for this table.
+
     Migrate to the V1 version. This will eventually also be migrated
     to the V2 version, but let's make this simple for now.
     """
-    word_list = WordList(
+    word_list = WordList.objects.create(
         lexicon=wgm.lexicon,
         name=uuid.uuid4().hex,
         is_temporary=True,
