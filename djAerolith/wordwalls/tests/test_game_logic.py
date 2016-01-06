@@ -629,9 +629,10 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
             'questionIndex': 0, 'is_temporary': True
         })
         questions = json.loads(word_list.origQuestions)
-        logger.debug('Questions: %s', questions)
         self.assertEqual(
             len(set([q['q'] for q in questions])), 50)
+        params = self.wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 50)
 
     def test_play_old_challenge(self):
         """ Play an old challenge instead of creating a new one. """
@@ -658,6 +659,35 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
             len(set([q['q'] for q in questions])), 100)
         params = self.wwg.start_quiz(table_id, self.user)
         self.assertEqual(len(params['questions']), 100)
+
+    def test_play_old_blank_bingos(self):
+        """
+        Play an old blank bingos challenge instead of creating a new one.
+
+        """
+        num_challenges = DailyChallenge.objects.count()
+        challenge = DailyChallengeName.objects.get(name="Blank Bingos")
+        table_id = self.wwg.initialize_daily_challenge(
+            self.user, Lexicon.objects.get(lexiconName='America'),
+            challenge, date(2016, 1, 1))
+        # Assert that it did not create an additional challenge.
+        self.assertEqual(num_challenges, DailyChallenge.objects.count())
+        wgm = self.wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertFalse(state['qualifyForAward'])
+        word_list = wgm.word_list
+        self.assert_wl(word_list, {
+            'numAlphagrams': 50, 'numCurAlphagrams': 50,
+            'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
+            'questionIndex': 0, 'is_temporary': True
+        })
+        questions = json.loads(word_list.origQuestions)
+        for q in questions:
+            self.assertTrue(len(q['q']) in (7, 8), msg=q)
+        self.assertEqual(
+            len(set([q['q'] for q in questions])), 50)
+        params = self.wwg.start_quiz(table_id, self.user)
+        self.assertEqual(len(params['questions']), 50)
 
 
 class WordwallsMissedBingosTest(WordwallsBasicLogicTest):

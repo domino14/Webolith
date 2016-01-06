@@ -34,6 +34,9 @@ class Word(object):
         self.inner_front_hook = True if inner_front_hook == 1 else False
         self.inner_back_hook = True if inner_back_hook == 1 else False
 
+    def __repr__(self):
+        return '{%s}' % self.word
+
 
 class Alphagram(object):
     def __init__(self, alphagram, probability=None, combinations=None):
@@ -47,6 +50,9 @@ class Alphagram(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __repr__(self):
+        return '{%s}' % self.alphagram
 
 
 class Questions(object):
@@ -93,6 +99,9 @@ class Questions(object):
             question.set_from_obj(q)
             self.append(question)
 
+    def __repr__(self):
+        return '<Questions %s>' % self.questions
+
 
 class Question(object):
     def __init__(self, alphagram=None, answers=[]):
@@ -103,6 +112,9 @@ class Question(object):
         """
         self.alphagram = alphagram
         self.answers = answers
+
+    def __repr__(self):
+        return '<Question: %s (%s)>' % (self.alphagram, self.answers)
 
     def set_answers_from_word_list(self, word_list):
         self.answers = []
@@ -150,9 +162,9 @@ class WordDB(object):
                         alphagram=row[6])
         return None
 
-    # XXX: Only used by tests.
     def get_words_data(self, words):
         """ Gets data for the words passed in. """
+        logger.debug('Getting word data for %s words.', len(words), words)
         c = self.conn.cursor()
         c.execute(""" SELECT lexicon_symbols, definition, front_hooks,
                   back_hooks, inner_front_hook, inner_back_hook, alphagram,
@@ -261,9 +273,26 @@ class WordDB(object):
         parameter alph_objects looks like:
         [{"q": ..., "a": [...]}, ...]
 
+        This call will not do a database lookup for the alphagrams,
+        instead it will look up all the words, and correlate them
+        to the passed-in alphagrams.
+
         """
-        alphagrams = [Alphagram(obj['q']) for obj in alph_objects]
-        questions = self.get_questions(alphagrams)
+        word_to_alphagram_dict = {}
+        questions = Questions()
+        # Create a mapping of words to initial questions
+        for alph in alph_objects:
+            alphagram = alph['q']
+            this_q = Question(Alphagram(alphagram), [])
+            for word in alph['a']:
+                word_to_alphagram_dict[word] = this_q
+            questions.append(this_q)
+        # Populate all words fully with information from the database.
+        words_pop = self.get_words_data(word_to_alphagram_dict.keys())
+        # Then, modify the question for each word.
+        for word in words_pop:
+            question = word_to_alphagram_dict[word.word]
+            question.answers.append(word)
         return questions
 
     def get_questions(self, alphagrams):

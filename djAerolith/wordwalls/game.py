@@ -290,9 +290,8 @@ class WordwallsGame(object):
 
         Params:
             - qs: An array of indices into oriq_questions
-            - orig_questions: An array of question alphagrams.
-            - version: The version of the word list. This parameter
-                should probably be deprecated after migration.
+            - orig_questions: An array of questions, looking like
+                [{'q': ..., 'a': [...]}, ...]
 
         Returns:
             - A tuple (questions, answer_hash)
@@ -307,9 +306,7 @@ class WordwallsGame(object):
             alphagrams_to_fetch.append(orig_questions[i])
             index_map[orig_questions[i]['q']] = i
 
-        alphagrams_to_fetch = [Alphagram(obj['q'])
-                               for obj in alphagrams_to_fetch]
-        questions = db.get_questions(alphagrams_to_fetch)
+        questions = db.get_questions_from_alph_objects(alphagrams_to_fetch)
         answer_hash = {}
         ret_q_array = []
 

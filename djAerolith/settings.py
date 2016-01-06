@@ -177,7 +177,6 @@ INTERNAL_IPS = ('127.0.0.1',)
 from logging_filters import skip_suspicious_operations
 
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -189,7 +188,8 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s'
+            'format': '%(levelname)s %(asctime)s '
+                      '[%(filename)s::%(funcName)s:%(lineno)s] %(message)s'
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
