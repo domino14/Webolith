@@ -164,7 +164,7 @@ class WordDB(object):
 
     def get_words_data(self, words):
         """ Gets data for the words passed in. """
-        logger.debug('Getting word data for %s words.', len(words), words)
+        logger.debug('Getting word data for %s words.', len(words))
         c = self.conn.cursor()
         c.execute(""" SELECT lexicon_symbols, definition, front_hooks,
                   back_hooks, inner_front_hook, inner_back_hook, alphagram,
