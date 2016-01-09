@@ -16,26 +16,27 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import WordList
-from tablegame.models import GenericTableGameModel
-from wordwalls.models import WordwallsGameModel
 import json
 import time
 from datetime import date
-import random
+import logging
+import re
+
+from django.conf import settings
+from django.db import IntegrityError
+
+from base.forms import SavedListForm
+from lib.word_db_helper import WordDB, Questions
+from lib.word_searches import word_search
+from wordwalls.challenges import generate_dc_questions
+from base.models import WordList
+from tablegame.models import GenericTableGameModel
+from wordwalls.models import WordwallsGameModel
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
                               DailyChallengeMissedBingos, DailyChallengeName)
-import re
-from base.forms import SavedListForm
-from django.conf import settings
-import logging
-from django.db import IntegrityError
-from lib.word_db_helper import WordDB, Questions, Alphagram
-from lib.word_searches import word_search
 logger = logging.getLogger(__name__)
-from wordwalls.challenges import generate_dc_questions
 
 
 class WordwallsGame(object):

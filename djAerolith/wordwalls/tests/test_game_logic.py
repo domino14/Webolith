@@ -4,21 +4,24 @@
 A class mostly to test the logic for wordwalls/game.py
 
 """
+from datetime import date
+import mock
+import re
+import json
+import logging
 
 from django.test import TestCase
+from django.contrib.auth.models import User
+from django.test.utils import override_settings
+
 from base.forms import SavedListForm
-from datetime import date
 from wordwalls.game import WordwallsGame
 from wordwalls.models import DailyChallengeName, NamedList, DailyChallenge
 from wordwalls.tests.mixins import WordListAssertMixin
 from lib.word_searches import SearchDescription
 from base.models import Lexicon, WordList
-from django.contrib.auth.models import User
-import mock
-import re
-import json
-from django.test.utils import override_settings
-import logging
+
+
 logger = logging.getLogger(__name__)
 
 

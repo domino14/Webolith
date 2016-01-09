@@ -1,13 +1,16 @@
-from lib.response import response
+import logging
+import json
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+
 from current_version import CURRENT_VERSION
-import json
 from base.models import Lexicon, WordList
-import logging
-logger = logging.getLogger(__name__)
-from django.contrib.auth.decorators import login_required
 from base.utils import savedlist_from_probabilities, quizzes_response
+from lib.response import response
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
