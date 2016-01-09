@@ -611,6 +611,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
             len(set([q['q'] for q in questions])), 100)
         params = self.wwg.start_quiz(table_id, self.user)
         self.assertEqual(len(params['questions']), 100)
+        probability = params['questions'][0]['p']
+        self.assertTrue(probability > 0)
 
     @mock.patch('wordwalls.challenges.get_blank_bingos_content',
                 side_effect=blank_bingo_loader)
@@ -633,6 +635,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
             len(set([q['q'] for q in questions])), 50)
         params = self.wwg.start_quiz(table_id, self.user)
         self.assertEqual(len(params['questions']), 50)
+        # Blank bingos have no probability for their alphagram.
+        self.assertTrue(params['questions'][0]['p'] is None)
 
     def test_play_old_challenge(self):
         """ Play an old challenge instead of creating a new one. """

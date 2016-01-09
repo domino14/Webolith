@@ -104,7 +104,7 @@ class Questions(object):
 
 
 class Question(object):
-    def __init__(self, alphagram=None, answers=[]):
+    def __init__(self, alphagram=None, answers=None):
         """
         alphagram - An Alphagram object.
         answers - A list of Word objects. see word_db_helper.py
@@ -190,6 +190,18 @@ class WordDB(object):
                              combinations=row[1])
         return None
 
+    def get_alphagrams_data(self, alphagrams):
+        """
+        Get data for a list of passed-in strings. Some alphagrams may
+        not have available data, such as those with blanks.
+
+        """
+        c = self.conn.cursor()
+        c.execute('SELECT alphagram, probability, combinations FROM alphagrams'
+                  ' WHERE alphagram IN (%s)' % ','.join('?' * len(alphagrams)),
+                  alphagrams)
+        return self._alphagrams(c)
+
     # XXX: Only used by tests.
     def probability(self, alphagram):
         """
@@ -273,22 +285,43 @@ class WordDB(object):
         parameter alph_objects looks like:
         [{"q": ..., "a": [...]}, ...]
 
-        This call will not do a database lookup for the alphagrams,
-        instead it will look up all the words, and correlate them
-        to the passed-in alphagrams.
+        This function is a little complicated.
+
+        We fetch all alphagrams from the database, populating the
+        probability and combinations. If the alphagrams are not in the
+        database, as can happen with blank bingos, we just create an
+        Alphagram object for it with no probability/extra info.
+
+        We then fetch all words from the database and tie them back to
+        the passed in alphagrams. We get all possible word data,
+        including definitions, etc. We assume the words that are passed
+        in will be found in the database.
 
         """
         word_to_alphagram_dict = {}
         questions = Questions()
+        alphagrams = self.get_alphagrams_data([
+            obj['q'] for obj in alph_objects])
+        alph_string_to_objects = {}
+        for alphagram in alphagrams:
+            alph_string_to_objects[alphagram.alphagram] = alphagram
         # Create a mapping of words to initial questions
         for alph in alph_objects:
-            alphagram = alph['q']
-            this_q = Question(Alphagram(alphagram), [])
+            alphagram_string = alph['q']
+            if alphagram_string in alph_string_to_objects:
+                # Found information for alphagram_string in database
+                this_a = alph_string_to_objects[alphagram_string]
+            else:
+                # Alphagram string does not exist in database. Maybe
+                # it's a blank bingo.
+                this_a = Alphagram(alphagram_string)
+            this_q = Question(this_a, [])
             for word in alph['a']:
                 word_to_alphagram_dict[word] = this_q
             questions.append(this_q)
         # Populate all words fully with information from the database.
         words_pop = self.get_words_data(word_to_alphagram_dict.keys())
+
         # Then, modify the question for each word.
         for word in words_pop:
             question = word_to_alphagram_dict[word.word]
@@ -333,6 +366,8 @@ class WordDB(object):
     def process_question_query(self, rows):
         """ Process a query consisting of rows. Return a Questions object. """
         qs = Questions()
+        if len(rows) == 0:
+            return qs
         last_alphagram = None
         cur_words = []
         for row in rows:

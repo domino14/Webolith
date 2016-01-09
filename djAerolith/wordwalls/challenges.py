@@ -36,6 +36,8 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         questions is of type Questions
 
     """
+    logger.debug('Trying to create challenge {} for {} ({})'.format(
+        challenge_name, lex, challenge_date))
     db = WordDB(lex.lexiconName)
     # capture number. first try to match to today's lists
     m = re.match("Today's (?P<length>[0-9]+)s",
@@ -120,22 +122,25 @@ def get_blank_bingos_content(challenge_date, length, lexicon_name):
     return contents
 
 
+# XXX: This appears to be an expensive function; about 0.75 secs on my
+# machine!
 def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     """
     Generate a list of toughies given a challenge name. We only store info
     about 7s and 8s now so it would only give us those...
 
     Returns:
-        A list of alphagram strings.
+        A list of Alphagram objects.
     """
     # Find all challenges matching these parameters
     challenges = DailyChallenge.objects.filter(lexicon=lex).filter(
         date__range=(min_date, max_date)).filter(name=challenge_name)
     # And the missed bingos...
+    # XXX: Rewrite as a raw SQL query.
     mbs = DailyChallengeMissedBingos.objects.filter(
         challenge__in=list(challenges))
     num_solved = {}
-
+    logger.debug('Got all relevant challenges and bingos...')
     # How many people did each challenge? Store this to avoid looking it
     # up.
     for dc in challenges:
@@ -147,33 +152,23 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
         except DailyChallengeLeaderboard.DoesNotExist:
             # This should not happen.
             num_solved[dc] = 1e6
+    logger.debug('Created num_solved dictionary...')
     mb_dict = {}
     # Now sort by percentage missed.
     for b in mbs:
         perc_correct = float(b.numTimesMissed) / num_solved[b.challenge]
-        alphagram = get_alphagram_for_dcmb(b)
+        alphagram = b.alphagram_string
         if alphagram in mb_dict:
             if perc_correct > mb_dict[alphagram][1]:
                 mb_dict[alphagram] = alphagram, perc_correct
         else:
             mb_dict[alphagram] = alphagram, perc_correct
+    logger.debug('Created missed bingo dictionary...')
     # Sort by difficulty in reverse order (most difficult first)
     alphs = sorted(mb_dict.items(), key=lambda x: x[1][1], reverse=True)[:num]
+    logger.debug('Sorted by difficulty, returning...')
     # And just return the alphagram portion.
     return [Alphagram(a[0]) for a in alphs]
-
-
-def get_alphagram_for_dcmb(mb):
-    """
-    Get an alphagram string, given a DailyChallengeMissedBingos object.
-    Handle both cases: `alphagram` and `alphagram_string` columns.
-    XXX: This function needs to be rewritten once we remove the
-    `alphagram` column.
-
-    """
-    if mb.alphagram is None:
-        return mb.alphagram_string
-    return mb.alphagram.alphagram
 
 
 def generate_toughies_challenge(lexicon, requested_date):
@@ -190,6 +185,7 @@ def generate_toughies_challenge(lexicon, requested_date):
     alphagrams.extend(gen_toughies_by_challenge(
         DailyChallengeName.objects.get(name="Today's 8s"), 25, min_date,
         max_date, lexicon))
+    logger.debug('Generated!')
     return alphagrams
 
 

@@ -540,7 +540,8 @@ def getSavedListList(lex, user):
         return []
 
     qset = WordList.objects.filter(
-        lexicon=lex_object, user=user).order_by('-lastSaved')
+        lexicon=lex_object, user=user,
+        is_temporary=False).order_by('-lastSaved')
     retData = []
     now = datetime.now()
     for sl in qset:
