@@ -75,7 +75,6 @@ urlpatterns = patterns('',
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^cards/', include('flashcards.urls')),
-    (r'^quackleInterface/', include('quackleInterface.urls')),
     (r'^socket_token/', 'views.socket_token'),
     (r'^base/', include('base.urls'))
 )

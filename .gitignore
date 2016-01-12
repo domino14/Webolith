@@ -23,3 +23,4 @@ dbCreator/*.o
 dbCreator/Makefile
 dbCreator/moc_*
 dbCreator/dbCreator
+dbCreator/*.db

@@ -18,27 +18,32 @@
 
 # Django settings for djAerolith project.
 import os
-import re
 import settings_local   # this file is not shared on vcs
 DEBUG = settings_local.DEBUG
 TEMPLATE_DEBUG = DEBUG
 DEBUG_JS = settings_local.DEBUG_JS
 
 ADMINS = (
-     ('Cesar Del Solar', 'delsolar@gmail.com'),
+    ('Cesar Del Solar', 'delsolar@gmail.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': settings_local.sql_db_name,                      # Or path to database file if using sqlite3.
-        'USER': settings_local.sqlUser,                      # Not used with sqlite3.
-        'PASSWORD': settings_local.sqlPw,                  # Not used with sqlite3.
-        'HOST': settings_local.SQL_HOST,                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-        'OPTIONS': {"init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED" } ,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': settings_local.sql_db_name,
+        'USER': settings_local.sqlUser,
+        'PASSWORD': settings_local.sqlPw,
+        'HOST': settings_local.SQL_HOST,
+        'PORT': '',
+        'TEST': {
+            'CHARSET': 'utf8',
+            'COLLATION': 'utf8_general_ci',
+        },
+        'OPTIONS': {
+            "init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
+        },
         # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
         'ATOMIC_REQUESTS': True
     }
@@ -139,8 +144,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'gunicorn',
     'whitleyCards',
-    'quackleInterface',
-    'crosswordgame',
     'gargoyle',
     'flashcards',
     'registration'
@@ -174,7 +177,6 @@ INTERNAL_IPS = ('127.0.0.1',)
 from logging_filters import skip_suspicious_operations
 
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -186,7 +188,8 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s'
+            'format': '%(levelname)s %(asctime)s '
+                      '[%(filename)s::%(funcName)s:%(lineno)s] %(message)s'
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -284,3 +287,10 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 AWS_ACCESS_KEY_ID = settings_local.AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY = settings_local.AWS_SECRET_ACCESS_KEY
+
+WORD_DB_LOCATION = os.path.join(PROJECT_ROOT, '../dbCreator')
+
+SAVE_LIST_LIMIT_NONMEMBER = 15000
+SAVE_LIST_LIMIT_MEMBER = 5000000
+WORDWALLS_QUESTIONS_PER_ROUND = 50
+

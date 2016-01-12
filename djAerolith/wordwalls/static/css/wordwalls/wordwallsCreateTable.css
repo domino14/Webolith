@@ -79,3 +79,7 @@ span#savedListWarning
 .csw-license-div-holder {
     display: none;
 }
+
+#hidden-preview-container {
+    display: none;
+}

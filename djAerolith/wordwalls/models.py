@@ -18,7 +18,9 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from base.models import Lexicon, Alphagram
+
+from base.models import Lexicon, Alphagram, WordList
+from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
 
 
@@ -98,32 +100,41 @@ class DailyChallengeLeaderboardEntry(models.Model):
 class WordwallsGameModel(GenericTableGameModel):
     # Additional fields.
     # XXX: we should get rid of these and use SavedList.
-    numOrigQuestions = models.IntegerField()
-    origQuestions = models.TextField()
+    # Remove these after migration.
+    numOrigQuestions = models.IntegerField(blank=True, null=True)
+    origQuestions = models.TextField(blank=True, null=True)
 
-    numCurQuestions = models.IntegerField()
-    curQuestions = models.TextField()
+    numCurQuestions = models.IntegerField(blank=True, null=True)
+    curQuestions = models.TextField(blank=True, null=True)
 
-    numMissed = models.IntegerField()
-    missed = models.TextField()
+    numMissed = models.IntegerField(blank=True, null=True)
+    missed = models.TextField(blank=True, null=True)
 
-    numFirstMissed = models.IntegerField()
-    firstMissed = models.TextField()
+    numFirstMissed = models.IntegerField(blank=True, null=True)
+    firstMissed = models.TextField(blank=True, null=True)
+
+    # Removed above, just keep below.
+    # XXX: Remove null after migration.
+    word_list = models.ForeignKey(WordList, null=True)
 
 
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge)
-    alphagram = models.ForeignKey(Alphagram)
+    # XXX: Phase out this column soon.
+    alphagram = models.ForeignKey(Alphagram, null=True)
+    alphagram_string = models.CharField(max_length=15, default='')
     numTimesMissed = models.IntegerField(default=0)
 
-    class Meta:
-        unique_together = ("challenge", "alphagram")
+    # XXX: Add a unique_together on alphagram_string and challenge later,
+    # after the migration is complete.
 
     def __unicode__(self):
-        return "%s, %s, %d" % (self.challenge.__unicode__(),
-                               self.alphagram.alphagram,
-                               self.numTimesMissed)
+        return "%s, %s, %d" % (
+            self.challenge.__unicode__(),
+            self.alphagram.alphagram if self.alphagram else
+            self.alphagram_string,
+            self.numTimesMissed)
 
 
 class NamedList(models.Model):
@@ -131,6 +142,5 @@ class NamedList(models.Model):
     name = models.CharField(max_length=50, default='')
     numQuestions = models.IntegerField()
     wordLength = models.IntegerField()
-    # is a range of alphagram pk indices, or if False it is a list of indices
     isRange = models.BooleanField()
-    questions = models.TextField(default='')  # json string
+    questions = models.TextField(validators=[named_list_format_validator])

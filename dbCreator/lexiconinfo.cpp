@@ -134,7 +134,7 @@ double LexiconInfo::combinations(QString alphagram)
         ++counts[i];
     }
 
-    return totalCombos;
+    return quint64(totalCombos);
 
 }
 

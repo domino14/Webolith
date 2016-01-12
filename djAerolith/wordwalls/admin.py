@@ -15,12 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from base.models import SavedList
+from django.contrib import admin
+
+from base.models import WordList
 from wordwalls.models import (
     DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry,
     DailyChallengeName)
 from wordwalls.models import WordwallsGameModel, DailyChallengeMissedBingos
-from django.contrib import admin
 
 
 class DailyChallengeAdmin(admin.ModelAdmin):
@@ -31,38 +32,48 @@ class DailyChallengeAdmin(admin.ModelAdmin):
 
 class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
     fields = ['challenge', 'maxScore']
+    search_fields = ['challenge']
     readonly_fields = ('challenge', 'maxScore')
+    list_display = ['challenge', 'maxScore']
 
 
 class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
     fields = ['user', 'score', 'timeRemaining', 'board', 'additionalData',
               'qualifyForAward']
+    search_fields = ['user']
+    list_display = ['user', 'score', 'timeRemaining', 'board']
     readonly_fields = ('board',)
 
 
 class WordwallsGameAdmin(admin.ModelAdmin):
     fields = ['host', 'inTable', 'lastActivity', 'currentGameState',
-              'gameType', 'playerType']
-    search_fields = ['host', 'lastActivity']
-    readonly_fields = ('lastActivity', )
+              'gameType', 'playerType', 'word_list']
+    search_fields = ['host', 'lastActivity', 'word_list']
+    readonly_fields = ('lastActivity', 'word_list', 'inTable', 'host',
+                       'gameType', 'playerType', 'currentGameState')
+    list_display = ['host', 'lastActivity', 'word_list']
 
 admin.site.register(WordwallsGameModel, WordwallsGameAdmin)
 
 
-class WordwallsSavedListAdmin(admin.ModelAdmin):
+class WordwallsWordListAdmin(admin.ModelAdmin):
     fields = ['user', 'name', 'lexicon', 'created', 'lastSaved',
               'numAlphagrams', 'goneThruOnce', 'missed', 'firstMissed',
-              'origQuestions', 'curQuestions']
-    readonly_fields = ('lastSaved', 'created')
+              'origQuestions', 'curQuestions', 'is_temporary', 'version']
+    search_fields = ['user__username', 'name', 'lexicon']
+    list_display = ['user', 'name', 'lexicon', 'created', 'lastSaved',
+                    'is_temporary']
+    readonly_fields = ('lastSaved', 'created', 'is_temporary')
 
 
 class DailyChallengeMissedBingosAdmin(admin.ModelAdmin):
-    fields = ['challenge', 'alphagram', 'numTimesMissed']
-    list_display = ('challenge', 'alphagram', 'numTimesMissed')
-    readonly_fields = ('challenge', 'alphagram', 'numTimesMissed')
+    fields = ['challenge', 'alphagram_string', 'numTimesMissed']
+    search_fields = ['alphagram_string']
+    list_display = ('challenge', 'alphagram_string', 'numTimesMissed')
+    readonly_fields = ('challenge', 'alphagram_string', 'numTimesMissed')
 
 
-admin.site.register(SavedList, WordwallsSavedListAdmin)
+admin.site.register(WordList, WordwallsWordListAdmin)
 admin.site.register(DailyChallengeMissedBingos,
                     DailyChallengeMissedBingosAdmin)
 admin.site.register(DailyChallengeLeaderboard, DailyChallengeLeaderboardAdmin)

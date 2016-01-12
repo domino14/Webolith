@@ -17,34 +17,35 @@
 # To contact the author, please email delsolar at gmail dot com
 
 # Create your views here.
+
+import json
+import time
+import os
+import logging
+from datetime import date, datetime
+
 from django.http import Http404
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.conf import settings
+from gargoyle import gargoyle
+
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm)
-from base.models import Lexicon, alphProbToProbPK, SavedList
-from django.contrib.auth.decorators import login_required
-import json
-from wordwalls.game import WordwallsGame, SearchDescription
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseBadRequest
+from base.models import Lexicon, WordList
+from wordwalls.game import WordwallsGame
+from lib.word_searches import SearchDescription
+from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
-                              DailyChallengeLeaderboardEntry)
-from wordwalls.models import (DailyChallengeName, NamedList)
-from datetime import date, datetime
-import time
-from django.conf import settings
+                              DailyChallengeLeaderboardEntry,
+                              DailyChallengeName, NamedList)
 import wordwalls.settings
-import base.settings
-import os
-import random
-import logging
 from lib.response import response, StatusCode
-from lib.socket_helper import get_connection_token
-from wordwalls.utils import get_alphas_from_words, get_pks_from_alphas
+from base.utils import get_alphas_from_words, UserListParseException
 from current_version import CURRENT_VERSION
-from wordwalls.utils import UserListParseException
-from gargoyle import gargoyle
+from wordwalls.challenges import toughies_challenge_date
 
 
 dcTimeMap = {}
@@ -155,8 +156,7 @@ def challenge_submit(user, post):
     if not chDate or chDate > date.today():
         chDate = date.today()
 
-    tablenum = wwg.initializeByDailyChallenge(
-        user, lex, challengeName, chDate)
+    tablenum = wwg.initialize_daily_challenge(user, lex, challengeName, chDate)
     if tablenum == 0:
         return response({'success': False,
                          'error': 'Challenge does not exist.'})
@@ -181,17 +181,12 @@ def search_params_submit(user, post):
                                   'search parameters or time selection.'})
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
-    quizTime = int(
-        round(timeForm.cleaned_data['quizTime'] * 60))
-    alphasSearchDescription = searchForAlphagrams(
-        fwForm.cleaned_data, lex)
+    quiz_time = int(round(timeForm.cleaned_data['quizTime'] * 60))
+    search = searchForAlphagrams(fwForm.cleaned_data, lex)
     wwg = WordwallsGame()
-    tablenum = wwg.initializeBySearchParams(
-        user, alphasSearchDescription,
-        quizTime)
+    tablenum = wwg.initialize_by_search_params(user, search, quiz_time)
 
-    return response({'url': reverse('wordwalls_table',
-                                    args=(tablenum,)),
+    return response({'url': reverse('wordwalls_table', args=(tablenum,)),
                      'success': True})
 
 
@@ -210,7 +205,7 @@ def saved_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
-    tablenum = wwg.initializeBySavedList(
+    tablenum = wwg.initialize_by_saved_list(
         lex, user, slForm.cleaned_data['wordList'],
         slForm.cleaned_data['listOption'], quizTime)
     if tablenum == 0:
@@ -247,7 +242,7 @@ def named_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
-    tablenum = wwg.initializeByNamedList(
+    tablenum = wwg.initialize_by_named_list(
         lex, user, nlForm.cleaned_data['namedList'],
         quizTime)
     if tablenum == 0:
@@ -261,7 +256,7 @@ def handle_homepage_post(profile, request):
     numAlphas = profile.wordwallsSaveListSize
     limit = 0
     if not profile.member:
-        limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+        limit = settings.SAVE_LIST_LIMIT_NONMEMBER
     if 'action' not in request.POST:
         return response({'success': False,
                          'error': 'Your request was not successful. You may '
@@ -302,12 +297,12 @@ def table(request, id):
             return response({'g': state[0], 'C': state[1]})
         elif action == "gameEnded":
             wwg = WordwallsGame()
-            ret = wwg.checkGameEnded(id)
+            ret = wwg.check_game_ended(id)
             # 'going' is the opposite of 'game ended'
             return response({'g': not ret})
         elif action == "giveUp":
             wwg = WordwallsGame()
-            ret = wwg.giveUp(request.user, id)
+            ret = wwg.give_up(request.user, id)
             return response({'g': not ret})
         elif action == "save":
             wwg = WordwallsGame()
@@ -315,7 +310,8 @@ def table(request, id):
             return response(ret)
         elif action == "giveUpAndSave":
             wwg = WordwallsGame()
-            ret = wwg.giveUpAndSave(request.user, id, request.POST['listname'])
+            ret = wwg.give_up_and_save(request.user, id,
+                                       request.POST['listname'])
             # this shouldn't return a response, because it's not going to be
             # caught by the javascript
             logger.debug("Give up and saving returned: %s" % ret)
@@ -327,7 +323,7 @@ def table(request, id):
             return response({'success': True})
         elif action == "getDcData":
             wwg = WordwallsGame()
-            dcId = wwg.getDcId(id)
+            dcId = wwg.get_dc_id(id)
             if dcId > 0:
                 leaderboardData = getLeaderboardDataDcInstance(
                     DailyChallenge.objects.get(pk=dcId))
@@ -338,29 +334,24 @@ def table(request, id):
         permitted = wwg.permit(request.user, id)
         if gargoyle.is_active('disable_games', request):
             permitted = False
-        if permitted:
-            params = wwg.getAddParams(id)
-            # Add styling params from user's profile (for styling table
-            # tiles, backgrounds, etc)
-            try:
-                profile = request.user.aerolithprofile
-                style = profile.customWordwallsStyle
-                if style != "":
-                    params['style'] = style
-            except:
-                pass
-
-            return render(request, 'wordwalls/table.html',
-                          {'tablenum': id,
-                           'username': request.user.username,
-                           'addParams': json.dumps(params),
-                           'avatarUrl': profile.avatarUrl,
-                           'CURRENT_VERSION': CURRENT_VERSION
-                           })
-
-        else:
+        if not permitted:
             return render(request, 'wordwalls/notPermitted.html',
                           {'tablenum': id})
+        params = wwg.get_add_params(id)
+        # Add styling params from user's profile (for styling table
+        # tiles, backgrounds, etc)
+        profile = request.user.aerolithprofile
+        style = profile.customWordwallsStyle
+        if style != "":
+            params['style'] = style
+
+        return render(request, 'wordwalls/table.html',
+                      {'tablenum': id,
+                       'username': request.user.username,
+                       'addParams': json.dumps(params),
+                       'avatarUrl': profile.avatarUrl,
+                       'CURRENT_VERSION': CURRENT_VERSION
+                       })
 
 
 def start_game(request, id):
@@ -369,109 +360,92 @@ def start_game(request, id):
             {'serverMsg': 'The Aerolith server is currently undergoing '
                           'maintenance. Please try again in a few minutes.'})
     wwg = WordwallsGame()
-    gameReady = wwg.startRequest(request.user, id)
-    if not gameReady:
-        return response({"serverMsg": request.user.username})
-    else:
-        quizParams = wwg.startQuiz(id, request.user)
-        return response(quizParams)
+    quizParams = wwg.start_quiz(id, request.user)
+    return response(quizParams)
 
 
 def ajax_upload(request):
-    if request.method == "POST":
-        lexForm = LexiconForm(request.GET)
-        if lexForm.is_valid():
-            lex = Lexicon.objects.get(
-                lexiconName=lexForm.cleaned_data['lexicon'])
-        else:
-            raise Http404("Bad lexicon")
-        if request.is_ajax():
-            # the file is stored raw in the request
-            upload = request
-            # AJAX Upload will pass the filename in the querystring if
-            # it is the "advanced" ajax upload
-            try:
-                filename = request.GET['qqfile']
-            except KeyError:
-                return HttpResponseBadRequest("AJAX request not valid")
-            # Not an ajax upload, so it was the "basic" iframe version
-            # with submission via form
-        else:
-            if len(request.FILES) == 1:
-                # FILES is a dictionary in Django but Ajax Upload gives
-                # the uploaded file an ID based on a random number, so
-                # it cannot be guessed here in the code. Rather than
-                # editing Ajax Upload to pass the ID in the querystring,
-                # observe that each upload is a separate request, so
-                # FILES should only have one entry. Thus, we can just
-                # grab the first (and only) value in the dict.
-                upload = request.FILES.values()[0]
-            else:
-                raise Http404("Bad Upload")
-            filename = upload.name
+    if request.method != "POST":
+        return response('This endpoint only accepts POST',
+                        StatusCode.BAD_REQUEST)
 
-      # save the file
-        success, msg = createUserList(upload, filename, lex, request.user)
+    lex_form = LexiconForm(request.POST)
 
-        # let Ajax Upload know whether we saved it or not
+    if lex_form.is_valid():
+        lex = Lexicon.objects.get(
+            lexiconName=lex_form.cleaned_data['lexicon'])
+    else:
+        logger.debug(lex_form.errors)
+        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
 
-        ret_json = {'success': success,
-                    'msg': msg}
-        return HttpResponse(json.dumps(ret_json))
+    uploaded_file = request.FILES['file']
+    if uploaded_file.multiple_chunks():
+        return response('Your file is too big.', StatusCode.BAD_REQUEST)
+
+    filename = uploaded_file.name
+    file_contents = uploaded_file.read()
+    # save the file
+    success, msg = create_user_list(file_contents, filename, lex,
+                                    request.user)
+    if not success:
+        return response(msg, StatusCode.BAD_REQUEST)
+    return response(msg)
 
 
-def createUserList(upload, filename, lex, user):
+def create_user_list(contents, filename, lex, user):
+    """
+    Creates a user list from file contents, a filename, a lexicon,
+    and a user. Checks to see if the user can create more lists.
+
+    """
     filename_stripped, extension = os.path.splitext(filename)
     try:
-        SavedList.objects.get(name=filename_stripped, user=user, lexicon=lex)
+        WordList.objects.get(name=filename_stripped, user=user, lexicon=lex)
         # uh oh, it exists!
-        return (False, "A list by the name %s already exists for this "
-                       "lexicon! Please rename your file." % filename_stripped)
-    except:
+        return (
+            False,
+            "A list by the name {} already exists for this "
+            "lexicon! Please rename your file.".format(filename_stripped))
+    except WordList.DoesNotExist:
         pass
     t1 = time.time()
     try:
-        alphaSet = get_alphas_from_words(upload)
+        alphas = get_alphas_from_words(
+            contents, wordwalls.settings.UPLOAD_FILE_LINE_LIMIT)
     except UserListParseException as e:
         return (False, str(e))
 
     profile = user.aerolithprofile
-    numSavedAlphas = profile.wordwallsSaveListSize
-    limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+    num_saved_alphas = profile.wordwallsSaveListSize
+    limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
-    if (numSavedAlphas + len(alphaSet)) > limit and not profile.member:
+    if (num_saved_alphas + len(alphas)) > limit and not profile.member:
         return False, "This list would exceed your total list size limit"
+    db = WordDB(lex.lexiconName)
 
-    pkList, addlMsg = get_pks_from_alphas(alphaSet, lex.pk)
-    numAlphagrams = len(pkList)
-    random.shuffle(pkList)
-    logger.info('number of uploaded alphagrams: %d', numAlphagrams)
+    questions = db.get_questions(alphas)
+    num_alphagrams = questions.size()
+
+    logger.info('number of uploaded alphagrams: %d', num_alphagrams)
     logger.info('elapsed time: %f', time.time() - t1)
     logger.info('user: %s, filename: %s', user.username, filename)
 
-    sl = SavedList(lexicon=lex, name=filename_stripped, user=user,
-                   numAlphagrams=numAlphagrams, numCurAlphagrams=numAlphagrams,
-                   numFirstMissed=0, numMissed=0, goneThruOnce=False,
-                   questionIndex=0, origQuestions=json.dumps(pkList),
-                   curQuestions=json.dumps(range(numAlphagrams)),
-                   missed=json.dumps([]), firstMissed=json.dumps([]))
-    try:
-        sl.save()
-    except:
-        return False, "Unable to save list!"
-
-    profile.wordwallsSaveListSize += numAlphagrams
+    wl = WordList()
+    wl.name = filename_stripped
+    wl.initialize_list(questions.to_python(), lex, user, shuffle=True,
+                       keep_old_name=True)
+    profile.wordwallsSaveListSize += num_alphagrams
     profile.save()
 
-    return True, addlMsg
+    return True, ''
 
 
 def searchForAlphagrams(data, lex):
-    """ searches for alphagrams using form data """
+    """ Searches for alphagrams using form data """
     length = int(data['wordLength'])
-    minP = alphProbToProbPK(data['probabilityMin'], lex.pk, length)
-    maxP = alphProbToProbPK(data['probabilityMax'], lex.pk, length)
-    return SearchDescription.probPkIndexRange(minP, maxP, lex)
+    return SearchDescription.probability_range(data['probabilityMin'],
+                                               data['probabilityMax'],
+                                               length, lex)
 
 
 def getLeaderboardDataDcInstance(dc):
@@ -509,9 +483,7 @@ def getLeaderboardData(lex, chName, challengeDate):
         return None
 
     if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-        from wordwalls.management.commands.genMissedBingoChalls import (
-            challengeDateFromReqDate)
-        chdate = challengeDateFromReqDate(challengeDate)
+        chdate = toughies_challenge_date(challengeDate)
     else:
         chdate = challengeDate
     try:
@@ -567,8 +539,9 @@ def getSavedListList(lex, user):
     except Lexicon.DoesNotExist:
         return []
 
-    qset = SavedList.objects.filter(
-        lexicon=lex_object, user=user).order_by('-lastSaved')
+    qset = WordList.objects.filter(
+        lexicon=lex_object, user=user,
+        is_temporary=False).order_by('-lastSaved')
     retData = []
     now = datetime.now()
     for sl in qset:

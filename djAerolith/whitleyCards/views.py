@@ -1,15 +1,19 @@
+import json
+import logging
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+
+from lib.word_db_helper import WordDB
 from lib.response import response
 from wordwalls.views import searchForAlphagrams
 from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList
-from base.models import Lexicon, Alphagram, SavedList
-import json
-from django.core.urlresolvers import reverse
-import logging
+from base.models import Lexicon, WordList
 logger = logging.getLogger(__name__)
-QUIZ_CHUNK_SIZE = 1000
+
+QUIZ_CHUNK_SIZE = 5000
 
 
 @login_required
@@ -28,8 +32,9 @@ def createQuiz(request):
                     lexiconName=lexForm.cleaned_data['lexicon'])
                 asd = searchForAlphagrams(fwForm.cleaned_data, lex)
                 return response({
-                    'url': reverse('flashcards_by_prob_pk_range',
-                                   args=(asd['min'], asd['max'])),
+                    'url': reverse('flashcards_by_prob_range',
+                                   args=(asd['lexicon'].pk, asd['length'],
+                                         asd['min'], asd['max'])),
                     'success': True})
 
         elif action == 'namedListsFlashcard':
@@ -72,31 +77,33 @@ def createQuiz(request):
                     status=400)
 
 
-def getQuizChunkByProb(minP, maxP):
+def getQuizChunkByProb(lexicon, length, minP, maxP):
     maxPGet = maxP
     newMinP = -1
     if maxP-minP+1 > QUIZ_CHUNK_SIZE:
         # only quiz on first 100 and send new lower limit as part of data
         newMinP = minP + QUIZ_CHUNK_SIZE
         maxPGet = newMinP - 1
-    wordData = getWordDataByProb(minP, maxPGet)
+    wordData = getWordDataByProb(lexicon, length, minP, maxPGet)
     return (wordData, newMinP, maxP)
 
 
-def getQuizChunkByIndices(indices, minIndex):
-    maxIndexGet = len(indices) - 1
+def getQuizChunkByQuestions(lexicon, questions, minIndex):
+    maxIndexGet = len(questions) - 1
     newMinIndex = -1
-    if len(indices) > QUIZ_CHUNK_SIZE:
+    if len(questions) > QUIZ_CHUNK_SIZE:
         maxIndexGet = minIndex + QUIZ_CHUNK_SIZE - 1
         newMinIndex = minIndex + QUIZ_CHUNK_SIZE
 
-    wordData = getWordDataFromIndices(indices[minIndex:maxIndexGet+1])
+    wordData = getWordDataFromQuestions(lexicon,
+                                        questions[minIndex:maxIndexGet+1])
     # will get minIndex to maxIndexGet inclusive
-    return (wordData, newMinIndex, len(indices) - 1)
+    return (wordData, newMinIndex, len(questions) - 1)
 
 
 @login_required
-def probPkRange(request, minP, maxP):
+def prob_range(request, lexid, length, minP, maxP):
+    lexicon = Lexicon.objects.get(pk=lexid)
     if request.method == 'GET':
         return render(request, 'whitleyCards/quiz.html')
     elif request.method == 'POST':
@@ -104,7 +111,7 @@ def probPkRange(request, minP, maxP):
         if action == 'getInitialSet':
             minP = int(minP)
             maxP = int(maxP)
-            data = getQuizChunkByProb(minP, maxP)
+            data = getQuizChunkByProb(lexicon, length, minP, maxP)
             return response({'data': data[0],
                              'nextMinP': data[1],
                              'nextMaxP': data[2],
@@ -117,7 +124,7 @@ def probPkRange(request, minP, maxP):
 
             maxP = int(request.POST['maxP'])
             logger.debug("getting set %s, %s", minP, maxP)
-            data = getQuizChunkByProb(minP, maxP)
+            data = getQuizChunkByProb(lexicon, length, minP, maxP)
             return response({'data': data[0],
                              'nextMinP': data[1],
                              'nextMaxP': data[2]})
@@ -127,13 +134,15 @@ def getQuizChunkFromNamedList(nlpk, minIndex):
     nl = NamedList.objects.get(pk=nlpk)
     questions = json.loads(nl.questions)
     if nl.isRange:
-        data = getQuizChunkByProb(questions[0] + minIndex, questions[1])
+        data = getQuizChunkByProb(nl.lexicon, nl.wordLength,
+                                  questions[0] + minIndex,
+                                  questions[1])
         if data[1] != -1:
             return (data[0], data[1] - questions[0], data[2])
         else:
             return (data[0], -1, data[2])
     else:
-        data = getQuizChunkByIndices(questions, minIndex)
+        data = getQuizChunkByQuestions(nl.lexicon, questions, minIndex)
         return data
 
 
@@ -164,16 +173,16 @@ def namedListPk(request, nlpk):
 
 
 def getQuizChunkFromSavedList(slpk, minIndex, option):
-    sl = SavedList.objects.get(pk=slpk)
+    sl = WordList.objects.get(pk=slpk)
     if option == SavedListForm.RESTART_LIST_CHOICE:
         questions = json.loads(sl.origQuestions)
-        data = getQuizChunkByIndices(questions, minIndex)
+        data = getQuizChunkByQuestions(sl.lexicon, questions, minIndex)
         return data[0], data[1], data[2], sl.numAlphagrams
     elif option == SavedListForm.FIRST_MISSED_CHOICE:
         questionIndices = json.loads(sl.firstMissed)
         origQuestions = json.loads(sl.origQuestions)
         questions = [origQuestions[i] for i in questionIndices]
-        data = getQuizChunkByIndices(questions, minIndex)
+        data = getQuizChunkByQuestions(sl.lexicon, questions, minIndex)
         print questions, data
         return data[0], data[1], data[2], sl.numFirstMissed
 
@@ -204,21 +213,21 @@ def savedListPk(request, slpk, option):
                              'nextMaxP': data[2]})
 
 
-def getWordDataByProb(minP, maxP):
+def getWordDataByProb(lexicon, length, minP, maxP):
+    db = WordDB(lexicon.lexiconName)
+    questions = db.get_questions_for_probability_range(minP, maxP, length)
+    return get_word_data(questions.questions_array())
+
+
+def getWordDataFromQuestions(lexicon, questions):
+    db = WordDB(lexicon.lexiconName)
+    questions = db.get_questions_from_alph_objects(questions)
+    return get_word_data(questions.questions_array())
+
+
+def get_word_data(questions_array):
     data = []
-    for i in range(minP, maxP+1):
-        alpha = Alphagram.objects.get(pk=i)
-        for j in alpha.word_set.all():
-            data.append({'w': j.word, 'd': j.definition})
-
-    return data
-
-
-def getWordDataFromIndices(indices):
-    data = []
-    for i in indices:
-        alpha = Alphagram.objects.get(pk=i)
-        for j in alpha.word_set.all():
-            data.append({'w': j.word, 'd': j.definition})
-
+    for question in questions_array:
+        for word in question.answers:
+            data.append({'w': word.word, 'd': word.definition})
     return data

@@ -1,4 +1,4 @@
-/* global requirejs,define,mixpanel */
+/* global requirejs,define,mixpanel,JSON */
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   /*
@@ -12,7 +12,7 @@ requirejs.config({
     bootstrap: '../../../../static/lib/bootstrap/js/bootstrap',
     underscore: '../../../../static/lib/underscore-1.4.4',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
-    fileUploader: '../../../../static/js/aerolith/fileuploader',
+    dropzone: '../../../../static/js/aerolith/dropzone',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
     sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
@@ -27,9 +27,6 @@ requirejs.config({
     bootstrap: {
       deps: ['jquery'],
       exports: '$.fn.tab'
-    },
-    fileUploader: {
-      exports: 'qq'
     },
     'json2': {
       exports: 'JSON'
@@ -47,8 +44,9 @@ requirejs.config({
 define([
   'module',
   'jquery',
+  'underscore',
   'tableCreate',
-  'fileUploader',
+  'dropzone',
   'socket',
   'chat',
   'mustache',
@@ -59,7 +57,7 @@ define([
   'csrfAjax',
   'bootstrap',
   'datepicker'
-], function (module, $, TableCreate, fileUploader, Socket, Chat,
+], function (module, $, _, TableCreate, Dropzone, Socket, Chat,
   Mustache,
   ChallengesHelp, SearchParamsHelp, SavedListsHelp, NamedListsHelp) {
   "use strict";
@@ -101,36 +99,33 @@ define([
       todayHighlight: true,
       autoclose: true
     });
-    uploader = new fileUploader.FileUploader({
-      action: tableCreateParams.ajaxUploadUrl,
-      element: $('#file-uploader')[0],
-      multiple: false,
-      onComplete: function(id, fileName, responseJSON) {
-        if (responseJSON.success ){
-          $("#file-upload-msgs").text("Success! " + responseJSON.msg);
-          app.requestSavedListInfo();
-          app.savedListLexiconChanged();  // to reload lists
-          mixpanel.track('Uploaded list');
-        } else {
-          mixpanel.track('Upload list error');
-          $("#file-upload-msgs").text("Error: " + responseJSON.msg);
-        }
-      },
-      onAllComplete: function(uploads) {
-      },
-      onSubmit: function() {
-        uploader.setParams({
-          'lexicon': $("#id_lexicon").val(),
-          'csrf_token': tableCreateParams.csrfToken,
-          'csrf_name': 'csrfmiddlewaretoken',
-          'csrf_xname': 'X-CSRFToken'
-        });
-      },
-      params: {
-
-      }
+    uploader = new Dropzone('#file-uploader', {
+      url: tableCreateParams.ajaxUploadUrl,
+      headers: {'X-CSRFToken': tableCreateParams.csrfToken},
+      uploadMultiple: false,
+      maxFilesize: 2.5,
+      addRemoveLinks: false,
+      previewsContainer: '#hidden-preview-container',
+      createImageThumbnails: false,
+      maxFiles: 1
     });
-    $('.qq-upload-button').addClass('btn btn-info');
+    uploader.on('success', function(file, response) {
+      $('#file-upload-msgs').text('Success! ' + JSON.parse(response));
+      app.requestSavedListInfo();
+      app.savedListLexiconChanged(); // to reload lists
+      mixpanel.track('Uploaded list');
+    });
+    uploader.on('error', function(file, response) {
+      mixpanel.track('Upload list error');
+      $("#file-upload-msgs").text("Error: " + JSON.parse(response));
+    });
+    uploader.on('sending', function(file, xhr, formData) {
+      formData.append('lexicon', $('#id_lexicon').val());
+    });
+    uploader.on('complete', function(file) {
+      uploader.removeFile(file);
+    });
+
     if (tableCreateParams.chatEnabled === 'True' && false) {
       s = new Socket();
       s.setUrl(tableCreateParams.socketUrl);

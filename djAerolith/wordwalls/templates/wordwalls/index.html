@@ -3,7 +3,6 @@
 {% block ss %}
     <link href="/static/css/wordwalls/wordwallsCreateTable.css" rel="stylesheet">
     <link href="/static/css/aerolith/datepicker3.css" rel="stylesheet">
-    <link href="/static/css/aerolith/fileuploader.css" rel="stylesheet">
 {% endblock %}
 {% block title %}Wordwalls - select list{% endblock %}
 
@@ -156,8 +155,10 @@
 
               </div>
               <div class="form-group">
-                <div id="file-uploader" class="col-md-10 col-md-offset-2"></div>
-
+                <div class="col-md-2 col-md-offset-2">
+                  <div id="file-uploader" class="btn btn-primary"><span class="glyphicon glyphicon-upload dz-message"></span> Upload Word List</div>
+                </div>
+                <div id="hidden-preview-container"></div>
               </div>
             </form>
           </div>

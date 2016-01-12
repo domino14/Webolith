@@ -19,37 +19,28 @@
 #include "utilities.h"
 #include "databasecreator.h"
 #include <iostream>
+#include <QtSql>
+
+#define INT_LIMIT 1<<31
+
 bool probLessThan(const Alph &a1, const Alph &a2)
+{
+    return a1.combinations > a2.combinations;
+}
+
+bool probLessThanQuint64(const AlphQuint64 &a1, const AlphQuint64 &a2)
 {
     return a1.combinations > a2.combinations;
 }
 
 DatabaseCreator::DatabaseCreator(LexiconMap* lexiconMap)
 {
-
-    alphFile.setFileName("alphs.txt");
-    wordFile.setFileName("words.txt");
-    lexFile.setFileName("lex.txt");
-
-    alphFile.open(QIODevice::WriteOnly);
-    wordFile.open(QIODevice::WriteOnly);
-    lexFile.open(QIODevice::WriteOnly);
-
-    alphStream.setDevice(&alphFile);
-    wordStream.setDevice(&wordFile);
-    lexStream.setDevice(&lexFile);
-
     this->lexiconMap = lexiconMap;
     qDebug() << "In db creator";
-    wordIndex = 1;
-
 }
 
 DatabaseCreator::~DatabaseCreator()
 {
-    alphFile.close();
-    wordFile.close();
-    lexFile.close();
 }
 
 
@@ -63,7 +54,6 @@ void DatabaseCreator::createLexiconDatabases(QStringList dbsToCreate)
     {
         if (!lexiconMap->map.contains(key)) continue;
         createLexiconDatabase(key);
-        emit createdDatabase(key);
     }
 
     qDebug() << "Done creating databases!";
@@ -81,6 +71,15 @@ QString DatabaseCreator::reverse(QString word)
 
 void DatabaseCreator::createLexiconDatabase(QString lexiconName)
 {
+    // Wipe out existing file.
+    QFile::remove(lexiconName + ".db");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", lexiconName);
+    db.setDatabaseName(lexiconName + ".db");
+
+    if (!db.open()) {
+        qDebug() << "Unable to open database for " << lexiconName;
+        return;
+    }
     qDebug() << lexiconName.toAscii().constData() << ": Loading word graphs...";
     QTime time;
     time.start();
@@ -90,6 +89,7 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
     qDebug() << lexiconName.toAscii().constData() << ": Reading in dictionary.";
 
     QHash <QString, Alph> alphagramsHash;
+    QHash <QString, AlphQuint64> alphagramsHashQuint64;
 
     QFile file(Utilities::getRootDir() + "/words/" + lexInfo->wordsFilename);
     if (!file.open(QIODevice::ReadOnly)) return;
@@ -118,111 +118,163 @@ void DatabaseCreator::createLexiconDatabase(QString lexiconName)
         wordCount++;
     }
     in.seek(0);
-    emit setProgressRange(0, wordCount*3);   // 1 accounts for reading the words, 2 accounts for alph, 3 for fixing defs
-    emit setProgressValue(0);
-    int progress = 0;
     while (!in.atEnd())
     {
         QString line = in.readLine();
         line = line.simplified();
         if (line.length() > 0)
         {
-            progress++;
-            if (progress%1000 == 0)
-                emit setProgressValue(progress);
             QString word = line.section(' ', 0, 0).toUpper();
             QString definition = line.section(' ', 1);
             definitionsHash.insert(word, definition);
-
-
             QString alphagram = LexiconUtilities::alphagrammize(word, lessThan);
-            if (!alphagramsHash.contains(alphagram))
-                alphagramsHash.insert(alphagram, Alph(dummy, lexInfo->combinations(alphagram), alphagram));
+            if (!alphagramsHash.contains(alphagram)) {
+                alphagramsHash.insert(alphagram,
+                    Alph(dummy, lexInfo->combinations(alphagram), alphagram));
+            }
 
             alphagramsHash[alphagram].words << word;
+
+            // Also add it to the other hash.
+            if (word.length() > 10) {
+                if (!alphagramsHashQuint64.contains(alphagram)) {
+                    alphagramsHashQuint64.insert(alphagram,
+                        AlphQuint64(dummy, lexInfo->combinations(alphagram),
+                                    alphagram));
+                }
+
+                alphagramsHashQuint64[alphagram].words << word;
+            }
 
         }
     }
 
     /* now sort alphagramsHash by probability/length */
-    qDebug() << lexiconName.toAscii().constData() << ": Sorting by probability...";
+    qDebug() << lexiconName.toAscii().constData() <<
+        ": Sorting by probability...";
     QList <Alph> alphs = alphagramsHash.values();
     qSort(alphs.begin(), alphs.end(), probLessThan);
 
-    qDebug() << lexiconName.toAscii().constData() << ": Creating alphagrams...";
+    QList <AlphQuint64> alphsQuint64 = alphagramsHashQuint64.values();
+    qSort(alphsQuint64.begin(), alphsQuint64.end(), probLessThanQuint64);
 
-    updateDefinitions(definitionsHash, progress);
+    QList <QVariant> alphagrams;
+
+    for (int i = 0; i < alphs.size(); i++) {
+        alphagrams.append(QVariant::fromValue(alphs[i]));
+    }
+    for (int i = 0; i < alphsQuint64.size(); i++) {
+        alphagrams.append(QVariant::fromValue(alphsQuint64[i]));
+    }
+
+    qDebug() << lexiconName.toAscii().constData() <<
+        ": Creating alphagrams...";
+
+    updateDefinitions(definitionsHash);
     int probs[16];
     for (int i = 0; i < 16; i++)
         probs[i] = 0;
     int lexIndex = lexInfo->lexiconIndex;
-    for (int i = 0; i < alphs.size(); i++)
-    {
-        int wordLength = alphs[i].alphagram.length();
+    QSqlQuery query("", db);
+    query.exec("create table alphagrams (probability int, "
+               "alphagram varchar(20), length int, combinations int)");
+    query.exec("create table words (word varchar(20), alphagram varchar(20), "
+               "lexicon_symbols varchar(5), definition varchar(512), "
+               "front_hooks varchar(26), back_hooks varchar(26), "
+               "inner_front_hook int, inner_back_hook int)");
+    query.exec("create index alpha_index on alphagrams(alphagram)");
+    query.exec("create index prob_index on alphagrams(probability, length)");
+    query.exec("create index word_index on words(word)");
+    query.exec("create index alphagram_index on words(alphagram)");
 
-        progress++;
-        if (progress%1000 == 0)
-            emit setProgressValue(progress); // this is gonna be a little behind because of alphagrams.. it's ok
+    QString alphagramInsertQuery = "INSERT INTO alphagrams (probability, "
+                                   "alphagram, length, combinations) "
+                                   "VALUES(?, ?, ?, ?)";
+    QString wordInsertQuery = "INSERT INTO words (word, alphagram, "
+                              "lexicon_symbols, definition, front_hooks, "
+                              "back_hooks, inner_front_hook, inner_back_hook) "
+                              "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+    db.transaction();
+    Alph alphagram;
+    AlphQuint64 alphagramQuint64;
+    int wordLength;
+    QString alphagramString;
+    quint64 combinations;
+    QStringList words;
+    for (int i = 0; i < alphagrams.size(); i++)
+    {
+        if (i < alphs.size()) {
+            alphagram = alphagrams[i].value<Alph>();
+            alphagramString = alphagram.alphagram;
+            if (alphagramString.length() > 10) {
+                continue;
+            }
+            combinations = int(alphagram.combinations);
+            words = alphagram.words;
+        } else {
+            // cast as alphsQuint64
+            alphagramQuint64 = alphagrams[i].value<AlphQuint64>();
+            alphagramString = alphagramQuint64.alphagram;
+            combinations = alphagramQuint64.combinations;
+            words = alphagramQuint64.words;
+        }
+        wordLength = alphagramString.length();
+
+        if (i%10000 == 0) {
+            qDebug() << i << "...";
+        }
 
         if (wordLength <= 15)
             probs[wordLength]++;
 
-        int encodedProb = LexiconUtilities::encodeProbIndex(probs[wordLength], wordLength, lexIndex);
-        alphStream << alphs[i].alphagram << ","
-                << lexIndex << ","
-                << probs[wordLength] << ","
-                << encodedProb << ","
-                << wordLength << endl;
-        for (int j = 0; j < alphs[i].words.length(); j++)
+        query.prepare(alphagramInsertQuery);
+        query.bindValue(0, probs[wordLength]);
+        query.bindValue(1, alphagramString);
+        query.bindValue(2, wordLength);
+        query.bindValue(3, combinations);
+        query.exec();
+        for (int j = 0; j < words.length(); j++)
         {
-            QString word = alphs[i].words[j];
-            QPair<bool, QString> backHooks = lexInfo->dawg.findHooks(word.toAscii());
-            QPair<bool, QString> frontHooks = lexInfo->reverseDawg.findHooks(reverse(word).toAscii());
+            QString word = words[j];
+            QPair<bool, QString> backHooks = lexInfo->dawg.findHooks(
+                word.toAscii());
+            QPair<bool, QString> frontHooks = lexInfo->reverseDawg.findHooks(
+                reverse(word).toAscii());
             QString lexSymbols = "";
-            if (updateCSWPoundSigns && lexInfoAmerica && !lexInfoAmerica->dawg.findWord(word.toAscii()))
+            if (updateCSWPoundSigns && lexInfoAmerica &&
+                    !lexInfoAmerica->dawg.findWord(word.toAscii())) {
                 lexSymbols = "#";
-            if (updateAmericaPlusSigns && lexInfoOWL2 && !lexInfoOWL2->dawg.findWord(word.toAscii()))
+            }
+            if (updateAmericaPlusSigns && lexInfoOWL2 &&
+                    !lexInfoOWL2->dawg.findWord(word.toAscii())) {
                 lexSymbols += "+";
-	    if (updateCSWPlusSigns && lexInfoCSW12 && !lexInfoCSW12->dawg.findWord(word.toAscii()))
-	        lexSymbols += "+";
-            if (updateAmericaDollarSigns && lexInfoCSW15 && !lexInfoCSW15->dawg.findWord(word.toAscii()))
+            }
+            if (updateCSWPlusSigns && lexInfoCSW12 &&
+                    !lexInfoCSW12->dawg.findWord(word.toAscii())) {
+                lexSymbols += "+";
+            }
+            if (updateAmericaDollarSigns && lexInfoCSW15 &&
+                    !lexInfoCSW15->dawg.findWord(word.toAscii())) {
                 lexSymbols += "$";
-            wordStream << wordIndex << "," << alphs[i].words[j] << "," << encodedProb << ","
-                        << lexIndex << "," << lexSymbols << "," << escapeStr(definitionsHash[word]) << ","
-                        << frontHooks.second << "," << backHooks.second << ","
-                        << frontHooks.first << "," << backHooks.first << endl;
-            wordIndex++;
+            }
+            query.prepare(wordInsertQuery);
+            query.bindValue(0, word);
+            query.bindValue(1, alphagramString);
+            query.bindValue(2, lexSymbols);
+            query.bindValue(3, definitionsHash[word]);
+            query.bindValue(4, frontHooks.second);
+            query.bindValue(5, backHooks.second);
+            query.bindValue(6, frontHooks.first ? 1 : 0);
+            query.bindValue(7, backHooks.first ? 1 : 0);
+            query.exec();
         }
     }
+    db.commit();
+    // lexStream <<   lexIndex << "," <<   lexInfo->lexiconName << "," << escapeStr(lexInfo->descriptiveName)
+    //         << "," << escapeStr(stringifyArray(probs)) << endl;
 
-    lexStream <<   lexIndex << "," <<   lexInfo->lexiconName << "," << escapeStr(lexInfo->descriptiveName)
-            << "," << escapeStr(stringifyArray(probs)) << endl;
-
-    qDebug() << "Created text files in" << time.elapsed() << "for lexicon" << lexiconName;
-
-
-    emit setProgressValue(0);
-
-}
-
-QString DatabaseCreator::escapeStr(QString str)
-{
-    /* escapes string suitable for loading into SQL database*/
-    str.replace(",", "\\,");
-    str.replace("\n", "\\\n");
-    return str;
-}
-
-QString DatabaseCreator::stringifyArray(int* probs)
-{
-    QString ret = "{";
-    for (int i = 2; i < 16; i++)
-    {
-        ret += "\"" + QString::number(i) + "\":" + QString::number(probs[i]);
-        if (i != 15) ret += ",";
-    }
-    ret+= "}";
-    return ret;
+    qDebug() << "Created database in" << time.elapsed() / 1000.0
+        << "s for lexicon" <<  lexiconName;
 }
 
 /*
@@ -287,15 +339,11 @@ void DatabaseCreator::sqlListMaker(QString queryString, QString listName, quint8
 
 }*/
 
-void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, int progress)
+void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash)
 {
     QHashIterator<QString, QString> hashIterator(defHash);
     while (hashIterator.hasNext())
     {
-        progress++;
-        if (progress%1000 == 0)
-            emit setProgressValue(progress);
-
         hashIterator.next();
         QString word = hashIterator.key();
         QString definition = hashIterator.value();
@@ -313,7 +361,9 @@ void DatabaseCreator::updateDefinitions(QHash<QString, QString>& defHash, int pr
 
 }
 
-QString DatabaseCreator::followDefinitionLinks(QString definition, QHash<QString, QString>& defHash, bool useFollow, int maxDepth)
+QString DatabaseCreator::followDefinitionLinks(QString definition,
+                                               QHash<QString, QString>& defHash,
+                                               bool useFollow, int maxDepth)
 {
     /* this code is basically taken from Michael Thelen's CreateDatabaseThread.cpp, part of Zyzzyva, which is
        GPLed software, source code available at http://www.zyzzyva.net, copyright Michael Thelen. */
@@ -375,7 +425,9 @@ QString DatabaseCreator::followDefinitionLinks(QString definition, QHash<QString
     return newDefinition;
 }
 
-QString DatabaseCreator::getSubDefinition(const QString& word, const QString& pos, QHash<QString, QString>& defHash)
+QString DatabaseCreator::getSubDefinition(const QString& word,
+                                          const QString& pos,
+                                          QHash<QString, QString>& defHash)
 {
     if (!defHash.contains(word))
         return QString();

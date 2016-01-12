@@ -16,383 +16,320 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from base.models import (Alphagram, alphProbToProbPK, probPKToAlphProb,
-                         alphagrammize, Word, SavedList)
-from tablegame.models import GenericTableGameModel
-from wordwalls.models import WordwallsGameModel
 import json
 import time
 from datetime import date
-import random
+import logging
+import re
+
+from django.conf import settings
+from django.db import IntegrityError
+
+from base.forms import SavedListForm
+from lib.word_db_helper import WordDB, Questions
+from lib.word_searches import word_search
+from wordwalls.challenges import generate_dc_questions
+from base.models import WordList
+from tablegame.models import GenericTableGameModel
+from wordwalls.models import WordwallsGameModel
+from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeMissedBingos, DailyChallengeName,
-                              NamedList)
-import re
-from base.forms import SavedListForm
-import base.settings
-import logging
-from django.db import IntegrityError
-import os
-from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
-                                                         FRIENDLY_COMMON_LONG)
+                              DailyChallengeMissedBingos, DailyChallengeName)
 logger = logging.getLogger(__name__)
 
 
-try:
-    COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
-    COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
-except NamedList.DoesNotExist:
-    COMMON_SHORT_NAMED_LIST = None
-    COMMON_LONG_NAMED_LIST = None
-
-
 class WordwallsGame(object):
-    # XXX: don't duplicate WordList/SavedList logic / fields here. Instead
-    # the wordwalls game model should maybe have a foreign key to a list.
-    def createGameModelInstance(self, host, playerType, lex,
-                                numOrigQuestions,
-                                origQuestionsStr,
-                                numCurQuestions,
-                                curQuestionsStr,
-                                numMissed,
-                                missedStr,
-                                numFirstMissed,
-                                firstMissedStr,
-                                **StateKwargs):
-        state = {'answerHash': {},
-                 'questionIndex': 0,
-                 'questionsToPull': 50,
-                 'quizGoing': False,
-                 'quizStartTime': 0,
-                 'numAnswersThisRound': 0,
-                 'goneThruOnce': False,
-                 'gameType': 'regular'}
+    def _initial_state(self):
+        """ Return an initial state object, for a brand new game. """
+        return {
+            'answerHash': {},
+            'questionsToPull': settings.WORDWALLS_QUESTIONS_PER_ROUND,
+            'quizGoing': False,
+            'quizStartTime': 0,
+            'numAnswersThisRound': 0,
+            'gameType': 'regular'
+        }
 
-        for param in StateKwargs:
-            state[param] = StateKwargs[param]
-
+    def create_game_instance(self, host, lex, word_list, **state_kwargs):
+        state = self._initial_state()
+        for param in state_kwargs:
+            state[param] = state_kwargs[param]
         wgm = WordwallsGameModel(
-            host=host,
-            currentGameState=json.dumps(state),
+            host=host, currentGameState=json.dumps(state),
             gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
-            playerType=playerType,
+            playerType=GenericTableGameModel.SINGLEPLAYER_GAME,
             lexicon=lex,
-            numOrigQuestions=numOrigQuestions,
-            origQuestions=origQuestionsStr,
-            curQuestions=curQuestionsStr,  # range(len(indices))
-            numCurQuestions=numCurQuestions,
-            missed=missedStr,
-            numMissed=numMissed,
-            firstMissed=firstMissedStr,
-            numFirstMissed=numFirstMissed)
-
+            word_list=word_list)
         return wgm
 
-    def getDc(self, chDate, chLex, chName):
+    def initialize_word_list(self, questions, lexicon, user):
         """
-            Gets a challenge with date, lex, name.
-        """
-        dc = DailyChallenge.objects.get(date=chDate, lexicon=chLex,
-                                        name=chName)
-        # pull out its indices
+        Initializes a word list with the given questions and
+        returns it.
 
-        qs = json.loads(dc.alphagrams)
+        questions - An instance of Questions.
+        lexicon - An instance of base.Lexicon
+        user - The user.
+
+        """
+        wl = WordList()
+        wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True)
+        return wl
+
+    def get_dc(self, ch_date, ch_lex, ch_name):
+        """
+        Gets a challenge with date, lex, name.
+
+        """
+        dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex,
+                                        name=ch_name)
+        qs = Questions()
+        qs.set_from_json(dc.alphagrams)
+        qs.shuffle()
         secs = dc.seconds
-        random.shuffle(qs)
         return qs, secs, dc
 
-    def initializeByDailyChallenge(self, user, challengeLex, challengeName,
-                                   challengeDate):
-        # Does a daily challenge exist with this name and the current
-        # date? If not, create it.
+    def initialize_daily_challenge(self, user, ch_lex, ch_name, ch_date):
+        """
+        Initializes a WordwallsGame daily challenge.
+
+        """
+
+        # Does a daily challenge exist with this name and date?
+        # If not, create it.
         today = date.today()
-        qualifyForAward = False
-        if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+        qualify_for_award = False
+        if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
             # Repeat on Tuesday at midnight local time (ie beginning of
             # the day, 0:00) Tuesday is an isoweekday of 2. Find the
             # nearest Tuesday back in time. isoweekday goes from 1 to 7.
-            from wordwalls.management.commands.genMissedBingoChalls import (
-                challengeDateFromReqDate)
-            chDate = challengeDateFromReqDate(challengeDate)
-            if chDate == challengeDateFromReqDate(today):
-                qualifyForAward = True
+            ch_date = toughies_challenge_date(ch_date)
+            if ch_date == toughies_challenge_date(today):
+                qualify_for_award = True
         # otherwise, it's not a 'bingo toughies', but a regular challenge.
         else:
-            chDate = challengeDate
-            if chDate == today:
-                qualifyForAward = True
+            if ch_date == today:
+                qualify_for_award = True
 
-        try:
-            qs, secs, dc = self.getDc(
-                chDate, challengeLex, challengeName)
-        except DailyChallenge.DoesNotExist:
-            # does not exist!
-            try:
-                ret = self.generateDailyChallengePks(challengeName,
-                                                     challengeLex,
-                                                     chDate)
-            except IOError:
-                return 0
-            if ret:
-                qs, secs = ret
-                dc = DailyChallenge(date=chDate, lexicon=challengeLex,
-                                    name=challengeName, seconds=secs,
-                                    alphagrams=json.dumps(qs))
-                try:
-                    dc.save()
-                except IntegrityError:
-                    logger.exception("Caught integrity error")
-                    # This happens rarely if the DC gets generated twice
-                    # in very close proximity.
-                    qs, secs, dc = self.getDc(chDate, challengeLex,
-                                              challengeName)
-            else:
-                return 0
-        num_questions = len(qs)
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME, challengeLex,
-            num_questions,
-            json.dumps(qs),
-            num_questions,
-            json.dumps(range(num_questions)),
-            0,
-            json.dumps([]),
-            0,
-            json.dumps([]),
-            gameType='challenge',
-            challengeId=dc.pk,
-            timerSecs=secs,
-            qualifyForAward=qualifyForAward,
-            questionsToPull=num_questions)
+        ret = self.get_or_create_dc(ch_date, ch_lex, ch_name)
+        if ret is None:
+            return 0
+        qs, secs, dc = ret
+        wl = self.initialize_word_list(qs, ch_lex, user)
+        wgm = self.create_game_instance(user, ch_lex, wl,
+                                        # Extra parameters to be put in 'state'
+                                        gameType='challenge',
+                                        questionsToPull=qs.size(),
+                                        challengeId=dc.pk,
+                                        timerSecs=secs,
+                                        qualifyForAward=qualify_for_award)
         wgm.save()
-        wgm.inTable.add(user)
         return wgm.pk   # the table number
 
-    def initializeBySearchParams(self, user, alphasSearchDescription,
-                                 timeSecs):
-        pkIndices = self.getPkIndices(alphasSearchDescription)
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME,
-            alphasSearchDescription['lexicon'],
-            len(pkIndices),
-            json.dumps(pkIndices),
-            len(pkIndices),
-            json.dumps(range(len(pkIndices))),
-            0,
-            json.dumps([]),
-            0,
-            json.dumps([]),
-            timerSecs=timeSecs)
+    def get_or_create_dc(self, ch_date, ch_lex, ch_name):
+        """
+        Get, or create, a daily challenge with the given parameters.
+
+        """
+        try:
+            qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
+        except DailyChallenge.DoesNotExist:
+            try:
+                ret = generate_dc_questions(ch_name, ch_lex, ch_date)
+                if not ret:
+                    return None
+            except IOError:
+                return None
+
+            qs, secs = ret
+            dc = DailyChallenge(date=ch_date, lexicon=ch_lex,
+                                name=ch_name, seconds=secs,
+                                alphagrams=qs.to_json())
+            try:
+                dc.save()
+            except IntegrityError:
+                logger.exception("Caught integrity error")
+                # This happens rarely if the DC gets generated twice
+                # in very close proximity.
+                qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
+
+        return qs, secs, dc
+
+    def initialize_by_search_params(self, user, search_description, time_secs):
+        lexicon = search_description['lexicon']
+        wl = self.initialize_word_list(word_search(search_description),
+                                       lexicon, user)
+        wgm = self.create_game_instance(user, lexicon, wl, timerSecs=time_secs)
         wgm.save()
-        wgm.inTable.add(user)
         return wgm.pk   # this is a table number id!
 
-    def initializeByNamedList(self, lex, user, namedList, secs):
-        addlParams = {}
-        addlParams['timerSecs'] = secs
-        pks = json.loads(namedList.questions)
-        if namedList.isRange:
-            pks = range(pks[0], pks[1] + 1)
-        if len(pks) != namedList.numQuestions:
-            raise
-        random.shuffle(pks)
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME, lex,
-            namedList.numQuestions,
-            json.dumps(pks),
-            namedList.numQuestions,
-            json.dumps(range(len(pks))),
-            0,
-            json.dumps([]),
-            0,
-            json.dumps([]),
-            **addlParams)
+    def initialize_by_named_list(self, lex, user, named_list, secs):
+        qs = json.loads(named_list.questions)
+        db = WordDB(lex.lexiconName)
+        if named_list.isRange:
+            questions = db.get_questions_for_probability_range(
+                qs[0], qs[1], named_list.wordLength, order=False)
+            wl = self.initialize_word_list(questions, lex, user)
+        else:
+            # Initialize word list directly.
+            wl = WordList()
+            wl.initialize_list(qs, lex, user, shuffle=True)
+
+        wgm = self.create_game_instance(user, lex, wl, timerSecs=secs)
         wgm.save()
-        wgm.inTable.add(user)
         return wgm.pk
 
-    def initializeBySavedList(self, lex, user, savedList, listOption, secs):
-        # First of all, return 0 if the user and the saved list don't
-        # match. TODO test this.
-        if savedList.user != user:
+    def initialize_by_saved_list(self, lex, user, saved_list, list_option,
+                                 secs):
+        if saved_list.user != user:
+            # Maybe this isn't a big deal.
+            logger.warning('Saved list user does not match user %s %s',
+                           saved_list.user, user)
             return 0
 
-        if (listOption == SavedListForm.FIRST_MISSED_CHOICE and
-                savedList.goneThruOnce is False):
-            logger.info('error, first missed list only valid if player has '
-                        'gone thru list once')
+        if (list_option == SavedListForm.FIRST_MISSED_CHOICE and
+                saved_list.goneThruOnce is False):
+            logger.warning('Error, first missed list only valid if player has '
+                           'gone thru list once.')
             return 0    # Can't do a 'first missed' list if we haven't gone
                         # through it once!
 
-        addlParams = {}
-        origQuestionsStr = savedList.origQuestions
-        goneThruOnce = savedList.goneThruOnce
-        if listOption == SavedListForm.RESTART_LIST_CHOICE:
-            # reset quiz to just original questions
-            addlParams['questionIndex'] = 0
-            curQuestionsStr = json.dumps(range(savedList.numAlphagrams))
-            numCurQuestions = savedList.numAlphagrams
-            firstMissedStr = json.dumps([])
-            numFirstMissed = 0
-            missedStr = json.dumps([])
-            numMissed = 0
-            goneThruOnce = False
-            #TODO shuffle origQuestions
-        else:
-        # add the other keys that the state variable needs.
-            if listOption == SavedListForm.FIRST_MISSED_CHOICE:
-                curQuestionsStr = savedList.firstMissed
-                # TODO maybe keep track of this length in database
-                numCurQuestions = savedList.numFirstMissed
-                firstMissedStr = savedList.firstMissed
-                numFirstMissed = savedList.numFirstMissed
+        self.maybe_modify_word_list(saved_list, list_option)
+        wgm = self.create_game_instance(user, lex, saved_list,
+                                        saveName=saved_list.name,
+                                        timerSecs=secs)
 
-                addlParams['questionIndex'] = 0
-                numMissed = 0
-                missedStr = json.dumps([])
-            else:   # continue list
-                curQuestionsStr = savedList.curQuestions
-                numCurQuestions = savedList.numCurAlphagrams
-                firstMissedStr = savedList.firstMissed
-                numFirstMissed = savedList.numFirstMissed
-                missedStr = savedList.missed
-                numMissed = savedList.numMissed
-                addlParams['questionIndex'] = savedList.questionIndex
-
-        addlParams['saveName'] = savedList.name
-        addlParams['goneThruOnce'] = goneThruOnce
-        addlParams['timerSecs'] = secs
-        wgm = self.createGameModelInstance(
-            user, GenericTableGameModel.SINGLEPLAYER_GAME, lex,
-            savedList.numAlphagrams,
-            origQuestionsStr,
-            numCurQuestions,
-            curQuestionsStr,
-            numMissed,
-            missedStr,
-            numFirstMissed,
-            firstMissedStr,
-            **addlParams)
         wgm.save()
-        wgm.inTable.add(user)
-
         return wgm.pk   # this is a table number id!
 
-    def getDcId(self, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
+    def maybe_modify_word_list(self, word_list, list_option):
+        """
+        Modifies the passed-in word list based on the options. If the
+        user chose to continue, does not modify word list.
+
+        """
+
+        if list_option == SavedListForm.RESTART_LIST_CHOICE:
+            word_list.restart_list(shuffle=True)
+        elif list_option == SavedListForm.FIRST_MISSED_CHOICE:
+            word_list.set_to_first_missed()
+        # Otherwise, if the user chose to continue, no changes need to
+        # be made.
+
+    def get_dc_id(self, tablenum):
+        wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return 0
         state = json.loads(wgm.currentGameState)
         return state.get('challengeId', 0)
 
-    # startRequest may be not used at all until later. for now we only
-    # have two types of games: single player will start right away with
-    # no 'request' needed multiplayer will have timed starts - every
-    # minute or so
-    def startRequest(self, user, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
-        if not wgm:
-            return False
-        # check if the player that sent the request is actually in the table.
-        if user in wgm.inTable.all():
-            #print user, "sent start request!"
-            #if user not in wgm.playing.all():
-            #    wgm.playing.add(user)
-            return True
-        else:
-            return False
-
-    def createErrorMessage(self, message):
+    def create_error_message(self, message):
         return {'error': message}
 
-    def startQuiz(self, tablenum, user):
-        wgm = self.getWGM(tablenum)
+    def start_quiz(self, tablenum, user):
+        wgm = self.get_wgm(tablenum)
         if not wgm:
-            return self.createErrorMessage("That table does not exist.")
+            return self.create_error_message("That table does not exist.")
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
             logger.debug('The quiz is going, state %s', state)
-            return self.createErrorMessage("The quiz is currently running.")
+            return self.create_error_message("The quiz is currently running.")
                 # the quiz is running right now; do not attempt to start again
-        startMessage = ""
-        curQuestionsObj = json.loads(wgm.curQuestions)
-        origQuestionsObj = json.loads(wgm.origQuestions)
+        start_message = ""
+        word_list = wgm.word_list
 
-        if state['questionIndex'] > wgm.numCurQuestions - 1:
-            startMessage += "Now quizzing on missed list.\r\n"
-            curQuestionsObj = json.loads(wgm.missed)
-            wgm.curQuestions = wgm.missed
-            wgm.numCurQuestions = len(curQuestionsObj)
-            wgm.missed = json.dumps([])
-            wgm.numMissed = 0
+        if not word_list:
+            raise Exception('Did not migrate word list for this table.')
 
-            state['questionIndex'] = 0
+        if word_list.questionIndex > word_list.numCurAlphagrams - 1:
+            start_message += "Now quizzing on missed list.\r\n"
+            word_list.set_to_missed()
             state['quizGoing'] = False
 
-        if wgm.numCurQuestions == 0:
+        if word_list.numCurAlphagrams == 0:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
-            return self.createErrorMessage(
+            return self.create_error_message(
                 "The quiz is done. Please exit the table and have a nice day!")
-        qs = curQuestionsObj[
-            state['questionIndex']:state['questionIndex'] +
-            state['questionsToPull']]
 
-        startMessage += "These are questions %d through %d of %d." % (
-            state['questionIndex'] + 1, len(qs) + state['questionIndex'],
-            wgm.numCurQuestions)
+        cur_questions_obj = json.loads(word_list.curQuestions)
+        idx = word_list.questionIndex
+        num_qs_per_round = state['questionsToPull']
+        qs = cur_questions_obj[idx:(idx + num_qs_per_round)]
 
-        state['questionIndex'] += state['questionsToPull']
+        start_message += "These are questions %d through %d of %d." % (
+            idx + 1, len(qs) + idx, word_list.numCurAlphagrams)
 
-        qsSet = set(qs)
-        if len(qsSet) != len(qs):
-            logger.info("Question set is not unique!!")
+        word_list.questionIndex += num_qs_per_round
 
-        questions = []
-        answerHash = {}
+        qs_set = set(qs)
+        if len(qs_set) != len(qs):
+            logger.error("Question set is not unique!!")
+
+        questions, answer_hash = self.load_questions(
+            qs, json.loads(word_list.origQuestions), word_list.lexicon)
+        state['quizGoing'] = True   # start quiz
+        state['quizStartTime'] = time.time()
+        state['answerHash'] = answer_hash
+        state['numAnswersThisRound'] = len(answer_hash)
+        wgm.currentGameState = json.dumps(state)
+        wgm.save()
+        word_list.save()
+        ret = {'questions': questions,
+               'time': state['timerSecs'],
+               'gameType': state['gameType'],
+               'serverMsg': start_message}
+
+        return ret
+
+    def load_questions(self, qs, orig_questions, lexicon):
+        """
+        Turn the qs array into an array of full question objects, ready
+        for the front-end.
+
+        Params:
+            - qs: An array of indices into oriq_questions
+            - orig_questions: An array of questions, looking like
+                [{'q': ..., 'a': [...]}, ...]
+
+        Returns:
+            - A tuple (questions, answer_hash)
+                questions: [{'a': alphagram, 'ws': words, ...}, {..}, ..]
+                answer_hash: {'word': (alphagram, idx), ...}
+
+        """
+        db = WordDB(lexicon.lexiconName)
+        alphagrams_to_fetch = []
+        index_map = {}
         for i in qs:
+            alphagrams_to_fetch.append(orig_questions[i])
+            index_map[orig_questions[i]['q']] = i
+
+        questions = db.get_questions_from_alph_objects(alphagrams_to_fetch)
+        answer_hash = {}
+        ret_q_array = []
+
+        for q in questions.questions_array():
             words = []
-            if type(origQuestionsObj[i]) == int:
-                a = Alphagram.objects.get(pk=origQuestionsObj[i])
-                alphagram_str = a.alphagram
-                alphagram_pk = a.pk
-                word_set = a.word_set.all()
-            elif type(origQuestionsObj[i]) == dict:
-                # This is a direct alphagram, usually a blank alphagram.
-                alphagram_str = origQuestionsObj[i]['q']
-                alphagram_pk = None
-                word_set = [Word.objects.get(pk=word_pk) for word_pk in
-                            origQuestionsObj[i]['a']]
-            for w in word_set:
+            alphagram_str = q.alphagram.alphagram
+            i = index_map[alphagram_str]
+            for w in q.answers:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
                               's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
                               'ibh': w.inner_back_hook})
-                answerHash[w.word] = alphagram_str, i
-            questions.append({'a': alphagram_str, 'ws': words,
-                              'p': probPKToAlphProb(alphagram_pk),
-                              'idx': i})
-        state['quizGoing'] = True   # start quiz
-        state['quizStartTime'] = time.time()
-        state['answerHash'] = answerHash
-        state['numAnswersThisRound'] = len(answerHash)
-        wgm.currentGameState = json.dumps(state)
-        wgm.save()
+                answer_hash[w.word] = alphagram_str, i
+            ret_q_array.append({'a': alphagram_str, 'ws': words,
+                                'p': q.alphagram.probability, 'idx': i})
+        return ret_q_array, answer_hash
 
-        ret = {'questions': questions,
-               'time': state['timerSecs'],
-               'gameType': state['gameType'],
-               'serverMsg': startMessage}
-
-        return ret
-
-    def didTimerRunOut(self, state):
+    def did_timer_run_out(self, state):
         # internal function; not meant to be called by the outside
         return (state['quizStartTime'] + state['timerSecs']) < time.time()
 
-    def getWGM(self, tablenum, lock=True):
+    def get_wgm(self, tablenum, lock=True):
         """
             Get word game model.
             :lock Should lock if this is a write operation. This is because
@@ -408,50 +345,48 @@ class WordwallsGame(object):
             return None
         return wgm
 
-    def checkGameEnded(self, tablenum):
+    def check_game_ended(self, tablenum):
         # Called when javascript tells the server that time ran out on
-        # its end. TODO think about what happens if javascript tells the
-        # server too early
-        wgm = self.getWGM(tablenum)
+        # its end. TODO think about what happens (on the front-end)
+        # if javascript tells the server too early.
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return False
 
         state = json.loads(wgm.currentGameState)
-        if self.didTimerRunOut(state) and state['quizGoing']:
+        if self.did_timer_run_out(state) and state['quizGoing']:
             # the game is over! mark it so.
             state['timeRemaining'] = 0
-            self.doQuizEndActions(state, tablenum, wgm)
+            self.do_quiz_end_actions(state, tablenum, wgm)
             wgm.currentGameState = json.dumps(state)
             wgm.save()
 
             return True
-        else:
-            logger.info('Got game ended but did not actually end: '
-                        'start_time=%f timer=%f now=%f quizGoing=%s',
-                        state['quizStartTime'], state['timerSecs'],
-                        time.time(), state['quizGoing'])
-            return False
+        logger.info('Got game ended but did not actually end: '
+                    'start_time=%f timer=%f now=%f quizGoing=%s',
+                    state['quizStartTime'], state['timerSecs'],
+                    time.time(), state['quizGoing'])
+        return False
 
-    def giveUp(self, user, tablenum):
-        wgm = self.getWGM(tablenum)
+    def give_up(self, user, tablenum):
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return False
-        if (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
-                user in wgm.inTable.all()):
+        if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
             state = json.loads(wgm.currentGameState)
             if state['quizGoing'] is False:
                 logger.info("the quiz isn't going. can't give up.")
                 return False
 
             state['timeRemaining'] = 0
-            self.doQuizEndActions(state, tablenum, wgm)
+            self.do_quiz_end_actions(state, tablenum, wgm)
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return True
         return False
 
-    def getAddParams(self, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
+    def get_add_params(self, tablenum):
+        wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return {}
 
@@ -461,157 +396,140 @@ class WordwallsGame(object):
         else:
             return {}
 
-    def giveUpAndSave(self, user, tablenum, listname):
-        if self.giveUp(user, tablenum):
+    def give_up_and_save(self, user, tablenum, listname):
+        if self.give_up(user, tablenum):
             return self.save(user, tablenum, listname)
-        else:
-            return {'success': False}
+        return {'success': False}
 
-    def save(self, user, tablenum, listname):
-        logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
-                     user, tablenum, listname)
-        ret = {'success': False}
-        wgm = self.getWGM(tablenum)
-        if not wgm:
-            ret['info'] = 'That table does not exist!'
-            return ret
+    def validate_can_save(self, tablenum, listname, wgm, state):
+        """
+        If we cannot save, return a string with an error message,
+        otherwise return None.
+
+        """
 
         # make sure the list name is not just all whitespace
         s = re.search(r"\S", listname)
         if s is None:
-            ret['info'] = 'Please enter a valid list name!'
-            return ret
-
-        if not (wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME and
-                user in wgm.inTable.all()):
-            ret['info'] = 'Your game must be a single player game!'
-            return ret
-        state = json.loads(wgm.currentGameState)
-        logger.debug('state=%s', state)
+            return 'Please enter a valid list name!'
+        if not wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
+            return 'Your game must be a single player game!'
         if state['quizGoing']:
             # TODO actually should check if time ran out
             # this seems like an arbitrary limitation but it makes
             # things a lot easier. we can change this later.
-            ret['info'] = ('You can only save the game at the end of '
-                           'a round.')
-            logger.error('Unable to save, quiz is going.')
-            return ret
+            logger.warning('Unable to save, quiz is going.')
+            return 'You can only save the game at the end of a round.'
 
-        # now check if a list with this name, lexicon, and user exists
-        profile = user.aerolithprofile
-        if profile.member:
-            limit = base.settings.SAVE_LIST_LIMIT_MEMBER
-        else:
-            limit = base.settings.SAVE_LIST_LIMIT_NONMEMBER
+    def save(self, user, tablenum, listname):
+        logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
+                     user, tablenum, listname)
+        wgm = self.get_wgm(tablenum)
+        if not wgm:
+            return {'success': False, 'info': 'That table does not exist!'}
+        state = json.loads(wgm.currentGameState)
+        err = self.validate_can_save(tablenum, listname, wgm, state)
+        if err is not None:
+            return {'success': False, 'info': err}
+        # If we are continuing a word list, just save the progress.
+        return self.save_word_list_result(
+            wgm.word_list, listname, state, wgm, user,
+            # XXX: This condition is a bit confusing, but seems right:
+            make_permanent_list=wgm.word_list.is_temporary)
 
-        exceededLimitMessage = (
-            'Unable to save list because you have gone over the number '
-            'of total alphagrams limit (%d). You can increase this limit '
-            'by becoming a supporter!' % limit)
-        profileModified = False
-        try:
-            sl = SavedList.objects.select_for_update().get(
-                lexicon=wgm.lexicon, name=listname, user=user)
-            oldNumAlphas = sl.numAlphagrams
-            sl.origQuestions = wgm.origQuestions
-            sl.missed = wgm.missed
-            sl.numMissed = wgm.numMissed
-            sl.curQuestions = wgm.curQuestions
-            sl.numCurAlphagrams = wgm.numCurQuestions
-            sl.firstMissed = wgm.firstMissed
-            sl.numFirstMissed = wgm.numFirstMissed
-            sl.questionIndex = state['questionIndex']
-            sl.name = listname
-            sl.numAlphagrams = wgm.numOrigQuestions
-            sl.goneThruOnce = state['goneThruOnce']
-            ret['info'] = ('A list with that name and lexicon already '
-                           'existed, and has been overwritten.')
-            # TODO too bad?
-            if sl.numAlphagrams != oldNumAlphas:
-                # The number of total alphagrams in all lists for
-                # this user has changed.
-                if (profile.wordwallsSaveListSize - oldNumAlphas +
-                        sl.numAlphagrams > limit):
-                    ret['info'] = exceededLimitMessage
-                    return ret
-                profile.wordwallsSaveListSize = (
-                    profile.wordwallsSaveListSize - oldNumAlphas +
-                    sl.numAlphagrams)
-                profileModified = True
-        except SavedList.DoesNotExist:
-            sl = SavedList(
-                lexicon=wgm.lexicon, name=listname, user=user,
-                numAlphagrams=wgm.numOrigQuestions,
-                origQuestions=wgm.origQuestions,
-                missed=wgm.missed,
-                numMissed=wgm.numMissed,
-                curQuestions=wgm.curQuestions,
-                numCurAlphagrams=wgm.numCurQuestions,
-                numFirstMissed=wgm.numFirstMissed,
-                firstMissed=wgm.firstMissed,
-                questionIndex=state['questionIndex'],
-                goneThruOnce=state['goneThruOnce'])
+    def save_word_list_result(self, word_list, listname, state, wgm, user,
+                              make_permanent_list=False):
+        """
+        Save a word list, return a response object.
 
-            if (profile.wordwallsSaveListSize + wgm.numOrigQuestions >
+
+        """
+        ret = {'success': False}
+        profile_modified = False
+        # Note: this could be a rename (the old list would be lost).
+        # Maybe we want a way to "save as" another list; think about
+        # a list copy.
+        word_list.name = listname
+        logger.debug('Saving word_list, name is %s (%s)', word_list.name,
+                     type(word_list.name))
+        if make_permanent_list:
+            word_list.is_temporary = False
+            profile = user.aerolithprofile
+            if profile.member:
+                limit = settings.SAVE_LIST_LIMIT_MEMBER
+            else:
+                limit = settings.SAVE_LIST_LIMIT_NONMEMBER
+
+            exceeded_limit_message = (
+                'Unable to save list because you have gone over the '
+                'number of total alphagrams limit (%d). You can '
+                'increase this limit by becoming a supporter!' % limit)
+            if (profile.wordwallsSaveListSize + word_list.numAlphagrams >
                     limit):
-                ret['info'] = exceededLimitMessage
+                ret['info'] = exceeded_limit_message
                 return ret
-
-            profile.wordwallsSaveListSize += wgm.numOrigQuestions
-            profileModified = True
+            profile.wordwallsSaveListSize += word_list.numAlphagrams
+            profile_modified = True
 
         try:
-            sl.save()
-            ret['success'] = True
-            ret['listname'] = listname
-            state['saveName'] = listname
-            wgm.currentGameState = json.dumps(state)
-            wgm.save()
-            if profileModified:
-                profile.save()
-
+            word_list.save()
+        except IntegrityError:
+            # There's already a word list with this name, perhaps?
+            ret['info'] = ('Cannot save - you already have a word list '
+                           'with that name!')
             return ret
-        except:
-            ret['info'] = 'Could not save for some other reason!'
-            return ret
+        ret['success'] = True
+        ret['listname'] = listname
+        state['saveName'] = listname
+        wgm.currentGameState = json.dumps(state)
+        wgm.save()
+        if profile_modified:
+            profile.save()
+        return ret
 
-    def doQuizEndActions(self, state, tablenum, wgm):
+    def do_quiz_end_actions(self, state, tablenum, wgm):
         state['quizGoing'] = False
-        state['LastCorrect'] = ""
         state['justCreatedFirstMissed'] = False
         # copy missed alphagrams to state['missed']
         missed_indices = set()
         for w in state['answerHash']:
             missed_indices.add(state['answerHash'][w][1])
             # [0] is the alphagram, [1] is the index in origQuestions
-
-        missed = json.loads(wgm.missed)
+        missed = json.loads(wgm.word_list.missed)
         missed.extend(missed_indices)
-        wgm.missed = json.dumps(missed)
-        wgm.numMissed = len(missed)
+        word_list = wgm.word_list
+        word_list.missed = json.dumps(missed)
+        word_list.numMissed = len(missed)
 
         # check if the list is unique
         uniqueMissed = set(missed)
         if len(uniqueMissed) != len(missed):
-            logger.info("missed list is not unique!!")
+            logger.error("missed list is not unique!! %s %s", uniqueMissed,
+                         missed)
             #raise Exception('Missed list is not unique')
 
         logger.info("%d missed this round, %d missed total",
                     len(missed_indices), len(missed))
         if state['gameType'] == 'challenge':
             state['gameType'] = 'challengeOver'
-            self.createChallengeLeaderboardEntries(state, tablenum, wgm)
+            self.create_challenge_leaderboard_entry(state, tablenum)
 
         # check if we've gone thru the quiz once.
-        if state['questionIndex'] > wgm.numCurQuestions - 1:
-            if not state['goneThruOnce']:
-                state['goneThruOnce'] = True
+        if word_list.questionIndex > word_list.numCurAlphagrams - 1:
+            if not word_list.goneThruOnce:
+                word_list.goneThruOnce = True
                 state['justCreatedFirstMissed'] = True
                 logger.debug('Creating first missed list from missed')
-                wgm.firstMissed = wgm.missed
-                wgm.numFirstMissed = wgm.numMissed
+                word_list.firstMissed = word_list.missed
+                word_list.numFirstMissed = word_list.numMissed
+        word_list.save()
 
-    def createChallengeLeaderboardEntries(self, state, tablenum, wgm):
+    def create_challenge_leaderboard_entry(self, state, tablenum):
+        """
+        Create a challenge leaderboard entry for this particular game
+        state and table number.
+
+        """
         # First create a leaderboard if one doesn't exist for this challenge.
         try:
             dc = DailyChallenge.objects.get(pk=state['challengeId'])
@@ -644,21 +562,17 @@ class WordwallsGame(object):
             else:
                 # Else, nothing would write it into the state.
                 timeRemaining = 0
-
-            if 'qualifyForAward' in state:
-                qualifyForAward = state['qualifyForAward']
-            else:
-                qualifyForAward = False     # i suppose this shouldn't happen
+            qualify_for_award = state.get('qualifyForAward', False)
 
             lbe = DailyChallengeLeaderboardEntry(
                 user=wgm.host, score=score, board=lb,
-                timeRemaining=timeRemaining, qualifyForAward=qualifyForAward)
+                timeRemaining=timeRemaining, qualifyForAward=qualify_for_award)
             # XXX: 500 here, integrity error, much more common than lb.save
             lbe.save()
             if (len(state['answerHash']) > 0 and dc.name.name in
                     ("Today's 7s", "Today's 8s")):
                 # if the user missed some 7s or 8s
-                self.addDCMissedBingos(state, dc, wgm)
+                self.add_dc_missed_bingos(state, dc, wgm)
 
     def add_dc_missed_bingo(self, challenge, alphagram):
         """
@@ -667,11 +581,11 @@ class WordwallsGame(object):
         try:
             dcmb = DailyChallengeMissedBingos.objects.select_for_update().get(
                 challenge=challenge,
-                alphagram=alphagram)
+                alphagram_string=alphagram)
             dcmb.numTimesMissed += 1
         except DailyChallengeMissedBingos.DoesNotExist:
             dcmb = DailyChallengeMissedBingos(challenge=challenge,
-                                              alphagram=alphagram)
+                                              alphagram_string=alphagram)
             dcmb.numTimesMissed = 1
         try:
             dcmb.save()
@@ -681,93 +595,86 @@ class WordwallsGame(object):
             # We should start over, but now that we know the object exists,
             # we can use select_for_update without fear.
             dcmb = DailyChallengeMissedBingos.objects.select_for_update().get(
-                challenge=challenge, alphagram=alphagram)
+                challenge=challenge, alphagram_string=alphagram)
             dcmb.numTimesMissed += 1
             dcmb.save()
 
-    def addDCMissedBingos(self, state, dc, wgm):
-        origQsObj = json.loads(wgm.origQuestions)
-        missedAlphas = set()
+    def add_dc_missed_bingos(self, state, dc, wgm):
+        orig_qs_obj = json.loads(wgm.word_list.origQuestions)
+        missed_alphas = set()
         for missed in state['answerHash']:
-            alphaPk = origQsObj[state['answerHash'][missed][1]]
-            missedAlphas.add(Alphagram.objects.get(pk=alphaPk))
-
-        for alpha in missedAlphas:
+            question, idx = state['answerHash'][missed]
+            question = orig_qs_obj[idx]
+            missed_alphas.add(question['q'])
+        for alpha in missed_alphas:
             self.add_dc_missed_bingo(dc, alpha)
-
-    def getPkIndices(self, searchDescription):
-        if searchDescription['condition'] == 'probPKRange':
-            minP = searchDescription['min']
-            maxP = searchDescription['max']
-            r = range(minP, maxP + 1)
-            random.shuffle(r)
-            return r
-        elif searchDescription['condition'] == 'probPKList':
-            pass
 
     def mark_missed(self, question_index, tablenum, user):
         try:
             question_index = int(question_index)
         except (ValueError, TypeError):
             return False
-        wgm = self.getWGM(tablenum)
+        wgm = self.get_wgm(tablenum)
         if not wgm:
             return 'No table #%s exists' % tablenum
-        missed = json.loads(wgm.missed)
+        word_list = wgm.word_list
+        missed = json.loads(word_list.missed)
         state = json.loads(wgm.currentGameState)
-        if question_index not in set(missed):
-            missed.append(question_index)
-            wgm.missed = json.dumps(missed)
-            if state.get('justCreatedFirstMissed'):
-                logger.debug('Also adding to first missed count')
-                # Also add to first missed count.
-                first_missed = json.loads(wgm.firstMissed)
-                if question_index not in set(first_missed):
-                    first_missed.append(question_index)
-                    wgm.numFirstMissed += 1
-                    wgm.firstMissed = json.dumps(first_missed)
+        if question_index in set(missed):
+            # Already missed, user should not be able to mark it missed.
+            return False
+        missed.append(question_index)
+        word_list.missed = json.dumps(missed)
+        if state.get('justCreatedFirstMissed'):
+            logger.debug('Also adding to first missed count')
+            # Also add to first missed count.
+            first_missed = json.loads(word_list.firstMissed)
+            if question_index not in set(first_missed):
+                first_missed.append(question_index)
+                word_list.numFirstMissed += 1
+                word_list.firstMissed = json.dumps(first_missed)
 
-            wgm.save()
-            return True
-        return False
+        word_list.save()
+        return True
 
-    def guess(self, guessStr, tablenum, user):
-        guessStr = guessStr.upper()
-        wgm = self.getWGM(tablenum)
+    def guess(self, guess_str, tablenum, user):
+        guess_str = guess_str.upper()
+        wgm = self.get_wgm(tablenum)
+        last_correct = ''
         if not wgm:
             return
         state = json.loads(wgm.currentGameState)
+        state_modified = False
         if not state['quizGoing']:
             logger.info('Guess came in after quiz ended.')
             return
         # Otherwise, let's process the guess.
-        if self.didTimerRunOut(state):
+        if self.did_timer_run_out(state):
             state['timeRemaining'] = 0
+            state_modified = True
             logger.info('Timer ran out, end quiz.')
-            self.doQuizEndActions(state, tablenum, wgm)
+            self.do_quiz_end_actions(state, tablenum, wgm)
             # Save state back to game.
-        else:
-            if guessStr not in state['answerHash']:
-                state['LastCorrect'] = ""
-            else:
-                alpha = state['answerHash'][guessStr]
-                # state['answerHash'] is modified here
-                del state['answerHash'][guessStr]
-                if len(state['answerHash']) == 0:
-                    timeRemaining = (state['quizStartTime'] +
-                                     state['timerSecs']) - time.time()
-                    if timeRemaining < 0:
-                        timeRemaining = 0
-                    state['timeRemaining'] = timeRemaining
-                    self.doQuizEndActions(state, tablenum, wgm)
-                state['LastCorrect'] = alpha[0]
-
-        wgm.currentGameState = json.dumps(state)
-        wgm.save()
-        return state['quizGoing'], state.get('LastCorrect', '')
+        elif guess_str in state['answerHash']:
+            alpha = state['answerHash'][guess_str]
+            # state['answerHash'] is modified here
+            del state['answerHash'][guess_str]
+            state_modified = True
+            if len(state['answerHash']) == 0:
+                time_remaining = (state['quizStartTime'] +
+                                  state['timerSecs']) - time.time()
+                if time_remaining < 0:
+                    time_remaining = 0
+                state['timeRemaining'] = time_remaining
+                self.do_quiz_end_actions(state, tablenum, wgm)
+            last_correct = alpha[0]
+        if state_modified:
+            wgm.currentGameState = json.dumps(state)
+            wgm.save()
+        return state['quizGoing'], last_correct
 
     def permit(self, user, tablenum):
-        wgm = self.getWGM(tablenum, lock=False)
+        wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return False
         if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
@@ -777,90 +684,3 @@ class WordwallsGame(object):
         if user != wgm.host:    # single player, return false!
             return False
         return True
-
-    def generateDailyChallengePks(self, challengeName, lex, chDate):
-        # capture number. first try to match to today's lists
-        m = re.match("Today's (?P<length>[0-9]+)s",
-                     challengeName.name)
-
-        if m:
-            wordLength = int(m.group('length'))
-            if wordLength < 2 or wordLength > 15:
-                return None   # someone is trying to break my server >:(
-            logger.info('Generating daily challenges %s %d', lex, wordLength)
-            minP = 1
-            # lengthCounts is a dictionary of strings as keys
-            maxP = json.loads(lex.lengthCounts)[repr(wordLength)]
-
-            r = range(minP, maxP + 1)
-            random.shuffle(r)
-            r = r[:50]  # just the first 50 elements for the daily challenge
-            pks = [alphProbToProbPK(i, lex.pk, wordLength) for i in r]
-            return pks, challengeName.timeSecs
-        else:
-            if challengeName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-                from wordwalls.management.commands.genMissedBingoChalls import(
-                    genPks)
-                mbs = genPks(lex, chDate)
-                pks = [mb[0] for mb in mbs]
-                random.shuffle(pks)
-                return pks, challengeName.timeSecs
-            elif challengeName.name == DailyChallengeName.BLANK_BINGOS:
-                questions = self.generate_blank_bingos_challenge(lex, chDate)
-                random.shuffle(questions)
-                return questions, challengeName.timeSecs
-            elif challengeName.name == DailyChallengeName.BINGO_MARATHON:
-                pks = []
-                for lgt in (7, 8):
-                    min_p = 1
-                    max_p = json.loads(lex.lengthCounts)[str(lgt)]
-                    r = range(min_p, max_p + 1)
-                    random.shuffle(r)
-                    pks += [alphProbToProbPK(i, lex.pk, lgt) for i in r[:50]]
-                return pks, challengeName.timeSecs
-            elif challengeName.name in (DailyChallengeName.COMMON_SHORT,
-                                        DailyChallengeName.COMMON_LONG):
-                questions = self.generate_common_words_challenge(
-                    challengeName.name)
-                random.shuffle(questions)
-                return questions, challengeName.timeSecs
-        return None
-
-    def generate_common_words_challenge(self, ch_name):
-        """Generate the common words challenges. Only for OWL2 right now."""
-        if ch_name == DailyChallengeName.COMMON_SHORT:
-            pks = json.loads(COMMON_SHORT_NAMED_LIST.questions)
-        elif ch_name == DailyChallengeName.COMMON_LONG:
-            pks = json.loads(COMMON_LONG_NAMED_LIST.questions)
-        random.shuffle(pks)
-        return pks[:50]
-
-    def generate_blank_bingos_challenge(self, lex, ch_date):
-        """
-            Reads the previously generated blank bingo files for lex.
-        """
-        start = time.time()
-        bingos = []
-        for length in (7, 8):
-            filename = ch_date.strftime("%Y-%m-%d") + "-%s-%ss.txt" % (
-                lex.lexiconName, length)
-            path = os.path.join(os.getenv("HOME"), 'blanks', filename)
-            f = open(path, 'rb')
-            for line in f:
-                qas = line.split()
-                # Look up pks for words.
-                words = qas[1:]
-                word_pks = [Word.objects.get(word=word, lexicon=lex).pk for
-                            word in words]
-                bingos.append({'q': alphagrammize(qas[0]), 'a': word_pks})
-            f.close()
-        logger.debug("Elapsed: %s" % (time.time() - start))
-        return bingos
-
-
-class SearchDescription:
-    @staticmethod
-    def probPkIndexRange(minP, maxP, lex):
-        return {"condition": "probPKRange",
-                "min": minP, "max": maxP,
-                "lexicon": lex}

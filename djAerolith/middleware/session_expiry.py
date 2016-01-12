@@ -1,7 +1,8 @@
-from django.contrib.auth import logout
 import datetime
 
-import settings
+from django.contrib.auth import logout
+from django.conf import settings
+
 
 class SessionIdleTimeout:
     """Middleware class to timeout a session after a specified time period.
@@ -11,7 +12,7 @@ class SessionIdleTimeout:
         if request.user.is_authenticated():
             current_datetime = datetime.datetime.now()
             # Timeout if idle time period is exceeded.
-            if (request.session.has_key('last_activity') and
+            if ('last_activity' in request.session and
                 (current_datetime - request.session['last_activity']).seconds >
                     settings.SESSION_IDLE_TIMEOUT):
                 logout(request)

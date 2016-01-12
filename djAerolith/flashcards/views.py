@@ -1,24 +1,23 @@
-from lib.response import response
-from django.db import IntegrityError
+import logging
+import json
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+
 from current_version import CURRENT_VERSION
-from flashcards.models import Card
-import json
-from base.models import Lexicon, alphProbToProbPK, SavedList
-import logging
+from base.models import Lexicon, WordList
+from base.utils import savedlist_from_probabilities, quizzes_response
+from lib.response import response
+
 logger = logging.getLogger(__name__)
-from django.contrib.auth.decorators import login_required
-from base.utils import savedlist_from_alpha_pks, quizzes_response
 
 
 @login_required
 def main(request):
-    user_cards = Card.objects.filter(user=request.user)
-    quizzes = SavedList.objects.filter(user=request.user)
-    num_cards = user_cards.count()
+    quizzes = WordList.objects.filter(user=request.user)
     return render_to_response("flashcards/index.html", {
-                              'numCards': num_cards,
+                              'numCards': 0,
                               'savedLists': json.dumps(quizzes_response(
                                                        quizzes)),
                               'CURRENT_VERSION': CURRENT_VERSION,
@@ -63,8 +62,8 @@ def validate_params(min, max, length, lex, max_range=1000):
 @login_required
 def new_quiz(request):
     """
-        Creates a new quiz but doesn't create any 'card' models.
-        Card models will only be used for cardbox in future.
+    Create a new quiz but doesn't create any 'card' models.
+    Card models will only be used for cardbox in future.
     """
     body = json.loads(request.body)
     params = validate_params(body['min'], body['max'], body['length'],
@@ -73,14 +72,11 @@ def new_quiz(request):
         return response(params, status=400)
     p_min, p_max, length, lexicon = params
 
-    min_pk = alphProbToProbPK(p_min, lexicon.pk, length)
-    max_pk = alphProbToProbPK(p_max, lexicon.pk, length)
-    alpha_pks = range(min_pk, max_pk + 1)
-    li, q_map = savedlist_from_alpha_pks(alpha_pks, lexicon)
+    li, q_map = savedlist_from_probabilities(lexicon, p_min, p_max, length)
     if len(q_map) > 0:
         # Generate a quiz name.
-        quiz_name = '%s %ss (%s to %s)' % (lexicon.lexiconName, length,
-                                           p_min, p_max)
+        quiz_name = '{} {}s ({} to {})'.format(lexicon.lexiconName, length,
+                                               p_min, p_max)
     else:
         quiz_name = ''
     return response({'list': li.to_python(),

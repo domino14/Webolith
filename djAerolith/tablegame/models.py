@@ -37,11 +37,12 @@ class GenericTableGameModel(models.Model):
         (SINGLEPLAYER_GAME, "SinglePlayer"),
         (MULTIPLAYER_GAME, "MultiPlayer"),
     )
+    # XXX: lexicon should not be here.
     lexicon = models.ForeignKey(Lexicon)
+    # XXX: get rid of host and inTable
     host = models.ForeignKey(User, related_name="%(app_label)s_%(class)s_host")
     inTable = models.ManyToManyField(
         User, related_name="%(app_label)s_%(class)s_inTable")
-    # everyone in table including the host
     lastActivity = models.DateTimeField(auto_now=True)
     currentGameState = models.TextField()
     gameType = models.IntegerField(choices=GAME_TYPES)

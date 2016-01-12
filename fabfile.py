@@ -38,6 +38,16 @@ def deploy_prod():
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
+@roles('prod')
+def deploy_word_db(lexicon_name):
+    # This will hopefully be done super rarely.
+    with settings(warn_only=True):
+        run('mkdir word_db')
+    with cd('word_db'):
+        put(os.path.join(curdir, 'dbCreator', '%s.db' % lexicon_name),
+            '%s.db' % lexicon_name)
+
+
 def create_js_build():
     """
         Uses r.js to generate a build.

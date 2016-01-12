@@ -1,0 +1,4430 @@
+[
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 26,
+      "alphagram_string": "ADEEIKKS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.7878787878787878
+    },
+    "pk": 313570
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 24,
+      "alphagram_string": "DEIILMMS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.7058823529411765
+    },
+    "pk": 313316
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 23,
+      "alphagram_string": "ACIORRTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.696969696969697
+    },
+    "pk": 313558
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 40,
+      "alphagram_string": "AABLLOR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6896551724137931
+    },
+    "pk": 313492
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 23,
+      "alphagram_string": "ACELOPRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6764705882352942
+    },
+    "pk": 313322
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 22,
+      "alphagram_string": "AFIIMNPR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6666666666666666
+    },
+    "pk": 313549
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 36,
+      "alphagram_string": "FIOPRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6666666666666666
+    },
+    "pk": 313139
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 35,
+      "alphagram_string": "AEHIMSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6481481481481481
+    },
+    "pk": 313109
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 22,
+      "alphagram_string": "ALMOOPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6470588235294118
+    },
+    "pk": 313324
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 22,
+      "alphagram_string": "AACEOSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6470588235294118
+    },
+    "pk": 313328
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 22,
+      "alphagram_string": "HIMORSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6470588235294118
+    },
+    "pk": 313131
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 37,
+      "alphagram_string": "ACCDHIL"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6379310344827587
+    },
+    "pk": 313529
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 37,
+      "alphagram_string": "ACEHRRX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6379310344827587
+    },
+    "pk": 313532
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 21,
+      "alphagram_string": "BDEEILNR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6363636363636364
+    },
+    "pk": 313573
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 21,
+      "alphagram_string": "EHOORSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6176470588235294
+    },
+    "pk": 313321
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 29,
+      "alphagram_string": "CEHNOSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6170212765957447
+    },
+    "pk": 313297
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 29,
+      "alphagram_string": "ACHHIRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6170212765957447
+    },
+    "pk": 313301
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 20,
+      "alphagram_string": "AGHNORST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6060606060606061
+    },
+    "pk": 313550
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 20,
+      "alphagram_string": "ACCILRSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6060606060606061
+    },
+    "pk": 313563
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 20,
+      "alphagram_string": "ACCDEILY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.6060606060606061
+    },
+    "pk": 313566
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 32,
+      "alphagram_string": "AEGILNR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5925925925925926
+    },
+    "pk": 313098
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 32,
+      "alphagram_string": "EIMORST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5925925925925926
+    },
+    "pk": 313108
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 20,
+      "alphagram_string": "ACIIRSTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5882352941176471
+    },
+    "pk": 313318
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 20,
+      "alphagram_string": "DEHKLNOU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5882352941176471
+    },
+    "pk": 313440
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 20,
+      "alphagram_string": "CIILNOPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5882352941176471
+    },
+    "pk": 313130
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 19,
+      "alphagram_string": "AADGMNOP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5757575757575758
+    },
+    "pk": 313552
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 19,
+      "alphagram_string": "AEORRRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5757575757575758
+    },
+    "pk": 313555
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 31,
+      "alphagram_string": "EGMORSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5740740740740741
+    },
+    "pk": 313097
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 31,
+      "alphagram_string": "ACCEIST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5740740740740741
+    },
+    "pk": 313105
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 33,
+      "alphagram_string": "AELMMSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5689655172413793
+    },
+    "pk": 313530
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 19,
+      "alphagram_string": "AAGIMNOS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5588235294117647
+    },
+    "pk": 313326
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 19,
+      "alphagram_string": "ADILMOSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5588235294117647
+    },
+    "pk": 313118
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 30,
+      "alphagram_string": "EEINSTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5555555555555556
+    },
+    "pk": 313101
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 32,
+      "alphagram_string": "LLOSTUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5517241379310345
+    },
+    "pk": 313637
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 31,
+      "alphagram_string": "ACEIRTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5344827586206896
+    },
+    "pk": 313531
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 31,
+      "alphagram_string": "AAAKLMY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5344827586206896
+    },
+    "pk": 313535
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 25,
+      "alphagram_string": "BIMNOSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5319148936170213
+    },
+    "pk": 313304
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 18,
+      "alphagram_string": "ADEIMSTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5294117647058824
+    },
+    "pk": 313330
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 18,
+      "alphagram_string": "DEELLORW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5294117647058824
+    },
+    "pk": 313439
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 18,
+      "alphagram_string": "EGIILNRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5294117647058824
+    },
+    "pk": 313443
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 18,
+      "alphagram_string": "AACEEHRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5294117647058824
+    },
+    "pk": 313113
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 18,
+      "alphagram_string": "EEILNOSV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5294117647058824
+    },
+    "pk": 313117
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 18,
+      "alphagram_string": "CEILORTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5294117647058824
+    },
+    "pk": 313246
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 28,
+      "alphagram_string": "AALOPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5185185185185185
+    },
+    "pk": 313138
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 30,
+      "alphagram_string": "CIKNPSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5172413793103449
+    },
+    "pk": 313493
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 17,
+      "alphagram_string": "AEEGHNRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5151515151515151
+    },
+    "pk": 313546
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 17,
+      "alphagram_string": "ABILMNSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313315
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 17,
+      "alphagram_string": "HORRSTTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313317
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 29,
+      "alphagram_string": "BDNOORU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313643
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 29,
+      "alphagram_string": "AEHMPTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313644
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 17,
+      "alphagram_string": "ADDEEGNR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313121
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 17,
+      "alphagram_string": "BCEEHOSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313122
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 17,
+      "alphagram_string": "AAILORRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313124
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 17,
+      "alphagram_string": "BEEHOOST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313218
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 17,
+      "alphagram_string": "AHIKLOOT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313242
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 17,
+      "alphagram_string": "EIMORSTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313262
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 27,
+      "alphagram_string": "ACCILST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313112
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 27,
+      "alphagram_string": "AEGIKPR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.5
+    },
+    "pk": 313237
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 23,
+      "alphagram_string": "ENNORSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.48936170212765956
+    },
+    "pk": 313296
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 23,
+      "alphagram_string": "ACIRTUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.48936170212765956
+    },
+    "pk": 313424
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 16,
+      "alphagram_string": "CEGINORS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.48484848484848486
+    },
+    "pk": 313547
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 28,
+      "alphagram_string": "AHLMSUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4827586206896552
+    },
+    "pk": 313534
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 28,
+      "alphagram_string": "ILNOSTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4827586206896552
+    },
+    "pk": 313641
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 28,
+      "alphagram_string": "DIOOPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4827586206896552
+    },
+    "pk": 313648
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 28,
+      "alphagram_string": "AAIOPRV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4827586206896552
+    },
+    "pk": 313658
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 16,
+      "alphagram_string": "DENPRSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.47058823529411764
+    },
+    "pk": 313314
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 16,
+      "alphagram_string": "AEGILLNS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.47058823529411764
+    },
+    "pk": 313319
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 16,
+      "alphagram_string": "CDINOSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.47058823529411764
+    },
+    "pk": 313434
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 16,
+      "alphagram_string": "EEHLLMPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.47058823529411764
+    },
+    "pk": 313442
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 16,
+      "alphagram_string": "ACEHOSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.47058823529411764
+    },
+    "pk": 313263
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 22,
+      "alphagram_string": "ABCIILT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46808510638297873
+    },
+    "pk": 313295
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 22,
+      "alphagram_string": "EELLPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46808510638297873
+    },
+    "pk": 313298
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 22,
+      "alphagram_string": "ADHORSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46808510638297873
+    },
+    "pk": 313421
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 22,
+      "alphagram_string": "CEHMNSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46808510638297873
+    },
+    "pk": 313427
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 27,
+      "alphagram_string": "AACHSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46551724137931033
+    },
+    "pk": 313536
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 25,
+      "alphagram_string": "IIMOSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46296296296296297
+    },
+    "pk": 313104
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 25,
+      "alphagram_string": "ACELOPU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46296296296296297
+    },
+    "pk": 313111
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 25,
+      "alphagram_string": "DEIOPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.46296296296296297
+    },
+    "pk": 313140
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 15,
+      "alphagram_string": "CEEEMNSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.45454545454545453
+    },
+    "pk": 313553
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 15,
+      "alphagram_string": "ACCEGKMO"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.45454545454545453
+    },
+    "pk": 313557
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 15,
+      "alphagram_string": "DEEGINSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.45454545454545453
+    },
+    "pk": 313615
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 21,
+      "alphagram_string": "AAFIKLS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.44680851063829785
+    },
+    "pk": 313307
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 24,
+      "alphagram_string": "EIILLNV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4444444444444444
+    },
+    "pk": 313107
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 24,
+      "alphagram_string": "ADIMRSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4444444444444444
+    },
+    "pk": 313110
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 15,
+      "alphagram_string": "AIPPRSTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4411764705882353
+    },
+    "pk": 313325
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 25,
+      "alphagram_string": "CDEGKOU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.43103448275862066
+    },
+    "pk": 313639
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 25,
+      "alphagram_string": "DEEGOSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.43103448275862066
+    },
+    "pk": 313642
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 23,
+      "alphagram_string": "AINOPPT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.42592592592592593
+    },
+    "pk": 313099
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 20,
+      "alphagram_string": "ACEILVW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.425531914893617
+    },
+    "pk": 313309
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 14,
+      "alphagram_string": "EMOSSTTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.42424242424242425
+    },
+    "pk": 313538
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 14,
+      "alphagram_string": "AEFGORST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4117647058823529
+    },
+    "pk": 313116
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 14,
+      "alphagram_string": "ADGNRRSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4117647058823529
+    },
+    "pk": 313125
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 14,
+      "alphagram_string": "AMMNOPSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4117647058823529
+    },
+    "pk": 313127
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 14,
+      "alphagram_string": "EEIMMSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4117647058823529
+    },
+    "pk": 313132
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 14,
+      "alphagram_string": "AAEGINPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4117647058823529
+    },
+    "pk": 313243
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 14,
+      "alphagram_string": "AGGIINNZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4117647058823529
+    },
+    "pk": 313250
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 22,
+      "alphagram_string": "EEPPRSX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4074074074074074
+    },
+    "pk": 313216
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 22,
+      "alphagram_string": "AAGINRU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.4074074074074074
+    },
+    "pk": 313230
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 19,
+      "alphagram_string": "ADOOPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.40425531914893614
+    },
+    "pk": 313303
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 19,
+      "alphagram_string": "ABIKNST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.40425531914893614
+    },
+    "pk": 313305
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 19,
+      "alphagram_string": "ALOORRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.40425531914893614
+    },
+    "pk": 313311
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 19,
+      "alphagram_string": "CIKMSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.40425531914893614
+    },
+    "pk": 313423
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 19,
+      "alphagram_string": "AEEMRRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.40425531914893614
+    },
+    "pk": 313425
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 19,
+      "alphagram_string": "EIKLNSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.40425531914893614
+    },
+    "pk": 313426
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 23,
+      "alphagram_string": "EEEGIPR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.39655172413793105
+    },
+    "pk": 313662
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 13,
+      "alphagram_string": "NOPSSSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3939393939393939
+    },
+    "pk": 313556
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 13,
+      "alphagram_string": "AEEMNOSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3939393939393939
+    },
+    "pk": 313677
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 21,
+      "alphagram_string": "EFLNORY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3888888888888889
+    },
+    "pk": 313226
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 18,
+      "alphagram_string": "BCEEHIP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3829787234042553
+    },
+    "pk": 313302
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "ABDEIPRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313320
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "AABINRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313323
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "EEIINNST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313327
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "EFILORST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313331
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "EEIPPRTZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313441
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "DEEILNST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313444
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "AEIIMRSV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313445
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 13,
+      "alphagram_string": "ACEGIMRR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313446
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 13,
+      "alphagram_string": "EGGIKNOS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313128
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 13,
+      "alphagram_string": "ADEEINOP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.38235294117647056
+    },
+    "pk": 313245
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 22,
+      "alphagram_string": "EGILNPY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3793103448275862
+    },
+    "pk": 313533
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 20,
+      "alphagram_string": "EIILLST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.37037037037037035
+    },
+    "pk": 313236
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 12,
+      "alphagram_string": "AABRRRTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.36363636363636365
+    },
+    "pk": 313551
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 12,
+      "alphagram_string": "BEMSSTUW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.36363636363636365
+    },
+    "pk": 313569
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 21,
+      "alphagram_string": "EEILNNT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3620689655172414
+    },
+    "pk": 313664
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 17,
+      "alphagram_string": "BEILNRY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3617021276595745
+    },
+    "pk": 313420
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 12,
+      "alphagram_string": "AEMOTTZZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35294117647058826
+    },
+    "pk": 313329
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 12,
+      "alphagram_string": "AHILOORT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35294117647058826
+    },
+    "pk": 313332
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 12,
+      "alphagram_string": "DEIINQSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35294117647058826
+    },
+    "pk": 313437
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 12,
+      "alphagram_string": "ACCEIMRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35294117647058826
+    },
+    "pk": 313217
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 12,
+      "alphagram_string": "CEFILOUV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35294117647058826
+    },
+    "pk": 313244
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 19,
+      "alphagram_string": "ABENPSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35185185185185186
+    },
+    "pk": 313234
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 19,
+      "alphagram_string": "DEEGHIN"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.35185185185185186
+    },
+    "pk": 313259
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 16,
+      "alphagram_string": "EFIILSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3404255319148936
+    },
+    "pk": 313313
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 11,
+      "alphagram_string": "GIIKNRSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3333333333333333
+    },
+    "pk": 313541
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 11,
+      "alphagram_string": "AACEGIRV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3333333333333333
+    },
+    "pk": 313542
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 11,
+      "alphagram_string": "DDDEERTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3333333333333333
+    },
+    "pk": 313562
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 11,
+      "alphagram_string": "CDEEILNS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3333333333333333
+    },
+    "pk": 313564
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 18,
+      "alphagram_string": "DEENORT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3333333333333333
+    },
+    "pk": 313136
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 19,
+      "alphagram_string": "ABEEKST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3275862068965517
+    },
+    "pk": 313640
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 19,
+      "alphagram": 587202612
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3275862068965517
+    },
+    "pk": 313657
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 11,
+      "alphagram_string": "AEIINRSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3235294117647059
+    },
+    "pk": 313435
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 11,
+      "alphagram_string": "ACDEELMP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3235294117647059
+    },
+    "pk": 313447
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 17,
+      "alphagram_string": "EHMNNOO"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3148148148148148
+    },
+    "pk": 313141
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 17,
+      "alphagram_string": "AEINNST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3148148148148148
+    },
+    "pk": 313231
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 17,
+      "alphagram_string": "ADDELRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3148148148148148
+    },
+    "pk": 313240
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 18,
+      "alphagram_string": "EEIKRRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3103448275862069
+    },
+    "pk": 313653
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 18,
+      "alphagram_string": "CEFFISU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.3103448275862069
+    },
+    "pk": 313655
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 10,
+      "alphagram_string": "CCDEHORS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.30303030303030304
+    },
+    "pk": 313537
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 10,
+      "alphagram_string": "AEHISSTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.30303030303030304
+    },
+    "pk": 313540
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 10,
+      "alphagram_string": "AAEGNNST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.30303030303030304
+    },
+    "pk": 313567
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 10,
+      "alphagram_string": "ALNOORST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.30303030303030304
+    },
+    "pk": 313568
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 10,
+      "alphagram_string": "AEHLNTUZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.30303030303030304
+    },
+    "pk": 313680
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 14,
+      "alphagram_string": "AEGNORY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2978723404255319
+    },
+    "pk": 313429
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 14,
+      "alphagram_string": "EEEFRRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2978723404255319
+    },
+    "pk": 313430
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 16,
+      "alphagram_string": "AACEEKT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2962962962962963
+    },
+    "pk": 313102
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 16,
+      "alphagram_string": "EINNORV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2962962962962963
+    },
+    "pk": 313103
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 16,
+      "alphagram_string": "BFFORSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2962962962962963
+    },
+    "pk": 313255
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 16,
+      "alphagram_string": "BEHMORS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2962962962962963
+    },
+    "pk": 313260
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 10,
+      "alphagram_string": "EGINNOPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.29411764705882354
+    },
+    "pk": 313436
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 10,
+      "alphagram_string": "DFGMOOSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.29411764705882354
+    },
+    "pk": 313120
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 17,
+      "alphagram_string": "BHIIINN"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.29310344827586204
+    },
+    "pk": 313650
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 17,
+      "alphagram_string": "EHILPSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.29310344827586204
+    },
+    "pk": 313651
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 15,
+      "alphagram_string": "EISSTVW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2777777777777778
+    },
+    "pk": 313137
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 15,
+      "alphagram_string": "AAEKPRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2777777777777778
+    },
+    "pk": 313227
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 13,
+      "alphagram_string": "EINSTTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2765957446808511
+    },
+    "pk": 313293
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 13,
+      "alphagram_string": "DINORWW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2765957446808511
+    },
+    "pk": 313308
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 13,
+      "alphagram_string": "BEIKRTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2765957446808511
+    },
+    "pk": 313422
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 13,
+      "alphagram_string": "AEHKOSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2765957446808511
+    },
+    "pk": 313433
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 16,
+      "alphagram_string": "CCEIMOT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.27586206896551724
+    },
+    "pk": 313660
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 16,
+      "alphagram_string": "ACELSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.27586206896551724
+    },
+    "pk": 313668
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 9,
+      "alphagram_string": "BBIMMOSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2727272727272727
+    },
+    "pk": 313545
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 9,
+      "alphagram_string": "DEFIINTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2727272727272727
+    },
+    "pk": 313548
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 9,
+      "alphagram_string": "AEGIOSTX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2727272727272727
+    },
+    "pk": 313572
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 9,
+      "alphagram_string": "AEGORTTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2727272727272727
+    },
+    "pk": 313678
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 9,
+      "alphagram_string": "ACEEHNNS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2727272727272727
+    },
+    "pk": 313681
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 9,
+      "alphagram_string": "EKNORSTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313438
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 9,
+      "alphagram_string": "ABEGILLN"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313467
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 9,
+      "alphagram_string": "IORSSTTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313115
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 9,
+      "alphagram_string": "EEEGRSUX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313119
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 9,
+      "alphagram_string": "EEIPRSSV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313126
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 9,
+      "alphagram_string": "AGILORSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313133
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 9,
+      "alphagram_string": "EEIKNRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2647058823529412
+    },
+    "pk": 313134
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 14,
+      "alphagram_string": "AADKRWW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.25925925925925924
+    },
+    "pk": 313100
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 14,
+      "alphagram_string": "DEEEINR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.25925925925925924
+    },
+    "pk": 313235
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 12,
+      "alphagram_string": "ACEIQRU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2553191489361702
+    },
+    "pk": 313306
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 12,
+      "alphagram": 587202613
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2553191489361702
+    },
+    "pk": 313312
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 12,
+      "alphagram_string": "EGILNRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2553191489361702
+    },
+    "pk": 313428
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 12,
+      "alphagram_string": "BIMSSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2553191489361702
+    },
+    "pk": 313431
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 8,
+      "alphagram_string": "BGGIILNY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.24242424242424243
+    },
+    "pk": 313561
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 8,
+      "alphagram_string": "EEISSTTZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.24242424242424243
+    },
+    "pk": 313674
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 8,
+      "alphagram_string": "ADILMNRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.24242424242424243
+    },
+    "pk": 313676
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 14,
+      "alphagram_string": "IILNNTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2413793103448276
+    },
+    "pk": 313528
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 14,
+      "alphagram_string": "ACFLPSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2413793103448276
+    },
+    "pk": 313654
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 14,
+      "alphagram_string": "ADEEFMR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2413793103448276
+    },
+    "pk": 313656
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 14,
+      "alphagram_string": "ALLOSWY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2413793103448276
+    },
+    "pk": 313663
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 13,
+      "alphagram_string": "AEHNPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.24074074074074073
+    },
+    "pk": 313233
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 8,
+      "alphagram_string": "AILNNORV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.23529411764705882
+    },
+    "pk": 313478
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 8,
+      "alphagram_string": "AAAILLMR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.23529411764705882
+    },
+    "pk": 313135
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 8,
+      "alphagram_string": "AABEELRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.23529411764705882
+    },
+    "pk": 313280
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 11,
+      "alphagram_string": "ACINOPT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.23404255319148937
+    },
+    "pk": 313419
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 11,
+      "alphagram_string": "LLOPRSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.23404255319148937
+    },
+    "pk": 313454
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 13,
+      "alphagram_string": "AEGPSUZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.22413793103448276
+    },
+    "pk": 313652
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 13,
+      "alphagram_string": "AACHHLL"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.22413793103448276
+    },
+    "pk": 313669
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 10,
+      "alphagram_string": "DEHNNSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2127659574468085
+    },
+    "pk": 313450
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 7,
+      "alphagram_string": "BBHILOSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.21212121212121213
+    },
+    "pk": 313544
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 7,
+      "alphagram_string": "EIMMPRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.21212121212121213
+    },
+    "pk": 313571
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 12,
+      "alphagram_string": "EEGRRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.20689655172413793
+    },
+    "pk": 313670
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 7,
+      "alphagram_string": "EJOPRSTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.20588235294117646
+    },
+    "pk": 313475
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 7,
+      "alphagram_string": "CDEMMNOU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.20588235294117646
+    },
+    "pk": 313479
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 7,
+      "alphagram_string": "AEFFHILL"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.20588235294117646
+    },
+    "pk": 313114
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 11,
+      "alphagram_string": "AIIPSTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2037037037037037
+    },
+    "pk": 313232
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 11,
+      "alphagram_string": "AEGRSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.2037037037037037
+    },
+    "pk": 313258
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 9,
+      "alphagram_string": "CCHKMSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.19148936170212766
+    },
+    "pk": 313456
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 10,
+      "alphagram_string": "BDELNOS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.18518518518518517
+    },
+    "pk": 313229
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 6,
+      "alphagram_string": "EIILMRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.18181818181818182
+    },
+    "pk": 313539
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 6,
+      "alphagram_string": "EELNORTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.18181818181818182
+    },
+    "pk": 313560
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 6,
+      "alphagram_string": "ELMMNOTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.18181818181818182
+    },
+    "pk": 313565
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 6,
+      "alphagram_string": "EHHOOSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.18181818181818182
+    },
+    "pk": 313574
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 6,
+      "alphagram_string": "AACINSSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.18181818181818182
+    },
+    "pk": 313679
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 6,
+      "alphagram_string": "AFGILLNT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313473
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 6,
+      "alphagram_string": "DMOPPUYY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313474
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 6,
+      "alphagram_string": "EEGHINST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313485
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 6,
+      "alphagram_string": "ABDOOTUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313241
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 6,
+      "alphagram_string": "EEEILNRY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313247
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 6,
+      "alphagram_string": "ADEEFLSX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313271
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 6,
+      "alphagram_string": "DEFIMOSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.17647058823529413
+    },
+    "pk": 313278
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 10,
+      "alphagram_string": "DEIIORZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1724137931034483
+    },
+    "pk": 313649
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 10,
+      "alphagram_string": "EFNNSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1724137931034483
+    },
+    "pk": 313659
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 8,
+      "alphagram_string": "EIIMSSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1702127659574468
+    },
+    "pk": 313432
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 8,
+      "alphagram_string": "AEIRRTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1702127659574468
+    },
+    "pk": 313453
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 9,
+      "alphagram_string": "ABDELMW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.16666666666666666
+    },
+    "pk": 313106
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 9,
+      "alphagram_string": "BDENOUX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.16666666666666666
+    },
+    "pk": 313228
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 9,
+      "alphagram_string": "DFLOPSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.16666666666666666
+    },
+    "pk": 313256
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 9,
+      "alphagram_string": "BILOSSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.15517241379310345
+    },
+    "pk": 313647
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 9,
+      "alphagram_string": "AENNPRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.15517241379310345
+    },
+    "pk": 313685
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 9,
+      "alphagram_string": "ACDEHMP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.15517241379310345
+    },
+    "pk": 313686
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 5,
+      "alphagram_string": "EIKNNPSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.15151515151515152
+    },
+    "pk": 313543
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 5,
+      "alphagram_string": "BELORSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.15151515151515152
+    },
+    "pk": 313673
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 7,
+      "alphagram_string": "EIPSSTZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14893617021276595
+    },
+    "pk": 313451
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 7,
+      "alphagram_string": "ADLNPSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14893617021276595
+    },
+    "pk": 313457
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 8,
+      "alphagram_string": "BEINRRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14814814814814814
+    },
+    "pk": 313257
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 8,
+      "alphagram_string": "EIKKRUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14814814814814814
+    },
+    "pk": 313261
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 8,
+      "alphagram_string": "DDGGINO"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14814814814814814
+    },
+    "pk": 313265
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 8,
+      "alphagram_string": "DELNRUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14814814814814814
+    },
+    "pk": 313266
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 8,
+      "alphagram_string": "DDEENPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14814814814814814
+    },
+    "pk": 313269
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 5,
+      "alphagram_string": "DEEHHNPY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14705882352941177
+    },
+    "pk": 313448
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 5,
+      "alphagram_string": "CGHIMNOR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14705882352941177
+    },
+    "pk": 313468
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 5,
+      "alphagram_string": "EIKLNOSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14705882352941177
+    },
+    "pk": 313483
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 5,
+      "alphagram_string": "EILORVWY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14705882352941177
+    },
+    "pk": 313272
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 5,
+      "alphagram_string": "AGILNTXY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.14705882352941177
+    },
+    "pk": 313279
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 8,
+      "alphagram_string": "EINNSTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.13793103448275862
+    },
+    "pk": 313661
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 8,
+      "alphagram_string": "CEHOOPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.13793103448275862
+    },
+    "pk": 313688
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 6,
+      "alphagram_string": "AEOPQSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1276595744680851
+    },
+    "pk": 313455
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 4,
+      "alphagram_string": "GHIILTTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.12121212121212122
+    },
+    "pk": 313554
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 4,
+      "alphagram_string": "DDEEGJRU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.12121212121212122
+    },
+    "pk": 313672
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 4,
+      "alphagram_string": "AGHIMMNS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.12121212121212122
+    },
+    "pk": 313675
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 7,
+      "alphagram_string": "CEKOORY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1206896551724138
+    },
+    "pk": 313638
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 7,
+      "alphagram_string": "BEEINNZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1206896551724138
+    },
+    "pk": 313667
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 7,
+      "alphagram_string": "AEQRRTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1206896551724138
+    },
+    "pk": 313682
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 7,
+      "alphagram_string": "ACDEHHT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1206896551724138
+    },
+    "pk": 313683
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 4,
+      "alphagram_string": "AFFLOPSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.11764705882352941
+    },
+    "pk": 313476
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 4,
+      "alphagram_string": "BDEELNTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.11764705882352941
+    },
+    "pk": 313477
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 4,
+      "alphagram_string": "DEEGILNT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.11764705882352941
+    },
+    "pk": 313482
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 6,
+      "alphagram_string": "BEERRSV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.1111111111111111
+    },
+    "pk": 313267
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 5,
+      "alphagram_string": "CEIKLRT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.10638297872340426
+    },
+    "pk": 313299
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 5,
+      "alphagram_string": "ABEESWX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.10638297872340426
+    },
+    "pk": 313300
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 5,
+      "alphagram_string": "BBELMRU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.10638297872340426
+    },
+    "pk": 313469
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 6,
+      "alphagram_string": "ADELNPT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.10344827586206896
+    },
+    "pk": 313691
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 3,
+      "alphagram_string": "GGINNNSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.08823529411764706
+    },
+    "pk": 313484
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 3,
+      "alphagram_string": "ADEFILOT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.08823529411764706
+    },
+    "pk": 313123
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 3,
+      "alphagram_string": "AAHNNSTX"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.08823529411764706
+    },
+    "pk": 313276
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 5,
+      "alphagram_string": "AEIJRZZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.08620689655172414
+    },
+    "pk": 313687
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 5,
+      "alphagram_string": "ADEEQTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.08620689655172414
+    },
+    "pk": 313689
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 4,
+      "alphagram_string": "DEGMPRU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.0851063829787234
+    },
+    "pk": 313294
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 4,
+      "alphagram_string": "BDDDEIU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.0851063829787234
+    },
+    "pk": 313310
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 4,
+      "alphagram_string": "CEHIKTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.0851063829787234
+    },
+    "pk": 313470
+  },
+  {
+    "fields": {
+      "challenge": 40307,
+      "numTimesMissed": 4,
+      "alphagram_string": "ABDEFFL"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.06896551724137931
+    },
+    "pk": 313690
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 3,
+      "alphagram_string": "CDEEFHT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.06382978723404255
+    },
+    "pk": 313452
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 3,
+      "alphagram_string": "CEGGIIS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.06382978723404255
+    },
+    "pk": 313471
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 2,
+      "alphagram_string": "GHINOOSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.06060606060606061
+    },
+    "pk": 313684
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 2,
+      "alphagram_string": "ADIKSSWY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.058823529411764705
+    },
+    "pk": 313129
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 2,
+      "alphagram_string": "ACCGHINN"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.058823529411764705
+    },
+    "pk": 313274
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 3,
+      "alphagram_string": "DEIKLNW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.05555555555555555
+    },
+    "pk": 313268
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 3,
+      "alphagram_string": "CKOOOTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.05555555555555555
+    },
+    "pk": 313270
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 2,
+      "alphagram_string": "EILRSZZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.0425531914893617
+    },
+    "pk": 313487
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 2,
+      "alphagram_string": "DEILRZZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.0425531914893617
+    },
+    "pk": 313488
+  },
+  {
+    "fields": {
+      "challenge": 40256,
+      "numTimesMissed": 2,
+      "alphagram_string": "EFILRTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.037037037037037035
+    },
+    "pk": 313290
+  },
+  {
+    "fields": {
+      "challenge": 40313,
+      "numTimesMissed": 1,
+      "alphagram_string": "CEGINRSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.030303030303030304
+    },
+    "pk": 313559
+  },
+  {
+    "fields": {
+      "challenge": 40287,
+      "numTimesMissed": 1,
+      "alphagram_string": "EJNORSUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.029411764705882353
+    },
+    "pk": 313491
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 1,
+      "alphagram_string": "EHIPRSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.029411764705882353
+    },
+    "pk": 313273
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 1,
+      "alphagram_string": "DEGGILNP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.029411764705882353
+    },
+    "pk": 313275
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 1,
+      "alphagram_string": "ELMRSUZZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.029411764705882353
+    },
+    "pk": 313277
+  },
+  {
+    "fields": {
+      "challenge": 40260,
+      "numTimesMissed": 1,
+      "alphagram_string": "ABDIJRSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.029411764705882353
+    },
+    "pk": 313292
+  },
+  {
+    "fields": {
+      "challenge": 40279,
+      "numTimesMissed": 1,
+      "alphagram_string": "EGGGILR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "___meta": {
+      "perc": 0.02127659574468085
+    },
+    "pk": 313489
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 24,
+      "alphagram_string": "DHIIOST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312898
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 25,
+      "alphagram_string": "EELRSSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312899
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 21,
+      "alphagram_string": "AABEKRSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312900
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 18,
+      "alphagram_string": "BCMORSUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312901
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 19,
+      "alphagram_string": "AEIMNOSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312902
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 18,
+      "alphagram_string": "AACEERTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312903
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 23,
+      "alphagram_string": "AIMMRSUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312904
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 19,
+      "alphagram_string": "DEIKNOST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312905
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 11,
+      "alphagram_string": "AEOPRTTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312906
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 16,
+      "alphagram_string": "GHILNOT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312921
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 26,
+      "alphagram_string": "ACILNOU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312922
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 17,
+      "alphagram_string": "EILOOSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312923
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 23,
+      "alphagram_string": "ACCEILTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312924
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 7,
+      "alphagram_string": "AACDEJNT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312925
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 16,
+      "alphagram_string": "BEIMSSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312926
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 18,
+      "alphagram_string": "DEEERRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312927
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 15,
+      "alphagram_string": "EEFFHIKY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312928
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 5,
+      "alphagram_string": "AILOTTTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312929
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 19,
+      "alphagram_string": "ACDEEGLY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312930
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 19,
+      "alphagram_string": "ACHIKNOP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312931
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 13,
+      "alphagram_string": "CEJNOSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312988
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 14,
+      "alphagram_string": "FFLMORU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312989
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 23,
+      "alphagram_string": "CDEINSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312990
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 23,
+      "alphagram_string": "ACNOSTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312991
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 20,
+      "alphagram_string": "INOPRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312992
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 10,
+      "alphagram_string": "ABKNNNO"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312993
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 15,
+      "alphagram_string": "BEEGISY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312994
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 11,
+      "alphagram_string": "ELLOSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312995
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 15,
+      "alphagram_string": "AFLNORT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312996
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 29,
+      "alphagram_string": "ILMNOSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312997
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 17,
+      "alphagram_string": "EEFLSUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312998
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 16,
+      "alphagram_string": "ACEGIOP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 312999
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 18,
+      "alphagram_string": "EGPRSUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313000
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 20,
+      "alphagram_string": "EEENRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313001
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 23,
+      "alphagram_string": "EEIPRTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313002
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 24,
+      "alphagram_string": "AENRSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313003
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 23,
+      "alphagram_string": "EELLORS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313004
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 28,
+      "alphagram_string": "BEEHOPS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313005
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 21,
+      "alphagram_string": "EEHPRRY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313006
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 13,
+      "alphagram_string": "EOQRTUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313007
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 12,
+      "alphagram_string": "IILLNOP"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313008
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 20,
+      "alphagram_string": "AAAHMMT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313009
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 14,
+      "alphagram": 587202625
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313010
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 5,
+      "alphagram_string": "ABENNRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313011
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 20,
+      "alphagram_string": "ADEENSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313012
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 7,
+      "alphagram_string": "GGHIINS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313013
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 15,
+      "alphagram_string": "BEQRSUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313014
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 31,
+      "alphagram_string": "AARSSTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313015
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 16,
+      "alphagram_string": "DDEGNOU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313016
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 17,
+      "alphagram_string": "CORRSSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313017
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 11,
+      "alphagram_string": "EGIOTUV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313018
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 23,
+      "alphagram_string": "ABHSSUW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313019
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 18,
+      "alphagram_string": "BEILMNR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313020
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 7,
+      "alphagram_string": "CGINRTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313021
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 24,
+      "alphagram_string": "ACEKMOS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313022
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 11,
+      "alphagram_string": "AELOPRV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313023
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 6,
+      "alphagram_string": "DEHIRTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313024
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 21,
+      "alphagram_string": "ACERRSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313025
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 27,
+      "alphagram_string": "ABIKNST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313026
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 14,
+      "alphagram_string": "AENPSTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313027
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 19,
+      "alphagram_string": "AEGLOSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313028
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 24,
+      "alphagram_string": "ELPPRSU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313052
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 17,
+      "alphagram_string": "CEEILRTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313053
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 14,
+      "alphagram_string": "AEERRSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313054
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 13,
+      "alphagram_string": "ABCEEILT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313055
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 5,
+      "alphagram_string": "EFLOORR"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313056
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 11,
+      "alphagram_string": "ABEELSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313057
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 15,
+      "alphagram_string": "ACGHIRSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313058
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 16,
+      "alphagram_string": "AEIILLTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313059
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 14,
+      "alphagram_string": "CEEEIRTV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313060
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 5,
+      "alphagram_string": "CEIKLSST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313061
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 10,
+      "alphagram_string": "ACHLORSS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313062
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 13,
+      "alphagram_string": "DEEEPRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313063
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 9,
+      "alphagram_string": "IORRSUVV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313064
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 14,
+      "alphagram_string": "BELMORSY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313065
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 20,
+      "alphagram_string": "BCLMNOOO"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313066
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 3,
+      "alphagram_string": "ADEGHTUW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313067
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 16,
+      "alphagram_string": "GHIMNSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313068
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 22,
+      "alphagram_string": "ADELOPTY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313069
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 14,
+      "alphagram_string": "ABDEHILL"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313070
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 8,
+      "alphagram_string": "DEINSSTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313071
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 5,
+      "alphagram_string": "AABGNORZ"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313072
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 22,
+      "alphagram_string": "ACIIMNOS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313073
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 7,
+      "alphagram_string": "EEINSTTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313074
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 7,
+      "alphagram_string": "BBDDEEMO"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313075
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 7,
+      "alphagram_string": "EGILNSSW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313076
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 6,
+      "alphagram_string": "EEFINRRS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313077
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 5,
+      "alphagram_string": "DEEILOTT"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313078
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 8,
+      "alphagram_string": "AACDITUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313079
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 4,
+      "alphagram_string": "CIKOSSTU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313080
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 5,
+      "alphagram_string": "AEIMPRSV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313081
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 7,
+      "alphagram_string": "ACEIKKLS"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313082
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 12,
+      "alphagram_string": "ACEIKLRY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313083
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 9,
+      "alphagram_string": "EEELPRST"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313084
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 4,
+      "alphagram_string": "EELSTVV"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313085
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 3,
+      "alphagram_string": "GGILLNUY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313086
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 7,
+      "alphagram_string": "BDEINRY"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313087
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 5,
+      "alphagram_string": "EIKLNTW"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313088
+  },
+  {
+    "fields": {
+      "challenge": 40233,
+      "numTimesMissed": 3,
+      "alphagram_string": "GGGHINU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313089
+  },
+  {
+    "fields": {
+      "challenge": 40234,
+      "numTimesMissed": 3,
+      "alphagram_string": "BNORSTUU"
+    },
+    "model": "wordwalls.dailychallengemissedbingos",
+    "pk": 313091
+  }
+]

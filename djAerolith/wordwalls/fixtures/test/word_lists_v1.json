@@ -1,0 +1,44 @@
+[
+{
+  "fields": {
+    "lexicon": 7,
+    "name": "blank bingos 8 1 15",
+    "created": "2015-08-01T06:39:12",
+    "numAlphagrams": 2,
+    "numFirstMissed": 2,
+    "lastSaved": "2015-08-01T06:41:49",
+    "missed": "[0, 1]",
+    "curQuestions": "[0, 1]",
+    "user": 1,
+    "numCurAlphagrams": 2,
+    "origQuestions": "[{\"q\": \"BEFLNOS?\", \"a\": [533373]}, {\"q\": \"AAGINN?\", \"a\": [582825, 573947, 582824, 573943]}]",
+    "goneThruOnce": true,
+    "numMissed": 2,
+    "firstMissed": "[0, 1]",
+    "questionIndex": 50
+  },
+  "model": "base.savedlist",
+  "pk": 7961
+},
+{
+  "fields": {
+    "lexicon": 7,
+    "name": "thursday night",
+    "created": "2015-12-03T18:49:13",
+    "numAlphagrams": 5,
+    "numFirstMissed": 2,
+    "lastSaved": "2015-12-10T19:31:55",
+    "missed": "[2, 3]",
+    "curQuestions": "[2, 3, 4]",
+    "user": 1,
+    "numCurAlphagrams": 3,
+    "origQuestions": "[587202814, 587217533, 587217164, 587212969, 587222511]",
+    "goneThruOnce": true,
+    "numMissed": 2,
+    "firstMissed": "[1, 2]",
+    "questionIndex": 50
+  },
+  "model": "base.savedlist",
+  "pk": 8717
+}
+]

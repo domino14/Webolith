@@ -15,26 +15,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
+
+import string
+import random
+import json
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
-import string
-import json
 
-# XXX: Include CSW12 here after Sept 1.
-EXCLUDED_LEXICA = ['OWL2', 'CSW07']
-
-def alphProbToProbPK(prob, lexId, length):
-    # XXX: THIS ONLY ALLOWS FOR LEXICON INDICES FROM 0 to 3
-    # (Terrible oversight)
-    # Everything else may result in weird collisions. This needs to be
-    # reworked!!
-    return prob + (lexId << 24) + (length << 26)
-
-
-def probPKToAlphProb(probPk):
-    if probPk:
-        return probPk & ((1 << 24) - 1)
-    return None
+from base.validators import word_list_format_validator
+EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
 
 
 def alphagrammize(word):
@@ -65,6 +56,7 @@ class AlphagramManager(models.Manager):
         return self.get(alphagram=alphagram, lexicon=lexicon)
 
 
+# XXX: Remove after migration.
 class Alphagram(models.Model):
     objects = AlphagramManager()
 
@@ -86,6 +78,7 @@ class Alphagram(models.Model):
                            )
 
 
+# XXX: Remove after migration.
 class Word(models.Model):
     word = models.CharField(max_length=15, db_index=True)
     alphagram = models.ForeignKey(Alphagram)
@@ -135,10 +128,81 @@ class SavedList(models.Model):
     goneThruOnce = models.BooleanField()
     questionIndex = models.IntegerField()
 
-    origQuestions = models.TextField()
+    origQuestions = models.TextField(validators=[word_list_format_validator])
     curQuestions = models.TextField()
     missed = models.TextField()
     firstMissed = models.TextField()
+    # If this word list is temporary, it should be cleaned up when its
+    # parent (the game table) gets deleted.
+    # This defaults to False for compatibility with prior rows, but
+    # in initialize_list we should set it to True. The only function
+    # that should set it back to False is a save.
+    is_temporary = models.BooleanField(default=False)
+    # XXX: Change default to 2 after migration.
+    version = models.IntegerField(default=1)
+
+    def initialize_list(self, questions, lexicon, user, shuffle=False,
+                        keep_old_name=False, save=True):
+        """
+        Initialize a list with the passed in questions. Optionally saves
+        it to the database.
+
+        questions - A list of {'q': 'abc', 'a': [...]} objects.
+        lexicon - The lexicon.
+        user - The user. If save is False, this value is ignored.
+        shuffle - Whether to shuffle the questions.
+        keep_old_name - If False, generate a new name and set as a
+            temporary word list.
+        save - Save the word list to the database. If this is False,
+            we can just use this as an object that we can dump to JSON.
+            This is used for the API in base/views.py.
+
+        """
+        num_questions = len(questions)
+        if shuffle:
+            random.shuffle(questions)
+        self.lexicon = lexicon
+        if not keep_old_name:
+            self.name = uuid.uuid4().hex
+            self.is_temporary = True
+        self.numAlphagrams = num_questions
+        self.numCurAlphagrams = num_questions
+        self.numFirstMissed = 0
+        self.numMissed = 0
+        self.goneThruOnce = False
+        self.questionIndex = 0
+        self.origQuestions = json.dumps(questions)
+        self.curQuestions = json.dumps(range(num_questions))
+        self.missed = json.dumps([])
+        self.firstMissed = json.dumps([])
+        self.version = 2
+        if save:
+            self.user = user
+            self.save()
+
+    def restart_list(self, shuffle=False):
+        """ Restart this list; save it back to the database. """
+        self.initialize_list(json.loads(self.origQuestions),
+                             self.lexicon, self.user, shuffle,
+                             keep_old_name=True)
+
+    def set_to_first_missed(self):
+        """ Set this list to quiz on first missed questions; save. """
+        self.curQuestions = self.firstMissed
+        self.numCurAlphagrams = self.numFirstMissed
+        self.questionIndex = 0
+        self.missed = json.dumps([])
+        self.numMissed = 0
+        self.save()
+
+    def set_to_missed(self):
+        """ Set this list to start quizzing on the missed questions; save. """
+        self.curQuestions = self.missed
+        self.numCurAlphagrams = self.numMissed
+        self.questionIndex = 0
+        self.missed = json.dumps([])
+        self.numMissed = 0
+        self.save()
 
     def to_python(self):
         """
@@ -157,7 +221,9 @@ class SavedList(models.Model):
             'curQuestions': json.loads(self.curQuestions),
             'missed': json.loads(self.missed),
             'firstMissed': json.loads(self.firstMissed),
-            'id': self.pk
+            'version': self.version,
+            'id': self.pk,
+            'temporary': self.is_temporary
         }
 
     def __unicode__(self):
@@ -166,8 +232,17 @@ class SavedList(models.Model):
             self.name,
             '*' if self.goneThruOnce else '',
             self.lastSaved)
-    # TODO keep track of original alphagrams even in regular list, so it
-    # can be saved separately..
 
     class Meta:
+        # XXX: This will be removed once we move over to Postgres or
+        # something. We should rename this database table properly
+        # (or even do it prior to that).
         db_table = 'wordwalls_savedlist'
+        unique_together = ('lexicon', 'name', 'user')
+
+
+class WordList(SavedList):
+    # XXX: we are using this instead of the badly-named "SavedList"
+    # in all of our code. These names should be interchangeable.
+    class Meta:
+        proxy = True

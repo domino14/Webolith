@@ -1,6 +1,6 @@
 /**
  * @fileOverview The word list model. This model should almost mirror the model
- * for SavedList in base/models.py.
+ * for WordList in base/models.py.
  */
 define([
   'underscore',
@@ -80,9 +80,9 @@ define([
        */
       questionIndex: 0,
       /**
-       * An array of original questions. These are the indices of the
-       * alphagrams in the Alphagram model.
-       * @type {Array.<number>}
+       * An array of original questions. These are objects that look
+       * like {"q": ..., "a": [...]}
+       * @type {Array.<Object>}
        */
       origQuestions: [],
       /**
@@ -145,9 +145,9 @@ define([
         missedDict[qIndex] = true;
       });
       _.each(this.get('curQuestions'), function(qIndex) {
-        var qId, card;
-        qId = orig[qIndex];
-        card = _.clone(this.questionMap_[qId]);
+        var qObj, card;
+        qObj = orig[qIndex];
+        card = _.clone(this.questionMap_[qObj.q]);
         if (!card) {
           return;
         }

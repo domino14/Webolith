@@ -6,8 +6,7 @@ from wordwalls.models import (DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
                               DailyChallengeName)
 from datetime import date
-from wordwalls.management.commands.genMissedBingoChalls import (
-    challengeDateFromReqDate)
+from wordwalls.challenges import toughies_challenge_date
 import json
 
 
@@ -25,7 +24,7 @@ class Command(BaseCommand):
         for lb in lbs:
             award = True
             if lb.challenge.name == toughies:
-                chDate = challengeDateFromReqDate(today)
+                chDate = toughies_challenge_date(today)
                 # Toughies challenge still ongoing
                 if chDate == lb.challenge.date:
                     award = False

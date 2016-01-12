@@ -17,6 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from django import forms
+
 from base.models import Lexicon, EXCLUDED_LEXICA
 
 
@@ -32,4 +33,3 @@ class ProfileEditForm(forms.Form):
         label='Your profile',
         required=False)
     disableChat = forms.BooleanField(label='Disable Chat', required=False)
-
