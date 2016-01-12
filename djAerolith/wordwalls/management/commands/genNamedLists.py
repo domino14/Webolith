@@ -242,5 +242,5 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         NamedList.objects.all().delete()
         for lex in Lexicon.objects.filter(
-                lexiconName__in=['OWL2', 'CSW12', 'America', 'CSW15']):
+                lexiconName__in=['America', 'CSW15']):
             createNamedLists(lex)
