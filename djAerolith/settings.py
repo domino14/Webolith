@@ -288,7 +288,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 AWS_ACCESS_KEY_ID = settings_local.AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY = settings_local.AWS_SECRET_ACCESS_KEY
 
-WORD_DB_LOCATION = os.path.join(PROJECT_ROOT, '../dbCreator')
+WORD_DB_LOCATION = settings_local.WORD_DB_LOCATION
 
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
