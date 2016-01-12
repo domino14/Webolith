@@ -3,6 +3,7 @@
 import json
 import time
 import re
+import logging
 
 from django.core.management.base import NoArgsCommand
 from django.db import connection
@@ -11,7 +12,7 @@ from base.models import Lexicon, alphagrammize
 from wordwalls.models import NamedList
 from lib.word_db_helper import WordDB, Questions
 
-
+logger = logging.getLogger(__name__)
 friendly_number_map = {
     2: 'Twos',
     3: 'Threes',
@@ -67,7 +68,7 @@ def get_questions_by_condition(db, min_prob, max_prob, length, condition,
 def create_named_list(lexicon, num_questions, word_length, is_range,
                       questions, name):
     if num_questions == 0:
-        print ">> Not creating empty list " + name
+        logger.debug(">> Not creating empty list " + name)
         return
 
     nl = NamedList(lexicon=lexicon,
@@ -82,7 +83,7 @@ def create_named_list(lexicon, num_questions, word_length, is_range,
 
 def create_wl_lists(i, lex, db):
     """Create word lists for words with length `i`."""
-
+    logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
     length_counts = json.loads(lex.lengthCounts)
     num_for_this_length = length_counts[str(i)]
     min_prob = 1
@@ -138,6 +139,38 @@ def create_wl_lists(i, lex, db):
             lex, len(qs), i, False, json.dumps(qs),
             'America {} not in CSW15'.format(friendly_number_map[i]))
 
+        if i == 4:
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda w: ('+' in w.lexiconSymbols and
+                           re.search(r'[JQXZ]', w.word) and
+                           len(w.word) == 4),
+                condition_type=Condition.WORD)
+            create_named_list(
+                lex, len(qs), i, False, json.dumps(qs),
+                'America JQXZ 4s not in OWL2')
+        elif i == 5:
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda w: ('+' in w.lexiconSymbols and
+                           re.search(r'[JQXZ]', w.word) and
+                           len(w.word) == 5),
+                condition_type=Condition.WORD)
+            create_named_list(
+                lex, len(qs), i, False, json.dumps(qs),
+                'America JQXZ 5s not in OWL2')
+
+        elif i == 6:
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda w: ('+' in w.lexiconSymbols and
+                           re.search(r'[JQXZ]', w.word) and
+                           len(w.word) == 6),
+                condition_type=Condition.WORD)
+            create_named_list(
+                lex, len(qs), i, False, json.dumps(qs),
+                'America JQXZ 6s not in OWL2')
+
     if lex.lexiconName == 'CSW15':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
@@ -167,7 +200,7 @@ def createNamedLists(lex):
     if lex.lexiconName == 'OWL2':
         create_common_words_lists()
 
-    print lex, "elapsed", time.time() - t1
+    logger.debug('%s, elapsed %s', lex, time.time() - t1)
 
 
 def create_common_words_lists():

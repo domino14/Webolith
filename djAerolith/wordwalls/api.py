@@ -2,9 +2,7 @@ import json
 from datetime import date, timedelta
 import time
 
-from wordwalls.models import (WordwallsGameModel,
-                              DailyChallenge,
-                              DailyChallengeName)
+from wordwalls.models import WordwallsGameModel, DailyChallengeName
 from base.models import Lexicon
 from lib.response import response, StatusCode
 from wordwalls.views import getLeaderboardData
