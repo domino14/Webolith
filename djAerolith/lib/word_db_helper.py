@@ -21,16 +21,14 @@ class BadInput(Exception):
 class Word(object):
     def __init__(self, word, alphagram=None, definition=None, front_hooks=None,
                  back_hooks=None, inner_front_hook=None, inner_back_hook=None,
-                 lexiconSymbols=None):
+                 lexicon_symbols=None):
         self.word = word
         self.alphagram = alphagram
         # Disallow None, to keep compatibility with old code.
         self.definition = definition or ''
         self.front_hooks = front_hooks or ''
         self.back_hooks = back_hooks or ''
-        # XXX: This one is camelCase for compatiblity with old model
-        # Fix this once we remove old model.
-        self.lexiconSymbols = lexiconSymbols or ''
+        self.lexicon_symbols = lexicon_symbols or ''
         self.inner_front_hook = True if inner_front_hook == 1 else False
         self.inner_back_hook = True if inner_back_hook == 1 else False
 
@@ -158,7 +156,7 @@ class WordDB(object):
         if row:
             return Word(word=word, definition=row[1], front_hooks=row[2],
                         back_hooks=row[3], inner_front_hook=row[4],
-                        inner_back_hook=row[5], lexiconSymbols=row[0],
+                        inner_back_hook=row[5], lexicon_symbols=row[0],
                         alphagram=row[6])
         return None
 
@@ -176,7 +174,7 @@ class WordDB(object):
             words.append(Word(word=row[7], definition=row[1],
                               front_hooks=row[2], back_hooks=row[3],
                               inner_front_hook=row[4], inner_back_hook=row[5],
-                              lexiconSymbols=row[0], alphagram=row[6]))
+                              lexicon_symbols=row[0], alphagram=row[6]))
         return words
 
     # XXX: Only used by tests.
@@ -379,7 +377,7 @@ class WordDB(object):
                              front_hooks=row[2], back_hooks=row[3],
                              inner_front_hook=row[4],
                              inner_back_hook=row[5],
-                             lexiconSymbols=row[0], alphagram=alpha))
+                             lexicon_symbols=row[0], alphagram=alpha))
             last_alphagram = alpha
         qs.append(Question(last_alphagram, cur_words))
         return qs
