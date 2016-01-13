@@ -49,7 +49,7 @@ def generate_question_map(questions):
                 'def': a.definition,
                 'f_hooks': a.front_hooks,
                 'b_hooks': a.back_hooks,
-                'symbols': a.lexiconSymbols,
+                'symbols': a.lexicon_symbols,
                 'f_inner': a.inner_front_hook,
                 'b_inner': a.inner_back_hook
             })

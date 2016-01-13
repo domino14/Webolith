@@ -726,8 +726,6 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
                 # replaced by sqlite, but for now we test for backwards
                 # compatibility, since we are doing an in-place
                 # migration.
-                'test/alphagrams.json',
-                'test/words.json',
                 'test/users.json',
                 'test/profiles.json',
                 'dcNames.json',

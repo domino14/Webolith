@@ -19,7 +19,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from base.models import Lexicon, Alphagram, WordList
+from base.models import Lexicon, WordList
 from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
 
@@ -92,42 +92,19 @@ class DailyChallengeLeaderboardEntry(models.Model):
         # user/leaderboard combination allowed in the leaderboard
         # entries
 
-    # in Word
-    # alphagram = models.ForeignKey(Alphagram)
-    # a word just has one alphagram, but an alphagram can 'have' multiple words
-
 
 class WordwallsGameModel(GenericTableGameModel):
-    # Additional fields.
-    # XXX: we should get rid of these and use SavedList.
-    # Remove these after migration.
-    numOrigQuestions = models.IntegerField(blank=True, null=True)
-    origQuestions = models.TextField(blank=True, null=True)
-
-    numCurQuestions = models.IntegerField(blank=True, null=True)
-    curQuestions = models.TextField(blank=True, null=True)
-
-    numMissed = models.IntegerField(blank=True, null=True)
-    missed = models.TextField(blank=True, null=True)
-
-    numFirstMissed = models.IntegerField(blank=True, null=True)
-    firstMissed = models.TextField(blank=True, null=True)
-
-    # Removed above, just keep below.
-    # XXX: Remove null after migration.
-    word_list = models.ForeignKey(WordList, null=True)
+    word_list = models.ForeignKey(WordList)
 
 
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge)
-    # XXX: Phase out this column soon.
-    alphagram = models.ForeignKey(Alphagram, null=True)
     alphagram_string = models.CharField(max_length=15, default='')
     numTimesMissed = models.IntegerField(default=0)
 
-    # XXX: Add a unique_together on alphagram_string and challenge later,
-    # after the migration is complete.
+    class Meta:
+        unique_together = ("alphagram_string", "challenge")
 
     def __unicode__(self):
         return "%s, %s, %d" % (
