@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def main(request):
-    quizzes = WordList.objects.filter(user=request.user)
+    quizzes = WordList.objects.filter(user=request.user, is_temporary=False)
     return render_to_response("flashcards/index.html", {
                               'numCards': 0,
                               'savedLists': json.dumps(quizzes_response(
