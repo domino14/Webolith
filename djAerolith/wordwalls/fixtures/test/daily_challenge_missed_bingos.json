@@ -1670,8 +1670,7 @@
   {
     "fields": {
       "challenge": 40307,
-      "numTimesMissed": 19,
-      "alphagram": 587202612
+      "numTimesMissed": 19
     },
     "model": "wordwalls.dailychallengemissedbingos",
     "___meta": {
@@ -2222,8 +2221,7 @@
   {
     "fields": {
       "challenge": 40279,
-      "numTimesMissed": 12,
-      "alphagram": 587202613
+      "numTimesMissed": 12
     },
     "model": "wordwalls.dailychallengemissedbingos",
     "___meta": {
@@ -3908,8 +3906,7 @@
   {
     "fields": {
       "challenge": 40233,
-      "numTimesMissed": 14,
-      "alphagram": 587202625
+      "numTimesMissed": 14
     },
     "model": "wordwalls.dailychallengemissedbingos",
     "pk": 313010

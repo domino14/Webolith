@@ -318,7 +318,8 @@ class WordwallsGame(object):
             for w in q.answers:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
-                              's': w.lexiconSymbols, 'ifh': w.inner_front_hook,
+                              's': w.lexicon_symbols,
+                              'ifh': w.inner_front_hook,
                               'ibh': w.inner_back_hook})
                 answer_hash[w.word] = alphagram_str, i
             ret_q_array.append({'a': alphagram_str, 'ws': words,

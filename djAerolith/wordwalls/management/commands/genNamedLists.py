@@ -125,7 +125,7 @@ def create_wl_lists(i, lex, db):
     if lex.lexiconName == 'America':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
-            lambda w: ('+' in w.lexiconSymbols),
+            lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
@@ -133,7 +133,7 @@ def create_wl_lists(i, lex, db):
 
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
-            lambda w: ('$' in w.lexiconSymbols),
+            lambda w: ('$' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
@@ -142,7 +142,7 @@ def create_wl_lists(i, lex, db):
         if i == 4:
             qs = get_questions_by_condition(
                 db, min_prob, max_prob, i,
-                lambda w: ('+' in w.lexiconSymbols and
+                lambda w: ('+' in w.lexicon_symbols and
                            re.search(r'[JQXZ]', w.word) and
                            len(w.word) == 4),
                 condition_type=Condition.WORD)
@@ -152,7 +152,7 @@ def create_wl_lists(i, lex, db):
         elif i == 5:
             qs = get_questions_by_condition(
                 db, min_prob, max_prob, i,
-                lambda w: ('+' in w.lexiconSymbols and
+                lambda w: ('+' in w.lexicon_symbols and
                            re.search(r'[JQXZ]', w.word) and
                            len(w.word) == 5),
                 condition_type=Condition.WORD)
@@ -163,7 +163,7 @@ def create_wl_lists(i, lex, db):
         elif i == 6:
             qs = get_questions_by_condition(
                 db, min_prob, max_prob, i,
-                lambda w: ('+' in w.lexiconSymbols and
+                lambda w: ('+' in w.lexicon_symbols and
                            re.search(r'[JQXZ]', w.word) and
                            len(w.word) == 6),
                 condition_type=Condition.WORD)
@@ -174,7 +174,7 @@ def create_wl_lists(i, lex, db):
     if lex.lexiconName == 'CSW15':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
-            lambda w: ('+' in w.lexiconSymbols),
+            lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
@@ -182,7 +182,7 @@ def create_wl_lists(i, lex, db):
 
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
-            lambda w: ('#' in w.lexiconSymbols),
+            lambda w: ('#' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),

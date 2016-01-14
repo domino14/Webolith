@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     #'basic.blog',
     #'basic.inlines',
     'base',
+    'flashcards',
     'tablegame',
     'wordwalls',
     'accounts',
@@ -145,7 +146,6 @@ INSTALLED_APPS = (
     'gunicorn',
     'whitleyCards',
     'gargoyle',
-    'flashcards',
     'registration'
     #'debug_toolbar',
     #'locking'
