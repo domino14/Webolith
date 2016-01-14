@@ -47,36 +47,6 @@ class Lexicon(models.Model):
     def __unicode__(self):
         return self.lexiconName
 
-# see http://docs.djangoproject.com/en/1.2/topics/serialization/ for
-# manager stuff:
-
-
-# class AlphagramManager(models.Manager):
-#     def get_by_natural_key(self, alphagram, lexicon):
-#         return self.get(alphagram=alphagram, lexicon=lexicon)
-
-
-# # XXX: Remove after migration.
-# class Alphagram(models.Model):
-#     objects = AlphagramManager()
-
-#     alphagram = models.CharField(max_length=15, db_index=True)
-#     lexicon = models.ForeignKey(Lexicon)
-#     probability = models.IntegerField()
-#     probability_pk = models.IntegerField(primary_key=True)
-#     length = models.IntegerField()
-
-#     def __unicode__(self):
-#         return self.alphagram
-
-#     def natural_key(self):
-#         return (self.alphagram, self.lexicon)
-
-#     class Meta:
-#         unique_together = (('alphagram', 'lexicon'),
-#                            ('probability', 'length', 'lexicon')
-#                            )
-
 
 class SavedList(models.Model):
     lexicon = models.ForeignKey(Lexicon)

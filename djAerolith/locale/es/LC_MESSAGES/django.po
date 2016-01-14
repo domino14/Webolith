@@ -1,0 +1,364 @@
+# Strings for the main Aerolith package.
+# Copyright (C) 2016 Cesarware
+# This file is distributed under the same license as the PACKAGE package.
+# Cesar Del Solar <delsolar@gmail.com>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-14 00:27-0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: registration_app/forms.py:26
+msgid "You seem to be a computer, please try again"
+msgstr "Parece que usted es una computadora, por favor intente otra vez."
+
+#: settings.py:66
+msgid "English"
+msgstr "Inglés"
+
+#: settings.py:67
+msgid "Spanish"
+msgstr "Español"
+
+#: templates/about.html:6 templates/base.html:87
+msgid "About"
+msgstr "Acerca de Aerolith"
+
+#: templates/about.html:7
+msgid ""
+"Aerolith is a web app written by César Del Solar. Its main goal is to "
+"provide a fun and fast-paced way to learn words quickly. It is particularly "
+"popular among <a href=\"http://www.scrabbleplayers.org/\" target=\"_blank"
+"\">tournament Scrabble</a> players but you can also use it for Boggle, Words "
+"with Friends, or any other word game! We even have some people that just "
+"like anagramming for fun and have gotten freakishly good."
+msgstr ""
+"\"El Aerolito\", como se diría en español, es una aplicación de web, escrita "
+"por César Del Solar. Su meta principal es proveer una manera divertida y "
+"rápida de aprender palabras. Es bien popular con jugadores de Scrabble, pero "
+"también se puede usar con Boggle, Words With Friends, o cualquier otro juego "
+"de palabras."
+
+#: templates/about.html:8
+msgid ""
+"The main program, Wordwalls, is quite simple. We present you with many "
+"challenges, once a day, where 50 scrambled words are shown to you and you "
+"must solve them as quickly as possible. You can also upload your own word "
+"lists, play some prepared lists of useful words, or search by probability."
+msgstr ""
+"El programa principal, Muros De Palabras, es bien simple. Se le presenta con "
+"muchos desafíos, una vez al día, donde debe resolver 50 palabras con letras "
+"mezcladas lo más rápido posible. Tambien puede subir sus proprias listas de "
+"palabras, o jugar listas ya preparadas por nosotros, o hasta buscar palabras "
+"por probabilidad."
+
+#: templates/about.html:9
+msgid "The following video shows you the basics and how to get started."
+msgstr "Este video (en inglés) le enseñará lo básico."
+
+#: templates/about.html:11
+msgid "About César"
+msgstr "Acerca de César"
+
+#: templates/about.html:12
+msgid ""
+"César likes programming, playing Scrabble, guitar, ukulele, running, and "
+"probably a few more things."
+msgstr ""
+"A César le gusta programar, jugar Scrabble, guitarra, ukelele, correr, y "
+"otras cosas."
+
+#: templates/base.html:78
+#: templates/registration/password_reset_complete.html:9
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+#: templates/base.html:79 templates/registration/registration_form.html:74
+msgid "Register"
+msgstr "Registrarse"
+
+#: templates/base.html:84
+msgid "Membership"
+msgstr "Membresía"
+
+#: templates/base.html:85
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: templates/base.html:88
+msgid "Wordwalls"
+msgstr "Muros De Palabras"
+
+#: templates/base.html:102
+msgid "Welcome to Aerolith 2.0! Please"
+msgstr "¡Bienvenidos a Aerolith 2.0! Por favor"
+
+#: templates/base.html:102
+msgid "log in"
+msgstr "inicie su sesión"
+
+#: templates/base.html:102
+msgid "or"
+msgstr "o"
+
+#: templates/base.html:102
+msgid "register"
+msgstr "regístrese"
+
+#: templates/base.html:102
+msgid "if you are new to this site"
+msgstr "si es su primera vez en este sitio"
+
+#: templates/base.html:103 templates/registration/login.html:36
+msgid "Forget your password?"
+msgstr "¿Se olvidó de su contraseña?"
+
+#: templates/base.html:105
+msgid "Welcome back"
+msgstr "Gracias por regresar"
+
+#: templates/base.html:105
+msgid "Here are some things you can do"
+msgstr "Aquí hay unas cosas que usted puede hacer"
+
+#: templates/base.html:106
+msgid "Play WordWalls"
+msgstr "Jugar Muros De Palabras"
+
+#: templates/base.html:141
+msgid "All Rights Reserved."
+msgstr "Reservados Todos Los Derechos"
+
+#: templates/registration/login.html:4
+msgid "Aerolith login"
+msgstr "Inicio de sesión"
+
+#: templates/registration/login.html:11
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+"Su nombre de usuario y la contraseña no coinciden. Por favor, vuelva a "
+"intentarlo."
+
+#: templates/registration/login.html:18
+#: templates/registration/registration_form.html:31
+#: templates/registration/registration_form.html:34
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: templates/registration/login.html:24
+#: templates/registration/registration_form.html:49
+#: templates/registration/registration_form.html:52
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/registration/login.html:31
+msgid "Sign in"
+msgstr "Inicie sesión"
+
+#: templates/registration/logout.html:5
+msgid "Aerolith - logged out"
+msgstr "Aerolith - sesión acabada"
+
+#: templates/registration/logout.html:11
+msgid "Back to the <a href=\"../../\">main page</a>. "
+msgstr "De regreso a la <a href=\"../../\">página principal</a>. "
+
+#: templates/registration/password_change_done.html:4
+msgid "Aerolith - Password Updated"
+msgstr "Aerolith - Contraseña cambiada"
+
+#: templates/registration/password_change_done.html:8
+msgid "Your password was changed successfully."
+msgstr "Su contraseña se ha cambiado correctamente."
+
+#: templates/registration/password_change_form.html:4
+msgid "Aerolith - Change Password"
+msgstr "Aerolith - Cambie su contraseña"
+
+#: templates/registration/password_change_form.html:14
+msgid "Old password"
+msgstr "Contraseña antigua"
+
+#: templates/registration/password_change_form.html:21
+#: templates/registration/password_reset_confirm.html:15
+msgid "New password"
+msgstr "Contraseña nueva"
+
+#: templates/registration/password_change_form.html:28
+#: templates/registration/password_reset_confirm.html:22
+msgid "New password confirmation"
+msgstr "Contraseña nueva (confirmación)"
+
+#: templates/registration/password_change_form.html:35
+#: templates/registration/password_reset_confirm.html:30
+#: templates/registration/password_reset_form.html:24
+msgid "Submit"
+msgstr "Cambiar contraseña"
+
+#: templates/registration/password_reset_complete.html:4
+#, fuzzy
+#| msgid "Aerolith - Change Password"
+msgid "Aerolith - Password Reset"
+msgstr "Aerolith - Cambie su contraseña"
+
+#: templates/registration/password_reset_complete.html:8
+msgid "Password reset successfully."
+msgstr "Contraseña fue cambiada correctamente."
+
+#: templates/registration/password_reset_confirm.html:4
+#, fuzzy
+#| msgid "Aerolith - Change Password"
+msgid "Aerolith - Confirm Password Reset"
+msgstr "Aerolith - Cambie su contraseña"
+
+#: templates/registration/password_reset_confirm.html:37
+msgid "Password reset failed"
+msgstr "No se pudo cambiar su contraseña."
+
+#: templates/registration/password_reset_done.html:4
+msgid "Aerolith - Email Sent"
+msgstr "Aerolith - Email mandado"
+
+#: templates/registration/password_reset_done.html:8
+msgid "An email with password reset instructions has been sent."
+msgstr ""
+"Un e-mail con instrucciones para cambiar su contraseña ha sido mandado."
+
+#: templates/registration/password_reset_email.html:3
+#, python-format
+msgid ""
+"\n"
+"You're receiving this e-mail because you requested a password reset for your "
+"user account at %(site_name)s.\n"
+"\n"
+"Your username is %(username)s.\n"
+"\n"
+"Please go to the following page and choose a new password:\n"
+msgstr ""
+"\n"
+"Usted está recibiendo este e-mail porque ha pedido un cambio de contraseña "
+"para el sitio %(site_name)s.\n"
+"\n"
+"Su nombre de usuario es %(username)s.\n"
+"\n"
+"Por favor, vaya a esta página y escoja una contraseña nueva:\n"
+
+#: templates/registration/password_reset_email.html:14
+#, python-format
+msgid ""
+"\n"
+"Love,\n"
+"\n"
+"The %(site_name)s team.\n"
+"\n"
+msgstr ""
+"\n"
+"Con amor,\n"
+"\n"
+"El personal de %(site_name)s.\n"
+"\n"
+
+#: templates/registration/password_reset_form.html:4
+#, fuzzy
+#| msgid "Aerolith - Change Password"
+msgid "Aerolith - Reset Password"
+msgstr "Aerolith - Cambie su contraseña"
+
+#: templates/registration/password_reset_form.html:9
+msgid ""
+"Please enter your email address to receive password change instructions."
+msgstr ""
+"Por favor entre su dirección de correo electrónico para recibir "
+"instrucciones para cambiar su contraseña."
+
+#: templates/registration/password_reset_form.html:16
+#: templates/registration/registration_form.html:40
+#: templates/registration/registration_form.html:43
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: templates/registration/registration_form.html:3
+msgid "Aerolith registration"
+msgstr "Registración para Aerolith"
+
+#: templates/registration/registration_form.html:8
+msgid "Please enter your registration information here."
+msgstr "Por favor registrése aquí."
+
+#: templates/registration/registration_form.html:58
+#: templates/registration/registration_form.html:61
+msgid "Password (again)"
+msgstr "Contraseña (de nuevo)"
+
+#: templates/registration/registration_form.html:67
+msgid "Are you human?"
+msgstr "¿Es usted humano(a)?"
+
+#: templates/support.html:8
+#, python-format
+msgid ""
+"\n"
+"<strong>You are already a supporter - thank you! Your membership expires "
+"%(expiry)s.</strong>\n"
+msgstr ""
+"\n"
+"<strong>Usted ya es un/una contribuidor(a) - ¡Gracias! Su membresía expira "
+"el %(expiry)s.</strong>\n"
+
+#: templates/support.html:16
+msgid ""
+"\n"
+"Becoming a supporter of Aerolith.org helps to pay for the server and incites "
+"the developer(s) to make more fun products! You will also get several "
+"benefits; this list will increase as we add more features:\n"
+msgstr ""
+"\n"
+"Llegar a ser un/una contribuidor(a) de Aerolith.org ayuda a pagar por el "
+"servidor e incita el desarrollador (César) para hacer productos más "
+"divertidos. Usted también tendrá varios beneficios; esta lista se "
+"incrementará a medida que agreguemos más características:\n"
+
+#: templates/support.html:20
+msgid ""
+"Remove limit for number of saved alphagrams among your saved lists "
+"(WordWalls game)"
+msgstr "Remover el límite del numero de alfagramas en sus listas de palabras."
+
+#: templates/support.html:24
+msgid "The membership cost is $19.99 per year."
+msgstr "El costo de la membresía es $19.99 por año."
+
+#: templates/support.html:33
+msgid ""
+"Alternatively, you can contribute in another way. If you know how to code in "
+"Python and/or Javascript, you can clone my Aerolith repo from <a href="
+"\"https://github.com/domino14/Webolith\">Github</a> and contribute code! "
+"There are a lot of ideas/feature requests that wouldn't take too long to "
+"code, but there's so many that I may not be able to do them all in a "
+"reasonable timeframe. You can make the change, test it on your desktop, and "
+"then do a \"Pull request\" on Github, and I will push your changes into this "
+"server. I'll also give you a few months of membership depending on how tough "
+"the feature was to implement ;) "
+msgstr ""
+"Alternativamente, si usted es un/una programador(a), ¡puede contribuir "
+"directamente a nuestro repositorio de <a href=\"https://github.com/domino14/"
+"Webolith\">Github</a>! Les daré varios meses de membresía, dependiente de la "
+"dificultad de lo que usted implementó ;)"
+
+#: templates/support.html:36
+msgid ""
+"\n"
+"Click <a href=\"/\">here</a> to return to homepage.</P>\n"
+msgstr ""
+"\n"
+"Haga click <a href=\"/\">aquí</a> para regresar a la página principal.</P>\n"

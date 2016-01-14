@@ -24,3 +24,4 @@ dbCreator/Makefile
 dbCreator/moc_*
 dbCreator/dbCreator
 dbCreator/*.db
+*.mo

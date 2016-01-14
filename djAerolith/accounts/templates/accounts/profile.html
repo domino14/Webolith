@@ -1,11 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{{profile.user.username}}'s profile{% endblock %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with username=profile.user.username %}{{username}}'s profile{% endblocktrans %}{% endblock %}
 
 
-{% block content_title %}<H3>{{profile.user.username}}'s profile</H3>
+{% block content_title %}<H3>{% blocktrans with username=profile.user.username %}{{username}}'s profile{% endblocktrans %}</H3>
 
 {% if user == profile.user %}
-<a href="/accounts/profile">(Edit</a>)
+<a href="/accounts/profile">({% trans "Edit" %}</a>)
 {% endif %}
 
 {% endblock %}
@@ -15,14 +17,14 @@
 <div class="row">
     <div class="col-sm-9">
         <div id="profile">
-          <H2>Profile</H2>
+          <H2>{% trans "Profile"%}</H2>
         {{profile.profile|my_markdown}}
         </div>
     </div>
     <div class="col-sm-3">
         <div id="awards" class="panel panel-default">
             <div class="panel-heading">
-                <h2 class="panel-title">Award Case</h2>
+                <h2 class="panel-title">{% trans "Award Case" %}</h2>
             </div>
             <div class="panel-body">
                 {% if wwMedals.medals.Platinum %}

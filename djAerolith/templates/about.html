@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% block title %}About Aerolith{% endblock %}
 
 {% block content %}
-<H3>About</H3>
-<P>Aerolith is a web app written by Cesar Del Solar. Its main goal is to provide a fun and fast-paced way to learn words quickly. It is particularly popular among <a href="http://www.scrabbleplayers.org/" target="_blank">tournament Scrabble</a> players but you can also use it for Boggle, Words with Friends, or any other word game! We even have some people that just like anagramming for fun and have gotten freakishly good.</P>
-<P>The main program, Wordwalls, is quite simple. We present you with a challenge once a day where 50 scrambled words are shown to you and you must solve them as quickly as possible. You can also upload your own word lists, play some prepared lists of useful words, or search by probability.</P>
-<P>The following video shows you the basics and how to get started.</P>
+<H3>{%trans "About"%}</H3>
+<P>{% blocktrans %}Aerolith is a web app written by César Del Solar. Its main goal is to provide a fun and fast-paced way to learn words quickly. It is particularly popular among <a href="http://www.scrabbleplayers.org/" target="_blank">tournament Scrabble</a> players but you can also use it for Boggle, Words with Friends, or any other word game! We even have some people that just like anagramming for fun and have gotten freakishly good.{%endblocktrans%}</P>
+<P>{%blocktrans%}The main program, Wordwalls, is quite simple. We present you with many challenges, once a day, where 50 scrambled words are shown to you and you must solve them as quickly as possible. You can also upload your own word lists, play some prepared lists of useful words, or search by probability.{%endblocktrans%}</P>
+<P>{%blocktrans%}The following video shows you the basics and how to get started.{%endblocktrans%}</P>
 <iframe width="560" height="315" src="//www.youtube.com/embed/I5lOgTCNj9s" frameborder="0" allowfullscreen></iframe>
-<H3>About Cesar</H3>
-Cesar likes programming, playing Scrabble, guitar, ukulele, running, and probably a few more things.
+<H3>{% trans "About César"%}</H3>
+{%blocktrans%}César likes programming, playing Scrabble, guitar, ukulele, running, and probably a few more things.{%endblocktrans%}
 {% endblock %}

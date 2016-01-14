@@ -105,6 +105,8 @@ class DailyChallengeMissedBingos(models.Model):
 
     class Meta:
         unique_together = ("alphagram_string", "challenge")
+        verbose_name = 'Daily Challenge Missed Bingo'
+        verbose_name_plural = 'Daily Challenge Missed Bingos'
 
     def __unicode__(self):
         return "%s, %s, %d" % (
