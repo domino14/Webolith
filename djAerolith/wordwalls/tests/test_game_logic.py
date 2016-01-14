@@ -726,8 +726,6 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
                 # replaced by sqlite, but for now we test for backwards
                 # compatibility, since we are doing an in-place
                 # migration.
-                'test/alphagrams.json',
-                'test/words.json',
                 'test/users.json',
                 'test/profiles.json',
                 'dcNames.json',
@@ -784,7 +782,6 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
-                'test/wordwallsgamemodel.json',
                 'test/named_lists.json']
 
     def setUp(self):

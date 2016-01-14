@@ -94,9 +94,7 @@ class DailyChallengeLeaderboardEntry(models.Model):
 
 
 class WordwallsGameModel(GenericTableGameModel):
-    # Removed above, just keep below.
-    # XXX: Remove null after migration.
-    word_list = models.ForeignKey(WordList, null=True)
+    word_list = models.ForeignKey(WordList)
 
 
 class DailyChallengeMissedBingos(models.Model):
@@ -105,8 +103,8 @@ class DailyChallengeMissedBingos(models.Model):
     alphagram_string = models.CharField(max_length=15, default='')
     numTimesMissed = models.IntegerField(default=0)
 
-    # XXX: Add a unique_together on alphagram_string and challenge later,
-    # after the migration is complete.
+    class Meta:
+        unique_together = ("alphagram_string", "challenge")
 
     def __unicode__(self):
         return "%s, %s, %d" % (

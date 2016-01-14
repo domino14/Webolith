@@ -14,7 +14,7 @@ class WordDBTest(TestCase):
     def test_word_data(self):
         word = self.db.get_word_data('PARTIEST')
         self.assertEqual(word.word, 'PARTIEST')
-        self.assertEqual(word.lexiconSymbols, '+$')
+        self.assertEqual(word.lexicon_symbols, '+$')
         self.assertEqual(word.front_hooks, '')
         self.assertEqual(word.back_hooks, '')
         self.assertEqual(word.inner_front_hook, True)
@@ -26,7 +26,7 @@ class WordDBTest(TestCase):
         words = self.db.get_words_data(['PARTIEST'])
         self.assertEqual(len(words), 1)
         self.assertEqual(words[0].word, 'PARTIEST')
-        self.assertEqual(words[0].lexiconSymbols, '+$')
+        self.assertEqual(words[0].lexicon_symbols, '+$')
         self.assertEqual(words[0].front_hooks, '')
         self.assertEqual(words[0].back_hooks, '')
         self.assertEqual(words[0].inner_front_hook, True)
@@ -40,7 +40,7 @@ class WordDBTest(TestCase):
 
         self.assertEqual(words[0].alphagram, 'ADEEGMMO')
         self.assertEqual(words[0].word, 'GAMODEME')
-        self.assertEqual(words[0].lexiconSymbols, '')
+        self.assertEqual(words[0].lexicon_symbols, '')
         self.assertEqual(words[0].front_hooks, '')
         self.assertEqual(words[0].back_hooks, 'S')
         self.assertEqual(words[0].inner_front_hook, False)
@@ -48,7 +48,7 @@ class WordDBTest(TestCase):
         self.assertTrue('organisms' in words[0].definition)
 
         self.assertEqual(words[1].word, 'PARTIEST')
-        self.assertEqual(words[1].lexiconSymbols, '+$')
+        self.assertEqual(words[1].lexicon_symbols, '+$')
         self.assertEqual(words[1].front_hooks, '')
         self.assertEqual(words[1].back_hooks, '')
         self.assertEqual(words[1].inner_front_hook, True)
