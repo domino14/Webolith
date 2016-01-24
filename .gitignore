@@ -25,3 +25,4 @@ dbCreator/moc_*
 dbCreator/dbCreator
 dbCreator/*.db
 *.mo
+*.gaddag

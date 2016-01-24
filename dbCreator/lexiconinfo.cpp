@@ -72,11 +72,11 @@ double LexiconInfo::combinations(QString alphagram)
        GPLed software, source code available at http://www.zyzzyva.net, copyright Michael Thelen. */
     // Build parallel arrays of letters with their counts, and the
     // precalculated combinations based on the letter frequency
-    QList<unsigned char> letters;
+    QList<QChar> letters;
     QList<int> counts;
     QList<const QList<double>*> combos;
     for (int i = 0; i < alphagram.length(); ++i) {
-        unsigned char c = alphagram.at(i).toAscii();
+        QChar c = alphagram.at(i);
 
         bool foundLetter = false;
         for (int j = 0; j < letters.size(); ++j) {
@@ -141,28 +141,10 @@ double LexiconInfo::combinations(QString alphagram)
 
 bool spanishLessThan(QChar i, QChar j)
 {
-    // anyone have a less horrible way of doing this?
-    /*
-    float x, y;
-    x = (float)i.toLower();
-    y = (float)tolower(j);
-
-
-    if (x == '1') x = (float)'c' + 0.5; // 'ch' is in between c and d
-    else if (x == '2') x = (float)'l' + 0.5; // 'll' is in between l and m
-    else if (x == '3') x = (float)'r' + 0.5; // 'rr' is in between r and s
-    else if (x == '4') x = (float)'n' + 0.5; // n-tilde is in between n and o
-
-    if (y == '1') y = (float)'c' + 0.5; // 'ch' is in between c and d
-    else if (y == '2') y = (float)'l' + 0.5; // 'll' is in between l and m
-    else if (y == '3') y = (float)'r' + 0.5; // 'rr' is in between r and s
-    else if (y == '4') y = (float)'n' + 0.5; // n-tilde is in between n and o
-
-    return x < y;*/
     i = i.toLower();
     j = j.toLower();
-
-    return (LexiconInfo::spanishTilesHash.value(i) < LexiconInfo::spanishTilesHash.value(j));
+    return (LexiconInfo::spanishTilesHash.value(i) <
+        LexiconInfo::spanishTilesHash.value(j));
 }
 
 
@@ -183,16 +165,9 @@ QString LexiconUtilities::alphagrammize(QString word, LessThans lessThan)
     return ret;
 }
 
-quint32 LexiconUtilities::encodeProbIndex(quint32 probIndex, quint32 wordLength, quint32 lexIndex)
+QMap <QChar, int> getEnglishDist()
 {
-    // XXX: This only allows for lexicon indices between 0 and 3! This is
-    // a really bad oversight!
-    return probIndex + (lexIndex << 24) + (wordLength << 26);
-}
-
-QMap <unsigned char, int> getEnglishDist()
-{
-    QMap <unsigned char, int> dist;
+    QMap <QChar, int> dist;
 
 
     dist.insert('A', 9); dist.insert('B', 2); dist.insert('C', 2);
@@ -207,15 +182,15 @@ QMap <unsigned char, int> getEnglishDist()
     return dist;
 }
 
-QMap <unsigned char, int> getSpanishDist()
+QMap <QChar, int> getSpanishDist()
 {
-    QMap <unsigned char, int> dist;
+    QMap <QChar, int> dist;
     dist.insert('1', 1); dist.insert('2', 1); dist.insert('3', 1);
     dist.insert('A', 12); dist.insert('B', 2); dist.insert('C', 4);
     dist.insert('D', 5); dist.insert('E', 12); dist.insert('F', 1);
     dist.insert('G', 2); dist.insert('H', 2); dist.insert('I', 6);
     dist.insert('J', 1); dist.insert('L', 4); dist.insert('M', 2);
-    dist.insert('N', 5); dist.insert('4', 1); dist.insert('O', 9);  // 4 is enye
+    dist.insert('N', 5); dist.insert(QChar(0xD1), 1); dist.insert('O', 9);
     dist.insert('P', 2); dist.insert('Q', 1); dist.insert('R', 5);
     dist.insert('S', 6); dist.insert('T', 4); dist.insert('U', 5);
     dist.insert('V', 1); dist.insert('X', 1); dist.insert('Y', 1);
@@ -231,28 +206,29 @@ void LexiconMap::createMap()
     QMap <unsigned char, int> spanishLetterDist = getSpanishDist();
 
     map.insert("OWL2", LexiconInfo("OWL2", "OWL2.txt", englishLetterDist,
-                                       "OWL2.trie", "OWL2_r.trie", 4, "North American 2006 Official Word List 2006"));
-    map.insert("CSW12", LexiconInfo("CSW12", "CSW12.txt", englishLetterDist, "CSW12.trie", "CSW12_r.trie", 6,
-                                    "Collins 2012 International English Word List"));
+        "OWL2.trie", "OWL2_r.trie", 4,
+        "North American 2006 Official Word List 2006"));
+    map.insert("CSW12", LexiconInfo("CSW12", "CSW12.txt", englishLetterDist,
+        "CSW12.trie", "CSW12_r.trie", 6,
+        "Collins 2012 International English Word List"));
     /* my lexicon indices are 4 and 5 because that's the way they first got made, and if I change them now
        in production it'll screw everything up (saved lists) */
     map.insert("America", LexiconInfo("America", "America.txt", englishLetterDist,
-                                    "America.trie", "America_r.trie", 7, "I am America, and so can you."));
-    map.insert("CSW15", LexiconInfo("CSW15", "CSW15.txt", englishLetterDist, "CSW15.trie", "CSW15_r.trie", 1,
-                                    "Collins 2015 International English Word List"));
-   /* map.insert("FISE", LexiconInfo("FISE", "fise.txt", spanishLetterDist, "fise.trie", "fise-r.trie"));
-    map.insert("OSPD4+LWL", LexiconInfo("OSPD4+LWL", "ospd4-lwl.txt", englishLetterDist,
-                                        "ospd4-lwl.trie", "ospd4-lwl-r.trie"));*/
+        "America.trie", "America_r.trie", 7, "I am America, and so can you."));
+    map.insert("CSW15", LexiconInfo("CSW15", "CSW15.txt", englishLetterDist,
+        "CSW15.trie", "CSW15_r.trie", 1,
+        "Collins 2015 International English Word List"));
+    map.insert("FISE", LexiconInfo("FISE", "FISE.txt", spanishLetterDist,
+        "FISE.trie", "FISE_r.trie"));
     foreach (QString key, map.keys())
     {
-        map[key].dawg.readDawg(Utilities::getRootDir() + "/words/" + map[key].dawgFilename);
-        map[key].reverseDawg.readDawg(Utilities::getRootDir() + "/words/" + map[key].dawgRFilename);
+        map[key].dawg.readDawg(Utilities::getRootDir() +
+            "/words/" + map[key].dawgFilename);
+        map[key].reverseDawg.readDawg(Utilities::getRootDir() +
+            "/words/" + map[key].dawgRFilename);
     }
-   // qDebug() << "find emicant";
-    //qDebug() << "fidning emicant" << map["OWL2"].dawg.findWord("EMICANT");
-    //map["OWL2"].dawg.checkDawg(Utilities::getRootDir() + "/words/OWL2.txt");
-    //map["FISE"].dawg.checkDawg(Utilities::getRootDir() + "/words/fise.txt");
-    // populate the spanish tiles hash here
+    // Populate the spanish tiles hash here. This is used for alphabetical
+    // sorting/alphagramming.
     int counter = 0;
     for (unsigned char c = 'a'; c <= 'c'; c++)
     {

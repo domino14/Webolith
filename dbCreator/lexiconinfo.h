@@ -30,11 +30,13 @@ enum LessThans
 class LexiconInfo
 {
 public:
-    LexiconInfo(QString name, QString filename, QMap <unsigned char, int> d, QString df, QString drf,
+    LexiconInfo(QString name, QString filename, QMap <QChar, int> d,
+                QString df, QString drf,
                 int lexIndex, QString dN)
     {
         lexiconName = name;
-        wordsFilename = filename; letterDist = d;
+        wordsFilename = filename;
+        letterDist = d;
         dawgFilename = df;
         dawgRFilename = drf;
         alphagramsPerLength.resize(16);  // 0-15 index
@@ -57,10 +59,7 @@ public:
     QString descriptiveName;
 private:
 
-    QMap<unsigned char, int> letterDist;
-
-
-
+    QMap<QChar, int> letterDist;
     QList <double> fullChooseCombos;    // copied from Zyzzyva
     QList<QList<double> > subChooseCombos; // ditto
 
@@ -79,7 +78,6 @@ public:
 namespace LexiconUtilities
 {
     QString alphagrammize(QString, LessThans lessThan);
-    quint32 encodeProbIndex(quint32 probIndex, quint32 wordLength, quint32 lexIndex);
 }
 
 #endif // LEXICONINFO_H
