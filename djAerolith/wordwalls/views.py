@@ -351,7 +351,8 @@ def table(request, id):
                        'username': request.user.username,
                        'addParams': json.dumps(params),
                        'avatarUrl': profile.avatarUrl,
-                       'CURRENT_VERSION': CURRENT_VERSION
+                       'CURRENT_VERSION': CURRENT_VERSION,
+                       'lexicon': wwg.get_wgm(id).lexicon
                        })
 
 

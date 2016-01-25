@@ -15,6 +15,7 @@ define([
      SolutionsTable, Mustache, ChallengeView, Tester, utils) {
   "use strict";
   var App;
+
   App = Backbone.View.extend({
     el: $("body"),
     events: {
@@ -38,8 +39,9 @@ define([
     enableTester_: function() {
       Tester.setEnabled();
     },
-    initialize: function() {
+    initialize: function(options) {
       this.guessInput = this.$("#guessText");
+      this.lexicon = options.lexicon;
       this.setupPopupEvent();
       this.wordwallsGame = new Game();
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
@@ -358,7 +360,8 @@ define([
       question.get('words').each(function(word) {
         var wordSolutionView;
         wordSolutionView = new WordSolutionView({
-          model: word
+          model: word,
+          lexicon: this.lexicon
         });
         $defsTable.append(wordSolutionView.render().el);
         this.roundTotalAnswers++;
@@ -401,15 +404,29 @@ define([
      */
     submitGuess: function(guessText) {
       var ucGuess;
-      ucGuess = $.trim(guessText.toUpperCase());
+      ucGuess = this.modifyGuess($.trim(guessText.toUpperCase()));
       $.post(this.tableUrl, {
         action: "guess",
-        guess: guessText
+        guess: ucGuess
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json').fail(_.bind(function(jqXHR) {
         this.updateMessages(jqXHR.responseJSON);
       }, this));
     },
+
+    /**
+     * Modify guess, based on lexicon. If we are using the Spanish (FISE)
+     * lexicon, we want to convert characters accordingly.
+     */
+    modifyGuess: function(guessText) {
+      if (this.lexicon !== utils.SPANISH_LEXICON) {
+        return guessText;
+      }
+      guessText = guessText.replace(/CH/g, '1').replace(/LL/g, 2).replace(
+        /RR/g, 3);
+      return guessText;
+    },
+
     /**
      * Processes a back-end response to a guess.
      * @param {string} ucGuess The upper-cased guess.
@@ -417,7 +434,8 @@ define([
      *                      in response to a guess.
      */
     processGuessResponse: function(ucGuess, data) {
-      var view, wordsRemaining, word;
+      var view, wordsRemaining, word, modifiedForDisplay;
+      modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
       if (_.has(data, 'C')) {
         if (data.C !== '') {
           /* data.C contains the alphagram. */
@@ -435,9 +453,10 @@ define([
           word = view.model.get('words').find(function(word) {
             return word.get('word').toUpperCase() === ucGuess;
           });
-          this.updateCorrectAnswer(ucGuess + word.get('lexiconSymbol'));
+          this.updateCorrectAnswer(modifiedForDisplay +
+            word.get('lexiconSymbol'));
         }
-        this.updateGuesses(ucGuess);
+        this.updateGuesses(modifiedForDisplay);
       }
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();

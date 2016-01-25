@@ -48,7 +48,9 @@ define([
       model: configuration,
       el: $("#customize_popup")
     });
-    appView = new AppView();
+    appView = new AppView({
+      lexicon: module.config().lexicon
+    });
     appView.setTablenum(module.config().tablenum);
     Dispatcher = _.clone(Backbone.Events);
     // Scope of 'this' is going to drive me nuts.

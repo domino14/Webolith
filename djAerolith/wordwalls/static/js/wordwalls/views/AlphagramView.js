@@ -84,6 +84,16 @@ define([
      */
     transformLetter: function(letter) {
       var blankCharacter;
+      // Do Spanish transformations.
+      if (letter === '1') {
+        letter = 'ᴄʜ';
+      } else if (letter === '2') {
+        letter = 'ʟʟ';
+      } else if (letter === '3') {
+        letter = 'ʀʀ';
+      } else if (letter === 'Ñ') {
+        letter = 'ñ';
+      }
       if (letter !== '?') {
         return letter;
       }
