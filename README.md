@@ -1,4 +1,4 @@
-Aerolith 2.0 is a word study website - Copyright 2007-2016 Cesar Del Solar
+Aerolith 2.0 is a word study website - Copyright 2007-2016 César Del Solar
 
 =======
 
@@ -16,7 +16,7 @@ Front-end code is Javascript (ES5 mostly), using Backbone, Underscore, and Requi
 
 The word databases are SQLITE, and [word_db_maker](https://github.com/domino14/word_db_maker) is a Go 1.5 program that will make them.
 
-See more information at that program. They require GADDAGs for the different lexica ([gaddag](https://github.com/domino14/macondo/gaddag)). Kind of convoluted but this is better than the previous way which required Qt and C++.
+See more information at that program. They require GADDAGs for the different lexica ([gaddag](https://github.com/domino14/macondo/tree/master/gaddag)). Kind of convoluted but this is better than the previous way which required Qt and C++.
 
 =======
 
