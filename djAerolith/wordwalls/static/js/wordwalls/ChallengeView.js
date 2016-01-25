@@ -1,10 +1,11 @@
-/*global define*/
+/*global define, django */
 define ([
   'jquery',
   'underscore',
   'text!templates/challengeResults.html',
   'mustache'
 ], function($, _, ChallengeResults, Mustache) {
+  "use strict";
   var sortEntry_, processDcResults_, getMedalName_;
   sortEntry_ = function(e1, e2) {
     if (e1.score === e2.score) {
@@ -27,10 +28,16 @@ define ([
   };
   processDcResults_ = function(data, divIdToPopulate) {
     var maxScore, entries, addlData, context, $el;
-    context = {results: []};
+    context = {
+      results: [],
+      i18n_ui_name: django.gettext('Name'),
+      i18n_ui_score: django.gettext('Score'),
+      i18n_ui_remaining: django.gettext('Remaining')
+    };
     $el = $("#" + divIdToPopulate);
     if (_.isNull(data)) {
-      $el.text("No one has done this challenge today. Be the first!");
+      $el.text(
+        django.gettext("No one has done this challenge today. Be the first!"));
       return;
     }
     maxScore = data.maxScore;

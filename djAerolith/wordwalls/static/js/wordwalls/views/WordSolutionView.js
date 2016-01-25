@@ -1,3 +1,4 @@
+/* global django */
 /**
  * @fileOverview This is the view for a single row in the solutions table.
  * Basically, a single word solution.
@@ -44,6 +45,7 @@ define([
         this.model) === 0 && !attrs.wrongAlpha) {
         attrs.markMissedBtn = true;
       }
+      attrs['i18n_ui_markmissed'] = django.gettext('Mark missed');
       this.$el.html(Mustache.render(SingleSolution, attrs));
       this.$('.mark-missed').button();
       return this;

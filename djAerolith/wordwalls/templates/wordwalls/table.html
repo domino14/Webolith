@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com
 {% endcomment %}
-
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,6 +58,7 @@ mixpanel.name_tag = function() {};
 </head>
 <body>
 {% block content %}
+<script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 <!-- http://stackoverflow.com/questions/9916073/how-to-load-bootstrapped-models-in-backbone-js-while-using-amd-require-js -->
 <script>
 var require = {
@@ -87,16 +88,16 @@ require(['main']);
 </script>
 
 <div id="topBar">
-<span id="start" onClick="mixpanel.track('request start');" class="tableButton">Start</span>
+<span id="start" onClick="mixpanel.track('request start');" class="tableButton">{% trans "Start" %}</span>
 <span id="gameTimer"> : </span>
-<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">Give up</span>
-<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">Solutions</span>
+<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">{% trans "Give up" %}</span>
+<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">{% trans "Solutions" %}</span>
 
-<span id="save" onClick="mixpanel.track('save game');" class="tableButton">Save</span>
+<span id="save" onClick="mixpanel.track('save game');" class="tableButton">{% trans "Save" context "table" %}</span>
 <input type="text" size="20" id="saveListName">
-<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">Preferences</span>
+<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">{% trans "Preferences" %}</span>
 <span id="horSep1"></span>
-<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">Exit</span>
+<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">{% trans "Exit" %}</span>
 </div>
 
 <div id="encloser">
@@ -119,11 +120,11 @@ require(['main']);
 
 
 <div id="bottomBar">
-<label for="guessText">Guess: </label><input type="text" name="Guess" size="15" id="guessText"/>
+<label for="guessText">{% trans "Guess" %}: </label><input type="text" name="Guess" size="15" id="guessText"/>
 <span id="horSep2"></span>
-<span id="shuffle" class="utilityButton">Shuffle (1)</span>
-<span id="alphagram" class="utilityButton">Alphagram (2)</span>
-<span id="customOrder" class="utilityButton">Custom (3)</span>
+<span id="shuffle" class="utilityButton">{% trans "Shuffle" %} (1)</span>
+<span id="alphagram" class="utilityButton">{% trans "Alphagram" %} (2)</span>
+<span id="customOrder" class="utilityButton">{% trans "Custom" %} (3)</span>
 {% if user.is_superuser %}
 <span id="testWordwalls" class="utilityButton">Test (4)</span>
 {% endif %}
@@ -131,7 +132,7 @@ require(['main']);
 
 <div id="textBar">
 <div id="messages"></div>
-Guesses:
+{% trans "Guesses" %}:
 <div id="guesses"></div>
 </div>
 <div id="customize_popup" class="popup_block customize_popup_block">
@@ -143,31 +144,31 @@ Guesses:
     </div>
     <BR>
     <div id="customize_popup_content" style="clear: both;">
-        <h3>Tiles:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">Don't use tiles</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">Sans-serif font</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">Bold letters</input></span>
-        <span class="configInputSpan">Tile style:
+        <h3>{% trans "Tiles" %}:</h3>
+        <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">{% trans "Don't use tiles" %}</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">{% trans "Sans-serif font" %}</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">{% trans "Bold letters" %}</input></span>
+        <span class="configInputSpan">{% trans "Tile style" %}:
         <select id="tileStyleSelect" class="configInput">
-          <option value="1">Style 1</option>
-          <option value="2">Style 2</option>
-          <option value="3">Style 3</option>
-          <option value="4">Style 4</option>
-          <option value="5">Style 5</option>
-          <option value="6">Style 6</option>
-          <option value="7">Style 7</option>
+          <option value="1">{% trans "Style" %} 1</option>
+          <option value="2">{% trans "Style" %} 2</option>
+          <option value="3">{% trans "Style" %} 3</option>
+          <option value="4">{% trans "Style" %} 4</option>
+          <option value="5">{% trans "Style" %} 5</option>
+          <option value="6">{% trans "Style" %} 6</option>
+          <option value="7">{% trans "Style" %} 7</option>
         </select></span>
-        <h3>Table:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">Don't show green table</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">Don't show canvas background</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">Show borders around questions</input></span>
+        <h3>{% trans "Table" %}:</h3>
+        <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">{% trans "Don't show green table" %}</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">{% trans "Don't show canvas background" %}</input></span>
+        <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">{% trans "Show borders around questions" %}</input></span>
         <div>
 
-        <h3>Other:</h3>
-        <span class="configInputSpan">Blank character: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
-        <span class="configInputSpan">Custom tile ordering: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
+        <h3>{% trans "Other" %}:</h3>
+        <span class="configInputSpan">{% trans "Blank character" %}: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
+        <span class="configInputSpan">{% trans "Custom tile ordering" %}: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
         <BR>
-        <button id="savePrefs">Save preferences</button><span id="prefsInfo"></span>
+        <button id="savePrefs">{% trans "Save preferences" %}</button><span id="prefsInfo"></span>
         </div>
     </div>
 </div>
@@ -182,7 +183,7 @@ Guesses:
 
 <div id="addlInfo_popup" class="popup_block">
     <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <H3><center>Challenge results</center></H3>
+    <H3><center>{% trans "Challenge results" %}</center></H3>
     <div id="addlInfo_content">
     <h2>Nothing to see here</h2>
     <p>You didn't say the magic word.</p>

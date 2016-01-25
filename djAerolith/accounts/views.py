@@ -27,6 +27,8 @@ from django.template import RequestContext
 from accounts.models import AerolithProfile
 from accounts.forms import ProfileEditForm
 
+DEFAULT_LANGUAGE = 'en'
+
 
 @login_required
 def editProfile(request):
@@ -50,10 +52,12 @@ def editProfile(request):
 
             return HttpResponseRedirect('/accounts/profile/%s' %
                                         profile.user.username)
-    return render(request, 'accounts/editProfile.html',
-                  {'profile': profile,
-                   'pForm': pForm,
-                   'session_language': request.session[LANGUAGE_SESSION_KEY]})
+    return render(
+        request, 'accounts/editProfile.html',
+        {'profile': profile,
+         'pForm': pForm,
+         'session_language': request.session.get(
+             LANGUAGE_SESSION_KEY, DEFAULT_LANGUAGE)})
 
 
 def viewProfile(request, username):

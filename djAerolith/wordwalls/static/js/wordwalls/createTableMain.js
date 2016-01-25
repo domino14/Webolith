@@ -1,4 +1,4 @@
-/* global requirejs,define,mixpanel,JSON */
+/* global requirejs,define,mixpanel,JSON,django */
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   /*
@@ -18,7 +18,8 @@ requirejs.config({
     sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
     json2: '../../../../static/js/aerolith/json2',
     backbone: '../../../../static/lib/backbone-1.0.0',
-    datepicker: '../../../../static/lib/bootstrap-datepicker'
+    datepicker: '../../../../static/lib/bootstrap-datepicker',
+    datepickeres: '../../../../static/lib/bootstrap-datepicker.es.min'
   },
   shim: {
     underscore: {
@@ -37,6 +38,9 @@ requirejs.config({
     },
     datepicker: {
       deps: ['bootstrap']
+    },
+    datepickeres: {
+      deps: ['datepicker']
     }
   }
 });
@@ -56,7 +60,8 @@ define([
   'text!templates/help/named_lists.html',
   'csrfAjax',
   'bootstrap',
-  'datepicker'
+  'datepicker',
+  'datepickeres'
 ], function (module, $, _, TableCreate, Dropzone, Socket, Chat,
   Mustache,
   ChallengesHelp, SearchParamsHelp, SavedListsHelp, NamedListsHelp) {
@@ -97,7 +102,8 @@ define([
       startDate: new Date(2011, 5, 14),
       todayBtn: "linked",
       todayHighlight: true,
-      autoclose: true
+      autoclose: true,
+      language: tableCreateParams.currentLanguage
     });
     uploader = new Dropzone('#file-uploader', {
       url: tableCreateParams.ajaxUploadUrl,
@@ -110,7 +116,8 @@ define([
       maxFiles: 1
     });
     uploader.on('success', function(file, response) {
-      $('#file-upload-msgs').text('Success! ' + JSON.parse(response));
+      $('#file-upload-msgs').text(django.gettext('Success! ') +
+        JSON.parse(response));
       app.requestSavedListInfo();
       app.savedListLexiconChanged(); // to reload lists
       mixpanel.track('Uploaded list');

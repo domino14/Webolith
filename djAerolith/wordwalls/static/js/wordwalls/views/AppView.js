@@ -1,4 +1,4 @@
-/* global define*/
+/* global define, django*/
 define([
   'backbone',
   'jquery',
@@ -53,10 +53,10 @@ define([
         this.handleChallengeEnded);
 
       this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
-        this.updateMessages([
-          "Autosave is NOT on. To save your progress, type in a name ",
+        this.updateMessages(django.gettext(
+          "Autosave is NOT on. To save your progress, type in a name " +
           "for this list next to the Save button, and click Save."
-        ].join(''));
+        ));
       });
       this.viewConfig = null;
       this.numColumns = 4;
@@ -94,10 +94,10 @@ define([
     },
     setSaveName: function(saveName) {
       this.$("#saveListName").val(saveName);
-      this.updateMessages([
-        "Autosave is on! Aerolith will save your list progress at the end ",
-        "of every round."
-      ].join(''));
+      this.updateMessages(django.gettext("Autosave is on! ") +
+        django.gettext("Aerolith will save your list progress at the end " +
+        "of every round.")
+      );
       this.wordwallsGame.set('autoSave', true);
     },
     /**
@@ -172,21 +172,22 @@ define([
       this.fadeInDialog('definitions_popup', true);
     },
     handleChallengeEnded: function() {
-      this.updateMessages("The challenge has ended!");
+      this.updateMessages(django.gettext("The challenge has ended!"));
       $.post(this.tableUrl, {action: 'getDcData'},
         function(data) {
           ChallengeView.processDcResults(data, "addlInfo_content");
         },
         'json');
-      this.updateMessages([
-        'Click <a class="softLink dcInfo">here</a> to see current results for ',
-        'this challenge.'
-      ].join(''));
+      this.updateMessages(django.gettext(
+        'Click <a class="softLink dcInfo">here</a> to see current results ' +
+        'for this challenge.'
+      ));
     },
     saveGame: function() {
       var text = this.$("#saveListName").val();
       if (!text) {
-        this.updateMessages("You must enter a list name for saving!");
+        this.updateMessages(django.gettext(
+          "You must enter a list name for saving!"));
       } else {
         $.post(this.tableUrl, {action: "save", listname: text},
           _.bind(this.processSaveResponse, this), 'json');
@@ -196,10 +197,11 @@ define([
       if (_.has(data, 'success') && data.success) {
         this.updateMessages("Saved as " + data.listname);
         if (this.wordwallsGame.get('autoSave') === false) {
-          this.updateMessages([
-            "Autosave is now on! Aerolith will save your ",
-            "list progress at the end of every round."
-          ].join(''));
+          this.updateMessages(django.gettext(
+            "Autosave is now on! ") + django.gettext(
+              "Aerolith will save your list progress " +
+              "at the end of every round.")
+          );
           this.wordwallsGame.set('autoSave', true);
         }
       }
@@ -237,13 +239,9 @@ define([
       if (!this.wordwallsGame.get('gameGoing')) {
         if (_.has(data, 'serverMsg')) {
           this.updateMessages(data.serverMsg);
-          this.wordwallsGame.set(
-            'quizzingOnMissed', data.serverMsg.indexOf('missed') !== -1);
         }
         if (_.has(data, 'error')) {
           this.updateMessages(data.error);
-          this.wordwallsGame.set(
-            'quizOverForever', data.error.indexOf('nice day') !== -1);
         }
         if (_.has(data, 'questions')) {
           this.wordwallsGame.processQuestionObj(data.questions);
@@ -307,7 +305,13 @@ define([
       this.$questionsList.html("");
       this.questionViewsByAlphagram = {};
       this.questionViews = [];
-      this.defsDiv.html(Mustache.render(SolutionsTable, {}));
+      this.defsDiv.html(Mustache.render(SolutionsTable, {
+        i18n_ui_prob: django.gettext('Prob'),
+        i18n_ui_alphagram: django.gettext('Alphagram'),
+        i18n_ui_word: django.gettext('Word'),
+        i18n_ui_definition: django.gettext('Definition'),
+        i18n_ui_actions: django.gettext('Actions')
+      }));
       /* Fetch the actual table element and hide it. */
       $defsTable = this.defsDiv.children("#solutionsTable");
       $defsTable.hide();
@@ -450,7 +454,8 @@ define([
         'idx': alphagramIndex
       }, _.bind(function(data) {
         if (data.success === false) {
-          window.alert('Unable to mark this alphagram as missed.');
+          window.alert(django.gettext(
+            'Unable to mark this alphagram as missed.'));
         } else if (data.success === true) {
           solutionView.markMissed();
         }

@@ -1,4 +1,4 @@
-/* global define*/
+/* global define, django*/
 define([
   'backbone',
   'jquery',
@@ -25,10 +25,10 @@ define([
     validate: function(attrs) {
       var i;
       if (attrs.blankCharacter === "") {
-        return [
-          "You must enter a character to use for the blank. If you want ",
+        return django.gettext(
+          "You must enter a character to use for the blank. If you want " +
           "it to look empty, please enter a Space (with the spacebar)."
-        ].join('');
+        );
       }
       /*
        * Check if all letters are contained in customOrder exactly once,
@@ -37,7 +37,8 @@ define([
       for (i = 0; i < DEFAULT_CUSTOM_ORDER.length; i++) {
         if (attrs.customOrder.indexOf(DEFAULT_CUSTOM_ORDER[i]) === -1) {
           return [
-            "Your custom order is missing at least one letter: ",
+            django.gettext(
+              "Your custom order is missing at least one letter: "),
             DEFAULT_CUSTOM_ORDER[i], "."
           ].join('');
         }

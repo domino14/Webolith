@@ -1,4 +1,4 @@
-/*global define, JSON */
+/*global define, JSON, django */
 define([
   'jquery',
   'underscore',
@@ -11,7 +11,13 @@ define([
 ], function($, _, Backbone, ChallengeView, Mustache, SavedListOption,
     NamedListOption) {
   "use strict";
-  var TableCreateView;
+  var TableCreateView, CONTINUE_LIST_CHOICE, FIRST_MISSED_CHOICE,
+    RESTART_LIST_CHOICE, DELETE_LIST_CHOICE;
+
+  CONTINUE_LIST_CHOICE = '1';
+  FIRST_MISSED_CHOICE = '2';
+  RESTART_LIST_CHOICE = '3';
+  DELETE_LIST_CHOICE = '4';
 
   TableCreateView = Backbone.View.extend({
     /**
@@ -116,7 +122,7 @@ define([
       curLength = $('#id_wordLength').val();
       this.maxProb = this.lengthCounts[lex][curLength];
       $('label[for="id_probabilityMax"]').text(
-        "Max probability (at most " + this.maxProb + ")");
+        django.gettext("Max probability (at most ") + this.maxProb + ")");
       if ($('#id_probabilityMax').val() > this.maxProb) {
         $('#id_probabilityMax').val(this.maxProb);
       }
@@ -130,11 +136,12 @@ define([
       cVal = $('#id_challenge option:selected').val();
       if (cVal === "") {
         // this is the ----- text
-        $('#dcResultsLabel').text('Select a challenge to view leaderboard');
+        $('#dcResultsLabel').text(
+          django.gettext('Select a challenge to view leaderboard'));
         $("#id_quizTime").val(0);
         return;
       }
-      lblText = '(' + lexName + ') ' + cName + ' leaderboard';
+      lblText = '(' + lexName + ') ' + cName + django.gettext(' leaderboard');
       if (date) {
         lblText += ' (' + date + ')';
       }
@@ -158,27 +165,28 @@ define([
     },
 
     savedListOptionChangeHandler: function() {
-      var optionName;
-      optionName = $('#id_listOption option:selected').text();
-      $('#savedListsSubmit').text('Play!').prop('disabled', false).removeClass(
-        'btn-danger').addClass('btn-success');
+      var option;
+      option = $('#id_listOption').val();
+      $('#savedListsSubmit').text(django.gettext('Play!')).prop(
+        'disabled', false).removeClass('btn-danger').addClass('btn-success');
       $('#savedListsFlashcardEntire').prop('disabled', false);
       $('#savedListsFlashcardFM').prop('disabled', false);
-      if (optionName === "Continue list") {
+      if (option === CONTINUE_LIST_CHOICE) {
         $('#savedListWarning').text("");
-      } else if (optionName === "Restart list") {
-        $('#savedListWarning').text([
-          "This will restart this list and wipe out all its information. ",
+      } else if (option === RESTART_LIST_CHOICE) {
+        $('#savedListWarning').text(django.gettext(
+          "This will restart this list and wipe out all its information. " +
           "Make sure you want to do this!"
-        ].join(''));
-      } else if (optionName === "Quiz on first missed") {
+        ));
+      } else if (option === FIRST_MISSED_CHOICE) {
         $('#savedListWarning').text("");
         this.dimIfListUnfinished("#savedListsSubmit");
-      } else if (optionName === "Delete list") {
-        $('#savedListsSubmit').text('Delete selected list').removeClass(
-          'btn-info').addClass('btn-danger');
+      } else if (option === DELETE_LIST_CHOICE) {
+        $('#savedListsSubmit').text(django.gettext('Delete selected list')).
+          removeClass('btn-info').addClass('btn-danger');
         $('#savedListWarning').text(
-          "This will delete the selected list! Make sure you want to do this!");
+          django.gettext("This will delete the selected list! Make sure you " +
+            "want to do this!"));
         $('#savedListsFlashcardEntire').prop('disabled', true);
         $('#savedListsFlashcardFM').prop('disabled', true);
       }
@@ -187,9 +195,9 @@ define([
 
 
     savedListChangeHandler: function() {
-      var optionName;
-      optionName = $('#id_listOption option:selected').text();
-      if (optionName === "Quiz on first missed") {
+      var option;
+      option = $('#id_listOption').val();
+      if (option === FIRST_MISSED_CHOICE) {
         this.dimIfListUnfinished("#savedListsSubmit");
       }
       this.dimIfListUnfinished("#savedListsFlashcardFM");
@@ -241,9 +249,9 @@ define([
     },
 
     savedListsSubmitClicked: function() {
-      var optionName;
-      optionName = $('#id_listOption option:selected').text();
-      if (optionName !== "Delete list") {
+      var option;
+      option = $('#id_listOption').val();
+      if (option !== DELETE_LIST_CHOICE) {
         $.post(this.commandUrl, {
           action: 'savedListsSubmit',
           lexicon: $('#id_lexicon').val(),
@@ -358,7 +366,9 @@ define([
             goneThruOnce: data[i].goneThruOnce,
             listName: data[i].name,
             lastSaved: data[i].lastSaved,
-            numAlphas: data[i].numAlphas
+            numAlphas: data[i].numAlphas,
+            'i18n_ui_lastSaved': django.gettext('last saved'),
+            'i18n_ui_totalAlphagrams': django.gettext('total alphagrams')
           }));
         }
         $("#id_wordList").html(options.join(''));
@@ -375,7 +385,8 @@ define([
           options.push(Mustache.render(NamedListOption, {
             listId: data[i].pk,
             listName: data[i].name,
-            numAlphas: data[i].numAlphas
+            numAlphas: data[i].numAlphas,
+            'i18n_ui_totalAlphagrams': django.gettext('total alphagrams')
           }));
         }
         $("#id_namedList").html(options.join(''));
@@ -385,20 +396,18 @@ define([
     requestSavedListInfo: function() {
       $.post(this.commandUrl, {action: 'getSavedListNumAlphas'},
         function(data) {
-          var addlText;
+          var addlText, currentAlphs;
           addlText = "";
           if (data.l > 0) {
-            addlText = [
-              "Your current limit is ",
-              data.l,
-              ". You can increase this by becoming a supporter!"
-            ].join('');
+            addlText = django.gettext(
+              'Your current limit is %s. You can increase this by becoming ' +
+              'a supporter!');
+            addlText = django.interpolate(addlText, [data.l]);
           }
-          $("#numAlphasInfo").text([
-              "You have ", data.na,
-              " alphagrams over all your saved lists. ",
-              addlText
-            ].join(''));
+          currentAlphs = django.gettext(
+            'You have %s alphagrams over all your saved lists. ');
+          currentAlphs = django.interpolate(currentAlphs, [data.na]);
+          $('#numAlphasInfo').text(currentAlphs + addlText);
         }, 'json');
     }
   });
