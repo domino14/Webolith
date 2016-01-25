@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Test the word database util functions.
 
@@ -73,3 +75,18 @@ class WordDBTest(TestCase):
 
     def test_probability(self):
         self.assertEqual(self.db.probability('AEINRST'), 9)
+
+
+class WordDBSpanishTest(TestCase):
+    def setUp(self):
+        self.db = WordDB(lexicon_name='FISE09')
+
+    def test_word_data(self):
+        word = self.db.get_word_data(u'ÑAME')
+        self.assertEqual(word.word, u'ÑAME')
+        self.assertEqual(word.lexicon_symbols, '')
+        self.assertEqual(word.front_hooks, '')
+        self.assertEqual(word.back_hooks, 'S')
+        self.assertEqual(word.inner_front_hook, True)
+        self.assertEqual(word.inner_back_hook, False)
+        self.assertEqual(word.alphagram, u'AEMÑ')

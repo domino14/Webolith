@@ -117,7 +117,7 @@ msgstr ""
 
 #: static/js/wordwalls/views/AppView.js:97
 msgid "Autosave is on! "
-msgstr "¡Autoguardar está activado!"
+msgstr "¡Autoguardar está activado! "
 
 #: static/js/wordwalls/views/AppView.js:98
 #: static/js/wordwalls/views/AppView.js:202
@@ -142,7 +142,7 @@ msgstr "¡Debe escribir un nombre para guardar esta lista!"
 
 #: static/js/wordwalls/views/AppView.js:201
 msgid "Autosave is now on! "
-msgstr "¡Autoguardar está prendido!"
+msgstr "¡Autoguardar está ahora activado! "
 
 #: static/js/wordwalls/views/AppView.js:309
 msgid "Prob"

@@ -169,7 +169,6 @@ ul.questionList
     padding: 0;
     margin-top: 5px;
     margin-left: 20px;
-    vertical-align: center;
     list-style-type: none;  /* remove bullets*/
     overflow-y: hidden;
     overflow-x: hidden;
@@ -406,7 +405,6 @@ span#gameTimer
 span.tiles
 {
     display: inline-block;
-    vertical-align: center;
     line-height: 24px;
 }
 
@@ -489,6 +487,11 @@ span.tilesans
     font-family: arial, geneva, helvetica, helv, sans-serif;
 }
 
+span.digraph {
+    font-size: 100%;
+    line-height: 1.7;
+}
+
 span.tilebold
 {
     font-weight: 600;
@@ -507,7 +510,6 @@ span.chip
     float: left;
     display: inline-block;
     text-align: center;
-    vertical-align: center;
     line-height: 18px;
     color: rgb(0, 0, 0);
     background-repeat: no-repeat;

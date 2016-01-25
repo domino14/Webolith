@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Generate the "named" default Aerolith lists."""
 
 import json
@@ -28,6 +30,23 @@ friendly_number_map = {
     13: 'Thirteens',
     14: 'Fourteens',
     15: 'Fifteens'
+}
+
+mapa_amigable = {
+    2: 'Dos',
+    3: 'Tres',
+    4: 'Cuatros',
+    5: 'Cincos',
+    6: 'Seis',
+    7: 'Sietes',
+    8: 'Ochos',
+    9: 'Nueves',
+    10: 'Diez',
+    11: 'Onces',
+    12: 'Doces',
+    13: 'Treces',
+    14: 'Catorces',
+    15: 'Quinces'
 }
 
 LIST_GRANULARITY = 1000
@@ -203,6 +222,58 @@ def createNamedLists(lex):
     logger.debug('%s, elapsed %s', lex, time.time() - t1)
 
 
+def create_spanish_lists():
+    lex = Lexicon.objects.get(lexiconName='FISE09')
+    db = WordDB(lex.lexiconName)
+    for i in range(2, 16):
+        logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
+        length_counts = json.loads(lex.lengthCounts)
+        num_for_this_length = length_counts[str(i)]
+        min_prob = 1
+        max_prob = num_for_this_length
+
+        create_named_list(lex, num_for_this_length, i, True,
+                          json.dumps([1, num_for_this_length]),
+                          'Los ' + mapa_amigable[i])
+        if i >= 7 and i <= 8:
+            # create 'every x' list
+            for p in range(1, num_for_this_length+1, LIST_GRANULARITY):
+                min_p = p
+                max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
+                create_named_list(
+                    lex, max_p - min_p + 1, i, True,
+                    json.dumps([min_p, max_p]),
+                    '{} ({} a {})'.format(mapa_amigable[i], p, max_p))
+
+        if i >= 4 and i <= 8:
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda a: re.search(r'[JQXZ]', a))
+            create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                              'JQXZ ' + mapa_amigable[i])
+
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda a: re.search(ur'[123Ñ]', a))
+            create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                              u'(ᴄʜ)(ʟʟ)(ʀʀ)Ñ ' + mapa_amigable[i])
+
+        if i == 7:
+            # 4+ vowel 7s
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda a: (len(re.findall(r'[AEIOU]', a)) >= 4))
+            create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                              'Sietes con 4 o más vocales')
+        if i == 8:
+            # 5+ vowel 8s
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda a: (len(re.findall(r'[AEIOU]', a)) >= 5))
+            create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                              'Ochos con 5 o más vocales')
+
+
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
     return
@@ -240,7 +311,9 @@ class Command(NoArgsCommand):
     help = """Populates database with named lists"""
 
     def handle_noargs(self, **options):
-        NamedList.objects.all().delete()
-        for lex in Lexicon.objects.filter(
-                lexiconName__in=['America', 'CSW15']):
-            createNamedLists(lex)
+        # NamedList.objects.all().delete()
+        # for lex in Lexicon.objects.filter(
+        #         lexiconName__in=['America', 'CSW15']):
+        #     createNamedLists(lex)
+        NamedList.objects.filter(lexicon__lexiconName='FISE09').delete()
+        create_spanish_lists()
