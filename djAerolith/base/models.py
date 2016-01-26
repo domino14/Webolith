@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 # Aerolith 2.0: A web-based word game website
 # Copyright (C) 2011 Cesar Del Solar
 #
@@ -27,14 +29,25 @@ from django.contrib.auth.models import User
 from base.validators import word_list_format_validator
 EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12']
 
+# XXX: This handles both the Spanish and English case, but alphagrammize
+# will need to be reworked with lexicon-specific ordering if we add
+# non-latin letters.
+SORT_STRING_ORDER = u'ABC1DEFGHIJKL2MNÑOPQR3STUVWXYZ?'
+SORT_MAP = {}
+
+
+def make_sort_map():
+    global SORT_MAP
+    for idx, val in enumerate(SORT_STRING_ORDER):
+        SORT_MAP[val] = idx
+
 
 def alphagrammize(word):
-    # Replace blank with something lexically bigger than the largest letter.
-    # This seems like a hack.
-    word = word.replace('?', chr(128))
-    l = list(word)
-    l.sort()
-    return string.join(l, '').upper().replace(chr(128), '?')
+    if len(SORT_MAP) == 0:
+        make_sort_map()
+    l = list(word.upper())
+    l.sort(key=lambda y: SORT_MAP[y])
+    return string.join(l, '')
 
 
 class Lexicon(models.Model):

@@ -31,7 +31,7 @@ class Command(BaseCommand):
             if award:
                 lbes = DailyChallengeLeaderboardEntry.objects.filter(
                     board=lb, qualifyForAward=True)
-                if len(lbes) < 12:
+                if len(lbes) < 8:
                     lb.medalsAwarded = True
                     lb.save()
                     continue    # do not award

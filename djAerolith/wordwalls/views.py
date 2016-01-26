@@ -418,6 +418,7 @@ def create_user_list(contents, filename, lex, user):
     except UserListParseException as e:
         return (False, str(e))
 
+    logger.debug('Got alphas: %s', alphas)
     profile = user.aerolithprofile
     num_saved_alphas = profile.wordwallsSaveListSize
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
@@ -427,6 +428,7 @@ def create_user_list(contents, filename, lex, user):
     db = WordDB(lex.lexiconName)
 
     questions = db.get_questions(alphas)
+    logger.debug('Got questions: %s', questions)
     num_alphagrams = questions.size()
 
     logger.info('number of uploaded alphagrams: %d', num_alphagrams)

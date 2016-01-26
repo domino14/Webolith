@@ -44,6 +44,10 @@ define([
         delete attrs.prob;
         delete attrs.wrongAlpha;
       }
+      attrs.frontHooks = utils.modifyWordForDisplay(attrs.frontHooks,
+        this.lexicon);
+      attrs.backHooks = utils.modifyWordForDisplay(attrs.backHooks,
+        this.lexicon);
       attrs.word = utils.modifyWordForDisplay(attrs.word, this.lexicon);
       if (this.model.collection && this.model.collection.indexOf(
         this.model) === 0 && !attrs.wrongAlpha) {

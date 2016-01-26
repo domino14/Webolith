@@ -8,6 +8,7 @@ import os
 import logging
 import json
 import random
+import sys
 
 from django.conf import settings
 
@@ -16,6 +17,12 @@ logger = logging.getLogger(__name__)
 
 class BadInput(Exception):
     pass
+
+
+def stdout_encode(u, default='UTF8'):
+    if sys.stdout.encoding:
+        return u.encode(sys.stdout.encoding)
+    return u.encode(default)
 
 
 class Word(object):
@@ -33,7 +40,10 @@ class Word(object):
         self.inner_back_hook = True if inner_back_hook == 1 else False
 
     def __repr__(self):
-        return '{%s}' % self.word
+        return stdout_encode(self.__unicode__())
+
+    def __unicode__(self):
+        return u'{%s}' % self.word
 
 
 class Alphagram(object):
@@ -50,7 +60,10 @@ class Alphagram(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return '{%s}' % self.alphagram
+        return stdout_encode(self.__unicode__())
+
+    def __unicode__(self):
+        return u'{%s}' % self.alphagram
 
 
 class Questions(object):
@@ -98,7 +111,10 @@ class Questions(object):
             self.append(question)
 
     def __repr__(self):
-        return '<Questions %s>' % self.questions
+        return stdout_encode(self.__unicode__())
+
+    def __unicode__(self):
+        return u'{<Questions %s>}' % self.questions
 
 
 class Question(object):
@@ -110,9 +126,6 @@ class Question(object):
         """
         self.alphagram = alphagram
         self.answers = answers
-
-    def __repr__(self):
-        return '<Question: %s (%s)>' % (self.alphagram, self.answers)
 
     def set_answers_from_word_list(self, word_list):
         self.answers = []
@@ -126,6 +139,13 @@ class Question(object):
     def set_from_obj(self, obj):
         self.alphagram = Alphagram(obj['q'])
         self.set_answers_from_word_list(obj['a'])
+
+    def __repr__(self):
+        return stdout_encode(self.__unicode__())
+
+    def __unicode__(self):
+        return u'<Question: %s (%s)>' % (self.alphagram,
+                                         self.answers)
 
 
 class WordDB(object):

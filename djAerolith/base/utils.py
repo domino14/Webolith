@@ -2,6 +2,7 @@ import logging
 
 from base.models import WordList, alphagrammize
 from lib.word_db_helper import WordDB, Alphagram
+from django.utils.translation import ugettext as _
 
 logger = logging.getLogger(__name__)
 FETCH_MANY_SIZE = 1000
@@ -22,14 +23,18 @@ def get_alphas_from_words(contents, max_words):
     for line in contents.split('\n'):
         word = line.strip()
         if len(word) > 15:
-            raise UserListParseException("List contains non-word elements")
+            raise UserListParseException(_("List contains non-word elements"))
         line_number += 1
         if line_number > max_words:
             raise UserListParseException(
-                "List contains more words than the current allowed per-file "
-                "limit of {}".format(max_words))
+                _("List contains more words than the current allowed per-file "
+                  "limit of {}").format(max_words))
         if len(word) > 1:
-            alpha_set.add(alphagrammize(word))
+            try:
+                alpha_set.add(alphagrammize(word))
+            except KeyError:
+                raise UserListParseException(
+                    _('List contains invalid characters.'))
     return [Alphagram(a) for a in alpha_set]
 
 

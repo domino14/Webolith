@@ -19,6 +19,29 @@ define([
   RESTART_LIST_CHOICE = '3';
   DELETE_LIST_CHOICE = '4';
 
+  // XXX: Only translates into Spanish right now. This should move over to
+  // a Django model translation library.
+  // This is an ugly hack!!
+  function translateChallenges(html) {
+    html = html.replace(/Today's 2s/g, 'Los 2 de hoy').
+      replace(/Today's 3s/g, 'Los 3 de hoy').
+      replace(/Today's 4s/g, 'Los 4 de hoy').
+      replace(/Today's 5s/g, 'Los 5 de hoy').
+      replace(/Today's 6s/g, 'Los 6 de hoy').
+      replace(/Today's 7s/g, 'Los 7 de hoy').
+      replace(/Today's 8s/g, 'Los 8 de hoy').
+      replace(/Today's 9s/g, 'Los 9 de hoy').
+      replace(/Today's 10s/g, 'Los 10 de hoy').
+      replace(/Today's 11s/g, 'Los 11 de hoy').
+      replace(/Today's 12s/g, 'Los 12 de hoy').
+      replace(/Today's 13s/g, 'Los 13 de hoy').
+      replace(/Today's 14s/g, 'Los 14 de hoy').
+      replace(/Today's 15s/g, 'Los 15 de hoy').
+      replace(/Week's Bingo Toughies/g, 'Bingos difíciles de la semana').
+      replace(/Bingo Marathon/g, 'Un maratón de bingos');
+    return html;
+  }
+
   TableCreateView = Backbone.View.extend({
     /**
      * Initialize the table create page.
@@ -26,13 +49,18 @@ define([
     initialize: function(options) {
       this.commandUrl = options.createTableUrl;
       this.flashcardUrl = options.createQuizUrl;
+      this.currentLanguage = options.language;
       this.lengthCounts = JSON.parse(options.lengthCounts);
       this.dcTimeMap = JSON.parse(options.dcTimes);
       _.each(this.lengthCounts, function(lex, index) {
         this.lengthCounts[index] = JSON.parse(lex);
       }, this);
 
+      if (this.currentLanguage === 'es') {
+        $('#id_challenge').html(translateChallenges($('#id_challenge').html()));
+      }
       this.defaultChallengeList = $('#id_challenge').html();
+
       this.requestSavedListInfo();
       this.savedListOptionChangeHandler();
       this.savedListChangeHandler();
@@ -141,7 +169,8 @@ define([
         $("#id_quizTime").val(0);
         return;
       }
-      lblText = '(' + lexName + ') ' + cName + django.gettext(' leaderboard');
+      lblText = '(' + lexName + ') ' + cName + ' - ' +
+        django.gettext(' leaderboard');
       if (date) {
         lblText += ' (' + date + ')';
       }
@@ -153,9 +182,9 @@ define([
     challengeLexiconChanged: function() {
       var lexName;
       lexName = $('#id_lexicon option:selected').text();
-      if (lexName !== 'OWL2') {
-        $('#id_challenge option[value="18"]').remove();
-        $('#id_challenge option[value="19"]').remove();
+      if (lexName === 'FISE09') {
+        // Remove Blank bingos from FISE until further notice.
+        $('#id_challenge option[value="16"]').remove();
       } else {
         $('#id_challenge').html(this.defaultChallengeList);
       }

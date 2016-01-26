@@ -134,7 +134,10 @@ TEMPLATE_DIRS = (
 )
 
 LOCALE_PATHS = [
-    os.path.join(PROJECT_ROOT, "locale")
+    os.path.join(PROJECT_ROOT, "locale"),
+    os.path.join(PROJECT_ROOT, "base", "locale"),
+    os.path.join(PROJECT_ROOT, "wordwalls", "locale"),
+    os.path.join(PROJECT_ROOT, "accounts", "locale"),
 ]
 
 INSTALLED_APPS = (

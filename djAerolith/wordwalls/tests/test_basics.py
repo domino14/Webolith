@@ -1,8 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import unittest
-from wordwalls.challenges import toughies_challenge_date
 from datetime import date
-#from django.test import TestCase
-#from django.contrib.auth.models import User
+
+from wordwalls.challenges import toughies_challenge_date
+from base.models import alphagrammize
 
 
 class ChallengeDatesTestCase(unittest.TestCase):
@@ -17,3 +19,12 @@ class ChallengeDatesTestCase(unittest.TestCase):
                          date(2012, 1, 3))  # sat, prev tues
         self.assertEqual(toughies_challenge_date(date(2012, 1, 2)),
                          date(2011, 12, 27))  # mon, prev tuesday
+
+
+class AlphagrammizeTestCase(unittest.TestCase):
+    def test_alphagrammize(self):
+        self.assertEqual(alphagrammize('BILLOWY'), 'BILLOWY')
+        self.assertEqual(alphagrammize('ACERVULI'), 'ACEILRUV')
+        self.assertEqual(alphagrammize('PRENTICE'), 'CEEINPRT')
+        self.assertEqual(alphagrammize(u'1ARMAQUITO'), u'AA1IMOQRTU')
+        self.assertEqual(alphagrammize(u'ÑOÑE3IN1AS'), u'A1EINÑÑO3S')

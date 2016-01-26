@@ -23,8 +23,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def getLexicon():
-    return Lexicon.objects.get(lexiconName='America')
+def getLexicon(request=None):
+    if not request:
+        return Lexicon.objects.get(lexiconName='America')
+    elif request.LANGUAGE_CODE == 'es':
+        return Lexicon.objects.get(lexiconName='FISE09')
 
 
 class AerolithProfile(models.Model):
@@ -68,6 +71,7 @@ class AerolithProfile(models.Model):
 def user_registered_handler(sender, user, request, **kwargs):
     profile = AerolithProfile()
     profile.user = user
+    profile.defaultLexicon = getLexicon(request)
     profile.save()
 
 user_registered.connect(user_registered_handler)

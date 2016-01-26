@@ -6,6 +6,7 @@ Test file upload and list creation.
 import os
 import logging
 import gzip
+import codecs
 
 from django.test import TestCase
 from django.conf import settings
@@ -32,8 +33,9 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
         f = open(path, 'r')
         contents = f.read()
         f.close()
-        create_user_list(contents, filename,
-                         Lexicon.objects.get(lexiconName='America'), user)
+        logger.debug(create_user_list(
+            contents, filename,
+            Lexicon.objects.get(lexiconName='America'), user))
         logger.debug(WordList.objects.all())
         wl = WordList.objects.get(name='new_america_jqxz_6s')
         self.assert_wl(wl, {
@@ -69,3 +71,28 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
         # profiles.json
         self.assertEqual(user.aerolithprofile.wordwallsSaveListSize,
                          55781 + 28291)
+
+    def test_create_spanish_list(self):
+        filename = 'spanish_words.txt'
+        path = os.path.join(settings.PROJECT_ROOT, 'wordwalls', 'tests',
+                            'files', filename)
+        user = User.objects.get(username='cesar')
+        f = codecs.open(path, 'r', 'utf-8')
+        contents = f.read()
+        f.close()
+        logger.debug(create_user_list(
+            contents, filename,
+            Lexicon.objects.get(lexiconName='FISE09'), user))
+        logger.debug(WordList.objects.all())
+        wl = WordList.objects.get(name='spanish_words')
+        self.assert_wl(wl, {
+            'numAlphagrams': 3, 'numCurAlphagrams': 3, 'numFirstMissed': 0,
+            'numMissed': 0, 'goneThruOnce': False, 'questionIndex': 0,
+            'is_temporary': False
+        })
+
+        # Check that it added to total. 55781 is the old value, in
+        # profiles.json
+        self.assertEqual(user.aerolithprofile.wordwallsSaveListSize,
+                         55781 + 3)
+        f.close()

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-24 13:58-0800\n"
+"POT-Creation-Date: 2016-01-25 19:57-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,3 +33,15 @@ msgstr "Reiniciar lista"
 #: base/forms.py:93
 msgid "Delete list"
 msgstr "Borrar lista"
+
+#: base/utils.py:26
+msgid "List contains non-word elements"
+msgstr "La lista contiene elementos que no son palabras"
+
+#: base/utils.py:30
+msgid "List contains more words than the current allowed per-file limit of {}"
+msgstr "La lista contiene mas palabras que el límite por lista de {}"
+
+#: base/utils.py:37
+msgid "List contains invalid characters."
+msgstr "La lista tiene carácteres inválidos."

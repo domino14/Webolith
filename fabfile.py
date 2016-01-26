@@ -35,6 +35,7 @@ def deploy_prod():
                 run("python manage.py collectstatic --noinput")
                 # execute any needed migrations
                 run("python manage.py migrate")
+                run("python manage.py compilemessages")
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
