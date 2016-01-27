@@ -18,8 +18,8 @@ requirejs.config({
     sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
     json2: '../../../../static/js/aerolith/json2',
     backbone: '../../../../static/lib/backbone-1.0.0',
-    datepicker: '../../../../static/lib/bootstrap-datepicker',
-    datepickeres: '../../../../static/lib/bootstrap-datepicker.es.min'
+    /*datepicker: '../../../../static/lib/bootstrap-datepicker',
+    datepickeres: '../../../../static/lib/bootstrap-datepicker.es.min'*/
   },
   shim: {
     underscore: {
@@ -35,13 +35,14 @@ requirejs.config({
     backbone: {
       deps: ['underscore', 'jquery', 'json2'],
       exports: 'Backbone'
-    },
-    datepicker: {
-      deps: ['bootstrap']
-    },
-    datepickeres: {
-      deps: ['datepicker']
     }
+    // datepicker: {
+    //   deps: ['bootstrap', 'jquery'],
+    //   exports: "$.fn.datepicker"
+    // },
+    // datepickeres: {
+    //   deps: ['datepicker', 'jquery']
+    // }
   }
 });
 
@@ -59,9 +60,9 @@ define([
   'text!templates/help/saved_lists.html',
   'text!templates/help/named_lists.html',
   'csrfAjax',
-  'bootstrap',
+  'bootstrap'/*,
   'datepicker',
-  'datepickeres'
+  'datepickeres'*/
 ], function (module, $, _, TableCreate, Dropzone, Socket, Chat,
   Mustache,
   ChallengesHelp, SearchParamsHelp, SavedListsHelp, NamedListsHelp) {
@@ -99,13 +100,13 @@ define([
 
     // Disable time select since daily challenges are selected.
     $("#id_quizTime").prop('disabled', true);
-    $("#id_challengeDate").datepicker({
+    /*$("#id_challengeDate").datepicker({
       startDate: new Date(2011, 5, 14),
       todayBtn: "linked",
       todayHighlight: true,
       autoclose: true,
       language: tableCreateParams.currentLanguage
-    });
+    });*/
     uploader = new Dropzone('#file-uploader', {
       url: tableCreateParams.ajaxUploadUrl,
       headers: {'X-CSRFToken': tableCreateParams.csrfToken},
