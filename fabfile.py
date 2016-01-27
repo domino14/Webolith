@@ -45,7 +45,7 @@ def deploy_word_db(lexicon_name):
     with settings(warn_only=True):
         run('mkdir word_db')
     with cd('word_db'):
-        put(os.path.join(curdir, 'dbCreator', '%s.db' % lexicon_name),
+        put(os.path.join(curdir, 'db', '%s.db' % lexicon_name),
             '%s.db' % lexicon_name)
 
 
