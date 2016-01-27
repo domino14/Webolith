@@ -15,11 +15,11 @@ requirejs.config({
     dropzone: '../../../../static/js/aerolith/dropzone',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
-    sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
-    json2: '../../../../static/js/aerolith/json2',
+    /*sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
+    json2: '../../../../static/js/aerolith/json2',*/
     backbone: '../../../../static/lib/backbone-1.0.0',
     datepicker: '../../../../static/lib/bootstrap-datepicker',
-    //datepickeres: '../../../../static/lib/bootstrap-datepicker.es.min'
+    datepickeres: '../../../../static/lib/bootstrap-datepicker.es.min'
   },
   shim: {
     underscore: {
@@ -29,16 +29,13 @@ requirejs.config({
       deps: ['jquery'],
       exports: '$.fn.tab'
     },
-    'json2': {
-      exports: 'JSON'
-    },
     backbone: {
-      deps: ['underscore', 'jquery', 'json2'],
+      deps: ['underscore', 'jquery'],
       exports: 'Backbone'
     }/*,
     datepickeres: {
-      deps: ['datepicker', 'jquery'],
-      exports: '$.fn.datepicker'
+      deps: ['datepicker'],
+      exports: 'jquery'
     }*/
   }
 });
@@ -49,8 +46,8 @@ define([
   'underscore',
   'tableCreate',
   'dropzone',
-  'socket',
-  'chat',
+//  'socket',
+//  'chat',
   'mustache',
   'text!templates/help/challenges.html',
   'text!templates/help/search_params.html',
@@ -59,8 +56,8 @@ define([
   'csrfAjax',
   'bootstrap',
   'datepicker',
-  //'datepickeres'
-], function (module, $, _, TableCreate, Dropzone, Socket, Chat,
+  'datepickeres'
+], function (module, $, _, TableCreate, Dropzone, /*Socket, Chat,*/
   Mustache,
   ChallengesHelp, SearchParamsHelp, SavedListsHelp, NamedListsHelp) {
   "use strict";
@@ -102,7 +99,7 @@ define([
       todayBtn: "linked",
       todayHighlight: true,
       autoclose: true,
-      //language: tableCreateParams.currentLanguage
+      language: tableCreateParams.currentLanguage
     });
     uploader = new Dropzone('#file-uploader', {
       url: tableCreateParams.ajaxUploadUrl,
@@ -132,18 +129,18 @@ define([
       uploader.removeFile(file);
     });
 
-    if (tableCreateParams.chatEnabled === 'True' && false) {
-      s = new Socket();
-      s.setUrl(tableCreateParams.socketUrl);
-      c = new Chat({
-        el: $("#lobby"),
-        socket: s,
-        channel: 'lobby'
-      });
-      s.setToken(tableCreateParams.socketConnectionToken);
-      s.connect();
-    } else {
-    }
+    // if (tableCreateParams.chatEnabled === 'True' && false) {
+    //   s = new Socket();
+    //   s.setUrl(tableCreateParams.socketUrl);
+    //   c = new Chat({
+    //     el: $("#lobby"),
+    //     socket: s,
+    //     channel: 'lobby'
+    //   });
+    //   s.setToken(tableCreateParams.socketConnectionToken);
+    //   s.connect();
+    // } else {
+    // }
     function showModalMessage(title, message) {
       $("#msg-content").html(message);
       $("#msg-title").html(title);
