@@ -367,6 +367,7 @@ def start_game(request, id):
     return response(quizParams)
 
 
+@login_required
 def ajax_upload(request):
     if request.method != "POST":
         return response(_('This endpoint only accepts POST'),
@@ -386,7 +387,11 @@ def ajax_upload(request):
         return response(_('Your file is too big.'), StatusCode.BAD_REQUEST)
 
     filename = uploaded_file.name
-    file_contents = uploaded_file.read()
+    try:
+        file_contents = uploaded_file.read().decode('utf-8')
+    except UnicodeDecodeError:
+        return response(_('Please make sure your file is utf-8 encoded.'),
+                        StatusCode.BAD_REQUEST)
     # save the file
     success, msg = create_user_list(file_contents, filename, lex,
                                     request.user)
@@ -418,7 +423,6 @@ def create_user_list(contents, filename, lex, user):
     except UserListParseException as e:
         return (False, str(e))
 
-    logger.debug('Got alphas: %s', alphas)
     profile = user.aerolithprofile
     num_saved_alphas = profile.wordwallsSaveListSize
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
@@ -428,7 +432,6 @@ def create_user_list(contents, filename, lex, user):
     db = WordDB(lex.lexiconName)
 
     questions = db.get_questions(alphas)
-    logger.debug('Got questions: %s', questions)
     num_alphagrams = questions.size()
 
     logger.info('number of uploaded alphagrams: %d', num_alphagrams)
@@ -587,6 +590,7 @@ def deleteSavedList(savedList, user):
     return profile.wordwallsSaveListSize
 
 
+@login_required
 def mark_missed(request, id):
     wwg = WordwallsGame()
     marked = wwg.mark_missed(request.POST['idx'], id, request.user)

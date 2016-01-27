@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-24 19:44-0800\n"
+"POT-Creation-Date: 2016-01-26 09:31-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,27 +18,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: static/js/wordwalls/ChallengeView.js:33
+#: wordwalls/static/js/wordwalls/ChallengeView.js:33
 msgid "Name"
 msgstr "Nombre"
 
-#: static/js/wordwalls/ChallengeView.js:34
+#: wordwalls/static/js/wordwalls/ChallengeView.js:34
 msgid "Score"
 msgstr "Puntaje"
 
-#: static/js/wordwalls/ChallengeView.js:35
+#: wordwalls/static/js/wordwalls/ChallengeView.js:35
 msgid "Remaining"
 msgstr "Quedaron"
 
-#: static/js/wordwalls/ChallengeView.js:40
+#: wordwalls/static/js/wordwalls/ChallengeView.js:40
 msgid "No one has done this challenge today. Be the first!"
 msgstr "Nadie ha hecho este desafío hoy. ¡Sea el primero!"
 
-#: static/js/wordwalls/createTableMain.js:119
+#: wordwalls/static/js/wordwalls/createTableMain.js:120
 msgid "Success! "
 msgstr "¡Éxito!"
 
-#: static/js/wordwalls/models/configure.js:29
+#: wordwalls/static/js/wordwalls/models/configure.js:29
 msgid ""
 "You must enter a character to use for the blank. If you want it to look "
 "empty, please enter a Space (with the spacebar)."
@@ -46,27 +46,27 @@ msgstr ""
 "Debe poner un carácter para usar para la letra en blanco. Si quiere que se "
 "vea vacía, entre un espacio (con el espaciador)."
 
-#: static/js/wordwalls/models/configure.js:41
+#: wordwalls/static/js/wordwalls/models/configure.js:41
 msgid "Your custom order is missing at least one letter: "
 msgstr "A su orden personalizado le falta por lo menos una letra: "
 
-#: static/js/wordwalls/tableCreate.js:125
+#: wordwalls/static/js/wordwalls/tableCreate.js:153
 msgid "Max probability (at most "
 msgstr "Probabilidad máxima (a lo mucho "
 
-#: static/js/wordwalls/tableCreate.js:140
+#: wordwalls/static/js/wordwalls/tableCreate.js:168
 msgid "Select a challenge to view leaderboard"
 msgstr "Seleccione un desafío para ver la tabla de posiciones."
 
-#: static/js/wordwalls/tableCreate.js:144
+#: wordwalls/static/js/wordwalls/tableCreate.js:173
 msgid " leaderboard"
 msgstr " tabla de posiciones"
 
-#: static/js/wordwalls/tableCreate.js:170
+#: wordwalls/static/js/wordwalls/tableCreate.js:199
 msgid "Play!"
 msgstr "¡Jugar!"
 
-#: static/js/wordwalls/tableCreate.js:178
+#: wordwalls/static/js/wordwalls/tableCreate.js:207
 msgid ""
 "This will restart this list and wipe out all its information. Make sure you "
 "want to do this!"
@@ -74,39 +74,39 @@ msgstr ""
 "Esta opción reiniciará esta lista y borrará toda su información. ¡Asegúrese "
 "de que quiera hacer esto!"
 
-#: static/js/wordwalls/tableCreate.js:185
+#: wordwalls/static/js/wordwalls/tableCreate.js:214
 msgid "Delete selected list"
 msgstr "Borre esta lista"
 
-#: static/js/wordwalls/tableCreate.js:188
+#: wordwalls/static/js/wordwalls/tableCreate.js:217
 msgid "This will delete the selected list! Make sure you want to do this!"
 msgstr ""
 "Esta opción borrará la lista seleccionada. ¡Asegúrese de que quiera hacer "
 "esto!"
 
-#: static/js/wordwalls/tableCreate.js:370
+#: wordwalls/static/js/wordwalls/tableCreate.js:399
 msgid "last saved"
 msgstr "últimamente guardada"
 
-#: static/js/wordwalls/tableCreate.js:371
-#: static/js/wordwalls/tableCreate.js:389
+#: wordwalls/static/js/wordwalls/tableCreate.js:400
+#: wordwalls/static/js/wordwalls/tableCreate.js:418
 msgid "total alphagrams"
 msgstr "alfagramas totales"
 
-#: static/js/wordwalls/tableCreate.js:403
+#: wordwalls/static/js/wordwalls/tableCreate.js:432
 #, javascript-format
 msgid ""
 "Your current limit is %s. You can increase this by becoming a supporter!"
 msgstr ""
-"Su límite corrente es %s. Usted puede remover este límite volviéndose en un/"
+"Su límite actual es %s. Usted puede remover este límite volviéndose en un/"
 "una contribuidor(a)."
 
-#: static/js/wordwalls/tableCreate.js:408
+#: wordwalls/static/js/wordwalls/tableCreate.js:437
 #, javascript-format
 msgid "You have %s alphagrams over all your saved lists. "
 msgstr "Usted tiene %s alfagramas en todas sus listas guardadas con Aerolith. "
 
-#: static/js/wordwalls/views/AppView.js:57
+#: wordwalls/static/js/wordwalls/views/AppView.js:59
 msgid ""
 "Autosave is NOT on. To save your progress, type in a name for this list next "
 "to the Save button, and click Save."
@@ -115,67 +115,71 @@ msgstr ""
 "nombre para esta lista al lado del botón \"Guardar\", y haga click en ese "
 "botón."
 
-#: static/js/wordwalls/views/AppView.js:97
+#: wordwalls/static/js/wordwalls/views/AppView.js:99
 msgid "Autosave is on! "
 msgstr "¡Autoguardar está activado! "
 
-#: static/js/wordwalls/views/AppView.js:98
-#: static/js/wordwalls/views/AppView.js:202
+#: wordwalls/static/js/wordwalls/views/AppView.js:100
+#: wordwalls/static/js/wordwalls/views/AppView.js:204
 msgid "Aerolith will save your list progress at the end of every round."
 msgstr "Aerolith guardará su progreso al final de cada ronda."
 
-#: static/js/wordwalls/views/AppView.js:175
+#: wordwalls/static/js/wordwalls/views/AppView.js:177
 msgid "The challenge has ended!"
 msgstr "¡El desafío ha acabado!"
 
-#: static/js/wordwalls/views/AppView.js:182
+#: wordwalls/static/js/wordwalls/views/AppView.js:184
 msgid ""
 "Click <a class=\"softLink dcInfo\">here</a> to see current results for this "
 "challenge."
 msgstr ""
 "Haga click <a class=\"softLink dcInfo\">aquí</a> para ver resultados "
-"corrientes para este desafío."
+"actuales para este desafío."
 
-#: static/js/wordwalls/views/AppView.js:190
+#: wordwalls/static/js/wordwalls/views/AppView.js:192
 msgid "You must enter a list name for saving!"
 msgstr "¡Debe escribir un nombre para guardar esta lista!"
 
-#: static/js/wordwalls/views/AppView.js:201
+#: wordwalls/static/js/wordwalls/views/AppView.js:200
+msgid "Saved as "
+msgstr "Guardado como "
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:203
 msgid "Autosave is now on! "
 msgstr "¡Autoguardar está ahora activado! "
 
-#: static/js/wordwalls/views/AppView.js:309
+#: wordwalls/static/js/wordwalls/views/AppView.js:311
 msgid "Prob"
 msgstr "Prob"
 
-#: static/js/wordwalls/views/AppView.js:310
+#: wordwalls/static/js/wordwalls/views/AppView.js:312
 msgid "Alphagram"
 msgstr "Alfagrama"
 
-#: static/js/wordwalls/views/AppView.js:311
+#: wordwalls/static/js/wordwalls/views/AppView.js:313
 msgid "Word"
 msgstr "Palabra"
 
-#: static/js/wordwalls/views/AppView.js:312
+#: wordwalls/static/js/wordwalls/views/AppView.js:314
 msgid "Definition"
 msgstr "Definición"
 
-#: static/js/wordwalls/views/AppView.js:313
+#: wordwalls/static/js/wordwalls/views/AppView.js:315
 msgid "Actions"
 msgstr "Acciones"
 
-#: static/js/wordwalls/views/AppView.js:458
+#: wordwalls/static/js/wordwalls/views/AppView.js:477
 msgid "Unable to mark this alphagram as missed."
 msgstr "No se pudo marcar este alfagrama como fallado."
 
-#: static/js/wordwalls/views/ConfigureView.js:70
+#: wordwalls/static/js/wordwalls/views/ConfigureView.js:70
 msgid "Successfully saved preferences."
 msgstr "Sus preferencias fueron guardadas."
 
-#: static/js/wordwalls/views/ConfigureView.js:73
+#: wordwalls/static/js/wordwalls/views/ConfigureView.js:73
 msgid "There was an error"
 msgstr "Hubo un error"
 
-#: static/js/wordwalls/views/WordSolutionView.js:48
+#: wordwalls/static/js/wordwalls/views/WordSolutionView.js:57
 msgid "Mark missed"
 msgstr "Marcar como falla"

@@ -197,7 +197,7 @@ define([
     },
     processSaveResponse: function(data) {
       if (_.has(data, 'success') && data.success) {
-        this.updateMessages("Saved as " + data.listname);
+        this.updateMessages(django.gettext("Saved as ") + data.listname);
         if (this.wordwallsGame.get('autoSave') === false) {
           this.updateMessages(django.gettext(
             "Autosave is now on! ") + django.gettext(

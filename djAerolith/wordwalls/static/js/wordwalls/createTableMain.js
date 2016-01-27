@@ -15,7 +15,6 @@ requirejs.config({
     dropzone: '../../../../static/js/aerolith/dropzone',
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
-    i18n: '../../../../static/lib/require/i18n',
     sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
     json2: '../../../../static/js/aerolith/json2',
     backbone: '../../../../static/lib/backbone-1.0.0',

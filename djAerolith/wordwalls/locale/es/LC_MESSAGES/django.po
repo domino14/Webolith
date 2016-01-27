@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 19:58-0800\n"
+"POT-Creation-Date: 2016-01-26 20:40-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,114 +166,122 @@ msgstr "Subir lista"
 msgid "or"
 msgstr "o"
 
-#: wordwalls/templates/wordwalls/table.html:92
+#: wordwalls/templates/wordwalls/table.html:24
+msgid "WordWalls - table"
+msgstr "Muros de Palabras - mesa"
+
+#: wordwalls/templates/wordwalls/table.html:98
+#: wordwalls/templates/wordwalls/table.html:122
 msgid "Start"
 msgstr "Empezar"
 
-#: wordwalls/templates/wordwalls/table.html:94
+#: wordwalls/templates/wordwalls/table.html:104
+#: wordwalls/templates/wordwalls/table.html:124
 msgid "Give up"
 msgstr "¡Me rindo!"
 
-#: wordwalls/templates/wordwalls/table.html:95
+#: wordwalls/templates/wordwalls/table.html:107
+#: wordwalls/templates/wordwalls/table.html:125
 msgid "Solutions"
 msgstr "Soluciones"
 
-#: wordwalls/templates/wordwalls/table.html:97
+#: wordwalls/templates/wordwalls/table.html:110
+#: wordwalls/templates/wordwalls/table.html:127
 msgctxt "table"
 msgid "Save"
 msgstr "Guardar"
 
-#: wordwalls/templates/wordwalls/table.html:99
+#: wordwalls/templates/wordwalls/table.html:129
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: wordwalls/templates/wordwalls/table.html:101
+#: wordwalls/templates/wordwalls/table.html:131
 msgid "Exit"
 msgstr "Salir"
 
-#: wordwalls/templates/wordwalls/table.html:124
+#: wordwalls/templates/wordwalls/table.html:154
 msgid "Guess"
 msgstr "Respuesta"
 
-#: wordwalls/templates/wordwalls/table.html:126
+#: wordwalls/templates/wordwalls/table.html:156
 msgid "Shuffle"
 msgstr "Mezclar"
 
-#: wordwalls/templates/wordwalls/table.html:127
+#: wordwalls/templates/wordwalls/table.html:157
 msgid "Alphagram"
 msgstr "Alfagrama"
 
-#: wordwalls/templates/wordwalls/table.html:128
+#: wordwalls/templates/wordwalls/table.html:158
 msgid "Custom"
 msgstr "Personalizado"
 
-#: wordwalls/templates/wordwalls/table.html:136
+#: wordwalls/templates/wordwalls/table.html:166
 msgid "Guesses"
 msgstr "Adivinanzas"
 
-#: wordwalls/templates/wordwalls/table.html:148
+#: wordwalls/templates/wordwalls/table.html:178
 msgid "Tiles"
 msgstr "Fichas"
 
-#: wordwalls/templates/wordwalls/table.html:149
+#: wordwalls/templates/wordwalls/table.html:179
 msgid "Don't use tiles"
 msgstr "No usar fichas"
 
-#: wordwalls/templates/wordwalls/table.html:150
+#: wordwalls/templates/wordwalls/table.html:180
 msgid "Sans-serif font"
 msgstr "Tipografía sin ornamentos"
 
-#: wordwalls/templates/wordwalls/table.html:151
+#: wordwalls/templates/wordwalls/table.html:181
 msgid "Bold letters"
 msgstr "Letras en negrita"
 
-#: wordwalls/templates/wordwalls/table.html:152
+#: wordwalls/templates/wordwalls/table.html:182
 msgid "Tile style"
 msgstr "Estilo de fichas"
 
-#: wordwalls/templates/wordwalls/table.html:154
-#: wordwalls/templates/wordwalls/table.html:155
-#: wordwalls/templates/wordwalls/table.html:156
-#: wordwalls/templates/wordwalls/table.html:157
-#: wordwalls/templates/wordwalls/table.html:158
-#: wordwalls/templates/wordwalls/table.html:159
-#: wordwalls/templates/wordwalls/table.html:160
+#: wordwalls/templates/wordwalls/table.html:184
+#: wordwalls/templates/wordwalls/table.html:185
+#: wordwalls/templates/wordwalls/table.html:186
+#: wordwalls/templates/wordwalls/table.html:187
+#: wordwalls/templates/wordwalls/table.html:188
+#: wordwalls/templates/wordwalls/table.html:189
+#: wordwalls/templates/wordwalls/table.html:190
 msgid "Style"
 msgstr "Estilo"
 
-#: wordwalls/templates/wordwalls/table.html:162
+#: wordwalls/templates/wordwalls/table.html:192
 msgid "Table"
 msgstr "Mesa"
 
-#: wordwalls/templates/wordwalls/table.html:163
+#: wordwalls/templates/wordwalls/table.html:193
 msgid "Don't show green table"
 msgstr "No mostrar mesa verde"
 
-#: wordwalls/templates/wordwalls/table.html:164
+#: wordwalls/templates/wordwalls/table.html:194
 msgid "Don't show canvas background"
 msgstr "No mostrar fondo de canvas"
 
-#: wordwalls/templates/wordwalls/table.html:165
+#: wordwalls/templates/wordwalls/table.html:195
 msgid "Show borders around questions"
 msgstr "Preguntas con márgenes"
 
-#: wordwalls/templates/wordwalls/table.html:168
+#: wordwalls/templates/wordwalls/table.html:198
 msgid "Other"
 msgstr "Más"
 
-#: wordwalls/templates/wordwalls/table.html:169
+#: wordwalls/templates/wordwalls/table.html:199
 msgid "Blank character"
 msgstr "Cáracter para fichas en blanco"
 
-#: wordwalls/templates/wordwalls/table.html:170
+#: wordwalls/templates/wordwalls/table.html:200
 msgid "Custom tile ordering"
 msgstr "Orden de fichas personalizado"
 
-#: wordwalls/templates/wordwalls/table.html:172
+#: wordwalls/templates/wordwalls/table.html:202
 msgid "Save preferences"
 msgstr "Guardar preferencias"
 
-#: wordwalls/templates/wordwalls/table.html:187
+#: wordwalls/templates/wordwalls/table.html:217
 msgid "Challenge results"
 msgstr "Resultados del desafío"
 
@@ -295,7 +303,7 @@ msgid ""
 "Please check that you have selected a word list and a time greater than 1 "
 "minute."
 msgstr ""
-"Por favor asegúrese de que haya elejido una lista y un tiempo más de un "
+"Por favor asegúrese de que haya elegido una lista y un tiempo más de un "
 "minuto."
 
 #: wordwalls/views.py:224
@@ -308,7 +316,7 @@ msgid ""
 "Please check that you have selected a list and that your quiz time is "
 "greater than 1 minute."
 msgstr ""
-"Por favor asegúrese de que haya elejido una lista y un tiempo más de un "
+"Por favor asegúrese de que haya elegido una lista y un tiempo más de un "
 "minuto."
 
 #: wordwalls/views.py:263
@@ -330,19 +338,23 @@ msgstr ""
 "El servidor de Aerolith está actualmente en mantenimiento. Por favor intente "
 "otra vez en algunos minutos."
 
-#: wordwalls/views.py:372
+#: wordwalls/views.py:373
 msgid "This endpoint only accepts POST"
 msgstr "Joder"
 
-#: wordwalls/views.py:382
+#: wordwalls/views.py:383
 msgid "Bad lexicon."
 msgstr "Léxico malo."
 
-#: wordwalls/views.py:386
+#: wordwalls/views.py:387
 msgid "Your file is too big."
 msgstr "Su archivo es demasiado grande."
 
-#: wordwalls/views.py:410
+#: wordwalls/views.py:393
+msgid "Please make sure your file is utf-8 encoded."
+msgstr "Por favor, asegúrese de que su archivo esté codificado con UTF-8."
+
+#: wordwalls/views.py:415
 msgid ""
 "A list by the name {} already exists for this lexicon! Please rename your "
 "file."
@@ -350,57 +362,63 @@ msgstr ""
 "Una lista bajo el nombre {} ya existe para este léxico. Por favor cambie el "
 "nombre del archivo."
 
-#: wordwalls/views.py:426
+#: wordwalls/views.py:431
 msgid "This list would exceed your total list size limit"
 msgstr "Esta lista excediría su límite de tamaño total de preguntas"
 
-#: wordwalls/views.py:517
+#: wordwalls/views.py:522
 msgid "just now"
 msgstr "ahorita"
 
-#: wordwalls/views.py:519
+#: wordwalls/views.py:524
 #, python-format
 msgid "%(seconds)s seconds ago"
 msgstr "hace %(seconds)s segundos"
 
-#: wordwalls/views.py:521
+#: wordwalls/views.py:526
 msgid "a minute ago"
 msgstr "hace un minuto"
 
-#: wordwalls/views.py:523
+#: wordwalls/views.py:528
 #, python-format
 msgid "%(minutes)s minutes ago"
 msgstr "hace %(minutes)s minutos"
 
-#: wordwalls/views.py:525
+#: wordwalls/views.py:530
 msgid "an hour ago"
 msgstr "hace una hora"
 
-#: wordwalls/views.py:527
+#: wordwalls/views.py:532
 #, python-format
 msgid "%(hours)s hours ago"
 msgstr "hace %(hours)s horas"
 
-#: wordwalls/views.py:529
+#: wordwalls/views.py:534
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: wordwalls/views.py:531
+#: wordwalls/views.py:536
 #, python-format
 msgid "%(day_diff)s days ago"
 msgstr "hace %(day_diff)s días"
 
-#: wordwalls/views.py:533
+#: wordwalls/views.py:538
 #, python-format
 msgid "%(week)s weeks ago"
 msgstr "hace %(week)s semanas"
 
-#: wordwalls/views.py:535
+#: wordwalls/views.py:540
 #, python-format
 msgid "%(month)s months ago"
 msgstr "hace %(month)s meses"
 
-#: wordwalls/views.py:536
+#: wordwalls/views.py:541
 #, python-format
 msgid "%(year)s years ago"
 msgstr "hace %(year)s años"
+
+#, fuzzy
+#~| msgctxt "table"
+#~| msgid "Save"
+#~ msgid "Save"
+#~ msgstr "Guardar"
