@@ -108,10 +108,13 @@ def get_dc_results(user, post):
         Gets daily challenge results and returns it to querier.
         :post The request.POST dictionary.
     """
-    lex = post.get('lexicon')
     try:
-        ch_name = DailyChallengeName.objects.get(name=post.get('chName'))
-    except DailyChallengeName.DoesNotExist:
+        lex = Lexicon.objects.get(pk=post.get('lexicon'))
+    except (Lexicon.DoesNotExist, ValueError):
+        raise Http404
+    try:
+        ch_name = DailyChallengeName.objects.get(pk=post.get('challenge'))
+    except (DailyChallengeName.DoesNotExist, ValueError):
         raise Http404
     try:
         ch_date = datetime.strptime(post.get('date'), '%m/%d/%Y').date()
@@ -459,7 +462,7 @@ def searchForAlphagrams(data, lex):
 def getLeaderboardDataDcInstance(dc):
     try:
         lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
-    except:
+    except DailyChallengeLeaderboard.DoesNotExist:
         return None
 
     lbes = DailyChallengeLeaderboardEntry.objects.filter(board=lb)
@@ -485,19 +488,14 @@ def getLeaderboardDataDcInstance(dc):
 
 
 def getLeaderboardData(lex, chName, challengeDate):
-    try:
-        lex_object = Lexicon.objects.get(lexiconName=lex)
-    except:
-        return None
-
     if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         chdate = toughies_challenge_date(challengeDate)
     else:
         chdate = challengeDate
     try:
-        dc = DailyChallenge.objects.get(lexicon=lex_object, date=chdate,
+        dc = DailyChallenge.objects.get(lexicon=lex, date=chdate,
                                         name=chName)
-    except:
+    except DailyChallenge.DoesNotExist:
         return None  # daily challenge doesn't exist
 
     return getLeaderboardDataDcInstance(dc)

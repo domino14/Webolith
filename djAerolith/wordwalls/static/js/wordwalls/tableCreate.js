@@ -359,8 +359,8 @@ define([
       // gets daily challenge results from server
       $.post(this.commandUrl, {
         action: 'getDcResults',
-        lexicon: $('#id_lexicon option:selected').text(),
-        chName: $('#id_challenge option:selected').text(),
+        lexicon: $('#id_lexicon').val(),
+        challenge: $('#id_challenge').val(),
         date: $('#id_challengeDate').val()
       }, _.bind(this.populateDcResults, this), 'json');
     },
