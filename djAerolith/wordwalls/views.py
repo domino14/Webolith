@@ -103,7 +103,7 @@ def homepage(request):
          'CURRENT_VERSION': CURRENT_VERSION})
 
 
-def get_dc_results(user, post):
+def get_dc_results(user, post, language_code):
     """
         Gets daily challenge results and returns it to querier.
         :post The request.POST dictionary.
@@ -117,7 +117,10 @@ def get_dc_results(user, post):
     except (DailyChallengeName.DoesNotExist, ValueError):
         raise Http404
     try:
-        ch_date = datetime.strptime(post.get('date'), '%m/%d/%Y').date()
+        if language_code == 'es':
+            ch_date = datetime.strptime(post.get('date'), '%d/%m/%Y').date()
+        else:
+            ch_date = datetime.strptime(post.get('date'), '%m/%d/%Y').date()
     except (ValueError, TypeError):
         ch_date = date.today()
     return response(getLeaderboardData(lex, ch_name, ch_date))
@@ -157,6 +160,10 @@ def challenge_submit(user, post):
     challengeName = DailyChallengeName.objects.get(
         name=dcForm.cleaned_data['challenge'])
     chDate = dcForm.cleaned_data['challengeDate']
+    logger.debug('Selected in form: %s, %s, %s',
+                 dcForm.cleaned_data['challenge'],
+                 dcForm.cleaned_data['challengeDate'],
+                 lexForm.cleaned_data['lexicon'])
     if not chDate or chDate > date.today():
         chDate = date.today()
 
@@ -269,7 +276,6 @@ def handle_homepage_post(profile, request):
     logger.debug(request.POST)
     # Call one of various functions depending on action.
     actions_dict = {
-        'getDcResults': get_dc_results,
         'getSavedListList': get_saved_lists,
         'getNamedListList': get_named_lists,
         'getSavedListNumAlphas': lambda x, y: response({'na': numAlphas,
@@ -280,6 +286,9 @@ def handle_homepage_post(profile, request):
         'savedListDelete': saved_list_delete,
         'namedListsSubmit': named_lists_submit
     }
+    if request.POST['action'] == 'getDcResults':
+        return get_dc_results(request.user, request.POST,
+                              request.LANGUAGE_CODE)
     return actions_dict[request.POST['action']](request.user, request.POST)
 
 
