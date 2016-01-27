@@ -287,7 +287,7 @@ msgstr "Resultados del desafío"
 
 #: wordwalls/views.py:150
 msgid "No challenge was selected."
-msgstr "No se seleccionó un desafío."
+msgstr "No seleccionó un desafío."
 
 #: wordwalls/views.py:163
 msgid "Challenge does not exist."
