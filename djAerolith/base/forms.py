@@ -3,6 +3,7 @@
 from django import forms
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
 from wordwalls.models import NamedList
+from django.utils.translation import ugettext_lazy as _
 
 
 class LexiconForm(forms.Form):
@@ -86,10 +87,10 @@ class SavedListForm(forms.Form):
     RESTART_LIST_CHOICE = 3
     DELETE_LIST_CHOICE = 4
     listOptions = (
-        (CONTINUE_LIST_CHOICE, 'Continue list'),
-        (FIRST_MISSED_CHOICE, 'Quiz on first missed'),
-        (RESTART_LIST_CHOICE, 'Restart list'),
-        (DELETE_LIST_CHOICE, 'Delete list')
+        (CONTINUE_LIST_CHOICE, _('Continue list')),
+        (FIRST_MISSED_CHOICE, _('Quiz on first missed')),
+        (RESTART_LIST_CHOICE, _('Restart list')),
+        (DELETE_LIST_CHOICE, _('Delete list'))
     )
 
     listOption = forms.TypedChoiceField(

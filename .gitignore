@@ -3,8 +3,6 @@
 settings_local.py
 settings_local_prod.py
 *~
-dbCreator-build-desktop
-dbCreator.pro.user*
 gunicorn.log
 words/*.trie
 words/*.txt
@@ -19,8 +17,6 @@ djAerolith/static/build/*
 dump.rdb
 scripts/digoceanssh.py
 scripts/gen_firewall.py
-dbCreator/*.o
-dbCreator/Makefile
-dbCreator/moc_*
-dbCreator/dbCreator
-dbCreator/*.db
+db/*.db
+*.mo
+*.gaddag

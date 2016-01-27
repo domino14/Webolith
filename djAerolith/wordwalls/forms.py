@@ -30,7 +30,8 @@ class TimeForm(forms.Form):
 class DailyChallengesForm(forms.Form):
     challengeDate = forms.DateField(label='Date', required=False)
     challenge = forms.ModelChoiceField(
-        queryset=DailyChallengeName.objects.all(),
+        # Remove common words for now.
+        queryset=DailyChallengeName.objects.exclude(pk__in=(18, 19)),
         label='Challenge',
         widget=forms.Select(attrs={'size': '13',
                                    'class': 'form-control'}))

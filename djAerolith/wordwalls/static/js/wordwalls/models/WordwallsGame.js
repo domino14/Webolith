@@ -15,8 +15,6 @@ define([
     defaults: function() {
       return {
         gameGoing: false,
-        quizzingOnMissed: false,
-        quizOverForever: false,
         challenge: false,
         autoSave: false
       };

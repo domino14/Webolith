@@ -84,6 +84,19 @@ define([
      */
     transformLetter: function(letter) {
       var blankCharacter;
+      // Do Spanish transformations.
+      if (letter === '1') {
+        letter = 'ᴄʜ';
+        letter = 'CH';
+      } else if (letter === '2') {
+        letter = 'ʟʟ';
+        letter = 'LL';
+      } else if (letter === '3') {
+        letter = 'ʀʀ';
+        letter = 'RR';
+      } else if (letter === 'Ñ') {
+        letter = 'ñ';
+      }
       if (letter !== '?') {
         return letter;
       }
@@ -106,9 +119,11 @@ define([
       tiles = this.model.get('alphagram').split('');
       tilesContext = [];
       for (i = 0; i < tiles.length; i++) {
+        var transformedLetter = this.transformLetter(tiles[this.tileOrder[i]]);
         tilesContext.push({
           'tcText': tcText,
-          'letter': this.transformLetter(tiles[this.tileOrder[i]])
+          'letter': transformedLetter,
+          'isDigraph': transformedLetter.length === 2 ? 'digraph' : ''
         });
       }
       context = {

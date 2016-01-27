@@ -1,49 +1,60 @@
 {% extends "base.html" %}
-{% block title %}Edit {{profile.user.username}}'s profile{% endblock %}
+{% load i18n %}
+{% block title %}{% blocktrans with username=profile.user.username %}Edit {{username}}'s profile{% endblocktrans %}{% endblock %}
 
 {% block content %}
 {% if profile.member %}
 <div class="row">
-You are currently a supporter; your membership expires on {{profile.membershipExpiry}}
+{% blocktrans with expiry=profile.membershipExpiry %}
+You are currently a supporter; your membership expires on {{expiry}}.
+{% endblocktrans %}
 </div>
 {% else %}
 
 {% endif %}
 <form class="form-horizontal" role="form" method="post" action="{% url 'accounts_edit_profile' %}" style="margin-top: 20px;">{% csrf_token %}
   <div class="form-group">
-    <label for="input-lexicon" class="col-sm-2 control-label">Default Lexicon</label>
+    <label for="input-lexicon" class="col-sm-2 control-label">{% trans "Default Lexicon" %}</label>
     <div class="col-sm-4">
       {{ pForm.defaultLexicon }}
     </div>
   </div>
   <div class="form-group">
-    <div class="col-sm-offset-1">Enter up to 2000 characters of information about yourself to show on your profile. You may use <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">Markdown</a>.</div>
+    <div class="col-sm-offset-1">{% blocktrans %}Enter up to 2000 characters of information about yourself to show on your profile. You may use <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank">Markdown</a>.{% endblocktrans %}</div>
   </div>
   <div class="form-group">
-    <label for="input-profile" class="col-sm-2 control-label">Your profile:</label>
+    <label for="input-profile" class="col-sm-2 control-label">{% trans "Your profile"%}:</label>
     <div class="col-sm-10">
       {{ pForm.profileText }}
     </div>
   </div>
-  <div class="form-group">
+<!--   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
-          <input type="checkbox" name="disableChat" id="id_disableChat"> Disable chat
+          <input type="checkbox" name="disableChat" id="id_disableChat"> {% trans "Disable chat" %}
         </label>
       </div>
     </div>
+  </div> -->
+  <div class="form-group">
+    <label for="input-language" class="col-sm-2 control-label">{% trans "Default Aerolith Interface Language" %}</label>
+    <div class="col-sm-4">
+      {{ pForm.default_language }}
+    </div>
   </div>
+
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Save Profile</button>
+      <button type="submit" class="btn btn-default">{% trans "Save Profile" %}</button>
     </div>
   </div>
 </form>
 <p>
-    <a href="/accounts/password/change">Password change form</a>
+    <a href="/accounts/password/change">{% trans "Password change form" %}</a>
 </p>
 <script type="text/javascript">
+/* global $, JSON*/
   $(document).ready(function() {
     var addlData;
     try {
@@ -52,8 +63,11 @@ You are currently a supporter; your membership expires on {{profile.membershipEx
       addlData = {disableChat: false};
     }
     $("#id_profileText").val("{{profile.profile|escapejs}}");
-    $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").prop('selected', true);
+    $("#id_defaultLexicon option[value='{{profile.defaultLexicon.pk}}']").prop(
+        'selected', true);
     $('#id_disableChat').prop('checked', addlData.disableChat);
+    $("#id_default_language option[value='{{session_language}}']").prop(
+      'selected', true);
   });
   $("#id_profileText").css({'height': '300px', 'width': '500px'});
 </script>

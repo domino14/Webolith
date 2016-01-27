@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load value_from_settings %}
 {% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
@@ -7,6 +8,8 @@
 
 <!DOCTYPE html>
 <html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<!-- Current language: {{ LANGUAGE_CODE }} -->
   <head>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="/static/favicon.ico" />
@@ -72,17 +75,17 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             {% if user.username == "" %}
-            <li><a href="/accounts/login" class="navbarLink">Log in</a></li>
-            <li><a href="/accounts/register" class="navbarLink">Register</a></li>
+            <li><a href="/accounts/login" class="navbarLink">{% trans "Log in" %}</a></li>
+            <li><a href="/accounts/register" class="navbarLink">{% trans "Register" %}</a></li>
             {% else %}
             <li><a href="/accounts/profile/{{user}}" class="navbarLink">
                 <span class="glyphicon glyphicon-wrench"></span> {{user}}</a>
             </li>
-            <li><a href="/supporter" class="navbarLink">Membership</a></li>
-            <li><a href="/accounts/logout" class="navbarLink">Log out</a></li>
+            <li><a href="/supporter" class="navbarLink">{% trans "Membership" %}</a></li>
+            <li><a href="/accounts/logout" class="navbarLink">{% trans "Log out" %}</a></li>
             {% endif %}
-            <li><a href="/about" class="navbarLink">About</a></li>
-            <li><a href="/wordwalls" class="navbarLink">Wordwalls</a></li>
+            <li><a href="/about" class="navbarLink">{% trans "About" %}</a></li>
+            <li><a href="/wordwalls" class="navbarLink">{% trans "Wordwalls" %}</a></li>
           </ul>
         </div>
       </div>
@@ -96,11 +99,11 @@
       {% block content %}
         <div class="row">
         {% if user.username == "" %}
-        <p>Welcome to Aerolith 2.0! Please <a href="/accounts/login">log in</a>, or <a href="/accounts/register">register</a> if you are new to this site.</p>
-        <p style="font-size: 100%;"><a href="/accounts/password/reset">Forget your password?</a></p>
+        <p>{% trans "Welcome to Aerolith 2.0! Please" %} <a href="/accounts/login">{% trans "log in" %}</a>, {% trans "or" %} <a href="/accounts/register">{% trans "register" %}</a> {% trans "if you are new to this site" %}.</p>
+        <p style="font-size: 100%;"><a href="/accounts/password/reset">{% trans "Forget your password?" %}</a></p>
         {% else %}
-        Welcome back, {{user}}! Here are some things you can do: <BR><BR>
-        <a href="wordwalls" class="btn btn-primary">Play WordWalls</a><BR>
+        {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
+        <a href="wordwalls" class="btn btn-primary">{% trans "Play WordWalls" %}</a><BR>
         {% endif %}
         </div>
         {% if USE_FB %}
@@ -135,7 +138,7 @@
     <div class="push"></div>
     <div id="footer">
       <div class="container">
-        <div id="copyright">&copy; 2007-{% now "Y" %} Cesarware. All Rights Reserved.</div>
+        <div id="copyright">&copy; 2007-{% now "Y" %} Cesarware. {% trans "All Rights Reserved." %}</div>
         <div id="mixpanel">
           <a href="https://mixpanel.com/f/partner"><img src="/static/img/aerolith/mixpanel_badge_light.png" alt="Mobile and Web Analytics" /></a>
         </div>

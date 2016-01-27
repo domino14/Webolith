@@ -61,6 +61,11 @@ TIME_ZONE = 'America/Los_Angeles'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
+from django.utils.translation import ugettext_lazy as _
+LANGUAGES = [
+    ('en', _('English')),
+    ('es', _('Spanish')),
+]
 
 SITE_ID = 1
 
@@ -106,8 +111,9 @@ STATICFILES_FINDERS = (
 
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -126,6 +132,13 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, "templates"),
 #    os.path.join(PROJECT_ROOT, "blog/templates"),   # overriding some default templates for the blog app
 )
+
+LOCALE_PATHS = [
+    os.path.join(PROJECT_ROOT, "locale"),
+    os.path.join(PROJECT_ROOT, "base", "locale"),
+    os.path.join(PROJECT_ROOT, "wordwalls", "locale"),
+    os.path.join(PROJECT_ROOT, "accounts", "locale"),
+]
 
 INSTALLED_APPS = (
     'django.contrib.auth',

@@ -1,4 +1,4 @@
-/* global define*/
+/* global define, django*/
 define([
   'backbone',
   'jquery',
@@ -15,6 +15,7 @@ define([
      SolutionsTable, Mustache, ChallengeView, Tester, utils) {
   "use strict";
   var App;
+
   App = Backbone.View.extend({
     el: $("body"),
     events: {
@@ -38,8 +39,9 @@ define([
     enableTester_: function() {
       Tester.setEnabled();
     },
-    initialize: function() {
+    initialize: function(options) {
       this.guessInput = this.$("#guessText");
+      this.lexicon = options.lexicon;
       this.setupPopupEvent();
       this.wordwallsGame = new Game();
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
@@ -53,10 +55,10 @@ define([
         this.handleChallengeEnded);
 
       this.listenTo(this.wordwallsGame, 'autosaveDisabled', function() {
-        this.updateMessages([
-          "Autosave is NOT on. To save your progress, type in a name ",
+        this.updateMessages(django.gettext(
+          "Autosave is NOT on. To save your progress, type in a name " +
           "for this list next to the Save button, and click Save."
-        ].join(''));
+        ));
       });
       this.viewConfig = null;
       this.numColumns = 4;
@@ -94,10 +96,10 @@ define([
     },
     setSaveName: function(saveName) {
       this.$("#saveListName").val(saveName);
-      this.updateMessages([
-        "Autosave is on! Aerolith will save your list progress at the end ",
-        "of every round."
-      ].join(''));
+      this.updateMessages(django.gettext("Autosave is on! ") +
+        django.gettext("Aerolith will save your list progress at the end " +
+        "of every round.")
+      );
       this.wordwallsGame.set('autoSave', true);
     },
     /**
@@ -172,21 +174,22 @@ define([
       this.fadeInDialog('definitions_popup', true);
     },
     handleChallengeEnded: function() {
-      this.updateMessages("The challenge has ended!");
+      this.updateMessages(django.gettext("The challenge has ended!"));
       $.post(this.tableUrl, {action: 'getDcData'},
         function(data) {
           ChallengeView.processDcResults(data, "addlInfo_content");
         },
         'json');
-      this.updateMessages([
-        'Click <a class="softLink dcInfo">here</a> to see current results for ',
-        'this challenge.'
-      ].join(''));
+      this.updateMessages(django.gettext(
+        'Click <a class="softLink dcInfo">here</a> to see current results ' +
+        'for this challenge.'
+      ));
     },
     saveGame: function() {
       var text = this.$("#saveListName").val();
       if (!text) {
-        this.updateMessages("You must enter a list name for saving!");
+        this.updateMessages(django.gettext(
+          "You must enter a list name for saving!"));
       } else {
         $.post(this.tableUrl, {action: "save", listname: text},
           _.bind(this.processSaveResponse, this), 'json');
@@ -194,12 +197,13 @@ define([
     },
     processSaveResponse: function(data) {
       if (_.has(data, 'success') && data.success) {
-        this.updateMessages("Saved as " + data.listname);
+        this.updateMessages(django.gettext("Saved as ") + data.listname);
         if (this.wordwallsGame.get('autoSave') === false) {
-          this.updateMessages([
-            "Autosave is now on! Aerolith will save your ",
-            "list progress at the end of every round."
-          ].join(''));
+          this.updateMessages(django.gettext(
+            "Autosave is now on! ") + django.gettext(
+              "Aerolith will save your list progress " +
+              "at the end of every round.")
+          );
           this.wordwallsGame.set('autoSave', true);
         }
       }
@@ -237,13 +241,9 @@ define([
       if (!this.wordwallsGame.get('gameGoing')) {
         if (_.has(data, 'serverMsg')) {
           this.updateMessages(data.serverMsg);
-          this.wordwallsGame.set(
-            'quizzingOnMissed', data.serverMsg.indexOf('missed') !== -1);
         }
         if (_.has(data, 'error')) {
           this.updateMessages(data.error);
-          this.wordwallsGame.set(
-            'quizOverForever', data.error.indexOf('nice day') !== -1);
         }
         if (_.has(data, 'questions')) {
           this.wordwallsGame.processQuestionObj(data.questions);
@@ -307,7 +307,13 @@ define([
       this.$questionsList.html("");
       this.questionViewsByAlphagram = {};
       this.questionViews = [];
-      this.defsDiv.html(Mustache.render(SolutionsTable, {}));
+      this.defsDiv.html(Mustache.render(SolutionsTable, {
+        i18n_ui_prob: django.gettext('Prob'),
+        i18n_ui_alphagram: django.gettext('Alphagram'),
+        i18n_ui_word: django.gettext('Word'),
+        i18n_ui_definition: django.gettext('Definition'),
+        i18n_ui_actions: django.gettext('Actions')
+      }));
       /* Fetch the actual table element and hide it. */
       $defsTable = this.defsDiv.children("#solutionsTable");
       $defsTable.hide();
@@ -354,7 +360,8 @@ define([
       question.get('words').each(function(word) {
         var wordSolutionView;
         wordSolutionView = new WordSolutionView({
-          model: word
+          model: word,
+          lexicon: this.lexicon
         });
         $defsTable.append(wordSolutionView.render().el);
         this.roundTotalAnswers++;
@@ -397,15 +404,29 @@ define([
      */
     submitGuess: function(guessText) {
       var ucGuess;
-      ucGuess = $.trim(guessText.toUpperCase());
+      ucGuess = this.modifyGuess($.trim(guessText.toUpperCase()));
       $.post(this.tableUrl, {
         action: "guess",
-        guess: guessText
+        guess: ucGuess
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json').fail(_.bind(function(jqXHR) {
         this.updateMessages(jqXHR.responseJSON);
       }, this));
     },
+
+    /**
+     * Modify guess, based on lexicon. If we are using the Spanish (FISE)
+     * lexicon, we want to convert characters accordingly.
+     */
+    modifyGuess: function(guessText) {
+      if (this.lexicon !== utils.SPANISH_LEXICON) {
+        return guessText;
+      }
+      guessText = guessText.replace(/CH/g, '1').replace(/LL/g, 2).replace(
+        /RR/g, 3);
+      return guessText;
+    },
+
     /**
      * Processes a back-end response to a guess.
      * @param {string} ucGuess The upper-cased guess.
@@ -413,7 +434,8 @@ define([
      *                      in response to a guess.
      */
     processGuessResponse: function(ucGuess, data) {
-      var view, wordsRemaining, word;
+      var view, wordsRemaining, word, modifiedForDisplay;
+      modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
       if (_.has(data, 'C')) {
         if (data.C !== '') {
           /* data.C contains the alphagram. */
@@ -431,9 +453,10 @@ define([
           word = view.model.get('words').find(function(word) {
             return word.get('word').toUpperCase() === ucGuess;
           });
-          this.updateCorrectAnswer(ucGuess + word.get('lexiconSymbol'));
+          this.updateCorrectAnswer(modifiedForDisplay +
+            word.get('lexiconSymbol'));
         }
-        this.updateGuesses(ucGuess);
+        this.updateGuesses(modifiedForDisplay);
       }
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();
@@ -450,7 +473,8 @@ define([
         'idx': alphagramIndex
       }, _.bind(function(data) {
         if (data.success === false) {
-          window.alert('Unable to mark this alphagram as missed.');
+          window.alert(django.gettext(
+            'Unable to mark this alphagram as missed.'));
         } else if (data.success === true) {
           solutionView.markMissed();
         }

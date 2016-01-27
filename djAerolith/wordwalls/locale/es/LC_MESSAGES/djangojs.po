@@ -1,0 +1,185 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-26 09:31-0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: wordwalls/static/js/wordwalls/ChallengeView.js:33
+msgid "Name"
+msgstr "Nombre"
+
+#: wordwalls/static/js/wordwalls/ChallengeView.js:34
+msgid "Score"
+msgstr "Puntaje"
+
+#: wordwalls/static/js/wordwalls/ChallengeView.js:35
+msgid "Remaining"
+msgstr "Quedaron"
+
+#: wordwalls/static/js/wordwalls/ChallengeView.js:40
+msgid "No one has done this challenge today. Be the first!"
+msgstr "Nadie ha hecho este desafío hoy. ¡Sea el primero!"
+
+#: wordwalls/static/js/wordwalls/createTableMain.js:120
+msgid "Success! "
+msgstr "¡Éxito!"
+
+#: wordwalls/static/js/wordwalls/models/configure.js:29
+msgid ""
+"You must enter a character to use for the blank. If you want it to look "
+"empty, please enter a Space (with the spacebar)."
+msgstr ""
+"Debe poner un carácter para usar para la letra en blanco. Si quiere que se "
+"vea vacía, entre un espacio (con el espaciador)."
+
+#: wordwalls/static/js/wordwalls/models/configure.js:41
+msgid "Your custom order is missing at least one letter: "
+msgstr "A su orden personalizado le falta por lo menos una letra: "
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:153
+msgid "Max probability (at most "
+msgstr "Probabilidad máxima (a lo mucho "
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:168
+msgid "Select a challenge to view leaderboard"
+msgstr "Seleccione un desafío para ver la tabla de posiciones."
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:173
+msgid " leaderboard"
+msgstr " tabla de posiciones"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:199
+msgid "Play!"
+msgstr "¡Jugar!"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:207
+msgid ""
+"This will restart this list and wipe out all its information. Make sure you "
+"want to do this!"
+msgstr ""
+"Esta opción reiniciará esta lista y borrará toda su información. ¡Asegúrese "
+"de que quiera hacer esto!"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:214
+msgid "Delete selected list"
+msgstr "Borre esta lista"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:217
+msgid "This will delete the selected list! Make sure you want to do this!"
+msgstr ""
+"Esta opción borrará la lista seleccionada. ¡Asegúrese de que quiera hacer "
+"esto!"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:399
+msgid "last saved"
+msgstr "últimamente guardada"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:400
+#: wordwalls/static/js/wordwalls/tableCreate.js:418
+msgid "total alphagrams"
+msgstr "alfagramas totales"
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:432
+#, javascript-format
+msgid ""
+"Your current limit is %s. You can increase this by becoming a supporter!"
+msgstr ""
+"Su límite actual es %s. Usted puede remover este límite volviéndose en un/"
+"una contribuidor(a)."
+
+#: wordwalls/static/js/wordwalls/tableCreate.js:437
+#, javascript-format
+msgid "You have %s alphagrams over all your saved lists. "
+msgstr "Usted tiene %s alfagramas en todas sus listas guardadas con Aerolith. "
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:59
+msgid ""
+"Autosave is NOT on. To save your progress, type in a name for this list next "
+"to the Save button, and click Save."
+msgstr ""
+"Autoguardar NO esta activado. Para guardar su progreso, por favor escriba un "
+"nombre para esta lista al lado del botón \"Guardar\", y haga click en ese "
+"botón."
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:99
+msgid "Autosave is on! "
+msgstr "¡Autoguardar está activado! "
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:100
+#: wordwalls/static/js/wordwalls/views/AppView.js:204
+msgid "Aerolith will save your list progress at the end of every round."
+msgstr "Aerolith guardará su progreso al final de cada ronda."
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:177
+msgid "The challenge has ended!"
+msgstr "¡El desafío ha acabado!"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:184
+msgid ""
+"Click <a class=\"softLink dcInfo\">here</a> to see current results for this "
+"challenge."
+msgstr ""
+"Haga click <a class=\"softLink dcInfo\">aquí</a> para ver resultados "
+"actuales para este desafío."
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:192
+msgid "You must enter a list name for saving!"
+msgstr "¡Debe escribir un nombre para guardar esta lista!"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:200
+msgid "Saved as "
+msgstr "Guardado como "
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:203
+msgid "Autosave is now on! "
+msgstr "¡Autoguardar está ahora activado! "
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:311
+msgid "Prob"
+msgstr "Prob"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:312
+msgid "Alphagram"
+msgstr "Alfagrama"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:313
+msgid "Word"
+msgstr "Palabra"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:314
+msgid "Definition"
+msgstr "Definición"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:315
+msgid "Actions"
+msgstr "Acciones"
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:477
+msgid "Unable to mark this alphagram as missed."
+msgstr "No se pudo marcar este alfagrama como fallado."
+
+#: wordwalls/static/js/wordwalls/views/ConfigureView.js:70
+msgid "Successfully saved preferences."
+msgstr "Sus preferencias fueron guardadas."
+
+#: wordwalls/static/js/wordwalls/views/ConfigureView.js:73
+msgid "There was an error"
+msgstr "Hubo un error"
+
+#: wordwalls/static/js/wordwalls/views/WordSolutionView.js:57
+msgid "Mark missed"
+msgstr "Marcar como falla"

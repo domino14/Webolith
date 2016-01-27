@@ -1,4 +1,4 @@
-/* global define*/
+/* global define, django*/
 define([
   'backbone',
   'collections/Alphagrams',
@@ -66,10 +66,11 @@ define([
       this.prefsInfo.html("");
       saveResult = this.model.save({}, {
         success: _.bind(function() {
-          this.prefsInfo.html("Successfully saved preferences.");
+          this.prefsInfo.html(
+            django.gettext("Successfully saved preferences."));
         }, this),
         error: _.bind(function() {
-          this.prefsInfo.html("There was an error");
+          this.prefsInfo.html(django.gettext("There was an error"));
         }, this)
       });
       if (!saveResult) {

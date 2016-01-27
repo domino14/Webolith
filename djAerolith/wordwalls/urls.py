@@ -17,12 +17,21 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from django.conf.urls import *
+from django.views.i18n import javascript_catalog
+
+
+js_info_dict = {
+    'packages': ('wordwalls',),
+}
 
 urlpatterns = patterns('',
     url(r'^$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
-    url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table', name='wordwalls_table'),
+    url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table',
+        name='wordwalls_table'),
     url(r'^table/(?P<id>\d+)/missed/$', 'wordwalls.views.mark_missed'),
-    url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload' ),
+    url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload'),
     url(r'^api/', include('wordwalls.api_urls')),
-   # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
-    )
+   # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
+   # name='get_new_signature')
+    url(r'^jsi18n/$', javascript_catalog, js_info_dict),
+)

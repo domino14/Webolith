@@ -24,6 +24,7 @@ import re
 
 from django.conf import settings
 from django.db import IntegrityError
+from django.utils.translation import ugettext as _
 
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions
@@ -230,12 +231,13 @@ class WordwallsGame(object):
     def start_quiz(self, tablenum, user):
         wgm = self.get_wgm(tablenum)
         if not wgm:
-            return self.create_error_message("That table does not exist.")
+            return self.create_error_message(_("That table does not exist."))
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
             logger.debug('The quiz is going, state %s', state)
-            return self.create_error_message("The quiz is currently running.")
+            return self.create_error_message(
+                _("The quiz is currently running."))
                 # the quiz is running right now; do not attempt to start again
         start_message = ""
         word_list = wgm.word_list
@@ -244,7 +246,7 @@ class WordwallsGame(object):
             raise Exception('Did not migrate word list for this table.')
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
-            start_message += "Now quizzing on missed list.\r\n"
+            start_message += _("Now quizzing on missed list.") + "\r\n"
             word_list.set_to_missed()
             state['quizGoing'] = False
 
@@ -252,15 +254,19 @@ class WordwallsGame(object):
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return self.create_error_message(
-                "The quiz is done. Please exit the table and have a nice day!")
+                _("The quiz is done. Please exit the table and have a nice "
+                  "day!"))
 
         cur_questions_obj = json.loads(word_list.curQuestions)
         idx = word_list.questionIndex
         num_qs_per_round = state['questionsToPull']
         qs = cur_questions_obj[idx:(idx + num_qs_per_round)]
 
-        start_message += "These are questions %d through %d of %d." % (
-            idx + 1, len(qs) + idx, word_list.numCurAlphagrams)
+        start_message += _(
+            "These are questions %(qbegin)s through %(qend)s of "
+            "%(qtotal)s.") % {'qbegin': idx + 1,
+                              'qend': len(qs) + idx,
+                              'qtotal': word_list.numCurAlphagrams}
 
         word_list.questionIndex += num_qs_per_round
 
@@ -412,22 +418,22 @@ class WordwallsGame(object):
         # make sure the list name is not just all whitespace
         s = re.search(r"\S", listname)
         if s is None:
-            return 'Please enter a valid list name!'
+            return _('Please enter a valid list name!')
         if not wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
-            return 'Your game must be a single player game!'
+            return _('Your game must be a single player game!')
         if state['quizGoing']:
             # TODO actually should check if time ran out
             # this seems like an arbitrary limitation but it makes
             # things a lot easier. we can change this later.
             logger.warning('Unable to save, quiz is going.')
-            return 'You can only save the game at the end of a round.'
+            return _('You can only save the game at the end of a round.')
 
     def save(self, user, tablenum, listname):
         logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
                      user, tablenum, listname)
         wgm = self.get_wgm(tablenum)
         if not wgm:
-            return {'success': False, 'info': 'That table does not exist!'}
+            return {'success': False, 'info': _('That table does not exist!')}
         state = json.loads(wgm.currentGameState)
         err = self.validate_can_save(tablenum, listname, wgm, state)
         if err is not None:
@@ -461,10 +467,10 @@ class WordwallsGame(object):
             else:
                 limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
-            exceeded_limit_message = (
+            exceeded_limit_message = _(
                 'Unable to save list because you have gone over the '
                 'number of total alphagrams limit (%d). You can '
-                'increase this limit by becoming a supporter!' % limit)
+                'increase this limit by becoming a supporter!') % limit
             if (profile.wordwallsSaveListSize + word_list.numAlphagrams >
                     limit):
                 ret['info'] = exceeded_limit_message
@@ -476,8 +482,8 @@ class WordwallsGame(object):
             word_list.save()
         except IntegrityError:
             # There's already a word list with this name, perhaps?
-            ret['info'] = ('Cannot save - you already have a word list '
-                           'with that name!')
+            ret['info'] = _('Cannot save - you already have a word list '
+                            'with that name!')
             return ret
         ret['success'] = True
         ret['listname'] = listname
@@ -617,7 +623,7 @@ class WordwallsGame(object):
             return False
         wgm = self.get_wgm(tablenum)
         if not wgm:
-            return 'No table #%s exists' % tablenum
+            return _('No table #%s exists') % tablenum
         word_list = wgm.word_list
         missed = json.loads(word_list.missed)
         state = json.loads(wgm.currentGameState)

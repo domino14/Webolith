@@ -29,6 +29,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.utils.translation import ugettext as _
 from gargoyle import gargoyle
 
 from forms import TimeForm, DailyChallengesForm
@@ -146,7 +147,7 @@ def challenge_submit(user, post):
     dcForm = DailyChallengesForm(post)
     if not(lexForm.is_valid() and dcForm.is_valid()):
         return response({'success': False,
-                         'error': 'No challenge was selected.'})
+                         'error': _('No challenge was selected.')})
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
     wwg = WordwallsGame()
@@ -159,7 +160,7 @@ def challenge_submit(user, post):
     tablenum = wwg.initialize_daily_challenge(user, lex, challengeName, chDate)
     if tablenum == 0:
         return response({'success': False,
-                         'error': 'Challenge does not exist.'})
+                         'error': _('Challenge does not exist.')})
 
     return response(
         {'url': reverse('wordwalls_table',
@@ -177,8 +178,8 @@ def search_params_submit(user, post):
     # form bound to the POST data
     if not (lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid()):
         return response({'success': False,
-                         'error': 'There was something wrong with your '
-                                  'search parameters or time selection.'})
+                         'error': _('There was something wrong with your '
+                                    'search parameters or time selection.')})
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
     quiz_time = int(round(timeForm.cleaned_data['quizTime'] * 60))
@@ -196,9 +197,9 @@ def saved_lists_submit(user, post):
     slForm = SavedListForm(post)
     if not (lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid()):
         return response({'success': False,
-                         'error': 'Please check that you have selected '
-                                  'a word list and a time greater than '
-                                  '1 minute.'})
+                         'error': _('Please check that you have selected '
+                                    'a word list and a time greater than '
+                                    '1 minute.')})
 
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
@@ -220,7 +221,7 @@ def saved_list_delete(user, post):
     slForm = SavedListForm(post)
     if not (lexForm.is_valid() and slForm.is_valid()):
         return response({'success': False,
-                         'error': 'You did not select a list to delete.'})
+                         'error': _('You did not select a list to delete.')})
     deletedListPk = slForm.cleaned_data['wordList'].pk
     deleteSavedList(slForm.cleaned_data['wordList'], user)
     return response({'deleted': True,
@@ -233,9 +234,9 @@ def named_lists_submit(user, post):
     nlForm = NamedListForm(post)
     if not (lexForm.is_valid() and timeForm.is_valid() and nlForm.is_valid()):
         return response({'success': False,
-                         'error': 'Please check that you have selected a '
-                                  'list and that your quiz time is greater '
-                                  'than 1 minute.'})
+                         'error': _('Please check that you have selected a '
+                                    'list and that your quiz time is greater '
+                                    'than 1 minute.')})
 
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
@@ -259,9 +260,9 @@ def handle_homepage_post(profile, request):
         limit = settings.SAVE_LIST_LIMIT_NONMEMBER
     if 'action' not in request.POST:
         return response({'success': False,
-                         'error': 'Your request was not successful. You may '
-                                  'be using an incompatible browser, please '
-                                  'upgrade it.'})
+                         'error': _('Your request was not successful. You may '
+                                    'be using an incompatible browser, please '
+                                    'upgrade it.')})
     logger.debug(request.POST)
     # Call one of various functions depending on action.
     actions_dict = {
@@ -291,7 +292,7 @@ def table(request, id):
             wwg = WordwallsGame()
             state = wwg.guess(request.POST['guess'].strip(), id, request.user)
             if state is None:
-                return response('Quiz is already over.',
+                return response(_('Quiz is already over.'),
                                 status=StatusCode.BAD_REQUEST)
             logger.debug('table=%s Returning %s, %s', id, state[0], state[1])
             return response({'g': state[0], 'C': state[1]})
@@ -350,23 +351,26 @@ def table(request, id):
                        'username': request.user.username,
                        'addParams': json.dumps(params),
                        'avatarUrl': profile.avatarUrl,
-                       'CURRENT_VERSION': CURRENT_VERSION
+                       'CURRENT_VERSION': CURRENT_VERSION,
+                       'lexicon': wwg.get_wgm(id).lexicon
                        })
 
 
 def start_game(request, id):
     if gargoyle.is_active('disable_games', request):
         return response(
-            {'serverMsg': 'The Aerolith server is currently undergoing '
-                          'maintenance. Please try again in a few minutes.'})
+            {'serverMsg': _(
+                'The Aerolith server is currently undergoing '
+                'maintenance. Please try again in a few minutes.')})
     wwg = WordwallsGame()
     quizParams = wwg.start_quiz(id, request.user)
     return response(quizParams)
 
 
+@login_required
 def ajax_upload(request):
     if request.method != "POST":
-        return response('This endpoint only accepts POST',
+        return response(_('This endpoint only accepts POST'),
                         StatusCode.BAD_REQUEST)
 
     lex_form = LexiconForm(request.POST)
@@ -376,14 +380,18 @@ def ajax_upload(request):
             lexiconName=lex_form.cleaned_data['lexicon'])
     else:
         logger.debug(lex_form.errors)
-        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
+        return response(_('Bad lexicon.'), StatusCode.BAD_REQUEST)
 
     uploaded_file = request.FILES['file']
     if uploaded_file.multiple_chunks():
-        return response('Your file is too big.', StatusCode.BAD_REQUEST)
+        return response(_('Your file is too big.'), StatusCode.BAD_REQUEST)
 
     filename = uploaded_file.name
-    file_contents = uploaded_file.read()
+    try:
+        file_contents = uploaded_file.read().decode('utf-8')
+    except UnicodeDecodeError:
+        return response(_('Please make sure your file is utf-8 encoded.'),
+                        StatusCode.BAD_REQUEST)
     # save the file
     success, msg = create_user_list(file_contents, filename, lex,
                                     request.user)
@@ -404,8 +412,8 @@ def create_user_list(contents, filename, lex, user):
         # uh oh, it exists!
         return (
             False,
-            "A list by the name {} already exists for this "
-            "lexicon! Please rename your file.".format(filename_stripped))
+            _("A list by the name {} already exists for this "
+              "lexicon! Please rename your file.").format(filename_stripped))
     except WordList.DoesNotExist:
         pass
     t1 = time.time()
@@ -420,7 +428,7 @@ def create_user_list(contents, filename, lex, user):
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if (num_saved_alphas + len(alphas)) > limit and not profile.member:
-        return False, "This list would exceed your total list size limit"
+        return False, _("This list would exceed your total list size limit")
     db = WordDB(lex.lexiconName)
 
     questions = db.get_questions(alphas)
@@ -511,26 +519,26 @@ def pretty_date(now, time):
 
     if day_diff == 0:
         if second_diff < 10:
-            return "just now"
+            return _("just now")
         if second_diff < 60:
-            return str(second_diff) + " seconds ago"
+            return _("%(seconds)s seconds ago") % {'seconds': second_diff}
         if second_diff < 120:
-            return "a minute ago"
+            return _("a minute ago")
         if second_diff < 3600:
-            return str(second_diff / 60) + " minutes ago"
+            return _("%(minutes)s minutes ago") % {'minutes': second_diff / 60}
         if second_diff < 7200:
-            return "an hour ago"
+            return _("an hour ago")
         if second_diff < 86400:
-            return str(second_diff / 3600) + " hours ago"
+            return _("%(hours)s hours ago") % {'hours': second_diff / 3600}
     if day_diff == 1:
-        return "Yesterday"
+        return _("Yesterday")
     if day_diff < 7:
-        return str(day_diff) + " days ago"
+        return _("%(day_diff)s days ago") % {'day_diff': day_diff}
     if day_diff < 31:
-        return str(day_diff / 7) + " weeks ago"
+        return _("%(week)s weeks ago") % {'week': day_diff / 7}
     if day_diff < 365:
-        return str(day_diff / 30) + " months ago"
-    return str(day_diff / 365) + " years ago"
+        return _("%(month)s months ago") % {'month': day_diff / 30}
+    return _("%(year)s years ago") % {'year': day_diff / 365}
 
 
 def getSavedListList(lex, user):
@@ -582,6 +590,7 @@ def deleteSavedList(savedList, user):
     return profile.wordwallsSaveListSize
 
 
+@login_required
 def mark_missed(request, id):
     wwg = WordwallsGame()
     marked = wwg.mark_missed(request.POST['idx'], id, request.user)

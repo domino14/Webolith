@@ -15,14 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from django.http import HttpResponseRedirect, Http404
-from django.contrib.auth.decorators import login_required
-from accounts.models import AerolithProfile
-from django.contrib.auth.models import User
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from accounts.forms import ProfileEditForm
 import json
+
+from django.http import HttpResponseRedirect, Http404
+from django.utils.translation import LANGUAGE_SESSION_KEY
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.template import RequestContext
+
+from accounts.models import AerolithProfile
+from accounts.forms import ProfileEditForm
+
+DEFAULT_LANGUAGE = 'en'
 
 
 @login_required
@@ -42,34 +47,37 @@ def editProfile(request):
             profile.additional_data = json.dumps(
                 {'disableChat': pForm.cleaned_data['disableChat']})
             profile.save()
+            request.session[LANGUAGE_SESSION_KEY] = pForm.cleaned_data[
+                'default_language']
 
             return HttpResponseRedirect('/accounts/profile/%s' %
                                         profile.user.username)
-    return render_to_response('accounts/editProfile.html',
-                              {'profile': profile,
-                               'pForm': pForm},
-                              context_instance=RequestContext(request))
+    return render(
+        request, 'accounts/editProfile.html',
+        {'profile': profile,
+         'pForm': pForm,
+         'session_language': request.session.get(
+             LANGUAGE_SESSION_KEY, DEFAULT_LANGUAGE)})
 
 
 def viewProfile(request, username):
     try:
         user = User.objects.get(username=username)
-    except:
+    except User.DoesNotExist:
         raise Http404
 
     try:
         profile = AerolithProfile.objects.get(user=user)
-    except:
+    except AerolithProfile.DoesNotExist:
         raise Http404
         # although this shouldn't happen!! every user should have a profile
 
     try:
         wwMedals = json.loads(profile.wordwallsMedals)
-    except:
+    except (ValueError, TypeError):
         wwMedals = {}
 
     print wwMedals
-    return render_to_response('accounts/profile.html',
-                              {'profile': profile,
-                               'wwMedals': wwMedals},
-                              context_instance=RequestContext(request))
+    return render(request, 'accounts/profile.html',
+                  {'profile': profile,
+                   'wwMedals': wwMedals})

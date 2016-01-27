@@ -1,3 +1,4 @@
+/* global django */
 /**
  * @fileOverview This is the view for a single row in the solutions table.
  * Basically, a single word solution.
@@ -8,12 +9,14 @@ define([
   "jquery",
   "text!templates/singleSolution.html",
   "mustache",
+  'utils',
   "jquery_ui"
-], function(Backbone, _, $, SingleSolution, Mustache) {
+], function(Backbone, _, $, SingleSolution, Mustache, utils) {
   "use strict";
   var SolutionView = Backbone.View.extend({
     tagName: 'tr',
-    initialize: function() {
+    initialize: function(options) {
+      this.lexicon = options.lexicon;
       this.listenTo(this.model, 'change', _.bind(this.render, this));
       this.listenTo(this.model.get('alphagram'), 'change',
         _.bind(this.render, this));
@@ -32,7 +35,8 @@ define([
         if (attrs.alphagram.attributes.wrong) {
           attrs.wrongAlpha = true;
         }
-        attrs.alphagramText = attrs.alphagram.get('alphagram');
+        attrs.alphagramText = utils.modifyWordForDisplay(
+          attrs.alphagram.get('alphagram'), this.lexicon);
       }
       if (this.model.collection &&
           this.model.collection.indexOf(this.model) !== 0) {
@@ -40,10 +44,17 @@ define([
         delete attrs.prob;
         delete attrs.wrongAlpha;
       }
+      attrs.frontHooks = utils.modifyWordForDisplay(attrs.frontHooks,
+        this.lexicon);
+      attrs.backHooks = utils.modifyWordForDisplay(attrs.backHooks,
+        this.lexicon);
+      attrs.word = utils.modifyWordForDisplay(attrs.word, this.lexicon);
       if (this.model.collection && this.model.collection.indexOf(
         this.model) === 0 && !attrs.wrongAlpha) {
         attrs.markMissedBtn = true;
       }
+
+      attrs['i18n_ui_markmissed'] = django.gettext('Mark missed');
       this.$el.html(Mustache.render(SingleSolution, attrs));
       this.$('.mark-missed').button();
       return this;
