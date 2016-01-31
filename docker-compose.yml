@@ -29,3 +29,9 @@ app:
   links:
     - db
   command: python manage.py runserver 0.0.0.0:8000
+
+# docker create -v /var/lib/mysql --name mysqldbdata tianon/true /bin/true
+# docker run --rm -it --volumes-from mysqldbdata -v ~/Downloads/backup_20160130-051513.sql:/docker-entrypoint-initdb.d/aerolith_data.sql --env MYSQL_ROOT_PASSWORD=pass mysql:latest
+#
+#
+# docker run --rm -it --volumes-from webolith_db_data_1 -v ~/Downloads/backup_20160130-051513.sql:/docker-entrypoint-initdb.d/aerolith_data.sql --env MYSQL_ROOT_PASSWORD=pass mysql:latest

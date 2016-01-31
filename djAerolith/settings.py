@@ -18,7 +18,7 @@
 
 # Django settings for djAerolith project.
 import os
-
+print 'here!'
 
 def tobool(val):
     if val is True:
@@ -205,7 +205,7 @@ from logging_filters import skip_suspicious_operations
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'filters': {
         'skip_suspicious_operations': {
             '()': 'django.utils.log.CallbackFilter',
@@ -248,21 +248,33 @@ LOGGING = {
     },
     'loggers': {
         'django.db': {
-            'handlers': ['log_file'],
+            'handlers': ['console'],
             'level': 'INFO'
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        '': {
-            'handlers': ['log_file', 'mail_admins'],
-            'level': 'DEBUG',
-            'propagate': True,
+        '': {   # catch-all
+            'handlers': ['console', 'mail_admins'],
+            'level': 'DEBUG'
         }
     }
 }
+
+if tobool(os.environ.get('PROD_LOGGING', False)):
+    LOGGING['loggers']['django.db'] = {
+        'handlers': ['log_file'],
+        'level': 'INFO'
+    }
+    LOGGING['loggers']['django.request'] = {
+        'handlers': ['mail_admins'],
+        'level': 'ERROR',
+        'propagate': True,
+    }
+    LOGGING['loggers'][''] = {
+        'handlers': ['log_file', 'mail_admins'],
+        'level': 'DEBUG',
+        'propagate': True,
+    }
+    LOGGING['disable_existing_loggers'] = False
+
 USE_MX = os.environ.get('USE_MX')
 USE_GA = os.environ.get('USE_GA')
 USE_FB = os.environ.get('USE_FB')
@@ -304,3 +316,5 @@ WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
+
+print 'After!'
