@@ -18,10 +18,23 @@
 
 # Django settings for djAerolith project.
 import os
-import settings_local   # this file is not shared on vcs
-DEBUG = settings_local.DEBUG
+
+
+def tobool(val):
+    if val is True:
+        return True
+    elif val is False:
+        return False
+    val = val.lower()
+    if val in ('y', 'on', 'true', '1'):
+        return True
+    elif val in ('n', 'off', 'false', '0'):
+        return False
+
+
+DEBUG = tobool(os.environ.get('DEBUG'))
 TEMPLATE_DEBUG = DEBUG
-DEBUG_JS = settings_local.DEBUG_JS
+DEBUG_JS = tobool(os.environ.get('DEBUG_JS'))
 
 ADMINS = (
     ('Cesar Del Solar', 'delsolar@gmail.com'),
@@ -32,10 +45,10 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': settings_local.sql_db_name,
-        'USER': settings_local.sqlUser,
-        'PASSWORD': settings_local.sqlPw,
-        'HOST': settings_local.SQL_HOST,
+        'NAME': os.environ.get('SQL_DB_NAME'),
+        'USER': os.environ.get('SQL_USER'),
+        'PASSWORD': os.environ.get('SQL_PASSWORD'),
+        'HOST': os.environ.get('SQL_HOST'),
         'PORT': '',
         'TEST': {
             'CHARSET': 'utf8',
@@ -86,7 +99,7 @@ MEDIA_ROOT = ''
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
 
-STATIC_ROOT = settings_local.STATIC_ROOT
+STATIC_ROOT = os.environ.get('STATIC_ROOT')
 STATIC_URL = '/static/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -95,7 +108,7 @@ STATIC_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = settings_local.SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -171,7 +184,7 @@ LOGIN_REDIRECT_URL = "/"
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'
-EMAIL_HOST_PASSWORD = settings_local.emailPw
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'webmaster@aerolith.mailgun.org'
 
@@ -250,32 +263,17 @@ LOGGING = {
         }
     }
 }
-try:
-    USE_MX = settings_local.USE_MX
-except AttributeError:
-    USE_MX = True
-try:
-    USE_GA = settings_local.USE_GA
-except AttributeError:
-    USE_GA = True
-try:
-    USE_FB = settings_local.USE_FB
-except AttributeError:
-    USE_FB = True
-try:
-    USE_UV = settings_local.USE_UV
-except AttributeError:
-    USE_UV = True
-try:
-    # Overwrite with settings_local's LOGGING if available.
-    LOGGING = settings_local.LOGGING
-except AttributeError:
-    pass
+USE_MX = os.environ.get('USE_MX')
+USE_GA = os.environ.get('USE_GA')
+USE_FB = os.environ.get('USE_FB')
+USE_UV = os.environ.get('USE_UV')
+
+# LOGGING config
 
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
-RECAPTCHA_PRIVATE_KEY = settings_local.RECAPTCHA_PRIVATE_KEY
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
-REDIS_HOST = settings_local.REDIS_HOST
+REDIS_HOST = os.environ.get('REDIS_HOST')   # not used.
 REDIS_PORT = 6379
 REDIS_ALPHAGRAMS_DB = 0   # alphas to pks
 REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
@@ -283,13 +281,13 @@ REDIS_SOCKET_TOKEN_DB = 2
 
 
 ALLOWED_HOSTS = ['.aerolith.org', '*']
-SOCKJS_SERVER = settings_local.SOCKJS_SERVER
+SOCKJS_SERVER = os.environ.get('SOCKJS_SERVER')   # not used.
 
 # See https://www.github.com/14domino/ujamaa
 # General-purpose word tool.
-UJAMAA_PATH = settings_local.UJAMAA_PATH
+UJAMAA_PATH = os.environ.get('UJAMAA_PATH')
 
-RECAPTCHA_SSL = settings_local.RECAPTCHA_SSL
+RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
 
 # See SessionIdleTimeout middleware
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
@@ -298,12 +296,11 @@ SESSION_IDLE_TIMEOUT = SESSION_COOKIE_AGE
 # Also ask them to log in once a month.
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-AWS_ACCESS_KEY_ID = settings_local.AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY = settings_local.AWS_SECRET_ACCESS_KEY
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
-WORD_DB_LOCATION = settings_local.WORD_DB_LOCATION
+WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
 
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
-

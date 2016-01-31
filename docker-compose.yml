@@ -1,0 +1,31 @@
+db:
+  image: mysql:latest
+  environment:
+    MYSQL_ROOT_PASSWORD: pass
+    MYSQL_DATABASE: djAerolith
+    VIRTUAL_HOST: db.docker
+  # volumes:
+  #   - ./djAerolith:/app
+  volumes_from:
+    - db_data
+  ports:
+    - 3306:3306
+
+db_data:
+  image: tianon/true
+  volumes:
+    - /var/lib/mysql/
+
+app:
+  env_file:
+    - ./config/local_config.env
+  build: .
+  working_dir: /opt/webolith/djAerolith
+  volumes:
+    - .:/opt/webolith:rw
+    - ./db:/db
+  ports:
+    - 8000:8000
+  links:
+    - db
+  command: python manage.py runserver 0.0.0.0:8000

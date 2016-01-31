@@ -1,0 +1,6 @@
+db/*
+words/*
+node/*
+.git/*
+*.pyc
+config/*.env
