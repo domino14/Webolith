@@ -28,10 +28,9 @@ def deploy_prod():
                 run("mkdir logs")
             with prefix("workon aeroenv"):
                 # collect static files!
-                # Copy settings_local_prod.py to settings_local.py
-                put(os.path.join(curdir, 'djAerolith',
-                                 'settings_local_prod.py'),
-                    'settings_local.py')
+                put(os.path.join(curdir, 'config', 'prod_config.env'),
+                    '/home/ubuntu/prod_config.env')
+                run(". ~/.prod_config.env")
                 run("python manage.py collectstatic --noinput")
                 # execute any needed migrations
                 run("python manage.py migrate")

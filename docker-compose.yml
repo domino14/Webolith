@@ -2,8 +2,6 @@ db:
   image: mysql:latest
   environment:
     MYSQL_ROOT_PASSWORD: pass
-    MYSQL_DATABASE: djAerolith
-    VIRTUAL_HOST: db.docker
   # volumes:
   #   - ./djAerolith:/app
   volumes_from:
