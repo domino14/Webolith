@@ -29,7 +29,7 @@ def getLexicon(request=None):
     elif request.LANGUAGE_CODE == 'es':
         return Lexicon.objects.get(lexiconName='FISE09')
     return Lexicon.objects.get(lexiconName='America')
-    
+
 
 class AerolithProfile(models.Model):
     user = models.OneToOneField(User)

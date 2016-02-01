@@ -20,7 +20,34 @@ See more information at that program. They require GADDAGs for the different lex
 
 =======
 
+## Getting started with Docker
+
+On my dev machine I installed docker - make sure it comes with docker-machine,
+VirtualBox, docker-compose ... the main package on the docker site should
+have these.
+
+`config/local_config_skeleton.env` should be filled in with appropriate values
+and renamed to `config/local_config.env`. 
+
+The `./db` directory needs the lexicon .db files made by `word_db_maker` above.
+Make sure to generate these first and place them in the `./db` directory.
+The `docker-compose` file will mount the `./db` directory here for use by the
+app.
+
+Then, running `./setup.sh` in this directory should set everything up, hopefully.
+
+Note: you may need to restart app after the initial `docker-compose up -d`...
+`docker-compose restart app`. This is because it tries to connect to a
+database that doesn't exist yet since everything restarts at once.
+(Gotta figure out how to sync it).
+
+You can access the app in your browser at the ip:8000 (get ip with 
+something like  `docker-machine ip default`, depending on your settings.)
+
+=======
+
 To generate blank challenges, there is a dependency on [Ujamaa](https://github.com/domino14/ujamaa). 
 See: [code](https://github.com/domino14/ujamaa/blob/v0.0.3/src/anagrammer/gen_blank_challenges.c)
 
 Hopefully this will move to Go as well at some point.
+
