@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% load gargoyle_tags %}
-{% block title %}WordWalls - table {{tablenum}}{% endblock %}
+{% block title %}{% trans "WordWalls - table" %} {{tablenum}}{% endblock %}
 {% block jquery_js %}{% endblock %}
 
 {% block content %}
-<P>You are not permitted to join this table!</P>
+<P>{% trans "Unable to join this table!" %}</P>
 
 {% ifswitch disable_games %}
-<P>The Aerolith server is currently undergoing maintenance. Please wait a few minutes and try again.</P>
+<P>{% trans "The Aerolith server is currently undergoing maintenance. Please wait a few minutes and try again." %}</P>
 {% endifswitch %}
 {% endblock %}

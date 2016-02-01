@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-26 20:40-0800\n"
+"POT-Creation-Date: 2016-01-31 20:45-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "You seem to be a computer, please try again"
 msgstr "Parece que usted es una computadora, por favor intente otra vez."
 
-#: settings.py:66
+#: settings.py:79
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:67
+#: settings.py:80
 msgid "Spanish"
 msgstr "Español"
 
