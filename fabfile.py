@@ -13,12 +13,18 @@ env.roledefs = {
         #'ubuntu@192.241.203.184',
         'ubuntu@104.236.137.163'],
     'prod_db': ['ubuntu@192.241.203.48']
-
 }
 
 
-@roles('prod')
-def deploy_prod():
+def deploy(role):
+    execute(_deploy, role, role=role)
+
+
+def _deploy(role):
+    if role == 'prod':
+        config_file = 'prod_config.env'
+    elif role == 'dev':
+        config_file = 'dev_config.env'
     with cd("webolith"):
         run("git pull")
         with cd("djAerolith"):
@@ -28,9 +34,9 @@ def deploy_prod():
                 run("mkdir logs")
             with prefix("workon aeroenv"):
                 # collect static files!
-                put(os.path.join(curdir, 'config', 'prod_config.env'),
-                    '/home/ubuntu/prod_config.env')
-                run(". ~/.prod_config.env")
+                put(os.path.join(curdir, 'config', config_file),
+                    '/home/ubuntu/config.env')
+                run(". ~/config.env")
                 run("python manage.py collectstatic --noinput")
                 # execute any needed migrations
                 run("python manage.py migrate")
@@ -51,11 +57,15 @@ def deploy_word_db(lexicon_name):
 def create_js_build():
     """
         Uses r.js to generate a build.
+
+        Requires node.js on host computer, and
+
+        `npm install -g requirejs` for the r.js executable.
     """
     with lcd(os.path.join(curdir, 'djAerolith')):
-        local("nodejs r.js -o js_build/create_table_wordwalls.js")
-        local("nodejs r.js -o js_build/table_wordwalls.js")
-        local("nodejs r.js -o js_build/flashcards.js")
+        local("r.js -o js_build/create_table_wordwalls.js")
+        local("r.js -o js_build/table_wordwalls.js")
+        local("r.js -o js_build/flashcards.js")
         with settings(warn_only=True):
             local("rm static/build/*.gz")
         local("gzip -c static/build/table-main-built.js > "
