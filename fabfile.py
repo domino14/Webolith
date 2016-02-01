@@ -16,11 +16,11 @@ env.roledefs = {
 }
 
 
-def deploy(role):
-    execute(_deploy, role, role=role)
+def deploy(role, skipjs=False):
+    execute(_deploy, role, skipjs, role=role)
 
 
-def _deploy(role, skipjs=False):
+def _deploy(role, skipjs):
     if role == 'prod':
         config_file = 'prod_config.env'
     elif role == 'dev':

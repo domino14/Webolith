@@ -18,7 +18,7 @@
 
 # Django settings for djAerolith project.
 import os
-print 'here!'
+
 
 def tobool(val):
     if val is True:
@@ -316,5 +316,3 @@ WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
-
-print 'After!'
