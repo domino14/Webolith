@@ -36,11 +36,11 @@ def _deploy(role):
                 # collect static files!
                 put(os.path.join(curdir, 'config', config_file),
                     '/home/ubuntu/config.env')
-                run(". ~/config.env")
-                run("python manage.py collectstatic --noinput")
-                # execute any needed migrations
-                run("python manage.py migrate")
-                run("python manage.py compilemessages")
+                with prefix("source /home/ubuntu/config.env"):
+                    run("python manage.py collectstatic --noinput")
+                    # execute any needed migrations
+                    run("python manage.py migrate")
+                    run("python manage.py compilemessages")
                 run("kill -s QUIT `supervisorctl pid gunicorn`")
 
 
