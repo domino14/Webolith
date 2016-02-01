@@ -20,7 +20,7 @@ def deploy(role):
     execute(_deploy, role, role=role)
 
 
-def _deploy(role):
+def _deploy(role, skipjs=False):
     if role == 'prod':
         config_file = 'prod_config.env'
     elif role == 'dev':
@@ -29,7 +29,8 @@ def _deploy(role):
         run("git pull")
         with cd("djAerolith"):
             # Deploy JS build.
-            deploy_js_build()
+            if skipjs is False:
+                deploy_js_build()
             with settings(warn_only=True):
                 run("mkdir logs")
             with prefix("workon aeroenv"):

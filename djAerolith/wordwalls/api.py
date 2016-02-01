@@ -54,7 +54,7 @@ def api_num_tables_created(request):
 def challengers(month, day, year, lex, ch_id):
     rows = [['User', 'Score', 'Time remaining']]
     try:
-        lex = Lexicon.objects.get(pk=lex).lexiconName
+        lex = Lexicon.objects.get(pk=lex)
         chName = DailyChallengeName.objects.get(pk=ch_id)
         chDate = date(day=int(day), month=int(month), year=int(year))
 

@@ -79,7 +79,7 @@ msgstr "Muros de Palabras - seleccione lista"
 
 #: wordwalls/templates/wordwalls/index.html:19
 msgid "Lexicon"
-msgstr "Léxico"
+msgstr "Lexicón"
 
 #: wordwalls/templates/wordwalls/index.html:29
 msgid "Time (minutes)"
@@ -173,18 +173,6 @@ msgstr "Muros de Palabras - mesa"
 #: wordwalls/templates/wordwalls/notPermitted.html:8
 msgid "Unable to join this table!"
 msgstr "No se pudo entrar a esta mesa."
-
-#: wordwalls/templates/wordwalls/notPermitted.html:11
-#, fuzzy
-#| msgid ""
-#| "The Aerolith server is currently undergoing maintenance. Please try again "
-#| "in a few minutes."
-msgid ""
-"The Aerolith server is currently undergoing maintenance. Please wait a few "
-"minutes and try again."
-msgstr ""
-"El servidor de Aerolith está actualmente en mantenimiento. Por favor intente "
-"otra vez en algunos minutos."
 
 #: wordwalls/templates/wordwalls/table.html:92
 msgid "Start"
@@ -356,7 +344,7 @@ msgstr "Joder"
 
 #: wordwalls/views.py:395
 msgid "Bad lexicon."
-msgstr "Léxico malo."
+msgstr "Lexicón malo."
 
 #: wordwalls/views.py:399
 msgid "Your file is too big."
@@ -371,7 +359,7 @@ msgid ""
 "A list by the name {} already exists for this lexicon! Please rename your "
 "file."
 msgstr ""
-"Una lista bajo el nombre {} ya existe para este léxico. Por favor cambie el "
+"Una lista bajo el nombre {} ya existe para este lexicón. Por favor cambie el "
 "nombre del archivo."
 
 #: wordwalls/views.py:443
