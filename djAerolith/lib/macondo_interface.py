@@ -13,6 +13,10 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+class MacondoError(Exception):
+    pass
+
+
 def gen_blank_challenges(length, lexicon_name, num_2_blanks, num_questions,
                          max_answers):
     """
@@ -28,7 +32,6 @@ def gen_blank_challenges(length, lexicon_name, num_2_blanks, num_questions,
                           'max_answers': max_answers,
                           'num_2_blanks': num_2_blanks})
     # Already an array formatted like [{'q': ..., 'a': [...]}, ...]
-    logger.debug(resp)
     return resp['questions']
 
 
@@ -55,7 +58,16 @@ def make_rpc_call(procedure_name, arguments):
             'num2Blanks': arguments['num_2_blanks']
         }
     }
-    response = requests.post(settings.MACONDO_ADDRESS + '/rpc',
-                             headers=headers,
-                             data=json.dumps(data))
-    return response.json()['result']
+    rpc_address = settings.MACONDO_ADDRESS + '/rpc'
+    try:
+        response = requests.post(rpc_address, headers=headers,
+                                 data=json.dumps(data))
+    except requests.ConnectionError as e:
+        raise MacondoError(e)
+    try:
+        resp = response.json()
+    except ValueError:
+        raise MacondoError(response.content)
+    if 'error' in resp:
+        raise MacondoError(resp['error']['message'])
+    return resp['result']
