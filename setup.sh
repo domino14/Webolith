@@ -6,6 +6,7 @@ docker-compose up -d
 docker-compose run --rm app \
     mysql -h db -ppass -e "drop database if exists djaerolith;" \
     -e "create database djaerolith;" \
+    -e "create database test_djAerolith;" \
     -e "create user aerolith@'%' identified by 'password';" \
     -e "grant all on djaerolith.* to aerolith@'%';"
 docker-compose run --rm app python manage.py migrate

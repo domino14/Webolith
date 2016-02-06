@@ -26,6 +26,8 @@ app:
     - 8000:8000
   links:
     - db
+  external_links:
+    - macondo_macondo_1:macondo
   command: python manage.py runserver 0.0.0.0:8000
 
 # docker create -v /var/lib/mysql --name mysqldbdata tianon/true /bin/true

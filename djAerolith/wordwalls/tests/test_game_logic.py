@@ -486,63 +486,80 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
                          WordList.objects.filter(user=self.user).count())
 
 
-def blank_bingo_loader(challenge_date, length, lexicon_name):
+def blank_bingo_generator(length, lexicon_name, num_2_blanks, num_questions,
+                          max_answers):
     if length == 7:
-        return """
-RLAKEA? KRAALED
-RDNRGE? GRANDER GRINDER GNARRED REGRIND
-WATEED? DEWATER TARWEED SWEATED WATERED TWEAKED
-TESFEA? FEATEST FEASTED DEFEATS DEAFEST FEASTER AFREETS
-INISDC? INDICTS INCISED INDICES DISCING
-DIFTEU? FRUITED FEUDIST
-CGPPAI? CAPPING
-DSIOGE? GOODIES DINGOES DOGGIES
-ELPOFR? PROFILE FLOPPER
-ALOLIC? LOGICAL LOCHIAL
-BDTEAA? DATABLE ABLATED
-NFTAEN? INFANTE
-RRIILE? ROILIER GIRLIER
-GAREGE? ENGAGER RAGGEES REGAUGE REGGAES
-ISTOMI? MIOTICS MITOSIS SOMITIC
-ERGYOA? VOYAGER ORANGEY
-IORLAB? BIPOLAR LABROID GARBOIL PARBOIL ORBITAL KILOBAR BOLIVAR BAILORS
-ATHDRS? HARDSET HARDEST TRASHED DEARTHS HATREDS THREADS
-LAISOI? LIAISON SIALOID
-AOPTHE? POTHEAD TEASHOP PHONATE PHAETON TAPHOLE PHORATE APOTHEM
-ETTANL? TETANAL TALENTS LATENTS GANTLET FLATTEN LATTENS MANTLET
-AROEIR? ARMOIRE HOARIER
-ADSLYI? DISPLAY SHADILY STAIDLY LADYISH DIALYSE
-ARHIV?? HAVARTI HRYVNIA HAVIOUR ARCHIVE VARNISH CHIVARI HAVIORS HEAVIER
-ODYOU?? DUOPOLY
-        """
+        return [
+            {u'q': u'ABIPST?', u'a': [u'BAPTISM', u'BAPTIST', u'BITMAPS',
+             u'BAPTISE']}, {u'q': u'AIINTX?', u'a': [u'TAXIING']},
+            {u'q': u'CILMSU?', u'a': [u'CULTISM', u'MUSICAL']},
+            {u'q': u'EIOORT?', u'a': [u'FOOTIER', u'HOOTIER', u'SOOTIER',
+             u'ZOOTIER', u'ROOTIER']},
+            {u'q': u'DHIIOR?', u'a': [u'RHIZOID']},
+            {u'q': u'DIRSTW?', u'a': [u'WRISTED']},
+            {u'q': u'EEFGSU?', u'a': [u'REFUGES']},
+            {u'q': u'AEEIRV?', u'a': [u'LEAVIER', u'VEALIER', u'HEAVIER']},
+            {u'q': u'AGIIOR?', u'a': [u'ORIGAMI']},
+            {u'q': u'AEFRRY?', u'a': [u'FORAYER']},
+            {u'q': u'AAEIOR?', u'a': [u'AERADIO', u'AEROBIA']},
+            {u'q': u'AOOPST?', u'a': [u'PATOOTS']},
+            {u'q': u'ILNORT?', u'a': [u'NOSTRIL', u'RETINOL']},
+            {u'q': u'ABDIJR?', u'a': [u'JAYBIRD']},
+            {u'q': u'AEILSU?', u'a': [u'AUDILES', u'INSULAE', u'INULASE',
+             u'DUALISE']},
+            {u'q': u'ABEENR?', u'a': [u'ENABLER', u'REBEGAN',
+             u'VERBENA', u'BEANERY']},
+            {u'q': u'AMNOOS?', u'a': [u'MAROONS',
+             u'ONOMAST', u'ROMANOS']},
+            {u'q': u'EEKLRT?', u'a': [u'KELTERS',
+             u'KESTREL', u'SKELTER']}, {u'q': u'BNOORS?', u'a': [u'BRONCOS']},
+            {u'q': u'AEGIIM?', u'a': [u'IMAGINE']},
+            {u'q': u'EHILPS?',
+             u'a': [u'HIPLESS', u'HIRPLES', u'PLENISH']},
+            {u'q': u'EHKNRU?',
+             u'a': [u'HUNKIER', u'HUNKERS']},
+            {u'q': u'AEIMOO?', u'a': [u'IPOMOEA']},
+            {u'q': u'EFNTT??', u'a': [u'FETTING', u'FATTENS', u'FITMENT',
+             u'FLATTEN']},
+            {u'q': u'CEIUV??', u'a':
+             [u'CURSIVE', u'INCURVE', u'UVEITIC', u'UNVOICE', u'CURVIER']}]
     elif length == 8:
-        return """
-AEOTZIL? THIAZOLE TOTALIZE TRIAZOLE
-ORSNENI? INFERNOS IRONNESS ENVIRONS REUNIONS RAISONNE INTONERS EINKORNS NEGRONIS NONSKIER TERNIONS
-GDINAOZ? AGONIZED
-ETAOGIN? NEGATION LEGATION GELATION
-AAITLDT? DILATANT DILATATE
-MIAELHI? LITHEMIA HEMIOLIA
-DTITNRA? DRATTING NITRATED
-CNVSINE? CONNIVES
-MAEETER? EMEERATE METERAGE PERMEATE RETEAMED AMEERATE EMERITAE METAMERE
-NORAOTL? ORTOLANS COLORANT
-LAAMNDS? LADANUMS LANDMASS MANDALAS DALESMAN LANDSMAN MANDOLAS LEADSMAN
-RLSLAOZ? ZORILLAS
-GEISNIN? INDIGENS INBEINGS SINGEING ENISLING SKEINING ENSILING VEININGS RESINING SINEWING GINNIEST
-SHDIAPO? HAPLOIDS SHIPLOAD SCAPHOID HAPKIDOS
-NEESOFT? FELSTONE SOFTENED RESOFTEN SOFTENER OFTENEST
-TIAISAC? SCIATICA ACTINIAS
-ICTIRAS? SCIMITAR ARTISTIC TRIACIDS TRIBASIC TRIADICS TRIASSIC CARDITIS RACHITIS AORISTIC
-ATOERPN? PROTEANS COPARENT ATROPINE PRONATED PORTANCE OPERANTS PRONATES PATENTOR
-ONETSEX? EXTENSOR
-NABORGT? BORATING TABORING ABORTING
-DWSCBRI? COWBIRDS BAWDRICS
-DTKEEOP? POCKETED
-EORNADE? OLEANDER ENDEAVOR ENAMORED RELOANED RENEGADO DEMEANOR REASONED AERODYNE
-EUAEQT?? BEQUEATH EQUISETA MAQUETTE COEQUATE ADEQUATE
-RBRHIO?? HORRIBLY HORRIBLE BIRROTCH
-        """
+        return [
+            {u'q': u'AEMNOPT?', u'a': [u'PTOMAINE', u'TAMPONED']},
+            {u'q': u'EGOORSU?', u'a': [u'GORGEOUS']},
+            {u'q': u'EIMNOTT?', u'a': [u'MONTEITH', u'OINTMENT', u'IMPOTENT']},
+            {u'q': u'AAMRSTU?', u'a': [u'TIMARAUS', u'AMATEURS', u'TAMARAUS',
+                                       u'TAMBURAS']},
+            {u'q': u'ABINRSV?', u'a': [u'VIBRANTS']},
+            {u'q': u'IMOOPRS?', u'a': [u'IMPOROUS', u'IMPOSTOR', u'ISOMORPH',
+             u'PROMISOR']},
+            {u'q': u'EGINOSY?', u'a': [u'SEIGNORY', u'HOSEYING', u'MOSEYING']},
+            {u'q': u'ABDORTU?', u'a': [u'ABDUCTOR', u'OBDURATE', u'OUTBOARD',
+             u'TABOURED']},
+            {u'q': u'CEIIIOS?', u'a': [u'IDIOCIES']},
+            {u'q': u'EEPRSTX?', u'a': [u'EXCERPTS', u'PREEXIST', u'PRETEXTS',
+             u'SEXPERTS']},
+            {u'q': u'IILNORS?', u'a': [u'LIONISER', u'LIGROINS', u'SIRLOINS']},
+            {u'q': u'EEGIKNS?', u'a': [u'STEEKING', u'KEENINGS', u'KEEPINGS',
+             u'SLEEKING', u'SMEEKING']},
+            {u'q': u'AHKNOSW?', u'a': [u'HAWKNOSE']},
+            {u'q': u'EEIIMRT?',
+             u'a': [u'TIMELIER', u'EREMITIC', u'ITEMISER', u'ITEMIZER']},
+            {u'q': u'ACHKSSW?', u'a': [u'HACKSAWS']},
+            {u'q': u'AEEMORT?',
+             u'a': [u'MODERATE', u'OVERTAME']},
+            {u'q': u'DEOOSTV?',
+             u'a': [u'DOVECOTS']},
+            {u'q': u'AMNOOPR?', u'a': [u'MONOCARP', u'CRAMPOON']},
+            {u'q': u'EEILTUX?', u'a': [u'ULEXITES']},
+            {u'q': u'AEIRSTX?', u'a': [u'SEXTARII', u'MATRIXES']},
+            {u'q': u'AENORWY?', u'a': [u'WEAPONRY']},
+            {u'q': u'AAHIRSV?', u'a': [u'HAVARTIS']},
+            {u'q': u'DDEMNOR?', u'a': [u'ENDODERM']},
+            {u'q': u'DEOOOW??', u'a': [u'WOODLORE', u'WOODNOTE', u'WOODTONE',
+             u'ROSEWOOD']},
+            {u'q': u'ABEGIY??', u'a': [u'BELAYING', u'EMBAYING', u'GIGABYTE',
+             u'LESBIGAY']}]
 
 
 class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
@@ -617,8 +634,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         probability = params['questions'][0]['p']
         self.assertTrue(probability > 0)
 
-    @mock.patch('wordwalls.challenges.get_blank_bingos_content',
-                side_effect=blank_bingo_loader)
+    @mock.patch('wordwalls.challenges.gen_blank_challenges',
+                side_effect=blank_bingo_generator)
     def test_blank_bingos(self, mock_content):
         """ Test blank bingos. (This comment is unnecessary, right?)"""
         challenge = DailyChallengeName.objects.get(name='Blank Bingos')

@@ -295,10 +295,6 @@ REDIS_SOCKET_TOKEN_DB = 2
 ALLOWED_HOSTS = ['.aerolith.org', '*']
 SOCKJS_SERVER = os.environ.get('SOCKJS_SERVER')   # not used.
 
-# See https://www.github.com/14domino/ujamaa
-# General-purpose word tool.
-UJAMAA_PATH = os.environ.get('UJAMAA_PATH')
-
 RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
 
 # See SessionIdleTimeout middleware
@@ -312,6 +308,9 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
 WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
+# See github.com/domino14/macondo
+# Tool used for generating blank bingos (and more in the future)
+MACONDO_ADDRESS = os.environ.get('MACONDO_ADDRESS')
 
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000

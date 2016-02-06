@@ -46,8 +46,5 @@ something like  `docker-machine ip default`, depending on your settings.)
 
 =======
 
-To generate blank challenges, there is a dependency on [Ujamaa](https://github.com/domino14/ujamaa). 
-See: [code](https://github.com/domino14/ujamaa/blob/v0.0.3/src/anagrammer/gen_blank_challenges.c)
-
-Hopefully this will move to Go as well at some point.
+Blank challenge generation is done with [macondo](https://github.com/domino14/macondo/tree/master/anagrammer/blank_challenges.go).
 
