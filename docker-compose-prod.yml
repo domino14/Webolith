@@ -1,0 +1,14 @@
+app:
+  env_file:
+    - /opt/config/config.env
+  build: .
+  working_dir: /opt/webolith/djAerolith
+  volumes:
+    - .:/opt/webolith:rw
+    - ./db:/db
+    - /home/ubuntu/config:/opt/config
+  ports:
+    - 8088:8000
+  external_links:
+    - macondo_macondo_1:macondo
+  command: python manage.py runserver 0.0.0.0:8000
