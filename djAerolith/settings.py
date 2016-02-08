@@ -62,6 +62,9 @@ DATABASES = {
     }
 }
 
+if '.sock' in os.environ.get('SQL_HOST'):
+    DATABASES['default']['OPTIONS']['unix_socket'] = os.environ.get('SQL_HOST')
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -234,7 +237,7 @@ LOGGING = {
         'log_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(os.getenv("HOME"), 'django.log'),
+            'filename': os.path.join('/opt/logs', 'django.log'),
             'maxBytes': 50000000,
             'formatter': 'verbose',
             'backupCount': 10
