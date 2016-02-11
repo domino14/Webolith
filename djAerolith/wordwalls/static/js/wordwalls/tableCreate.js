@@ -7,13 +7,13 @@ define([
   'mustache',
   'text!templates/saved_list_option.html',
   'text!templates/named_list_option.html',
+  'utils',
   'bootstrap'
 ], function($, _, Backbone, ChallengeView, Mustache, SavedListOption,
-    NamedListOption) {
+    NamedListOption, Utils) {
   "use strict";
   var TableCreateView, CONTINUE_LIST_CHOICE, FIRST_MISSED_CHOICE,
     RESTART_LIST_CHOICE, DELETE_LIST_CHOICE;
-
   CONTINUE_LIST_CHOICE = '1';
   FIRST_MISSED_CHOICE = '2';
   RESTART_LIST_CHOICE = '3';
@@ -362,12 +362,24 @@ define([
     getDcResults: function() {
       // gets daily challenge results from server
       this.ringSpinner.show();
-      $.post(this.commandUrl, {
-        action: 'getDcResults',
-        lexicon: $('#id_lexicon').val(),
-        challenge: $('#id_challenge').val(),
-        date: $('#id_challengeDate').val()
-      }, _.bind(this.populateDcResults, this), 'json');
+      // The API should only accept one date format.
+      $.ajax({
+        method: 'GET',
+        url: '/wordwalls/api/challengers/',
+        data: {
+          lexicon: $('#id_lexicon').val(),
+          challenge: $('#id_challenge').val(),
+          date: Utils.convertDateToIso($('#id_challengeDate').val(),
+            this.currentLanguage)
+        },
+        dataType: 'json'
+      }).done(_.bind(this.populateDcResults, this));
+      // $.post(this.commandUrl, {
+      //   action: 'getDcResults',
+      //   lexicon: $('#id_lexicon').val(),
+      //   challenge: $('#id_challenge').val(),
+      //   date: $('#id_challengeDate').val()
+      // }, _.bind(this.populateDcResults, this), 'json');
     },
 
     populateDcResults: function(data) {

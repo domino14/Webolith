@@ -20,9 +20,7 @@ from django.conf.urls import *
 
 
 urlpatterns = patterns('',
-    url(r'^challengers/(?P<month>\d+)/(?P<day>\d+)/(?P<year>\d+)/(?P<lex>\d+)'
-          '/(?P<ch_id>\d+)/$',
-        'wordwalls.api.api_challengers'),
+    url(r'^challengers', 'wordwalls.api.api_challengers'),
     url(r'^challengers_days_from_today/(?P<days>\d+)/(?P<lex>\d+)/'
         '(?P<ch_id>\d+)/$',
         'wordwalls.api.api_challengers_days_from_today'),

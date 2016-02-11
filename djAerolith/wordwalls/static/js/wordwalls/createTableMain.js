@@ -1,6 +1,7 @@
 /* global requirejs,define,mixpanel,JSON,django */
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
+  waitSeconds: 20,
   /*
    * Due to Django's style of having static directories per app, and because
    * our libs live in the djAerolith/static directory, we must append this
@@ -18,6 +19,7 @@ requirejs.config({
     /*sockjs: '../../../../static/js/aerolith/sockjs-0.3.min',
     json2: '../../../../static/js/aerolith/json2',*/
     backbone: '../../../../static/lib/backbone-1.0.0',
+    moment: '../../../../static/lib/moment',
     datepicker: '../../../../static/lib/bootstrap-datepicker',
     datepickeres: '../../../../static/lib/bootstrap-datepicker.es.min'
   },

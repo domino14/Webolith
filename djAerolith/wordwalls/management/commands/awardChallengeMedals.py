@@ -35,7 +35,7 @@ class Command(BaseCommand):
                     lb.medalsAwarded = True
                     lb.save()
                     continue    # do not award
-                lbes = sorted(lbes, cmp=sortCmp)
+                lbes = sorted(lbes, cmp=sort_cmp)
 
                 if lb.challenge.name == toughies:
                     # Award extra medal.
@@ -73,8 +73,11 @@ class Command(BaseCommand):
                 lb.save()
 
 
-def sortCmp(e1, e2):
+def sort_cmp(e1, e2):
     if e1.score == e2.score:
         return int(e2.timeRemaining - e1.timeRemaining)
     else:
         return int(e2.score - e1.score)
+    # Otherwise, randomly award to someone if time and score are the same.
+    # It's not necessarily alphabetical, but based on the vagaries of the
+    # hash function :P
