@@ -35,7 +35,7 @@ def _deploy(role, skipjs):
             put(os.path.join(curdir, 'config', config_file),
                 '../config.env')
             # collect static files!
-            run("docker run --rm -it -v webolith_app ")
+            run("docker run --rm -it -v webolith_app collectstatic --noinput")
             run("python manage.py collectstatic --noinput")
             # execute any needed migrations
             run("python manage.py migrate")

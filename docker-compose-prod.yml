@@ -1,12 +1,11 @@
 app:
   env_file:
-    - ./config/prod_config.env
+    - ./config/config.env
   build: .
   working_dir: /opt/webolith/djAerolith
   volumes:
     - .:/opt/webolith:rw
-    - ./db:/db
-    - /var/run/mysqld/mysqld.sock:/tmp/mysqld.sock
+    - /home/ubuntu/word_db:/db
     - /home/ubuntu/logs:/opt/logs
     - /home/ubuntu/webolith_static:/opt/webolith_static
   ports:

@@ -278,10 +278,10 @@ if tobool(os.environ.get('PROD_LOGGING', False)):
     }
     LOGGING['disable_existing_loggers'] = False
 
-USE_MX = os.environ.get('USE_MX')
-USE_GA = os.environ.get('USE_GA')
-USE_FB = os.environ.get('USE_FB')
-USE_UV = os.environ.get('USE_UV')
+USE_MX = tobool(os.environ.get('USE_MX'))
+USE_GA = tobool(os.environ.get('USE_GA'))
+USE_FB = tobool(os.environ.get('USE_FB'))
+USE_UV = tobool(os.environ.get('USE_UV'))
 
 # LOGGING config
 

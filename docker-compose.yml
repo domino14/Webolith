@@ -14,6 +14,11 @@ db_data:
   volumes:
     - /var/lib/mysql/
 
+# best way to load data into db
+# add volume below to app (mount sql file location as /opt/downloads .e.g)
+# then docker exec -it webolith_app_1 bash
+# then go to /opt/downloads and do mysql -u root -p djAerolith -h db < file.sql
+
 app:
   env_file:
     - ./config/local_config.env
@@ -22,6 +27,9 @@ app:
   volumes:
     - .:/opt/webolith:rw
     - ./db:/db
+    # ??? /home/ubuntu/logs
+    - /home/ubuntu/logs:/opt/logs
+    - /Users/cesar/Downloads:/opt/downloads
   ports:
     - 8000:8000
   links:
@@ -30,8 +38,3 @@ app:
     - macondo_macondo_1:macondo
   command: python manage.py runserver 0.0.0.0:8000
 
-# docker create -v /var/lib/mysql --name mysqldbdata tianon/true /bin/true
-# docker run --rm -it --volumes-from mysqldbdata -v ~/Downloads/backup_20160130-051513.sql:/docker-entrypoint-initdb.d/aerolith_data.sql --env MYSQL_ROOT_PASSWORD=pass mysql:latest
-#
-#
-# docker run --rm -it --volumes-from webolith_db_data_1 -v ~/Downloads/backup_20160130-051513.sql:/docker-entrypoint-initdb.d/aerolith_data.sql --env MYSQL_ROOT_PASSWORD=pass mysql:latest
