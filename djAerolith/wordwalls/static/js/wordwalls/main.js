@@ -9,7 +9,8 @@ requirejs.config({
     mustache: '../../../../static/lib/mustache',
     text: '../../../../static/lib/require/text',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
-    json2: '../../../../static/js/aerolith/json2'
+    json2: '../../../../static/js/aerolith/json2',
+    moment: '../../../../static/lib/moment'
   },
   shim: {
     underscore: {
