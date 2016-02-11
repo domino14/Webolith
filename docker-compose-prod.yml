@@ -6,6 +6,7 @@ app:
   volumes:
     - .:/opt/webolith:rw
     - /home/ubuntu/word_db:/db
+    - /var/run/mysqld/mysqld.sock:/tmp/mysqld.sock
     - /home/ubuntu/logs:/opt/logs
     - /home/ubuntu/webolith_static:/opt/webolith_static
   ports:
