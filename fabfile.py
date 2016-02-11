@@ -28,19 +28,17 @@ def _deploy(role, skipjs):
         config_file = 'dev_config.env'
     with cd("webolith"):
         run("git pull")
-        with cd("djAerolith"):
-            # Deploy JS build.
-            if skipjs is False:
-                deploy_js_build()
-            put(os.path.join(curdir, 'config', config_file),
-                '../config.env')
-            # collect static files!
-            run("docker run --rm -it -v webolith_app collectstatic --noinput")
-            run("python manage.py collectstatic --noinput")
-            # execute any needed migrations
-            run("python manage.py migrate")
-            run("python manage.py compilemessages")
-                run("kill -s QUIT `supervisorctl pid gunicorn`")
+        # Deploy JS build.
+        if skipjs is False:
+            deploy_js_build()
+        put(os.path.join(curdir, 'config', config_file),
+            'config/config.env')
+        docker_cmd = ("docker run --env-file=config/config.env --rm -it "
+                      "webolith_app")
+        run(docker_cmd + " scripts/deploy.sh")
+        # Kill gunicorn pid. This needs to be done in the actual
+        # executing container.
+        run("docker exec -it webolith_app_1 kill -HUP `cat /gunicorn.pid`")
 
 # ubuntu@ubuntu-512mb-sfo1-01:~/webolith$ docker run --env-file config/config.env --volumes-from webolith_app_1 -it --rm webolith_app "djAerolith/manage.py collectstatic --noinput"
 # exec: "djAerolith/manage.py collectstatic --noinput": stat djAerolith/manage.py collectstatic --noinput: no such file or directory
