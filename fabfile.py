@@ -82,7 +82,7 @@ def create_js_build():
 def deploy_js_build():
     create_js_build()
     with settings(warn_only=True):
-        with cd("static"):
+        with cd("djAerolith/static"):
             run("mkdir build")
     put(os.path.join(curdir, 'djAerolith', 'static/build/*.gz'),
         '/home/ubuntu/webolith/djAerolith/static/build/')
