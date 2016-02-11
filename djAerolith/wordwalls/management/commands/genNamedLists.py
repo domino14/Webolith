@@ -311,9 +311,8 @@ class Command(NoArgsCommand):
     help = """Populates database with named lists"""
 
     def handle_noargs(self, **options):
-        # NamedList.objects.all().delete()
-        # for lex in Lexicon.objects.filter(
-        #         lexiconName__in=['America', 'CSW15']):
-        #     createNamedLists(lex)
-        NamedList.objects.filter(lexicon__lexiconName='FISE09').delete()
+        NamedList.objects.all().delete()
+        for lex in Lexicon.objects.filter(
+                lexiconName__in=['America', 'CSW15']):
+            createNamedLists(lex)
         create_spanish_lists()
