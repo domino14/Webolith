@@ -33,12 +33,7 @@ def _deploy(role, skipjs):
             deploy_js_build()
         put(os.path.join(curdir, 'config', config_file),
             'config/config.env')
-        docker_cmd = ("docker run --env-file=config/config.env --rm -it "
-                      "webolith_app")
-        run(docker_cmd + " scripts/deploy.sh")
-        # Kill gunicorn pid. This needs to be done in the actual
-        # executing container.
-        run("docker exec -it webolith_app_1 kill -HUP `cat /gunicorn.pid`")
+        run("docker exec -it webolith_app_1 scripts/deploy.sh")
 
 # ubuntu@ubuntu-512mb-sfo1-01:~/webolith$ docker run --env-file config/config.env --volumes-from webolith_app_1 -it --rm webolith_app "djAerolith/manage.py collectstatic --noinput"
 # exec: "djAerolith/manage.py collectstatic --noinput": stat djAerolith/manage.py collectstatic --noinput: no such file or directory
