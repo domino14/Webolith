@@ -38,27 +38,32 @@ def get_alphas_from_words(contents, max_words):
     return [Alphagram(a) for a in alpha_set]
 
 
+def generate_question_list(questions):
+    """ Generate a question list from a Questions object."""
+    q_list = []
+    for q in questions.questions_array():
+        q_list.append(q.to_python_full())
+    return q_list
+
+
 def generate_question_map(questions):
     """ Generate a question map from a Questions object. """
     q_map = {}
 
     for q in questions.questions_array():
-        q_map[q.alphagram.alphagram] = {
-            'question': q.alphagram.alphagram,
-            'probability': q.alphagram.probability,
-            'answers': []
-        }
-        for a in q.answers:
-            q_map[q.alphagram.alphagram]['answers'].append({
-                'word': a.word,
-                'def': a.definition,
-                'f_hooks': a.front_hooks,
-                'b_hooks': a.back_hooks,
-                'symbols': a.lexicon_symbols,
-                'f_inner': a.inner_front_hook,
-                'b_inner': a.inner_back_hook
-            })
+        q_map[q.alphagram.alphagram] = q.to_python_full()
     return q_map
+
+
+def generate_question_list_from_alphagrams(lexicon, alph_objects):
+    """
+    Generate a list of questions from a list of {'q': ..., 'a': [..]}
+    objects.
+
+    """
+    db = WordDB(lexicon.lexiconName)
+    return generate_question_list(
+        db.get_questions_from_alph_dicts(alph_objects))
 
 
 def generate_question_map_from_alphagrams(lexicon, alph_objects):
@@ -68,7 +73,14 @@ def generate_question_map_from_alphagrams(lexicon, alph_objects):
     """
     db = WordDB(lexicon.lexiconName)
     return generate_question_map(
-        db.get_questions_from_alph_objects(alph_objects))
+        db.get_questions_from_alph_dicts(alph_objects))
+
+
+def question_list_from_probabilities(lexicon, p_min, p_max, length):
+    """ Generate a list of questions from a probability range."""
+    db = WordDB(lexicon.lexiconName)
+    questions = db.get_questions_for_probability_range(p_min, p_max, length)
+    return generate_question_list(questions)
 
 
 def savedlist_from_probabilities(lexicon, p_min, p_max, length):

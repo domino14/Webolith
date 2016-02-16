@@ -132,6 +132,25 @@ class Question(object):
         for word in word_list:
             self.answers.append(Word(word=word))
 
+    def to_python_full(self):
+        """ A complete representation of question. """
+        q = {
+            'question': self.alphagram.alphagram,
+            'probability': self.alphagram.probability,
+            'answers': []
+        }
+        for a in self.answers:
+            q['answers'].append({
+                'word': a.word,
+                'def': a.definition,
+                'f_hooks': a.front_hooks,
+                'b_hooks': a.back_hooks,
+                'symbols': a.lexicon_symbols,
+                'f_inner': a.inner_front_hook,
+                'b_inner': a.inner_back_hook
+            })
+        return q
+
     def to_python(self):
         return {'q': self.alphagram.alphagram,
                 'a': [w.word for w in self.answers]}
@@ -159,8 +178,12 @@ class WordDB(object):
         lexicon is an instance of base.models.Lexicon
 
         """
-        self.conn = sqlite3.connect(os.path.join(settings.WORD_DB_LOCATION,
-                                    '%s.db' % lexicon_name))
+        file_path = os.path.join(settings.WORD_DB_LOCATION,
+                                 '{0}.db'.format(lexicon_name))
+        if not os.path.isfile(file_path):
+            raise BadInput('Database does not exist for lexicon {0}'.format(
+                           lexicon_name))
+        self.conn = sqlite3.connect(file_path)
 
     # XXX: Only used by tests.
     def get_word_data(self, word):
@@ -297,7 +320,7 @@ class WordDB(object):
         rows = c.fetchall()
         return self.process_question_query(rows)
 
-    def get_questions_from_alph_objects(self, alph_objects):
+    def get_questions_from_alph_dicts(self, alph_objects):
         """
         See get_questions, but instead of Alphagram objects, the
         parameter alph_objects looks like:

@@ -313,7 +313,7 @@ class WordwallsGame(object):
             alphagrams_to_fetch.append(orig_questions[i])
             index_map[orig_questions[i]['q']] = i
 
-        questions = db.get_questions_from_alph_objects(alphagrams_to_fetch)
+        questions = db.get_questions_from_alph_dicts(alphagrams_to_fetch)
         answer_hash = {}
         ret_q_array = []
 
