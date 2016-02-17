@@ -11,6 +11,6 @@ app:
     - /home/ubuntu/webolith_static:/opt/webolith_static
   ports:
     - 8088:8000
-  #external_links:
-  #  - macondo_macondo_1:macondo
+  external_links:
+   - macondo_macondo_1:macondo
   command: gunicorn wsgi:application --config gunicorn.py
