@@ -1,3 +1,11 @@
+# This is a docker-compose prod file. It is not meant to "extend"
+# docker-compose.yml.
+#
+# For now, we only have a web container. nginx and the db will still be
+# regular linux processes under the main host.
+
+# Used for dev.aerolith.org and www.aerolith.org
+# prod doesn't use the mysqld.sock but it doesn't hurt to have it here.
 app:
   env_file:
     - ./config/config.env
@@ -5,7 +13,7 @@ app:
   working_dir: /opt/webolith/djAerolith
   volumes:
     - .:/opt/webolith:rw
-    - /home/ubuntu/word_db:/db
+    - /home/ubuntu/word_db:/db:ro
     - /var/run/mysqld/mysqld.sock:/tmp/mysqld.sock
     - /home/ubuntu/logs:/opt/logs
     - /home/ubuntu/webolith_static:/opt/webolith_static
