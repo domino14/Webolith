@@ -55,6 +55,11 @@
     window.mixpanel.track = function() {};
     window.mixpanel.name_tag = function() {};
     </script>
+    <script>
+    if (location.hostname === 'dev.aerolith.org') {
+      $('.devsite').show();
+    }
+    </script>
     {% endif %}
 
 
@@ -89,6 +94,10 @@
           </ul>
         </div>
       </div>
+    </div>
+    <div class="alert alert-warning" style="display: none;">
+      <p>Welcome to the test Aerolith site! A lot of things may not quite work here at various times, and this site may change or break at any time.Experimental features abound!</p>
+      <p>Please let me know any feedback through our <a href="https://www.facebook.com/aerolith.org/" target="_blank">Facebook page</a>. Thank you so much!</p>
     </div>
     {% endblock navbar %}
     <div id="content_title">
