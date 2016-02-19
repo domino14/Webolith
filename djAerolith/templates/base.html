@@ -55,13 +55,12 @@
     window.mixpanel.track = function() {};
     window.mixpanel.name_tag = function() {};
     </script>
+    {% endif %}
     <script>
     if (location.hostname === 'dev.aerolith.org') {
       $('.devsite').show();
     }
     </script>
-    {% endif %}
-
 
   </head>
 
