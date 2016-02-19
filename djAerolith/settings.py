@@ -315,6 +315,8 @@ WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
 # Tool used for generating blank bingos (and more in the future)
 MACONDO_ADDRESS = os.environ.get('MACONDO_ADDRESS')
 
+BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
+
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50

@@ -3,11 +3,13 @@ import popen2
 import time
 from optparse import make_option
 import logging
-logger = logging.getLogger(__name__)
+
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+
+logger = logging.getLogger(__name__)
 
 # example: python manage.py backup -e base_word -e base_alphagram -c
 
@@ -83,6 +85,8 @@ class Command(BaseCommand):
     def upload_to_s3(self, filename, bucket='aerolith-backups'):
         conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
                             settings.AWS_SECRET_ACCESS_KEY)
+        if settings.BACKUP_BUCKET_SUFFIX:
+            bucket = bucket + settings.BACKUP_BUCKET_SUFFIX
         s3_bucket = conn.get_bucket(bucket, validate=False)
         k = Key(s3_bucket)
         k.key = filename
