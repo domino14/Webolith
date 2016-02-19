@@ -83,6 +83,7 @@ class Command(BaseCommand):
             outfile = compressed_outfile
 
         self.upload_to_s3(outfile)
+        os.remove(outfile)
 
     def compress_dir(self, directory, outfile):
         os.system('tar -czf %s %s' % (outfile, directory))
