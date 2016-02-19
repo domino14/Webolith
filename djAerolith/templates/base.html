@@ -57,9 +57,11 @@
     </script>
     {% endif %}
     <script>
-    if (location.hostname === 'dev.aerolith.org') {
-      $('.devsite').show();
-    }
+    $(function(){
+      if (location.hostname === 'dev.aerolith.org') {
+        $('.devsite').show();
+      }
+    });
     </script>
 
   </head>
