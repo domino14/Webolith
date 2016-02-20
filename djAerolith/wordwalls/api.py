@@ -49,9 +49,9 @@ def api_challengers(request):
     return response(challengers(ch_date, lex, ch_id))
 
 
-def api_challengers_days_from_today(request, days, lex, ch_id):
-    dt = date.today() - timedelta(days=int(days))
-    return response(challengers(dt, lex, ch_id))
+# def api_challengers_days_from_today(request, days, lex, ch_id):
+#     dt = date.today() - timedelta(days=int(days))
+#     return response(challengers(dt, lex, ch_id))
 
 
 # api views helpers
