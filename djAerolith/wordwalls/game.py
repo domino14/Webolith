@@ -136,14 +136,14 @@ class WordwallsGame(object):
         try:
             qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
         except DailyChallenge.DoesNotExist:
-            try:
-                ret = generate_dc_questions(ch_name, ch_lex, ch_date)
-                if not ret:
-                    return None
-            except IOError:
+            ret = generate_dc_questions(ch_name, ch_lex, ch_date)
+            if not ret:
                 return None
 
             qs, secs = ret
+            if qs.size() == 0:
+                logger.error('Empty questions.')
+                return None
             dc = DailyChallenge(date=ch_date, lexicon=ch_lex,
                                 name=ch_name, seconds=secs,
                                 alphagrams=qs.to_json())
@@ -313,7 +313,7 @@ class WordwallsGame(object):
             alphagrams_to_fetch.append(orig_questions[i])
             index_map[orig_questions[i]['q']] = i
 
-        questions = db.get_questions_from_alph_objects(alphagrams_to_fetch)
+        questions = db.get_questions_from_alph_dicts(alphagrams_to_fetch)
         answer_hash = {}
         ret_q_array = []
 

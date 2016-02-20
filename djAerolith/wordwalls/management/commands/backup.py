@@ -3,11 +3,13 @@ import popen2
 import time
 from optparse import make_option
 import logging
-logger = logging.getLogger(__name__)
+
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+
+logger = logging.getLogger(__name__)
 
 # example: python manage.py backup -e base_word -e base_alphagram -c
 
@@ -45,6 +47,11 @@ class Command(BaseCommand):
         self.passwd = settings.DATABASES['default']['PASSWORD']
         self.host = settings.DATABASES['default']['HOST']
         self.port = settings.DATABASES['default']['PORT']
+        self.unix_socket = settings.DATABASES['default']['OPTIONS'].get(
+            'unix_socket')
+        if self.unix_socket:
+            # Connect just via the socket, delete host.
+            self.host = ''
 
         backup_dir = 'backups'
         if not os.path.exists(backup_dir):
@@ -76,6 +83,7 @@ class Command(BaseCommand):
             outfile = compressed_outfile
 
         self.upload_to_s3(outfile)
+        os.remove(outfile)
 
     def compress_dir(self, directory, outfile):
         os.system('tar -czf %s %s' % (outfile, directory))
@@ -83,6 +91,8 @@ class Command(BaseCommand):
     def upload_to_s3(self, filename, bucket='aerolith-backups'):
         conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
                             settings.AWS_SECRET_ACCESS_KEY)
+        if settings.BACKUP_BUCKET_SUFFIX:
+            bucket = bucket + settings.BACKUP_BUCKET_SUFFIX
         s3_bucket = conn.get_bucket(bucket, validate=False)
         k = Key(s3_bucket)
         k.key = filename
@@ -100,6 +110,8 @@ class Command(BaseCommand):
             args += ["--password=%s" % self.passwd]
         if self.host:
             args += ["--host=%s" % self.host]
+        if self.unix_socket:
+            args += ["--socket=%s" % self.unix_socket]
         if self.port:
             args += ["--port=%s" % self.port]
 

@@ -62,6 +62,9 @@ DATABASES = {
     }
 }
 
+if '.sock' in os.environ.get('SQL_HOST'):
+    DATABASES['default']['OPTIONS']['unix_socket'] = os.environ.get('SQL_HOST')
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -234,7 +237,7 @@ LOGGING = {
         'log_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(os.getenv("HOME"), 'django.log'),
+            'filename': os.path.join('/opt/logs', 'django.log'),
             'maxBytes': 50000000,
             'formatter': 'verbose',
             'backupCount': 10
@@ -275,10 +278,10 @@ if tobool(os.environ.get('PROD_LOGGING', False)):
     }
     LOGGING['disable_existing_loggers'] = False
 
-USE_MX = os.environ.get('USE_MX')
-USE_GA = os.environ.get('USE_GA')
-USE_FB = os.environ.get('USE_FB')
-USE_UV = os.environ.get('USE_UV')
+USE_MX = tobool(os.environ.get('USE_MX'))
+USE_GA = tobool(os.environ.get('USE_GA'))
+USE_FB = tobool(os.environ.get('USE_FB'))
+USE_UV = tobool(os.environ.get('USE_UV'))
 
 # LOGGING config
 
@@ -295,10 +298,6 @@ REDIS_SOCKET_TOKEN_DB = 2
 ALLOWED_HOSTS = ['.aerolith.org', '*']
 SOCKJS_SERVER = os.environ.get('SOCKJS_SERVER')   # not used.
 
-# See https://www.github.com/14domino/ujamaa
-# General-purpose word tool.
-UJAMAA_PATH = os.environ.get('UJAMAA_PATH')
-
 RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
 
 # See SessionIdleTimeout middleware
@@ -312,6 +311,11 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
 WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
+# See github.com/domino14/macondo
+# Tool used for generating blank bingos (and more in the future)
+MACONDO_ADDRESS = os.environ.get('MACONDO_ADDRESS')
+
+BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
 
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000

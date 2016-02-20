@@ -103,6 +103,7 @@ def homepage(request):
          'CURRENT_VERSION': CURRENT_VERSION})
 
 
+# XXX Obsolete this in favor of GET from wordwalls/api.py
 def get_dc_results(user, post, language_code):
     """
         Gets daily challenge results and returns it to querier.
@@ -469,6 +470,11 @@ def searchForAlphagrams(data, lex):
 
 
 def getLeaderboardDataDcInstance(dc):
+    """
+    Gets leaderboard data given a daily challenge instance.
+    Returns a dictionary of `entry`s.
+
+    """
     try:
         lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
     except DailyChallengeLeaderboard.DoesNotExist:
@@ -492,6 +498,8 @@ def getLeaderboardDataDcInstance(dc):
 
     entries = sorted(entries, cmpFunction)
     retData['entries'] = entries
+    retData['challengeName'] = dc.name.name
+    retData['lexicon'] = dc.lexicon.lexiconName
 
     return retData
 

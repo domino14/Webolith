@@ -7,13 +7,13 @@ define([
   'mustache',
   'text!templates/saved_list_option.html',
   'text!templates/named_list_option.html',
+  'utils',
   'bootstrap'
 ], function($, _, Backbone, ChallengeView, Mustache, SavedListOption,
-    NamedListOption) {
+    NamedListOption, Utils) {
   "use strict";
   var TableCreateView, CONTINUE_LIST_CHOICE, FIRST_MISSED_CHOICE,
     RESTART_LIST_CHOICE, DELETE_LIST_CHOICE;
-
   CONTINUE_LIST_CHOICE = '1';
   FIRST_MISSED_CHOICE = '2';
   RESTART_LIST_CHOICE = '3';
@@ -38,6 +38,7 @@ define([
       replace(/Today's 14s/g, 'Los 14 de hoy').
       replace(/Today's 15s/g, 'Los 15 de hoy').
       replace(/Week's Bingo Toughies/g, 'Bingos difíciles de la semana').
+      replace(/Blank Bingos/g, 'Bingos con fichas en blanco').
       replace(/Bingo Marathon/g, 'Un maratón de bingos');
     return html;
   }
@@ -47,6 +48,7 @@ define([
      * Initialize the table create page.
      */
     initialize: function(options) {
+      this.ringSpinner = $('.ring-spinner');
       this.commandUrl = options.createTableUrl;
       this.flashcardUrl = options.createQuizUrl;
       this.currentLanguage = options.language;
@@ -83,8 +85,8 @@ define([
       'click #searchParamsFlashcard': 'searchParamsFlashcardClicked',
       'click #savedListsFlashcardEntire': 'savedListsFlashcardEntireClicked',
       'click #savedListsFlashcardFM': 'savedListsFlashcardFMClicked',
-      'click #namedListsFlashcard': 'namedListsFlashcardClicked'
-
+      'click #namedListsFlashcard': 'namedListsFlashcardClicked',
+      'click .formSubmitButton': 'submittedForm'
     },
     tabClicked: function(e) {
       if (e.target.tagName === 'SPAN') {
@@ -182,12 +184,7 @@ define([
     challengeLexiconChanged: function() {
       var lexName;
       lexName = $('#id_lexicon option:selected').text();
-      if (lexName === 'FISE09') {
-        // Remove Blank bingos from FISE until further notice.
-        $('#id_challenge option[value="16"]').remove();
-      } else {
-        $('#id_challenge').html(this.defaultChallengeList);
-      }
+      $('#id_challenge').html(this.defaultChallengeList);
       if (this.currentTab === 0) {
         this.challengeChanged();
       }
@@ -239,13 +236,20 @@ define([
     },
 
     wwRedirect: function(data) {
+      this.ringSpinner.hide();
       if (data.success) {
         if (data.url) {
           window.location.href = data.url;   // redirect
         }
       } else {
         this.showError(data.error);
+        $('.formSubmitButton').prop('disabled', false);
       }
+    },
+
+    submittedForm: function(e) {
+      $(e.target).prop('disabled', true);
+      this.ringSpinner.show();
     },
 
     challengeSubmitClicked: function() {
@@ -357,15 +361,29 @@ define([
 
     getDcResults: function() {
       // gets daily challenge results from server
-      $.post(this.commandUrl, {
-        action: 'getDcResults',
-        lexicon: $('#id_lexicon').val(),
-        challenge: $('#id_challenge').val(),
-        date: $('#id_challengeDate').val()
-      }, _.bind(this.populateDcResults, this), 'json');
+      this.ringSpinner.show();
+      // The API should only accept one date format.
+      $.ajax({
+        method: 'GET',
+        url: '/wordwalls/api/challengers/',
+        data: {
+          lexicon: $('#id_lexicon').val(),
+          challenge: $('#id_challenge').val(),
+          date: Utils.convertDateToIso($('#id_challengeDate').val(),
+            this.currentLanguage)
+        },
+        dataType: 'json'
+      }).done(_.bind(this.populateDcResults, this));
+      // $.post(this.commandUrl, {
+      //   action: 'getDcResults',
+      //   lexicon: $('#id_lexicon').val(),
+      //   challenge: $('#id_challenge').val(),
+      //   date: $('#id_challengeDate').val()
+      // }, _.bind(this.populateDcResults, this), 'json');
     },
 
     populateDcResults: function(data) {
+      this.ringSpinner.hide();
       ChallengeView.processDcResults(data, "dcResultsDiv");
     },
 

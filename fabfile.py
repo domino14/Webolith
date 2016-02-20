@@ -12,6 +12,7 @@ env.roledefs = {
     'prod': [
         #'ubuntu@192.241.203.184',
         'ubuntu@104.236.137.163'],
+    'dev': ['ubuntu@162.243.144.78'],
     'prod_db': ['ubuntu@192.241.203.48']
 }
 
@@ -27,26 +28,22 @@ def _deploy(role, skipjs):
         config_file = 'dev_config.env'
     with cd("webolith"):
         run("git pull")
-        with cd("djAerolith"):
-            # Deploy JS build.
-            if skipjs is False:
-                deploy_js_build()
-            with settings(warn_only=True):
-                run("mkdir logs")
-            with prefix("workon aeroenv"):
-                # collect static files!
-                put(os.path.join(curdir, 'config', config_file),
-                    '/home/ubuntu/config.env')
-                with prefix("source /home/ubuntu/config.env"):
-                    run("python manage.py collectstatic --noinput")
-                    # execute any needed migrations
-                    run("python manage.py migrate")
-                    run("python manage.py compilemessages")
-                run("kill -s QUIT `supervisorctl pid gunicorn`")
+        # Deploy JS build.
+        if skipjs is False:
+            deploy_js_build()
+        put(os.path.join(curdir, 'config', config_file),
+            'config/config.env')
+        run("docker exec -it webolith_app_1 ../scripts/deploy.sh")
+
+# ubuntu@ubuntu-512mb-sfo1-01:~/webolith$ docker run --env-file config/config.env --volumes-from webolith_app_1 -it --rm webolith_app "djAerolith/manage.py collectstatic --noinput"
+# exec: "djAerolith/manage.py collectstatic --noinput": stat djAerolith/manage.py collectstatic --noinput: no such file or directory
+
+# docker run --env-file config/dev_config.env --volumes-from webolith_app_1 -it --rm webolith_app bash
+def deploy_word_db(lexicon_name, role):
+    execute(_deploy_word_db, lexicon_name, role, role=role)
 
 
-@roles('prod')
-def deploy_word_db(lexicon_name):
+def _deploy_word_db(lexicon_name, role):
     # This will hopefully be done super rarely.
     with settings(warn_only=True):
         run('mkdir word_db')
@@ -80,7 +77,7 @@ def create_js_build():
 def deploy_js_build():
     create_js_build()
     with settings(warn_only=True):
-        with cd("static"):
+        with cd("djAerolith/static"):
             run("mkdir build")
     put(os.path.join(curdir, 'djAerolith', 'static/build/*.gz'),
         '/home/ubuntu/webolith/djAerolith/static/build/')

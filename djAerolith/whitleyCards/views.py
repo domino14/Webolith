@@ -221,7 +221,7 @@ def getWordDataByProb(lexicon, length, minP, maxP):
 
 def getWordDataFromQuestions(lexicon, questions):
     db = WordDB(lexicon.lexiconName)
-    questions = db.get_questions_from_alph_objects(questions)
+    questions = db.get_questions_from_alph_dicts(questions)
     return get_word_data(questions.questions_array())
 
 

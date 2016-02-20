@@ -25,10 +25,13 @@ import time
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 from base.models import WordList, Lexicon
-from lib.response import response
-from base.utils import generate_question_map_from_alphagrams
+from lib.response import response, StatusCode
+from base.utils import (generate_question_map_from_alphagrams,
+                        generate_question_list_from_alphagrams,
+                        question_list_from_probabilities)
 
 logger = logging.getLogger(__name__)
 
@@ -189,3 +192,40 @@ def question_map(request):
                                                   json.loads(sl.origQuestions))
     logger.debug('Map generated, returning. Time: %s s.' % (time.time() - t1))
     return response(q_map)
+
+
+@csrf_exempt
+def list_questions_view(request):
+    """
+    Get list of questions - `get_questions_from_alph_dicts` as an API view.
+
+    Use POST since GET should not accept a request body in the standard.
+
+    """
+    if request.method != 'POST':
+        return response('Must use POST', StatusCode.BAD_REQUEST)
+    body = json.loads(request.body)
+    lexicon_name = body['lexicon']
+    questions = body['questions']
+    try:
+        lex = Lexicon.objects.get(lexiconName=lexicon_name)
+    except Lexicon.DoesNotExist:
+        return response('Bad Lexicon', StatusCode.BAD_REQUEST)
+    return response(generate_question_list_from_alphagrams(lex, questions))
+
+
+@csrf_exempt
+def questions_for_prob_range(request):
+    """ Get a list of questions for a probability range. """
+    if request.method != 'POST':
+        return response('Must use POST', StatusCode.BAD_REQUEST)
+    body = json.loads(request.body)
+    lexicon_name = body['lexicon']
+    pmin = body['pmin']
+    pmax = body['pmax']
+    length = body['length']
+    try:
+        lex = Lexicon.objects.get(lexiconName=lexicon_name)
+    except Lexicon.DoesNotExist:
+        return response('Bad Lexicon', StatusCode.BAD_REQUEST)
+    return response(question_list_from_probabilities(lex, pmin, pmax, length))

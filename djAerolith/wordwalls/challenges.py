@@ -5,7 +5,6 @@ Helper functions for generating challenges.
 import json
 from datetime import timedelta
 import random
-import os
 import re
 import logging
 
@@ -17,6 +16,7 @@ from wordwalls.models import (DailyChallengeName, NamedList, DailyChallenge,
 from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
                                                          FRIENDLY_COMMON_LONG)
 from lib.word_db_helper import WordDB, Question, Questions, Alphagram
+from lib.macondo_interface import gen_blank_challenges, MacondoError
 
 logger = logging.getLogger(__name__)
 
@@ -95,31 +95,22 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
 
 def generate_blank_bingos_challenge(lex, ch_date):
     """
-    Reads the previously generated blank bingo files for lex.
+    Contact blank challenges server and generate said challenges.
+
     """
     bingos = Questions()
+    logger.debug('in generate_blank_bingos_challenge')
     for length in (7, 8):
-        contents = get_blank_bingos_content(ch_date, length, lex.lexiconName)
-        for line in contents.split('\n'):
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            qas = line.split()
-            words = ' '.join(qas[1:])
-            question = Question(Alphagram(alphagrammize(qas[0])), [])
-            question.set_answers_from_word_list(words.split())
+        try:
+            challs = gen_blank_challenges(length, lex.lexiconName, 2, 25, 5)
+        except MacondoError:
+            logger.exception(u'[event=macondoerror]')
+            return bingos
+        for chall in challs:
+            question = Question(Alphagram(chall['q']), [])
+            question.set_answers_from_word_list(chall['a'])
             bingos.append(question)
     return bingos
-
-
-def get_blank_bingos_content(challenge_date, length, lexicon_name):
-    filename = challenge_date.strftime("%Y-%m-%d") + "-%s-%ss.txt" % (
-        lexicon_name, length)
-    path = os.path.join(os.getenv("HOME"), 'blanks', filename)
-    f = open(path, 'rb')
-    contents = f.read()
-    f.close()
-    return contents
 
 
 # XXX: This appears to be an expensive function; about 0.75 secs on my
@@ -156,7 +147,10 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     mb_dict = {}
     # Now sort by percentage missed.
     for b in mbs:
-        perc_correct = float(b.numTimesMissed) / num_solved[b.challenge]
+        try:
+            perc_correct = float(b.numTimesMissed) / num_solved[b.challenge]
+        except ZeroDivisionError:
+            continue
         alphagram = b.alphagram_string
         if alphagram in mb_dict:
             if perc_correct > mb_dict[alphagram][1]:
