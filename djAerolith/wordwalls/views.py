@@ -39,6 +39,7 @@ from base.models import Lexicon, WordList
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
 from lib.word_db_helper import WordDB
+from lib.socket_helper import get_connection_token
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
                               DailyChallengeName, NamedList)
@@ -99,7 +100,7 @@ def homepage(request):
          'defaultLexicon': profile.defaultLexicon,
          # 'connToken': conn_token,
          'chatEnabled': not data.get('disableChat', False),
-         'socketUrl': settings.SOCKJS_SERVER,
+         'socket_server': settings.SOCKET_SERVER,
          'CURRENT_VERSION': CURRENT_VERSION})
 
 
@@ -351,20 +352,25 @@ def table(request, id):
         if not permitted:
             return render(request, 'wordwalls/notPermitted.html',
                           {'tablenum': id})
-        params = wwg.get_add_params(id)
+        savename = wwg.get_save_name(id)
+
         # Add styling params from user's profile (for styling table
         # tiles, backgrounds, etc)
         profile = request.user.aerolithprofile
         style = profile.customWordwallsStyle
-        if style != "":
-            params['style'] = style
+
+        username = request.user.username
+        socket_conn_url, token = get_connection_token(username, id)
 
         return render(request, 'wordwalls/table.html',
                       {'tablenum': id,
-                       'username': request.user.username,
-                       'addParams': json.dumps(params),
+                       'username': username,
+                       'savename': savename,
+                       'style': style,
                        'avatarUrl': profile.avatarUrl,
                        'CURRENT_VERSION': CURRENT_VERSION,
+                       'socket_connection_url': socket_conn_url,
+                       'socket_connection_token': token,
                        'lexicon': wwg.get_wgm(id).lexicon
                        })
 

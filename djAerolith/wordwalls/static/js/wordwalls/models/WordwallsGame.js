@@ -30,43 +30,49 @@ define([
       this.numAnswersGottenThisRound = 0;
       this.numAlphagramsLeft = 0;
     },
+    /**
+     * Process a list of questions.
+     * @param  {Array.<Object>} questions A list of questions in  {'q': ...,
+     *  'a': [...]} format.
+     *
+     */
     processQuestionObj: function(questions) {
       this.wrongWordsHash = {};
       this.wrongAlphasHash = {};
       this.numTotalAnswersThisRound = 0;
       this.numAnswersGottenThisRound = 0;
       this.cleanupPrevious();
-      _.each(questions, function(question) {
+      _.each(questions, function(question, idx) {
         var wordCollection, questionModel;
         questionModel = new Alphagram();
         wordCollection = new Words();
         questionModel.set({
-          alphagram: question.a,
-          prob: question.p,
-          numWords: question.ws.length,
-          wordsRemaining: question.ws.length,
+          alphagram: question.q,
+          // prob: question.p,
+          numWords: question.a.length,
+          wordsRemaining: question.a.length,
           words: wordCollection,
-          idx: question.idx
+          idx: idx
         });
-        _.each(question.ws, function(word) {
+        _.each(question.a, function(word) {
           /* Add each word to the word collection. */
           var wordModel = new Word({
-            word: word.w,
-            frontHooks: word.fh,
-            backHooks: word.bh,
-            lexiconSymbol: word.s,
-            definition: word.d,
-            alphagram: questionModel,
-            prob: question.p,
-            innerFrontHook: word.ifh,
-            innerBackHook: word.ibh
+            word: word,
+            // frontHooks: word.fh,
+            // backHooks: word.bh,
+            // lexiconSymbol: word.s,
+            // definition: word.d,
+            alphagram: questionModel
+            // prob: question.p,
+            // innerFrontHook: word.ifh,
+            // innerBackHook: word.ibh
           });
           wordCollection.add(wordModel);
-          this.wrongWordsHash[word.w] = wordModel;
+          this.wrongWordsHash[word] = wordModel;
           this.numTotalAnswersThisRound++;
         }, this);
         this.questionCollection.add(questionModel);
-        this.wrongAlphasHash[question.a] = questionModel;
+        this.wrongAlphasHash[question.q] = questionModel;
       }, this);
       this.numAlphagramsLeft = this.questionCollection.length;
       this.trigger('gotQuestionData', this.questionCollection);

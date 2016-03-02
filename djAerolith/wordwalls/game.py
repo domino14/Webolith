@@ -41,23 +41,21 @@ logger = logging.getLogger(__name__)
 
 
 class WordwallsGame(object):
-    def _initial_state(self):
-        """ Return an initial state object, for a brand new game. """
+    def _initial_options(self):
+        """ Return an initial options object, for a brand new game. """
         return {
-            'answerHash': {},
             'questionsToPull': settings.WORDWALLS_QUESTIONS_PER_ROUND,
-            'quizGoing': False,
-            'quizStartTime': 0,
             'numAnswersThisRound': 0,
             'gameType': 'regular'
         }
 
-    def create_game_instance(self, host, lex, word_list, **state_kwargs):
-        state = self._initial_state()
-        for param in state_kwargs:
-            state[param] = state_kwargs[param]
+    def create_game_instance(self, host, lex, word_list, **options_kwargs):
+        game_options = self._initial_options()
+        for param in options_kwargs:
+            game_options[param] = options_kwargs[param]
+        game_options['_word_list_id'] = word_list.pk
         wgm = WordwallsGameModel(
-            host=host, currentGameState=json.dumps(state),
+            host=host, game_options=json.dumps(game_options),
             gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
             playerType=GenericTableGameModel.SINGLEPLAYER_GAME,
             lexicon=lex,
@@ -119,7 +117,8 @@ class WordwallsGame(object):
         qs, secs, dc = ret
         wl = self.initialize_word_list(qs, ch_lex, user)
         wgm = self.create_game_instance(user, ch_lex, wl,
-                                        # Extra parameters to be put in 'state'
+                                        # Extra parameters to be put in
+                                        # 'game_options'
                                         gameType='challenge',
                                         questionsToPull=qs.size(),
                                         challengeId=dc.pk,
@@ -228,109 +227,68 @@ class WordwallsGame(object):
     def create_error_message(self, message):
         return {'error': message}
 
-    def start_quiz(self, tablenum, user):
-        wgm = self.get_wgm(tablenum)
-        if not wgm:
-            return self.create_error_message(_("That table does not exist."))
-        state = json.loads(wgm.currentGameState)
+    # def start_quiz(self, tablenum, user):
+    #     # XXX: This function should be removed. Refer to start_game_state.
+    #     wgm = self.get_wgm(tablenum)
+    #     if not wgm:
+    #         return self.create_error_message(_("That table does not exist."))
+    #     state = json.loads(wgm.currentGameState)
 
-        if state['quizGoing']:
-            logger.debug('The quiz is going, state %s', state)
-            return self.create_error_message(
-                _("The quiz is currently running."))
-                # the quiz is running right now; do not attempt to start again
-        start_message = ""
-        word_list = wgm.word_list
+    #     if state['quizGoing']:
+    #         logger.debug('The quiz is going, state %s', state)
+    #         return self.create_error_message(
+    #             _("The quiz is currently running."))
+    #             # the quiz is running right now; do not attempt to start again
+    #     start_message = ""
+    #     word_list = wgm.word_list
 
-        if not word_list:
-            raise Exception('Did not migrate word list for this table.')
+    #     if not word_list:
+    #         raise Exception('Did not migrate word list for this table.')
 
-        if word_list.questionIndex > word_list.numCurAlphagrams - 1:
-            start_message += _("Now quizzing on missed list.") + "\r\n"
-            word_list.set_to_missed()
-            state['quizGoing'] = False
+    #     if word_list.questionIndex > word_list.numCurAlphagrams - 1:
+    #         start_message += _("Now quizzing on missed list.") + "\r\n"
+    #         word_list.set_to_missed()
+    #         state['quizGoing'] = False
 
-        if word_list.numCurAlphagrams == 0:
-            wgm.currentGameState = json.dumps(state)
-            wgm.save()
-            return self.create_error_message(
-                _("The quiz is done. Please exit the table and have a nice "
-                  "day!"))
+    #     if word_list.numCurAlphagrams == 0:
+    #         wgm.currentGameState = json.dumps(state)
+    #         wgm.save()
+    #         return self.create_error_message(
+    #             _("The quiz is done. Please exit the table and have a nice "
+    #               "day!"))
 
-        cur_questions_obj = json.loads(word_list.curQuestions)
-        idx = word_list.questionIndex
-        num_qs_per_round = state['questionsToPull']
-        qs = cur_questions_obj[idx:(idx + num_qs_per_round)]
+    #     cur_questions_obj = json.loads(word_list.curQuestions)
+    #     idx = word_list.questionIndex
+    #     num_qs_per_round = state['questionsToPull']
+    #     qs = cur_questions_obj[idx:(idx + num_qs_per_round)]
 
-        start_message += _(
-            "These are questions %(qbegin)s through %(qend)s of "
-            "%(qtotal)s.") % {'qbegin': idx + 1,
-                              'qend': len(qs) + idx,
-                              'qtotal': word_list.numCurAlphagrams}
+    #     start_message += _(
+    #         "These are questions %(qbegin)s through %(qend)s of "
+    #         "%(qtotal)s.") % {'qbegin': idx + 1,
+    #                           'qend': len(qs) + idx,
+    #                           'qtotal': word_list.numCurAlphagrams}
 
-        word_list.questionIndex += num_qs_per_round
+    #     word_list.questionIndex += num_qs_per_round
 
-        qs_set = set(qs)
-        if len(qs_set) != len(qs):
-            logger.error("Question set is not unique!!")
+    #     qs_set = set(qs)
+    #     if len(qs_set) != len(qs):
+    #         logger.error("Question set is not unique!!")
 
-        questions, answer_hash = self.load_questions(
-            qs, json.loads(word_list.origQuestions), word_list.lexicon)
-        state['quizGoing'] = True   # start quiz
-        state['quizStartTime'] = time.time()
-        state['answerHash'] = answer_hash
-        state['numAnswersThisRound'] = len(answer_hash)
-        wgm.currentGameState = json.dumps(state)
-        wgm.save()
-        word_list.save()
-        ret = {'questions': questions,
-               'time': state['timerSecs'],
-               'gameType': state['gameType'],
-               'serverMsg': start_message}
+    #     questions, answer_hash = self.load_questions(
+    #         qs, json.loads(word_list.origQuestions), word_list.lexicon)
+    #     state['quizGoing'] = True   # start quiz
+    #     state['quizStartTime'] = time.time()
+    #     state['answerHash'] = answer_hash
+    #     state['numAnswersThisRound'] = len(answer_hash)
+    #     wgm.currentGameState = json.dumps(state)
+    #     wgm.save()
+    #     word_list.save()
+    #     ret = {'questions': questions,
+    #            'time': state['timerSecs'],
+    #            'gameType': state['gameType'],
+    #            'serverMsg': start_message}
 
-        return ret
-
-    def load_questions(self, qs, orig_questions, lexicon):
-        """
-        Turn the qs array into an array of full question objects, ready
-        for the front-end.
-
-        Params:
-            - qs: An array of indices into oriq_questions
-            - orig_questions: An array of questions, looking like
-                [{'q': ..., 'a': [...]}, ...]
-
-        Returns:
-            - A tuple (questions, answer_hash)
-                questions: [{'a': alphagram, 'ws': words, ...}, {..}, ..]
-                answer_hash: {'word': (alphagram, idx), ...}
-
-        """
-        db = WordDB(lexicon.lexiconName)
-        alphagrams_to_fetch = []
-        index_map = {}
-        for i in qs:
-            alphagrams_to_fetch.append(orig_questions[i])
-            index_map[orig_questions[i]['q']] = i
-
-        questions = db.get_questions_from_alph_dicts(alphagrams_to_fetch)
-        answer_hash = {}
-        ret_q_array = []
-
-        for q in questions.questions_array():
-            words = []
-            alphagram_str = q.alphagram.alphagram
-            i = index_map[alphagram_str]
-            for w in q.answers:
-                words.append({'w': w.word, 'd': w.definition,
-                              'fh': w.front_hooks, 'bh': w.back_hooks,
-                              's': w.lexicon_symbols,
-                              'ifh': w.inner_front_hook,
-                              'ibh': w.inner_back_hook})
-                answer_hash[w.word] = alphagram_str, i
-            ret_q_array.append({'a': alphagram_str, 'ws': words,
-                                'p': q.alphagram.probability, 'idx': i})
-        return ret_q_array, answer_hash
+    #     return ret
 
     def did_timer_run_out(self, state):
         # internal function; not meant to be called by the outside
@@ -392,16 +350,12 @@ class WordwallsGame(object):
             return True
         return False
 
-    def get_add_params(self, tablenum):
-        wgm = self.get_wgm(tablenum, lock=False)
+    def get_save_name(self, tablenum):
+        wgm = self.get_wgm(tablenum)
         if not wgm:
-            return {}
-
-        state = json.loads(wgm.currentGameState)
-        if 'saveName' in state:
-            return {'saveName': state['saveName']}
-        else:
-            return {}
+            return False
+        options = json.loads(wgm.game_options)
+        return options.get('saveName', '')
 
     def give_up_and_save(self, user, tablenum, listname):
         if self.give_up(user, tablenum):

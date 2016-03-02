@@ -45,5 +45,7 @@ def about(request):
 
 @login_required
 def socket_token(request):
-    conn_token = get_connection_token(request.user)
-    return response(conn_token)
+    realm = request.GET.get('realm')
+    # XXX: Later verify that we actually can access this table.
+    conn_url, token = get_connection_token(request.user, realm)
+    return response({'url': conn_url, 'token': token})

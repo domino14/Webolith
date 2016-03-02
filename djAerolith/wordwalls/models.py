@@ -95,6 +95,7 @@ class DailyChallengeLeaderboardEntry(models.Model):
 
 class WordwallsGameModel(GenericTableGameModel):
     word_list = models.ForeignKey(WordList)
+    game_options = models.CharField(max_length=1024, default='{}')
 
 
 class DailyChallengeMissedBingos(models.Model):

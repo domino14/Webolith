@@ -91,14 +91,30 @@ def saved_list_sync(request):
     return response(sl.to_python())
 
 
+# XXX: Add an auth key here for "superuser". request.user will be Anonymous.
+@csrf_exempt
+def saved_list_keyauth(request, id):
+    try:
+        sl = WordList.objects.get(id=id)
+    except WordList.DoesNotExist:
+        return response('This list does not exist on the server!', status=404)
+    if request.method == 'DELETE':
+        return response('Forbidden method.', status=403)
+    return saved_list_bare(None, sl, request)
+
+
 @login_required
 def saved_list(request, id):
     try:
         sl = WordList.objects.get(user=request.user, id=id)
     except WordList.DoesNotExist:
         return response('This list does not exist on the server!', status=404)
+    return saved_list_bare(request.user, sl, request)
+
+
+def saved_list_bare(user, sl, request):
     if request.method == 'DELETE':
-        profile = request.user.aerolithprofile
+        profile = user.aerolithprofile
         saved_alphas = profile.wordwallsSaveListSize
         profile.wordwallsSaveListSize = saved_alphas - sl.numAlphagrams
         sl.delete()

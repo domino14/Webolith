@@ -22,5 +22,9 @@ from django.conf.urls import *
 urlpatterns = patterns('',
     url(r'^challengers/$', 'wordwalls.api.api_challengers'),
     url(r'^configure/$', 'wordwalls.api.configure'),
+    url(r'^start_game/(?P<tablenum>\d+)/$', 'wordwalls.state.start_game'),
+    url(r'^get_start_game/(?P<tablenum>\d+)/$',
+        'wordwalls.state.get_start_state'),
+    url(r'^game_options/(?P<tablenum>\d+)/$', 'wordwalls.state.game_options'),
    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
     )

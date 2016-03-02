@@ -11,29 +11,27 @@ define([
   "use strict";
   var Chat;
   /**
-   * A Chat view. Requires a chat bar to have class .chatBar.
+   * A Chat view. Requires a chat bar to have class .chat-bar.
    * @type {Backbone.View}
    */
   Chat = Backbone.View.extend({
     initialize: function(options) {
-      this.chatBar = this.$('.chatBar');
-      this.chatTextId = 'chatText';
+      this.chatBar = this.$('.chat-bar');
+      this.chatTextId = 'messages';
       this.peopleId = 'people';
       this.socket = options.socket;
-      this.channel = options.channel;
-      this.socket.setMessageHandler(_.bind(this.messageHandler, this));
       this.currentUsers = [];
     },
     events: function() {
       return {
-        'keypress .chatBar': 'chatBarHandler'
+        'keypress .chat-bar': 'chatBarHandler'
       };
     },
     messageHandler: function(data) {
       if (data.type === 'chat') {
-        this.updateChat(data.from, data.msg, this.chatTextId);
+        this.updateChat(data.from, data.data, this.chatTextId);
       } else if (data.type === 'error') {
-        this.updateChat('Server error', data.msg, this.chatTextId);
+        this.updateChat('Server error', data.data, this.chatTextId);
       } else if (data.type === 'joined') {
         this.addUsers(data.msg);
       } else if (data.type === 'left') {
@@ -47,10 +45,10 @@ define([
         if (chat.length === 0) {
           return;
         }
-        msg = JSON.stringify({
-          'chat': chat,
-          'channel': this.channel
-        });
+        msg = {
+          'type': 'chat',
+          'data': chat
+        };
         this.socket.send(msg);
         this.clearChatBar();
       }
