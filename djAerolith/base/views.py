@@ -100,7 +100,7 @@ def saved_list_keyauth(request, id):
         return response('This list does not exist on the server!', status=404)
     if request.method == 'DELETE':
         return response('Forbidden method.', status=403)
-    return saved_list_bare(None, sl, request)
+    return saved_list_bare(None, sl, request, with_map=True)
 
 
 @login_required
@@ -151,6 +151,10 @@ def saved_list_bare(user, sl, request):
             l_obj['numMissed'] = 0
             l_obj['goneThruOnce'] = False
         logger.debug('Returning response %s' % l_obj)
+        # if with_map:
+        #     l_obj['q_map'] = generate_question_map_from_alphagrams(
+        #         sl.lexicon,
+        #         json.loads(sl.origQuestions))
         return response(l_obj)
     elif request.method == 'PUT':
         # Edit a saved list.
@@ -220,9 +224,18 @@ def list_questions_view(request):
     """
     if request.method != 'POST':
         return response('Must use POST', StatusCode.BAD_REQUEST)
-    body = json.loads(request.body)
-    lexicon_name = body['lexicon']
-    questions = body['questions']
+    try:
+        body = json.loads(request.body)
+    except (TypeError, ValueError):
+        return response('Bad JSON.', StatusCode.BAD_REQUEST)
+    if type(body) is not dict:
+        return response('Your JSON must represent an object.',
+                        StatusCode.BAD_REQUEST)
+    lexicon_name = body.get('lexicon')
+    questions = body.get('questions')
+    if not lexicon_name or not questions:
+        return response('You must specify a valid lexicon name and questions.',
+                        StatusCode.BAD_REQUEST)
     try:
         lex = Lexicon.objects.get(lexiconName=lexicon_name)
     except Lexicon.DoesNotExist:

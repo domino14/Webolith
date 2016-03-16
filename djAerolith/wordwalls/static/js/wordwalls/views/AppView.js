@@ -239,29 +239,6 @@ define([
       });
     },
 
-    // processStartData: function (data) {
-    //   /* Probably should track gameGoing with a signal from wordwallsGame? */
-    //   if (!this.wordwallsGame.get('gameGoing')) {
-    //     if (_.has(data, 'serverMsg')) {
-    //       this.updateMessages(data.serverMsg);
-    //     }
-    //     if (_.has(data, 'error')) {
-    //       this.updateMessages(data.error);
-    //     }
-    //     if (_.has(data, 'questions')) {
-    //       this.wordwallsGame.processQuestionObj(data.questions);
-    //       Tester.setQuestionData(data.questions);
-    //     }
-    //     if (_.has(data, 'time')) {
-    //       this.wordwallsGame.set('gameGoing', true);
-    //       this.wordwallsGame.startTimer(data.time);
-    //     }
-    //     if (_.has(data, 'gameType')) {
-    //       this.wordwallsGame.set('challenge', data.gameType === 'challenge');
-    //     }
-    //   }
-    // },
-
     processGiveUp: function(data) {
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();
@@ -435,37 +412,33 @@ define([
     },
 
     /**
-     * Processes a back-end response to a guess.
-     * @param {Object} data The data object returned by the back-end server
-     *                      in response to a guess.
+     * Process a score response. Looks like
+     * {"answer":"SCORNS","alphagram":"CNORSS","user":"cesar",
+     * "idx":48,"score":1}
+     * @param  {Object} data
      */
-    processGuessResponse: function(data) {
-      var view, wordsRemaining, word, modifiedForDisplay, ucGuess;
-      ucGuess = data.answer;
-      modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
-
+    processScoreResponse: function(data) {
+      var view, wordsRemaining, word, modifiedForDisplay, correctAnswer;
+      correctAnswer = data.answer;
+      modifiedForDisplay = utils.modifyWordForDisplay(correctAnswer,
+        this.lexicon);
       view = this.questionViewsByAlphagram[data.alphagram];
       wordsRemaining = view.model.get('wordsRemaining') - 1;
       /* Trigger an update of the view here. */
       view.model.set({
         wordsRemaining: wordsRemaining
       });
-      this.wordwallsGame.correctGuess(ucGuess);
+      this.wordwallsGame.correctGuess(correctAnswer);
       if (wordsRemaining === 0) {
         this.wordwallsGame.finishedAlphagram(data.alphagram);
         this.moveUpNextQuestion(view);
       }
       word = view.model.get('words').find(function(word) {
-        return word.get('word').toUpperCase() === ucGuess;
+        return word.get('word').toUpperCase() === correctAnswer;
       });
-      this.updateCorrectAnswer(modifiedForDisplay +
-        word.get('lexiconSymbol'));
-
+      this.updateCorrectAnswer(modifiedForDisplay + word.get('lexiconSymbol'));
       this.updateGuesses(modifiedForDisplay);
-
-      if (_.has(data, 'g') && !data.g) {
-        this.processQuizEnded();
-      }
+      // XXX: process quiz ended somewhere else.
     },
     /**
      * Mark an alphagram as missed, at the end of a round.
@@ -546,7 +519,10 @@ define([
       if (msg.type === 'questions') {
         this.handleQuestions(JSON.parse(msg.data));
       } else if (msg.type === 'guess') {
-        this.processGuessResponse(JSON.parse(msg.data));
+        // Don't do this yet. Just handle scores.
+        //this.processGuessResponse(msg.data, msg.from);
+      } else if (msg.type === 'score') {
+        this.processScoreResponse(JSON.parse(msg.data));
       }
     },
     /**
