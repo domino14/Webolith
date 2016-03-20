@@ -100,7 +100,7 @@ def saved_list_keyauth(request, id):
         return response('This list does not exist on the server!', status=404)
     if request.method == 'DELETE':
         return response('Forbidden method.', status=403)
-    return saved_list_bare(None, sl, request, with_map=True)
+    return saved_list_bare(None, sl, request)
 
 
 @login_required
@@ -150,11 +150,6 @@ def saved_list_bare(user, sl, request):
             l_obj['missed'] = []
             l_obj['numMissed'] = 0
             l_obj['goneThruOnce'] = False
-        logger.debug('Returning response %s' % l_obj)
-        # if with_map:
-        #     l_obj['q_map'] = generate_question_map_from_alphagrams(
-        #         sl.lexicon,
-        #         json.loads(sl.origQuestions))
         return response(l_obj)
     elif request.method == 'PUT':
         # Edit a saved list.

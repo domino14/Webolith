@@ -47,32 +47,32 @@ define([
         questionModel = new Alphagram();
         wordCollection = new Words();
         questionModel.set({
-          alphagram: question.q,
-          // prob: question.p,
-          numWords: question.a.length,
-          wordsRemaining: question.a.length,
+          alphagram: question.question,
+          prob: question.probability,
+          numWords: question.answers.length,
+          wordsRemaining: question.answers.length,
           words: wordCollection,
           idx: idx
         });
-        _.each(question.a, function(word) {
+        _.each(question.answers, function(answer) {
           /* Add each word to the word collection. */
           var wordModel = new Word({
-            word: word,
-            // frontHooks: word.fh,
-            // backHooks: word.bh,
-            // lexiconSymbol: word.s,
-            // definition: word.d,
-            alphagram: questionModel
-            // prob: question.p,
-            // innerFrontHook: word.ifh,
-            // innerBackHook: word.ibh
+            word: answer.word,
+            frontHooks: answer.f_hooks,
+            backHooks: answer.b_hooks,
+            lexiconSymbol: answer.symbols,
+            definition: answer.def,
+            alphagram: questionModel,
+            prob: question.probability,
+            innerFrontHook: answer.f_inner,
+            innerBackHook: answer.b_inner
           });
           wordCollection.add(wordModel);
-          this.wrongWordsHash[word] = wordModel;
+          this.wrongWordsHash[answer.word] = wordModel;
           this.numTotalAnswersThisRound++;
         }, this);
         this.questionCollection.add(questionModel);
-        this.wrongAlphasHash[question.q] = questionModel;
+        this.wrongAlphasHash[question.question] = questionModel;
       }, this);
       this.numAlphagramsLeft = this.questionCollection.length;
       this.trigger('gotQuestionData', this.questionCollection);
@@ -98,11 +98,7 @@ define([
       this.currentTimer = this.timeForQuiz - (
         timeNow - this.timeStarted) / 1000.0;
       this.trigger('tick', this.currentTimer);
-      if (this.currentTimer <= 0) {
-        this.trigger('timerExpired');
-      } else {
-        _.delay(_.bind(this.updateTimer, this), 1000);
-      }
+      _.delay(_.bind(this.updateTimer, this), 1000);
     },
     correctGuess: function(word) {
       delete this.wrongWordsHash[word];

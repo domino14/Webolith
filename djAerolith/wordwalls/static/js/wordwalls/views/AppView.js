@@ -46,8 +46,6 @@ define([
       this.setupPopupEvent();
       this.wordwallsGame = new Game();
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
-      this.listenTo(this.wordwallsGame, 'timerExpired',
-        this.processTimerExpired);
       this.listenTo(this.wordwallsGame, 'gotQuestionData',
         this.gotQuestionData);
       this.listenTo(this.wordwallsGame, 'updateQStats', this.renderQStats);
@@ -80,7 +78,7 @@ define([
       this.listenTo(Tester, 'msg', _.bind(function(msg) {
         this.updateMessages(msg);
       }, this));
-      this.listenTo(Tester, 'endGame', _.bind(this.processTimerExpired, this));
+      //this.listenTo(Tester, 'endGame', _.bind(this.processTimerExpired, this));
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;
@@ -486,15 +484,15 @@ define([
         lastView.render();
       }, 5000);
     },
-    processTimerExpired: function() {
-      /* Tell the server the timer expired. */
-      $.post(this.tableUrl, {action: 'gameEnded'}, _.bind(function(data) {
-        if (_.has(data, 'g') && !data.g) {
-          this.processQuizEnded();
-        }
-      }, this),
-      'json');
-    },
+    // processTimerExpired: function() {
+    //   /* Tell the server the timer expired. */
+    //   $.post(this.tableUrl, {action: 'gameEnded'}, _.bind(function(data) {
+    //     if (_.has(data, 'g') && !data.g) {
+    //       this.processQuizEnded();
+    //     }
+    //   }, this),
+    //   'json');
+    // },
     processQuizEnded: function() {
       this.wordwallsGame.endGame();
       this.$questionsList.html("");
@@ -515,14 +513,38 @@ define([
         type: "POST"
       });
     },
+    /**
+     * Handle a message coming from the socket.
+     * @param  {Object} msg [description]
+     */
     messageHandler: function(msg) {
-      if (msg.type === 'questions') {
-        this.handleQuestions(JSON.parse(msg.data));
-      } else if (msg.type === 'guess') {
-        // Don't do this yet. Just handle scores.
-        //this.processGuessResponse(msg.data, msg.from);
-      } else if (msg.type === 'score') {
-        this.processScoreResponse(JSON.parse(msg.data));
+      this.updateMessages(JSON.stringify(msg));
+      switch (msg.type) {
+        case 'questions':
+          this.handleQuestions(JSON.parse(msg.data));
+          break;
+
+        case 'guess':
+          // Don't do this yet. Just handle scores.
+          //this.processGuessResponse(msg.data, msg.from);
+          break;
+
+        case 'score':
+          this.processScoreResponse(JSON.parse(msg.data));
+          break;
+
+        case 'countdown':
+
+          break;
+
+        case 'gameover':
+          this.processQuizEnded();
+          break;
+
+        case 'timer':
+          this.wordwallsGame.set('gameGoing', true);
+          this.wordwallsGame.startTimer(parseFloat(msg.data));
+          break;
       }
     },
     /**
