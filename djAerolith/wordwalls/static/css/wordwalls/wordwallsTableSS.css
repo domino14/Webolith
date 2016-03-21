@@ -687,3 +687,10 @@ span.configInputSpan
 .tile {
     cursor: default;
 }
+
+.countdown {
+    position: fixed;
+    top: 100px;
+    left: 400px;
+    font-size: 15em;
+}

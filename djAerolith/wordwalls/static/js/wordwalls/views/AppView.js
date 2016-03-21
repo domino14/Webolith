@@ -6,12 +6,13 @@ define([
   'models/WordwallsGame',
   'views/AlphagramView',
   'views/WordSolutionView',
+  'views/countdown',
   'text!templates/solutionsTable.html',
   'mustache',
   'ChallengeView',
   'wordwalls_tests',
   'utils'
-], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
+], function(Backbone, $, _, Game, AlphagramView, WordSolutionView, Countdown,
      SolutionsTable, Mustache, ChallengeView, Tester, utils) {
   "use strict";
   var App;
@@ -60,6 +61,9 @@ define([
         ));
       });
       this.viewConfig = null;
+      this.countdown = new Countdown({
+        el: this.$('#questions')
+      });
       this.numColumns = 4;
       this.maxScreenQuestions = 50;   // How many questions fit on the screen?
       this.$questionsList = this.$("#questions > .questionList");
@@ -534,7 +538,7 @@ define([
           break;
 
         case 'countdown':
-
+          this.countdown.start(parseFloat(msg.data));
           break;
 
         case 'gameover':

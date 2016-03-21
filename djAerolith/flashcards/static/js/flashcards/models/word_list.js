@@ -1,3 +1,4 @@
+/* global JSON*/
 /**
  * @fileOverview The word list model. This model should almost mirror the model
  * for WordList in base/models.py.
