@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Preferences" %}{% endblock %}
+
+
+{% block content_title %}<H3>{% trans "Preferences" %}</H3>{%endblock%}
+
+{% block content %}
+<div class="row">
+<h4>Saved List Manager</h4>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <table id="list-table" class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Lexicon</th>
+                    <th>Progress</th>
+                    <th>Total questions</th>
+                    <th>Last Saved</th>
+                    <th>Select</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+    <button type="button" class="btn btn-danger btn-sm">Delete Selected Lists</button>
+    </div>
+</div>
+<script>
+/* global $*/
+$(function() {
+    "use strict";
+    $.get('/base/api/saved_lists/', {
+        'temp': 0
+    }, function(data) {
+        populateTable(data);
+    }, 'json');
+
+    /**
+     * Populates a table with list data.
+     * @param  {Object} data
+     */
+    function populateTable(data) {
+        $('#list-table tbody').empty();
+        $.each(data.lists, function(idx, list) {
+            var row = $('<tr/>');
+
+            row.append([
+                '<td>', list.name, '</td>'
+            ].join(''));
+            row.append([
+                '<td>', list.lexicon, '</td>'
+            ].join(''));
+            row.append([
+                '<td>', list.questionIndex, '/', list.numCurAlphagrams, '</td>'
+            ].join(''));
+            row.append([
+                '<td>', list.numAlphagrams, '</td>'
+            ].join(''));
+            row.append([
+                '<td>', list.lastSaved, '</td>'
+            ].join(''));
+            row.append([
+                '<td><input type="checkbox" data-list-id="', list.id, '"/> '
+            ].join(''));
+            $('#list-table tbody').append(row);
+
+        });
+    }
+
+});
+</script>
+{% endblock %}

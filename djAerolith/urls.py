@@ -45,6 +45,7 @@ urlpatterns = patterns('',
     (r'^old/', 'views.oldhomepage'),
     (r'^about/', 'views.about'),
     (r'^admin/', include(admin.site.urls)),
+    (r'^accounts/preferences/$', 'accounts.views.preferences'),
     (r'^accounts/profile/', include('accounts.urls')),
     (r'^accounts/register/$', AerolithRegistrationView.as_view(
         form_class=RecaptchaRegistrationForm)),

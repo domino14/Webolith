@@ -92,6 +92,40 @@ def saved_list_sync(request):
 
 
 @login_required
+def saved_lists(request):
+    if request.method == 'GET':
+        return saved_lists_get(request)
+    elif request.method == 'DELETE':
+        return saved_lists_delete(request)
+
+
+def saved_lists_get(request):
+    query_params = request.GET
+    qargs = {'user': request.user}
+    lexicon = query_params.get('lexicon')
+    temporary = query_params.get('temp')
+    if lexicon:
+        qargs['lexicon__lexiconName'] = lexicon
+    if temporary:
+        qargs['is_temporary'] = temporary == '1'
+    lists = WordList.objects.filter(**qargs)
+    return response({'lists': [sl.to_python_reduced() for sl in lists],
+                     'count': lists.count()})
+
+
+def saved_lists_delete(request):
+    list_ids = json.loads(request.body)
+    sls = []
+    for l in list_ids:
+        sls.append(WordList.objects.get(user=request.user), id=l)
+    profile = request.user.aerolithprofile
+    for l in sls:
+        profile.wordwallsSaveListSize -= l.numAlphagrams
+        l.delete()
+    profile.save()
+
+
+@login_required
 def saved_list(request, id):
     try:
         sl = WordList.objects.get(user=request.user, id=id)
