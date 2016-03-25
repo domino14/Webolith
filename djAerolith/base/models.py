@@ -172,6 +172,27 @@ class SavedList(models.Model):
             'temporary': self.is_temporary
         }
 
+    def to_python_reduced(self):
+        """
+        Converts to a Python object, but this is a reduced form. This
+        should be used for "get_all" type responses.
+
+        """
+        return {
+            'lexicon': self.lexicon.lexiconName,
+            'name': self.name,
+            'numAlphagrams': self.numAlphagrams,
+            'numCurAlphagrams': self.numCurAlphagrams,
+            'numFirstMissed': self.numFirstMissed,
+            'numMissed': self.numMissed,
+            'goneThruOnce': self.goneThruOnce,
+            'questionIndex': self.questionIndex,
+            'version': self.version,
+            'lastSaved': self.lastSaved.strftime('%Y-%m-%d %H:%M'),
+            'id': self.pk,
+            'temporary': self.is_temporary
+        }
+
     def __unicode__(self):
         return "(%s) %s%s (Saved %s)" % (
             self.lexicon.lexiconName,

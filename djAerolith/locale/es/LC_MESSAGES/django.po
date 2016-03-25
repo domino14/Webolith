@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 21:24-0800\n"
+"POT-Creation-Date: 2016-03-24 23:41-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,15 +22,15 @@ msgstr ""
 msgid "You seem to be a computer, please try again"
 msgstr "Parece que usted es una computadora, por favor intente otra vez."
 
-#: settings.py:79
+#: settings.py:82
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:80
+#: settings.py:83
 msgid "Spanish"
 msgstr "Español"
 
-#: templates/about.html:6 templates/base.html:87
+#: templates/about.html:6 templates/base.html:86
 msgid "About"
 msgstr "Acerca de Aerolith"
 
@@ -78,64 +78,64 @@ msgstr ""
 "A César le gusta programar, jugar Scrabble, guitarra, ukelele, correr, y "
 "otras cosas."
 
-#: templates/base.html:78
+#: templates/base.html:77
 #: templates/registration/password_reset_complete.html:9
 msgid "Log in"
 msgstr "Iniciar sesión"
 
-#: templates/base.html:79 templates/registration/registration_form.html:74
+#: templates/base.html:78 templates/registration/registration_form.html:74
 msgid "Register"
 msgstr "Registrarse"
 
-#: templates/base.html:84
+#: templates/base.html:83
 msgid "Membership"
 msgstr "Membresía"
 
-#: templates/base.html:85
+#: templates/base.html:84
 msgid "Log out"
 msgstr "Cerrar sesión"
 
-#: templates/base.html:88
+#: templates/base.html:87
 msgid "Wordwalls"
 msgstr "Muros De Palabras"
 
-#: templates/base.html:102
+#: templates/base.html:114
 msgid "Welcome to Aerolith 2.0! Please"
 msgstr "¡Bienvenidos a Aerolith 2.0! Por favor"
 
-#: templates/base.html:102
+#: templates/base.html:114
 msgid "log in"
 msgstr "inicie su sesión"
 
-#: templates/base.html:102
+#: templates/base.html:114
 msgid "or"
 msgstr "o"
 
-#: templates/base.html:102
+#: templates/base.html:114
 msgid "register"
 msgstr "regístrese"
 
-#: templates/base.html:102
+#: templates/base.html:114
 msgid "if you are new to this site"
 msgstr "si es su primera vez en este sitio"
 
-#: templates/base.html:103 templates/registration/login.html:36
+#: templates/base.html:115 templates/registration/login.html:36
 msgid "Forget your password?"
 msgstr "¿Se olvidó de su contraseña?"
 
-#: templates/base.html:105
+#: templates/base.html:117
 msgid "Welcome back"
 msgstr "Gracias por regresar"
 
-#: templates/base.html:105
+#: templates/base.html:117
 msgid "Here are some things you can do"
 msgstr "Aquí hay unas cosas que usted puede hacer"
 
-#: templates/base.html:106
+#: templates/base.html:118
 msgid "Play WordWalls"
 msgstr "Jugar Muros De Palabras"
 
-#: templates/base.html:141
+#: templates/base.html:153
 msgid "All Rights Reserved."
 msgstr "Reservados Todos Los Derechos"
 

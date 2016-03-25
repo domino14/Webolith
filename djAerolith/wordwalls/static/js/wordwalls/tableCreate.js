@@ -13,11 +13,10 @@ define([
     NamedListOption, Utils) {
   "use strict";
   var TableCreateView, CONTINUE_LIST_CHOICE, FIRST_MISSED_CHOICE,
-    RESTART_LIST_CHOICE, DELETE_LIST_CHOICE;
+    RESTART_LIST_CHOICE;
   CONTINUE_LIST_CHOICE = '1';
   FIRST_MISSED_CHOICE = '2';
   RESTART_LIST_CHOICE = '3';
-  DELETE_LIST_CHOICE = '4';
 
   // XXX: Only translates into Spanish right now. This should move over to
   // a Django model translation library.
@@ -207,14 +206,6 @@ define([
       } else if (option === FIRST_MISSED_CHOICE) {
         $('#savedListWarning').text("");
         this.dimIfListUnfinished("#savedListsSubmit");
-      } else if (option === DELETE_LIST_CHOICE) {
-        $('#savedListsSubmit').text(django.gettext('Delete selected list')).
-          removeClass('btn-info').addClass('btn-danger');
-        $('#savedListWarning').text(
-          django.gettext("This will delete the selected list! Make sure you " +
-            "want to do this!"));
-        $('#savedListsFlashcardEntire').prop('disabled', true);
-        $('#savedListsFlashcardFM').prop('disabled', true);
       }
       this.dimIfListUnfinished("#savedListsFlashcardFM");
     },
@@ -284,22 +275,14 @@ define([
     savedListsSubmitClicked: function() {
       var option;
       option = $('#id_listOption').val();
-      if (option !== DELETE_LIST_CHOICE) {
-        $.post(this.commandUrl, {
-          action: 'savedListsSubmit',
-          lexicon: $('#id_lexicon').val(),
-          quizTime: $("#id_quizTime").val(),
-          listOption: $("#id_listOption").val(),
-          wordList: $("#id_wordList").val()
-        }, _.bind(this.wwRedirect, this), 'json');
-      } else {
-        $.post(this.commandUrl, {
-          action: 'savedListDelete',
-          lexicon: $('#id_lexicon').val(),
-          listOption: $("#id_listOption").val(),  /*todo redundancy, dry */
-          wordList: $("#id_wordList").val()
-        }, _.bind(this.savedListDelete, this), 'json');
-      }
+      $.post(this.commandUrl, {
+        action: 'savedListsSubmit',
+        lexicon: $('#id_lexicon').val(),
+        quizTime: $("#id_quizTime").val(),
+        listOption: $("#id_listOption").val(),
+        wordList: $("#id_wordList").val()
+      }, _.bind(this.wwRedirect, this), 'json');
+
     },
 
     searchParamsFlashcardClicked: function() {
@@ -338,15 +321,6 @@ define([
         listOption: $('#id_listOption').val(),
         wordList: $("#id_wordList").val()
       }, _.bind(this.wwRedirect, this), 'json');
-    },
-
-    savedListDelete: function(data) {
-      if (data.deleted) {
-        $("#id_wordList option[value=" + data.wordList + "]").remove();
-        this.requestSavedListInfo(); // populate new limit/text
-      } else {
-        this.showError(data.error);
-      }
     },
 
     dimIfListUnfinished: function(selector) {
@@ -455,7 +429,8 @@ define([
             'You have %s alphagrams over all your saved lists. ');
           currentAlphs = django.interpolate(currentAlphs, [data.na]);
           $('#numAlphasInfo').text(currentAlphs + addlText);
-        }, 'json');
+        },
+        'json');
     }
   });
   return TableCreateView;

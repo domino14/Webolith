@@ -7,7 +7,8 @@
 {% block content_title %}<H3>{% blocktrans with username=profile.user.username %}{{username}}'s profile{% endblocktrans %}</H3>
 
 {% if user == profile.user %}
-<a href="/accounts/profile">({% trans "Edit" %}</a>)
+(<a href="/accounts/profile">{% trans "Edit" %}</a> |
+ <a href="/accounts/preferences">{% trans "Preferences" %}</a>)
 {% endif %}
 
 {% endblock %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 21:24-0800\n"
+"POT-Creation-Date: 2016-03-24 23:41-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,21 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: base/forms.py:90
+#: base/forms.py:89
 msgid "Continue list"
 msgstr "Continuar lista"
 
-#: base/forms.py:91
+#: base/forms.py:90
 msgid "Quiz on first missed"
 msgstr "Primeras fallas"
 
-#: base/forms.py:92
+#: base/forms.py:91
 msgid "Restart list"
 msgstr "Reiniciar lista"
-
-#: base/forms.py:93
-msgid "Delete list"
-msgstr "Borrar lista"
 
 #: base/utils.py:26
 msgid "List contains non-word elements"
@@ -45,3 +41,6 @@ msgstr "La lista contiene más palabras que el límite por lista de {}"
 #: base/utils.py:37
 msgid "List contains invalid characters."
 msgstr "La lista tiene carácteres inválidos."
+
+#~ msgid "Delete list"
+#~ msgstr "Borrar lista"
