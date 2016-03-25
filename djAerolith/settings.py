@@ -42,25 +42,34 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.environ.get('SQL_DB_NAME'),
+    #     'USER': os.environ.get('SQL_USER'),
+    #     'PASSWORD': os.environ.get('SQL_PASSWORD'),
+    #     'HOST': os.environ.get('SQL_HOST'),
+    #     'PORT': '',
+    #     'TEST': {
+    #         'CHARSET': 'utf8',
+    #         'COLLATION': 'utf8_general_ci',
+    #     },
+    #     'OPTIONS': {
+    #         "init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
+    #     },
+    #     'ATOMIC_REQUESTS': True
+    # },
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('SQL_DB_NAME'),
-        'USER': os.environ.get('SQL_USER'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD'),
-        'HOST': os.environ.get('SQL_HOST'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('PGSQL_DB_NAME'),
+        'USER': os.environ.get('PGSQL_USER'),
+        'PASSWORD': os.environ.get('PGSQL_PASSWORD'),
+        'HOST': os.environ.get('PGSQL_HOST'),
         'PORT': '',
-        'TEST': {
-            'CHARSET': 'utf8',
-            'COLLATION': 'utf8_general_ci',
-        },
-        'OPTIONS': {
-            "init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
-        },
-        # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
         'ATOMIC_REQUESTS': True
     }
 }
 
+# XXX: modify this line.
 if '.sock' in os.environ.get('SQL_HOST'):
     DATABASES['default']['OPTIONS']['unix_socket'] = os.environ.get('SQL_HOST')
 
@@ -155,7 +164,6 @@ TEMPLATES = [
         }
     },
 ]
-
 
 LOCALE_PATHS = [
     os.path.join(PROJECT_ROOT, "locale"),
@@ -339,6 +347,7 @@ USE_UV = tobool(os.environ.get('USE_UV'))
 
 # LOGGING config
 
+NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
