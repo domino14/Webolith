@@ -85,12 +85,10 @@ class SavedListForm(forms.Form):
     CONTINUE_LIST_CHOICE = 1
     FIRST_MISSED_CHOICE = 2
     RESTART_LIST_CHOICE = 3
-    DELETE_LIST_CHOICE = 4
     listOptions = (
         (CONTINUE_LIST_CHOICE, _('Continue list')),
         (FIRST_MISSED_CHOICE, _('Quiz on first missed')),
-        (RESTART_LIST_CHOICE, _('Restart list')),
-        (DELETE_LIST_CHOICE, _('Delete list'))
+        (RESTART_LIST_CHOICE, _('Restart list'))
     )
 
     listOption = forms.TypedChoiceField(

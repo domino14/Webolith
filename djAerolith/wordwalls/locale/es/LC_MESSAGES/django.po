@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 20:45-0800\n"
+"POT-Creation-Date: 2016-03-24 23:41-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,8 +115,8 @@ msgstr "Desafío"
 
 #: wordwalls/templates/wordwalls/index.html:73
 #: wordwalls/templates/wordwalls/index.html:109
-#: wordwalls/templates/wordwalls/index.html:143
-#: wordwalls/templates/wordwalls/index.html:185
+#: wordwalls/templates/wordwalls/index.html:148
+#: wordwalls/templates/wordwalls/index.html:190
 msgid "Play!"
 msgstr "¡Jugar!"
 
@@ -133,7 +133,7 @@ msgid "Max Probability"
 msgstr "Probabilidad máxima"
 
 #: wordwalls/templates/wordwalls/index.html:113
-#: wordwalls/templates/wordwalls/index.html:189
+#: wordwalls/templates/wordwalls/index.html:194
 msgid "Flashcard"
 msgstr "Tarjetas de memoria"
 
@@ -141,28 +141,36 @@ msgstr "Tarjetas de memoria"
 msgid "Quiz Options"
 msgstr "Optiones para la prueba"
 
-#: wordwalls/templates/wordwalls/index.html:136
-#: wordwalls/templates/wordwalls/index.html:178
+#: wordwalls/templates/wordwalls/index.html:137
+msgid ""
+"To delete your saved lists, please do so in the <a href=\"/accounts/"
+"preferences/\">Preferences</a>"
+msgstr ""
+"Para borrar sus listas guardadas, vaya a las <a href=\"/accounts/"
+"preferences/\">Preferencias</a>"
+
+#: wordwalls/templates/wordwalls/index.html:141
+#: wordwalls/templates/wordwalls/index.html:183
 msgid "List choice"
 msgstr "Selección de lista"
 
-#: wordwalls/templates/wordwalls/index.html:146
+#: wordwalls/templates/wordwalls/index.html:151
 msgid "Flashcard entire list"
 msgstr "Tarjetas de memoria (lista entera)"
 
-#: wordwalls/templates/wordwalls/index.html:149
+#: wordwalls/templates/wordwalls/index.html:154
 msgid "Flashcard first missed"
 msgstr "Tarjetas de memoria (fallas primeras)"
 
-#: wordwalls/templates/wordwalls/index.html:156
+#: wordwalls/templates/wordwalls/index.html:161
 msgid "Or upload a new list"
 msgstr "O suba una lista nueva"
 
-#: wordwalls/templates/wordwalls/index.html:161
+#: wordwalls/templates/wordwalls/index.html:166
 msgid "Upload Word List"
 msgstr "Subir lista"
 
-#: wordwalls/templates/wordwalls/index.html:187
+#: wordwalls/templates/wordwalls/index.html:192
 msgid "or"
 msgstr "o"
 
@@ -173,6 +181,14 @@ msgstr "Muros de Palabras - mesa"
 #: wordwalls/templates/wordwalls/notPermitted.html:8
 msgid "Unable to join this table!"
 msgstr "No se pudo entrar a esta mesa."
+
+#: wordwalls/templates/wordwalls/notPermitted.html:11 wordwalls/views.py:376
+msgid ""
+"The Aerolith server is currently undergoing maintenance. Please try again in "
+"a few minutes."
+msgstr ""
+"El servidor de Aerolith está actualmente en mantenimiento. Por favor intente "
+"otra vez en algunos minutos."
 
 #: wordwalls/templates/wordwalls/table.html:92
 msgid "Start"
@@ -285,20 +301,20 @@ msgstr "Guardar preferencias"
 msgid "Challenge results"
 msgstr "Resultados del desafío"
 
-#: wordwalls/views.py:156
+#: wordwalls/views.py:157
 msgid "No challenge was selected."
 msgstr "No seleccionó un desafío."
 
-#: wordwalls/views.py:173
+#: wordwalls/views.py:174
 msgid "Challenge does not exist."
 msgstr "El desafío no existe."
 
-#: wordwalls/views.py:191
+#: wordwalls/views.py:192
 msgid ""
 "There was something wrong with your search parameters or time selection."
 msgstr "Hubo un error con sus parámetros de búsqueda o selección de tiempo."
 
-#: wordwalls/views.py:210
+#: wordwalls/views.py:211
 msgid ""
 "Please check that you have selected a word list and a time greater than 1 "
 "minute."
@@ -306,12 +322,12 @@ msgstr ""
 "Por favor asegúrese de que haya elegido una lista y un tiempo más de un "
 "minuto."
 
-#: wordwalls/views.py:234
+#: wordwalls/views.py:235
 msgid "You did not select a list to delete."
 msgstr "No seleccionó una lista para borrar."
 
 # XXX: Duplicate almost.
-#: wordwalls/views.py:247
+#: wordwalls/views.py:248
 msgid ""
 "Please check that you have selected a list and that your quiz time is "
 "greater than 1 minute."
@@ -319,42 +335,34 @@ msgstr ""
 "Por favor asegúrese de que haya elegido una lista y un tiempo más de un "
 "minuto."
 
-#: wordwalls/views.py:273
+#: wordwalls/views.py:274
 msgid ""
 "Your request was not successful. You may be using an incompatible browser, "
 "please upgrade it."
 msgstr ""
 "Hubo un error, por favor compruebe que esté usando un navegador corriente."
 
-#: wordwalls/views.py:307
+#: wordwalls/views.py:308
 msgid "Quiz is already over."
 msgstr "Ya se acabó la prueba."
 
-#: wordwalls/views.py:375
-msgid ""
-"The Aerolith server is currently undergoing maintenance. Please try again in "
-"a few minutes."
-msgstr ""
-"El servidor de Aerolith está actualmente en mantenimiento. Por favor intente "
-"otra vez en algunos minutos."
-
-#: wordwalls/views.py:385
+#: wordwalls/views.py:386
 msgid "This endpoint only accepts POST"
 msgstr "Joder"
 
-#: wordwalls/views.py:395
+#: wordwalls/views.py:396
 msgid "Bad lexicon."
 msgstr "Lexicón malo."
 
-#: wordwalls/views.py:399
+#: wordwalls/views.py:400
 msgid "Your file is too big."
 msgstr "Su archivo es demasiado grande."
 
-#: wordwalls/views.py:405
+#: wordwalls/views.py:406
 msgid "Please make sure your file is utf-8 encoded."
 msgstr "Por favor, asegúrese de que su archivo esté codificado con UTF-8."
 
-#: wordwalls/views.py:427
+#: wordwalls/views.py:428
 msgid ""
 "A list by the name {} already exists for this lexicon! Please rename your "
 "file."
@@ -362,57 +370,57 @@ msgstr ""
 "Una lista bajo el nombre {} ya existe para este lexicón. Por favor cambie el "
 "nombre del archivo."
 
-#: wordwalls/views.py:443
+#: wordwalls/views.py:444
 msgid "This list would exceed your total list size limit"
 msgstr "Esta lista excediría su límite de tamaño total de preguntas"
 
-#: wordwalls/views.py:529
+#: wordwalls/views.py:537
 msgid "just now"
 msgstr "ahorita"
 
-#: wordwalls/views.py:531
+#: wordwalls/views.py:539
 #, python-format
 msgid "%(seconds)s seconds ago"
 msgstr "hace %(seconds)s segundos"
 
-#: wordwalls/views.py:533
+#: wordwalls/views.py:541
 msgid "a minute ago"
 msgstr "hace un minuto"
 
-#: wordwalls/views.py:535
+#: wordwalls/views.py:543
 #, python-format
 msgid "%(minutes)s minutes ago"
 msgstr "hace %(minutes)s minutos"
 
-#: wordwalls/views.py:537
+#: wordwalls/views.py:545
 msgid "an hour ago"
 msgstr "hace una hora"
 
-#: wordwalls/views.py:539
+#: wordwalls/views.py:547
 #, python-format
 msgid "%(hours)s hours ago"
 msgstr "hace %(hours)s horas"
 
-#: wordwalls/views.py:541
+#: wordwalls/views.py:549
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: wordwalls/views.py:543
+#: wordwalls/views.py:551
 #, python-format
 msgid "%(day_diff)s days ago"
 msgstr "hace %(day_diff)s días"
 
-#: wordwalls/views.py:545
+#: wordwalls/views.py:553
 #, python-format
 msgid "%(week)s weeks ago"
 msgstr "hace %(week)s semanas"
 
-#: wordwalls/views.py:547
+#: wordwalls/views.py:555
 #, python-format
 msgid "%(month)s months ago"
 msgstr "hace %(month)s meses"
 
-#: wordwalls/views.py:548
+#: wordwalls/views.py:556
 #, python-format
 msgid "%(year)s years ago"
 msgstr "hace %(year)s años"

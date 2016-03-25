@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-31 21:24-0800\n"
+"POT-Creation-Date: 2016-03-24 23:41-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,6 +67,12 @@ msgstr "Guardar Perfil"
 msgid "Password change form"
 msgstr "Formulario de cambio de contraseña"
 
+#: accounts/templates/accounts/preferences.html:4
+#: accounts/templates/accounts/preferences.html:7
+#: accounts/templates/accounts/profile.html:11
+msgid "Preferences"
+msgstr "Preferencias"
+
 #: accounts/templates/accounts/profile.html:4
 #: accounts/templates/accounts/profile.html:7
 #, python-format
@@ -77,10 +83,10 @@ msgstr "El perfil de %(username)s"
 msgid "Edit"
 msgstr "Editar"
 
-#: accounts/templates/accounts/profile.html:20
+#: accounts/templates/accounts/profile.html:21
 msgid "Profile"
 msgstr "Perfil"
 
-#: accounts/templates/accounts/profile.html:27
+#: accounts/templates/accounts/profile.html:28
 msgid "Award Case"
 msgstr "Cajón de Premios"

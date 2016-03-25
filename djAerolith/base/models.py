@@ -188,7 +188,7 @@ class SavedList(models.Model):
             'goneThruOnce': self.goneThruOnce,
             'questionIndex': self.questionIndex,
             'version': self.version,
-            'lastSaved': self.lastSaved.strftime('%Y-%m-%d'),
+            'lastSaved': self.lastSaved.strftime('%Y-%m-%d %H:%M'),
             'id': self.pk,
             'temporary': self.is_temporary
         }
