@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from base.models import Lexicon
+from base.models import Lexicon, Maintenance
 from django.contrib import admin
 
 admin.site.register(Lexicon)
+admin.site.register(Maintenance)

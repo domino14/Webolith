@@ -33,7 +33,6 @@ def tobool(val):
 
 
 DEBUG = tobool(os.environ.get('DEBUG'))
-TEMPLATE_DEBUG = DEBUG
 DEBUG_JS = tobool(os.environ.get('DEBUG_JS'))
 
 ADMINS = (
@@ -113,13 +112,6 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -141,13 +133,26 @@ ROOT_URLCONF = 'urls'
 
 PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, "templates"),
-#    os.path.join(PROJECT_ROOT, "blog/templates"),   # overriding some default templates for the blog app
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'processors.maintenance.maintenance'
+            ]
+        }
+    },
+]
+
 
 LOCALE_PATHS = [
     os.path.join(PROJECT_ROOT, "locale"),

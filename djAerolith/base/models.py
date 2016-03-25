@@ -50,6 +50,11 @@ def alphagrammize(word):
     return string.join(l, '')
 
 
+class Maintenance(models.Model):
+    info = models.CharField(max_length=1024)
+    show = models.BooleanField(default=False)
+
+
 class Lexicon(models.Model):
     lexiconName = models.CharField(max_length=12)
     # user-friendly description
