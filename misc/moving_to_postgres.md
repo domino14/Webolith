@@ -17,7 +17,10 @@ about 40 minutes on my machine
 ----------
 
 To do now:
-=- Make migrations on Postgres db and save migration files
+
+- Delete all migration files 
+- Clear migrations table of all app migrations (keep django-related migrations)
+- Make migrations on Postgres db and save migration files
 
 After creating all dump files:
 

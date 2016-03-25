@@ -66,7 +66,7 @@ class Lexicon(models.Model):
         return self.lexiconName
 
 
-class SavedList(models.Model):
+class WordList(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
@@ -206,15 +206,4 @@ class SavedList(models.Model):
             self.lastSaved)
 
     class Meta:
-        # XXX: This will be removed once we move over to Postgres or
-        # something. We should rename this database table properly
-        # (or even do it prior to that).
-        db_table = 'wordwalls_savedlist'
         unique_together = ('lexicon', 'name', 'user')
-
-
-class WordList(SavedList):
-    # XXX: we are using this instead of the badly-named "SavedList"
-    # in all of our code. These names should be interchangeable.
-    class Meta:
-        proxy = True
