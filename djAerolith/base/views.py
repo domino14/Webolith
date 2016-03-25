@@ -117,12 +117,16 @@ def saved_lists_delete(request):
     list_ids = json.loads(request.body)
     sls = []
     for l in list_ids:
-        sls.append(WordList.objects.get(user=request.user), id=l)
+        try:
+            sls.append(WordList.objects.get(user=request.user, id=l))
+        except WordList.DoesNotExist:
+            return response('List id %s was not found.' % l, status=404)
     profile = request.user.aerolithprofile
     for l in sls:
         profile.wordwallsSaveListSize -= l.numAlphagrams
         l.delete()
     profile.save()
+    return response('OK')
 
 
 @login_required

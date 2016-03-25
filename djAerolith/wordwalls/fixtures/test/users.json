@@ -10,7 +10,7 @@
     "last_login": "2015-09-11T18:48:28",
     "groups": [],
     "user_permissions": [],
-    "password": "bar",
+    "password": "pbkdf2_sha256$20000$heCi8Ugbu7E3$qFjsLXFI5fxySq0cxZU3C0uGd7RpXQJJ9yiyb5UssRM=",
     "email": "delsolar@gmail.com",
     "date_joined": "2011-06-02T22:46:57"
   },
