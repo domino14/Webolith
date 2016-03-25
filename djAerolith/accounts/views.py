@@ -81,3 +81,8 @@ def viewProfile(request, username):
     return render(request, 'accounts/profile.html',
                   {'profile': profile,
                    'wwMedals': wwMedals})
+
+
+@login_required
+def preferences(request):
+    return render(request, 'accounts/preferences.html')
