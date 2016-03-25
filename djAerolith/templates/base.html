@@ -5,7 +5,6 @@
 {% value_from_settings USE_FB as USE_FB %}
 {% value_from_settings USE_UV as USE_UV %}
 {% value_from_settings DEBUG_JS as DEBUG_JS %}
-
 <!DOCTYPE html>
 <html lang="en">
 {% get_current_language as LANGUAGE_CODE %}
@@ -93,7 +92,6 @@
       <p>Welcome to the test Aerolith site! A lot of things may not quite work here at various times, and this site may change or break at any time.Experimental features abound!</p>
       <p>Please let me know any feedback through our <a href="https://www.facebook.com/aerolith.org/" target="_blank">Facebook page</a>. Thank you so much!</p>
     </div>
-
     <script>
 
     if (location.hostname === 'dev.aerolith.org') {
@@ -108,6 +106,14 @@
     {% endblock %}
     </div>
     <div class="container">
+    {% if show_maintenance %}
+    <div class="alert alert-info" id="maintenance-schedule">
+      <p>There is a maintenance period scheduled for {{info.maintenance_date}}. It
+      will last approximately {{info.maintenance_duration}}.</p>
+      <p>{{info.additional_maintenance_info}}</p>
+      <p>During this time, the site will be offline. Please plan accordingly!</p>
+    </div>
+    {% endif %}
       {% block content %}
         <div class="row">
         {% if user.username == "" %}
