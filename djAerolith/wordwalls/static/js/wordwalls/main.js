@@ -1,6 +1,7 @@
-/* global requirejs,define*/
+/* global requirejs,define, JSON*/
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
+  waitSeconds: 20,
   paths: {
     jquery: '../../../../static/js/aerolith/jquery-1.11.0',
     jquery_ui: '../../../../static/js/aerolith/jquery-ui-1.10.2.custom.min',
@@ -36,27 +37,52 @@ define([
   'views/ConfigureView',
   'views/AppView',
   'backbone',
+  'socket',
+  'chat',
   'csrfAjax'
-], function (module, $, _, Configure, ConfigureView, AppView, Backbone) {
+], function (module, $, _, Configure, ConfigureView, AppView, Backbone,
+  Socket, Chat) {
   "use strict";
   $(function() {
-    var Dispatcher, configuration, configurationView, appView, addlParams, rx;
-    /* Load bootstrapped params from backend. */
-    addlParams = module.config().addlParams;
-    addlParams = $.parseJSON(module.config().addlParams);
+    var Dispatcher, configuration, configurationView, appView, saveName, rx,
+      conn, chat, style;
+    if (!window["WebSocket"]) {
+      window.alert([
+        'Your browser does not support WebSockets. Please upgrade to ',
+        'a new browser. If you are using Internet Explorer, you must ',
+        'upgrade to version 10 or higher.'].join(''));
+      return;
+    }
+    conn = new Socket(module.config().tablenum);
+    conn.setUrl(module.config().socketConnUrl);
+    conn.setToken(module.config().socketConnToken);
+    conn.connect();
+
+    chat = new Chat({
+      socket: conn,
+      el: $('#bottomBar')
+    });
+
+    saveName = module.config().savename;
+
+    style = module.config().style;
     configuration = new Configure();
     configurationView = new ConfigureView({
       model: configuration,
       el: $("#customize_popup")
     });
     appView = new AppView({
-      lexicon: module.config().lexicon
+      lexicon: module.config().lexicon,
+      socket: conn
     });
     appView.setTablenum(module.config().tablenum);
     Dispatcher = _.clone(Backbone.Events);
     // Scope of 'this' is going to drive me nuts.
     Dispatcher.listenTo(configuration, 'change', _.bind(
       appView.configChange, appView));
+    Dispatcher.listenTo(conn, 'message', _.bind(
+      appView.messageHandler, appView));
+    Dispatcher.listenTo(conn, 'message', _.bind(chat.messageHandler, chat));
     /* Add the configuration to appView. */
     appView.configChange(configuration);
     /*
@@ -65,10 +91,10 @@ define([
      */
     window.onbeforeunload = _.bind(appView.beforeUnloadEventHandler, appView);
 
+    configuration.setConfig(style);
     /* Load addlParams into app. */
-    configuration.setConfig(addlParams.style);
-    if (_.has(addlParams, 'saveName')) {
-      appView.setSaveName(addlParams.saveName);
+    if (saveName) {
+      appView.setSaveName(saveName);
     }
     if (window.mixpanel) {
       window.mixpanel.track('Entered table');

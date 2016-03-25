@@ -1,18 +1,23 @@
-/* global define*/
+/* global define, JSON*/
 define([
-  'sockjs',
   'underscore',
-  'json2',
-  'jquery'
-], function(SockJS, _, JSON, $) {
+  'jquery',
+  'backbone'
+], function(_, $, Backbone) {
   "use strict";
-  var Socket;
-  Socket = function() {
+  var Socket, DEFAULT_CONNECT_INTERVAL;
+  /**
+   * milliseconds
+   * @type number
+   */
+  DEFAULT_CONNECT_INTERVAL = 100;
+  Socket = function(realm) {
     if (Socket.prototype.singletonInstance_) {
       return Socket.prototype.singletonInstance_;
     }
     Socket.prototype.singletonInstance_ = this;
     this.conn_ = null;
+    this.realm_ = realm;
     this.url_ = null;
     this.tokenPath = '/socket_token/';
     this.connected_ = false;
@@ -33,60 +38,76 @@ define([
   };
   Socket.prototype.connect = function() {
     /*
-     * Always create a new sock on connect. SockJS should clean up the
-     * old one if we disconnected.
+     * Always create a new sock on connect. Our server should clean up
+     * the old one if we disconnected.
      */
-    if (this.connected_ || this.backoffCounter_ > this.maxConnRetries_) {
+    console.log('Called connect', this.connected_);
+    if (this.connected_) {
       return;
     }
-    this.conn_ = new SockJS(this.url_);
+    // We can't pass the token through custom headers so just append it
+    // to the query string.
+    this.conn_ = new WebSocket(this.url_ + '&_token=' +
+      this.socketConnectionToken_);
     this.conn_.onopen = _.bind(this.handleConnect_, this);
     this.conn_.onmessage = _.bind(this.handleMessage_, this);
     this.conn_.onclose = _.bind(this.handleDisconnect_, this);
     this.conn_.onerror = _.bind(this.handleError_, this);
   };
   Socket.prototype.handleMessage_ = function(e) {
+    // Don't reset backoff until we get a message. This is because we
+    // can connect and disconnect right away if the signature is wrong.
+    this.resetBackoff_();
     /*
      * Check if this is a special type of error - tokenError. If so we
      * will need a token refresh from the server.
      */
     var msgObj = JSON.parse(e.data);
-    if (msgObj.type === 'tokenError') {
-      $.get(this.tokenPath, _.bind(function(data) {
-        this.socketConnectionToken_ = data;
-        this.sendConnectionToken_();
-      }, this), 'json');
-    } else {
-      this.messageHandler_(msgObj);
-    }
+    console.log('in socket message', msgObj);
+    this.trigger('message', msgObj);
   };
   Socket.prototype.handleConnect_ = function() {
     this.connected_ = true;
-    this.resetBackoff_();
-    this.sendConnectionToken_();
-  };
-  Socket.prototype.sendConnectionToken_ = function() {
-    var msg = JSON.stringify({'token': this.socketConnectionToken_});
-    this.send(msg);
   };
   Socket.prototype.resetBackoff_ = function() {
     this.backoffCounter_ = 0;
-    this.currentConnectInterval_ = 100;
+    this.currentConnectInterval_ = DEFAULT_CONNECT_INTERVAL;
   };
   Socket.prototype.handleError_ = function() {
     console.log('error')
     console.log(arguments);
   };
-  Socket.prototype.handleDisconnect_ = function() {
+  Socket.prototype.handleDisconnect_ = function(e) {
+    console.log('In disconnect', e);
     this.connected_ = false;
-    _.delay(_.bind(this.connect, this), this.currentConnectInterval_);
+    if (e.code === 1008) {
+      // Sent by backend if the signature is invalid.
+      $.get(this.tokenPath, {
+        realm: this.realm_
+      },_.bind(function(data) {
+        console.log('Getting new token', data, 'connecting again soon.');
+        this.socketConnectionToken_ = data.token;
+        this.url_ = data.url;
+        _.delay(_.bind(this.connect, this), DEFAULT_CONNECT_INTERVAL);
+      }, this), 'json').fail(function() {
+        console.log("failed to get token");
+      });
+    } else {
+      _.delay(_.bind(this.connect, this), this.currentConnectInterval_);
+    }
     this.currentConnectInterval_ *= 2;
     this.backoffCounter_ += 1;
   };
+  /**
+   * Send an object through the web socket. This function will send
+   * the JSON representation of it.
+   * @param  {Object} m
+   */
   Socket.prototype.send = function(m) {
     if (this.connected_) {
-      this.conn_.send(m);
+      this.conn_.send(JSON.stringify(m));
     }
   };
+  _.extend(Socket.prototype, Backbone.Events);
   return Socket;
 });

@@ -301,7 +301,7 @@ REDIS_SOCKET_TOKEN_DB = 2
 
 
 ALLOWED_HOSTS = ['.aerolith.org', '*']
-SOCKJS_SERVER = os.environ.get('SOCKJS_SERVER')   # not used.
+SOCKET_SERVER = os.environ.get('SOCKET_SERVER')
 
 RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
 

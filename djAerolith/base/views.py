@@ -91,6 +91,18 @@ def saved_list_sync(request):
     return response(sl.to_python())
 
 
+# XXX: Add an auth key here for "superuser". request.user will be Anonymous.
+@csrf_exempt
+def saved_list_keyauth(request, id):
+    try:
+        sl = WordList.objects.get(id=id)
+    except WordList.DoesNotExist:
+        return response('This list does not exist on the server!', status=404)
+    if request.method == 'DELETE':
+        return response('Forbidden method.', status=403)
+    return saved_list_bare(None, sl, request)
+
+
 @login_required
 def saved_lists(request):
     if request.method == 'GET':
@@ -135,8 +147,12 @@ def saved_list(request, id):
         sl = WordList.objects.get(user=request.user, id=id)
     except WordList.DoesNotExist:
         return response('This list does not exist on the server!', status=404)
+    return saved_list_bare(request.user, sl, request)
+
+
+def saved_list_bare(user, sl, request):
     if request.method == 'DELETE':
-        profile = request.user.aerolithprofile
+        profile = user.aerolithprofile
         saved_alphas = profile.wordwallsSaveListSize
         profile.wordwallsSaveListSize = saved_alphas - sl.numAlphagrams
         sl.delete()
@@ -172,7 +188,6 @@ def saved_list(request, id):
             l_obj['missed'] = []
             l_obj['numMissed'] = 0
             l_obj['goneThruOnce'] = False
-        logger.debug('Returning response %s' % l_obj)
         return response(l_obj)
     elif request.method == 'PUT':
         # Edit a saved list.
@@ -242,9 +257,18 @@ def list_questions_view(request):
     """
     if request.method != 'POST':
         return response('Must use POST', StatusCode.BAD_REQUEST)
-    body = json.loads(request.body)
-    lexicon_name = body['lexicon']
-    questions = body['questions']
+    try:
+        body = json.loads(request.body)
+    except (TypeError, ValueError):
+        return response('Bad JSON.', StatusCode.BAD_REQUEST)
+    if type(body) is not dict:
+        return response('Your JSON must represent an object.',
+                        StatusCode.BAD_REQUEST)
+    lexicon_name = body.get('lexicon')
+    questions = body.get('questions')
+    if not lexicon_name or not questions:
+        return response('You must specify a valid lexicon name and questions.',
+                        StatusCode.BAD_REQUEST)
     try:
         lex = Lexicon.objects.get(lexiconName=lexicon_name)
     except Lexicon.DoesNotExist:

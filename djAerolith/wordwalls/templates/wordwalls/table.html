@@ -64,9 +64,14 @@ mixpanel.name_tag = function() {};
 var require = {
   config: {
     'main': {
-      addlParams: "{{addParams|escapejs}}",
+      savename: "{{savename}}",
       tablenum: {{tablenum}},
-      lexicon: "{{lexicon.lexiconName}}"
+      style: "{{style|escapejs}}",
+      lexicon: "{{lexicon.lexiconName}}",
+      username: "{{username}}",
+      socketConnUrl: "{{socket_connection_url|safe}}",
+      socketConnToken: "{{socket_connection_token}}",
+
     }
   }
 }
@@ -121,6 +126,7 @@ require(['main']);
 
 
 <div id="bottomBar">
+<form>
 <label for="guessText">{% trans "Guess" %}: </label><input type="text" name="Guess" size="15" id="guessText"/>
 <span id="horSep2"></span>
 <span id="shuffle" class="utilityButton">{% trans "Shuffle" %} (1)</span>
@@ -129,6 +135,8 @@ require(['main']);
 {% if user.is_superuser %}
 <span id="testWordwalls" class="utilityButton">Test (4)</span>
 {% endif %}
+<input type="text" size="115" class="chat-bar"/>
+</form>
 </div>
 
 <div id="textBar">

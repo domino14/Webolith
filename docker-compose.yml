@@ -36,5 +36,6 @@ app:
     - db
   external_links:
     - macondo_macondo_1:macondo
+    - gosports_socket_1:socket
   command: python manage.py runserver 0.0.0.0:8000
 

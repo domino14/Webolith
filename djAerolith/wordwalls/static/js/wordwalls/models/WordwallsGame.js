@@ -30,43 +30,49 @@ define([
       this.numAnswersGottenThisRound = 0;
       this.numAlphagramsLeft = 0;
     },
+    /**
+     * Process a list of questions.
+     * @param  {Array.<Object>} questions A list of questions in  {'q': ...,
+     *  'a': [...]} format.
+     *
+     */
     processQuestionObj: function(questions) {
       this.wrongWordsHash = {};
       this.wrongAlphasHash = {};
       this.numTotalAnswersThisRound = 0;
       this.numAnswersGottenThisRound = 0;
       this.cleanupPrevious();
-      _.each(questions, function(question) {
+      _.each(questions, function(question, idx) {
         var wordCollection, questionModel;
         questionModel = new Alphagram();
         wordCollection = new Words();
         questionModel.set({
-          alphagram: question.a,
-          prob: question.p,
-          numWords: question.ws.length,
-          wordsRemaining: question.ws.length,
+          alphagram: question.question,
+          prob: question.probability,
+          numWords: question.answers.length,
+          wordsRemaining: question.answers.length,
           words: wordCollection,
-          idx: question.idx
+          idx: idx
         });
-        _.each(question.ws, function(word) {
+        _.each(question.answers, function(answer) {
           /* Add each word to the word collection. */
           var wordModel = new Word({
-            word: word.w,
-            frontHooks: word.fh,
-            backHooks: word.bh,
-            lexiconSymbol: word.s,
-            definition: word.d,
+            word: answer.word,
+            frontHooks: answer.f_hooks,
+            backHooks: answer.b_hooks,
+            lexiconSymbol: answer.symbols,
+            definition: answer.def,
             alphagram: questionModel,
-            prob: question.p,
-            innerFrontHook: word.ifh,
-            innerBackHook: word.ibh
+            prob: question.probability,
+            innerFrontHook: answer.f_inner,
+            innerBackHook: answer.b_inner
           });
           wordCollection.add(wordModel);
-          this.wrongWordsHash[word.w] = wordModel;
+          this.wrongWordsHash[answer.word] = wordModel;
           this.numTotalAnswersThisRound++;
         }, this);
         this.questionCollection.add(questionModel);
-        this.wrongAlphasHash[question.a] = questionModel;
+        this.wrongAlphasHash[question.question] = questionModel;
       }, this);
       this.numAlphagramsLeft = this.questionCollection.length;
       this.trigger('gotQuestionData', this.questionCollection);
@@ -92,11 +98,7 @@ define([
       this.currentTimer = this.timeForQuiz - (
         timeNow - this.timeStarted) / 1000.0;
       this.trigger('tick', this.currentTimer);
-      if (this.currentTimer <= 0) {
-        this.trigger('timerExpired');
-      } else {
-        _.delay(_.bind(this.updateTimer, this), 1000);
-      }
+      _.delay(_.bind(this.updateTimer, this), 1000);
     },
     correctGuess: function(word) {
       delete this.wrongWordsHash[word];

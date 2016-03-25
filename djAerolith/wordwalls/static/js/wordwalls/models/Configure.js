@@ -1,4 +1,4 @@
-/* global define, django*/
+/* global define, django, JSON*/
 define([
   'backbone',
   'jquery',
@@ -68,12 +68,17 @@ define([
         }[secondLevelKey];
       }
     },
+    /**
+     * Sets the config of this model. Params is a string that comes
+     * from the server.
+     * @param {string} params
+     */
     setConfig: function(params) {
       var styleObj, setObj;
       if (_.isUndefined(params) || _.isNull(params)) {
         params = {};
       } else {
-        styleObj = $.parseJSON(params);
+        styleObj = JSON.parse(params);
       }
       setObj = {};
       if (styleObj) {

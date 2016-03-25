@@ -1,4 +1,4 @@
-/* global define, django*/
+/* global define, django, JSON */
 define([
   'backbone',
   'jquery',
@@ -6,12 +6,13 @@ define([
   'models/WordwallsGame',
   'views/AlphagramView',
   'views/WordSolutionView',
+  'views/countdown',
   'text!templates/solutionsTable.html',
   'mustache',
   'ChallengeView',
   'wordwalls_tests',
   'utils'
-], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
+], function(Backbone, $, _, Game, AlphagramView, WordSolutionView, Countdown,
      SolutionsTable, Mustache, ChallengeView, Tester, utils) {
   "use strict";
   var App;
@@ -42,11 +43,10 @@ define([
     initialize: function(options) {
       this.guessInput = this.$("#guessText");
       this.lexicon = options.lexicon;
+      this.socket = options.socket;
       this.setupPopupEvent();
       this.wordwallsGame = new Game();
       this.listenTo(this.wordwallsGame, 'tick', this.updateTimeDisplay);
-      this.listenTo(this.wordwallsGame, 'timerExpired',
-        this.processTimerExpired);
       this.listenTo(this.wordwallsGame, 'gotQuestionData',
         this.gotQuestionData);
       this.listenTo(this.wordwallsGame, 'updateQStats', this.renderQStats);
@@ -61,6 +61,9 @@ define([
         ));
       });
       this.viewConfig = null;
+      this.countdown = new Countdown({
+        el: this.$('#questions')
+      });
       this.numColumns = 4;
       this.maxScreenQuestions = 50;   // How many questions fit on the screen?
       this.$questionsList = this.$("#questions > .questionList");
@@ -79,7 +82,7 @@ define([
       this.listenTo(Tester, 'msg', _.bind(function(msg) {
         this.updateMessages(msg);
       }, this));
-      this.listenTo(Tester, 'endGame', _.bind(this.processTimerExpired, this));
+      //this.listenTo(Tester, 'endGame', _.bind(this.processTimerExpired, this));
     },
     setTablenum: function(tablenum) {
       this.tablenum = tablenum;
@@ -142,8 +145,10 @@ define([
 
     requestStart: function() {
       this.guessInput.focus();
-      $.post(this.tableUrl, {action: "start"},
-        _.bind(this.processStartData, this), 'json');
+      this.socket.send({
+        'type': 'tableCmd',
+        'data': 'start'
+      });
     },
 
     giveUp: function() {
@@ -234,29 +239,6 @@ define([
       _.each(this.questionViewsByAlphagram, function(view) {
         view.customOrder();
       });
-    },
-
-    processStartData: function (data) {
-      /* Probably should track gameGoing with a signal from wordwallsGame? */
-      if (!this.wordwallsGame.get('gameGoing')) {
-        if (_.has(data, 'serverMsg')) {
-          this.updateMessages(data.serverMsg);
-        }
-        if (_.has(data, 'error')) {
-          this.updateMessages(data.error);
-        }
-        if (_.has(data, 'questions')) {
-          this.wordwallsGame.processQuestionObj(data.questions);
-          Tester.setQuestionData(data.questions);
-        }
-        if (_.has(data, 'time')) {
-          this.wordwallsGame.set('gameGoing', true);
-          this.wordwallsGame.startTimer(data.time);
-        }
-        if (_.has(data, 'gameType')) {
-          this.wordwallsGame.set('challenge', data.gameType === 'challenge');
-        }
-      }
     },
 
     processGiveUp: function(data) {
@@ -405,13 +387,17 @@ define([
     submitGuess: function(guessText) {
       var ucGuess;
       ucGuess = this.modifyGuess($.trim(guessText.toUpperCase()));
-      $.post(this.tableUrl, {
-        action: "guess",
-        guess: ucGuess
-      }, _.bind(this.processGuessResponse, this, ucGuess),
-      'json').fail(_.bind(function(jqXHR) {
-        this.updateMessages(jqXHR.responseJSON);
-      }, this));
+      // $.post(this.tableUrl, {
+      //   action: "guess",
+      //   guess: ucGuess
+      // }, _.bind(this.processGuessResponse, this, ucGuess),
+      // 'json').fail(_.bind(function(jqXHR) {
+      //   this.updateMessages(jqXHR.responseJSON);
+      // }, this));
+      this.socket.send({
+        'type': 'guess',
+        'data': ucGuess
+      });
     },
 
     /**
@@ -428,39 +414,33 @@ define([
     },
 
     /**
-     * Processes a back-end response to a guess.
-     * @param {string} ucGuess The upper-cased guess.
-     * @param {Object} data The data object returned by the back-end server
-     *                      in response to a guess.
+     * Process a score response. Looks like
+     * {"answer":"SCORNS","alphagram":"CNORSS","user":"cesar",
+     * "idx":48,"score":1}
+     * @param  {Object} data
      */
-    processGuessResponse: function(ucGuess, data) {
-      var view, wordsRemaining, word, modifiedForDisplay;
-      modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
-      if (_.has(data, 'C')) {
-        if (data.C !== '') {
-          /* data.C contains the alphagram. */
-          view = this.questionViewsByAlphagram[data.C];
-          wordsRemaining = view.model.get('wordsRemaining') - 1;
-          /* Trigger an update of the view here. */
-          view.model.set({
-            wordsRemaining: wordsRemaining
-          });
-          this.wordwallsGame.correctGuess(ucGuess);
-          if (wordsRemaining === 0) {
-            this.wordwallsGame.finishedAlphagram(data.C);
-            this.moveUpNextQuestion(view);
-          }
-          word = view.model.get('words').find(function(word) {
-            return word.get('word').toUpperCase() === ucGuess;
-          });
-          this.updateCorrectAnswer(modifiedForDisplay +
-            word.get('lexiconSymbol'));
-        }
-        this.updateGuesses(modifiedForDisplay);
+    processScoreResponse: function(data) {
+      var view, wordsRemaining, word, modifiedForDisplay, correctAnswer;
+      correctAnswer = data.answer;
+      modifiedForDisplay = utils.modifyWordForDisplay(correctAnswer,
+        this.lexicon);
+      view = this.questionViewsByAlphagram[data.alphagram];
+      wordsRemaining = view.model.get('wordsRemaining') - 1;
+      /* Trigger an update of the view here. */
+      view.model.set({
+        wordsRemaining: wordsRemaining
+      });
+      this.wordwallsGame.correctGuess(correctAnswer);
+      if (wordsRemaining === 0) {
+        this.wordwallsGame.finishedAlphagram(data.alphagram);
+        this.moveUpNextQuestion(view);
       }
-      if (_.has(data, 'g') && !data.g) {
-        this.processQuizEnded();
-      }
+      word = view.model.get('words').find(function(word) {
+        return word.get('word').toUpperCase() === correctAnswer;
+      });
+      this.updateCorrectAnswer(modifiedForDisplay + word.get('lexiconSymbol'));
+      this.updateGuesses(modifiedForDisplay);
+      // XXX: process quiz ended somewhere else.
     },
     /**
      * Mark an alphagram as missed, at the end of a round.
@@ -508,15 +488,15 @@ define([
         lastView.render();
       }, 5000);
     },
-    processTimerExpired: function() {
-      /* Tell the server the timer expired. */
-      $.post(this.tableUrl, {action: 'gameEnded'}, _.bind(function(data) {
-        if (_.has(data, 'g') && !data.g) {
-          this.processQuizEnded();
-        }
-      }, this),
-      'json');
-    },
+    // processTimerExpired: function() {
+    //   /* Tell the server the timer expired. */
+    //   $.post(this.tableUrl, {action: 'gameEnded'}, _.bind(function(data) {
+    //     if (_.has(data, 'g') && !data.g) {
+    //       this.processQuizEnded();
+    //     }
+    //   }, this),
+    //   'json');
+    // },
     processQuizEnded: function() {
       this.wordwallsGame.endGame();
       this.$questionsList.html("");
@@ -536,6 +516,47 @@ define([
         },
         type: "POST"
       });
+    },
+    /**
+     * Handle a message coming from the socket.
+     * @param  {Object} msg [description]
+     */
+    messageHandler: function(msg) {
+      this.updateMessages(JSON.stringify(msg));
+      switch (msg.type) {
+        case 'questions':
+          this.handleQuestions(JSON.parse(msg.data));
+          break;
+
+        case 'guess':
+          // Don't do this yet. Just handle scores.
+          //this.processGuessResponse(msg.data, msg.from);
+          break;
+
+        case 'score':
+          this.processScoreResponse(JSON.parse(msg.data));
+          break;
+
+        case 'countdown':
+          this.countdown.start(parseFloat(msg.data));
+          break;
+
+        case 'gameover':
+          this.processQuizEnded();
+          break;
+
+        case 'timer':
+          this.wordwallsGame.set('gameGoing', true);
+          this.wordwallsGame.startTimer(parseFloat(msg.data));
+          break;
+      }
+    },
+    /**
+     * Handle questions. Display and set these appropriately.
+     * @param  {Array.<Object>} questions
+     */
+    handleQuestions: function(questions) {
+      this.wordwallsGame.processQuestionObj(questions);
     }
 
   });

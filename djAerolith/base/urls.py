@@ -9,5 +9,6 @@ urlpatterns = patterns(
     url(r'^api/question_map/$', 'base.views.question_map'),
     url(r'^api/word_db/full_questions/$', 'base.views.list_questions_view'),
     url(r'^api/word_db/questions_prob_range/$',
-        'base.views.questions_for_prob_range')
+        'base.views.questions_for_prob_range'),
+    url(r'^api/wordlist/(?P<id>\d+)$', 'base.views.saved_list_keyauth')
 )
