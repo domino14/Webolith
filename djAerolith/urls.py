@@ -23,7 +23,7 @@ from django.contrib import admin
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import views as auth_views
-
+from django.views.generic import TemplateView
 import gargoyle
 
 gargoyle.autodiscover()
@@ -70,6 +70,14 @@ urlpatterns = patterns('',
         '(?P<token>.+)/$',
         auth_views.password_reset_confirm,
         name='password_reset_confirm'),
+
+    url(r'^accounts/username/change/$',
+        'accounts.views.username_change',
+        name='accounts_edit_username'),
+
+    url(r'^accounts/username/change/done/$',
+        TemplateView.as_view(template_name='accounts/edit_username_done.html')
+        ),
 
     (r'^accounts/', include('registration.backends.simple.urls')),
     (r'^supporter/', 'views.supporter'),
