@@ -33,6 +33,10 @@
   </div>
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
+
+<a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a><br>
+<a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
+
 <p style="font-size: 100%;"><a href="/accounts/password/reset">{% trans "Forget your password?" %}</a></p>
 {% endblock %}
 

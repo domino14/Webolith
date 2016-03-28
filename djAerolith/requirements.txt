@@ -1,4 +1,4 @@
-django==1.8.9
+django==1.8.11
 six >= 1.7
 Fabric
 Markdown
@@ -7,8 +7,8 @@ django-registration-redux
 gargoyle
 markup
 gunicorn
-requests
 pycrypto
+requests==2.9.1
 python-dateutil
 recaptcha-client
 wsgiref
@@ -19,3 +19,5 @@ boto
 mock
 jsonschema
 python-social-auth
+requests-oauthlib
+python-openid

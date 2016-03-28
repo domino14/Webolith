@@ -19,6 +19,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import *
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.contrib.auth.forms import AuthenticationForm
 #from registration.forms import RegistrationFormUniqueEmail
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.backends.simple.views import RegistrationView
@@ -78,14 +79,14 @@ urlpatterns = patterns('',
     url(r'^accounts/username/change/done/$',
         TemplateView.as_view(template_name='accounts/edit_username_done.html')
         ),
-
+    url('', include('social.apps.django_app.urls', namespace='social')),
     (r'^accounts/', include('registration.backends.simple.urls')),
     (r'^supporter/', 'views.supporter'),
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^cards/', include('flashcards.urls')),
     (r'^socket_token/', 'views.socket_token'),
-    (r'^base/', include('base.urls'))
+    (r'^base/', include('base.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true

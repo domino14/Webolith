@@ -147,7 +147,9 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-                'processors.maintenance.maintenance'
+                'processors.maintenance.maintenance',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ]
         }
     },
@@ -180,12 +182,50 @@ INSTALLED_APPS = (
     'gunicorn',
     'whitleyCards',
     'gargoyle',
-    'registration'
+    'registration',
+    'social.apps.django_app.default',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.open_id.OpenIdAuth',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.social_auth.associate_by_email',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+)
+
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY', '')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('SOCIAL_AUTH_FACEBOOK_SECRET', '')
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email'
+}
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
+SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE = 'openid email'
+
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
 
