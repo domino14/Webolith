@@ -20,6 +20,6 @@ from django.conf.urls import *
 
 urlpatterns = patterns('',
     url(r'^$', 'accounts.views.editProfile', name='accounts_edit_profile'),
-    url(r'^(?P<username>\w+)/$', 'accounts.views.viewProfile', name='accounts_view_profile'),
+    url(r'^(?P<username>.+)/$', 'accounts.views.viewProfile', name='accounts_view_profile'),
 
     )

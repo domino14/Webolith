@@ -22,7 +22,6 @@ from django.utils.translation import LANGUAGE_SESSION_KEY
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.template import RequestContext
 
 from accounts.models import AerolithProfile
 from accounts.forms import ProfileEditForm, UsernameEditForm

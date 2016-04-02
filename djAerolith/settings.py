@@ -123,6 +123,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.session_expiry.SessionIdleTimeout',
@@ -191,7 +192,6 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social.backends.open_id.OpenIdAuth',
     'social.backends.google.GoogleOAuth2',
     'social.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -225,10 +225,11 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
 SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE = 'openid email'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
-
+LOGIN_ERROR_URL = '/login-error/'
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'

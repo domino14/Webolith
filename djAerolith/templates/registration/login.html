@@ -11,33 +11,52 @@
 <p>{% trans "Your username and password didn't match. Please try again." %}</p>
 {% endif %}
 
-<form class="form-horizontal" role="form" method="post" action="{% url 'django.contrib.auth.views.login' %}">
- {% csrf_token %}
+<div class="row">
+  <div class="col-sm-6">
+    <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
+    <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
 
-  <div class="form-group">
-    <label for="input-username" class="col-sm-2 control-label">{% trans "Username" %}</label>
-    <div class="col-sm-4">
-      <input type="text" class="form-control" id="input-username" name="username" placeholder="Username">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="input-password" class="col-sm-2 control-label">{% trans "Password" %}</label>
-    <div class="col-sm-4">
-      <input type="password" class="form-control" name="password" id="input-password" placeholder="Password">
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-4">
-      <button type="submit" class="btn btn-default">{% trans "Sign in" %}</button>
-    </div>
-  </div>
-<input type="hidden" name="next" value="{{ next }}" />
-</form>
+    <p style="margin-top: 50px;">
+    {% trans "Or use old login form" %}
+    </p>
+    <div class="old-login-form">
+    <p></p>
+    <form class="form-horizontal" role="form" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+     {% csrf_token %}
 
-<a href="{% url 'social:begin' 'facebook' %}">Login with Facebook</a><br>
-<a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a>
+      <div class="form-group">
+        <label for="input-username" class="col-sm-2 control-label">{% trans "Username" %}</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="input-username" name="username" placeholder="Username">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="input-password" class="col-sm-2 control-label">{% trans "Password" %}</label>
+        <div class="col-sm-4">
+          <input type="password" class="form-control" name="password" id="input-password" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-4">
+          <button type="submit" class="btn btn-default">{% trans "Sign in" %}</button>
+        </div>
+      </div>
+    <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+    <p style="font-size: 100%;"><a href="/accounts/password/reset">{% trans "Forget your password?" %}</a></p>
+    </div>
 
-<p style="font-size: 100%;"><a href="/accounts/password/reset">{% trans "Forget your password?" %}</a></p>
+  </div>
+
+
+
+</div>
+
+
+
+
+
+
 {% endblock %}
 
 {% comment %} Aerolith 2.0: A web-based word game website

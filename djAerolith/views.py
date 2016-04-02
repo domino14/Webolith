@@ -16,7 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from lib.socket_helper import get_connection_token
@@ -47,3 +47,11 @@ def about(request):
 def socket_token(request):
     conn_token = get_connection_token(request.user)
     return response(conn_token)
+
+
+def login_error(request):
+    return render(request, 'login_error.html')
+
+
+def new_social_user(request):
+    return render(request, 'new_social_user.html')

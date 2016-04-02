@@ -80,6 +80,8 @@ urlpatterns = patterns('',
         TemplateView.as_view(template_name='accounts/edit_username_done.html')
         ),
     url('', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^login-error/', 'views.login_error'),
+    url(r'^new-users-redirect-url/', 'views.new_social_user'),
     (r'^accounts/', include('registration.backends.simple.urls')),
     (r'^supporter/', 'views.supporter'),
     (r'^wordwalls/', include('wordwalls.urls')),
