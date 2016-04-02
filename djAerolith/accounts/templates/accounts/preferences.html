@@ -51,25 +51,24 @@ $(function() {
         {% if assoc.provider == 'facebook' %}
             service = 'Facebook';
             assocId = {{assoc.id}};
-            {% with id as assoc.id %}
-            discUrl = '{% url 'social:disconnect_individual' 'facebook', id %}';
-            {% endwith %}
+            discUrl = '{% url 'social:disconnect_individual' 'facebook' assoc.id %}';
         {% endif %}
         {% if assoc.provider == 'google-oauth2' %}
             service = 'Google';
             assocId = {{assoc.id}};
-            {% with id as assoc.id %}
-            discUrl = '{% url 'social:disconnect_individual' google id %}';
-            {% endwith %}
+            discUrl = '{% url 'social:disconnect_individual' 'google-oauth2' assoc.id %}'
         {% endif %}
         $socialButtons.append([
             '<div class="row" style="margin-bottom:10px;">',
             '<div class="col-sm-1">',
             service,
             '</div><div class="col-sm-1">',
+            '<form action="', discUrl, '" method="POST">',
+            '<input type="hidden" name="csrfmiddlewaretoken" value="',
+            '{{csrf_token}}"/>',
             '<button class="btn btn-sm btn-default ',
-            'disassoc-{{assoc.provider}}" data-disc-url="', discUrl,
-            '">X</button></div></div>'
+            'disassoc-{{assoc.provider}}" type="submit">X</button>',
+            '</div></div>'
         ].join(''));
     {% endfor %}
 
