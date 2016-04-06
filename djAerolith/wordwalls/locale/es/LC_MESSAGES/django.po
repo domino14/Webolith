@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-24 23:41-0700\n"
+"POT-Creation-Date: 2016-04-05 19:05-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -143,11 +143,11 @@ msgstr "Optiones para la prueba"
 
 #: wordwalls/templates/wordwalls/index.html:137
 msgid ""
-"To delete your saved lists, please do so in the <a href=\"/accounts/"
-"preferences/\">Preferences</a>"
+"To delete your saved lists, please do so in the <a href=\"/listmanager/"
+"\">List Manager</a>"
 msgstr ""
-"Para borrar sus listas guardadas, vaya a las <a href=\"/accounts/"
-"preferences/\">Preferencias</a>"
+"Para borrar sus listas guardadas, vaya al <a href=\"/listmanager/"
+"\">Administrador de Listas</a>"
 
 #: wordwalls/templates/wordwalls/index.html:141
 #: wordwalls/templates/wordwalls/index.html:183

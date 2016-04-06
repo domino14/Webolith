@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Social Media Accounts" %}{% endblock %}
+
+
+{% block content_title %}<H3>{% trans "Social Media Accounts" %}</H3>{%endblock%}
+
+{% block content %}
+<div class="row">
+<h4>{% trans "Associate/Remove Social Media Accounts" %}</h4>
+    <div class="social-buttons"></div>
+</div>
+<script>
+/* global $, JSON*/
+$(function() {
+    "use strict";
+    var $socialButtons = $('.social-buttons');
+    var service, imgUrl, href, assocId, discUrl;
+    // backends comes from a context processor
+    {% for assoc in backends.associated %}
+        {% if assoc.provider == 'facebook' %}
+            service = 'Facebook';
+            assocId = {{assoc.id}};
+            discUrl = '{% url 'social:disconnect_individual' 'facebook' assoc.id %}';
+        {% endif %}
+        {% if assoc.provider == 'google-oauth2' %}
+            service = 'Google';
+            assocId = {{assoc.id}};
+            discUrl = '{% url 'social:disconnect_individual' 'google-oauth2' assoc.id %}'
+        {% endif %}
+        $socialButtons.append([
+            '<div class="row" style="margin-bottom:10px;">',
+            '<div class="col-sm-1">',
+            service,
+            '</div><div class="col-sm-1">',
+            '<form action="', discUrl, '" method="POST">',
+            '<input type="hidden" name="next" value="/accounts/social/"/>',
+            '<input type="hidden" name="csrfmiddlewaretoken" value="',
+            '{{csrf_token}}"/>',
+            '<button class="btn btn-sm btn-default disassoc" data-provider="',
+            service, '" type="submit">X</button>',
+            '</div></div>'
+        ].join(''));
+    {% endfor %}
+
+    {% for assoc in backends.not_associated %}
+        {% if assoc == 'facebook' %}
+            imgUrl = "/static/img/aerolith/login_with_facebook.png";
+            href = '{% url "social:begin" "facebook" %}';
+        {% endif %}
+        {% if assoc == 'google-oauth2' %}
+            imgUrl = "/static/img/aerolith/login_with_google.png";
+            href = '{% url "social:begin" "google-oauth2" %}';
+        {% endif %}
+        $socialButtons.append([
+            '<p><a class="{{assoc}}-btn social-login" href="', href, '">',
+            '<img src="', imgUrl, '"></a></p>'
+        ].join(''));
+    {% endfor %}
+
+    $('.disassoc').click(function(event) {
+        var ok = confirm([
+            "Are you sure you wish to remove the association with Aerolith ",
+            "and your ", $(this).data('provider'), " account?"
+        ].join(''));
+        if (!ok) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

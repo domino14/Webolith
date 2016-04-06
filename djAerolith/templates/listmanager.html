@@ -1,20 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Preferences" %}{% endblock %}
+{% block title %}{% trans "List Manager" %}{% endblock %}
 
 
-{% block content_title %}<H3>{% trans "Preferences" %}</H3>{%endblock%}
+{% block content_title %}<H3>{% trans "List Manager" %}</H3>{%endblock%}
 
 {% block content %}
-<div class="row">
-<h4>{% trans "Associate/Remove Social Media Accounts" %}</h4>
-    <div class="social-buttons"></div>
-</div>
-<div class="row">
 <h4>{% trans "Saved List Manager" %}</h4>
 <h5>{% trans "You can view and delete your old saved lists here. Be careful, as deleting a saved list is permanent!" %}</h5>
-</div>
 <div class="row">
     <div class="col-lg-12">
         <div class="table-responsive">
@@ -41,63 +35,9 @@
     </div>
 </div>
 <script>
-/* global $, JSON*/
+/* global $, JSON, jQuery*/
 $(function() {
     "use strict";
-    var $socialButtons = $('.social-buttons');
-    var service, imgUrl, href, assocId, discUrl;
-    // backends comes from a context processor
-    {% for assoc in backends.associated %}
-        {% if assoc.provider == 'facebook' %}
-            service = 'Facebook';
-            assocId = {{assoc.id}};
-            discUrl = '{% url 'social:disconnect_individual' 'facebook' assoc.id %}';
-        {% endif %}
-        {% if assoc.provider == 'google-oauth2' %}
-            service = 'Google';
-            assocId = {{assoc.id}};
-            discUrl = '{% url 'social:disconnect_individual' 'google-oauth2' assoc.id %}'
-        {% endif %}
-        $socialButtons.append([
-            '<div class="row" style="margin-bottom:10px;">',
-            '<div class="col-sm-1">',
-            service,
-            '</div><div class="col-sm-1">',
-            '<form action="', discUrl, '" method="POST">',
-            '<input type="hidden" name="csrfmiddlewaretoken" value="',
-            '{{csrf_token}}"/>',
-            '<button class="btn btn-sm btn-default ',
-            'disassoc-{{assoc.provider}}" type="submit">X</button>',
-            '</div></div>'
-        ].join(''));
-    {% endfor %}
-
-    {% for assoc in backends.not_associated %}
-        {% if assoc == 'facebook' %}
-            imgUrl = "/static/img/aerolith/login_with_facebook.png";
-            href = '{% url "social:begin" "facebook" %}';
-        {% endif %}
-        {% if assoc == 'google-oauth2' %}
-            imgUrl = "/static/img/aerolith/login_with_google.png";
-            href = '{% url "social:begin" "google-oauth2" %}';
-        {% endif %}
-        $socialButtons.append([
-            '<p><a class="{{assoc}}-btn social-login" href="', href, '">',
-            '<img src="', imgUrl, '"></a></p>'
-        ].join(''));
-    {% endfor %}
-
-    $('.disassoc-facebook').click(function() {
-        // alert('should disassociate facebook')
-
-    });
-
-    $('.disassoc-google-oauth2').click(function() {
-        alert('should disassociate google')
-
-
-    });
-
     function fetchListData() {
         $.get('/base/api/saved_lists/', {
             'temp': 0

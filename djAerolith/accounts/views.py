@@ -83,11 +83,6 @@ def viewProfile(request, username):
 
 
 @login_required
-def preferences(request):
-    return render(request, 'accounts/preferences.html')
-
-
-@login_required
 def username_change(request):
     u_form = UsernameEditForm()
     if request.method == 'POST':
@@ -99,3 +94,8 @@ def username_change(request):
     return render(
         request, 'accounts/edit_username.html',
         {'u_form': u_form})
+
+
+@login_required
+def social(request):
+    return render(request, 'accounts/social.html')

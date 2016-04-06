@@ -6,6 +6,6 @@
 
 
 {% block content %}
-{% trans "Welcome" %}, {{user}}! {% trans "If you wish, you can <a href=\"/accounts/username/change\">change your username here</a>." %} <BR><BR>
+{% blocktrans %}Welcome, {{user}}! If you wish, you can <a href="/accounts/username/change">change your username here</a>.{% endblocktrans %}<BR><BR>
 
 {% endblock %}

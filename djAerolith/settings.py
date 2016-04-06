@@ -210,6 +210,13 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
 )
 
+SOCIAL_AUTH_DISCONNECT_PIPELINE = (
+    # Collects the social associations to disconnect.
+    'social.pipeline.disconnect.get_entries',
+    # Removes the social associations.
+    'social.pipeline.disconnect.disconnect',
+)
+
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
 
 SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY', '')
@@ -225,11 +232,12 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
 SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE = 'openid email'
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new_users/'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/accounts/social/'
 
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
-LOGIN_ERROR_URL = '/login-error/'
+LOGIN_ERROR_URL = '/login_error/'
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'
