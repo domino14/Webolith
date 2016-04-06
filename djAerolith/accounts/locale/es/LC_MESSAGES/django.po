@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-24 23:41-0700\n"
+"POT-Creation-Date: 2016-04-05 19:04-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: accounts/forms.py:53
+msgid "You must enter a username"
+msgstr "Debe poner un nombre de usuario."
+
+#: accounts/forms.py:56
+msgid "Your username must consist of alphanumeric characters."
+msgstr "Su nombre de usuario debe consistir de carácteres alfanuméricos."
+
+#: accounts/forms.py:60
+msgid "This username already exists in our system!"
+msgstr "¡Este nombre de usuario ya existe en nuestro sistema!"
+
 #: accounts/templates/accounts/editProfile.html:3
-#, fuzzy, python-format
-#| msgid "%(username)s's profile"
+#, python-format
 msgid "Edit %(username)s's profile"
-msgstr "El perfil de %(username)s"
+msgstr "Editar el perfil de %(username)s"
 
 #: accounts/templates/accounts/editProfile.html:8
 #, python-format
@@ -67,11 +78,30 @@ msgstr "Guardar Perfil"
 msgid "Password change form"
 msgstr "Formulario de cambio de contraseña"
 
-#: accounts/templates/accounts/preferences.html:4
-#: accounts/templates/accounts/preferences.html:7
-#: accounts/templates/accounts/profile.html:11
-msgid "Preferences"
-msgstr "Preferencias"
+#: accounts/templates/accounts/editProfile.html:55
+msgid "Username change form"
+msgstr "Formulario de cambio de nombre de usuario"
+
+#: accounts/templates/accounts/edit_username.html:3
+#, python-format
+msgid "Edit %(username)s's username"
+msgstr "Editar el nombre de usuario de %(username)s"
+
+#: accounts/templates/accounts/edit_username.html:11
+msgid "Desired username"
+msgstr "Nombre deseado"
+
+#: accounts/templates/accounts/edit_username.html:19
+msgid "Edit username"
+msgstr "Editar nombre de usuario"
+
+#: accounts/templates/accounts/edit_username_done.html:4
+msgid "Aerolith - Username updated"
+msgstr "Aerolith - Nombre de usuario cambiado"
+
+#: accounts/templates/accounts/edit_username_done.html:8
+msgid "Your username was changed successfully."
+msgstr "Su nombre de usuario fue cambiado."
 
 #: accounts/templates/accounts/profile.html:4
 #: accounts/templates/accounts/profile.html:7
@@ -83,10 +113,27 @@ msgstr "El perfil de %(username)s"
 msgid "Edit"
 msgstr "Editar"
 
-#: accounts/templates/accounts/profile.html:21
+#: accounts/templates/accounts/profile.html:11
+msgid "Social"
+msgstr "Social"
+
+#: accounts/templates/accounts/profile.html:12
+msgid "List Manager"
+msgstr "Listas Guardadas"
+
+#: accounts/templates/accounts/profile.html:22
 msgid "Profile"
 msgstr "Perfil"
 
-#: accounts/templates/accounts/profile.html:28
+#: accounts/templates/accounts/profile.html:29
 msgid "Award Case"
 msgstr "Cajón de Premios"
+
+#: accounts/templates/accounts/social.html:4
+#: accounts/templates/accounts/social.html:7
+msgid "Social Media Accounts"
+msgstr "Cuentas de Media Social"
+
+#: accounts/templates/accounts/social.html:11
+msgid "Associate/Remove Social Media Accounts"
+msgstr "Asociar/Remover Cuentas de Media Social"

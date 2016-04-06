@@ -1,27 +1,25 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Preferences" %}{% endblock %}
+{% block title %}{% trans "List Manager" %}{% endblock %}
 
 
-{% block content_title %}<H3>{% trans "Preferences" %}</H3>{%endblock%}
+{% block content_title %}<H3>{% trans "List Manager" %}</H3>{%endblock%}
 
 {% block content %}
-<div class="row">
-<h4>Saved List Manager</h4>
-<h5>You can view and delete your old saved lists here. Be careful, as deleting a saved list is permanent!</h5>
-</div>
+<h4>{% trans "Saved List Manager" %}</h4>
+<h5>{% trans "You can view and delete your old saved lists here. Be careful, as deleting a saved list is permanent!" %}</h5>
 <div class="row">
     <div class="col-lg-12">
         <div class="table-responsive">
             <table id="list-table" class="table">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Lexicon</th>
-                    <th>Progress</th>
-                    <th>Total questions</th>
-                    <th>Last Saved</th>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "Lexicon" %}</th>
+                    <th>{% trans "Progress" %}</th>
+                    <th>{% trans "Total questions" %}</th>
+                    <th>{% trans "Last Saved" %}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,11 +31,11 @@
 </div>
 <div class="row">
     <div class="col-lg-12">
-    <button type="button" class="btn btn-danger btn-sm" id="delete-lists">Delete Selected Lists</button>
+    <button type="button" class="btn btn-danger btn-sm" id="delete-lists">{% trans "Delete Selected Lists" %}</button>
     </div>
 </div>
 <script>
-/* global $, JSON*/
+/* global $, JSON, jQuery*/
 $(function() {
     "use strict";
     function fetchListData() {

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}
+{% trans "Social login error" %}
+{% endblock %}
+
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+<BR>
+{% blocktrans %}
+If you wish to associate your Facebook or Google account with this Aerolith account, and it's already been associated with another Aerolith account, please log on to that other account, then disassociate it from the <a href="/accounts/social">Social Accounts</a> page first.
+{% endblocktrans %}
+{% endif %}
+
+{% endblock %}

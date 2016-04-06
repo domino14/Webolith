@@ -22,10 +22,9 @@ from django.utils.translation import LANGUAGE_SESSION_KEY
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.template import RequestContext
 
 from accounts.models import AerolithProfile
-from accounts.forms import ProfileEditForm
+from accounts.forms import ProfileEditForm, UsernameEditForm
 
 DEFAULT_LANGUAGE = 'en'
 
@@ -84,5 +83,19 @@ def viewProfile(request, username):
 
 
 @login_required
-def preferences(request):
-    return render(request, 'accounts/preferences.html')
+def username_change(request):
+    u_form = UsernameEditForm()
+    if request.method == 'POST':
+        u_form = UsernameEditForm(request.POST)
+        if u_form.is_valid():    # all validation rules pass
+            request.user.username = u_form.cleaned_data['username']
+            request.user.save()
+            return HttpResponseRedirect('/accounts/username/change/done/')
+    return render(
+        request, 'accounts/edit_username.html',
+        {'u_form': u_form})
+
+
+@login_required
+def social(request):
+    return render(request, 'accounts/social.html')

@@ -19,11 +19,12 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import *
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.contrib.auth.forms import AuthenticationForm
 #from registration.forms import RegistrationFormUniqueEmail
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import views as auth_views
-
+from django.views.generic import TemplateView
 import gargoyle
 
 gargoyle.autodiscover()
@@ -45,7 +46,7 @@ urlpatterns = patterns('',
     (r'^old/', 'views.oldhomepage'),
     (r'^about/', 'views.about'),
     (r'^admin/', include(admin.site.urls)),
-    (r'^accounts/preferences/$', 'accounts.views.preferences'),
+    (r'^accounts/social/$', 'accounts.views.social'),
     (r'^accounts/profile/', include('accounts.urls')),
     (r'^accounts/register/$', AerolithRegistrationView.as_view(
         form_class=RecaptchaRegistrationForm)),
@@ -71,13 +72,24 @@ urlpatterns = patterns('',
         auth_views.password_reset_confirm,
         name='password_reset_confirm'),
 
+    url(r'^accounts/username/change/$',
+        'accounts.views.username_change',
+        name='accounts_edit_username'),
+
+    url(r'^accounts/username/change/done/$',
+        TemplateView.as_view(template_name='accounts/edit_username_done.html')
+        ),
+    url('', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^login_error/', 'views.login_error'),
+    url(r'^new_users/', 'views.new_social_user'),
     (r'^accounts/', include('registration.backends.simple.urls')),
+    (r'^listmanager/', 'base.views.listmanager'),
     (r'^supporter/', 'views.supporter'),
     (r'^wordwalls/', include('wordwalls.urls')),
     (r'^flashcards/', include('whitleyCards.urls')),
     (r'^cards/', include('flashcards.urls')),
     (r'^socket_token/', 'views.socket_token'),
-    (r'^base/', include('base.urls'))
+    (r'^base/', include('base.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true

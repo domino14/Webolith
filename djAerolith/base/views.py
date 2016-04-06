@@ -26,6 +26,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
 
 from base.models import WordList, Lexicon
 from lib.response import response, StatusCode
@@ -267,3 +268,8 @@ def questions_for_prob_range(request):
     except Lexicon.DoesNotExist:
         return response('Bad Lexicon', StatusCode.BAD_REQUEST)
     return response(question_list_from_probabilities(lex, pmin, pmax, length))
+
+
+@login_required
+def listmanager(request):
+    return render(request, 'listmanager.html')

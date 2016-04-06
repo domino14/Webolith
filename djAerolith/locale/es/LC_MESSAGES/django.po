@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-24 23:41-0700\n"
+"POT-Creation-Date: 2016-04-05 19:04-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,15 +22,15 @@ msgstr ""
 msgid "You seem to be a computer, please try again"
 msgstr "Parece que usted es una computadora, por favor intente otra vez."
 
-#: settings.py:82
+#: settings.py:81
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:83
+#: settings.py:82
 msgid "Spanish"
 msgstr "Español"
 
-#: templates/about.html:6 templates/base.html:86
+#: templates/about.html:6 templates/base.html:84
 msgid "About"
 msgstr "Acerca de Aerolith"
 
@@ -78,66 +78,121 @@ msgstr ""
 "A César le gusta programar, jugar Scrabble, guitarra, ukelele, correr, y "
 "otras cosas."
 
-#: templates/base.html:77
+#: templates/base.html:76
 #: templates/registration/password_reset_complete.html:9
 msgid "Log in"
 msgstr "Iniciar sesión"
 
-#: templates/base.html:78 templates/registration/registration_form.html:74
-msgid "Register"
-msgstr "Registrarse"
-
-#: templates/base.html:83
+#: templates/base.html:81
 msgid "Membership"
 msgstr "Membresía"
 
-#: templates/base.html:84
+#: templates/base.html:82
 msgid "Log out"
 msgstr "Cerrar sesión"
 
-#: templates/base.html:87
+#: templates/base.html:85
 msgid "Wordwalls"
 msgstr "Muros De Palabras"
 
-#: templates/base.html:114
-msgid "Welcome to Aerolith 2.0! Please"
-msgstr "¡Bienvenidos a Aerolith 2.0! Por favor"
+#: templates/base.html:119
+msgid "Welcome to Aerolith 2.0!"
+msgstr "¡Bienvenidos a Aerolith 2.0!"
 
-#: templates/base.html:114
-msgid "log in"
-msgstr "inicie su sesión"
+#: templates/base.html:124
+msgid ""
+"Or <a href=\\\"accounts/register\\\">register</a> with a username and "
+"password..."
+msgstr ""
+"O <a href=\\\"accounts/register\\\">regístrese</a> con un nombre de usuario "
+"y contraseña..."
 
-#: templates/base.html:114
-msgid "or"
-msgstr "o"
-
-#: templates/base.html:114
-msgid "register"
-msgstr "regístrese"
-
-#: templates/base.html:114
-msgid "if you are new to this site"
-msgstr "si es su primera vez en este sitio"
-
-#: templates/base.html:115 templates/registration/login.html:36
-msgid "Forget your password?"
-msgstr "¿Se olvidó de su contraseña?"
-
-#: templates/base.html:117
+#: templates/base.html:127
 msgid "Welcome back"
 msgstr "Gracias por regresar"
 
-#: templates/base.html:117
+#: templates/base.html:127
 msgid "Here are some things you can do"
 msgstr "Aquí hay unas cosas que usted puede hacer"
 
-#: templates/base.html:118
+#: templates/base.html:128
 msgid "Play WordWalls"
 msgstr "Jugar Muros De Palabras"
 
-#: templates/base.html:153
+#: templates/base.html:163
 msgid "All Rights Reserved."
 msgstr "Reservados Todos Los Derechos"
+
+#: templates/listmanager.html:4 templates/listmanager.html.py:7
+msgid "List Manager"
+msgstr "Listas Guardadas"
+
+#: templates/listmanager.html:10
+msgid "Saved List Manager"
+msgstr "Listas Guardadas"
+
+#: templates/listmanager.html:11
+msgid ""
+"You can view and delete your old saved lists here. Be careful, as deleting a "
+"saved list is permanent!"
+msgstr ""
+"Usted puede borrar sus listas guardadas aquí. Tenga cuidado, borrar una "
+"lista tiene efecto permanente."
+
+#: templates/listmanager.html:18
+msgid "Name"
+msgstr "Nombre"
+
+#: templates/listmanager.html:19
+msgid "Lexicon"
+msgstr "Léxicon"
+
+#: templates/listmanager.html:20
+msgid "Progress"
+msgstr "Progreso"
+
+#: templates/listmanager.html:21
+msgid "Total questions"
+msgstr "Número de preguntas"
+
+#: templates/listmanager.html:22
+msgid "Last Saved"
+msgstr "Guardado en"
+
+#: templates/listmanager.html:34
+msgid "Delete Selected Lists"
+msgstr "Borrar listas seleccionadas"
+
+#: templates/login_error.html:4
+msgid "Social login error"
+msgstr "Error con login social"
+
+#: templates/login_error.html:17
+msgid ""
+"\n"
+"If you wish to associate your Facebook or Google account with this Aerolith "
+"account, and it's already been associated with another Aerolith account, "
+"please log on to that other account, then disassociate it from the <a href="
+"\"/accounts/social\">Social Accounts</a> page first.\n"
+msgstr ""
+"\n"
+"Si desea asociar su cuenta de Facebook o Google con esta cuenta de Aerolith, "
+"y ya ha sido asociada con otra cuenta de Aerolith, por favor entre a la otra "
+"cuenta de Aerolith, y borre la asociación desde la página de <a href=\"/"
+"accounts/social\">Cuentas Sociales</a>.\n"
+
+#: templates/new_social_user.html:4
+msgid "Welcome"
+msgstr "¡Bienvenidos!"
+
+#: templates/new_social_user.html:9
+#, python-format
+msgid ""
+"Welcome, %(user)s! If you wish, you can <a href=\"/accounts/username/change"
+"\">change your username here</a>."
+msgstr ""
+"¡Bienvenido(a), %(user)s! Si desea, puede <a href=\"/accounts/username/change"
+"\">cambiar su nombre de usuario aquí</a>."
 
 #: templates/registration/login.html:4
 msgid "Aerolith login"
@@ -149,21 +204,29 @@ msgstr ""
 "Su nombre de usuario y la contraseña no coinciden. Por favor, vuelva a "
 "intentarlo."
 
-#: templates/registration/login.html:18
+#: templates/registration/login.html:20
+msgid "Or use old login form"
+msgstr "O use el formulario de login antiguo"
+
+#: templates/registration/login.html:28
 #: templates/registration/registration_form.html:31
 #: templates/registration/registration_form.html:34
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: templates/registration/login.html:24
+#: templates/registration/login.html:34
 #: templates/registration/registration_form.html:49
 #: templates/registration/registration_form.html:52
 msgid "Password"
 msgstr "Contraseña"
 
-#: templates/registration/login.html:31
+#: templates/registration/login.html:41
 msgid "Sign in"
 msgstr "Inicie sesión"
+
+#: templates/registration/login.html:46
+msgid "Forget your password?"
+msgstr "¿Se olvidó de su contraseña?"
 
 #: templates/registration/logout.html:5
 msgid "Aerolith - logged out"
@@ -206,10 +269,8 @@ msgid "Submit"
 msgstr "Cambiar contraseña"
 
 #: templates/registration/password_reset_complete.html:4
-#, fuzzy
-#| msgid "Aerolith - Change Password"
 msgid "Aerolith - Password Reset"
-msgstr "Aerolith - Cambie su contraseña"
+msgstr "Aerolith - Cambio de contraseña"
 
 #: templates/registration/password_reset_complete.html:8
 msgid "Password reset successfully."
@@ -304,6 +365,10 @@ msgstr "Contraseña (de nuevo)"
 msgid "Are you human?"
 msgstr "¿Es usted humano(a)?"
 
+#: templates/registration/registration_form.html:74
+msgid "Register"
+msgstr "Registrarse"
+
 #: templates/support.html:8
 #, python-format
 msgid ""
@@ -332,7 +397,7 @@ msgstr ""
 msgid ""
 "Remove limit for number of saved alphagrams among your saved lists "
 "(WordWalls game)"
-msgstr "Remover el límite del numero de alfagramas en sus listas de palabras."
+msgstr "Remover el límite del número de alfagramas en sus listas de palabras."
 
 #: templates/support.html:24
 msgid "The membership cost is $19.99 per year."

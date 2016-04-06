@@ -74,7 +74,6 @@
           <ul class="nav navbar-nav">
             {% if user.username == "" %}
             <li><a href="/accounts/login" class="navbarLink">{% trans "Log in" %}</a></li>
-            <li><a href="/accounts/register" class="navbarLink">{% trans "Register" %}</a></li>
             {% else %}
             <li><a href="/accounts/profile/{{user}}" class="navbarLink">
                 <span class="glyphicon glyphicon-wrench"></span> {{user}}</a>
@@ -117,8 +116,13 @@
       {% block content %}
         <div class="row">
         {% if user.username == "" %}
-        <p>{% trans "Welcome to Aerolith 2.0! Please" %} <a href="/accounts/login">{% trans "log in" %}</a>, {% trans "or" %} <a href="/accounts/register">{% trans "register" %}</a> {% trans "if you are new to this site" %}.</p>
-        <p style="font-size: 100%;"><a href="/accounts/password/reset">{% trans "Forget your password?" %}</a></p>
+        <p>{% trans "Welcome to Aerolith 2.0!" %}</p>
+    <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
+    <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
+
+        <p style="margin-top: 70px;">
+        {% blocktrans %}Or <a href=\"accounts/register\">register</a> with a username and password...{% endblocktrans %}
+        </p>
         {% else %}
         {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
         <a href="wordwalls" class="btn btn-primary">{% trans "Play WordWalls" %}</a><BR>

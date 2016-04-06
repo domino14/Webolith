@@ -123,6 +123,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.session_expiry.SessionIdleTimeout',
@@ -147,7 +148,9 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-                'processors.maintenance.maintenance'
+                'processors.maintenance.maintenance',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ]
         }
     },
@@ -180,15 +183,61 @@ INSTALLED_APPS = (
     'gunicorn',
     'whitleyCards',
     'gargoyle',
-    'registration'
+    'registration',
+    'social.apps.django_app.default',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.social_auth.associate_by_email',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+)
+
+SOCIAL_AUTH_DISCONNECT_PIPELINE = (
+    # Collects the social associations to disconnect.
+    'social.pipeline.disconnect.get_entries',
+    # Removes the social associations.
+    'social.pipeline.disconnect.disconnect',
+)
+
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY', '')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('SOCIAL_AUTH_FACEBOOK_SECRET', '')
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email'
+}
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
+SOCIAL_AUTH_GOOGLE_OAUTH_SCOPE = 'openid email'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new_users/'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/accounts/social/'
+
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
-
+LOGIN_ERROR_URL = '/login_error/'
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'

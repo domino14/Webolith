@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}
+{% trans "Welcome" %}
+{% endblock %}
+
+
+{% block content %}
+{% blocktrans %}Welcome, {{user}}! If you wish, you can <a href="/accounts/username/change">change your username here</a>.{% endblocktrans %}<BR><BR>
+
+{% endblock %}

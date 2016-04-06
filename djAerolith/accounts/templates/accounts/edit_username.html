@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% blocktrans with username=user.username %}Edit {{username}}'s username{% endblocktrans %}{% endblock %}
+
+{% block content %}
+
+<form class="form-horizontal" role="form" method="post" action="{% url 'accounts_edit_username' %}" style="margin-top: 20px;">{% csrf_token %}
+    {{u_form.non_field_errors}}
+    {{u_form.username.errors}}
+  <div class="form-group">
+    <label for="input-username" class="col-sm-2 control-label">{% trans "Desired username" %}</label>
+    <div class="col-sm-4">
+      {{ u_form.username }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">{% trans "Edit username" %}</button>
+    </div>
+  </div>
+</form>
+
+{% endblock %}
