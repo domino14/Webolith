@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-05 19:04-0700\n"
+"POT-Creation-Date: 2016-04-06 22:47-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,10 +101,9 @@ msgstr "¡Bienvenidos a Aerolith 2.0!"
 
 #: templates/base.html:124
 msgid ""
-"Or <a href=\\\"accounts/register\\\">register</a> with a username and "
-"password..."
+"Or <a href=\"accounts/register\">register</a> with a username and password..."
 msgstr ""
-"O <a href=\\\"accounts/register\\\">regístrese</a> con un nombre de usuario "
+"O <a href=\"accounts/register\">regístrese</a> con un nombre de usuario "
 "y contraseña..."
 
 #: templates/base.html:127

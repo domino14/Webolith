@@ -121,7 +121,7 @@
     <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
 
         <p style="margin-top: 70px;">
-        {% blocktrans %}Or <a href=\"accounts/register\">register</a> with a username and password...{% endblocktrans %}
+        {% blocktrans %}Or <a href="accounts/register">register</a> with a username and password...{% endblocktrans %}
         </p>
         {% else %}
         {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
