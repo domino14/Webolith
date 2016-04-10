@@ -31,7 +31,7 @@ gargoyle.autodiscover()
 
 
 class AerolithRegistrationView(RegistrationView):
-    def get_success_url(self, request, user):
+    def get_success_url(self, user):
         return "/"
 
 
