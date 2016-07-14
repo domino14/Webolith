@@ -73,7 +73,7 @@ class AerolithProfile(models.Model):
 
 
 def user_registered_handler(sender, **kwargs):
-    if kwargs['created']:
+    if kwargs['created'] and not kwargs.get('raw', False):
         profile = AerolithProfile()
         profile.user = kwargs['instance']
         profile.save()

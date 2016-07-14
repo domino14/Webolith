@@ -6,14 +6,20 @@ Type "help" for help.
 postgres=# create database djaerolith;
 
 # To save data
-`./manage.py dumpdata_chunks --exclude registration --exclude migrations --traceback --output-folder /opt/dump_folder --max-records-per-chunk=1000`
 
-# Load into postgres
-`find /opt/dump_folder | egrep -o "([0-9]+_[0-9]+).json" |sort | awk '{print "./manage.py loaddata --database postgres /opt/dump_folder/"$1}' > script-to-loaddata.sh`
+TODO for testing:
+- Get a MySQL dump.
+- Load locally
+- Run `dump_data_chunks`
+- Create brand new PG database
+- Run data load script. There should be no errors. If there are, fix and repeat.
 
-time sh script-to-loaddata.sh
-about 40 minutes on my machine
-~ 10? minutes to save data
+Exclude unneeded apps, and apps that will automatically get data added to them during the initial `./manage.py migrate` when setting up the pg database.
+
+```
+./manage.py dump_data_chunks --exclude contenttypes  --exclude auth.Permission --traceback --output-folder /opt/dump_folder --max-records-per-chunk=1000 --natural
+
+```
 ----------
 
 To do now:
@@ -33,5 +39,5 @@ After creating all dump files:
 
 ## Issues:
 - Postgres is case sensitive. 
-    - [ ] Can't log in unless capitalization of screen name is identical. Probably want to enforce uniqueness regardless of capitalization. >.<
+    - [x] Can't log in unless capitalization of screen name is identical. Probably want to enforce uniqueness regardless of capitalization. >.<
     
