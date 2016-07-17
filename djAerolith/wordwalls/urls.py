@@ -34,4 +34,7 @@ urlpatterns = patterns('',
    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
    # name='get_new_signature')
     url(r'^jsi18n/$', javascript_catalog, js_info_dict),
+    url(r'^stats/$', 'wordwalls.stats.main'),
+    url(r'^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$', 'wordwalls.stats.get_stats'),
 )
+
