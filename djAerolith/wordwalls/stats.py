@@ -7,7 +7,7 @@ from wordwalls.models import (DailyChallengeName,
                               DailyChallengeLeaderboardEntry)
 from base.models import Lexicon
 import json
-from datetime import date
+from lib.response import response
 
 
 # If not logged in, will ask user to log in and forward back to the main url
@@ -42,4 +42,4 @@ def get_stats(request, lexicon, type_of_challenge_id):
         entry_info['Date'] = entry.board.challenge.date.strftime('%Y-%m-%d')
         info_we_want.append(entry_info)
 
-    return HttpResponse(json.dumps(info_we_want))
+    return response(info_we_want)

@@ -9,7 +9,50 @@
 {% block jquery_js %}{% endblock %}
 
 {% block content %}
+<script src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
+<script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
 
-Meow.
+Lexicon:<br>
+<select class="form-control" id="lexicon">
+  <option value="1">CSW15</option>
+  <option value="4">OWL2</option>
+  <option value="6">CSW12</option>
+  <option value="7">America</option>
+  <option value="8">FISE09</option>
+</select>
+
+<p>
+
+Challenges:<br>
+<select class="form-control" id="challenge">
+  <option value="6">Today's 7's</option>
+  <option value="7">Today's 8's</option>
+</select>
+
+</p>
+
+<button type="button" class="btn btn-primary" id="dropdown-button">Primary</button>
+
+<script>
+
+$( "#dropdown-button" ).click(function() {
+
+    var lexicon = $('#lexicon').val()
+    var challenge = $('#challenge').val()
+
+    $.ajax({
+          method: "GET",
+          url: "/wordwalls/stats/api/" + lexicon + "/" + challenge,
+          dataType: 'json'
+    })
+        .done(function( msg ) {
+            console.log(msg)
+            console.log(typeof msg)
+            // Here is where I will parse the data to put into charts
+        });
+});
+
+</script>
 
 {% endblock %}
