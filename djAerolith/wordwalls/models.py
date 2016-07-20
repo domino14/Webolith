@@ -111,7 +111,6 @@ class DailyChallengeMissedBingos(models.Model):
     def __unicode__(self):
         return "%s, %s, %d" % (
             self.challenge.__unicode__(),
-            self.alphagram.alphagram if self.alphagram else
             self.alphagram_string,
             self.numTimesMissed)
 
