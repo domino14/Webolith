@@ -1,3 +1,4 @@
+/* global JSON*/
 define([
   'backbone',
   'underscore',
@@ -10,7 +11,7 @@ define([
 ], function(Backbone, _, $, Mustache, Router, Quiz, QuizSelector,
     NewQuizTemplate) {
   "use strict";
-  var App, NEW_QUIZ_URL, SCHEDULED_URL;
+  var App, NEW_QUIZ_URL, SCHEDULED_URL, LOOKUP_WORDS_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
   SCHEDULED_URL = '/cards/api/scheduled';
   App = Backbone.View.extend({
@@ -63,6 +64,7 @@ define([
       }), _.bind(this.startQuiz, this),
       'json').fail(_.bind(this.alertCallback, this));
     },
+
     getScheduledCards: function() {
       $.get(SCHEDULED_URL, function(data) {
       }, 'json');
