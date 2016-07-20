@@ -53,10 +53,6 @@ DATABASES = {
     }
 }
 
-# XXX: modify this line.
-if '.sock' in os.environ.get('SQL_HOST'):
-    DATABASES['default']['OPTIONS']['unix_socket'] = os.environ.get('SQL_HOST')
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
