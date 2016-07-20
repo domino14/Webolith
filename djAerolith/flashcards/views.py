@@ -25,9 +25,13 @@ def main(request):
                               context_instance=RequestContext(request))
 
 
-def validate_params(min, max, length, lex, max_range=1000):
+def validate_params(min, max, length, lex):
     """
         Validates string parameters min, max, length with lexicon.
+        :min - Minimum probability
+        :max-  Maximum probability
+        :length - Length of word
+        :lex - Lexicon short name (string)
     """
     try:
         lexicon = Lexicon.objects.get(lexiconName=lex.upper())
