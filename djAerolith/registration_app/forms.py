@@ -1,9 +1,12 @@
+from django.contrib.auth.models import User
 from django.conf import settings
 from django import forms
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 from django.utils.safestring import mark_safe
 from recaptcha.client import captcha
+from django.core.exceptions import ValidationError
 
 from registration.forms import RegistrationFormUniqueEmail
 
@@ -46,3 +49,10 @@ class ReCaptchaField(forms.CharField):
 
 class RecaptchaRegistrationForm(RegistrationFormUniqueEmail):
     recaptcha = ReCaptchaField(label="Please prove you're not a computer")
+
+    # Case-insensitive usernames.
+    def clean_username(self):
+        if User.objects.filter(username__iexact=self.cleaned_data['username']):
+            raise ValidationError(ugettext(
+                'A user with that username already exists.'), code='invalid')
+        return self.cleaned_data['username']

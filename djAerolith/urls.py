@@ -15,17 +15,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
+
+import gargoyle
+
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import *
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from django.contrib.auth.forms import AuthenticationForm
 #from registration.forms import RegistrationFormUniqueEmail
 from registration_app.forms import RecaptchaRegistrationForm
 from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
-import gargoyle
 
 gargoyle.autodiscover()
 

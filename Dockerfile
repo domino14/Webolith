@@ -3,7 +3,7 @@ MAINTAINER Cesar Del Solar <delsolar@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install -y python python-pip \
-    python-dev libmysqlclient-dev mysql-client gettext
+    python-dev libmysqlclient-dev mysql-client gettext libpq-dev postgresql-client
 COPY . /opt/webolith/
 RUN pip install -r /opt/webolith/djAerolith/requirements.txt
 WORKDIR /opt/webolith/

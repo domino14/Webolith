@@ -54,9 +54,8 @@ class UsernameEditForm(forms.Form):
         if not re.match(r'\w+$', u):
             raise forms.ValidationError(
                 _('Your username must consist of alphanumeric characters.'))
-        try:
-            User.objects.get(username=u)
+        # Case-insensitive username match
+        users = User.objects.filter(username__iexact=u)
+        if users.count() > 0:
             raise forms.ValidationError(
                 _('This username already exists in our system!'))
-        except User.DoesNotExist:
-            pass   # Good!

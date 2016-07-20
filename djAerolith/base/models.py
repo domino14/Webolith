@@ -206,9 +206,9 @@ class SavedList(models.Model):
             self.lastSaved)
 
     class Meta:
-        # XXX: This will be removed once we move over to Postgres or
-        # something. We should rename this database table properly
-        # (or even do it prior to that).
+        # XXX: Unfortunately, changing this table name, and not just
+        # moving to "WordList" will be tricky. Table names have to be
+        # changed everywhere, including tests, etc...
         db_table = 'wordwalls_savedlist'
         unique_together = ('lexicon', 'name', 'user')
 

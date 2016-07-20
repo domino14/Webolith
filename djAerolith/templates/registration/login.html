@@ -7,10 +7,6 @@
 
 {% block content %}
 
-{% if form.errors %}
-<p>{% trans "Your username and password didn't match. Please try again." %}</p>
-{% endif %}
-
 <div class="row">
   <div class="col-sm-6">
     <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
@@ -19,6 +15,9 @@
     <p style="margin-top: 50px;">
     {% trans "Or use old login form" %}
     </p>
+    {% if form.errors %}
+    <p>{% trans "Your username and password didn't match. Please try again." %}</p>
+    {% endif %}
     <div class="old-login-form">
     <p></p>
     <form class="form-horizontal" role="form" method="post" action="{% url 'django.contrib.auth.views.login' %}">

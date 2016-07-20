@@ -21,3 +21,4 @@ jsonschema
 python-social-auth
 requests-oauthlib
 python-openid
+psycopg2

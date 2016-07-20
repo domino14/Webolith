@@ -13,7 +13,7 @@ env.roledefs = {
         #'ubuntu@192.241.203.184',
         'ubuntu@104.236.137.163'],
     'dev': ['ubuntu@162.243.144.78'],
-    'prod_db': ['ubuntu@192.241.203.48']
+    'prod_db': ['ubuntu@159.203.220.140']
 }
 
 
@@ -114,8 +114,10 @@ def deploy_firewalls():
     execute(deploy_all_firewalls, servers)
 
 
-@roles('prod', 'prod_db')
+@roles('prod_db')
 def deploy_all_firewalls(servers):
+    # DON'T DEPLOY THIS TO THE WEB ROLE!!!
+    # DOCKER MAKES ITS OWN CHAINS AND SCREWS EVERYTHING UP!!
     secGroup = None
     if env.host_string in env.roledefs['prod']:
         secGroup = 'Web'

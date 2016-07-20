@@ -56,11 +56,20 @@ DATABASES = {
         'OPTIONS': {
             "init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
         },
-        # I HATE YOU MYSQL I HATE YOU I SHOULDN'T NEED THIS OPTION.
+        'ATOMIC_REQUESTS': True
+    },
+    'postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('PGSQL_DB_NAME'),
+        'USER': os.environ.get('PGSQL_USER'),
+        'PASSWORD': os.environ.get('PGSQL_PASSWORD'),
+        'HOST': os.environ.get('PGSQL_HOST'),
+        'PORT': '',
         'ATOMIC_REQUESTS': True
     }
 }
 
+# XXX: modify this line.
 if '.sock' in os.environ.get('SQL_HOST'):
     DATABASES['default']['OPTIONS']['unix_socket'] = os.environ.get('SQL_HOST')
 
@@ -156,7 +165,6 @@ TEMPLATES = [
     },
 ]
 
-
 LOCALE_PATHS = [
     os.path.join(PROJECT_ROOT, "locale"),
     os.path.join(PROJECT_ROOT, "base", "locale"),
@@ -194,7 +202,7 @@ INSTALLED_APPS = (
 AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOAuth2',
     'social.backends.facebook.FacebookOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.CaseInsensitiveModelBackend',
 )
 
 SOCIAL_AUTH_PIPELINE = (
@@ -339,6 +347,7 @@ USE_UV = tobool(os.environ.get('USE_UV'))
 
 # LOGGING config
 
+NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
