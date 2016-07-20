@@ -48,7 +48,7 @@ DATABASES = {
         'USER': os.environ.get('PGSQL_USER'),
         'PASSWORD': os.environ.get('PGSQL_PASSWORD'),
         'HOST': os.environ.get('PGSQL_HOST'),
-        'PORT': '',
+        'PORT': '5432',
         'ATOMIC_REQUESTS': True
     }
 }

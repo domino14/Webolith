@@ -125,20 +125,10 @@ class Command(BaseCommand):
 
     def do_postgresql_backup(self, outfile):
         args = []
-        if self.user:
-            args += ["--username=%s" % self.user]
-        if self.passwd:
-            args += ["--password"]
-        if self.host:
-            args += ["--host=%s" % self.host]
-        if self.port:
-            args += ["--port=%s" % self.port]
-        if self.db:
-            args += [self.db]
-        pipe = popen2.Popen4('pg_dump %s > %s' % (' '.join(args), outfile))
-        if self.passwd:
-            pipe.tochild.write('%s\n' % self.passwd)
-            pipe.tochild.close()
+        args += ["--dbname=postgresql://{0}:{1}@{2}:{3}/{4}".format(
+            self.user, self.passwd, self.host, self.port, self.db)]
+
+        os.system('pg_dump %s > %s' % (' '.join(args), outfile))
 
 # mysqldump -u dave -ppassword -h localhost
 # --ignore-table=my_db_name.my_table_name my_db_name
