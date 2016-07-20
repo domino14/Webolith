@@ -10,14 +10,18 @@ postgres=# create database djaerolith;
 TODO for testing:
 - Get a MySQL dump.
 - Load locally
-- Run `dump_data_chunks`
+- Run `dumpdata_chunks`
 - Create brand new PG database
+- Run `./manage.py migrate --database=postgres` with this new database
+- `find /opt/dump_folder | egrep -o "([0-9]+_[0-9]+).json" |sort | awk '{print "./manage.py loaddata --database postgres /opt/dump_folder/"$1}' > script-to-loaddata.sh`
 - Run data load script. There should be no errors. If there are, fix and repeat.
 
 Exclude unneeded apps, and apps that will automatically get data added to them during the initial `./manage.py migrate` when setting up the pg database.
 
+Excluding admin because unfortunately the log references old content types for the blog, which is no longer supported. We'll have to migrate old blog data at some point. (Maybe)
+
 ```
-./manage.py dump_data_chunks --exclude contenttypes  --exclude auth.Permission --traceback --output-folder /opt/dump_folder --max-records-per-chunk=1000 --natural
+./manage.py dumpdata_chunks --exclude contenttypes  --exclude auth.Permission --exclude admin --traceback --output-folder /opt/dump_folder --max-records-per-chunk=1000 --natural
 
 ```
 ----------

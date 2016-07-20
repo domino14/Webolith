@@ -66,7 +66,7 @@ class Lexicon(models.Model):
         return self.lexiconName
 
 
-class WordList(models.Model):
+class SavedList(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
@@ -206,4 +206,15 @@ class WordList(models.Model):
             self.lastSaved)
 
     class Meta:
+        # XXX: Unfortunately, changing this table name, and not just
+        # moving to "WordList" will be tricky. Table names have to be
+        # changed everywhere, including tests, etc...
+        db_table = 'wordwalls_savedlist'
         unique_together = ('lexicon', 'name', 'user')
+
+
+class WordList(SavedList):
+    # XXX: we are using this instead of the badly-named "SavedList"
+    # in all of our code. These names should be interchangeable.
+    class Meta:
+        proxy = True
