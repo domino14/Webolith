@@ -25,14 +25,26 @@ def gen_blank_challenges(length, lexicon_name, num_2_blanks, num_questions,
 
     """
     logger.debug('in gen_blank_challenges')
-    resp = make_rpc_call('AnagramService.BlankChallenge',
-                         {'word_length': length,
-                          'num_questions': num_questions,
-                          'lexicon_name': lexicon_name,
-                          'max_answers': max_answers,
-                          'num_2_blanks': num_2_blanks})
+    resp = make_rpc_call(
+        'AnagramService.BlankChallenge', {
+            'wordLength': length,
+            'numQuestions': num_questions,
+            'lexicon': lexicon_name,
+            'maxSolutions': max_answers,
+            'num2Blanks': num_2_blanks
+        })
+
     # Already an array formatted like [{'q': ..., 'a': [...]}, ...]
     return resp['questions']
+
+
+def anagram_letters(lexicon_name, letters):
+    resp = make_rpc_call('AnagramService.Anagram', {
+        'lexicon': lexicon_name,
+        'letters': letters,
+        'mode': 'exact'
+    })
+    return resp['words']
 
 
 def make_rpc_call(procedure_name, arguments):
@@ -50,13 +62,7 @@ def make_rpc_call(procedure_name, arguments):
         'jsonrpc': "2.0",
         'method': procedure_name,
         'id': str(uuid.uuid4()),
-        'params': {
-            'wordLength': arguments['word_length'],
-            'numQuestions': arguments['num_questions'],
-            'lexicon': arguments['lexicon_name'],
-            'maxSolutions': arguments['max_answers'],
-            'num2Blanks': arguments['num_2_blanks']
-        }
+        'params': arguments
     }
     rpc_address = settings.MACONDO_ADDRESS + '/rpc'
     try:

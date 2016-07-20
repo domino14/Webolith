@@ -29,9 +29,10 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#help" data-toggle="modal" data-target="#myModal">Help</a></li>
+            <li><a href="#help" data-toggle="modal" data-target="#help-modal">Help</a></li>
             <li><a href="#newquiz">New Quiz</a></li>
             <li><a href="#continue">Continue Quiz</a></li>
+            <li><a href="#lookupword" data-toggle="modal" data-target="#word-lookup-modal">Look up Word</a></li>
           </ul>
         </div>
       </div>
@@ -72,7 +73,7 @@
     </div> <!-- /container -->
 
   <!-- Modal -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal-label" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -81,6 +82,65 @@
         </div>
         <div class="modal-body">
           {% include "flashcards/card_help.html" %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="word-lookup-modal" tabindex="-1" role="dialog" aria-labelledby="word-lookup-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Look up Word</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-10">
+              <form class="form-horizontal" role="form">
+
+                <!-- Lexicon -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label" for="word-lookup-lexicon">Lexicon</label>
+                  <div class="col-lg-9">
+                    <select id="word-lookup-lexicon" class="form-control">
+                      <option>America</option>
+                      <option>CSW12</option>
+                      <option>OWL2</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Word input -->
+                <div class="form-group">
+                  <label class="col-lg-3 control-label" for="word-lookup-letters">Letters</label>
+                  <div class="col-lg-9">
+                    <input type="text" id="word-lookup-letters" class="form-control">
+                  </div>
+                </div>
+
+                <!-- Lookup button -->
+
+                <div class="form-group">
+                  <div class="col-lg-offset-3 col-lg-9">
+                    <button type="button" class="btn btn-primary" id="word-lookup">Look up!</button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-10">
+              <div id="lookup-results"></div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

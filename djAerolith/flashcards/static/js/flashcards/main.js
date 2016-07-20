@@ -1,4 +1,4 @@
-/* global requirejs,define*/
+/* global requirejs,define, JSON*/
 requirejs.config({
   baseUrl: '/static/js/flashcards',
   paths: {
@@ -41,14 +41,19 @@ define([
   'underscore',
   'backbone',
   'views/app',
+  'views/word_lookup',
   'csrfAjax',
   'bootstrap'
-], function (module, $, _, Backbone, App) {
+], function (module, $, _, Backbone, App, WordLookup) {
   "use strict";
-  var app;
+  var app, wordLookup;
   app = new App({
     el: $('#app-view'),
     numCards: module.config().numCards,
     quizzes: JSON.parse(module.config().quizzes)
+  });
+
+  wordLookup = new WordLookup({
+    el: $('#word-lookup-modal')
   });
 });

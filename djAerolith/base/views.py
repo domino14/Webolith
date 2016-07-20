@@ -30,6 +30,7 @@ from django.shortcuts import render
 
 from base.models import WordList, Lexicon
 from lib.response import response, StatusCode
+from lib.macondo_interface import anagram_letters
 from base.utils import (generate_question_map_from_alphagrams,
                         generate_question_list_from_alphagrams,
                         question_list_from_probabilities)
@@ -273,3 +274,11 @@ def questions_for_prob_range(request):
 @login_required
 def listmanager(request):
     return render(request, 'listmanager.html')
+
+
+@login_required
+def word_lookup(request):
+    lexicon = request.GET.get('lexicon')
+    letters = request.GET.get('letters')
+    results = anagram_letters(lexicon, letters)
+    return response(results)
