@@ -2,7 +2,6 @@ django==1.8.11
 six >= 1.7
 Fabric
 Markdown
-MySQL-python
 django-registration-redux
 gargoyle
 markup
