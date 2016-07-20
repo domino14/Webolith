@@ -34,7 +34,7 @@ def validate_params(min, max, length, lex):
         :lex - Lexicon short name (string)
     """
     try:
-        lexicon = Lexicon.objects.get(lexiconName=lex.upper())
+        lexicon = Lexicon.objects.get(lexiconName=lex)
     except Lexicon.DoesNotExist:
         return "No such lexicon: %s" % lex
     try:
