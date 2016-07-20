@@ -43,22 +43,6 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('SQL_DB_NAME'),
-        'USER': os.environ.get('SQL_USER'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD'),
-        'HOST': os.environ.get('SQL_HOST'),
-        'PORT': '',
-        'TEST': {
-            'CHARSET': 'utf8',
-            'COLLATION': 'utf8_general_ci',
-        },
-        'OPTIONS': {
-            "init_command": "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
-        },
-        'ATOMIC_REQUESTS': True
-    },
-    'postgres': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('PGSQL_DB_NAME'),
         'USER': os.environ.get('PGSQL_USER'),
