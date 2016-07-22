@@ -16,9 +16,19 @@
 
 <div>
 
-    <canvas id="myChart" width="400" height="100"></canvas>
+    <canvas id="scoresChart" width="400" height="100"></canvas>
 
 </div>
+
+<p>
+
+<div>
+
+    <canvas id="timeChart" width="400" height="100"></canvas>
+
+</div>
+
+</p>
 
 <p>
 
@@ -41,15 +51,15 @@ Challenges:<br>
 
 </p>
 
-<button type="button" class="btn btn-primary" id="dropdown-button">Primary</button>
+<button type="button" class="btn btn-primary" id="dropdown-button">Submit</button>
 
 </p>
 
 <script>
 
-var scoreArray = [];
 var scoresByDate = {};
 var dateArray = [];
+var timeRemainingByDate = {};
 
 $( "#dropdown-button" ).click(function() {
 
@@ -66,8 +76,11 @@ $( "#dropdown-button" ).click(function() {
             for (i = 0; i < msg.length; i++) {
                 var x = i;
                 var value = msg[i];
-                scoreArray.push(value.Score);
-                scoresByDate[value.Date] = value.Score;
+                console.log(value);
+                scoresByDate[value.Date] = (Number(value.Score) / Number(value.maxScore)) * 100;
+                timeRemainingByDate[value.Date] = value.timeRemaining;
+                console.log(timeRemainingByDate);
+                console.log(scoresByDate);
                 dateArray.push(value.Date);
             }
 
@@ -79,6 +92,7 @@ function charts () {
     dateArray = dateArray.sort();
     var keys = [];
     scoresSorted = [];
+    timeSorted = [];
 
     for (var key in scoresByDate) {
         if (scoresByDate.hasOwnProperty(key)) {
@@ -89,11 +103,14 @@ function charts () {
     keys.sort();
     for (i = 0; i < keys.length; i++) {
         scoresSorted[i] = scoresByDate[keys[i]];
+        timeSorted[i] = timeRemainingByDate[keys[i]];
     }
 
-    var ctx = document.getElementById("myChart");
+    console.log(timeSorted);
 
-    var myChart = new Chart(ctx, {
+    var ctx = document.getElementById("scoresChart");
+
+    var scoresChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dateArray,
@@ -130,7 +147,51 @@ function charts () {
                 }]
             }
         }
+
     });
+
+    var ctx = document.getElementById("timeChart");
+
+    var timeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dateArray,
+
+            datasets: [{
+                label: 'Time Remaining',
+                data: timeSorted,
+
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+
+    });
+
 }
 });
 
