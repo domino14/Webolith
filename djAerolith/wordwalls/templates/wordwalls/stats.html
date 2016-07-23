@@ -12,9 +12,10 @@
 <script src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
 <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 
-<div>
+<div id="div1">
 
     <canvas id="scoresChart" width="400" height="100"></canvas>
 
@@ -22,7 +23,7 @@
 
 <p>
 
-<div>
+<div id="div2">
 
     <canvas id="timeChart" width="400" height="100"></canvas>
 
@@ -57,42 +58,77 @@ Challenges:<br>
 
 <script>
 
+// These hold info for the charts
 var scoresByDate = {};
 var dateArray = [];
 var timeRemainingByDate = {};
 
 $( "#dropdown-button" ).click(function() {
+    $("#scoresChart").load();
 
+    // This is the info we want
     var lexicon = $('#lexicon').val()
     var challenge = $('#challenge').val()
 
+    // Call the API, receive JSON
     $.ajax({
           method: "GET",
           url: "/wordwalls/stats/api/" + lexicon + "/" + challenge,
           dataType: 'json'
     })
-        .done(function( msg ) {
+        .done(function(msg) {
 
+            // Parse the JSON for the info we want for the charts
             for (i = 0; i < msg.length; i++) {
                 var x = i;
                 var value = msg[i];
-                console.log(value);
-                scoresByDate[value.Date] = (Number(value.Score) / Number(value.maxScore)) * 100;
+                var dateString = value.Date;
+                var dateYearOnly = dateString.slice(0, 4);
+                var scoreShortened = (Number(value.Score) / Number(value.maxScore)) * 100;
+
+                scoresByDate[value.Date] = scoreShortened.toFixed(2);
                 timeRemainingByDate[value.Date] = value.timeRemaining;
-                console.log(timeRemainingByDate);
-                console.log(scoresByDate);
+
+                // dateArray.push(dateYearOnly);
                 dateArray.push(value.Date);
+
             }
 
+            // Call the charts function to generate the charts on the page
             charts();
         });
 
+function isDateInArray(value, array) {
+    return array.indexOf(value) > -1;
+}
+
 function charts () {
 
+    // Info for chart axes
     dateArray = dateArray.sort();
     var keys = [];
     scoresSorted = [];
     timeSorted = [];
+
+    // for (i = 0; i < dateArray.length; i++) {
+    //     if (isDateInArray(dateArray[i], dateArray) == false) {
+    //         dateArray.push(dateYearOnly);
+    //     } else {
+    //         dateArray.push(' ');
+    //     }
+    // }
+    // console.log(dateArray);
+
+    // for (i = 1; i < dateArray.length; i++) {
+    //     if (isDateInArray(dateArray[i], dateArray) == true) {
+    //         dateArray[i] = ' ';
+    //     }
+    // }
+        // if (dateArray[i] === dateArray[i - 1] || dateArray[i] in dateArray) {
+        //     dateArray[i] = ' ';
+        // }
+    // }
+    // console.log(dateArray);
 
     for (var key in scoresByDate) {
         if (scoresByDate.hasOwnProperty(key)) {
@@ -106,8 +142,7 @@ function charts () {
         timeSorted[i] = timeRemainingByDate[keys[i]];
     }
 
-    console.log(timeSorted);
-
+    // Scores line graph
     var ctx = document.getElementById("scoresChart");
 
     var scoresChart = new Chart(ctx, {
@@ -119,16 +154,24 @@ function charts () {
                 label: 'Score',
                 data: scoresSorted,
 
+                // Point color
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
+                    // Fill color under line
+                    'rgba(75,192,192,0.2)'
                 ],
                 borderColor: [
-                    'rgba(255,99,132, 1)',
+                    // Line
+                    'rgba(75,192,192,0.5)',
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
@@ -150,6 +193,7 @@ function charts () {
 
     });
 
+    // Time remaining line graph
     var ctx = document.getElementById("timeChart");
 
     var timeChart = new Chart(ctx, {
@@ -161,16 +205,24 @@ function charts () {
                 label: 'Time Remaining',
                 data: timeSorted,
 
+                // Point color
+                pointBorderColor: "rgba(255, 99, 132, 1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(255,99,132, 1)",
+                pointHoverBorderColor: "rgba(255,99,132, 0.5)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
+                    // Fill color under line
+                    'rgba(255, 99, 132, 0.2)'
                 ],
                 borderColor: [
-                    'rgba(255,99,132, 1)',
+                    // Line
+                    'rgba(255,99,132, 0.5)',
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
@@ -194,7 +246,6 @@ function charts () {
 
 }
 });
-
 
 </script>
 
