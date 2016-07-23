@@ -63,8 +63,22 @@ var scoresByDate = {};
 var dateArray = [];
 var timeRemainingByDate = {};
 
+// Defining the charts as global - destroy the charts should the user
+// select another option to view
+var scoresChart;
+var timeChart;
+
 $( "#dropdown-button" ).click(function() {
-    $("#scoresChart").load();
+
+    // Check if charts exist so another chart isn't populated
+    // on top of it
+    if (scoresChart) {
+        scoresChart.destroy()
+    }
+
+    if (timeChart) {
+        timeChart.destroy()
+    }
 
     // This is the info we want
     var lexicon = $('#lexicon').val()
@@ -79,8 +93,7 @@ $( "#dropdown-button" ).click(function() {
         .done(function(msg) {
 
             // Parse the JSON for the info we want for the charts
-            for (i = 0; i < msg.length; i++) {
-                var x = i;
+            for (var i = 0; i < msg.length; i++) {
                 var value = msg[i];
                 var dateString = value.Date;
                 var dateYearOnly = dateString.slice(0, 4);
@@ -98,54 +111,26 @@ $( "#dropdown-button" ).click(function() {
             charts();
         });
 
-function isDateInArray(value, array) {
-    return array.indexOf(value) > -1;
-}
+// function isDateInArray(value, array) {
+//     return array.indexOf(value) > -1;
+// }
 
 function charts () {
 
     // Info for chart axes
-    dateArray = dateArray.sort();
-    var keys = [];
-    scoresSorted = [];
-    timeSorted = [];
+    dateArray.sort();
+    var scoresSorted = [];
+    var timeSorted = [];
 
-    // for (i = 0; i < dateArray.length; i++) {
-    //     if (isDateInArray(dateArray[i], dateArray) == false) {
-    //         dateArray.push(dateYearOnly);
-    //     } else {
-    //         dateArray.push(' ');
-    //     }
-    // }
-    // console.log(dateArray);
-
-    // for (i = 1; i < dateArray.length; i++) {
-    //     if (isDateInArray(dateArray[i], dateArray) == true) {
-    //         dateArray[i] = ' ';
-    //     }
-    // }
-        // if (dateArray[i] === dateArray[i - 1] || dateArray[i] in dateArray) {
-        //     dateArray[i] = ' ';
-        // }
-    // }
-    // console.log(dateArray);
-
-    for (var key in scoresByDate) {
-        if (scoresByDate.hasOwnProperty(key)) {
-            keys.push(key);
-        }
-    }
-
-    keys.sort();
-    for (i = 0; i < keys.length; i++) {
-        scoresSorted[i] = scoresByDate[keys[i]];
-        timeSorted[i] = timeRemainingByDate[keys[i]];
+    for (var i = 0; i < dateArray.length; i++) {
+        scoresSorted[i] = scoresByDate[dateArray[i]];
+        timeSorted[i] = timeRemainingByDate[dateArray[i]];
     }
 
     // Scores line graph
     var ctx = document.getElementById("scoresChart");
 
-    var scoresChart = new Chart(ctx, {
+    scoresChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dateArray,
@@ -194,9 +179,9 @@ function charts () {
     });
 
     // Time remaining line graph
-    var ctx = document.getElementById("timeChart");
+    var ntx = document.getElementById("timeChart");
 
-    var timeChart = new Chart(ctx, {
+    timeChart = new Chart(ntx, {
         type: 'line',
         data: {
             labels: dateArray,

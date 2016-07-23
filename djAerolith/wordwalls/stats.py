@@ -30,7 +30,6 @@ def get_stats(request, lexicon, type_of_challenge_id):
     challenges = DailyChallenge.objects.filter(name=name, lexicon__lexiconName__in=lexica)
     leaderboards = DailyChallengeLeaderboard.objects.filter(challenge__in=challenges)
     entries = DailyChallengeLeaderboardEntry.objects.filter(user=request.user, board__in=leaderboards)
-    print entries
 
     info_we_want = []
 
