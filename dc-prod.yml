@@ -4,8 +4,7 @@
 # For now, we only have a web container. nginx and the db will still be
 # regular linux processes under the main host.
 
-# Used for dev.aerolith.org and www.aerolith.org
-# prod doesn't use the mysqld.sock but it doesn't hurt to have it here.
+# Used for www.aerolith.org
 app:
   env_file:
     - ./config/config.env
