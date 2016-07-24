@@ -174,7 +174,7 @@ function charts () {
                 pointHoverBorderWidth: 2,
                 pointRadius: 1,
                 pointHitRadius: 10,
-
+                spanGaps: true,
                 backgroundColor: [
                     // Fill color under line
                     'rgba(75,192,192,0.2)'
@@ -197,6 +197,14 @@ function charts () {
                     ticks: {
                         beginAtZero:true
                     }
+                }],
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                    displayFormats: {
+                        quarter: 'MMM YYYY'
+                    }
+                }
                 }]
             }
         }
@@ -248,6 +256,14 @@ function charts () {
                     ticks: {
                         beginAtZero:true
                     }
+                }],
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                    displayFormats: {
+                        quarter: 'MMM YYYY'
+                    }
+                }
                 }]
             }
         }
