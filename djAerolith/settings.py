@@ -276,14 +276,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'log_file': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join('/opt/logs', 'django.log'),
-            'maxBytes': 50000000,
-            'formatter': 'verbose',
-            'backupCount': 10
-        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -304,6 +296,14 @@ LOGGING = {
 }
 
 if tobool(os.environ.get('PROD_LOGGING', False)):
+    LOGGING['handlers']['log_file'].append({
+        'level': 'DEBUG',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'filename': os.path.join('/opt/logs', 'django.log'),
+        'maxBytes': 50000000,
+        'formatter': 'verbose',
+        'backupCount': 10
+    })
     LOGGING['loggers']['django.db'] = {
         'handlers': ['log_file'],
         'level': 'INFO'

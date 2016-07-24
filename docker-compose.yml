@@ -25,8 +25,6 @@ app:
   volumes:
     - .:/opt/webolith:rw
     - ./db:/db
-    # ??? /home/ubuntu/logs
-    - /home/ubuntu/logs:/opt/logs
     - /Users/cesar/Downloads:/opt/downloads
   ports:
     - 8000:8000
