@@ -113,7 +113,7 @@ $( "#dropdown-button" ).click(function() {
     // Call the API, receive JSON
     $.ajax({
           method: "GET",
-          url: "/wordwalls/stats/api/" + lexicon + "/" + challenge,
+          url: "/wordwalls/stats/api/" + lexicon + "/" + challenge + "/",
           dataType: 'json'
     })
         .done(function(msg) {
