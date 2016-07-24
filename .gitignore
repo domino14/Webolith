@@ -24,3 +24,4 @@ db/*.db
 config/local_config.env
 config/prod_config.env
 config/dev_config.env
+*.DS_Store

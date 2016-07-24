@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block ss %}
+    <link href="/static/css/wordwalls/wordwallsCreateTable.css" rel="stylesheet">
+    <link href="/static/css/aerolith/bootstrap-datepicker.css" rel="stylesheet">
+{% endblock %}
+{% block title %}{% trans "Wordwalls - select list" %}{% endblock %}
+
+{% block jquery_js %}{% endblock %}
+
+{% block content %}
+<script src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
+<script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/js/aerolith/Chart.bundle.min.js"></script>
+
+
+<p>
+
+Lexicon:<br>
+<select class="form-control" id="lexicon">
+  <option value="1">CSW15</option>
+  <option value="7">America</option>
+  <option value="8">FISE09</option>
+</select>
+
+<p>
+
+Challenges:<br>
+<select class="form-control" id="challenge">
+  <option value="1">Today's 2's</option>
+  <option value="2">Today's 3's</option>
+  <option value="3">Today's 4's</option>
+  <option value="4">Today's 5's</option>
+  <option value="5">Today's 6's</option>
+  <option value="6">Today's 7's</option>
+  <option value="7">Today's 8's</option>
+  <option value="8">Today's 9's</option>
+  <option value="9">Today's 10's</option>
+  <option value="10">Today's 11's</option>
+  <option value="11">Today's 12's</option>
+  <option value="12">Today's 13's</option>
+  <option value="13">Today's 14's</option>
+  <option value="14">Today's 15's</option>
+  <option value="15">Week's Bingo Toughies</option>
+  <option value="16">Blank Bingos</option>
+  <option value="17">Bingo Marathon</option>
+  <option value="18">Common Words (short)</option>
+  <option value="19">Common Words (long)</option>
+
+</select>
+
+</p>
+
+<button type="button" class="btn btn-primary" id="dropdown-button">Submit</button>
+
+</p>
+
+
+<div id="div1">
+
+    <canvas id="scoresChart" width="400" height="100"></canvas>
+
+</div>
+
+<p>
+
+<div id="div2">
+
+    <canvas id="timeChart" width="400" height="100"></canvas>
+
+</div>
+
+</p>
+
+<img src="/static/img/aerolith/blue_spinner.gif" style="display: none; position: fixed; left: 600px; top: 100px;" class="ring-spinner">
+
+
+
+<script>
+
+// These hold info for the charts
+var scoresByDate = {};
+var dateArray = [];
+var timeRemainingByDate = {};
+
+// Defining the charts as global - destroy the charts should the user
+// select another option to view
+var scoresChart;
+var timeChart;
+
+$( "#dropdown-button" ).click(function() {
+
+    $( ".ring-spinner").show();
+    $( "#dropdown-button").prop('disabled', true);
+
+    // Check if charts exist so another chart isn't populated
+    // on top of it
+    if (scoresChart) {
+        scoresChart.destroy()
+    }
+
+    if (timeChart) {
+        timeChart.destroy()
+    }
+
+    // This is the info we want
+    var lexicon = $('#lexicon').val()
+    var challenge = $('#challenge').val()
+
+    // Call the API, receive JSON
+    $.ajax({
+          method: "GET",
+          url: "/wordwalls/stats/api/" + lexicon + "/" + challenge,
+          dataType: 'json'
+    })
+        .done(function(msg) {
+
+            // Parse the JSON for the info we want for the charts
+            for (var i = 0; i < msg.length; i++) {
+                var value = msg[i];
+                var dateString = value.Date;
+                var dateYearOnly = dateString.slice(0, 4);
+                var scoreShortened = (Number(value.Score) / Number(value.maxScore)) * 100;
+
+                scoresByDate[value.Date] = scoreShortened.toFixed(2);
+                timeRemainingByDate[value.Date] = value.timeRemaining;
+
+                // dateArray.push(dateYearOnly);
+                dateArray.push(value.Date);
+
+            }
+
+            // Call the charts function to generate the charts on the page
+            charts();
+        });
+
+function charts () {
+
+    $( ".ring-spinner").hide();
+    $( "#dropdown-button").prop('disabled', false);
+
+    // Info for chart axes
+    dateArray.sort();
+    var scoresSorted = [];
+    var timeSorted = [];
+
+    for (var i = 0; i < dateArray.length; i++) {
+        scoresSorted[i] = scoresByDate[dateArray[i]];
+        timeSorted[i] = timeRemainingByDate[dateArray[i]];
+    }
+
+    // Scores line graph
+    var ctx = document.getElementById("scoresChart");
+
+    scoresChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dateArray,
+
+            datasets: [{
+                label: 'Score',
+                data: scoresSorted,
+
+                // Point color
+                pointBorderColor: "rgba(75,192,192,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                pointHoverBorderColor: "rgba(220,220,220,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+
+                backgroundColor: [
+                    // Fill color under line
+                    'rgba(75,192,192,0.2)'
+                ],
+                borderColor: [
+                    // Line
+                    'rgba(75,192,192,0.5)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+
+    });
+
+    // Time remaining line graph
+    var ntx = document.getElementById("timeChart");
+
+    timeChart = new Chart(ntx, {
+        type: 'line',
+        data: {
+            labels: dateArray,
+
+            datasets: [{
+                label: 'Time Remaining',
+                data: timeSorted,
+
+                // Point color
+                pointBorderColor: "rgba(255, 99, 132, 1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(255,99,132, 1)",
+                pointHoverBorderColor: "rgba(255,99,132, 0.5)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+
+                backgroundColor: [
+                    // Fill color under line
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    // Line
+                    'rgba(255,99,132, 0.5)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+
+    });
+
+}
+});
+
+</script>
+
+
+{% endblock %}
