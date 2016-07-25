@@ -23,7 +23,8 @@ import datetime
 # group
 securityGroups = {'Database': ['aerolith-pg'],
                   'Web': ['aerolith-web'],
-                  'Wordpress': ['AerolithWP']
+                  'Wordpress': ['AerolithWP'],
+                  'Dev': ['ubuntu-512mb-sfo1-01']
                   }
 
 # groupRules tell you for each security groups, which security groups
@@ -32,7 +33,8 @@ securityGroups = {'Database': ['aerolith-pg'],
 groupRules = {'Web': [('all', 80), ('all', 443), ('all', 21), ('all', 20),
                       ('all', '61052:61057'), ('all', 8080)],
               'Redis': [('Web', 6379), ('all', 80)],
-              'Database': [('Web', 5432)]
+              'Database': [('Web', 5432)],
+              'Dev': [('all', 80), ('all', 443)]
               }
 
 

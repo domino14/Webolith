@@ -109,7 +109,7 @@ def deploy_firewalls():
     execute(deploy_all_firewalls, servers)
 
 
-@roles('prod_db')
+@roles('prod_db', 'dev')
 def deploy_all_firewalls(servers):
     # DON'T DEPLOY THIS TO THE WEB ROLE!!!
     # DOCKER MAKES ITS OWN CHAINS AND SCREWS EVERYTHING UP!!
