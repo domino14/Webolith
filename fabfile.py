@@ -9,10 +9,8 @@ print curdir
 
 env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
-    'prod': [
-        #'ubuntu@192.241.203.184',
-        'ubuntu@104.236.137.163'],
-    'dev': ['ubuntu@162.243.144.78'],
+    'prod': ['ubuntu@www.aerolith.org'],
+    'dev': ['ubuntu@dev.aerolith.org'],
     'prod_db': ['ubuntu@159.203.220.140']
 }
 
@@ -35,10 +33,7 @@ def _deploy(role, skipjs):
             'config/config.env')
         run("docker exec -it webolith_app_1 ../scripts/deploy.sh")
 
-# ubuntu@ubuntu-512mb-sfo1-01:~/webolith$ docker run --env-file config/config.env --volumes-from webolith_app_1 -it --rm webolith_app "djAerolith/manage.py collectstatic --noinput"
-# exec: "djAerolith/manage.py collectstatic --noinput": stat djAerolith/manage.py collectstatic --noinput: no such file or directory
 
-# docker run --env-file config/dev_config.env --volumes-from webolith_app_1 -it --rm webolith_app bash
 def deploy_word_db(lexicon_name, role):
     execute(_deploy_word_db, lexicon_name, role, role=role)
 
