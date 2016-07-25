@@ -109,7 +109,7 @@ def deploy_firewalls():
     execute(deploy_all_firewalls, servers)
 
 
-@roles('prod_db', 'dev')
+@roles('prod_db')
 def deploy_all_firewalls(servers):
     # DON'T DEPLOY THIS TO THE WEB ROLE!!!
     # DOCKER MAKES ITS OWN CHAINS AND SCREWS EVERYTHING UP!!
@@ -118,8 +118,8 @@ def deploy_all_firewalls(servers):
         secGroup = 'Web'
     elif env.host_string in env.roledefs['prod_db']:
         secGroup = 'Database'
-    elif env.host_string in env.roledefs['prod_redis']:
-        secGroup = 'Redis'
+    elif env.host_string in env.roledefs['dev']:
+        secGroup = 'Dev'
     gen_firewall(secGroup, servers)
 
     # write the firewall to the /etc/iptables.up.rules file

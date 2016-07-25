@@ -6,6 +6,9 @@ import sys
 
 key = os.getenv("HOME") + '/.ssh/aerolith.pem'
 API_TOKEN = os.getenv('DIGITAL_OCEAN_API_TOKEN')
+if not API_TOKEN:
+    sys.exit(
+        'Error: Need to set DIGITAL_OCEAN_API_TOKEN environment variable.')
 
 
 def get_servers():
