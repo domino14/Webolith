@@ -297,17 +297,17 @@ def handle_homepage_post(profile, request):
 def table(request, id):
     if request.method == 'POST':
         action = request.POST['action']
-        logger.debug('user=%s, action=%s, table=%s', request.user, action, id)
+        logger.debug(u'user=%s, action=%s, table=%s', request.user, action, id)
         if action == "start":
             return start_game(request, id)
         elif action == "guess":
-            logger.debug('guess=%s', request.POST['guess'])
+            logger.debug(u'guess=%s', request.POST['guess'])
             wwg = WordwallsGame()
             state = wwg.guess(request.POST['guess'].strip(), id, request.user)
             if state is None:
                 return response(_('Quiz is already over.'),
                                 status=StatusCode.BAD_REQUEST)
-            logger.debug('table=%s Returning %s, %s', id, state[0], state[1])
+            logger.debug(u'table=%s Returning %s, %s', id, state[0], state[1])
             return response({'g': state[0], 'C': state[1]})
         elif action == "gameEnded":
             wwg = WordwallsGame()
