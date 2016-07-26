@@ -130,3 +130,14 @@ def deploy_all_firewalls(servers):
     # Put this in /etc/network/interfaces:
     # pre-up iptables-restore < /etc/iptables.up.rules
     # So that the firewalls get restored on restart
+
+
+def init_database():
+    """
+    Create database from scratch. Requires a djaerolith database to
+    have been created.
+
+    """
+    local('python manage.py migrate')
+    local('python manage.py loaddata wordwalls/fixtures/test/lexica.json')
+    local('python manage.py loaddata dcNames')
