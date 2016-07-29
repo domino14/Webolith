@@ -84,8 +84,8 @@ var timeRemainingByDate = {};
 
 // Defining the charts as global - destroy the charts should the user
 // select another option to view
-var scoresChart;
-var timeChart;
+var scoresChartObj;
+var timeChartObj;
 
 $( "#dropdown-button" ).click(function() {
 
@@ -94,12 +94,12 @@ $( "#dropdown-button" ).click(function() {
 
     // Check if charts exist so another chart isn't populated
     // on top of it
-    if (scoresChart) {
-        scoresChart.destroy()
+    if (scoresChartObj) {
+        scoresChartObj.destroy()
     }
 
-    if (timeChart) {
-        timeChart.destroy()
+    if (timeChartObj) {
+        timeChartObj.destroy()
     }
 
     scoresByDate = {};
@@ -154,7 +154,7 @@ function charts () {
     // Scores line graph
     var ctx = document.getElementById("scoresChart");
 
-    scoresChart = new Chart(ctx, {
+    scoresChartObj = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dateArray,
@@ -212,7 +212,7 @@ function charts () {
     // Time remaining line graph
     var ntx = document.getElementById("timeChart");
 
-    timeChart = new Chart(ntx, {
+    timeChartObj = new Chart(ntx, {
         type: 'line',
         data: {
             labels: dateArray,
