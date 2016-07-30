@@ -180,12 +180,11 @@ $( "#dropdown-button" ).click(function() {
 function getAverage (array, idToUpdate) {
 
     var count = 0;
-    var total = 0;
+    var total = array.length;
 
     for (var i = 0; i < array.length; i++) {
         num = parseInt(array[i], 10);
         count += num;
-        total += 1;
     }
 
     var avg = (count / total).toFixed(2);
