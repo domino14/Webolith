@@ -13,47 +13,88 @@
 <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/js/aerolith/Chart.bundle.min.js"></script>
 
+<div class="container">
 
-<p>
+    <div class="row">
 
-Lexicon:<br>
-<select class="form-control" id="lexicon">
-  <option value="1">CSW15</option>
-  <option value="7">America</option>
-  <option value="8">FISE09</option>
-</select>
+        <div class="col-md-6">
 
-<p>
+            <p>
 
-Challenges:<br>
-<select class="form-control" id="challenge">
-  <option value="1">Today's 2's</option>
-  <option value="2">Today's 3's</option>
-  <option value="3">Today's 4's</option>
-  <option value="4">Today's 5's</option>
-  <option value="5">Today's 6's</option>
-  <option value="6">Today's 7's</option>
-  <option value="7">Today's 8's</option>
-  <option value="8">Today's 9's</option>
-  <option value="9">Today's 10's</option>
-  <option value="10">Today's 11's</option>
-  <option value="11">Today's 12's</option>
-  <option value="12">Today's 13's</option>
-  <option value="13">Today's 14's</option>
-  <option value="14">Today's 15's</option>
-  <option value="15">Week's Bingo Toughies</option>
-  <option value="16">Blank Bingos</option>
-  <option value="17">Bingo Marathon</option>
-  <option value="18">Common Words (short)</option>
-  <option value="19">Common Words (long)</option>
+                Lexicon:<br>
+                <select class="form-control" id="lexicon">
+                  <option value="1">CSW15</option>
+                  <option value="7">America</option>
+                  <option value="8">FISE09</option>
+                </select>
 
-</select>
+            </p>
 
-</p>
+            <p>
 
-<button type="button" class="btn btn-primary" id="dropdown-button">Submit</button>
+                Challenges:<br>
+                <select class="form-control" id="challenge">
+                  <option value="1">Today's 2's</option>
+                  <option value="2">Today's 3's</option>
+                  <option value="3">Today's 4's</option>
+                  <option value="4">Today's 5's</option>
+                  <option value="5">Today's 6's</option>
+                  <option value="6">Today's 7's</option>
+                  <option value="7">Today's 8's</option>
+                  <option value="8">Today's 9's</option>
+                  <option value="9">Today's 10's</option>
+                  <option value="10">Today's 11's</option>
+                  <option value="11">Today's 12's</option>
+                  <option value="12">Today's 13's</option>
+                  <option value="13">Today's 14's</option>
+                  <option value="14">Today's 15's</option>
+                  <option value="15">Week's Bingo Toughies</option>
+                  <option value="16">Blank Bingos</option>
+                  <option value="17">Bingo Marathon</option>
+                  <option value="18">Common Words (short)</option>
+                  <option value="19">Common Words (long)</option>
+                </select>
 
-</p>
+            </p>
+
+            <button type="button" class="btn btn-primary" id="dropdown-button">Submit</button>
+
+            </p>
+
+    </div>
+
+
+
+    <div class="col-md-6">
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Average</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Time Remaining (seconds)</th>
+              <td><span id="time"></span></td>
+              <td><span id="time-low"></span></td>
+              <td><span id="time-high"></span></td>
+            </tr>
+            <tr>
+              <th scope="row">Score</th>
+              <td><span id="scores"></span></td>
+              <td><span id="scores-low"></span></td>
+              <td><span id="scores-high"></span></td>
+            </tr>
+          </tbody>
+        </table>
+
+    </div>
+
+</div>
 
 
 <div id="div1">
@@ -136,6 +177,30 @@ $( "#dropdown-button" ).click(function() {
             charts();
         });
 
+function getAverage (array, idToUpdate) {
+
+    var count = 0;
+    var total = array.length;
+
+    for (var i = 0; i < array.length; i++) {
+        num = parseInt(array[i], 10);
+        count += num;
+    }
+
+    var avg = (count / total).toFixed(2);
+
+    var avgString = avg.toString();
+
+    if (avgString === 'NaN') {
+        avgString = '0';
+    }
+
+    var averageElement = $('#' + idToUpdate);
+
+    averageElement.html(avgString);
+
+}
+
 function charts () {
 
     $( ".ring-spinner").hide();
@@ -150,6 +215,10 @@ function charts () {
         scoresSorted[i] = scoresByDate[dateArray[i]];
         timeSorted[i] = timeRemainingByDate[dateArray[i]];
     }
+
+    getAverage(scoresSorted, 'scores');
+    getAverage(timeSorted, 'time');
+
 
     // Scores line graph
     var ctx = document.getElementById("scoresChart");
