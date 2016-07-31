@@ -16,11 +16,16 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
+import logging
+
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+
 from lib.socket_helper import get_connection_token
 from lib.response import response
+
+logger = logging.getLogger(__name__)
 
 
 def homepage(request):
@@ -55,3 +60,8 @@ def login_error(request):
 
 def new_social_user(request):
     return render(request, 'new_social_user.html')
+
+
+def js_error(request):
+    logger.error(request.body)
+    return response('OK')

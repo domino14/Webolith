@@ -36,8 +36,9 @@ define([
   'views/ConfigureView',
   'views/AppView',
   'backbone',
+  'error',
   'csrfAjax'
-], function (module, $, _, Configure, ConfigureView, AppView, Backbone) {
+], function (module, $, _, Configure, ConfigureView, AppView, Backbone, Error) {
   "use strict";
   $(function() {
     var Dispatcher, configuration, configurationView, appView, addlParams, rx;
@@ -84,5 +85,7 @@ define([
         }
       }
     });
+    Error.setup();
+
   });
 });
