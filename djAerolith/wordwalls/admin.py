@@ -26,13 +26,13 @@ from wordwalls.models import WordwallsGameModel, DailyChallengeMissedBingos
 
 class DailyChallengeAdmin(admin.ModelAdmin):
     fields = ['lexicon', 'date', 'name', 'seconds', 'alphagrams']
-    search_fields = ['name']
+    search_fields = ['name__name']
     list_display = ('date', 'name', 'lexicon')
 
 
 class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
     fields = ['challenge', 'maxScore']
-    search_fields = ['challenge']
+    search_fields = ['challenge__name__name']
     readonly_fields = ('challenge', 'maxScore')
     list_display = ['challenge', 'maxScore']
 
@@ -40,7 +40,7 @@ class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
 class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
     fields = ['user', 'score', 'timeRemaining', 'board', 'additionalData',
               'qualifyForAward']
-    search_fields = ['user__username']
+    search_fields = ['user__username', 'board__challenge__name__name']
     list_display = ['user', 'score', 'timeRemaining', 'board']
     readonly_fields = ('board',)
 
@@ -48,7 +48,8 @@ class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
 class WordwallsGameAdmin(admin.ModelAdmin):
     fields = ['host', 'inTable', 'lastActivity', 'currentGameState',
               'gameType', 'playerType', 'word_list']
-    search_fields = ['host', 'lastActivity', 'word_list']
+    search_fields = ['host__username', 'lastActivity', 'word_list__name',
+                     'word_list__lexicon__lexiconName']
     readonly_fields = ('lastActivity', 'word_list', 'inTable', 'host',
                        'gameType', 'playerType', 'currentGameState')
     list_display = ['host', 'lastActivity', 'word_list']
@@ -59,8 +60,9 @@ admin.site.register(WordwallsGameModel, WordwallsGameAdmin)
 class WordwallsWordListAdmin(admin.ModelAdmin):
     fields = ['user', 'name', 'lexicon', 'created', 'lastSaved',
               'numAlphagrams', 'goneThruOnce', 'missed', 'firstMissed',
-              'origQuestions', 'curQuestions', 'is_temporary', 'version']
-    search_fields = ['user__username', 'name', 'lexicon']
+              'origQuestions', 'curQuestions', 'is_temporary', 'version',
+              'questionIndex']
+    search_fields = ['user__username', 'name', 'lexicon__lexiconName']
     list_display = ['user', 'name', 'lexicon', 'created', 'lastSaved',
                     'is_temporary']
     readonly_fields = ('lastSaved', 'created', 'is_temporary')
