@@ -12,6 +12,7 @@
 <script src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
 <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/js/aerolith/Chart.bundle.min.js"></script>
+<script src="/static/lib/bootstrap-datepicker.js"></script>
 
 <div class="container">
 
@@ -54,6 +55,20 @@
                   <option value="18">Common Words (short)</option>
                   <option value="19">Common Words (long)</option>
                 </select>
+
+            <p>
+
+                Start Date:<br>
+                <input data-provide="datepicker" id="start-date" class="form-control">
+
+            </p>
+
+            <p>
+
+                End Date:<br>
+                <input data-provide="datepicker" id="end-date" class="form-control">
+
+            </p>
 
             </p>
 
@@ -128,6 +143,10 @@ var timeRemainingByDate = {};
 var scoresChartObj;
 var timeChartObj;
 
+$('.datepicker').datepicker({
+    format: 'yyyy-mm-dd',
+});
+
 $( "#dropdown-button" ).click(function() {
 
     $( ".ring-spinner").show();
@@ -149,6 +168,9 @@ $( "#dropdown-button" ).click(function() {
     // This is the info we want
     var lexicon = $('#lexicon').val()
     var challenge = $('#challenge').val()
+    var startDate = $('#start-date').val()
+    var endDate = $('end-date').val()
+
 
     // Call the API, receive JSON
     $.ajax({

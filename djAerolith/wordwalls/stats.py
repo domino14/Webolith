@@ -18,7 +18,11 @@ def main(request):
 
 @login_required
 def get_stats(request, lexicon, type_of_challenge_id):
+
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
     lexicon = Lexicon.objects.get(id=lexicon)
+
     if lexicon.lexiconName in ('OWL2', 'America'):
         lexica = ['OWL2', 'America']
     elif lexicon.lexiconName in ('CSW12', 'CSW15'):
@@ -29,6 +33,19 @@ def get_stats(request, lexicon, type_of_challenge_id):
     name = DailyChallengeName.objects.get(id=type_of_challenge_id)
     challenges = DailyChallenge.objects.filter(name=name,
                                                lexicon__lexiconName__in=lexica)
+
+    if not start_date and not end_date:
+        pass
+
+    elif not start_date:
+        challenges = challenges.filter(date__lte=end_date)
+
+    elif not end_date:
+        challenges = challenges.filter(date__gte=start_date)
+
+    else:
+        challenges = challenges.filter(date__range=(start_date, end_date))
+
     leaderboards = DailyChallengeLeaderboard.objects.filter(challenge__in=challenges)
     entries = DailyChallengeLeaderboardEntry.objects.filter(user=request.user,
                                                             board__in=leaderboards)
