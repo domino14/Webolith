@@ -91,6 +91,7 @@ urlpatterns = patterns('',
     (r'^cards/', include('flashcards.urls')),
     (r'^socket_token/', 'views.socket_token'),
     (r'^base/', include('base.urls')),
+    (r'^js_errors/', 'views.js_error'),
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
