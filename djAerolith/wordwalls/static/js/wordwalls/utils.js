@@ -9,9 +9,16 @@ define([
   messageTextBoxLimit = 3000; // Characters.
   Utils = {
     SPANISH_LEXICON: SPANISH_LEXICON,
-    updateTextBox: function(message, textBoxId) {
+    /**
+     * Update the text box with the given id, with the message.
+     */
+    updateTextBox: function(message, textBoxId, optionalColor) {
       var $box, newMessage;
       $box = $('#' + textBoxId);
+      if (optionalColor) {
+        message = '<span style="color:' + optionalColor + ';">' + message +
+          '</span>';
+      }
       newMessage = $box.html() + message + '<BR>';
       if (newMessage.length > messageTextBoxLimit) {
         newMessage = newMessage.substr(

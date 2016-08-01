@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-06 22:47-0700\n"
+"POT-Creation-Date: 2016-07-31 17:15-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: registration_app/forms.py:26
+#: registration_app/forms.py:29
 msgid "You seem to be a computer, please try again"
 msgstr "Parece que usted es una computadora, por favor intente otra vez."
 
-#: settings.py:81
+#: registration_app/forms.py:57
+msgid "A user with that username already exists."
+msgstr ""
+
+#: settings.py:70
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:82
+#: settings.py:71
 msgid "Spanish"
 msgstr "Español"
 
@@ -78,8 +82,7 @@ msgstr ""
 "A César le gusta programar, jugar Scrabble, guitarra, ukelele, correr, y "
 "otras cosas."
 
-#: templates/base.html:76
-#: templates/registration/password_reset_complete.html:9
+#: templates/base.html:76 templates/registration/password_reset_complete.html:9
 msgid "Log in"
 msgstr "Iniciar sesión"
 
@@ -95,30 +98,34 @@ msgstr "Cerrar sesión"
 msgid "Wordwalls"
 msgstr "Muros De Palabras"
 
-#: templates/base.html:119
+#: templates/base.html:86
+msgid "Stats"
+msgstr ""
+
+#: templates/base.html:120
 msgid "Welcome to Aerolith 2.0!"
 msgstr "¡Bienvenidos a Aerolith 2.0!"
 
-#: templates/base.html:124
+#: templates/base.html:125
 msgid ""
 "Or <a href=\"accounts/register\">register</a> with a username and password..."
 msgstr ""
-"O <a href=\"accounts/register\">regístrese</a> con un nombre de usuario "
-"y contraseña..."
+"O <a href=\"accounts/register\">regístrese</a> con un nombre de usuario y "
+"contraseña..."
 
-#: templates/base.html:127
+#: templates/base.html:128
 msgid "Welcome back"
 msgstr "Gracias por regresar"
 
-#: templates/base.html:127
+#: templates/base.html:128
 msgid "Here are some things you can do"
 msgstr "Aquí hay unas cosas que usted puede hacer"
 
-#: templates/base.html:128
+#: templates/base.html:129
 msgid "Play WordWalls"
 msgstr "Jugar Muros De Palabras"
 
-#: templates/base.html:163
+#: templates/base.html:164
 msgid "All Rights Reserved."
 msgstr "Reservados Todos Los Derechos"
 
@@ -197,33 +204,33 @@ msgstr ""
 msgid "Aerolith login"
 msgstr "Inicio de sesión"
 
-#: templates/registration/login.html:11
+#: templates/registration/login.html:16
+msgid "Or use old login form"
+msgstr "O use el formulario de login antiguo"
+
+#: templates/registration/login.html:19
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Su nombre de usuario y la contraseña no coinciden. Por favor, vuelva a "
 "intentarlo."
 
-#: templates/registration/login.html:20
-msgid "Or use old login form"
-msgstr "O use el formulario de login antiguo"
-
-#: templates/registration/login.html:28
+#: templates/registration/login.html:27
 #: templates/registration/registration_form.html:31
 #: templates/registration/registration_form.html:34
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: templates/registration/login.html:34
+#: templates/registration/login.html:33
 #: templates/registration/registration_form.html:49
 #: templates/registration/registration_form.html:52
 msgid "Password"
 msgstr "Contraseña"
 
-#: templates/registration/login.html:41
+#: templates/registration/login.html:40
 msgid "Sign in"
 msgstr "Inicie sesión"
 
-#: templates/registration/login.html:46
+#: templates/registration/login.html:45
 msgid "Forget your password?"
 msgstr "¿Se olvidó de su contraseña?"
 
