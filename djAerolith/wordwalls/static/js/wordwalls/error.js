@@ -22,7 +22,12 @@ define([
 
     sendErrorData: function(data) {
       data['fe_timestamp'] = new Date().toString();
-      $.post(ERROR_URL, JSON.stringify(data)).fail(function() {
+      $.ajax({
+        method: 'POST',
+        url: ERROR_URL,
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+      }).fail(function() {
         ErrorHandler.errorQueue.push(JSON.stringify(data));
         // Try again soon.
         setTimeout(ErrorHandler.sendErrorQueue, ErrorHandler.errorTimeout);
@@ -31,10 +36,17 @@ define([
     },
 
     sendErrorQueue: function() {
-      $.post(ERROR_URL, JSON.stringify({
-        'fe_message': 'error queue',
+      var data;
+      data = {
+        'fe_message': '(Javascript error queue)',
         'queue': ErrorHandler.errorQueue
-      })).success(function() {
+      };
+      $.ajax({
+        method: 'POST',
+        url: ERROR_URL,
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+      }).done(function() {
         ErrorHandler.errorQueue = [];
         ErrorHandler.errorTimeout = ERROR_TIMEOUT;
       }).fail(function() {
