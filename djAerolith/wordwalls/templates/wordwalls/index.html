@@ -104,6 +104,14 @@
                 <input type="text" class="form-control" id="id_probabilityMax" name="probabilityMax">
               </div>
             </div>
+
+            <div class="form-group">
+              <label for="id_fw_num_questions" class="col-md-4 control-label">{% trans "Number of questions per round"%}</label>
+              <div class="col-md-4">
+                {{fwForm.fw_num_questions}}
+              </div>
+            </div>
+
             <div class="form-group">
               <div class="col-md-offset-4 col-md-2 col-sm-2 col-xs-4">
                 <button type="button" class="formSubmitButton btn btn-success" id="searchParamsSubmit">{% trans "Play!" %}</button>
@@ -143,6 +151,15 @@
                   {{slForm.wordList}}
                 </div>
               </div>
+
+              <div class="form-group">
+                <label for="id_sl_num_questions" class="col-md-2 control-label">{% trans "Number of questions per round"%}</label>
+                <div class="col-md-2">
+                  {{slForm.sl_num_questions}}
+                </div>
+              </div>
+
+
               <div class="form-group">
                 <div class="col-md-offset-2 col-md-2 col-sm-3 col-xs-12">
                   <button type="button" class="formSubmitButton btn btn-success" id="savedListsSubmit">{% trans "Play!" %}</button>
@@ -180,11 +197,19 @@
         <div class="col-md-8">
           <form class="form-horizontal" role="form">
             <div class="form-group">
-              <label for="id_wordLength" class="col-md-3 control-label">{% trans "List choice"%}</label>
+              <label for="id_namedList" class="col-md-3 control-label">{% trans "List choice"%}</label>
               <div class="col-md-8">
                 {{nlForm.namedList}}
               </div>
             </div>
+
+            <div class="form-group">
+              <label for="id_nl_num_questions" class="col-md-3 control-label">{% trans "Number of questions per round"%}</label>
+              <div class="col-md-3">
+                {{nlForm.nl_num_questions}}
+              </div>
+            </div>
+
             <div class="form-group">
               <div class="col-md-offset-3 col-md-2 col-sm-2 col-xs-4">
                 <button type="button" class="formSubmitButton btn btn-success" id="namedListsSubmit">{% trans "Play!" %}</button>

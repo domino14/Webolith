@@ -24,7 +24,10 @@ class FindWordsForm(forms.Form):
                                         label='Min probability (at least 1)')
     probabilityMax = forms.IntegerField(max_value=250000, min_value=1,
                                         label='Max probability')
-
+    fw_num_questions = forms.IntegerField(
+        max_value=200, min_value=20, initial=50,
+        label='Number of questions per round',
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
     # PLAYERMODE_SINGLE = 1
     # PLAYERMODE_MULTI = 2
 
@@ -100,6 +103,10 @@ class SavedListForm(forms.Form):
         queryset=WordList.objects.none(),
         widget=forms.Select(attrs={'size': '10',
                                    'class': 'form-control'}))
+    sl_num_questions = forms.IntegerField(
+        max_value=200, min_value=20, initial=50,
+        label='Number of questions per round',
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
 
 class NamedListChoiceField(forms.ModelChoiceField):
@@ -120,3 +127,7 @@ class NamedListForm(forms.Form):
         queryset=NamedList.objects.none(),
         widget=forms.Select(attrs={'size': '15',
                                    'class': 'form-control'}))
+    nl_num_questions = forms.IntegerField(
+        max_value=200, min_value=20, initial=50,
+        label='Number of questions per round',
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
