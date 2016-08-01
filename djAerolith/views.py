@@ -17,6 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 import logging
+import json
 
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext
@@ -62,6 +63,11 @@ def new_social_user(request):
     return render(request, 'new_social_user.html')
 
 
+@login_required
 def js_error(request):
-    logger.error(request.body)
+    err = json.loads(request.body)
+    # Add the request so that we get the full body.
+    err['request'] = request
+    logger.error('User {0} encountered JS error: {1}'.format(
+        request.user, err['fe_message']), extra=err)
     return response('OK')
