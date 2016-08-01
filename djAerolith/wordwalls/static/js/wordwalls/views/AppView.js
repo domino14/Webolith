@@ -243,7 +243,7 @@ define([
           this.updateMessages(data.serverMsg);
         }
         if (_.has(data, 'error')) {
-          this.updateMessages(data.error);
+          this.updateMessages(data.error, 'red');
         }
         if (_.has(data, 'questions')) {
           this.wordwallsGame.processQuestionObj(data.questions);
@@ -282,8 +282,8 @@ define([
       text = mins + ":" + pad + secs;
       this.$("#gameTimer").text(text);
     },
-    updateMessages: function(message) {
-      utils.updateTextBox(message, 'messages');
+    updateMessages: function(message, color) {
+      utils.updateTextBox(message, 'messages', color);
     },
     updateCorrectAnswer: function(answer) {
       utils.updateTextBox(answer, 'correctAnswers');
@@ -410,6 +410,13 @@ define([
         guess: ucGuess
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json').fail(_.bind(function(jqXHR) {
+        if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
+            jqXHR.statusText === 'error') {
+          this.updateMessages(django.gettext(
+            'There was an error - please check your Internet connectivity.'),
+            'red');
+          return;
+        }
         this.updateMessages(jqXHR.responseJSON);
       }, this));
     },

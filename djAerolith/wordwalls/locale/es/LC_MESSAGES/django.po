@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-05 19:05-0700\n"
+"POT-Creation-Date: 2016-07-31 17:15-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,6 +74,7 @@ msgid "No table #%s exists"
 msgstr "La mesa #%s no existe"
 
 #: wordwalls/templates/wordwalls/index.html:7
+#: wordwalls/templates/wordwalls/stats.html:7
 msgid "Wordwalls - select list"
 msgstr "Muros de Palabras - seleccione lista"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-05 19:04-0700\n"
+"POT-Creation-Date: 2016-07-31 17:14-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "Debe poner un nombre de usuario."
 msgid "Your username must consist of alphanumeric characters."
 msgstr "Su nombre de usuario debe consistir de carácteres alfanuméricos."
 
-#: accounts/forms.py:60
+#: accounts/forms.py:61
 msgid "This username already exists in our system!"
 msgstr "¡Este nombre de usuario ya existe en nuestro sistema!"
 

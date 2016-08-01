@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-04 08:52-0700\n"
+"POT-Creation-Date: 2016-07-31 17:22-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,7 +158,11 @@ msgstr "Definición"
 msgid "Actions"
 msgstr "Acciones"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:477
+#: wordwalls/static/js/wordwalls/views/AppView.js:416
+msgid "There was an error - please check your Internet connectivity."
+msgstr "Hubo un error - por favor revise su conexión de Internet."
+
+#: wordwalls/static/js/wordwalls/views/AppView.js:484
 msgid "Unable to mark this alphagram as missed."
 msgstr "No se pudo marcar este alfagrama como fallado."
 
