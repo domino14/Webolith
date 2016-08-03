@@ -33,7 +33,7 @@
 
             <p>
 
-                Challenges:<br>
+                Challenge:<br>
                 <select class="form-control" id="challenge">
                   <option value="1">Today's 2's</option>
                   <option value="2">Today's 3's</option>
@@ -59,14 +59,14 @@
             <p>
 
                 Start Date:<br>
-                <input data-provide="datepicker" id="start-date" class="form-control">
+                <input data-provide="datepicker" id="start-date" class="form-control date-picker">
 
             </p>
 
             <p>
 
                 End Date:<br>
-                <input data-provide="datepicker" id="end-date" class="form-control">
+                <input data-provide="datepicker" id="end-date" class="form-control date-picker">
 
             </p>
 
@@ -133,6 +133,10 @@
 
 <script>
 
+$('.date-picker').datepicker({
+    format: 'yyyy-mm-dd'
+});
+
 // These hold info for the charts
 var scoresByDate = {};
 var dateArray = [];
@@ -142,10 +146,6 @@ var timeRemainingByDate = {};
 // select another option to view
 var scoresChartObj;
 var timeChartObj;
-
-$('.datepicker').datepicker({
-    format: 'yyyy-mm-dd',
-});
 
 $( "#dropdown-button" ).click(function() {
 
@@ -169,12 +169,13 @@ $( "#dropdown-button" ).click(function() {
     var lexicon = $('#lexicon').val()
     var challenge = $('#challenge').val()
     var startDate = $('#start-date').val()
-    var endDate = $('end-date').val()
+    var endDate = $('#end-date').val()
 
 
     // Call the API, receive JSON
     $.ajax({
           method: "GET",
+          data: {start_date: startDate, end_date: endDate},
           url: "/wordwalls/stats/api/" + lexicon + "/" + challenge + "/",
           dataType: 'json'
     })
