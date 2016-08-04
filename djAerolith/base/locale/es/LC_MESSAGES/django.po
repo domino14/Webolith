@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-31 17:15-0700\n"
+"POT-Creation-Date: 2016-08-03 21:15-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: base/forms.py:89
+#: base/forms.py:92
 msgid "Continue list"
 msgstr "Continuar lista"
 
-#: base/forms.py:90
+#: base/forms.py:93
 msgid "Quiz on first missed"
 msgstr "Primeras fallas"
 
-#: base/forms.py:91
+#: base/forms.py:94
 msgid "Restart list"
 msgstr "Reiniciar lista"
 
