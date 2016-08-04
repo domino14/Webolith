@@ -5,8 +5,9 @@
  */
 define([
   'backbone',
-  'underscore'
-], function(Backbone, _) {
+  'underscore',
+  'error'
+], function(Backbone, _, Error) {
   "use strict";
   var Tester;
   Tester = {};
@@ -44,6 +45,12 @@ define([
     if (command === 'guessend') {
       Tester.trigger('testerGuess', Tester.questionData[0].ws[0].w);
       Tester.trigger('endGame');
+    }
+    if (command === 'errorlog') {
+      Error.sendErrorData({
+        'fe_message': 'Testing the error logger.',
+        'foo': 'bar'
+      });
     }
   };
   /*

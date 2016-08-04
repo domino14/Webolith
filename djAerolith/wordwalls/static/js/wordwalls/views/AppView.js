@@ -10,9 +10,10 @@ define([
   'mustache',
   'ChallengeView',
   'wordwalls_tests',
-  'utils'
+  'utils',
+  'error'
 ], function(Backbone, $, _, Game, AlphagramView, WordSolutionView,
-     SolutionsTable, Mustache, ChallengeView, Tester, utils) {
+     SolutionsTable, Mustache, ChallengeView, Tester, utils, Error) {
   "use strict";
   var App;
 
@@ -410,6 +411,14 @@ define([
         guess: ucGuess
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json').fail(_.bind(function(jqXHR) {
+        // Log the error.
+        Error.sendErrorData({
+          'fe_message': 'JS error while submitting guess',
+          'jqXHR': jqXHR.status + ' ' + jqXHR.readyState + ' ' +
+            jqXHR.statusText,
+          'guess': guessText
+        });
+
         if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
             jqXHR.statusText === 'error') {
           this.updateMessages(django.gettext(
@@ -417,6 +426,7 @@ define([
             'red');
           return;
         }
+
         this.updateMessages(jqXHR.responseJSON);
       }, this));
     },

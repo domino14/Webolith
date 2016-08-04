@@ -17,10 +17,13 @@
 # To contact the author, please email delsolar at gmail dot com
 
 import logging
+import json
 
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.conf import settings
 
 from lib.socket_helper import get_connection_token
 from lib.response import response
@@ -62,6 +65,15 @@ def new_social_user(request):
     return render(request, 'new_social_user.html')
 
 
+@login_required
 def js_error(request):
-    logger.error(request.body)
+    err = json.loads(request.body)
+
+    send_mail(
+        'User {0} encountered JS error: {1}'.format(
+            request.user, err['fe_message']),
+        json.dumps(err, indent=2),
+        'root@aerolith',
+        [admin[1] for admin in settings.ADMINS]
+    )
     return response('OK')
