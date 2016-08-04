@@ -11,6 +11,7 @@ import codecs
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import connection
 
 from wordwalls.views import create_user_list
 from base.models import Lexicon, WordList
@@ -26,6 +27,17 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json']
+
+    def setUp(self):
+        # Reset sequence so that we don't get integrity errors.
+        # Resetting it to a high number (higher than the PKs of the word list).
+        # XXX XXX XXX
+        # Why do I have to do this? Why doesn't Django do this by default,
+        # or at least warn me in the docs, or have some method to do this?
+        # It's so weird, am I missing something?
+        cursor = connection.cursor()
+        cursor.execute("select setval('%s_id_seq', %d, True)" % (
+            'wordwalls_savedlist', 123456))
 
     def test_create_list(self):
         filename = 'new_america_jqxz_6s.txt'
