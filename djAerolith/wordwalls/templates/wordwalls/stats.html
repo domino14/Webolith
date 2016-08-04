@@ -12,6 +12,7 @@
 <script src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
 <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="/static/js/aerolith/Chart.bundle.min.js"></script>
+<script src="/static/lib/bootstrap-datepicker.js"></script>
 
 <div class="container">
 
@@ -32,7 +33,7 @@
 
             <p>
 
-                Challenges:<br>
+                Challenge:<br>
                 <select class="form-control" id="challenge">
                   <option value="1">Today's 2's</option>
                   <option value="2">Today's 3's</option>
@@ -54,6 +55,20 @@
                   <option value="18">Common Words (short)</option>
                   <option value="19">Common Words (long)</option>
                 </select>
+
+            <p>
+
+                Start Date:<br>
+                <input data-provide="datepicker" id="start-date" class="form-control date-picker">
+
+            </p>
+
+            <p>
+
+                End Date:<br>
+                <input data-provide="datepicker" id="end-date" class="form-control date-picker">
+
+            </p>
 
             </p>
 
@@ -118,6 +133,10 @@
 
 <script>
 
+$('.date-picker').datepicker({
+    format: 'yyyy-mm-dd'
+});
+
 // These hold info for the charts
 var scoresByDate = {};
 var dateArray = [];
@@ -149,10 +168,14 @@ $( "#dropdown-button" ).click(function() {
     // This is the info we want
     var lexicon = $('#lexicon').val()
     var challenge = $('#challenge').val()
+    var startDate = $('#start-date').val()
+    var endDate = $('#end-date').val()
+
 
     // Call the API, receive JSON
     $.ajax({
           method: "GET",
+          data: {start_date: startDate, end_date: endDate},
           url: "/wordwalls/stats/api/" + lexicon + "/" + challenge + "/",
           dataType: 'json'
     })
