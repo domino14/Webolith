@@ -56,6 +56,8 @@ class WordwallsGame(object):
         state = self._initial_state()
         for param in state_kwargs:
             state[param] = state_kwargs[param]
+        if state['questionsToPull'] is None:
+            state['questionsToPull'] = settings.WORDWALLS_QUESTIONS_PER_ROUND
         wgm = WordwallsGameModel(
             host=host, currentGameState=json.dumps(state),
             gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
@@ -158,7 +160,7 @@ class WordwallsGame(object):
         return qs, secs, dc
 
     def initialize_by_search_params(self, user, search_description, time_secs,
-                                    questions_per_round):
+                                    questions_per_round=None):
         lexicon = search_description['lexicon']
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
@@ -168,7 +170,7 @@ class WordwallsGame(object):
         return wgm.pk   # this is a table number id!
 
     def initialize_by_named_list(self, lex, user, named_list, secs,
-                                 questions_per_round):
+                                 questions_per_round=None):
         qs = json.loads(named_list.questions)
         db = WordDB(lex.lexiconName)
         if named_list.isRange:
@@ -186,7 +188,7 @@ class WordwallsGame(object):
         return wgm.pk
 
     def initialize_by_saved_list(self, lex, user, saved_list, list_option,
-                                 secs, questions_per_round):
+                                 secs, questions_per_round=None):
         if saved_list.user != user:
             # Maybe this isn't a big deal.
             logger.warning('Saved list user does not match user %s %s',
