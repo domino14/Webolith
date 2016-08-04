@@ -10,6 +10,7 @@ define([
 
   ErrorHandler = {
     errorTimeout: ERROR_TIMEOUT,
+    timeoutID: null,
     errorQueue: [],
     setup: function() {
       window.addEventListener("error", function (event) {
@@ -22,6 +23,11 @@ define([
 
     sendErrorData: function(data) {
       data['fe_timestamp'] = new Date().toString();
+      if (ErrorHandler.timeoutID) {
+        // Don't try posting again, but instead put in the queue.
+        ErrorHandler.errorQueue.push(JSON.stringify(data));
+        return;
+      }
       $.ajax({
         method: 'POST',
         url: ERROR_URL,
@@ -30,7 +36,10 @@ define([
       }).fail(function() {
         ErrorHandler.errorQueue.push(JSON.stringify(data));
         // Try again soon.
-        setTimeout(ErrorHandler.sendErrorQueue, ErrorHandler.errorTimeout);
+        if (!ErrorHandler.timeoutID) {
+          ErrorHandler.timeoutID = setTimeout(ErrorHandler.sendErrorQueue,
+            ErrorHandler.errorTimeout);
+        }
       });
 
     },
@@ -49,13 +58,16 @@ define([
       }).done(function() {
         ErrorHandler.errorQueue = [];
         ErrorHandler.errorTimeout = ERROR_TIMEOUT;
+        ErrorHandler.timeoutID = null;
       }).fail(function() {
         // Exponential backoff.
         ErrorHandler.errorTimeout *= 1.5;
         if (ErrorHandler.errorTimeout > MAX_ERROR_TIMEOUT) {
           ErrorHandler.errorTimeout = MAX_ERROR_TIMEOUT;
         }
-        setTimeout(ErrorHandler.sendErrorQueue, ErrorHandler.errorTimeout);
+        ErrorHandler.timeoutID = setTimeout(ErrorHandler.sendErrorQueue,
+          ErrorHandler.errorTimeout);
+
       });
     }
   };
