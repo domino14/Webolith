@@ -411,14 +411,18 @@ define([
         guess: ucGuess
       }, _.bind(this.processGuessResponse, this, ucGuess),
       'json').fail(_.bind(function(jqXHR) {
-        // Log the error.
-        Error.sendErrorData({
-          'fe_message': 'JS error while submitting guess',
-          'jqXHR': jqXHR.status + ' ' + jqXHR.readyState + ' ' +
-            jqXHR.statusText,
-          'guess': guessText
-        });
 
+        // 400s are expected. We want to log unusual cases like 500s,
+        // 0s, and maybe 403/401s.
+        if (jqXHR.status !== 400) {
+          // Log the error.
+          Error.sendErrorData({
+            'fe_message': 'JS error while submitting guess',
+            'jqXHR': jqXHR.status + ' ' + jqXHR.readyState + ' ' +
+              jqXHR.statusText + ' ' + jqXHR.responseText,
+            'guess': guessText
+          });
+        }
         if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
             jqXHR.statusText === 'error') {
           this.updateMessages(django.gettext(

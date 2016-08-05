@@ -69,11 +69,21 @@ def new_social_user(request):
 def js_error(request):
     err = json.loads(request.body)
 
-    send_mail(
-        'User {0} encountered JS error: {1}'.format(
-            request.user, err['fe_message']),
-        json.dumps(err, indent=2),
-        'root@aerolith',
-        [admin[1] for admin in settings.ADMINS]
-    )
+    if not settings.DEBUG:
+        send_mail(
+            'User {0} encountered JS error: {1}'.format(
+                request.user, err['fe_message']),
+            json.dumps(err, indent=2),
+            'root@aerolith',
+            [admin[1] for admin in settings.ADMINS]
+        )
+    else:
+        # Send a "fake" email - just log.
+        logger.debug('Fake email:')
+        logger.debug('Subject: User %s encountered JS error: %s',
+                     request.user, err['fe_message'])
+        logger.debug('Body: %s', json.dumps(err, indent=2))
+        logger.debug('From: root@aerolith')
+        logger.debug('To: %s', [admin[1] for admin in settings.ADMINS])
+
     return response('OK')
