@@ -194,9 +194,11 @@ def search_params_submit(user, post):
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
     quiz_time = int(round(timeForm.cleaned_data['quizTime'] * 60))
+    questions_per_round = fwForm.cleaned_data['fw_num_questions']
     search = searchForAlphagrams(fwForm.cleaned_data, lex)
     wwg = WordwallsGame()
-    tablenum = wwg.initialize_by_search_params(user, search, quiz_time)
+    tablenum = wwg.initialize_by_search_params(user, search, quiz_time,
+                                               questions_per_round)
 
     return response({'url': reverse('wordwalls_table', args=(tablenum,)),
                      'success': True})
@@ -219,7 +221,8 @@ def saved_lists_submit(user, post):
     wwg = WordwallsGame()
     tablenum = wwg.initialize_by_saved_list(
         lex, user, slForm.cleaned_data['wordList'],
-        slForm.cleaned_data['listOption'], quizTime)
+        slForm.cleaned_data['listOption'], quizTime,
+        slForm.cleaned_data['sl_num_questions'])
     if tablenum == 0:
         raise Http404
     return response({'url': reverse('wordwalls_table',
@@ -254,9 +257,10 @@ def named_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
+    questions_per_round = nlForm.cleaned_data['nl_num_questions']
     tablenum = wwg.initialize_by_named_list(
         lex, user, nlForm.cleaned_data['namedList'],
-        quizTime)
+        quizTime, questions_per_round)
     if tablenum == 0:
         raise Http404
     return response({'url': reverse('wordwalls_table',

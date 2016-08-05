@@ -13,6 +13,7 @@ import logging
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test.utils import override_settings
+from django.db import connection
 
 from base.forms import SavedListForm
 from wordwalls.game import WordwallsGame
@@ -30,6 +31,11 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json']
+
+    def setUp(self):
+        cursor = connection.cursor()
+        cursor.execute("select setval('%s_id_seq', %d, True)" % (
+            'wordwalls_savedlist', 123456))
 
     def setup_quiz(self, p_min=10, p_max=90, length=8):
         """

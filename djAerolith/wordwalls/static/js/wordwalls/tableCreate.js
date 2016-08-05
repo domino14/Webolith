@@ -259,7 +259,8 @@ define([
         quizTime: $("#id_quizTime").val(),
         wordLength: $("#id_wordLength").val(),
         probabilityMin: $("#id_probabilityMin").val(),
-        probabilityMax: $("#id_probabilityMax").val()
+        probabilityMax: $("#id_probabilityMax").val(),
+        fw_num_questions: $('#id_fw_num_questions').val()
       }, _.bind(this.wwRedirect, this), 'json');
     },
 
@@ -268,7 +269,8 @@ define([
         action: 'namedListsSubmit',
         lexicon: $('#id_lexicon').val(),
         quizTime: $("#id_quizTime").val(),
-        namedList: $("#id_namedList").val()
+        namedList: $("#id_namedList").val(),
+        nl_num_questions: $('#id_nl_num_questions').val()
       }, _.bind(this.wwRedirect, this), 'json');
     },
 
@@ -280,7 +282,8 @@ define([
         lexicon: $('#id_lexicon').val(),
         quizTime: $("#id_quizTime").val(),
         listOption: $("#id_listOption").val(),
-        wordList: $("#id_wordList").val()
+        wordList: $("#id_wordList").val(),
+        sl_num_questions: $('#id_sl_num_questions').val()
       }, _.bind(this.wwRedirect, this), 'json');
 
     },
