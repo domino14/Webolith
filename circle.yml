@@ -1,0 +1,31 @@
+# Config file for CircleCI. See https://circleci.com/gh/domino14/Webolith
+machine:
+  python:
+    # This is not quite the newest 2.7, but 2.7.12 takes an extra
+    # two minutes to download every time. This really should not
+    # make a difference.
+    version: 2.7.11
+  environment:
+    PGSQL_DB_NAME: circle_test
+    PGSQL_USER: ubuntu
+    PGSQL_HOST: 127.0.0.1
+    PGSQL_PASSWORD:
+    # Debug for tests is False even if I set this to True.
+    DEBUG: false
+    DEBUG_JS: false
+    # Just some random secret key
+    SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
+    DICT_FILE_URL: https://s3-us-west-1.amazonaws.com/aerolith-files/dicts.tar.bz.enc
+    # The password is in the circleci env.
+    WORD_DB_LOCATION: /home/ubuntu/db
+test:
+  pre:
+    - pip install setuptools>=0.19
+    - pip install -r djAerolith/requirements.txt
+    - wget $DICT_FILE_URL
+    - openssl des3 -d -in dicts.tar.bz.enc -out dicts.tar.bz -pass env:DICT_FILE_PW
+    - mkdir $WORD_DB_LOCATION
+    - mv dicts.tar.bz $WORD_DB_LOCATION
+    - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
+  override:
+    - cd djAerolith && ./manage.py test -v2

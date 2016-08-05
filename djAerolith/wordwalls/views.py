@@ -49,10 +49,6 @@ from current_version import CURRENT_VERSION
 from wordwalls.challenges import toughies_challenge_date
 
 
-dcTimeMap = {}
-for i in DailyChallengeName.objects.all():
-    dcTimeMap[i.pk] = i.timeSecs
-
 logger = logging.getLogger(__name__)
 
 
@@ -81,6 +77,11 @@ def homepage(request):
         data = json.loads(profile.additional_data)
     except (TypeError, ValueError):
         data = {}
+
+    dcTimeMap = {}
+    for i in DailyChallengeName.objects.all():
+        dcTimeMap[i.pk] = i.timeSecs
+
     return render(
         request,
         'wordwalls/index.html',

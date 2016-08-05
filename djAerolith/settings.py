@@ -25,6 +25,8 @@ def tobool(val):
         return True
     elif val is False:
         return False
+    elif val is None:
+        return False
     val = val.lower()
     if val in ('y', 'on', 'true', '1'):
         return True
