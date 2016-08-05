@@ -1,5 +1,7 @@
 Aerolith 2.0 is a word study website - Copyright 2007-2016 César Del Solar
 
+Build status: [![CircleCI](https://circleci.com/gh/domino14/Webolith.svg?style=svg&circle-token=63b1498e4c366aff7052ee02d1e4cf59075e235d)](https://circleci.com/gh/domino14/Webolith)
+
 =======
 
 This repository holds the Python and Javascript required to serve Aerolith on a fresh machine. Here's a brief description of the different modules:
