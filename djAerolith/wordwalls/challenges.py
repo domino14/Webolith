@@ -8,24 +8,22 @@ import random
 import re
 import logging
 
-from base.models import alphagrammize
-from wordwalls.models import (DailyChallengeName, NamedList, DailyChallenge,
+from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeMissedBingos,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from wordwalls.management.commands.genNamedLists import (FRIENDLY_COMMON_SHORT,
-                                                         FRIENDLY_COMMON_LONG)
 from lib.word_db_helper import WordDB, Question, Questions, Alphagram
 from lib.macondo_interface import gen_blank_challenges, MacondoError
 
 logger = logging.getLogger(__name__)
 
-try:
-    COMMON_SHORT_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_SHORT)
-    COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
-except NamedList.DoesNotExist:
-    COMMON_SHORT_NAMED_LIST = None
-    COMMON_LONG_NAMED_LIST = None
+# try:
+#     COMMON_SHORT_NAMED_LIST = NamedList.objects.get(
+#           name=FRIENDLY_COMMON_SHORT)
+#     COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
+# except NamedList.DoesNotExist:
+#     COMMON_SHORT_NAMED_LIST = None
+#     COMMON_LONG_NAMED_LIST = None
 
 
 def generate_dc_questions(challenge_name, lex, challenge_date):

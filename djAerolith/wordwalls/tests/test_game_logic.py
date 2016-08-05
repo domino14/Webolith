@@ -582,7 +582,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
 
     def setUp(self):
         self.user = User.objects.get(username='cesar')
-        self.lex = Lexicon.objects.get(lexiconName='OWL2')
+        self.lex = Lexicon.objects.get(lexiconName='America')
         self.wwg = WordwallsGame()
 
     def test_length_challenge(self):
