@@ -25,8 +25,7 @@ class FindWordsForm(forms.Form):
     probabilityMax = forms.IntegerField(max_value=250000, min_value=1,
                                         label='Max probability')
     fw_num_questions = forms.IntegerField(
-        max_value=200, min_value=20, initial=50,
-        label='Number of questions per round',
+        max_value=200, min_value=20, initial=50, required=False,
         widget=forms.NumberInput(attrs={'class': 'form-control'}))
     # PLAYERMODE_SINGLE = 1
     # PLAYERMODE_MULTI = 2
@@ -104,8 +103,7 @@ class SavedListForm(forms.Form):
         widget=forms.Select(attrs={'size': '10',
                                    'class': 'form-control'}))
     sl_num_questions = forms.IntegerField(
-        max_value=200, min_value=20, initial=50,
-        label='Number of questions per round',
+        max_value=200, min_value=20, initial=50, required=False,
         widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
 
@@ -128,6 +126,5 @@ class NamedListForm(forms.Form):
         widget=forms.Select(attrs={'size': '15',
                                    'class': 'form-control'}))
     nl_num_questions = forms.IntegerField(
-        max_value=200, min_value=20, initial=50,
-        label='Number of questions per round',
+        max_value=200, min_value=20, initial=50, required=False,
         widget=forms.NumberInput(attrs={'class': 'form-control'}))
