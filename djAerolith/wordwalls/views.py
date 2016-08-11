@@ -34,7 +34,7 @@ from gargoyle import gargoyle
 
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
-                        LexiconForm, NamedListForm)
+                        LexiconForm, NamedListForm, NumQuestionsForm)
 from base.models import Lexicon, WordList
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
@@ -62,6 +62,7 @@ def homepage(request):
     ulForm = UserListForm()
     slForm = SavedListForm()
     nlForm = NamedListForm()
+    num_q_form = NumQuestionsForm()
     profile = request.user.aerolithprofile
 
     if request.method == 'POST':
@@ -78,9 +79,12 @@ def homepage(request):
     except (TypeError, ValueError):
         data = {}
 
-    dcTimeMap = {}
+    dc_map = {}
     for i in DailyChallengeName.objects.all():
-        dcTimeMap[i.pk] = i.timeSecs
+        dc_map[i.pk] = {
+            'seconds': i.timeSecs,
+            'questions': i.num_questions
+        }
 
     return render(
         request,
@@ -96,8 +100,9 @@ def homepage(request):
          'nlForm': nlForm,
          'lengthCounts': json.dumps(lengthCounts),
          'upload_list_limit': wordwalls.settings.UPLOAD_FILE_LINE_LIMIT,
-         'dcTimes': json.dumps(dcTimeMap),
+         'dc_info': json.dumps(dc_map),
          'defaultLexicon': profile.defaultLexicon,
+         'num_q_form': num_q_form,
          # 'connToken': conn_token,
          'chatEnabled': not data.get('disableChat', False),
          'socketUrl': settings.SOCKJS_SERVER,
@@ -187,15 +192,18 @@ def search_params_submit(user, post):
     lexForm = LexiconForm(post)
     timeForm = TimeForm(post)
     fwForm = FindWordsForm(post)
+    num_q_form = NumQuestionsForm(post)
+
     # form bound to the POST data
-    if not (lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid()):
+    if not (lexForm.is_valid() and timeForm.is_valid() and fwForm.is_valid()
+            and num_q_form.is_valid()):
         return response({'success': False,
                          'error': _('There was something wrong with your '
                                     'search parameters or time selection.')})
     lex = Lexicon.objects.get(
         lexiconName=lexForm.cleaned_data['lexicon'])
     quiz_time = int(round(timeForm.cleaned_data['quizTime'] * 60))
-    questions_per_round = fwForm.cleaned_data['fw_num_questions']
+    questions_per_round = num_q_form.cleaned_data['num_questions']
     search = searchForAlphagrams(fwForm.cleaned_data, lex)
     wwg = WordwallsGame()
     tablenum = wwg.initialize_by_search_params(user, search, quiz_time,
@@ -209,7 +217,9 @@ def saved_lists_submit(user, post):
     lexForm = LexiconForm(post)
     timeForm = TimeForm(post)
     slForm = SavedListForm(post)
-    if not (lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid()):
+    num_q_form = NumQuestionsForm(post)
+    if not (lexForm.is_valid() and timeForm.is_valid() and slForm.is_valid()
+            and num_q_form.is_valid()):
         return response({'success': False,
                          'error': _('Please check that you have selected '
                                     'a word list and a time greater than '
@@ -223,7 +233,7 @@ def saved_lists_submit(user, post):
     tablenum = wwg.initialize_by_saved_list(
         lex, user, slForm.cleaned_data['wordList'],
         slForm.cleaned_data['listOption'], quizTime,
-        slForm.cleaned_data['sl_num_questions'])
+        num_q_form.cleaned_data['num_questions'])
     if tablenum == 0:
         raise Http404
     return response({'url': reverse('wordwalls_table',
@@ -247,7 +257,9 @@ def named_lists_submit(user, post):
     lexForm = LexiconForm(post)
     timeForm = TimeForm(post)
     nlForm = NamedListForm(post)
-    if not (lexForm.is_valid() and timeForm.is_valid() and nlForm.is_valid()):
+    num_q_form = NumQuestionsForm(post)
+    if not (lexForm.is_valid() and timeForm.is_valid() and nlForm.is_valid()
+            and num_q_form.is_valid()):
         return response({'success': False,
                          'error': _('Please check that you have selected a '
                                     'list and that your quiz time is greater '
@@ -258,7 +270,7 @@ def named_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
-    questions_per_round = nlForm.cleaned_data['nl_num_questions']
+    questions_per_round = num_q_form.cleaned_data['num_questions']
     tablenum = wwg.initialize_by_named_list(
         lex, user, nlForm.cleaned_data['namedList'],
         quizTime, questions_per_round)

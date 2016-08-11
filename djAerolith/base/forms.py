@@ -14,6 +14,12 @@ class LexiconForm(forms.Form):
         empty_label=None)
 
 
+class NumQuestionsForm(forms.Form):
+    num_questions = forms.IntegerField(
+        max_value=200, min_value=20, initial=50, required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
+
 class FindWordsForm(forms.Form):
     wlList = tuple([(repr(l), repr(l)) for l in range(2, 16)])
 
@@ -24,9 +30,6 @@ class FindWordsForm(forms.Form):
                                         label='Min probability (at least 1)')
     probabilityMax = forms.IntegerField(max_value=250000, min_value=1,
                                         label='Max probability')
-    fw_num_questions = forms.IntegerField(
-        max_value=200, min_value=20, initial=50, required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'}))
     # PLAYERMODE_SINGLE = 1
     # PLAYERMODE_MULTI = 2
 
@@ -41,17 +44,17 @@ class FindWordsForm(forms.Form):
     def clean(self):
         try:
             pmin = self.cleaned_data['probabilityMin']
-        except:
+        except KeyError:
             raise forms.ValidationError(
                 "No value submitted for minimum probability!")
         try:
             pmax = self.cleaned_data['probabilityMax']
-        except:
+        except KeyError:
             raise forms.ValidationError(
                 "No value submitted for maximum probability!")
         try:
             wordLength = self.cleaned_data['wordLength']
-        except:
+        except KeyError:
             raise forms.ValidationError(
                 "You must submit a word length between 2 and 15")
         if pmin < 1:
@@ -78,7 +81,7 @@ class WordListChoiceField(forms.ModelChoiceField):
 
         try:
             sl = WordList.objects.get(pk=value)
-        except:
+        except WordList.DoesNotExist:
             return None
         return sl
 
@@ -102,9 +105,6 @@ class SavedListForm(forms.Form):
         queryset=WordList.objects.none(),
         widget=forms.Select(attrs={'size': '10',
                                    'class': 'form-control'}))
-    sl_num_questions = forms.IntegerField(
-        max_value=200, min_value=20, initial=50, required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
 
 class NamedListChoiceField(forms.ModelChoiceField):
@@ -114,7 +114,7 @@ class NamedListChoiceField(forms.ModelChoiceField):
 
         try:
             nl = NamedList.objects.get(pk=value)
-        except:
+        except NamedList.DoesNotExist:
             return None
         return nl
 
@@ -125,6 +125,4 @@ class NamedListForm(forms.Form):
         queryset=NamedList.objects.none(),
         widget=forms.Select(attrs={'size': '15',
                                    'class': 'form-control'}))
-    nl_num_questions = forms.IntegerField(
-        max_value=200, min_value=20, initial=50, required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+

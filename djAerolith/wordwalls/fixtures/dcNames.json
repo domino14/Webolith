@@ -151,7 +151,8 @@
     "fields": {
       "name": "Bingo Marathon",
       "timeSecs": 480,
-      "orderPriority": 2
+      "orderPriority": 2,
+      "num_questions": 100
     }
   },
   {

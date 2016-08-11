@@ -32,9 +32,11 @@ class DailyChallengeName(models.Model):
     COMMON_LONG = "Common Words (long)"
     # Tuesday's coming, did you bring a coat?
     WEEKS_BINGO_TOUGHIES_ISOWEEKDAY = 2
+
     name = models.CharField(max_length=32)
     timeSecs = models.IntegerField(default=0)
     orderPriority = models.IntegerField(default=1)
+    num_questions = models.IntegerField(default=50)
 
     def __unicode__(self):
         return self.name
