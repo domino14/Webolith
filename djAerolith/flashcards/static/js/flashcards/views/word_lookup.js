@@ -32,6 +32,7 @@ define([
     },
     alertCallback: function(jqXHR) {
       window.alert(jqXHR.responseJSON);
+      this.displaySpinner_(false);
     },
     /**
      * Displays (or hides) the spinner.
@@ -49,6 +50,7 @@ define([
     displayWordLookupResults: function(results) {
       // Build up html
       var html = '';
+      this.displaySpinner_(false);
       if (results.length === 0) {
         this.$('#lookup-results').html(
           '<span style="color: red;">No results found</span>');
