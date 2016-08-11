@@ -400,12 +400,23 @@ define([
       }
     },
     /**
-     * Submits a guess to the back-end server.
+     * Submits a guess to the back-end server, only if it hasn't already
+     * been solved.
      * @param  {string} guessText A guess.
      */
     submitGuess: function(guessText) {
-      var ucGuess;
+      var ucGuess, modifiedForDisplay;
       ucGuess = this.modifyGuess($.trim(guessText.toUpperCase()));
+
+      if (!this.wordwallsGame.wordIsUnsolved(ucGuess)) {
+        // Word has already been marked as solved by the front end.
+        // (Or, it's not even in the board)
+        // Log guess but don't submit to backend.
+        modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
+        this.updateGuesses(modifiedForDisplay);
+        return;
+      }
+
       $.post(this.tableUrl, {
         action: "guess",
         guess: ucGuess

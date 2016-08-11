@@ -104,6 +104,14 @@ define([
       this.trigger('updateQStats', this.numTotalAnswersThisRound,
         this.numAnswersGottenThisRound);
     },
+    /**
+     * Returns true if the word is in the wrong words hash.
+     * @param  {string} word
+     * @return {boolean}
+     */
+    wordIsUnsolved: function(word) {
+      return !!this.wrongWordsHash[word];
+    },
     finishedAlphagram: function(alphagram) {
       delete this.wrongAlphasHash[alphagram];
       this.numAlphagramsLeft--;
