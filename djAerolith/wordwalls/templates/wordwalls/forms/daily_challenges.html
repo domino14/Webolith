@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="tab-pane active" id="today">
+  <div class="row">
+    <div class="col-md-6 col-sm-6">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="id_challengeDate" class="col-md-2 col-md-offset-2 control-label">{% trans "Date" %}</label>
+          <div class="col-md-6">
+            <input type="text" class="form-control" id="id_challengeDate" name="challengeDate">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="id_challenge" class="col-md-2 col-md-offset-2 control-label">{% trans "Challenge" %}</label>
+          <div class="col-md-6">
+            {{dcForm.challenge}}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-2">
+            <button type="button" class="formSubmitButton btn btn-success" id="challengeSubmit">{% trans "Play!"%}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-4 col-sm-6">
+      <span id="dcResultsLabel"></span><BR>
+      <div id="dcResultsDiv"></div>
+    </div>
+  </div>
+</div>

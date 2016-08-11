@@ -52,7 +52,7 @@ define([
       this.flashcardUrl = options.createQuizUrl;
       this.currentLanguage = options.language;
       this.lengthCounts = JSON.parse(options.lengthCounts);
-      this.dcTimeMap = JSON.parse(options.dcTimes);
+      this.dcInfo = JSON.parse(options.dcInfo);
       _.each(this.lengthCounts, function(lex, index) {
         this.lengthCounts[index] = JSON.parse(lex);
       }, this);
@@ -99,12 +99,16 @@ define([
      * @param {Element} target [description]
      */
     tabSelected: function(target) {
+      // Index 0 is the daily challenges index.
       if ($(target).data('index') === 0) {
         $("#id_quizTime").prop('disabled', true);
+        $("#id_num_questions").prop('disabled', true);
         this.challengeChanged();
       } else {
         $("#id_quizTime").prop('disabled', false);
+        $("#id_num_questions").prop('disabled', false);
         $("#id_quizTime").val(4);
+        $("#id_num_questions").val(50);
       }
       this.currentTab = $(target).data('index');
     },
@@ -177,7 +181,8 @@ define([
       }
       $('#dcResultsLabel').text(lblText);
       this.getDcResults();
-      $("#id_quizTime").val(this.dcTimeMap[cVal]/60.0);
+      $("#id_quizTime").val(this.dcInfo[cVal].seconds/60.0);
+      $("#id_num_questions").val(this.dcInfo[cVal].questions);
 
     },
     challengeLexiconChanged: function() {
@@ -260,7 +265,7 @@ define([
         wordLength: $("#id_wordLength").val(),
         probabilityMin: $("#id_probabilityMin").val(),
         probabilityMax: $("#id_probabilityMax").val(),
-        fw_num_questions: $('#id_fw_num_questions').val()
+        num_questions: $('#id_num_questions').val()
       }, _.bind(this.wwRedirect, this), 'json');
     },
 
@@ -270,7 +275,7 @@ define([
         lexicon: $('#id_lexicon').val(),
         quizTime: $("#id_quizTime").val(),
         namedList: $("#id_namedList").val(),
-        nl_num_questions: $('#id_nl_num_questions').val()
+        num_questions: $('#id_num_questions').val()
       }, _.bind(this.wwRedirect, this), 'json');
     },
 
@@ -283,7 +288,7 @@ define([
         quizTime: $("#id_quizTime").val(),
         listOption: $("#id_listOption").val(),
         wordList: $("#id_wordList").val(),
-        sl_num_questions: $('#id_sl_num_questions').val()
+        num_questions: $('#id_num_questions').val()
       }, _.bind(this.wwRedirect, this), 'json');
 
     },

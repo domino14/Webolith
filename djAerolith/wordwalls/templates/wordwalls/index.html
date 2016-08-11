@@ -15,6 +15,7 @@
 <div id="commonForm">
 
   <form class="form-horizontal" role="form">
+    <!-- Lexicon -->
     <div class="form-group">
       <label for="id_lexicon" class="col-md-2 control-label">{% trans "Lexicon" %}</label>
       <div class="col-md-2">
@@ -25,17 +26,26 @@
       <label class="col-md-2"></label>
       <div class="col-md-6">The Collins Official Scrabble Words 2015 (CSW15) is copyright of HarperCollins Publishers 2015 and used with permission.</div>
     </div>
+    <!-- Quiz time -->
     <div class="form-group">
       <label for="id_quizTime" class="col-md-2 control-label">{% trans "Time (minutes)" %}:</label>
       <div class="col-md-2">
           <input id="id_quizTime" name="quizTime" type="text" value="4" class="form-control">
       </div>
     </div>
+    <!-- Number of questions -->
+    <div class="form-group">
+      <label for="id_num_questions" class="col-md-2 control-label">{% trans "Number of questions per round" %} (20-200)</label>
+      <div class="col-md-2">
+        {{num_q_form.num_questions}}
+      </div>
+    </div>
+
   </form>
 </div>
 
 <div class="row">
-  <div class="col-md-2">
+  <div class="col-md-2">{% comment %} A fake form just for the tabs. Helps to align the labels. {% endcomment %}
     <form class="form-horizontal" role="form">
       <div class="form-group">
         <label class="col-md-12 control-label">{% trans "Select a quiz type" %}</label>
@@ -52,177 +62,10 @@
   </div>
 </div>
 <div class="tab-content">
-    <div class="tab-pane active" id="today">
-      <div class="row">
-        <div class="col-md-6 col-sm-6">
-          <form class="form-horizontal" role="form">
-            <div class="form-group">
-              <label for="id_challengeDate" class="col-md-2 col-md-offset-2 control-label">{% trans "Date" %}</label>
-              <div class="col-md-6">
-                <input type="text" class="form-control" id="id_challengeDate" name="challengeDate">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="id_challenge" class="col-md-2 col-md-offset-2 control-label">{% trans "Challenge" %}</label>
-              <div class="col-md-6">
-                {{dcForm.challenge}}
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="col-md-offset-4 col-md-2">
-                <button type="button" class="formSubmitButton btn btn-success" id="challengeSubmit">{% trans "Play!"%}</button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="col-md-4 col-sm-6">
-          <span id="dcResultsLabel"></span><BR>
-          <div id="dcResultsDiv"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="search">
-      <div class="row">
-        <div class="col-md-6">
-          <form class="form-horizontal" role="form">
-            <div class="form-group">
-              <label for="id_wordLength" class="col-md-4 control-label">{% trans "Word Length" %}</label>
-              <div class="col-md-4">
-                {{fwForm.wordLength}}
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="id_probabilityMin" class="col-md-4 control-label">{% trans "Min Probability (at least 1)"%}</label>
-              <div class="col-md-4">
-                <input type="text" class="form-control" id="id_probabilityMin" name="probabilityMin">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="id_probabilityMax" class="col-md-4 control-label">{% trans "Max Probability" %}</label>
-              <div class="col-md-4">
-                <input type="text" class="form-control" id="id_probabilityMax" name="probabilityMax">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="id_fw_num_questions" class="col-md-4 control-label">{% trans "Number of questions per round"%} (20-200)</label>
-              <div class="col-md-4">
-                {{fwForm.fw_num_questions}}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="col-md-offset-4 col-md-2 col-sm-2 col-xs-4">
-                <button type="button" class="formSubmitButton btn btn-success" id="searchParamsSubmit">{% trans "Play!" %}</button>
-              </div>
-              <div class="col-md-1 col-sm-1 col-xs-2">or</div>
-              <div class="col-md-2 col-sm-2 col-xs-6">
-                <button type="button" class="formSubmitButton btn btn-info" id="searchParamsFlashcard">{% trans "Flashcard" %}</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="saved-list">
-        <div class="row">
-          <div id="numAlphasInfo" class="text-muted"></div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <form class="form-horizontal" role="form">
-              <div class="form-group">
-                <label for="id_listOption" class="col-md-2 control-label">{% trans "Quiz Options" %}</label>
-                <div class="col-md-3">
-                  {{slForm.listOption}}
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="col-md-8 col-md-offset-2">
-                {% blocktrans %}To delete your saved lists, please do so in the <a href="/listmanager/">List Manager</a>{% endblocktrans %}
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="id_wordList" class="col-md-2 control-label">{% trans "List choice" %}</label>
-                <div class="col-md-8">
-                  {{slForm.wordList}}
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="id_sl_num_questions" class="col-md-2 control-label">{% trans "Number of questions per round"%} (20-200)</label>
-                <div class="col-md-2">
-                  {{slForm.sl_num_questions}}
-                </div>
-              </div>
-
-
-              <div class="form-group">
-                <div class="col-md-offset-2 col-md-2 col-sm-3 col-xs-12">
-                  <button type="button" class="formSubmitButton btn btn-success" id="savedListsSubmit">{% trans "Play!" %}</button>
-                </div>
-                <div class="col-md-3 col-sm-4 col-xs-12">
-                  <button type="button" class="formSubmitButton btn btn-info" id="savedListsFlashcardEntire">{% trans "Flashcard entire list" %}</button>
-                </div>
-                <div class="col-md-3 col-sm-4 col-xs-12">
-                  <button type="button" class="formSubmitButton btn btn-info" id="savedListsFlashcardFM">{% trans "Flashcard first missed" %}</button>
-                </div>
-              </div>
-              <div class="form-group">
-                <span class="col-md-8 col-md-offset-2" id="savedListWarning"></span>
-              </div>
-              <div class="form-group">
-                <h3 class="col-md-4 col-md-offset-2">{% trans "Or upload a new list" %}:</h3>
-
-              </div>
-              <div class="form-group">
-                <div class="col-md-2 col-md-offset-2">
-                  <div id="file-uploader" class="btn btn-primary"><span class="glyphicon glyphicon-upload dz-message"></span> {% trans "Upload Word List" %}</div>
-                </div>
-                <div id="hidden-preview-container"></div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div id="file-upload-msgs" class="col-md-offset-2"></div>
-
-    </div>
-
-    <div class="tab-pane" id="named-list">
-      <div class="row">
-        <div class="col-md-8">
-          <form class="form-horizontal" role="form">
-            <div class="form-group">
-              <label for="id_namedList" class="col-md-3 control-label">{% trans "List choice"%}</label>
-              <div class="col-md-8">
-                {{nlForm.namedList}}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="id_nl_num_questions" class="col-md-3 control-label">{% trans "Number of questions per round"%} (20-200)</label>
-              <div class="col-md-3">
-                {{nlForm.nl_num_questions}}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="col-md-offset-3 col-md-2 col-sm-2 col-xs-4">
-                <button type="button" class="formSubmitButton btn btn-success" id="namedListsSubmit">{% trans "Play!" %}</button>
-              </div>
-              <div class="col-md-1 col-sm-1 col-xs-2">{% trans "or" %}</div>
-              <div class="col-md-2 col-sm-2 col-xs-4">
-                <button type="button" class="formSubmitButton btn btn-info" id="namedListsFlashcard">{% trans "Flashcard" %}</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+  {% include "wordwalls/forms/daily_challenges.html" %}
+  {% include "wordwalls/forms/search_criteria.html" %}
+  {% include "wordwalls/forms/saved_lists.html" %}
+  {% include "wordwalls/forms/default_lists.html" %}
 </div>
 
 {% if False %}
@@ -251,9 +94,9 @@
 <script>
 var require = {
   config: {
-    'createTableMain': {
+    'create_table_main': {
       lengthCounts: "{{lengthCounts|escapejs}}",
-      dcTimes: "{{dcTimes|escapejs}}",
+      dcInfo: "{{dc_info|escapejs}}",
       createTableUrl: "{% url 'wordwalls_create_table' %}",
       createQuizUrl: "{% url 'flashcards_create_quiz' %}",
       defaultLexicon: "{{defaultLexicon.pk}}",
@@ -273,17 +116,17 @@ var require = {
 require.config({
     {% if DEBUG_JS %}
         paths: {
-            "createTableMain": "/static/js/wordwalls/createTableMain"
+            "create_table_main": "/static/js/wordwalls/create_table_main"
         }
 
     {% else %}
         urlArgs: 'v={{CURRENT_VERSION}}',
         paths: {
-            "createTableMain": "/static/build/create-table-main-built"
+            "create_table_main": "/static/build/create-table-main-built"
         }
     {% endif %}
 });
-require(["createTableMain"]);
+require(["create_table_main"]);
 </script>
 
 {% endblock %}

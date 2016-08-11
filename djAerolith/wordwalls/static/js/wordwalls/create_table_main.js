@@ -34,11 +34,7 @@ requirejs.config({
     backbone: {
       deps: ['underscore', 'jquery'],
       exports: 'Backbone'
-    }/*,
-    datepickeres: {
-      deps: ['datepicker'],
-      exports: 'jquery'
-    }*/
+    }
   }
 });
 
@@ -46,7 +42,7 @@ define([
   'module',
   'jquery',
   'underscore',
-  'tableCreate',
+  'create_table_app',
   'dropzone',
 //  'socket',
 //  'chat',
@@ -71,7 +67,7 @@ define([
       "']").prop('selected', true);
     app = new TableCreate({
       lengthCounts: tableCreateParams.lengthCounts,
-      dcTimes: tableCreateParams.dcTimes,
+      dcInfo: tableCreateParams.dcInfo,
       createTableUrl: tableCreateParams.createTableUrl,
       createQuizUrl: tableCreateParams.createQuizUrl,
       language: tableCreateParams.currentLanguage,
@@ -94,8 +90,9 @@ define([
         }));
     });
 
-    // Disable time select since daily challenges are selected.
+    // Disable time and num q select since daily challenges are selected.
     $("#id_quizTime").prop('disabled', true);
+    $("#id_num_questions").prop('disabled', true);
     $("#id_challengeDate").datepicker({
       startDate: new Date(2011, 5, 14),
       todayBtn: "linked",

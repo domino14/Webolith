@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-31 17:15-0700\n"
+"POT-Creation-Date: 2016-08-10 19:29-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,11 +26,11 @@ msgstr "Parece que usted es una computadora, por favor intente otra vez."
 msgid "A user with that username already exists."
 msgstr ""
 
-#: settings.py:70
+#: settings.py:72
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:71
+#: settings.py:73
 msgid "Spanish"
 msgstr "Español"
 
