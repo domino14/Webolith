@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block ss %}
+    <link href="/static/css/wordwalls/wordwallsCreateTable.css" rel="stylesheet">
+    <link href="/static/css/aerolith/bootstrap-datepicker.css" rel="stylesheet">
+{% endblock %}
+{% block title %}{% trans "Wordwalls - select list" %}{% endblock %}
+
+{% block jquery_js %}{% endblock %}
+
+{% block content %}
+<script src="/static/js/aerolith/jquery-1.11.0.min.js"></script>
+<script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/js/aerolith/Chart.bundle.min.js"></script>
+<script src="/static/lib/bootstrap-datepicker.js"></script>
+
+hi
+
+<script type="text/javascript">
+
+$(document).ready(function()  {
+    $.ajax({
+        method: "GET",
+        url: "/wordwalls/leaderboard/getboard/",
+        dataTyle: 'json'
+    })
+
+    .done(function(msg) {
+        console.log('cats');
+    })
+});
+
+</script>
+
+
+{% endblock %}
