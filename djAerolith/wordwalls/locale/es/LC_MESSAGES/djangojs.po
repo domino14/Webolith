@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-31 17:22-0700\n"
+"POT-Creation-Date: 2016-08-10 19:30-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,53 @@ msgstr "Quedaron"
 msgid "No one has done this challenge today. Be the first!"
 msgstr "Nadie ha hecho este desafío hoy. ¡Sea el primero!"
 
-#: wordwalls/static/js/wordwalls/createTableMain.js:117
+#: wordwalls/static/js/wordwalls/create_table_app.js:158
+msgid "Max probability (at most "
+msgstr "Probabilidad máxima (a lo mucho "
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:173
+msgid "Select a challenge to view leaderboard"
+msgstr "Seleccione un desafío para ver la tabla de posiciones."
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:178
+msgid " leaderboard"
+msgstr " tabla de posiciones"
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:200
+msgid "Play!"
+msgstr "¡Jugar!"
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:208
+msgid ""
+"This will restart this list and wipe out all its information. Make sure you "
+"want to do this!"
+msgstr ""
+"Esta opción reiniciará esta lista y borrará toda su información. ¡Asegúrese "
+"de que quiera hacer esto!"
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:399
+msgid "last saved"
+msgstr "últimamente guardada"
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:400
+#: wordwalls/static/js/wordwalls/create_table_app.js:418
+msgid "total alphagrams"
+msgstr "alfagramas totales"
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:432
+#, javascript-format
+msgid ""
+"Your current limit is %s. You can increase this by becoming a supporter!"
+msgstr ""
+"Su límite actual es %s. Usted puede remover este límite volviéndose en un/"
+"una contribuidor(a)."
+
+#: wordwalls/static/js/wordwalls/create_table_app.js:437
+#, javascript-format
+msgid "You have %s alphagrams over all your saved lists. "
+msgstr "Usted tiene %s alfagramas en todas sus listas guardadas con Aerolith. "
+
+#: wordwalls/static/js/wordwalls/create_table_main.js:114
 msgid "Success! "
 msgstr "¡Éxito!"
 
@@ -50,53 +96,7 @@ msgstr ""
 msgid "Your custom order is missing at least one letter: "
 msgstr "A su orden personalizado le falta por lo menos una letra: "
 
-#: wordwalls/static/js/wordwalls/tableCreate.js:154
-msgid "Max probability (at most "
-msgstr "Probabilidad máxima (a lo mucho "
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:169
-msgid "Select a challenge to view leaderboard"
-msgstr "Seleccione un desafío para ver la tabla de posiciones."
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:174
-msgid " leaderboard"
-msgstr " tabla de posiciones"
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:195
-msgid "Play!"
-msgstr "¡Jugar!"
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:203
-msgid ""
-"This will restart this list and wipe out all its information. Make sure you "
-"want to do this!"
-msgstr ""
-"Esta opción reiniciará esta lista y borrará toda su información. ¡Asegúrese "
-"de que quiera hacer esto!"
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:391
-msgid "last saved"
-msgstr "últimamente guardada"
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:392
-#: wordwalls/static/js/wordwalls/tableCreate.js:410
-msgid "total alphagrams"
-msgstr "alfagramas totales"
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:424
-#, javascript-format
-msgid ""
-"Your current limit is %s. You can increase this by becoming a supporter!"
-msgstr ""
-"Su límite actual es %s. Usted puede remover este límite volviéndose en un/"
-"una contribuidor(a)."
-
-#: wordwalls/static/js/wordwalls/tableCreate.js:429
-#, javascript-format
-msgid "You have %s alphagrams over all your saved lists. "
-msgstr "Usted tiene %s alfagramas en todas sus listas guardadas con Aerolith. "
-
-#: wordwalls/static/js/wordwalls/views/AppView.js:59
+#: wordwalls/static/js/wordwalls/views/AppView.js:60
 msgid ""
 "Autosave is NOT on. To save your progress, type in a name for this list next "
 "to the Save button, and click Save."
@@ -105,20 +105,20 @@ msgstr ""
 "nombre para esta lista al lado del botón \"Guardar\", y haga click en ese "
 "botón."
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:99
+#: wordwalls/static/js/wordwalls/views/AppView.js:100
 msgid "Autosave is on! "
 msgstr "¡Autoguardar está activado! "
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:100
-#: wordwalls/static/js/wordwalls/views/AppView.js:204
+#: wordwalls/static/js/wordwalls/views/AppView.js:101
+#: wordwalls/static/js/wordwalls/views/AppView.js:205
 msgid "Aerolith will save your list progress at the end of every round."
 msgstr "Aerolith guardará su progreso al final de cada ronda."
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:177
+#: wordwalls/static/js/wordwalls/views/AppView.js:178
 msgid "The challenge has ended!"
 msgstr "¡El desafío ha acabado!"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:184
+#: wordwalls/static/js/wordwalls/views/AppView.js:185
 msgid ""
 "Click <a class=\"softLink dcInfo\">here</a> to see current results for this "
 "challenge."
@@ -126,43 +126,43 @@ msgstr ""
 "Haga click <a class=\"softLink dcInfo\">aquí</a> para ver resultados "
 "actuales para este desafío."
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:192
+#: wordwalls/static/js/wordwalls/views/AppView.js:193
 msgid "You must enter a list name for saving!"
 msgstr "¡Debe escribir un nombre para guardar esta lista!"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:200
+#: wordwalls/static/js/wordwalls/views/AppView.js:201
 msgid "Saved as "
 msgstr "Guardado como "
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:203
+#: wordwalls/static/js/wordwalls/views/AppView.js:204
 msgid "Autosave is now on! "
 msgstr "¡Autoguardar está ahora activado! "
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:311
+#: wordwalls/static/js/wordwalls/views/AppView.js:312
 msgid "Prob"
 msgstr "Prob"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:312
+#: wordwalls/static/js/wordwalls/views/AppView.js:313
 msgid "Alphagram"
 msgstr "Alfagrama"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:313
+#: wordwalls/static/js/wordwalls/views/AppView.js:314
 msgid "Word"
 msgstr "Palabra"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:314
+#: wordwalls/static/js/wordwalls/views/AppView.js:315
 msgid "Definition"
 msgstr "Definición"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:315
+#: wordwalls/static/js/wordwalls/views/AppView.js:316
 msgid "Actions"
 msgstr "Acciones"
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:416
+#: wordwalls/static/js/wordwalls/views/AppView.js:429
 msgid "There was an error - please check your Internet connectivity."
 msgstr "Hubo un error - por favor revise su conexión de Internet."
 
-#: wordwalls/static/js/wordwalls/views/AppView.js:484
+#: wordwalls/static/js/wordwalls/views/AppView.js:498
 msgid "Unable to mark this alphagram as missed."
 msgstr "No se pudo marcar este alfagrama como fallado."
 
