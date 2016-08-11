@@ -18,15 +18,17 @@ hi
 
 <script type="text/javascript">
 
-$(document).ready(function()  {
+$(document).ready(function() {
     $.ajax({
         method: "GET",
         url: "/wordwalls/leaderboard/getboard/",
-        dataTyle: 'json'
+        dataType: 'json'
     })
 
     .done(function(msg) {
-        console.log('cats');
+        console.log(msg);
+
+
     })
 });
 
