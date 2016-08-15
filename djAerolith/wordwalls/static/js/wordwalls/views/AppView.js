@@ -407,13 +407,12 @@ define([
     submitGuess: function(guessText) {
       var ucGuess, modifiedForDisplay;
       ucGuess = this.modifyGuess($.trim(guessText.toUpperCase()));
+      modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
+      this.updateGuesses(modifiedForDisplay);
 
       if (!this.wordwallsGame.wordIsUnsolved(ucGuess)) {
         // Word has already been marked as solved by the front end.
         // (Or, it's not even in the board)
-        // Log guess but don't submit to backend.
-        modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
-        this.updateGuesses(modifiedForDisplay);
         return;
       }
 
@@ -488,7 +487,6 @@ define([
           });
           this.updateCorrectAnswer(word.display(this.lexicon, true));
         }
-        this.updateGuesses(ucGuess);
       }
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();

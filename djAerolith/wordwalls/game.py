@@ -693,8 +693,6 @@ class WordwallsGame(object):
             # connectivity issues.
             # In this case, we should advise the front end to mark the
             # question correct.
-            # TODO: test when this is the very last question to be
-            # solved.
             logger.info('event=guess-not-correct guess=%s', guess_str)
             last_correct = state['originalAnswerHash'][guess_str][0]
             return {'going': state['quizGoing'],
