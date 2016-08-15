@@ -535,8 +535,8 @@ define([
         lastView.setElement(questionView.el);
         questionView.setElement(lastElement);
         questionView.remove();
-        lastView.render();
-      }, 5000);
+        lastView.render().$el.hide().fadeIn();
+      }, 2000);
     },
     processTimerExpired: function() {
       /* Tell the server the timer expired. */
