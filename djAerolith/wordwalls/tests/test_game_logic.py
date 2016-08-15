@@ -57,9 +57,9 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
         self.assertEqual(params['gameType'], 'regular')
         self.assertEqual(params['serverMsg'],
                          'These are questions 1 through 50 of 81.')
-        going, last_correct = wwg.guess('CATS', table_id, user)
-        self.assertTrue(going)
-        self.assertEqual(last_correct, '')
+        guess_state = wwg.guess('CATS', table_id, user)
+        self.assertTrue(guess_state['going'])
+        self.assertEqual(guess_state['alphagram'], '')
 
     @mock.patch.object(WordwallsGame, 'did_timer_run_out')
     def test_quiz_ends_after_time(self, timer_ran_out):
@@ -68,9 +68,9 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
         table_id, user = self.setup_quiz()
         wwg = WordwallsGame()
         wwg.start_quiz(table_id, user)
-        going, last_correct = wwg.guess('CATS', table_id, user)
-        self.assertFalse(going)
-        self.assertEqual(last_correct, '')
+        guess_state = wwg.guess('CATS', table_id, user)
+        self.assertFalse(guess_state['going'])
+        self.assertEqual(guess_state['alphagram'], '')
         wgm = wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertFalse(state['quizGoing'])
@@ -124,12 +124,12 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             idx = 0
             for w in valid_words:
                 idx += 1
-                going, last_correct = wwg.guess(w, table_id, user)
+                guess_state = wwg.guess(w, table_id, user)
                 if idx != ct:
-                    self.assertTrue(going)
+                    self.assertTrue(guess_state['going'])
                 else:
-                    self.assertFalse(going)      # Quiz ends
-                self.assertTrue(last_correct != '')
+                    self.assertFalse(guess_state['going'])      # Quiz ends
+                self.assertTrue(guess_state['alphagram'] != '')
 
         fully_solve_and_assert()
         wgm = wwg.get_wgm(table_id)
