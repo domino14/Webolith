@@ -18,6 +18,7 @@
 
 import json
 import time
+import copy
 from datetime import date
 import logging
 import re
@@ -45,6 +46,7 @@ class WordwallsGame(object):
         """ Return an initial state object, for a brand new game. """
         return {
             'answerHash': {},
+            'originalAnswerHash': {},
             'questionsToPull': settings.WORDWALLS_QUESTIONS_PER_ROUND,
             'quizGoing': False,
             'quizStartTime': 0,
@@ -286,6 +288,7 @@ class WordwallsGame(object):
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answer_hash
+        state['originalAnswerHash'] = copy.deepcopy(answer_hash)
         state['numAnswersThisRound'] = len(answer_hash)
         wgm.currentGameState = json.dumps(state)
         wgm.save()
@@ -652,6 +655,7 @@ class WordwallsGame(object):
         return True
 
     def guess(self, guess_str, tablenum, user):
+        """ Handle a guess submission from the front end. """
         guess_str = guess_str.upper()
         wgm = self.get_wgm(tablenum)
         last_correct = ''
@@ -682,10 +686,26 @@ class WordwallsGame(object):
                 state['timeRemaining'] = time_remaining
                 self.do_quiz_end_actions(state, tablenum, wgm)
             last_correct = alpha[0]
+        elif guess_str in state.get('originalAnswerHash', {}):
+            # It's possible that the guess is in the answer hash that
+            # existed at the beginning of the quiz, but the front end
+            # never got the message that it was solved, due to Internet
+            # connectivity issues.
+            # In this case, we should advise the front end to mark the
+            # question correct.
+            logger.info('event=guess-not-correct guess=%s', guess_str)
+            last_correct = state['originalAnswerHash'][guess_str][0]
+            return {'going': state['quizGoing'],
+                    'word': guess_str,
+                    'alphagram': last_correct,
+                    'already_solved': True}
         if state_modified:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
-        return state['quizGoing'], last_correct
+        return {'going': state['quizGoing'],
+                'word': guess_str,
+                'alphagram': last_correct,
+                'already_solved': False}
 
     def permit(self, user, tablenum):
         wgm = self.get_wgm(tablenum, lock=False)
