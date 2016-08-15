@@ -421,31 +421,37 @@ define([
         action: "guess",
         guess: ucGuess
       }, _.bind(this.processGuessResponse, this, ucGuess),
-      'json').fail(_.bind(function(jqXHR) {
-
-        // 400s are expected. We want to log unusual cases like 500s,
-        // 0s, and maybe 403/401s.
-        if (jqXHR.status !== 400) {
-          // Log the error.
-          Error.sendErrorData({
-            'fe_message': 'JS error while submitting guess',
-            'jqXHR': jqXHR.status + ' ' + jqXHR.readyState + ' ' +
-              jqXHR.statusText + ' ' + jqXHR.responseText,
-            'guess': guessText
-          });
-        }
-        if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
-            jqXHR.statusText === 'error') {
-          this.updateMessages(django.gettext(
-            'There was an error - please check your Internet connectivity.'),
-            'red');
-          return;
-        }
-
-        this.updateMessages(jqXHR.responseJSON);
-      }, this));
+      'json').fail(_.bind(this.processGuessFailure, this, ucGuess));
     },
+    /**
+     * This is called when a guess response fails for whatever reason.
+     * In the event that there is an internet blip, we also try to
+     * reconcile the guess on the front end.
+     * @param  {string} ucGuess
+     * @param  {Object} jqXHR
+     */
+    processGuessFailure: function(ucGuess, jqXHR) {
+      // 400s are expected. We want to log unusual cases like 500s
+      // and maybe 403/401s.
+      if (jqXHR.status !== 400 && jqXHR.status !== 0) {
+        // Log the error.
+        Error.sendErrorData({
+          'fe_message': 'JS error while submitting guess',
+          'jqXHR': jqXHR.status + ' ' + jqXHR.readyState + ' ' +
+            jqXHR.statusText + ' ' + jqXHR.responseText,
+          'ucGuess': ucGuess
+        });
+      }
+      if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
+          jqXHR.statusText === 'error') {
+        this.updateMessages(django.gettext(
+          'Error - please check your Internet connection and try again.'),
+          'red');
+        return;
+      }
 
+      this.updateMessages(jqXHR.responseJSON);
+    },
     /**
      * Modify guess, based on lexicon. If we are using the Spanish (FISE)
      * lexicon, we want to convert characters accordingly.
@@ -466,29 +472,23 @@ define([
      *                      in response to a guess.
      */
     processGuessResponse: function(ucGuess, data) {
-      var view, wordsRemaining, word, modifiedForDisplay;
-      modifiedForDisplay = utils.modifyWordForDisplay(ucGuess, this.lexicon);
+      var view, word;
       if (_.has(data, 'C')) {
         if (data.C !== '') {
           /* data.C contains the alphagram. */
           view = this.questionViewsByAlphagram[data.C];
-          wordsRemaining = view.model.get('wordsRemaining') - 1;
-          /* Trigger an update of the view here. */
-          view.model.set({
-            wordsRemaining: wordsRemaining
-          });
+          view.model.solve(data.w);
           this.wordwallsGame.correctGuess(ucGuess);
-          if (wordsRemaining === 0) {
+          if (view.model.fullySolved()) {
             this.wordwallsGame.finishedAlphagram(data.C);
             this.moveUpNextQuestion(view);
           }
           word = view.model.get('words').find(function(word) {
             return word.get('word').toUpperCase() === ucGuess;
           });
-          this.updateCorrectAnswer(modifiedForDisplay +
-            word.get('lexiconSymbol'));
+          this.updateCorrectAnswer(word.display(this.lexicon, true));
         }
-        this.updateGuesses(modifiedForDisplay);
+        this.updateGuesses(ucGuess);
       }
       if (_.has(data, 'g') && !data.g) {
         this.processQuizEnded();

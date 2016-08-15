@@ -324,8 +324,10 @@ def table(request, id):
             if state is None:
                 return response(_('Quiz is already over.'),
                                 status=StatusCode.BAD_REQUEST)
-            logger.debug(u'table=%s Returning %s, %s', id, state[0], state[1])
-            return response({'g': state[0], 'C': state[1]})
+            logger.debug(u'table=%s Returning %s', id, state)
+            return response({'g': state['going'], 'C': state['alphagram'],
+                             'w': state['word'],
+                             'a': state['already_solved']})
         elif action == "gameEnded":
             wwg = WordwallsGame()
             ret = wwg.check_game_ended(id)
