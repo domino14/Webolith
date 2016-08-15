@@ -10,7 +10,8 @@ requirejs.config({
     text: '../../../../static/lib/require/text',
     csrfAjax: '../../../../static/js/aerolith/csrfAjax',
     json2: '../../../../static/js/aerolith/json2',
-    moment: '../../../../static/lib/moment'
+    moment: '../../../../static/lib/moment',
+    react: '../../../../static/lib/react'
   },
   shim: {
     underscore: {

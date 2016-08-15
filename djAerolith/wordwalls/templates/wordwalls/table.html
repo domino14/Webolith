@@ -76,7 +76,7 @@ var require = {
 require.config({
   {% if DEBUG_JS %}
     paths: {
-      'main': '/static/js/wordwalls/main'
+      'main': '/static/js/wordwalls/main-react'
     }
   {% else %}
     urlArgs: 'v={{CURRENT_VERSION}}',
@@ -197,6 +197,9 @@ require(['main']);
 
 <div id="fade"></div>
 <div id="infoDialog" title=""></div>
+
+<!-- Use for React experiment -->
+<div id="content"></div>
 
 </body>
 <script>
