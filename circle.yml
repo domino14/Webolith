@@ -2,12 +2,12 @@
 machine:
   node:
     version: stable
+  services:
+    - docker
   python:
-    # This is not quite the newest 2.7, but 2.7.12 takes an extra
-    # two minutes to download every time. This really should not
-    # make a difference.
-    version: 2.7.11
+    version: 2.7.12
   environment:
+    REPO: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     PGSQL_DB_NAME: circle_test
     PGSQL_USER: ubuntu
     PGSQL_HOST: 127.0.0.1
@@ -17,9 +17,12 @@ machine:
     DEBUG_JS: false
     # Just some random secret key
     SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
-    DICT_FILE_URL: https://s3-us-west-1.amazonaws.com/aerolith-files/dicts.tar.bz.enc
     # The password is in the circleci env.
+    DICT_FILE_URL: https://s3-us-west-1.amazonaws.com/aerolith-files/dicts.tar.bz.enc
     WORD_DB_LOCATION: /home/ubuntu/db
+    # For collecting static files to later copy into Nginx. This
+    # dir must be in the context of the build, so inside the kubernetes dir.
+    STATIC_ROOT: $REPO/kubernetes/webolith_static/
 dependencies:
   pre:
     - mkdir -p ~/.yarn-cache
@@ -31,7 +34,8 @@ dependencies:
 test:
   pre:
     - pip install setuptools>=0.19
-    - pip install -r djAerolith/requirements.txt
+    - pip install -r djAerolith/test_requirements.txt
+    - pip install -r djAerolith/prod_requirements.txt
     - wget $DICT_FILE_URL
     - openssl des3 -d -in dicts.tar.bz.enc -out dicts.tar.bz -pass env:DICT_FILE_PW
     - mkdir $WORD_DB_LOCATION
@@ -42,16 +46,53 @@ test:
     - yarn full-prod-build
     # Test the app.
     - cd djAerolith && ./manage.py test -v2
-
+    # Gather all JS files and compile messages for building into image.
+    - cd djAerolith && ./manage.py collectstatic --noinput
+    - cd djAerolith && ./manage.py compilemessages
+  post:
+    - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM .
+    # We need to do a sanity check here.
+    - docker run --rm --name webolith_ctr -e SECRET_KEY=abcdef -p 8000:8000 domino14/webolith:$CIRCLE_BUILD_NUM :
+          background: true
+    - sleep 5
+    - curl --fail -vvv http://localhost:8000
+    # If the curl above returns a non-200 status code we are probably missing
+    # a requirement and need to rebuild the base dockerfile?
+    - docker stop webolith_ctr
 deployment:
   production:
     branch: master
     commands:
+      - >
+        cd $REPO/kubernetes &&
+        docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+        -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
+      - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD
+      - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+      # Delete the static files.
+      - rm -rf $STATIC_ROOT
+      - docker push domino14/webolith:$CIRCLE_BUILD_NUM
+
+      # We need to create the kubernetes service yaml files, and apply new
+      # ones from config vars.
+      - fab create_k8s_configs:prod
       - fab deploy:prod
   staging:
     branch: staging
     commands:
-      - fab deploy:dev
+      - >
+        cd $REPO/kubernetes &&
+        docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+        -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
+      - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD
+      - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+      # Delete the static files.
+      - rm -rf $STATIC_ROOT
+      - docker push domino14/webolith:$CIRCLE_BUILD_NUM
 
+      # We need to create the kubernetes service yaml files, and apply new
+      # ones from config vars.
+      - fab create_k8s_configs:dev
+      - fab deploy:dev
   # Don't deploy other branches.
 

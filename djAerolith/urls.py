@@ -46,6 +46,7 @@ urlpatterns = patterns('',
 
     (r'^$', 'views.homepage'),
     (r'^old/', 'views.oldhomepage'),
+    (r'^health/', 'views.health'),
     (r'^about/', 'views.about'),
     (r'^admin/', include(admin.site.urls)),
     (r'^accounts/social/$', 'accounts.views.social'),
@@ -94,6 +95,7 @@ urlpatterns = patterns('',
     (r'^base/', include('base.urls')),
     (r'^js_errors/', 'views.js_error'),
     (r'^500tester/', 'views.test_500'),
+    (r'^healthz/', 'views.healthz')
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: webolith
+    component: db
+  ports:
+    - port: 5432
+      name: postgres-port
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: db
+    spec:
+      containers:
+      - name: pg-container
+        image: postgres:9.5
+        env:
+          - name: POSTGRES_PASSWORD
+            value: pass
+        ports:
+          - containerPort: 5432
+        volumeMounts:
+          - name: postgresdata
+            mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgresdata
+        persistentVolumeClaim:
+          claimName: postgres-data

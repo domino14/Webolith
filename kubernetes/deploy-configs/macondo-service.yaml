@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: macondo
+  labels:
+    app: webolith
+    component: macondo
+spec:
+  selector:
+    app: webolith
+    component: macondo
+  ports:
+    - port: 8088
+      name: macondo-port

@@ -1,0 +1,59 @@
+# This nginx container is only used for static serving. Annoyingly
+# we need another outer one as an ingress, but that's cool.
+# All TLS is done on the outer Ingress.
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-static-svc
+spec:
+  selector:
+    app: webolith
+    component: nginx
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 80
+      name: http
+    # - protocol: "TCP"
+    #   port: 443
+    #   targetPort: 443
+    #   name: https
+  # type: NodePort
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-static-deployment
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: domino14/webolith-nginx
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /usr/share/nginx/html/50x.html
+            successThreshold: 1
+            failureThreshold: 2
+            periodSeconds: 3
+            initialDelaySeconds: 3
+
+          lifecycle:
+            preStop:
+              exec:
+                # Note: This is a total hack, but kubernetes needs some time
+                # to gracefully cut traffic off when terminating.
+                # SIGTERM triggers a quick exit; wait and gracefully terminate instead
+                command: ["/bin/bash", "-c", "rm /usr/share/nginx/html/50x.html && sleep 15 && /usr/sbin/nginx -s quit"]

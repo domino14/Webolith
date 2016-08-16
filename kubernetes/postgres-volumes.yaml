@@ -1,0 +1,29 @@
+# A persistent volume for the Postgres pod. Note that this is
+# used mainly locally for developing.
+# This only needs to be run once.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0001
+  labels:
+    name: pg-data-disk
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/pv0001/
+
+---
+# A persistent volume claim for the Postgres pod.
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

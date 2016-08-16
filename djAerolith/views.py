@@ -24,9 +24,10 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 
 from lib.socket_helper import get_connection_token
-from lib.response import response
+from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +50,13 @@ def oldhomepage(request):
 def about(request):
     return render_to_response('about.html',
                               context_instance=RequestContext(request))
+
+
+def health(request):
+    # HAProxy health request
+    if request.method != 'OPTIONS':
+        return response('Bad method.', StatusCode.BAD_REQUEST)
+    return response('OK')
 
 
 @login_required
@@ -92,3 +100,12 @@ def js_error(request):
 @login_required
 def test_500(request):
     raise Exception('A test 500')
+
+
+@csrf_exempt
+def healthz(request):
+    if request.method == 'GET':
+        return response('OK')
+    elif request.method == 'POST':
+        return response('OKPOST')
+    return response('Bad method.', StatusCode.BAD_REQUEST)

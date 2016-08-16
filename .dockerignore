@@ -4,3 +4,5 @@ node/*
 .git/*
 *.pyc
 config/*.env
+node_modules/*
+kubernetes/*
