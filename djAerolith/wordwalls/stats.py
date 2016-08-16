@@ -127,17 +127,6 @@ def get_medals(request):
         user_medals = [user, medals]
         all_medals.append(user_medals)
 
-    # Sum a user's medals, then add the {user: total medals} key value pair
-    # to medal_totals
-    # for user in all_medals:
-
-    #     total_medals = add_medals(user)
-    #     medal_totals[user[0]] = total_medals
-
-    # Find the user with the most medals
-    # top_user = max(medal_totals, key=medal_totals.get)
-    # top_user_score[top_user] = medal_totals[top_user]
-
     # Create user objects with info about medals
     for user in all_medals:
 
@@ -157,6 +146,7 @@ def get_medals(request):
         users_medals_totals.append(user_info)
 
     def total_function(dict):
+        """ Returns total """
 
         return dict['total']
 
@@ -167,39 +157,4 @@ def get_medals(request):
     print top_ten_users
     print len(top_ten_users)
 
-
     return response(top_ten_users)
-
-# {"cesar": 35, "drbing": 28, ... }
-#
-# Player        G   S   B    T
-#  drbing       3   5   4   12
-#  cesar        3   6   1   10
-#  wanderer15   7   0   1    8
-#
-# [{'drbing': {G: 6, S: 5, B: 4, T: 12}}, {'cesar': {G: 3, ...}}]
-
-# response = [
-#     {'name': 'cesar', 'G': 3, 'S': 6, 'B': 1, 'T': 10},
-
-#     {'name': 'drbing', 'G': 6, 'S': 5, 'B': 4, 'T': 12},
-
-#     {'name': 'emily', 'G': 12, 'S': 3, 'B': 14, 'T': 29}]
-
-
-
-
-# def total_function(element):
-#     return element['T']
-
-
-# def silver_function(element):
-#     return element['S']
-
-
-# def total_function_without_t(element):
-#     return element['G'] + element['S'] + element['B']
-
-
-
-# response.sort(key=my_function)

@@ -14,20 +14,184 @@
 <script src="/static/js/aerolith/Chart.bundle.min.js"></script>
 <script src="/static/lib/bootstrap-datepicker.js"></script>
 
-hi
+<div class="container"><!-- DIV .CONTAINER -->
+
+    <table class="table"><!-- LEADERBOARD TABLE -->
+      <thead>
+        <tr>
+          <th>Place</th>
+          <th>User</th>
+          <th>Platinum Star</th>
+          <th>Gold Star</th>
+          <th>Gold Medal</th>
+          <th>Silver Medal</th>
+          <th>Bronze Medal</th>
+          <th>Total Medals</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td><span id="9-0"></span></td>
+          <td><span id="9-1"></span></td>
+          <td><span id="9-2"></span></td>
+          <td><span id="9-3"></span></td>
+          <td><span id="9-4"></span></td>
+          <td><span id="9-5"></span></td>
+          <td><span id="9-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td><span id="8-0"></span></td>
+          <td><span id="8-1"></span></td>
+          <td><span id="8-2"></span></td>
+          <td><span id="8-3"></span></td>
+          <td><span id="8-4"></span></td>
+          <td><span id="8-5"></span></td>
+          <td><span id="8-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td><span id="7-0"></span></td>
+          <td><span id="7-1"></span></td>
+          <td><span id="7-2"></span></td>
+          <td><span id="7-3"></span></td>
+          <td><span id="7-4"></span></td>
+          <td><span id="7-5"></span></td>
+          <td><span id="7-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">4</th>
+          <td><span id="6-0"></span></td>
+          <td><span id="6-1"></span></td>
+          <td><span id="6-2"></span></td>
+          <td><span id="6-3"></span></td>
+          <td><span id="6-4"></span></td>
+          <td><span id="6-5"></span></td>
+          <td><span id="6-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">5</th>
+          <td><span id="5-0"></span></td>
+          <td><span id="5-1"></span></td>
+          <td><span id="5-2"></span></td>
+          <td><span id="5-3"></span></td>
+          <td><span id="5-4"></span></td>
+          <td><span id="5-5"></span></td>
+          <td><span id="5-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">6</th>
+          <td><span id="4-0"></span></td>
+          <td><span id="4-1"></span></td>
+          <td><span id="4-2"></span></td>
+          <td><span id="4-3"></span></td>
+          <td><span id="4-4"></span></td>
+          <td><span id="4-5"></span></td>
+          <td><span id="4-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">7</th>
+          <td><span id="3-0"></span></td>
+          <td><span id="3-1"></span></td>
+          <td><span id="3-2"></span></td>
+          <td><span id="3-3"></span></td>
+          <td><span id="3-4"></span></td>
+          <td><span id="3-5"></span></td>
+          <td><span id="3-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">8</th>
+          <td><span id="2-0"></span></td>
+          <td><span id="2-1"></span></td>
+          <td><span id="2-2"></span></td>
+          <td><span id="2-3"></span></td>
+          <td><span id="2-4"></span></td>
+          <td><span id="2-5"></span></td>
+          <td><span id="2-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">9</th>
+          <td><span id="1-0"></span></td>
+          <td><span id="1-1"></span></td>
+          <td><span id="1-2"></span></td>
+          <td><span id="1-3"></span></td>
+          <td><span id="1-4"></span></td>
+          <td><span id="1-5"></span></td>
+          <td><span id="1-6"></span></td>
+        </tr>
+        <tr>
+          <th scope="row">10</th>
+          <td><span id="0-0"></span></td>
+          <td><span id="0-1"></span></td>
+          <td><span id="0-2"></span></td>
+          <td><span id="0-3"></span></td>
+          <td><span id="0-4"></span></td>
+          <td><span id="0-5"></span></td>
+          <td><span id="0-6"></span></td>
+        </tr>
+      </tbody>
+    </table><!-- /LEADERBOARD TABLE -->
+
+</div><!-- /DIV .CONTAINER -->
 
 <script type="text/javascript">
 
 $(document).ready(function() {
+
     $.ajax({
         method: "GET",
         url: "/wordwalls/leaderboard/getboard/",
         dataType: 'json'
+
     })
 
     .done(function(msg) {
-        console.log(msg);
 
+        // List of leaderboard entries in order of how
+        // information appears on the front end
+        var entriesSorted = [];
+
+        // Parse JSON in correct order
+        for (var i = 0; i < msg.length; i++) {
+            var entry = [];
+            var value = msg[i];
+
+            entry.push(value.name);
+            entry.push(value.Platinum);
+            entry.push(value.GoldStar);
+            entry.push(value.Gold);
+            entry.push(value.Silver);
+            entry.push(value.Bronze);
+            entry.push(value.total);
+            entriesSorted.push(entry);
+
+        }
+
+        // Call the info function for each row in the
+        // leaderboard
+        for (var i = 0; i < 10; i++) {
+
+            goThroughList(entriesSorted, i);
+
+        }
+
+        // Get info to display
+        function goThroughList (array, row) {
+
+            for (var i = 0; i < 7; i++) {
+
+                var row = row;
+                var entry = entriesSorted[row][i];
+                var iString = i.toString();
+                var rowString = row.toString();
+
+                var frontEndID = $('#' + row + '-' + iString);
+
+                frontEndID.html(entry);
+
+            }
+        }
 
     })
 });
