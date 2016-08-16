@@ -21,11 +21,11 @@
         <tr>
           <th>Place</th>
           <th>User</th>
-          <th>Platinum Star</th>
-          <th>Gold Star</th>
-          <th>Gold Medal</th>
-          <th>Silver Medal</th>
-          <th>Bronze Medal</th>
+          <th><img src="/static/img/aerolith/platinum_star_32x32.png"></th>
+          <th><img src="http://0.0.0.0:8000/static/img/aerolith/gold_star_32x32.png"></th>
+          <th><img src="http://0.0.0.0:8000/static/img/aerolith/gold_medal_32x32.png"></th>
+          <th><img src="/static/img/aerolith/silver_medal_32x32.png"></th>
+          <th><img src="/static/img/aerolith/bronze_medal_32x32.png"></th>
           <th>Total Medals</th>
         </tr>
       </thead>
@@ -176,7 +176,8 @@ $(document).ready(function() {
 
         }
 
-        // Get info to display
+        // Get info from the list of users to display in an
+        // individual row
         function goThroughList (array, row) {
 
             for (var i = 0; i < 7; i++) {
