@@ -40,11 +40,12 @@ requirejs.config({
 define([
   'module',
   'jquery',
-  'jsx!reactapp/comment',
+  'jsx!reactapp/app',
   'csrfAjax'
-], function (module, $, dogs) {
+], function (module, $, App) {
   "use strict";
   $(function() {
-
+    var app = new App();
+    app.initialize();
   });
 });

@@ -88,54 +88,62 @@ require.config({
 require(['main']);
 </script>
 
-<div id="topBar">
-<span id="start" onClick="mixpanel.track('request start');" class="tableButton">{% trans "Start" %}</span>
-<span id="gameTimer"> : </span>
-<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">{% trans "Give up" %}</span>
-<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">{% trans "Solutions" %}</span>
+<div id="main-app-content">
 
-<span id="save" onClick="mixpanel.track('save game');" class="tableButton">{% trans "Save" context "table" %}</span>
-<input type="text" size="20" id="saveListName">
-<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">{% trans "Preferences" %}</span>
-<span id="horSep1"></span>
-<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">{% trans "Exit" %}</span>
-</div>
+<!--   <div id="topBar">
+    <span id="start" onClick="mixpanel.track('request start');" class="tableButton">{% trans "Start" %}</span>
+    <span id="gameTimer"> : </span>
+    <span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">{% trans "Give up" %}</span>
+    <span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">{% trans "Solutions" %}</span>
 
-<div id="encloser">
-    <div id="questions">
-        <ul class="questionList"></ul>
+    <span id="save" onClick="mixpanel.track('save game');" class="tableButton">{% trans "Save" context "table" %}</span>
+    <input type="text" size="20" id="saveListName">
+    <span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">{% trans "Preferences" %}</span>
+    <span id="horSep1"></span>
+    <span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">{% trans "Exit" %}</span>
+  </div> -->
+
+<!--   <div id="encloser">
+      <div id="questions">
+          <ul class="questionList"></ul>
+      </div>
+
+      <div id="playerRanks">
+      </div>
+
+      <div id="userBox">
+          <span id="avatarLabel"></span>
+          <span id="usernameLabel">{{username}}</span>
+          <span id="pointsLabelPercent"></span>
+          <span id="pointsLabelFraction"></span>
+          <div id="correctAnswers"></div>
+      </div>
+  </div>
+ -->
+
+
+<!--   <div id="bottomBar">
+    <label for="guessText">{% trans "Guess" %}: </label><input type="text" name="Guess" size="15" id="guessText"/>
+    <span id="horSep2"></span>
+    <span id="shuffle" class="utilityButton">{% trans "Shuffle" %} (1)</span>
+    <span id="alphagram" class="utilityButton">{% trans "Alphagram" %} (2)</span>
+    <span id="customOrder" class="utilityButton">{% trans "Custom" %} (3)</span>
+    {% if user.is_superuser %}
+    <span id="testWordwalls" class="utilityButton">Test (4)</span>
+    {% endif %}
     </div>
 
-    <div id="playerRanks">
-    </div>
+    <div id="textBar">
+    <div id="messages"></div>
+    {% trans "Guesses" %}:
+    <div id="guesses"></div>
+  </div>
+ -->
 
-    <div id="userBox">
-        <span id="avatarLabel"></span>
-        <span id="usernameLabel">{{username}}</span>
-        <span id="pointsLabelPercent"></span>
-        <span id="pointsLabelFraction"></span>
-        <div id="correctAnswers"></div>
-    </div>
 </div>
 
 
 
-<div id="bottomBar">
-<label for="guessText">{% trans "Guess" %}: </label><input type="text" name="Guess" size="15" id="guessText"/>
-<span id="horSep2"></span>
-<span id="shuffle" class="utilityButton">{% trans "Shuffle" %} (1)</span>
-<span id="alphagram" class="utilityButton">{% trans "Alphagram" %} (2)</span>
-<span id="customOrder" class="utilityButton">{% trans "Custom" %} (3)</span>
-{% if user.is_superuser %}
-<span id="testWordwalls" class="utilityButton">Test (4)</span>
-{% endif %}
-</div>
-
-<div id="textBar">
-<div id="messages"></div>
-{% trans "Guesses" %}:
-<div id="guesses"></div>
-</div>
 <div id="customize_popup" class="popup_block customize_popup_block">
     <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
 
