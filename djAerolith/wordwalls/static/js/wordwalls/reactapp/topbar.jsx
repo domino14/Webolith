@@ -1,18 +1,28 @@
 define([
-  'react'
-], function(React) {
+  'react',
+  'jsx!reactapp/game_timer'
+], function(React, GameTimer) {
   /**
    * The top bar with the various interaction buttons.
    */
+  "use strict";
   var TopBar = React.createClass({
     render: function() {
       // XXX: Figure out how i18n works with React.
       // XXX: These should not be spans, and figure out how to get events.
       return (
         <div id="topBar">
-          <span id="start" className="tableButton">Start</span>
-          <span id="gameTimer"> : </span>
-          <span id="giveup" className="tableButton">Give up</span>
+          <span id="start"
+                className="tableButton"
+                onClick={this.props.handleStart}>Start</span>
+
+          <GameTimer
+            initialTimeRemaining={this.props.initialTimeRemaining}/>
+
+          <span id="giveup"
+                className="tableButton"
+                onClick={this.props.handleGiveup}>Give up</span>
+
           <span id="solutions" className="tableButton">Solutions</span>
 
           <span id="save" className="tableButton">Save</span>

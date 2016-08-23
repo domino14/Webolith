@@ -1,4 +1,4 @@
-/* global requirejs,define*/
+/* global requirejs,define,JSON */
 requirejs.config({
   baseUrl: '/static/js/wordwalls',
   paths: {
@@ -46,6 +46,10 @@ define([
   "use strict";
   $(function() {
     var app = new App();
-    app.initialize();
+    app.initialize({
+      lexicon: module.config().lexicon,
+      tablenum: module.config().tablenum,
+      addlParams: JSON.parse(module.config().addlParams)
+    });
   });
 });

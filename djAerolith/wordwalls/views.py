@@ -361,6 +361,9 @@ def table(request, id):
                 leaderboardData = getLeaderboardDataDcInstance(
                     DailyChallenge.objects.get(pk=dcId))
                 return response(leaderboardData)
+        else:
+            return response({'success': False},
+                            status=StatusCode.BAD_REQUEST)
 
     else:   # it's a GET
         wwg = WordwallsGame()

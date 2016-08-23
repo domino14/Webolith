@@ -15,14 +15,12 @@ define([
       // XXX: These should not be spans, and figure out how to get events.
       return (
         <div id="bottomBar">
-          <GuessBox/>
-
+          <GuessBox
+            onGuessSubmit={this.props.onGuessSubmit}/>
           <span id="horSep2"></span>
-
           <ShuffleButtons/>
-
           <div id="textBar">
-            <ChatBox/>
+            <ChatBox messages={this.props.messages}/>
             <Guesses/>
           </div>
         </div>

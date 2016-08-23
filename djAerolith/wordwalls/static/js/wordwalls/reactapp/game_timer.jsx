@@ -1,0 +1,110 @@
+/**
+ * Heavily based on
+ * https://github.com/uken/react-countdown-timer
+ * MIT licensed.
+ */
+define([
+  'react'
+], function(React) {
+  // A millisecond timer.
+  "use strict";
+  return React.createClass({
+    getDefaultProps: function() {
+      return {
+        interval: 1000,
+        completeCallback: null
+      };
+    },
+    propTypes: {
+      initialTimeRemaining: React.PropTypes.number.isRequired,
+      interval: React.PropTypes.number,
+      completeCallback: React.PropTypes.func
+    },
+
+    getInitialState: function() {
+      return {
+        timeRemaining: this.props.initialTimeRemaining,
+        timeoutId: null,
+        prevTime: null
+      };
+    },
+    componentDidMount: function() {
+      this.tick();
+    },
+    /**
+     * Called when component is about to receive new props (typically
+     * when timer is reset).
+     * @param  {Object} newProps
+     */
+    componentWillReceiveProps: function(newProps) {
+      if (this.state.timeoutId) {
+        clearTimeout(this.state.timeoutId);
+      }
+      this.setState({
+        prevTime: null,
+        timeRemaining: newProps.initialTimeRemaining
+      });
+    },
+    componentDidUpdate: function() {
+      if ((!this.state.prevTime) && this.state.timeRemaining > 0 &&
+          this.isMounted()) {
+        this.tick();
+      }
+    },
+    tick: function() {
+      var currentTime = Date.now();
+      var dt = this.state.prevTime ? (currentTime - this.state.prevTime) : 0;
+      var interval = this.props.interval;
+
+      // correct for small variations in actual timeout time
+      var timeRemainingInInterval = (interval - (dt % interval));
+      var timeout = timeRemainingInInterval;
+
+      if (timeRemainingInInterval < (interval / 2.0)) {
+        timeout += interval;
+      }
+
+      var timeRemaining = Math.max(this.state.timeRemaining - dt, 0);
+      var countdownComplete = (this.state.prevTime && timeRemaining <= 0);
+
+      if (this.isMounted()) {
+        if (this.state.timeoutId) {
+          clearTimeout(this.state.timeoutId);
+        }
+        this.setState({
+          timeoutId: countdownComplete ? null : setTimeout(this.tick, timeout),
+          prevTime: currentTime,
+          timeRemaining: timeRemaining
+        });
+      }
+
+      if (countdownComplete) {
+        if (this.props.completeCallback) {
+          this.props.completeCallback();
+        }
+        return;
+      }
+    },
+    componentWillUnmount: function() {
+      clearTimeout(this.state.timeoutId);
+    },
+    getFormattedTime: function(milliseconds) {
+      var totalSeconds, seconds, minutes;
+      totalSeconds = Math.round(milliseconds / 1000);
+      seconds = parseInt(totalSeconds % 60, 10);
+      minutes = parseInt(totalSeconds / 60, 10) % 60;
+
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+
+      return minutes + ':' + seconds;
+    },
+    render: function() {
+      return (
+        <span id="gameTimer">
+          {this.getFormattedTime(this.state.timeRemaining)}
+        </span>
+      );
+    }
+  });
+});
