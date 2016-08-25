@@ -154,7 +154,4 @@ def get_medals(request):
 
     top_ten_users = users_medals_totals[-10:]
 
-    print top_ten_users
-    print len(top_ten_users)
-
     return response(top_ten_users)
