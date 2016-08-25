@@ -4,13 +4,15 @@ define([
   'jquery',
   'underscore',
 
+  'reactapp/wordwalls_game',
   'jsx!reactapp/topbar',
   'jsx!reactapp/gameboard',
   'jsx!reactapp/bottombar',
 
   'reactapp/test_initial_state'
 
-], function(React, ReactDOM, $, _, TopBar, GameBoard, BottomBar) {
+], function(React, ReactDOM, $, _, WordwallsGame,
+    TopBar, GameBoard, BottomBar) {
   "use strict";
   var App = function() {};
 
@@ -20,14 +22,17 @@ define([
    */
   App.prototype.initialize = function(options) {
     // WordwallsApp will be the holder of state.
-    var WordwallsApp;
+    var WordwallsApp, game;
+    console.log(options.addlParams);
+    game = new WordwallsGame();
     WordwallsApp = React.createClass({
       getInitialState: function() {
         return {
           gameGoing: false,
           initialTime: 0,
           questions: [],
-          messages: []
+          messages: [],
+          isChallenge: false
         };
       },
       render: function() {
@@ -71,6 +76,7 @@ define([
         .done(this.handleStartReceived);
       },
       handleStartReceived: function(data) {
+        var questionState;
         if (this.state.gameGoing) {
           return;
         }
@@ -78,7 +84,11 @@ define([
           this.addServerMessage(data['serverMsg']);
         }
         if (_.has(data, 'questions')) {
-          this.setState({'questions': data.questions});
+          // `init` mutates the state to add helper structures on it.
+          // (is that an anti-pattern?)
+          // Should use an immutable.
+          questionState = game.init(data.questions);
+          this.setState({'questions': questionState});
         }
         if (_.has(data, 'error')) {
           this.addServerMessage(data['error'], 'error');
@@ -86,6 +96,9 @@ define([
         if (_.has(data, 'time')) {
           // Convert time to milliseconds.
           this.setState({'initialTime': data.time * 1000});
+        }
+        if (_.has(data, 'gameType')) {
+          this.setState({'isChallenge': data.gameType === 'challenge'});
         }
       },
 
@@ -103,6 +116,13 @@ define([
 
       handleGuessResponse: function(data) {
         console.log('Got guess data back', data);
+        if (_.has(data, 'C')) {
+          if (data.C !== '') {
+            // data.C contains the alphagram.
+            game.solve(data.w, data.C);
+            this.setState(game.getQuestionState());
+          }
+        }
       },
 
       addServerMessage: function(serverMsg, optType) {

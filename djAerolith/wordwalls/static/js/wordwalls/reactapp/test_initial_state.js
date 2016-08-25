@@ -3,6 +3,7 @@ define([
   /**
    * Initial state, used for building an initial static version of the app.
    */
+  "use strict";
   var initialWordwallsData = {
     "serverMsg": "These are questions 1 through 50 of 50.",
     "gameType": "challenge",
