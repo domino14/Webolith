@@ -4,17 +4,50 @@ define([
 ], function(React, WordwallsQuestion) {
   "use strict";
   var GameBoard = React.createClass({
+    getDefaultProps: function() {
+      // Maybe move this to the configurator.
+      return {
+        displayStyle: {
+          tc: {
+            on: true,
+            selection: '1',
+            bold: false,
+            customOrder: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ?',
+            blankCharacter: '?',
+            font: 'mono'
+          },
+          bc: {
+            showTable: true,
+            showBorders: false,
+            showCanvas: true
+          }
+        }
+      };
+    },
+    getQuestionStyle: function() {
+      var qStyle = this.props.displayStyle.tc;
+      qStyle['showBorders'] = this.props.displayStyle.bc.showBorders;
+      return qStyle;
+    },
     render: function() {
-      var questions = [];
+      var questions, questionsClassName, questionDisplayStyle;
+      questionsClassName = '';
+      questions = [];
+      questionDisplayStyle = this.getQuestionStyle();
       this.props.questions.forEach(function(question) {
         questions.push(
           <WordwallsQuestion
+            displayStyle={questionDisplayStyle}
             letters={question.a}
             key={question.a}
             words={question.ws}/>);
-      });
+      }.bind(this));
+      if (this.props.displayStyle.bc.showTable) {
+        questionsClassName = 'tableBg';
+      }
       return (
-        <div id="questions">
+        <div id="questions"
+             className={questionsClassName}>
           <ul className="questionList">{questions}</ul>
         </div>
       );

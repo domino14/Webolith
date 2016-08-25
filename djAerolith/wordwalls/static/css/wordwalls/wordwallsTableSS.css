@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 To contact the author, please email delsolar at gmail dot com*/
 
-body.canvasBg
+.canvasBg
 {
     background-image:url('../../img/wordwalls/canvas.png');
 }
