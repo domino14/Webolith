@@ -7,8 +7,11 @@ define([
   'jsx!reactapp/gameboard',
   'jsx!reactapp/bottombar',
 
+  'immutable',
   'reactapp/wordwalls_game'
-], function(React, $, _, TopBar, GameBoard, BottomBar, WordwallsGame) {
+], function(React, $, _, TopBar, GameBoard, BottomBar, Immutable,
+  WordwallsGame) {
+
   "use strict";
   var WordwallsApp, game;
 
@@ -18,8 +21,15 @@ define([
     getInitialState: function() {
       return {
         gameGoing: false,
-        initialTime: 0,
-        questions: [],
+        initialGameTime: 0,
+        // Contains the original questions. This list should remain in
+        // a fixed order, and the only mutable things should be the
+        // "correct" state of words/alphagrams.
+        origQuestions: Immutable.List(),
+        // Similar to origQuestions, but this list is what is directly
+        // being rendered in the game board. Questions should be removed
+        // from it as they are solved, and they can be shuffled around.
+        curQuestions: Immutable.List(),
         messages: [],
         isChallenge: false
       };
@@ -29,17 +39,17 @@ define([
       if (this.props.displayStyle.bc && this.props.displayStyle.bc.showCanvas) {
         canvasClass = 'canvasBg';
       }
-      console.log('this', this.props.displayStyle);
       return (
         <div className={canvasClass || ''}>
           <TopBar
             handleStart={this.handleStart}
             handleGiveup={this.handleGiveup}
-            initialTimeRemaining={this.state.initialTime}/>
+            initialGameTime={this.state.initialGameTime}
+            gameGoing={this.state.gameGoing}/>
 
           <div id="encloser">
             <GameBoard
-              questions={this.state.questions}
+              curQuestions={this.state.curQuestions}
               // Maybe this should be state.
               displayStyle={this.props.displayStyle}/>
           </div>
@@ -73,7 +83,6 @@ define([
       .done(this.handleStartReceived);
     },
     handleStartReceived: function(data) {
-      var questionState;
       if (this.state.gameGoing) {
         return;
       }
@@ -81,18 +90,21 @@ define([
         this.addServerMessage(data['serverMsg']);
       }
       if (_.has(data, 'questions')) {
-        // `init` mutates the state to add helper structures on it.
-        // (is that an anti-pattern?)
-        // Should use an immutable.
-        questionState = game.init(data.questions);
-        this.setState({'questions': questionState});
+        game.init(data.questions);
+        this.setState({
+          'origQuestions': game.getOriginalQuestionState(),
+          'curQuestions': game.getQuestionState()
+        });
       }
       if (_.has(data, 'error')) {
         this.addServerMessage(data['error'], 'error');
       }
       if (_.has(data, 'time')) {
         // Convert time to milliseconds.
-        this.setState({'initialTime': data.time * 1000});
+        this.setState({
+          'initialGameTime': data.time * 1000,
+          'gameGoing': true
+        });
       }
       if (_.has(data, 'gameType')) {
         this.setState({'isChallenge': data.gameType === 'challenge'});
@@ -117,7 +129,10 @@ define([
         if (data.C !== '') {
           // data.C contains the alphagram.
           game.solve(data.w, data.C);
-          this.setState(game.getQuestionState());
+          this.setState({
+            'curQuestions': game.getQuestionState(),
+            'origQuestions': game.getOriginalQuestionState()
+          });
         }
       }
     },
@@ -135,8 +150,7 @@ define([
 
     processGameEnded: function() {
       this.setState({
-        gameGoing: false,
-        initialTime: 0
+        gameGoing: false
       });
     }
   });

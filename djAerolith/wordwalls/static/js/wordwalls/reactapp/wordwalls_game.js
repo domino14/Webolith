@@ -3,34 +3,41 @@
  * helper to calculate state for the react app in app.jsx.
  *
  * We also use this as a sort of state store for the questions.
- * TODO: use immutable.js
  */
 define([
-
-], function() {
+  'immutable'
+], function(Immutable) {
   "use strict";
-  var Game;
+
+  var Game, MAX_SCREEN_QUESTIONS;
+  // The maximum number of questions that can be displayed on a table
+  // at once (any more are outside of the viewport).
+  MAX_SCREEN_QUESTIONS = 50;
   Game = function() {};
   /**
-   * Initializes the main data structures.
+   * Initializes the main data structures when a new array comes in.
    * @param  {Array.<Object>} questions The array of questions.
-   * @return {Array.<Object>} The new question state.
+   * @return {Immutable} The original questions as an immutable.
    */
   Game.prototype.init = function(questions) {
+    var qMap = {};
     this.wrongWordsHash = {};
-    this.wrongAlphasHash = {};
-    this.questionState = questions;
-    questions.forEach(function(question) {
-      question.ws.forEach(function(word) {
-        this.wrongWordsHash[word.w] = word;
-        word.solved = false;
-      }.bind(this));
-      this.wrongAlphasHash[question.a] = question;
-      question.solved = false;
-    }.bind(this));
+    // Hash of "alphagram strings" to indices in curQuestions.
+    this.alphaIndexHash = {};
+    this.alphagramsLeft = 0;
 
-    console.log('this.questionState', this.questionState);
-    return this.questionState;
+    questions.forEach(function(question, aidx) {
+      question.ws.forEach(function(word, idx) {
+        this.wrongWordsHash[word.w] = idx;
+      }.bind(this));
+      question.answersRemaining = question.ws.length;
+      this.alphaIndexHash[question.a] = aidx;
+      qMap[question.a] = question;
+    }.bind(this));
+    this.alphagramsLeft = questions.length;
+    this.origQuestions = Immutable.fromJS(qMap).toOrderedMap();
+    // This can still be a list.
+    this.curQuestions = Immutable.fromJS(questions);
   };
   /**
    * Solve a word. This will modify the elements in the hashes, which
@@ -39,29 +46,73 @@ define([
    * @param {string} alphagram
    */
   Game.prototype.solve = function(word, alphagram) {
-    var w, a, remainingWords;
-    w = this.wrongWordsHash[word];
-    if (!w) {
+    var widx, aidx;
+    widx = this.wrongWordsHash[word];
+    if (widx == null) {
       return;
     }
-    w.solved = true;
+
     delete this.wrongWordsHash[word];
-    a = this.wrongAlphasHash[alphagram];
-    remainingWords = a.ws.filter(function(word) {
-      return !word.solved;
+
+    // Update the word object; add a solved property.
+    this.origQuestions = this.origQuestions.updateIn(
+      [alphagram, 'ws', widx], function(wObj) {
+
+      return wObj.set('solved', true);
     });
-    if (remainingWords.length === 0) {
-      a.solved = true;
-      delete this.wrongAlphasHash[alphagram];
-    }
+    // Look up the index of this alphagram in the alphaIndex hash.
+    aidx = this.alphaIndexHash[alphagram];
+    // This index is mutable and represents the current display position.
+    // Delete the word from the list.
+    this.curQuestions = this.curQuestions.deleteIn([aidx, 'ws', widx]);
+
+    this.origQuestions = this.origQuestions.update(alphagram, function(aObj) {
+      var replacementAlpha;
+      aObj = aObj.set('answersRemaining', aObj.get('answersRemaining') - 1);
+      if (aObj.get('answersRemaining') !== 0) {
+        return aObj;
+      }
+      // Otherwise, the alphagram is fully solved.
+      // Set it to solved in the original questions, and delete the alphagram
+      // from the alphaIndexHash.
+      aObj = aObj.set('solved', true);
+      this.alphagramsLeft--;
+      delete this.alphaIndexHash[alphagram];
+      // Replace the alphagram in curQuestions with a blank space.
+      this.curQuestions = this.curQuestions.update(aidx, function() {
+        // Create an empty map. This will not be rendered by the front end.
+        return Immutable.fromJS({});
+      });
+
+      if (this.alphagramsLeft > MAX_SCREEN_QUESTIONS) {
+        // If we can't fit all the words in the screen, we want to replace
+        // the word we just solved.
+        replacementAlpha = this.curQuestions.last();
+
+        // Set the alpha at `aidx` to the last alpha in the list.
+        this.curQuestions = this.curQuestions.pop().set(aidx, replacementAlpha);
+        // Change the index in this.alphaIndexHash to aidx, for the new
+        // alphagram (replace in place).
+        this.alphaIndexHash[replacementAlpha.get('a')] = aidx;
+
+      }
+      return aObj;
+    }.bind(this));
   };
   /**
    * Get the current question state.
-   * @return {Array.<Object>}
+   * @return {Immutable.List}
    */
   Game.prototype.getQuestionState = function() {
-    return this.questionState;
+    return this.curQuestions;
   };
 
+  /**
+   * Get the original question state.
+   * @return {Immutable.List}
+   */
+  Game.prototype.getOriginalQuestionState = function() {
+    return this.origQuestions;
+  };
   return Game;
 });

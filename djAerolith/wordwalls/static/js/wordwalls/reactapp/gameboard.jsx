@@ -34,13 +34,15 @@ define([
       questionsClassName = '';
       questions = [];
       questionDisplayStyle = this.getQuestionStyle();
-      this.props.questions.forEach(function(question) {
+      // questions is an Immutable List of Maps
+      this.props.curQuestions.forEach(function(question, idx) {
         questions.push(
           <WordwallsQuestion
             displayStyle={questionDisplayStyle}
-            letters={question.a}
-            key={question.a}
-            words={question.ws}/>);
+            letters={question.get('a')}
+            key={idx}
+            words={question.get('ws')}
+          />);
       }.bind(this));
       if (this.props.displayStyle.bc.showTable) {
         questionsClassName = 'tableBg';

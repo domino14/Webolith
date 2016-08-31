@@ -28,23 +28,27 @@ define([
       return classes.join(' ');
     },
     render: function() {
-      var tiles, numAnagrams, chipClassName, unsolvedWords, liClass;
+      var tiles, numAnagrams, chipClassName, liClass, tileClass;
       tiles = [];
-      unsolvedWords = this.props.words.filter(function(word) {
-        return word.solved === false;
-      });
-      numAnagrams = Math.min(unsolvedWords.length, 9);
-      for (var i = 0; i < this.props.letters.length; i++) {
-        tiles.push(<span
-          className={this.getTileClass()}
-          key={i}>{this.props.letters[i]}</span>);
-      }
-      chipClassName = "chip chip" + String(numAnagrams);
       if (this.props.displayStyle.showBorders) {
         liClass = 'qle borders';
       } else {
         liClass = 'qle noborders';
       }
+      if (this.props.words) {
+        numAnagrams = Math.min(this.props.words.size, 9);
+      } else {
+        // No words for this question; return an empty list item.
+        return <li className={liClass}/>;
+      }
+      tileClass = this.getTileClass();
+      for (var i = 0; i < this.props.letters.length; i++) {
+        tiles.push(<span
+          className={tileClass}
+          key={i}>{this.props.letters[i]}</span>);
+      }
+      chipClassName = "chip chip" + String(numAnagrams);
+
       return (
         <li className={liClass}>
           <span className={chipClassName}>{numAnagrams}</span>

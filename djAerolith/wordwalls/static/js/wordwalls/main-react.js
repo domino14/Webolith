@@ -14,7 +14,8 @@ requirejs.config({
     react: '../../../../static/lib/react',
     'react-dom': '../../../../static/lib/react-dom',
     jsx: '../../../../static/lib/jsx',
-    babel: '../../../../static/lib/babel-5.8.34.min'
+    babel: '../../../../static/lib/babel-5.8.34.min',
+    immutable: '../../../../static/lib/immutable.min'
   },
   shim: {
     underscore: {

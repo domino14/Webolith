@@ -17,7 +17,9 @@ define([
                 onClick={this.props.handleStart}>Start</span>
 
           <GameTimer
-            initialTimeRemaining={this.props.initialTimeRemaining}/>
+            initialGameTime={this.props.initialGameTime}
+            gameGoing={this.props.gameGoing}
+          />
 
           <span id="giveup"
                 className="tableButton"

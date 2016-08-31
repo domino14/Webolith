@@ -12,18 +12,20 @@ define([
     getDefaultProps: function() {
       return {
         interval: 1000,
-        completeCallback: null
+        completeCallback: null,
+        gameGoing: false
       };
     },
     propTypes: {
-      initialTimeRemaining: React.PropTypes.number.isRequired,
+      gameGoing: React.PropTypes.bool,
+      initialGameTime: React.PropTypes.number.isRequired,
       interval: React.PropTypes.number,
       completeCallback: React.PropTypes.func
     },
 
     getInitialState: function() {
       return {
-        timeRemaining: this.props.initialTimeRemaining,
+        timeRemaining: this.props.initialGameTime,
         timeoutId: null,
         prevTime: null
       };
@@ -37,17 +39,29 @@ define([
      * @param  {Object} newProps
      */
     componentWillReceiveProps: function(newProps) {
-      if (this.state.timeoutId) {
-        clearTimeout(this.state.timeoutId);
+      // if (this.state.timeoutId) {
+      //   clearTimeout(this.state.timeoutId);
+      // }
+      if (!newProps.gameGoing) {
+        this.setState({
+          prevTime: null,
+          timeRemaining: 0
+        });
+        return;   // The game has stopped.
+      } else {
+        if (this.props.gameGoing) {
+          // The game was already going. Don't reset the timer.
+          return;
+        }
       }
+      // Otherwise, restart the timer.
       this.setState({
         prevTime: null,
-        timeRemaining: newProps.initialTimeRemaining
+        timeRemaining: newProps.initialGameTime
       });
     },
     componentDidUpdate: function() {
-      if ((!this.state.prevTime) && this.state.timeRemaining > 0 &&
-          this.isMounted()) {
+      if ((!this.state.prevTime) && this.state.timeRemaining > 0) {
         this.tick();
       }
     },
@@ -66,17 +80,14 @@ define([
 
       var timeRemaining = Math.max(this.state.timeRemaining - dt, 0);
       var countdownComplete = (this.state.prevTime && timeRemaining <= 0);
-
-      if (this.isMounted()) {
-        if (this.state.timeoutId) {
-          clearTimeout(this.state.timeoutId);
-        }
-        this.setState({
-          timeoutId: countdownComplete ? null : setTimeout(this.tick, timeout),
-          prevTime: currentTime,
-          timeRemaining: timeRemaining
-        });
+      if (this.state.timeoutId) {
+        clearTimeout(this.state.timeoutId);
       }
+      this.setState({
+        timeoutId: countdownComplete ? null : setTimeout(this.tick, timeout),
+        prevTime: currentTime,
+        timeRemaining: timeRemaining
+      });
 
       if (countdownComplete) {
         if (this.props.completeCallback) {
