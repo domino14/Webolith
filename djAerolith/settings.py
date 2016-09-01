@@ -365,3 +365,12 @@ BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+        'TIMEOUT': 12*60*60, #12 hours
+    }
+}
+
