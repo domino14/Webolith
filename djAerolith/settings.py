@@ -18,6 +18,7 @@
 
 # Django settings for djAerolith project.
 import os
+import sys
 
 
 def tobool(val):
@@ -366,11 +367,17 @@ SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache_table',
-        'TIMEOUT': 12*60*60, #12 hours
+if 'test' in sys.argv:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
     }
-}
-
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'cache_table',
+            'TIMEOUT': 12*60*60,  # 12 hours
+        }
+    }
