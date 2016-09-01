@@ -9,6 +9,7 @@ from accounts.models import AerolithProfile
 from base.models import Lexicon
 import json
 from lib.response import response
+from django.views.decorators.cache import cache_page
 
 
 # If not logged in, will ask user to log in and forward back to the main url
@@ -71,6 +72,7 @@ def leaderboard(request):
     return render(request, 'wordwalls/leaderboard.html')
 
 
+@cache_page(12*60*60) #12 hours
 @login_required
 def get_medals(request):
 
