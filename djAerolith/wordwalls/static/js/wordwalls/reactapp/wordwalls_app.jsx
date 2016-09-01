@@ -6,11 +6,13 @@ define([
   'jsx!reactapp/topbar',
   'jsx!reactapp/gameboard',
   'jsx!reactapp/bottombar',
+  'jsx!reactapp/player_ranks',
+  'jsx!reactapp/user_box',
 
   'immutable',
   'reactapp/wordwalls_game'
-], function(React, $, _, TopBar, GameBoard, BottomBar, Immutable,
-  WordwallsGame) {
+], function(React, $, _, TopBar, GameBoard, BottomBar, PlayerRanks, UserBox,
+  Immutable, WordwallsGame) {
 
   "use strict";
   var WordwallsApp, game;
@@ -52,6 +54,8 @@ define([
               curQuestions={this.state.curQuestions}
               // Maybe this should be state.
               displayStyle={this.props.displayStyle}/>
+            <PlayerRanks/>
+            <UserBox/>
           </div>
           <BottomBar
             messages={this.state.messages}
