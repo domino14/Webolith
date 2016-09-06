@@ -58,7 +58,6 @@ define([
           <div className="row">
             <div className="col-md-8">
               <span
-                className="label label-default"
                 style={spanStyle}>{this.state.listName}</span>
               <input
                 type="text"
@@ -78,6 +77,7 @@ define([
                 style={pencilStyle}
                 onClick={this.handleEdit}></i>
             </div>
+
           </div> {/* end of first row */}
           <div className="row">
             <div className="col-md-8">

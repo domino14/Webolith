@@ -70,7 +70,7 @@ define([
       return (
         <div className={canvasClass || ''}>
           <div className="row">
-            <div className="col-md-3">
+            <div className="col-md-4">
             <ListSaveBar
               initialListName={this.props.listName}
               initialAutoSave={this.props.autoSave}
@@ -79,8 +79,7 @@ define([
             <div className="col-md-1">
               <Preferences />
             </div>
-            <div className="col-md-offset-6"></div>
-            <div className="col-md-2">
+            <div className="col-md-2 col-md-offset-3">
               <StartButton
                 handleStart={this.handleStart}
                 handleGiveup={this.handleGiveup}
