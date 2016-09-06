@@ -70,14 +70,22 @@ define([
       return (
         <div className={canvasClass || ''}>
           <div className="row">
+            <div className="col-md-3">
             <ListSaveBar
-              listName={this.props.listName}
+              initialListName={this.props.listName}
+              initialAutoSave={this.props.autoSave}
             />
-            <Preferences />
-            <StartButton
-              handleStart={this.handleStart}
-              handleGiveup={this.handleGiveup}
-              gameGoing={this.state.gameGoing} />
+            </div>
+            <div className="col-md-1">
+              <Preferences />
+            </div>
+            <div className="col-md-offset-6"></div>
+            <div className="col-md-2">
+              <StartButton
+                handleStart={this.handleStart}
+                handleGiveup={this.handleGiveup}
+                gameGoing={this.state.gameGoing} />
+            </div>
           </div>
           <div className="row">
             <ShuffleButtons />
@@ -87,7 +95,7 @@ define([
           </div>
 
 
-          <div id="encloser">
+          <div id="encloser" className="row">
             <GameBoard
               curQuestions={this.state.curQuestions}
               // Maybe this should be state.
