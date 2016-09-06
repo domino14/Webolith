@@ -13,8 +13,8 @@ define([
    */
   App.prototype.initialize = function(options) {
     // WordwallsApp will be the holder of state.
-    var style, topClassName;
-    console.log(options.addlParams);
+    var style, topClassName, listName;
+    console.log('addl params', options.addlParams);
     topClassName = '';
 
     if (options.addlParams.style != null) {
@@ -22,10 +22,16 @@ define([
     } else {
       style = {};
     }
+    // Get the list name from one of two places.
+    if (options.addlParams.saveName) {
+      listName = options.addlParams.saveName;
+    } else {
+      listName = options.addlParams.tempListName;
+    }
     // Render.
     ReactDOM.render(
       <WordwallsApp
-        saveName={options.addlParams.saveName}
+        listName={listName}
         lexicon={options.lexicon}
         displayStyle={style}
         tableUrl={'/wordwalls/table/' + options.tablenum + '/'}

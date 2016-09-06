@@ -54,12 +54,36 @@ class WordwallsGame(object):
             'gameType': 'regular'
         }
 
+    def maybe_modify_list_name(self, list_name, user):
+        """
+        Given a temporary `list_name` for a `user`, modify it if user
+        already has a list with this list name. We don't want to
+        silently overwrite lists.
+
+        """
+        orig_list_name = list_name
+        user_lists = WordList.objects.filter(
+            user=user, is_temporary=False).filter(name=list_name)
+        repeat = 1
+        while user_lists.count() > 0:
+            list_name = '{0} ({1})'.format(orig_list_name, repeat)
+            user_lists = WordList.objects.filter(
+                user=user, is_temporary=False).filter(name=list_name)
+            repeat += 1
+        return list_name
+
     def create_game_instance(self, host, lex, word_list, **state_kwargs):
         state = self._initial_state()
+        if 'temp_list_name' in state_kwargs:
+            state_kwargs['temp_list_name'] = self.maybe_modify_list_name(
+                state_kwargs['temp_list_name'], host
+            )
+
         for param in state_kwargs:
             state[param] = state_kwargs[param]
         if state['questionsToPull'] is None:
             state['questionsToPull'] = settings.WORDWALLS_QUESTIONS_PER_ROUND
+
         wgm = WordwallsGameModel(
             host=host, currentGameState=json.dumps(state),
             gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
@@ -122,12 +146,18 @@ class WordwallsGame(object):
             return 0
         qs, secs, dc = ret
         wl = self.initialize_word_list(qs, ch_lex, user)
+        temporary_list_name = '{0} {1} - {2}'.format(
+            ch_lex.lexiconName,
+            ch_name.name,
+            ch_date.strftime('%Y-%m-%d')
+        )
         wgm = self.create_game_instance(user, ch_lex, wl,
                                         # Extra parameters to be put in 'state'
                                         gameType='challenge',
                                         questionsToPull=qs.size(),
                                         challengeId=dc.pk,
                                         timerSecs=secs,
+                                        temp_list_name=temporary_list_name,
                                         qualifyForAward=qualify_for_award)
         wgm.save()
         return wgm.pk   # the table number
@@ -166,7 +196,14 @@ class WordwallsGame(object):
         lexicon = search_description['lexicon']
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
+        temporary_list_name = '{0} {1}s ({2} - {3})'.format(
+            search_description['lexicon'].lexiconName,
+            search_description['length'],
+            search_description['min'],
+            search_description['max']
+        )
         wgm = self.create_game_instance(user, lexicon, wl, timerSecs=time_secs,
+                                        temp_list_name=temporary_list_name,
                                         questionsToPull=questions_per_round)
         wgm.save()
         return wgm.pk   # this is a table number id!
@@ -185,6 +222,7 @@ class WordwallsGame(object):
             wl.initialize_list(qs, lex, user, shuffle=True)
 
         wgm = self.create_game_instance(user, lex, wl, timerSecs=secs,
+                                        temp_list_name=named_list.name,
                                         questionsToPull=questions_per_round)
         wgm.save()
         return wgm.pk
@@ -408,10 +446,12 @@ class WordwallsGame(object):
             return {}
 
         state = json.loads(wgm.currentGameState)
+        params = {}
         if 'saveName' in state:
-            return {'saveName': state['saveName']}
-        else:
-            return {}
+            params['saveName'] = state['saveName']
+        if 'temp_list_name' in state:
+            params['tempListName'] = state['temp_list_name']
+        return params
 
     def give_up_and_save(self, user, tablenum, listname):
         if self.give_up(user, tablenum):

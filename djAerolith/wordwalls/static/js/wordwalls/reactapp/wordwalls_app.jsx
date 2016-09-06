@@ -3,16 +3,26 @@ define([
   'jquery',
   'underscore',
 
-  'jsx!reactapp/topbar',
+  'jsx!reactapp/topbar/game_timer',
+  'jsx!reactapp/topbar/shufflebuttons',
+  'jsx!reactapp/topbar/start_button',
+  'jsx!reactapp/topbar/save_list',
+  'jsx!reactapp/topbar/preferences',
+
+  'jsx!reactapp/bottombar/chatbox',
+  'jsx!reactapp/bottombar/guessbox',
+  'jsx!reactapp/bottombar/guesses',
+
   'jsx!reactapp/gameboard',
-  'jsx!reactapp/bottombar',
   'jsx!reactapp/player_ranks',
   'jsx!reactapp/user_box',
 
   'immutable',
   'reactapp/wordwalls_game'
-], function(React, $, _, TopBar, GameBoard, BottomBar, PlayerRanks, UserBox,
-  Immutable, WordwallsGame) {
+], function(React, $, _, GameTimer, ShuffleButtons, StartButton, ListSaveBar,
+    Preferences, ChatBox,
+    GuessBox, Guesses, GameBoard, PlayerRanks, UserBox,
+    Immutable, WordwallsGame) {
 
   "use strict";
   var WordwallsApp, game;
@@ -36,6 +46,22 @@ define([
         isChallenge: false
       };
     },
+
+    /**
+     *
+     *
+     *  <TopBar
+            handleStart={this.handleStart}
+            handleGiveup={this.handleGiveup}
+            initialGameTime={this.state.initialGameTime}
+            gameGoing={this.state.gameGoing}/>
+
+          <BottomBar
+            messages={this.state.messages}
+            onGuessSubmit={this.onGuessSubmit}/>
+
+     */
+
     render: function() {
       var canvasClass;
       if (this.props.displayStyle.bc && this.props.displayStyle.bc.showCanvas) {
@@ -43,11 +69,23 @@ define([
       }
       return (
         <div className={canvasClass || ''}>
-          <TopBar
-            handleStart={this.handleStart}
-            handleGiveup={this.handleGiveup}
-            initialGameTime={this.state.initialGameTime}
-            gameGoing={this.state.gameGoing}/>
+          <div className="row">
+            <ListSaveBar
+              listName={this.props.listName}
+            />
+            <Preferences />
+            <StartButton
+              handleStart={this.handleStart}
+              handleGiveup={this.handleGiveup}
+              gameGoing={this.state.gameGoing} />
+          </div>
+          <div className="row">
+            <ShuffleButtons />
+            <GameTimer
+              initialGameTime={this.state.initialGameTime}
+              gameGoing={this.state.gameGoing} />
+          </div>
+
 
           <div id="encloser">
             <GameBoard
@@ -57,9 +95,11 @@ define([
             <PlayerRanks/>
             <UserBox/>
           </div>
-          <BottomBar
-            messages={this.state.messages}
-            onGuessSubmit={this.onGuessSubmit}/>
+
+          <GuessBox onGuessSubmit={this.onGuessSubmit}/>
+          <ChatBox messages={this.state.messages}/>
+          <Guesses/>
+
         </div>
       );
     },

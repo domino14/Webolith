@@ -1,6 +1,16 @@
 define([
   'react'
 ], function(React) {
+  "use strict";
+  return React.createClass({
+    render: function() {
+      return <div/>;
+    }
+  });
+});
+/*define([
+  'react'
+], function(React) {
 
   "use strict";
   var StartButton = React.createClass({
@@ -10,9 +20,7 @@ define([
           onClick={this.props.onStartDesired}>Start</span>
       );
     },
-    /**
-     * Handle the start click event.
-     */
+
     handleClick: function() {
       $.ajax({
         url: this.props.tableUrl,
@@ -53,4 +61,4 @@ define([
   });
 
   return StartButton;
-});
+});*/

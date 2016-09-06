@@ -1,6 +1,6 @@
 define([
   'react',
-  'jsx!reactapp/message'
+  'jsx!reactapp/bottombar/message'
 ], function(React, Message) {
   "use strict";
   return React.createClass({

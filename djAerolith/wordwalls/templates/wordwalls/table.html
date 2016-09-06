@@ -17,16 +17,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 To contact the author, please email delsolar at gmail dot com
 {% endcomment %}
 {% load i18n %}
-<!DOCTYPE html>
-<html>
-<head>
-<link rel="shortcut icon" href="/static/favicon.ico" />
-<title>WordWalls - table {{tablenum}}</title>
+
 {% load value_from_settings %}
 {% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
 {% value_from_settings DEBUG_JS as DEBUG_JS %}
-<link href="/static/css/wordwalls/wordwallsTableSS.css" rel="stylesheet">
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/static/favicon.ico" />
+  <title>WordWalls - table {{tablenum}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="/static/lib/bootstrap/css/bootstrap-yeti.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/lib/font-awesome-4.6.3/css/font-awesome.min.css">
+
+  <!--<link href="/static/css/wordwalls/wordwallsTableSS.css" rel="stylesheet">-->
+
+
 {% if USE_GA %}
 <script type="text/javascript">
 
@@ -49,13 +59,15 @@ mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
 mixpanel.identify("{{username}}");
 </script><!-- end Mixpanel -->
 {% else %}
-<script>
-var mixpanel = {};
-mixpanel.track = function() {};
-mixpanel.name_tag = function() {};
-</script>
+  <script>
+  var mixpanel = {};
+  mixpanel.track = function() {};
+  mixpanel.name_tag = function() {};
+  </script>
 {% endif %}
 </head>
+
+
 <body>
 {% block content %}
 <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
@@ -88,11 +100,12 @@ require.config({
 require(['main']);
 </script>
 
-<div id="main-app-content"></div>
+<div class="container">
+  <div id="main-app-content"></div>
+</div>
 
 
-
-<div id="customize_popup" class="popup_block customize_popup_block">
+<!-- <div id="customize_popup" class="popup_block customize_popup_block">
     <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
 
     <div id="customSample">
@@ -128,9 +141,9 @@ require(['main']);
         <button id="savePrefs">{% trans "Save preferences" %}</button><span id="prefsInfo"></span>
         </div>
     </div>
-</div>
+</div> -->
 
-<div id="definitions_popup" class="popup_block">
+<!-- <div id="definitions_popup" class="popup_block">
     <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
     <div id="defs_popup_content">
     <h2>Nothing to see here</h2>
@@ -145,7 +158,7 @@ require(['main']);
     <h2>Nothing to see here</h2>
     <p>You didn't say the magic word.</p>
     </div>
-</div>
+</div> -->
 {% endblock %}
 
 <div id="netbookBorders">
