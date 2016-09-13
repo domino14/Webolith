@@ -31,9 +31,16 @@ To contact the author, please email delsolar at gmail dot com
   <title>WordWalls - table {{tablenum}}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="/static/lib/bootstrap/css/bootstrap-yeti.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap/css/bootstrap-sandstone.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/lib/font-awesome-4.6.3/css/font-awesome.min.css">
+  <style>
+/*  .container {
 
+  }*/
+  svg.gameboard {
+    background-image: url("/static/img/aerolith/cork-wallet.png");
+  }
+  </style>
   <!--<link href="/static/css/wordwalls/wordwallsTableSS.css" rel="stylesheet">-->
 
 
@@ -78,7 +85,8 @@ var require = {
     'main': {
       addlParams: "{{addParams|escapejs}}",
       tablenum: {{tablenum}},
-      lexicon: "{{lexicon.lexiconName}}"
+      lexicon: "{{lexicon.lexiconName}}",
+      username: "{{username}}"
     }
   }
 }
@@ -100,7 +108,7 @@ require.config({
 require(['main']);
 </script>
 
-<div class="container">
+<div class="container" style="padding-top: 10px;">
   <div id="main-app-content"></div>
 </div>
 

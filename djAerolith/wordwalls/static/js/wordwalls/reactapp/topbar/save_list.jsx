@@ -52,6 +52,7 @@ define([
         pencilStyle = {'display': 'none'};
       } else {
         inputStyle = {'display': 'none'};
+        pencilStyle = {'marginLeft': '5px'};
       }
       return (
         <div>

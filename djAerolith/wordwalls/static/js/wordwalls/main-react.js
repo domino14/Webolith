@@ -50,7 +50,8 @@ define([
     app.initialize({
       lexicon: module.config().lexicon,
       tablenum: module.config().tablenum,
-      addlParams: JSON.parse(module.config().addlParams)
+      addlParams: JSON.parse(module.config().addlParams),
+      username: module.config().username
     });
   });
 });

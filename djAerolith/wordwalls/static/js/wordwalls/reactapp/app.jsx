@@ -33,6 +33,7 @@ define([
     // Render.
     ReactDOM.render(
       <WordwallsApp
+        username={options.username}
         listName={listName}
         autoSave={autoSave}
         lexicon={options.lexicon}

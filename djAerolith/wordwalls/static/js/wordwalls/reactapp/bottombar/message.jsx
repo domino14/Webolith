@@ -3,20 +3,19 @@ define([
 ], function(React) {
   "use strict";
 
-  var colorMap;
-  colorMap = {
-    // muted blueish info color
-    'server': 'cyan',
-    'error': 'red',
-    'chat': 'black'
+  var classMap;
+  classMap = {
+    'server': 'text-muted',
+    'error': 'text-danger',
+    'chat': ''
   };
 
   return React.createClass({
     render: function() {
-      var color = colorMap[this.props.type];
+      var cn = classMap[this.props.type];
       return (
         <div>
-          <span style={{color: color}}>{this.props.children}</span>
+          <span className={cn}>{this.props.children}</span>
         </div>
       );
     }

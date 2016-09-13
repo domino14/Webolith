@@ -43,24 +43,11 @@ define([
         // from it as they are solved, and they can be shuffled around.
         curQuestions: Immutable.List(),
         messages: [],
-        isChallenge: false
+        isChallenge: false,
+        totalWords: 0,
+        answeredByMe: []
       };
     },
-
-    /**
-     *
-     *
-     *  <TopBar
-            handleStart={this.handleStart}
-            handleGiveup={this.handleGiveup}
-            initialGameTime={this.state.initialGameTime}
-            gameGoing={this.state.gameGoing}/>
-
-          <BottomBar
-            messages={this.state.messages}
-            onGuessSubmit={this.onGuessSubmit}/>
-
-     */
 
     render: function() {
       var canvasClass;
@@ -70,43 +57,66 @@ define([
       return (
         <div className={canvasClass || ''}>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-sm-6">
             <ListSaveBar
               initialListName={this.props.listName}
               initialAutoSave={this.props.autoSave}
             />
             </div>
-            <div className="col-md-1">
+            <div className="col-sm-1 col-sm-offset-1">
               <Preferences />
             </div>
-            <div className="col-md-2 col-md-offset-3">
+            <div className="col-sm-2 col-sm-offset-2">
               <StartButton
                 handleStart={this.handleStart}
                 handleGiveup={this.handleGiveup}
                 gameGoing={this.state.gameGoing} />
             </div>
           </div>
+
           <div className="row">
-            <ShuffleButtons />
-            <GameTimer
-              initialGameTime={this.state.initialGameTime}
-              gameGoing={this.state.gameGoing} />
+            <div className="col-sm-5">
+              <ShuffleButtons />
+            </div>
+            <div className="col-sm-2 col-sm-offset-5">
+              <GameTimer
+                initialGameTime={this.state.initialGameTime}
+                gameGoing={this.state.gameGoing} />
+            </div>
           </div>
 
-
-          <div id="encloser" className="row">
-            <GameBoard
-              curQuestions={this.state.curQuestions}
-              // Maybe this should be state.
-              displayStyle={this.props.displayStyle}/>
-            <PlayerRanks/>
-            <UserBox/>
+          <div className="row">
+            <div className="col-sm-10">
+              <GameBoard
+                curQuestions={this.state.curQuestions}
+                // Maybe this should be state.
+                displayStyle={this.props.displayStyle}/>
+            </div>
+            <div className="col-sm-2">
+              <PlayerRanks/>
+              {/* make showLexiconSymbol an option later */}
+              <UserBox
+                showLexiconSymbol={true}
+                answeredByMe={this.state.answeredByMe}
+                totalWords={this.state.totalWords}
+                username={this.props.username}
+              />
+            </div>
           </div>
 
-          <GuessBox onGuessSubmit={this.onGuessSubmit}/>
-          <ChatBox messages={this.state.messages}/>
-          <Guesses/>
-
+          <div className="row">
+            <div className="col-sm-9">
+              <GuessBox onGuessSubmit={this.onGuessSubmit}/>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-8">
+              <ChatBox messages={this.state.messages}/>
+            </div>
+            <div className="col-sm-2">
+              <Guesses/>
+            </div>
+          </div>
         </div>
       );
     },
@@ -144,11 +154,16 @@ define([
         game.init(data.questions);
         this.setState({
           'origQuestions': game.getOriginalQuestionState(),
-          'curQuestions': game.getQuestionState()
+          'curQuestions': game.getQuestionState(),
+          'totalWords': game.getTotalNumWords()
         });
       }
       if (_.has(data, 'error')) {
         this.addServerMessage(data['error'], 'error');
+        // XXX: This is a temporary hack to make it possible to give up.
+        this.setState({
+          'gameGoing': true
+        });
       }
       if (_.has(data, 'time')) {
         // Convert time to milliseconds.
@@ -182,7 +197,8 @@ define([
           game.solve(data.w, data.C);
           this.setState({
             'curQuestions': game.getQuestionState(),
-            'origQuestions': game.getOriginalQuestionState()
+            'origQuestions': game.getOriginalQuestionState(),
+            'answeredByMe': game.getAnsweredByMe()
           });
         }
       }

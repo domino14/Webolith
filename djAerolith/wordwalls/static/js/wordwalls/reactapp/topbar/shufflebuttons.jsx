@@ -6,9 +6,35 @@ define([
     render: function() {
       return (
         <div>
-          <span id="shuffle" className="utilityButton">Shuffle (1)</span>
-          <span id="alphagram" className="utilityButton">Alphagram (2)</span>
-          <span id="customOrder" className="utilityButton">Custom (3)</span>
+          <div className="row">
+            <div className="col-md-3">
+              <button
+                className="btn btn-info btn-sm"
+                style={{width: 125}}
+                type="button">
+                <span
+                  className="badge">1</span> Shuffle
+              </button>
+            </div>
+            <div className="col-md-3 col-md-offset-1">
+              <button
+                className="btn btn-info btn-sm"
+                style={{width: 125}}
+                type="button">
+                <span
+                  className="badge">2</span> Alphagram
+              </button>
+            </div>
+            <div className="col-md-3 col-md-offset-1">
+              <button
+                className="btn btn-info btn-sm"
+                style={{width: 125}}
+                type="button">
+                <span
+                  className="badge">3</span> Custom
+              </button>
+            </div>
+          </div>
         </div>
       );
     }

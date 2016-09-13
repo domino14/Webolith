@@ -21,7 +21,11 @@ define([
             showBorders: false,
             showCanvas: true
           }
-        }
+        },
+        width: 900,
+        height: 300,
+        gridWidth: 5,
+        gridHeight: 10
       };
     },
     getQuestionStyle: function() {
@@ -30,28 +34,52 @@ define([
       return qStyle;
     },
     render: function() {
-      var questions, questionsClassName, questionDisplayStyle;
+      var questions, questionsClassName, questionDisplayStyle, xSize, ySize;
       questionsClassName = '';
       questions = [];
       questionDisplayStyle = this.getQuestionStyle();
-      // questions is an Immutable List of Maps
+      // xSize and ySize are the size that each question object takes
+      // up.
+      xSize = this.props.width / this.props.gridWidth;
+      ySize = this.props.height / this.props.gridHeight;
+      // curQuestions is an Immutable List of Maps
       this.props.curQuestions.forEach(function(question, idx) {
+        // Calculate top left X, Y based on dimensions.
+        var gridX, gridY;
+
+        gridX = idx % this.props.gridWidth * xSize;
+        gridY = Math.floor(idx / this.props.gridWidth) * ySize;
+
         questions.push(
           <WordwallsQuestion
             displayStyle={questionDisplayStyle}
             letters={question.get('a')}
             key={idx}
-            words={question.get('ws')}
+            qNumber={idx}
+            words={question.get('wMap')}
+            gridX={gridX}
+            gridY={gridY}
+            ySize={ySize}
+            xSize={xSize}
           />);
       }.bind(this));
       if (this.props.displayStyle.bc.showTable) {
         questionsClassName = 'tableBg';
       }
       return (
+        /*
         <div id="questions"
              className={questionsClassName}>
           <ul className="questionList">{questions}</ul>
         </div>
+        */
+
+        <svg
+          className="gameboard"
+          width={this.props.width}
+          height={this.props.height}>
+          {questions}
+        </svg>
       );
     }
   });

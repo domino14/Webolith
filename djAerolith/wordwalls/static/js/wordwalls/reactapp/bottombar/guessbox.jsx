@@ -31,17 +31,13 @@ define([
     },
     render: function() {
       return (
-        <div>
-          <label htmlFor="guessText">Guess: </label>
-          <input
-            type="text"
-            name="Guess"
-            size="15"
-            id="guessText"
-            onChange={this.handleGuessChange}
-            value={this.state.guessText}
-            onKeyPress={this.handleKeyPress} />
-        </div>
+        <input
+          className="form-control input-sm"
+          type="text"
+          placeholder="Guess"
+          onChange={this.handleGuessChange}
+          value={this.state.guessText}
+          onKeyPress={this.handleKeyPress} />
       );
     }
   });

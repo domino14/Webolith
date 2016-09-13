@@ -16,7 +16,12 @@ define([
         );
       });
       return (
-        <div id="messages">{messageNodes}</div>
+        <div
+          className="panel panel-default">
+          <div
+          className="panel-body"
+          style={{height: 100, overflow: 'auto'}}>
+        {messageNodes}</div></div>
       );
     }
   });

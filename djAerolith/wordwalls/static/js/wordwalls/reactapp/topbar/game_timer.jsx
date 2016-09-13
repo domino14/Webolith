@@ -11,6 +11,7 @@ define([
   return React.createClass({
     getDefaultProps: function() {
       return {
+        warningCountdown: 10000,
         interval: 1000,
         completeCallback: null,
         gameGoing: false
@@ -111,10 +112,18 @@ define([
       return minutes + ':' + seconds;
     },
     render: function() {
+      var cn;
+      if (this.state.timeRemaining <= this.props.warningCountdown) {
+        cn = "label label-warning";
+      } else {
+        cn = "label label-info";
+      }
       return (
-        <span id="gameTimer">
-          {this.getFormattedTime(this.state.timeRemaining)}
-        </span>
+        <h4>
+          <span className={cn}>
+            {this.getFormattedTime(this.state.timeRemaining)}
+          </span>
+        </h4>
       );
     }
   });

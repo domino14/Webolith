@@ -20,24 +20,30 @@ define([
    * @return {Immutable} The original questions as an immutable.
    */
   Game.prototype.init = function(questions) {
-    var qMap = {};
+    var qMap = {}, reducedQuestions = [];
     this.wrongWordsHash = {};
     // Hash of "alphagram strings" to indices in curQuestions.
     this.alphaIndexHash = {};
     this.alphagramsLeft = 0;
-
+    // Answered by me is a list of words answered by the current user.
+    this.answeredByMe = [];
+    this.totalWords = 0;
     questions.forEach(function(question, aidx) {
+      var wMap = {};
       question.ws.forEach(function(word, idx) {
         this.wrongWordsHash[word.w] = idx;
+        this.totalWords += 1;
+        wMap[word.w] = word;
       }.bind(this));
       question.answersRemaining = question.ws.length;
       this.alphaIndexHash[question.a] = aidx;
       qMap[question.a] = question;
+      reducedQuestions.push({"a": question.a, "wMap": wMap});
     }.bind(this));
     this.alphagramsLeft = questions.length;
     this.origQuestions = Immutable.fromJS(qMap).toOrderedMap();
-    // This can still be a list.
-    this.curQuestions = Immutable.fromJS(questions);
+    // This structure is used just for the initial display.
+    this.curQuestions = Immutable.fromJS(reducedQuestions);
   };
   /**
    * Solve a word. This will modify the elements in the hashes, which
@@ -57,14 +63,14 @@ define([
     // Update the word object; add a solved property.
     this.origQuestions = this.origQuestions.updateIn(
       [alphagram, 'ws', widx], function(wObj) {
-
-      return wObj.set('solved', true);
-    });
+        this.answeredByMe.push(wObj);
+        return wObj.set('solved', true);
+    }.bind(this));
     // Look up the index of this alphagram in the alphaIndex hash.
-    aidx = this.alphaIndexHash[alphagram];
     // This index is mutable and represents the current display position.
-    // Delete the word from the list.
-    this.curQuestions = this.curQuestions.deleteIn([aidx, 'ws', widx]);
+    aidx = this.alphaIndexHash[alphagram];
+    // Delete the word from the curQuestions word map.
+    this.curQuestions = this.curQuestions.deleteIn([aidx, 'wMap', word]);
 
     this.origQuestions = this.origQuestions.update(alphagram, function(aObj) {
       var replacementAlpha;
@@ -113,6 +119,15 @@ define([
    */
   Game.prototype.getOriginalQuestionState = function() {
     return this.origQuestions;
+  };
+
+  Game.prototype.getTotalNumWords = function() {
+    return this.totalWords;
+  };
+
+  Game.prototype.getAnsweredByMe = function() {
+    console.log('answered by me', JSON.stringify(this.answeredByMe));
+    return this.answeredByMe;
   };
   return Game;
 });
