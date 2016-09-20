@@ -8,12 +8,20 @@ define([
     render: function() {
       var answers, percentScore, fractionScore;
       answers = [];
-     // console.log('Answered by me', JSON.stringify(this.props.answeredByMe));
       this.props.answeredByMe.forEach(function(word, idx) {
         answers.push(
-          <div key={idx}>
-            {word.get('w') +
+          <div
+            key={idx}
+            data-toggle="tooltip"
+            data-placement="left"
+            title={word.get('d')}>
+            <span
+              className="text-info">{word.get('fh')} </span>
+            <span>{word.get('w') +
               (this.props.showLexiconSymbol ? word.get('s') : '')}
+            </span>
+            <span
+              className="text-info"> {word.get('bh')}</span>
           </div>);
       }.bind(this));
       //console.log('The answers are ', answers);

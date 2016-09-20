@@ -11,7 +11,6 @@ define([
 
   'jsx!reactapp/bottombar/chatbox',
   'jsx!reactapp/bottombar/guessbox',
-  'jsx!reactapp/bottombar/guesses',
 
   'jsx!reactapp/gameboard',
   'jsx!reactapp/player_ranks',
@@ -21,7 +20,7 @@ define([
   'reactapp/wordwalls_game'
 ], function(React, $, _, GameTimer, ShuffleButtons, StartButton, ListSaveBar,
     Preferences, ChatBox,
-    GuessBox, Guesses, GameBoard, PlayerRanks, UserBox,
+    GuessBox, GameBoard, PlayerRanks, UserBox,
     Immutable, WordwallsGame) {
 
   "use strict";
@@ -45,7 +44,8 @@ define([
         messages: [],
         isChallenge: false,
         totalWords: 0,
-        answeredByMe: []
+        answeredByMe: [],
+        lastGuess: ''
       };
     },
 
@@ -76,7 +76,11 @@ define([
 
           <div className="row">
             <div className="col-sm-5">
-              <ShuffleButtons />
+              <ShuffleButtons
+                shuffle={this.handleShuffleAll}
+                alphagram={this.handleAlphagram}
+                customOrder={this.handleCustomOrder}
+              />
             </div>
             <div className="col-sm-2 col-sm-offset-5">
               <GameTimer
@@ -86,13 +90,13 @@ define([
           </div>
 
           <div className="row">
-            <div className="col-sm-10">
+            <div className="col-lg-8 col-md-9">
               <GameBoard
                 curQuestions={this.state.curQuestions}
                 // Maybe this should be state.
                 displayStyle={this.props.displayStyle}/>
             </div>
-            <div className="col-sm-2">
+            <div className="col-lg-2 col-md-3">
               <PlayerRanks/>
               {/* make showLexiconSymbol an option later */}
               <UserBox
@@ -106,15 +110,16 @@ define([
 
           <div className="row">
             <div className="col-sm-9">
-              <GuessBox onGuessSubmit={this.onGuessSubmit}/>
+              <GuessBox
+                onGuessSubmit={this.onGuessSubmit}
+                lastGuess={this.state.lastGuess}
+                onHotKey={this.onHotKey}
+              />
             </div>
           </div>
           <div className="row">
             <div className="col-sm-8">
               <ChatBox messages={this.state.messages}/>
-            </div>
-            <div className="col-sm-2">
-              <Guesses/>
             </div>
           </div>
         </div>
@@ -178,6 +183,9 @@ define([
     },
 
     onGuessSubmit: function(guess) {
+      // XXX: This should only do an ajax request if the guess is an
+      // answer already.
+      var guesses;
       $.ajax({
         url: this.props.tableUrl,
         method: 'POST',
@@ -187,6 +195,7 @@ define([
       })
       .done(this.handleGuessResponse)
       .fail(this.handleGuessFailure);
+      this.setState({'lastGuess': guess});
     },
 
     handleGuessResponse: function(data) {
@@ -204,6 +213,11 @@ define([
       }
     },
 
+    // TODO: handle guess failure the old way.
+    handleGuessFailure: function() {
+
+    },
+
     addServerMessage: function(serverMsg, optType) {
       var messages = this.state.messages;
       messages.push({
@@ -218,6 +232,41 @@ define([
     processGameEnded: function() {
       this.setState({
         gameGoing: false
+      });
+    },
+
+    onHotKey: function(key) {
+      // Hot key map.
+      var fnMap = {'1': this.handleShuffleAll,
+       '2': this.handleAlphagram,
+       '3': this.handleCustomOrder};
+       fnMap[key]();
+    },
+    /**
+     * Handle the shuffling of tiles for display.
+     * @param  {number?} which The index (or undefined for all).
+     */
+    handleShuffleAll: function() {
+      game.shuffleAll();
+      this.setState({
+        'curQuestions': game.getQuestionState()
+      });
+    },
+
+    handleAlphagram: function() {
+      game.resetAllOrders();
+      this.setState({
+        'curQuestions': game.getQuestionState()
+      });
+    },
+
+    handleCustomOrder: function() {
+      if (!(this.props.displayStyle && this.props.displayStyle.tc)) {
+        return;
+      }
+      game.setCustomLetterOrder(this.props.displayStyle.tc.customOrder);
+      this.setState({
+        'curQuestions': game.getQuestionState()
       });
     }
   });

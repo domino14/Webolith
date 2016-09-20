@@ -4,7 +4,8 @@ define([
   "use strict";
   return React.createClass({
     propTypes: {
-      onGuessSubmit: React.PropTypes.func
+      onGuessSubmit: React.PropTypes.func,
+      onHotKey: React.PropTypes.func
     },
     getInitialState: function() {
       return {guessText: ''};
@@ -26,18 +27,35 @@ define([
         // XXX: Only submit guess if not solved locally, i.e.
         // see old logic.
         this.props.onGuessSubmit(guess);
+      } else if (keyCode === 49) {
+        this.props.onHotKey('1');
+        e.preventDefault();
+      } else if (keyCode === 50) {
+        this.props.onHotKey('2');
+        e.preventDefault();
+      } else if (keyCode === 51) {
+        this.props.onHotKey('3');
+        e.preventDefault();
       }
-      // XXX: Handle shuffle/alphagram/etc
     },
     render: function() {
       return (
-        <input
-          className="form-control input-sm"
-          type="text"
-          placeholder="Guess"
-          onChange={this.handleGuessChange}
-          value={this.state.guessText}
-          onKeyPress={this.handleKeyPress} />
+        <div className="row">
+          <div className="col-sm-6">
+            <input
+              className="form-control input-sm"
+              type="text"
+              placeholder="Guess"
+              onChange={this.handleGuessChange}
+              value={this.state.guessText}
+              onKeyPress={this.handleKeyPress} />
+          </div>
+          <div className="col-sm-6">
+            <span className="text-muted">
+              Last guess: {this.props.lastGuess}
+            </span>
+          </div>
+        </div>
       );
     }
   });

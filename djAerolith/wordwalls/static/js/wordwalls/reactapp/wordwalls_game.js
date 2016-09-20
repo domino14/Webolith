@@ -5,8 +5,9 @@
  * We also use this as a sort of state store for the questions.
  */
 define([
-  'immutable'
-], function(Immutable) {
+  'immutable',
+  'underscore'
+], function(Immutable, _) {
   "use strict";
 
   var Game, MAX_SCREEN_QUESTIONS;
@@ -38,7 +39,10 @@ define([
       question.answersRemaining = question.ws.length;
       this.alphaIndexHash[question.a] = aidx;
       qMap[question.a] = question;
-      reducedQuestions.push({"a": question.a, "wMap": wMap});
+      reducedQuestions.push({
+        "a": question.a, "wMap": wMap,
+        "displayedAs": question.a
+      });
     }.bind(this));
     this.alphagramsLeft = questions.length;
     this.origQuestions = Immutable.fromJS(qMap).toOrderedMap();
@@ -126,8 +130,41 @@ define([
   };
 
   Game.prototype.getAnsweredByMe = function() {
-    console.log('answered by me', JSON.stringify(this.answeredByMe));
     return this.answeredByMe;
+  };
+
+  /**
+   * Shuffle the element at the index given by which.
+   * @param  {number} which
+   */
+  Game.prototype.shuffle = function(which) {
+    this.curQuestions = this.curQuestions.update(which, function(aObj) {
+      aObj = aObj.set('displayedAs', _.shuffle(aObj.get('a')).join(''));
+      return aObj;
+    });
+  };
+
+  Game.prototype.shuffleAll = function() {
+    for (var i = 0; i < this.curQuestions.size; i++) {
+      // XXX can we speed this up with `withMutations`?
+      this.shuffle(i);
+    }
+  };
+
+  Game.prototype.resetAllOrders = function() {
+    for (var i = 0; i < this.curQuestions.size; i++) {
+      this.curQuestions = this.curQuestions.update(i, function(aObj) {
+        aObj = aObj.set('displayedAs', aObj.get('a'));
+        return aObj;
+      });
+    }
+  };
+
+  Game.prototype.setCustomLetterOrder = function(order) {
+    if (!order) {
+      return;
+    }
+    // XXX: Set order.
   };
   return Game;
 });

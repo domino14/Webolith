@@ -22,10 +22,10 @@ define([
             showCanvas: true
           }
         },
-        width: 900,
-        height: 300,
-        gridWidth: 5,
-        gridHeight: 10
+        width: 720,
+        height: 390,
+        gridWidth: 4,
+        gridHeight: 13
       };
     },
     getQuestionStyle: function() {
@@ -53,7 +53,7 @@ define([
         questions.push(
           <WordwallsQuestion
             displayStyle={questionDisplayStyle}
-            letters={question.get('a')}
+            letters={question.get('displayedAs')}
             key={idx}
             qNumber={idx}
             words={question.get('wMap')}
