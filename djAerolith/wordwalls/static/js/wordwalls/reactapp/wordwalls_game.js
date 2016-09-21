@@ -161,10 +161,30 @@ define([
   };
 
   Game.prototype.setCustomLetterOrder = function(order) {
+    var customOrder;
     if (!order) {
       return;
     }
-    // XXX: Set order.
+
+    /**
+     * Sorts a string into the custom order given by `order`.
+     * @param  {string} letters
+     * @return {string}
+     */
+    customOrder = function(letters) {
+      letters = _.sortBy(letters, function(letter) {
+        return order.indexOf(letter);
+      });
+      return letters.join('');
+    };
+
+    // XXX: Don't make functions within a loop ??????
+    for (var i = 0; i < this.curQuestions.size; i++) {
+      this.curQuestions = this.curQuestions.update(i, function(aObj) {
+        aObj = aObj.set('displayedAs', customOrder(aObj.get('a')));
+        return aObj;
+      });
+    }
   };
   return Game;
 });
