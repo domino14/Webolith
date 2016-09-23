@@ -94,7 +94,9 @@ define([
               <GameBoard
                 curQuestions={this.state.curQuestions}
                 // Maybe this should be state.
-                displayStyle={this.props.displayStyle}/>
+                displayStyle={this.props.displayStyle}
+                onShuffle={this.onShuffleQuestion}
+                />
             </div>
             <div className="col-lg-2 col-md-3">
               <PlayerRanks/>
@@ -248,6 +250,13 @@ define([
      */
     handleShuffleAll: function() {
       game.shuffleAll();
+      this.setState({
+        'curQuestions': game.getQuestionState()
+      });
+    },
+
+    onShuffleQuestion: function(idx) {
+      game.shuffle(idx);
       this.setState({
         'curQuestions': game.getQuestionState()
       });

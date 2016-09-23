@@ -61,6 +61,7 @@ define([
             gridY={gridY}
             ySize={ySize}
             xSize={xSize}
+            onShuffle={this.props.onShuffle}
           />);
       }.bind(this));
       if (this.props.displayStyle.bc.showTable) {

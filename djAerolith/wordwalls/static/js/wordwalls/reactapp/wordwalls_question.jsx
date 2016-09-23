@@ -115,8 +115,12 @@ define([
         </li>
 
         */
-        <g>{tiles}</g>
+        <g onClick={this.clickedQ}>{tiles}</g>
       );
+    },
+
+    clickedQ: function() {
+      this.props.onShuffle(this.props.qNumber);
     }
   });
 

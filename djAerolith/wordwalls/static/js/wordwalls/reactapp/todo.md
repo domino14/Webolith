@@ -1,13 +1,9 @@
 -[x] 4 x 12 instead of 5 x 10
 -[ ] color legend
--[ ] on hover things
-    - show alphagrams solved, number of alphagrams, etc
-    - show definitions for words.
-    - (how do we get tooltips to work?)
--[ ] click questions to shuffle
+-[ ] make divs scroll down properly on addition of info.
+-[x] click questions to shuffle
 -[ ] preferences (handle no tiles case gracefully, etc)
 -[x] make tiles smaller for longer words
--[ ] as user types hide tiles
 -[ ] spanish digraph tiles
 -[x] shuffle/alpha/etc
 -[ ] solutions
@@ -21,6 +17,14 @@
 -[ ] optimization (don't handle unseen elements, etc)
 -[ ] tests
 -[ ] Search for XXX/TODO/etc.
+
+Nice to haves:
+-[ ] on hover things
+    - show alphagrams solved, number of alphagrams, etc
+    - show definitions for words.
+    - (how do we get tooltips to work?)
+-[ ] as user types, dim tiles
+
 
 (Can release part 1)
 
