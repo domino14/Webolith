@@ -4,10 +4,12 @@
     - show alphagrams solved, number of alphagrams, etc
     - show definitions for words.
     - (how do we get tooltips to work?)
+-[ ] click questions to shuffle
 -[ ] preferences (handle no tiles case gracefully, etc)
--[ ] make tiles smaller for longer words
+-[x] make tiles smaller for longer words
+-[ ] as user types hide tiles
 -[ ] spanish digraph tiles
--[ ] shuffle/alpha/etc
+-[x] shuffle/alpha/etc
 -[ ] solutions
 -[ ] daily challenge results
 -[ ] submit guess if not solved locally
@@ -17,8 +19,11 @@
 -[ ] localization
 -[ ] visual rearrangement
 -[ ] optimization (don't handle unseen elements, etc)
+-[ ] tests
+-[ ] Search for XXX/TODO/etc.
 
-(Can release)
+(Can release part 1)
+
 For multiplayer
 -[ ] More player boxes (only show on bigger screens?)
 -[ ] Chat submit box

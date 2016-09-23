@@ -24,7 +24,7 @@ define([
             textAnchor="middle"
             alignmentBaseline="central"
             fontFamily={fontFamily}
-            fontSize="160%"
+            fontSize={this.props.fontSize}
             stroke={this.props.color[2]}
             fill={this.props.color[2]}
             strokeWidth="1px">{this.props.letter}</text>

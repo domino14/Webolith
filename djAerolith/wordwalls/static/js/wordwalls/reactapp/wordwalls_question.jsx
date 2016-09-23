@@ -14,6 +14,14 @@ define([
       if (length <= 9) {
         return [18, 20];
       }
+      return {
+        10: [16, 18],
+        11: [14.5, 16],
+        12: [13, 14.5],
+        13: [12, 13],
+        14: [11.5, 11.5],
+        15: [10.75, 10.75]
+      }[length];
     },
     /**
      * Get the color for this tile given the number of anagrams.
@@ -59,7 +67,7 @@ define([
     },
     render: function() {
       var tiles, numAnagrams, chipClassName, liClass, tileClass, x, y,
-        tileWidth, tileHeight, key, heightPct, xPadding, dims, color;
+        tileWidth, tileHeight, key, heightPct, xPadding, dims, color, fontSize;
       tiles = [];
       if (this.props.displayStyle.showBorders) {
         liClass = 'qle borders';
@@ -81,6 +89,8 @@ define([
 
       y = this.props.gridY + this.props.ySize * (1 - heightPct) / 2;
       xPadding = this.props.gridX + tileWidth * 0.1;
+      // XXX: This is a bit of an ugly formula, but it's fast.
+      fontSize = dims[0] * 8 + '%';
       for (var i = 0; i < this.props.letters.length; i++) {
         x = xPadding + tileWidth * i + i;
         key = "q" + this.props.qNumber + "tile" + i;
@@ -92,6 +102,7 @@ define([
             y={y}
             width={tileWidth}
             height={tileHeight}
+            fontSize={fontSize}
             letter={this.props.letters[i]}/>);
       }
       chipClassName = "chip chip" + String(numAnagrams);
