@@ -74,9 +74,11 @@ define([
           <ul className="questionList">{questions}</ul>
         </div>
         */
-
+        // Prevent default on mouse down to prevent taking focus in
+        // case of misclick.
         <svg
           className="gameboard"
+          onMouseDown={function(e) { e.preventDefault(); }}
           width={this.props.width}
           height={this.props.height}>
           {questions}
