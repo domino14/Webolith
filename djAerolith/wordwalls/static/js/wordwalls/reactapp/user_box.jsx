@@ -3,8 +3,6 @@ define([
 ], function(React) {
   "use strict";
   return React.createClass({
-
-
     render: function() {
       var answers, percentScore, fractionScore;
       answers = [];
@@ -38,7 +36,15 @@ define([
             <span>{this.props.username}</span>
           </div>
           <div className="panel-body"
-            style={{height: 200, overflow: 'auto'}}>
+            style={{height: 200, overflow: 'auto'}}
+            ref={function(domNode) {
+              if (domNode === null) {
+                return;
+              }
+              domNode.scrollTop = domNode.scrollHeight;
+             }
+            }
+            >
             {answers}
           </div>
           <div className="panel-footer">

@@ -20,7 +20,14 @@ define([
           className="panel panel-default">
           <div
           className="panel-body"
-          style={{height: 100, overflow: 'auto'}}>
+          style={{height: 100, overflow: 'auto'}}
+          ref={function(domNode) {
+            if (domNode === null) {
+              return;
+            }
+            domNode.scrollTop = domNode.scrollHeight;
+          }}
+          >
         {messageNodes}</div></div>
       );
     }

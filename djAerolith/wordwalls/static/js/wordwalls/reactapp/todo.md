@@ -1,6 +1,6 @@
 -[x] 4 x 12 instead of 5 x 10
 -[ ] color legend
--[ ] make divs scroll down properly on addition of info.
+-[x] make divs scroll down properly on addition of info.
 -[x] click questions to shuffle
 -[ ] preferences (handle no tiles case gracefully, etc)
 -[x] make tiles smaller for longer words
