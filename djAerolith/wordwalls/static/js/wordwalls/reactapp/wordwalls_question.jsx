@@ -115,12 +115,21 @@ define([
         </li>
 
         */
-        <g onClick={this.clickedQ}>{tiles}</g>
+        <g
+          onMouseDown={this.mouseDown}
+          onClick={this.clickedQ}
+          style={{cursor: 'default'}}
+        >{tiles}</g>
       );
     },
 
     clickedQ: function() {
       this.props.onShuffle(this.props.qNumber);
+    },
+
+    mouseDown: function(e) {
+      // Disallow highlighting text.
+      e.preventDefault();
     }
   });
 
