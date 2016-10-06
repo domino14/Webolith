@@ -64,7 +64,9 @@ define([
             />
             </div>
             <div className="col-sm-1 col-sm-offset-1">
-              <Preferences />
+              <Preferences
+                displayStyle={this.props.displayStyle}
+              />
             </div>
             <div className="col-sm-2 col-sm-offset-2">
               <StartButton

@@ -1,18 +1,24 @@
 define([
-  'react'
-], function(React) {
+  'react',
+  'jsx!reactapp/topbar/prefs_modal',
+  'bootstrap'
+], function(React, PrefsModal) {
   "use strict";
   return React.createClass({
-    handleCogClick: function() {
-      // do nothing for now.
-      console.log('The cog was clicked.');
-    },
+
     render: function() {
       return (
         <div>
-          <i className="fa fa-cog fa-2x"
-            aria-hidden="true"
-            onClick={this.handleCogClick}></i>
+          <button
+            type="button"
+            data-toggle="modal"
+            data-target=".prefs-modal">
+            <i className="fa fa-cog fa-2x"
+              aria-hidden="true"></i>
+          </button>
+          <PrefsModal
+            displayStyle={this.props.displayStyle}
+          />
         </div>
       );
     }

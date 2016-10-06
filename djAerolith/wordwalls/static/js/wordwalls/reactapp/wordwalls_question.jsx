@@ -1,26 +1,35 @@
 define([
   'react',
-  'jsx!reactapp/game_tile'
-], function(React, Tile) {
+  'jsx!reactapp/game_tile',
+  'jsx!reactapp/game_chip'
+], function(React, Tile, Chip) {
   "use strict";
   // This represents a question and renders given the user's style.
   var WordwallsQuestion = React.createClass({
     /**
      * Get the dimensions of a tile given the length of the word.
      * @param  {number} length
+     * @param {boolean} chipAdded If there is a "chip", it'll take up
+     * space, thus making the effective length longer
      * @return {Array.<Number>} A 2-tuple (width, height)
      */
-    getTileDimensions: function(length) {
-      if (length <= 9) {
+    getTileDimensions: function(length, chipAdded) {
+      if (chipAdded === true) {
+        length = length + 1;
+      }
+      if (length <= 8) {
         return [18, 20];
       }
       return {
+        9: [17, 19],
         10: [16, 18],
         11: [14.5, 16],
         12: [13, 14.5],
         13: [12, 13],
         14: [11.5, 11.5],
-        15: [10.75, 10.75]
+        15: [10.75, 10.75],
+        // Only when a chip is added.
+        16: [10, 10]
       }[length];
     },
     /**
@@ -67,7 +76,8 @@ define([
     },
     render: function() {
       var tiles, numAnagrams, chipClassName, liClass, tileClass, x, y,
-        tileWidth, tileHeight, key, heightPct, xPadding, dims, color, fontSize;
+        tileWidth, tileHeight, key, heightPct, xPadding, dims, color,
+        numberFontSize, letterFontSize, countFrom;
       tiles = [];
       if (this.props.displayStyle.showBorders) {
         liClass = 'qle borders';
@@ -82,7 +92,8 @@ define([
       }
       tileClass = this.getTileClass();
       color = this.getColorFromAnagrams(numAnagrams);
-      dims = this.getTileDimensions(this.props.letters.length);
+      dims = this.getTileDimensions(this.props.letters.length,
+        this.props.displayStyle.showChips);
       tileWidth = dims[0];
       tileHeight = dims[1];
       heightPct = tileHeight / this.props.ySize;
@@ -90,10 +101,28 @@ define([
       y = this.props.gridY + this.props.ySize * (1 - heightPct) / 2;
       xPadding = this.props.gridX + tileWidth * 0.1;
       // XXX: This is a bit of an ugly formula, but it's fast.
-      fontSize = dims[0] * 8 + '%';
-      for (var i = 0; i < this.props.letters.length; i++) {
-        x = xPadding + tileWidth * i + i;
-        key = "q" + this.props.qNumber + "tile" + i;
+      // See http://stackoverflow.com/a/22580176/1737333 for perhaps
+      // a better approach.
+      letterFontSize = dims[0] * 8 + '%';
+      numberFontSize = dims[0] * 5 + '%';
+      countFrom = 0;
+      if (this.props.displayStyle.showChips) {
+        tiles.push(<Chip
+          radius={tileWidth/2}
+          x={xPadding}
+          y={y}
+          color={color}
+          fontSize={numberFontSize}
+          number={this.props.words.size}
+          key={"q" + this.props.qNumber + "chip"}/>);
+        countFrom = 1;
+      }
+
+      for (var i = countFrom, letterIdx = 0;
+           i < this.props.letters.length+countFrom;
+           i++, letterIdx++) {
+        x = xPadding + i * (tileWidth + 1);
+        key = "q" + this.props.qNumber + "tile" + letterIdx;
         tiles.push(
           <Tile
             color={color}
@@ -102,19 +131,12 @@ define([
             y={y}
             width={tileWidth}
             height={tileHeight}
-            fontSize={fontSize}
-            letter={this.props.letters[i]}/>);
+            fontSize={letterFontSize}
+            letter={this.props.letters[letterIdx]}/>);
       }
       chipClassName = "chip chip" + String(numAnagrams);
 
       return (
-        /*
-        <li className={liClass}>
-          <span className={chipClassName}>{numAnagrams}</span>
-          <span className="tiles">{tiles}</span>
-        </li>
-
-        */
         <g
           onMouseDown={this.mouseDown}
           onClick={this.clickedQ}
