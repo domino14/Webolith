@@ -18,6 +18,7 @@ define([
           </button>
           <PrefsModal
             displayStyle={this.props.displayStyle}
+            onSave={this.props.onSave}
           />
         </div>
       );

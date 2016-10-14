@@ -16,7 +16,12 @@ define([
             <div className={inputColSizeClass}>
               <label>{this.props.label}</label>
               <input type="text"
-                className="form-control input-sm"/>
+                name={this.props.inputName}
+                className="form-control input-sm"
+                maxLength={this.props.maxLength}
+                onChange={this.props.onChange}
+                onKeyPress={this.props.onKeyPress}
+              />
             </div>
           </div>
         </div>

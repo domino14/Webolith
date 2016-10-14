@@ -14,7 +14,10 @@ define([
   // The maximum number of questions that can be displayed on a table
   // at once (any more are outside of the viewport).
   MAX_SCREEN_QUESTIONS = 50;
-  Game = function() {};
+  Game = function() {
+    this.curQuestions = Immutable.List();
+    this.origQuestions = Immutable.List();
+  };
   /**
    * Initializes the main data structures when a new array comes in.
    * @param  {Array.<Object>} questions The array of questions.
@@ -48,6 +51,7 @@ define([
     this.origQuestions = Immutable.fromJS(qMap).toOrderedMap();
     // This structure is used just for the initial display.
     this.curQuestions = Immutable.fromJS(reducedQuestions);
+    console.log('I am here. this.curQuestions', this.curQuestions);
   };
   /**
    * Solve a word. This will modify the elements in the hashes, which
@@ -145,6 +149,9 @@ define([
   };
 
   Game.prototype.shuffleAll = function() {
+    if (!this.curQuestions) {
+      return;
+    }
     for (var i = 0; i < this.curQuestions.size; i++) {
       // XXX can we speed this up with `withMutations`?
       this.shuffle(i);
@@ -152,6 +159,9 @@ define([
   };
 
   Game.prototype.resetAllOrders = function() {
+    if (!this.curQuestions) {
+      return;
+    }
     for (var i = 0; i < this.curQuestions.size; i++) {
       this.curQuestions = this.curQuestions.update(i, function(aObj) {
         aObj = aObj.set('displayedAs', aObj.get('a'));
@@ -162,7 +172,7 @@ define([
 
   Game.prototype.setCustomLetterOrder = function(order) {
     var customOrder;
-    if (!order) {
+    if (!order || !this.curQuestions) {
       return;
     }
 

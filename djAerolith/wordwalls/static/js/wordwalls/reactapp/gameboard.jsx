@@ -5,7 +5,7 @@ define([
   "use strict";
   var GameBoard = React.createClass({
     getDefaultProps: function() {
-      // Maybe move this to the configurator.
+      // XXX: Get these from the configuration state.
       return {
         displayStyle: {
           tc: {

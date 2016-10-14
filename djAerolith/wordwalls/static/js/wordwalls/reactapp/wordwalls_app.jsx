@@ -45,17 +45,26 @@ define([
         isChallenge: false,
         totalWords: 0,
         answeredByMe: [],
-        lastGuess: ''
+        lastGuess: '',
+        displayStyle: this.props.displayStyle
       };
     },
 
+    /**
+     * Set the display style. (Yes, this is a useless comment)
+     * @param {Object} style
+     */
+    setDisplayStyle: function(style) {
+      this.setState({
+        displayStyle: style
+      });
+      // Also persist to the backend.
+      console.log('Should persist to the backend.', style);
+    },
+
     render: function() {
-      var canvasClass;
-      if (this.props.displayStyle.bc && this.props.displayStyle.bc.showCanvas) {
-        canvasClass = 'canvasBg';
-      }
       return (
-        <div className={canvasClass || ''}>
+        <div>
           <div className="row">
             <div className="col-sm-6">
             <ListSaveBar
@@ -65,7 +74,8 @@ define([
             </div>
             <div className="col-sm-1 col-sm-offset-1">
               <Preferences
-                displayStyle={this.props.displayStyle}
+                displayStyle={this.state.displayStyle}
+                onSave={this.setDisplayStyle}
               />
             </div>
             <div className="col-sm-2 col-sm-offset-2">
@@ -95,8 +105,7 @@ define([
             <div className="col-lg-8 col-md-9">
               <GameBoard
                 curQuestions={this.state.curQuestions}
-                // Maybe this should be state.
-                displayStyle={this.props.displayStyle}
+                displayStyle={this.state.displayStyle}
                 onShuffle={this.onShuffleQuestion}
                 />
             </div>
@@ -272,10 +281,10 @@ define([
     },
 
     handleCustomOrder: function() {
-      if (!(this.props.displayStyle && this.props.displayStyle.tc)) {
+      if (!(this.state.displayStyle && this.state.displayStyle.tc)) {
         return;
       }
-      game.setCustomLetterOrder(this.props.displayStyle.tc.customOrder);
+      game.setCustomLetterOrder(this.state.displayStyle.tc.customOrder);
       this.setState({
         'curQuestions': game.getQuestionState()
       });

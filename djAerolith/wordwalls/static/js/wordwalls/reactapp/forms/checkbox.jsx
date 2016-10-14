@@ -14,7 +14,9 @@ define([
             <label>
               <input
                 type="checkbox"
+                name={this.props.inputName}
                 checked={this.props.on}
+                value={this.props.inputName /* doesn't matter */}
                 onChange={this.props.onChange}
               />
               {this.props.label}
