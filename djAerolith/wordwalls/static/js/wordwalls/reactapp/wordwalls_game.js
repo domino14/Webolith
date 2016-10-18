@@ -51,7 +51,6 @@ define([
     this.origQuestions = Immutable.fromJS(qMap).toOrderedMap();
     // This structure is used just for the initial display.
     this.curQuestions = Immutable.fromJS(reducedQuestions);
-    console.log('I am here. this.curQuestions', this.curQuestions);
   };
   /**
    * Solve a word. This will modify the elements in the hashes, which

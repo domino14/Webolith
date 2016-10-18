@@ -1,27 +1,12 @@
 define([
   'react',
-  'jsx!reactapp/wordwalls_question'
-], function(React, WordwallsQuestion) {
+  'jsx!reactapp/wordwalls_question',
+  'jsx!reactapp/solutions'
+], function(React, WordwallsQuestion, Solutions) {
   "use strict";
   var GameBoard = React.createClass({
     getDefaultProps: function() {
-      // XXX: Get these from the configuration state.
       return {
-        displayStyle: {
-          tc: {
-            on: true,
-            selection: '1',
-            bold: false,
-            customOrder: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ?',
-            blankCharacter: '?',
-            font: 'mono'
-          },
-          bc: {
-            showTable: true,
-            showBorders: false,
-            showCanvas: true
-          }
-        },
         width: 720,
         height: 390,
         gridWidth: 4,
@@ -67,23 +52,23 @@ define([
       if (this.props.displayStyle.bc.showTable) {
         questionsClassName = 'tableBg';
       }
-      return (
-        /*
-        <div id="questions"
-             className={questionsClassName}>
-          <ul className="questionList">{questions}</ul>
-        </div>
-        */
-        // Prevent default on mouse down to prevent taking focus in
-        // case of misclick.
-        <svg
-          className="gameboard"
-          onMouseDown={function(e) { e.preventDefault(); }}
-          width={this.props.width}
-          height={this.props.height}>
-          {questions}
-        </svg>
-      );
+      if (this.props.gameGoing) {
+        return (
+          // Prevent default on mouse down to prevent taking focus in
+          // case of misclick.
+          <svg
+            className="gameboard"
+            onMouseDown={function(e) { e.preventDefault(); }}
+            width={this.props.width}
+            height={this.props.height}>
+            {questions}
+          </svg>
+        );
+      } else {
+        return <Solutions
+          questions={this.props.origQuestions}
+        />;
+      }
     }
   });
 

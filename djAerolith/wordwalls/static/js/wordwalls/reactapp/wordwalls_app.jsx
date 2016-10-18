@@ -121,8 +121,10 @@ define([
             <div className="col-lg-8 col-md-9">
               <GameBoard
                 curQuestions={this.state.curQuestions}
+                origQuestions={this.state.origQuestions}
                 displayStyle={this.state.displayStyle}
                 onShuffle={this.onShuffleQuestion}
+                gameGoing={this.state.gameGoing}
                 />
             </div>
             <div className="col-lg-2 col-md-3">

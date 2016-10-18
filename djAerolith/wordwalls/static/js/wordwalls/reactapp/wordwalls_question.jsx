@@ -68,6 +68,24 @@ define([
         '1': ['#ffffff', 1, '#3e3f3a', '#3e3f3a'] // White tile, dark text.
       }[String(numAnagrams)];
     },
+
+    /**
+     * Draw a rectangular border, that may have a stroke of 0px (hidden)
+     * @return {React.Element}
+     */
+    borderRectangle: function() {
+      return (<rect
+        width={this.props.xSize}
+        height={this.props.ySize}
+        x={this.props.gridX}
+        y={this.props.gridY}
+        stroke="#3e3f3a"
+        strokeWidth="1px"
+        fill="none"
+        strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
+        ></rect>);
+    },
+
     render: function() {
       var tiles, numAnagrams, x, y,
         tileWidth, tileHeight, key, heightPct, xPadding, dims, color,
@@ -78,7 +96,7 @@ define([
         numAnagrams = Math.min(this.props.words.size, 9);
       } else {
         // No words for this question; return an empty g.
-        return <g/>;
+        return <g>{this.borderRectangle()}</g>;
       }
       color = this.getColorFromAnagrams(numAnagrams);
       dims = this.getTileDimensions(this.props.letters.length,
@@ -150,17 +168,8 @@ define([
           onMouseDown={this.mouseDown}
           onClick={this.clickedQ}
           style={{cursor: 'default'}}
-        >{tiles}
-        <rect
-          width={this.props.xSize}
-          height={this.props.ySize}
-          x={this.props.gridX}
-          y={this.props.gridY}
-          stroke="#3e3f3a"
-          strokeWidth="1px"
-          fill="none"
-          strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
-          ></rect></g>
+        >{tiles}{this.borderRectangle()}
+        </g>
       );
     },
 
