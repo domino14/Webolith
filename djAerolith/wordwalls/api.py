@@ -1,5 +1,5 @@
 import json
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -14,21 +14,12 @@ logger = logging.getLogger(__name__)
 def configure(request):
     if request.method != "POST":
         return response("Must use POST.", StatusCode.FORBIDDEN)
-
+    # XXX: User can put any old JSON here. We should do some backend
+    # validation.
     prefs = json.loads(request.body)
-    saveObj = {'tc': {}, 'bc': {}}
-    saveObj['tc'] = {'on': prefs['tilesOn'],
-                     'font': prefs['font'],
-                     'selection': prefs['tileSelection'],
-                     'bold': prefs['bold'],
-                     'blankCharacter': prefs['blankCharacter'],
-                     'customOrder': prefs['customOrder']}
-    saveObj['bc'] = {'showTable': prefs['showTable'],
-                     'showCanvas': prefs['showCanvas'],
-                     'showBorders': prefs['showBorders']}
 
     profile = request.user.aerolithprofile
-    profile.customWordwallsStyle = json.dumps(saveObj)
+    profile.customWordwallsStyle = json.dumps(prefs)
     profile.save()
     return response("OK")
 

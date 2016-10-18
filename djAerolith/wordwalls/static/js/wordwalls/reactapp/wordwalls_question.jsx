@@ -1,11 +1,26 @@
 define([
   'react',
   'jsx!reactapp/game_tile',
-  'jsx!reactapp/game_chip'
-], function(React, Tile, Chip) {
+  'jsx!reactapp/game_chip',
+  'jsx!reactapp/question_text'
+], function(React, Tile, Chip, QuestionText) {
   "use strict";
   // This represents a question and renders given the user's style.
-  var WordwallsQuestion = React.createClass({
+  var DEFAULT_BLANK_CHARACTER, WordwallsQuestion;
+
+  DEFAULT_BLANK_CHARACTER = '?';
+  WordwallsQuestion = React.createClass({
+    propTypes: {
+      displayStyle: React.PropTypes.object.isRequired,
+      letters: React.PropTypes.string,
+      qNumber: React.PropTypes.number.isRequired,
+      words: React.PropTypes.any,
+      gridX: React.PropTypes.number.isRequired,
+      gridY: React.PropTypes.number.isRequired,
+      xSize: React.PropTypes.number.isRequired,
+      ySize: React.PropTypes.number.isRequired,
+      onShuffle: React.PropTypes.func.isRequired
+    },
     /**
      * Get the dimensions of a tile given the length of the word.
      * @param  {number} length
@@ -36,61 +51,35 @@ define([
      * Get the color for this tile given the number of anagrams.
      * Use the bootstrap theme's colors and ROYGBIV ordering.
      * @param  {number} numAnagrams - cannot be higher than 9.
-     * @return {Array.<String>} A color hex code, opacity, text color tuple.
+     * @return {Array.<String>} A color hex code, opacity, text color,
+     *  alternate text color tuple. The alternate text color is used
+     *  for when tiles are off.
      */
     getColorFromAnagrams: function(numAnagrams) {
       return {
-        '9': ['#3e3f3a', 1, '#ffffff'],  // dark (black)
-        '8': ['#3e3f3a', 0.65, '#ffffff'], // Gray tile.
-        '7': ['#325d88', 1, '#ffffff'], // A dark blue.
-        '6': ['#29abe0', 1, '#ffffff'], // A lighter blue.
-        '5': ['#93c54b', 1, '#ffffff'], // A greenish color.
-        '4': ['#fce053', 1, '#3e3f3a'], // A light yellow
-        '3': ['#f47c3c', 1, '#ffffff'], // Orange
-        '2': ['#d9534f', 1, '#ffffff'], // Red
-        '1': ['#ffffff', 1, '#3e3f3a'] // White tile, dark text.
+        '9': ['#3e3f3a', 1, '#ffffff', '#800080'],  // dark (black)
+        '8': ['#3e3f3a', 0.65, '#ffffff', '#400040'], // Gray tile.
+        '7': ['#325d88', 1, '#ffffff', '#325d88'], // A dark blue.
+        '6': ['#29abe0', 1, '#ffffff', '#29abe0'], // A lighter blue.
+        '5': ['#93c54b', 1, '#ffffff', '#93c54b'], // A greenish color.
+        '4': ['#fce053', 1, '#3e3f3a', '#938231'], // A light yellow
+        '3': ['#f47c3c', 1, '#ffffff', '#f47c3c'], // Orange
+        '2': ['#d9534f', 1, '#ffffff', '#d9534f'], // Red
+        '1': ['#ffffff', 1, '#3e3f3a', '#3e3f3a'] // White tile, dark text.
       }[String(numAnagrams)];
     },
-    /**
-     * Calculate the class of the tile from the displayStyle.
-     * @return {string}
-     */
-    getTileClass: function() {
-      var classes;
-      classes = ['tile'];
-      if (this.props.displayStyle.on) {
-        classes.push('tileon');
-        classes.push('tile' + this.props.displayStyle.selection);
-      } else {
-        classes.push('tileoff');
-      }
-      if (this.props.displayStyle.font === 'mono') {
-        classes.push('tilemono');
-      } else if (this.props.displayStyle.font === 'sans') {
-        classes.push('tilesans');
-      }
-      if (this.props.displayStyle.bold) {
-        classes.push('tilebold');
-      }
-      return classes.join(' ');
-    },
     render: function() {
-      var tiles, numAnagrams, chipClassName, liClass, tileClass, x, y,
+      var tiles, numAnagrams, x, y,
         tileWidth, tileHeight, key, heightPct, xPadding, dims, color,
-        numberFontSize, letterFontSize, countFrom;
+        numberFontSize, letterFontSize, countFrom, letter;
       tiles = [];
-      if (this.props.displayStyle.showBorders) {
-        liClass = 'qle borders';
-      } else {
-        liClass = 'qle noborders';
-      }
+
       if (this.props.words) {
         numAnagrams = Math.min(this.props.words.size, 9);
       } else {
-        // No words for this question; return an empty list item.
-        return <li className={liClass}/>;
+        // No words for this question; return an empty g.
+        return <g/>;
       }
-      tileClass = this.getTileClass();
       color = this.getColorFromAnagrams(numAnagrams);
       dims = this.getTileDimensions(this.props.letters.length,
         this.props.displayStyle.showChips);
@@ -118,30 +107,60 @@ define([
         countFrom = 1;
       }
 
-      for (var i = countFrom, letterIdx = 0;
-           i < this.props.letters.length+countFrom;
-           i++, letterIdx++) {
-        x = xPadding + i * (tileWidth + 1);
-        key = "q" + this.props.qNumber + "tile" + letterIdx;
+      if (this.props.displayStyle.on) {
+        for (var i = countFrom, letterIdx = 0;
+             i < this.props.letters.length+countFrom;
+             i++, letterIdx++) {
+          x = xPadding + i * (tileWidth + 1);
+          key = "q" + this.props.qNumber + "tile" + letterIdx;
+          letter = this.props.letters[letterIdx];
+          if (letter === DEFAULT_BLANK_CHARACTER &&
+              this.props.displayStyle.blankCharacter !== '') {
+            letter = this.props.displayStyle.blankCharacter;
+          }
+          tiles.push(
+            <Tile
+              color={color}
+              key={key}
+              x={x}
+              y={y}
+              width={tileWidth}
+              height={tileHeight}
+              fontSize={letterFontSize}
+              letter={letter}/>);
+        }
+      } else {
+        // Tiles are off, just use a <text>
         tiles.push(
-          <Tile
+          <QuestionText
+            font={this.props.displayStyle.font}
+            bold={this.props.displayStyle.bold}
             color={color}
-            key={key}
-            x={x}
-            y={y}
-            width={tileWidth}
-            height={tileHeight}
+            key={"q" + this.props.qNumber + "qtext"}
+            x={xPadding + countFrom * (tileWidth + 1)}
+            y={this.props.gridY + this.props.ySize/2}
             fontSize={letterFontSize}
-            letter={this.props.letters[letterIdx]}/>);
+            letters={this.props.letters}
+          />);
       }
-      chipClassName = "chip chip" + String(numAnagrams);
+
 
       return (
         <g
           onMouseDown={this.mouseDown}
           onClick={this.clickedQ}
           style={{cursor: 'default'}}
-        >{tiles}</g>
+        >{tiles}
+        <rect
+          width={this.props.xSize}
+          height={this.props.ySize}
+          x={this.props.gridX}
+          y={this.props.gridY}
+          stroke="#3e3f3a"
+          strokeWidth="1px"
+          fill="none"
+          strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
+          ></rect></g>
       );
     },
 

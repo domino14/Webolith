@@ -3,8 +3,11 @@
 -[x] game colored chips
 -[x] make divs scroll down properly on addition of info.
 -[x] click questions to shuffle
--[ ] preferences (handle no tiles case gracefully, etc)
--[ ] preferences dialog
+-[x] preferences (handle no tiles case gracefully, etc)
+-[x] preferences (save)
+    - [wontfix] inserting into custom tile order moves cursor to the end
+        (won't fix for now)
+-[x] preferences dialog
 -[x] make tiles smaller for longer words
 -[ ] spanish digraph tiles
 -[x] shuffle/alpha/etc

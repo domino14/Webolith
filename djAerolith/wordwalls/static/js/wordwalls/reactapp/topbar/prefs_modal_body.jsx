@@ -3,13 +3,36 @@ define([
   'jsx!reactapp/wordwalls_question',
   'jsx!reactapp/forms/checkbox',
   'jsx!reactapp/forms/text_input',
-  'immutable'
-], function(React, WordwallsQuestion, Checkbox, TextInput, Immutable) {
+  'immutable',
+  'underscore'
+], function(React, WordwallsQuestion, Checkbox, TextInput, Immutable, _) {
   "use strict";
 
   var ModalBody;
 
   ModalBody = React.createClass({
+    getInitialState: function() {
+      return {
+        letters: 'ADEEMMO?',
+        tileOrderLettersRemaining: this.calculateLettersRemaining(
+          this.props.customTileOrder),
+        wMap: Immutable.fromJS({'GAMODEME': {}, 'HOMEMADE': {}})
+      };
+    },
+
+    /**
+     * Calculate the letters that are remaining given a tile order.
+     * XXX: We need to fix this for Spanish, I guess.
+     * @param  {string} tileOrder
+     * @return string
+     */
+    calculateLettersRemaining: function(tileOrder) {
+      var allLetters;
+      allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ?';
+      return _.difference(allLetters.split(''), tileOrder.split('')).join('');
+
+    },
+
     onBlankCharChange: function(event) {
       this.props.onOptionsModify('blankCharacter', event.target.value);
     },
@@ -17,7 +40,19 @@ define([
     onTileOrderChange: function(event) {
       // XXX: Check if it has all letters before setting state. If not,
       // set some sort of indicator.
-      this.props.onOptionsModify('customTileOrder', event.target.value);
+      var letters, remaining;
+      letters = _.uniq(
+        event.target.value.toLocaleUpperCase().split('')).join('');
+      this.props.onOptionsModify('customTileOrder', letters);
+      remaining = this.calculateLettersRemaining(letters);
+      this.setState({
+        tileOrderLettersRemaining: remaining
+      });
+      if (remaining.length === 0 || remaining.length === 27) {
+        this.props.allowSave(true);
+      } else {
+        this.props.allowSave(false);
+      }
     },
 
     componentWillReceiveProps: function() {
@@ -43,6 +78,7 @@ define([
             colSize={2}
             label="Blank Character"
             maxLength={1}
+            value={this.props.blankCharacter}
             onChange={this.onBlankCharChange}
             onKeyPress={function(){}}
           />
@@ -70,14 +106,24 @@ define([
     },
 
     render: function() {
-      var wMap, letters;
-      wMap = {
-        'GAMODEME': {},
-        'HOMEMADE': {}
-      };
-      wMap = Immutable.fromJS(wMap);
-      // letters should be in the state if we want to shuffle here.
-      letters = 'ADEEMMO?';
+      var letRem, stateLetRem;
+      stateLetRem = this.state.tileOrderLettersRemaining;
+      // If it's not totally empty (or not totally full)
+      if (stateLetRem.length !== 0 && stateLetRem.length !== 27) {
+        letRem = (
+          <span
+            className="text-danger">
+            <strong>{
+              `${stateLetRem} (${stateLetRem.length})`
+            }</strong></span>);
+      } else {
+        letRem = (
+          <span className="text-success">
+            <i className="fa fa-check-circle"
+              aria-hidden="true"></i>
+          </span>);
+      }
+
 
       return (
         <div className="modal-body">
@@ -87,9 +133,9 @@ define([
                 width="180"
                 height="30">
                 <WordwallsQuestion
-                  letters={letters}
+                  letters={this.state.letters}
                   qNumber={0}
-                  words={wMap}
+                  words={this.state.wMap}
                   gridX={0}
                   gridY={0}
                   xSize={180}
@@ -103,7 +149,13 @@ define([
                     bold: this.props.showBold,
                     showBorders: this.props.showBorders
                   }}
-                  onShuffle={function(){}}
+                  onShuffle={function(){
+                    var letters = this.state.letters;
+                    letters = _.shuffle(letters);
+                    this.setState({
+                      letters: letters
+                    });
+                  }.bind(this)}
                 />
               </svg>
             </div>
@@ -124,11 +176,16 @@ define([
                 <TextInput
                   colSize={6}
                   label="Custom Tile Order"
+                  value={this.props.customTileOrder}
                   maxLength={30}
                   onChange={this.onTileOrderChange}
                   onKeyPress={function(){}}
                 />
-
+                <div className="row">
+                  <div className="col-lg-6">
+                    Letters remaining: {letRem}
+                  </div>
+                </div>
                 <Checkbox
                   on={this.props.showBorders}
                   onChange={function(event) {
@@ -142,7 +199,7 @@ define([
                     this.props.onOptionsModify('showChips',
                       event.target.checked);
                   }.bind(this)}
-                  label="Show color-coded chips"/>
+                  label="Show number of anagrams"/>
 
               </form>
             </div>

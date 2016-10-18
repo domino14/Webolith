@@ -17,6 +17,7 @@ define([
               <label>{this.props.label}</label>
               <input type="text"
                 name={this.props.inputName}
+                value={this.props.value}
                 className="form-control input-sm"
                 maxLength={this.props.maxLength}
                 onChange={this.props.onChange}

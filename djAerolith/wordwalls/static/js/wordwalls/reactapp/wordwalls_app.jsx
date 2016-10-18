@@ -1,3 +1,4 @@
+/* global JSON */
 define([
   'react',
   'jquery',
@@ -59,7 +60,22 @@ define([
         displayStyle: style
       });
       // Also persist to the backend.
-      console.log('Should persist to the backend.', style);
+      $.ajax({
+        url: '/wordwalls/api/configure/',
+        method: 'POST',
+        dataType: 'json',
+        data: this.serializeStyle(style)
+      });
+    },
+
+    /**
+     * Turn style into a JSON representation that the backend will
+     * understand.
+     * @param  {Object} style
+     * @return {Object}
+     */
+    serializeStyle: function(style) {
+      return JSON.stringify(style);
     },
 
     render: function() {

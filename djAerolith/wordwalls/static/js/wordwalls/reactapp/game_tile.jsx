@@ -27,7 +27,7 @@ define([
             fontSize={this.props.fontSize}
             stroke={this.props.color[2]}
             fill={this.props.color[2]}
-            strokeWidth="1px">{this.props.letter}</text>
+            strokeWidth="0.75px">{this.props.letter}</text>
         </g>
       );
     }

@@ -16,7 +16,9 @@ define([
         // so that it's not an uncontrolled component.
         // (undefined value/checked causes an uncontrolled component)
         showChips: this.props.displayStyle.tc.showChips || false,
-        showBold: this.props.displayStyle.tc.bold
+        showBold: this.props.displayStyle.tc.bold,
+
+        saveAllowed: true
       };
     },
 
@@ -30,28 +32,39 @@ define([
       this.setState(newState);
     },
 
+    /**
+     * Call the save function in this.props to persist the state to the
+     * backend. Note that instead of reading DOM elements we're just
+     * persisting the state itself, which should track all of the changes.
+     */
     saveChanges: function() {
-      // XXX: get state from form.
-      this.props.onSave({});
-
-
-      /**
-       * HERE.
-       *
-       * - How do we save the state to the backend? We need to either:
-       *    - keep track of state one level up (right here)
-       *    - move the save button inside the modal body component
-       *    - something else?
-       * - Close behavior (close buttons and click outside modal) should
-       * reset state to original value.
-       * - Look at controled checkbox component (how to update value? checked?)
-       * - Controlled text input component? What do I use for the value?
-       *
-       * - Need to find an example online of forms/etc.
-       */
+      this.props.onSave({
+        tc: {
+          on: this.state.tilesOn,
+          bold: this.state.showBold,
+          customOrder: this.state.customTileOrder,
+          blankCharacter: this.state.blankCharacter,
+          font: this.state.fontSans ? 'sans' : 'mono',
+          showChips: this.state.showChips
+        },
+        bc: {
+          showBorders: this.state.showBorders
+        }
+      });
     },
-    render: function() {
 
+    allowSave: function(allow) {
+      this.setState({
+        saveAllowed: allow
+      });
+    },
+
+    render: function() {
+      var savebtnClass;
+      savebtnClass = 'btn btn-primary';
+      if (!this.state.saveAllowed) {
+        savebtnClass += ' disabled';
+      }
 
       return (
         <div className="modal fade prefs-modal"
@@ -85,6 +98,7 @@ define([
                 showBorders={this.state.showBorders}
                 showChips={this.state.showChips}
                 showBold={this.state.showBold}
+                allowSave={this.allowSave}
               />
 
               <div className="modal-footer">
@@ -92,7 +106,7 @@ define([
                   className="btn btn-default"
                   data-dismiss="modal">Close</button>
                 <button type="button"
-                  className="btn btn-primary"
+                  className={savebtnClass}
                   onClick={this.saveChanges}>Save changes</button>
               </div>
 
