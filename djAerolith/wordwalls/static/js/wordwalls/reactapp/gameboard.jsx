@@ -67,6 +67,10 @@ define([
       } else {
         return <Solutions
           questions={this.props.origQuestions}
+          answeredByMe={this.props.answeredByMe}
+          totalWords={this.props.totalWords}
+          height={this.props.height}
+          markMissed={this.props.markMissed}
         />;
       }
     }

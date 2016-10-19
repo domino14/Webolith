@@ -52,6 +52,14 @@ define([
     // This structure is used just for the initial display.
     this.curQuestions = Immutable.fromJS(reducedQuestions);
   };
+
+  Game.prototype.miss = function(alphagram) {
+    this.origQuestions = this.origQuestions.update(alphagram, function(aObj) {
+      aObj = aObj.set('solved', false);
+      return aObj;
+    });
+  };
+
   /**
    * Solve a word. This will modify the elements in the hashes, which
    * modifies the state.

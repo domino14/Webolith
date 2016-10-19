@@ -11,7 +11,8 @@
 -[x] make tiles smaller for longer words
 -[ ] spanish digraph tiles
 -[x] shuffle/alpha/etc
--[ ] solutions
+-[x] solutions
+    -[x] mark missed
 -[ ] daily challenge results
 -[ ] submit guess if not solved locally
 -[ ] end game properly when all words solved/time runs out

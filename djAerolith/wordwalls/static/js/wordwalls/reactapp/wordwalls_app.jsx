@@ -123,8 +123,11 @@ define([
                 curQuestions={this.state.curQuestions}
                 origQuestions={this.state.origQuestions}
                 displayStyle={this.state.displayStyle}
+                totalWords={this.state.totalWords}
+                answeredByMe={this.state.answeredByMe}
                 onShuffle={this.onShuffleQuestion}
                 gameGoing={this.state.gameGoing}
+                markMissed={this.markMissed}
                 />
             </div>
             <div className="col-lg-2 col-md-3">
@@ -247,6 +250,24 @@ define([
     // TODO: handle guess failure the old way.
     handleGuessFailure: function() {
 
+    },
+
+    markMissed: function(alphaIdx, alphagram) {
+      // Mark the alphagram missed.
+      $.ajax({
+        url: this.props.tableUrl + 'missed/',
+        method: 'POST',
+        dataType: 'json',
+        data: {'idx': alphaIdx}
+      })
+      .done(function(data) {
+        if (data && data.success) {
+          game.miss(alphagram);
+          this.setState({
+            'origQuestions': game.getOriginalQuestionState()
+          });
+        }
+      }.bind(this));
     },
 
     addServerMessage: function(serverMsg, optType) {
