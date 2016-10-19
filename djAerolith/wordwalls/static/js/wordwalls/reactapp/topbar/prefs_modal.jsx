@@ -12,11 +12,9 @@ define([
         blankCharacter: this.props.displayStyle.tc.blankCharacter,
         fontSans: this.props.displayStyle.tc.font === 'sans',
         showBorders: this.props.displayStyle.bc.showBorders,
-        // showChips is not a legacy option so let's set it to false
-        // so that it's not an uncontrolled component.
-        // (undefined value/checked causes an uncontrolled component)
-        showChips: this.props.displayStyle.tc.showChips || false,
+        showChips: this.props.displayStyle.tc.showChips,
         showBold: this.props.displayStyle.tc.bold,
+        hideLexiconSymbols: this.props.displayStyle.bc.hideLexiconSymbols,
 
         saveAllowed: true
       };
@@ -48,7 +46,8 @@ define([
           showChips: this.state.showChips
         },
         bc: {
-          showBorders: this.state.showBorders
+          showBorders: this.state.showBorders,
+          hideLexiconSymbols: this.state.hideLexiconSymbols
         }
       });
     },
@@ -98,6 +97,7 @@ define([
                 showBorders={this.state.showBorders}
                 showChips={this.state.showChips}
                 showBold={this.state.showBold}
+                hideLexiconSymbols={this.state.hideLexiconSymbols}
                 allowSave={this.allowSave}
               />
 

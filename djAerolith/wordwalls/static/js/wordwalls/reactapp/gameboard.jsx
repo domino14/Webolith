@@ -71,6 +71,7 @@ define([
           totalWords={this.props.totalWords}
           height={this.props.height}
           markMissed={this.props.markMissed}
+          showLexiconSymbols={!this.props.displayStyle.bc.hideLexiconSymbols}
         />;
       }
     }

@@ -19,8 +19,25 @@ define([
 
     if (options.addlParams.style != null) {
       style = JSON.parse(options.addlParams.style);
+      // Add default options that may not have been there.
+      style.tc.showChips = false;
+      style.bc.hideLexiconSymbols = false;
     } else {
-      style = {};
+      // Default style.
+      style = {
+        tc: {
+          on: true,
+          customOrder: '',
+          blankCharacter: '?',
+          font: 'mono',
+          showChips: false,
+          bold: false
+        },
+        bc: {
+          showBorders: false,
+          hideLexiconSymbols: false
+        }
+      };
     }
     // Get the list name from one of two places.
     if (options.addlParams.saveName) {

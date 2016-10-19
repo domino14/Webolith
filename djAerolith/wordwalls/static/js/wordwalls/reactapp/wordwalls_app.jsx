@@ -132,9 +132,9 @@ define([
             </div>
             <div className="col-lg-2 col-md-3">
               <PlayerRanks/>
-              {/* make showLexiconSymbol an option later */}
               <UserBox
-                showLexiconSymbol={true}
+                showLexiconSymbols={
+                  !this.state.displayStyle.bc.hideLexiconSymbols}
                 answeredByMe={this.state.answeredByMe}
                 totalWords={this.state.totalWords}
                 username={this.props.username}

@@ -16,7 +16,7 @@ define([
             <span
               className="text-info">{word.get('fh')} </span>
             <span>{word.get('w') +
-              (this.props.showLexiconSymbol ? word.get('s') : '')}
+              (this.props.showLexiconSymbols ? word.get('s') : '')}
             </span>
             <span
               className="text-info"> {word.get('bh')}</span>

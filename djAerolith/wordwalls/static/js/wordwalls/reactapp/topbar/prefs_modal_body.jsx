@@ -200,6 +200,13 @@ define([
                       event.target.checked);
                   }.bind(this)}
                   label="Show number of anagrams"/>
+                <Checkbox
+                  on={this.props.hideLexiconSymbols}
+                  onChange={function(event) {
+                    this.props.onOptionsModify('hideLexiconSymbols',
+                      event.target.checked);
+                  }.bind(this)}
+                  label="Hide lexicon symbols (such as # or +)"/>
 
               </form>
             </div>

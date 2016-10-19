@@ -8,8 +8,12 @@
     - ~~[wontfix] inserting into custom tile order moves cursor to the end
         (won't fix for now)~~
 -[x] preferences dialog
+    - [x] hide lexicon symbols
+    - [ ] close on save
+    - [ ] reset on close
 -[x] make tiles smaller for longer words
 -[ ] spanish digraph tiles
+-[ ] localization
 -[x] shuffle/alpha/etc
 -[x] solutions
     -[x] mark missed
@@ -18,11 +22,11 @@
 -[ ] end game properly when all words solved/time runs out
 -[ ] save behavior
 -[ ] exit table
--[ ] localization
--[ ] visual rearrangement
 -[ ] optimization (don't handle unseen elements, etc)
+    - [ ] check on slower computers (my old macbook)
 -[ ] tests
 -[ ] Search for XXX/TODO/etc.
+-[ ] visual rearrangement
 
 Nice to haves:
 -[ ] on hover things

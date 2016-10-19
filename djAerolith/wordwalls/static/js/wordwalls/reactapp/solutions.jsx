@@ -68,7 +68,8 @@ define([
               word={word.get('w')}
               innerFrontHook={word.get('ifh')}
               innerBackHook={word.get('ibh')}
-              lexiconSymbols={word.get('s')}
+              lexiconSymbols={this.props.showLexiconSymbols ?
+                word.get('s') : ''}
               definition={word.get('d')}
               wordSolved={word.get('solved', false)}
               correct={question.get('solved', false)}
