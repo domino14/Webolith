@@ -61,6 +61,18 @@ define([
   };
 
   /**
+   * Check if the guess is actually a valid one. This is so we don't
+   * submit bad guesses to the server.
+   * @param  {string} guess
+   * @return {boolean}
+   */
+  Game.prototype.answerExists = function(guess) {
+    var widx;
+    widx = this.wrongWordsHash[guess];
+    return widx != null;
+  };
+
+  /**
    * Solve a word. This will modify the elements in the hashes, which
    * modifies the state.
    * @param {string} word

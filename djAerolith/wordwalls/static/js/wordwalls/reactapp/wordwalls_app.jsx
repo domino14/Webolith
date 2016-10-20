@@ -217,9 +217,12 @@ define([
     },
 
     onGuessSubmit: function(guess) {
-      // XXX: This should only do an ajax request if the guess is an
-      // answer already.
-      var guesses;
+      this.setState({'lastGuess': guess});
+      if (!game.answerExists(guess)) {
+        // If the guess wasn't valid, don't bother submitting it to
+        // the server.
+        return;
+      }
       $.ajax({
         url: this.props.tableUrl,
         method: 'POST',
@@ -229,11 +232,9 @@ define([
       })
       .done(this.handleGuessResponse)
       .fail(this.handleGuessFailure);
-      this.setState({'lastGuess': guess});
     },
 
     handleGuessResponse: function(data) {
-      console.log('Got guess data back', data);
       if (_.has(data, 'C')) {
         if (data.C !== '') {
           // data.C contains the alphagram.

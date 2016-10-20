@@ -13,16 +13,17 @@
     - [ ] reset on close
 -[x] make tiles smaller for longer words
 -[ ] spanish digraph tiles
--[ ] localization
+-[ ] i18n
 -[x] shuffle/alpha/etc
 -[x] solutions
     -[x] mark missed
--[ ] daily challenge results
--[ ] submit guess if not solved locally
+-[x] submit guess if not solved locally
 -[ ] end game properly when all words solved/time runs out
 -[ ] save behavior
 -[ ] exit table
+-[ ] daily challenge results
 -[ ] optimization (don't handle unseen elements, etc)
+    - [ ] compilation/deployment on dev
     - [ ] check on slower computers (my old macbook)
 -[ ] tests
 -[ ] Search for XXX/TODO/etc.

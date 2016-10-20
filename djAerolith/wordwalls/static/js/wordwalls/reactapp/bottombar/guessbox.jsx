@@ -24,8 +24,6 @@ define([
         }
         guess = this.state.guessText.trim().toUpperCase();
         this.setState({guessText: ''});
-        // XXX: Only submit guess if not solved locally, i.e.
-        // see old logic.
         this.props.onGuessSubmit(guess);
       } else if (keyCode === 49) {
         this.props.onHotKey('1');
