@@ -1,6 +1,7 @@
 define([
-  'react'
-], function(React) {
+  'react',
+  'jsx!reactapp/word_part_display'
+], function(React, WordPartDisplay) {
   "use strict";
   var Solutions, Solution;
 
@@ -9,7 +10,7 @@ define([
       this.props.markMissed(this.props.idx, this.props.alphagram);
     },
     render: function() {
-      var qTdClass, wTdClass, wordDisplay, markMissedBtn = '';
+      var qTdClass, wTdClass, wordDisplay, alphagram, markMissedBtn = '';
       qTdClass = '';
       if (!this.props.correct) {
         qTdClass = 'danger';
@@ -28,19 +29,28 @@ define([
             onClick={this.markMissed}>Mark missed</button>
         );
       }
-
+      alphagram = (
+        this.props.wordPos === 0 ? <WordPartDisplay
+          text={this.props.alphagram}/> : '');
       return (
         <tr>
           <td>{this.props.wordPos === 0 ?
                this.props.probability : ''}</td>
           <td
-            className={qTdClass}>{this.props.wordPos === 0 ?
-                                  this.props.alphagram : ''}</td>
+            className={qTdClass}>{alphagram}</td>
           <td
-            className="text-right">{this.props.frontHooks}</td>
-          <td className={wTdClass}>{wordDisplay}</td>
+            className="text-right">
+            <WordPartDisplay
+              classes="text-info small"
+              text={this.props.frontHooks}/></td>
+          <td className={wTdClass}>
+            <WordPartDisplay
+              text={wordDisplay}/></td>
           <td
-            className="text-left">{this.props.backHooks}</td>
+            className="text-left">
+            <WordPartDisplay
+              classes="text-info small"
+              text={this.props.backHooks}/></td>
           <td>{this.props.definition}</td>
           <td>{markMissedBtn}</td>
         </tr>

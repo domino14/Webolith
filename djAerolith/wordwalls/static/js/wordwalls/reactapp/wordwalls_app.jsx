@@ -128,6 +128,7 @@ define([
                 onShuffle={this.onShuffleQuestion}
                 gameGoing={this.state.gameGoing}
                 markMissed={this.markMissed}
+                lexicon={this.props.lexicon}
                 />
             </div>
             <div className="col-lg-2 col-md-3">
@@ -216,9 +217,26 @@ define([
       }
     },
 
+    /**
+     * Maybe modify the guess to replace spanish digraph tiles with their
+     * proper code. Only if lexicon is Spanish.
+     * @param  {string} guess
+     * @return {string}
+     */
+    maybeModifyGuess: function(guess) {
+      if (this.props.lexicon !== 'FISE09') {
+        return guess;
+      }
+      // Replace.
+      guess = guess.replace(/CH/g, '1').replace(/LL/g, '2').replace(/RR/g, '3');
+      return guess;
+    },
+
     onGuessSubmit: function(guess) {
+      var modifiedGuess;
       this.setState({'lastGuess': guess});
-      if (!game.answerExists(guess)) {
+      modifiedGuess = this.maybeModifyGuess(guess);
+      if (!game.answerExists(modifiedGuess)) {
         // If the guess wasn't valid, don't bother submitting it to
         // the server.
         return;
@@ -228,7 +246,7 @@ define([
         method: 'POST',
         dataType: 'json',
         // That's a lot of guess
-        data: {action: 'guess', guess: guess}
+        data: {action: 'guess', guess: modifiedGuess}
       })
       .done(this.handleGuessResponse)
       .fail(this.handleGuessFailure);

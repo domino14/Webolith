@@ -1,6 +1,7 @@
 define([
-  'react'
-], function(React) {
+  'react',
+  'jsx!reactapp/word_part_display'
+], function(React, WordPartDisplay) {
   "use strict";
   return React.createClass({
     render: function() {
@@ -13,13 +14,15 @@ define([
             data-toggle="tooltip"
             data-placement="left"
             title={word.get('d')}>
-            <span
-              className="text-info">{word.get('fh')} </span>
-            <span>{word.get('w') +
-              (this.props.showLexiconSymbols ? word.get('s') : '')}
-            </span>
-            <span
-              className="text-info"> {word.get('bh')}</span>
+            <WordPartDisplay
+              text={word.get('fh') + ' '}
+              classes="text-info small"/>
+            <WordPartDisplay
+              text={word.get('w') + (this.props.showLexiconSymbols ?
+                word.get('s') : '')}/>
+            <WordPartDisplay
+              text={' ' + word.get('bh')}
+              classes="text-info small"/>
           </div>);
       }.bind(this));
       //console.log('The answers are ', answers);

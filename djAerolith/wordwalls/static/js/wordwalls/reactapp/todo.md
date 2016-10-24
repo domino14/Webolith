@@ -12,8 +12,10 @@
     - [ ] close on save
     - [ ] reset on close
 -[x] make tiles smaller for longer words
--[ ] spanish digraph tiles
--[ ] i18n
+-[x] spanish digraph tiles
+    - [x] guess/display logic
+~~-[ ] i18n
+    - This is difficult. https://github.com/yahoo/react-intl is a good package but I'd need to move to nodejs/babel/es6/etc and change a lot of stuff. I may temporarily remove i18n since there's only one Spanish user.~~
 -[x] shuffle/alpha/etc
 -[x] solutions
     -[x] mark missed

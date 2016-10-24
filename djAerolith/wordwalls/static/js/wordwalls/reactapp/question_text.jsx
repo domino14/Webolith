@@ -19,7 +19,7 @@ define([
           y={this.props.y}
           fontFamily={fontFamily}
           alignmentBaseline="central"
-          fontSize={this.props.fontSize}
+          fontSize={this.props.fontSize + '%'}
           stroke={this.props.color[3]}
           fill={this.props.color[3]}
           fontWeight={fontWeight}

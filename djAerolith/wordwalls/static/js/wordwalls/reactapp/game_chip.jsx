@@ -27,7 +27,7 @@ define([
             textAnchor="middle"
             alignmentBaseline="central"
             fontFamily={fontFamily}
-            fontSize={this.props.fontSize}
+            fontSize={this.props.fontSize + '%'}
             stroke={this.props.color[2]}
             fill={this.props.color[2]}
             strokeWidth="1px">{this.props.number}</text>

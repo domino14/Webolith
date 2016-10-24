@@ -4,9 +4,30 @@ define([
   "use strict";
   return React.createClass({
     render: function() {
-      var transform, fontFamily;
+      var transform, fontFamily, letter, fontSize;
       transform = "translate(" + this.props.x + "," + this.props.y + ")";
       fontFamily = 'Menlo,Consolas,"Ubuntu Mono",monospace';
+
+      letter = this.props.letter;
+      fontSize = this.props.fontSize;
+      switch (letter) {
+        case '1':
+          letter = 'CH';
+          fontSize *= 0.62;
+          break;
+        case '2':
+          letter = 'LL';
+          fontSize *= 0.62;
+          break;
+        case '3':
+          letter = 'RR';
+          fontSize *= 0.62;
+          break;
+        case 'Ñ':
+          letter = 'ñ';
+          break;
+      }
+
       return (
         <g transform={transform}>
           <rect
@@ -24,10 +45,10 @@ define([
             textAnchor="middle"
             alignmentBaseline="central"
             fontFamily={fontFamily}
-            fontSize={this.props.fontSize}
+            fontSize={fontSize + '%'}
             stroke={this.props.color[2]}
             fill={this.props.color[2]}
-            strokeWidth="0.75px">{this.props.letter}</text>
+            strokeWidth="0.75px">{letter}</text>
         </g>
       );
     }

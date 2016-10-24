@@ -110,8 +110,8 @@ define([
       // XXX: This is a bit of an ugly formula, but it's fast.
       // See http://stackoverflow.com/a/22580176/1737333 for perhaps
       // a better approach.
-      letterFontSize = dims[0] * 8 + '%';
-      numberFontSize = dims[0] * 5 + '%';
+      letterFontSize = dims[0] * 8;
+      numberFontSize = dims[0] * 5;
       countFrom = 0;
       if (this.props.displayStyle.showChips) {
         tiles.push(<Chip
