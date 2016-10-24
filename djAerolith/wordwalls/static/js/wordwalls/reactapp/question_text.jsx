@@ -1,6 +1,7 @@
 define([
-  'react'
-], function(React) {
+  'react',
+  'reactapp/utils'
+], function(React, Utils) {
   "use strict";
   return React.createClass({
     render: function() {
@@ -23,7 +24,8 @@ define([
           stroke={this.props.color[3]}
           fill={this.props.color[3]}
           fontWeight={fontWeight}
-          strokeWidth="0.5px">{this.props.letters}</text>
+          strokeWidth="0.5px">{Utils.displaySpanishDigraphs(
+            this.props.letters)}</text>
       );
     }
   });

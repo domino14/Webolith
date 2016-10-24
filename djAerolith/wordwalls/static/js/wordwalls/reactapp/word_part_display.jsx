@@ -3,15 +3,15 @@
  * a set of front/back hooks.
  */
 define([
-  'react'
-], function(React) {
+  'react',
+  'reactapp/utils'
+], function(React, Utils) {
   "use strict";
 
   return React.createClass({
     render: function() {
       var text;
-      text = this.props.text.replace(/1/g, 'ᴄʜ').replace(/2/g, 'ʟʟ').replace(
-        /3/g, 'ʀʀ');
+      text = Utils.displaySpanishDigraphs(this.props.text);
 
       return (
         <span
