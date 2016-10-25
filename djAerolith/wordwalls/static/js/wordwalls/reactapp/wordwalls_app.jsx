@@ -113,6 +113,7 @@ define([
             <div className="col-sm-2 col-sm-offset-5">
               <GameTimer
                 initialGameTime={this.state.initialGameTime}
+                completeCallback={this.timerRanOut}
                 gameGoing={this.state.gameGoing} />
             </div>
           </div>
@@ -218,6 +219,28 @@ define([
     },
 
     /**
+     * Called when the front-end timer runs out. Make a call to the
+     * back-end to possibly end the game.
+     */
+    timerRanOut: function() {
+      // Only send this if the game is going.
+      if (!this.state.gameGoing) {
+        return;
+      }
+      $.ajax({
+        url: this.props.tableUrl,
+        method: 'POST',
+        data: {action: 'gameEnded'},
+        dataType: 'json'
+      })
+      .done(function(data) {
+        if (_.has(data, 'g') && !data.g) {
+          this.processGameEnded();
+        }
+      }.bind(this));
+    },
+
+    /**
      * Maybe modify the guess to replace spanish digraph tiles with their
      * proper code. Only if lexicon is Spanish.
      * @param  {string} guess
@@ -263,6 +286,9 @@ define([
             'answeredByMe': game.getAnsweredByMe()
           });
         }
+      }
+      if (_.has(data, 'g') && !data.g) {
+        this.processGameEnded();
       }
     },
 

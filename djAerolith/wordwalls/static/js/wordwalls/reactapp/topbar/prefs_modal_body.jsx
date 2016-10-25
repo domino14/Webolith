@@ -55,17 +55,6 @@ define([
       }
     },
 
-    componentWillReceiveProps: function() {
-      console.log('component will receive props');
-    },
-
-    componentWillUnmount: function() {
-      console.log('component will unmount');
-    },
-
-    componentDidMount: function() {
-      console.log('component did mount');
-    },
     /**
      * Depending on the value of this.props.tilesOn, different
      * forms must display.

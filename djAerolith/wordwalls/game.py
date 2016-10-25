@@ -682,6 +682,7 @@ class WordwallsGame(object):
             return False
         missed.append(question_index)
         word_list.missed = json.dumps(missed)
+        word_list.numMissed += 1
         if state.get('justCreatedFirstMissed'):
             logger.debug('Also adding to first missed count')
             # Also add to first missed count.
@@ -692,6 +693,7 @@ class WordwallsGame(object):
                 word_list.firstMissed = json.dumps(first_missed)
 
         word_list.save()
+        logger.debug('Missed: %s', word_list.missed)
         return True
 
     def guess(self, guess_str, tablenum, user):

@@ -9,8 +9,8 @@
         (won't fix for now)~~
 -[x] preferences dialog
     - [x] hide lexicon symbols
-    - [ ] close on save
-    - [ ] reset on close
+    - [x] close on save
+    - [x] reset on close
 -[x] make tiles smaller for longer words
 -[x] spanish digraph tiles
     - [x] guess/display logic
@@ -19,14 +19,17 @@
 -[x] shuffle/alpha/etc
 -[x] solutions
     -[x] mark missed
+    -[ ] click to show solutions? (if users were in the middle of typing)
 -[x] submit guess if not solved locally
--[ ] end game properly when all words solved/time runs out
+-[x] end game properly when all words solved/time runs out
 -[ ] save behavior
 -[ ] exit table
+    -[ ] exit behavior (auto give up if quiz going, etc.)
 -[ ] daily challenge results
 -[ ] optimization (don't handle unseen elements, etc)
-    - [ ] compilation/deployment on dev
     - [ ] check on slower computers (my old macbook)
+-[ ] compilation/deployment on dev
+-[ ] autofocus guess on start
 -[ ] tests
 -[ ] Search for XXX/TODO/etc.
 -[ ] visual rearrangement

@@ -12,7 +12,7 @@ define([
     getDefaultProps: function() {
       return {
         warningCountdown: 10000,
-        interval: 1000,
+        interval: 500,
         completeCallback: null,
         gameGoing: false
       };
@@ -40,9 +40,7 @@ define([
      * @param  {Object} newProps
      */
     componentWillReceiveProps: function(newProps) {
-      // if (this.state.timeoutId) {
-      //   clearTimeout(this.state.timeoutId);
-      // }
+
       if (!newProps.gameGoing) {
         this.setState({
           prevTime: null,
@@ -55,7 +53,7 @@ define([
           return;
         }
       }
-      // Otherwise, restart the timer.
+      // Otherwise, newProps.gameGoing is true. Restart the timer.
       this.setState({
         prevTime: null,
         timeRemaining: newProps.initialGameTime

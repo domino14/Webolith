@@ -20,6 +20,10 @@ define([
       };
     },
 
+    reset: function() {
+      this.setState(this.getInitialState());
+    },
+
     /**
      * When an option in the modal changes, this function will get called,
      * which will update the state accordingly.
@@ -107,7 +111,8 @@ define([
                   data-dismiss="modal">Close</button>
                 <button type="button"
                   className={savebtnClass}
-                  onClick={this.saveChanges}>Save changes</button>
+                  onClick={this.saveChanges}
+                  data-dismiss="modal">Save changes</button>
               </div>
 
             </div>
