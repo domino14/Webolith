@@ -398,8 +398,10 @@ def start_game(request, id):
                 'The Aerolith server is currently undergoing '
                 'maintenance. Please try again in a few minutes.')})
     wwg = WordwallsGame()
-    quizParams = wwg.start_quiz(id, request.user)
-    return response(quizParams)
+    quiz_params = wwg.start_quiz(id, request.user)
+    if 'error' in quiz_params:
+        return response(quiz_params, StatusCode.BAD_REQUEST)
+    return response(quiz_params)
 
 
 @login_required

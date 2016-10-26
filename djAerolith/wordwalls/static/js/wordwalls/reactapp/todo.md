@@ -22,15 +22,16 @@
     -[ ] click to show solutions? (if users were in the middle of typing)
 -[x] submit guess if not solved locally
 -[x] end game properly when all words solved/time runs out
+    - [x] start at end of game should not start timer/show giveup button.
 -[ ] save behavior
 -[ ] exit table
     -[ ] exit behavior (auto give up if quiz going, etc.)
 -[ ] daily challenge results
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
--[ ] compilation/deployment on dev
--[ ] autofocus guess on start
+-[x] autofocus guess on start
 -[ ] tests
+-[ ] compilation/deployment on dev
 -[ ] Search for XXX/TODO/etc.
 -[ ] visual rearrangement
 

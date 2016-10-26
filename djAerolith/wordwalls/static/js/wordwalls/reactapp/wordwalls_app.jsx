@@ -150,6 +150,7 @@ define([
                 onGuessSubmit={this.onGuessSubmit}
                 lastGuess={this.state.lastGuess}
                 onHotKey={this.onHotKey}
+                ref={gb => this.guessBox = gb}
               />
             </div>
           </div>
@@ -168,13 +169,13 @@ define([
         dataType: 'json',
         data: {action: 'giveUp'}
       })
-      .done(this.handleGiveupReceived);
+      .done(data => {
+        if (_.has(data, 'g') && !data.g) {
+          this.processGameEnded();
+        }
+      });
     },
-    handleGiveupReceived: function(data) {
-      if (_.has(data, 'g') && !data.g) {
-        this.processGameEnded();
-      }
-    },
+
     handleStart: function() {
       $.ajax({
         url: this.props.tableUrl,
@@ -182,7 +183,10 @@ define([
         dataType: 'json',
         data: {action: 'start'}
       })
-      .done(this.handleStartReceived);
+      .done(this.handleStartReceived)
+      .fail(jqXHR => {
+        this.addServerMessage(jqXHR.responseJSON.error, 'error');
+      });
     },
     handleStartReceived: function(data) {
       if (this.state.gameGoing) {
@@ -198,6 +202,7 @@ define([
           'curQuestions': game.getQuestionState(),
           'totalWords': game.getTotalNumWords()
         });
+        this.guessBox.setFocus();
       }
       if (_.has(data, 'error')) {
         this.addServerMessage(data['error'], 'error');
@@ -233,11 +238,11 @@ define([
         data: {action: 'gameEnded'},
         dataType: 'json'
       })
-      .done(function(data) {
+      .done(data => {
         if (_.has(data, 'g') && !data.g) {
           this.processGameEnded();
         }
-      }.bind(this));
+      });
     },
 
     /**

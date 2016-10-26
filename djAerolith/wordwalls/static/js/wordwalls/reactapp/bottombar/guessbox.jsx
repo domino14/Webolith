@@ -7,6 +7,9 @@ define([
       onGuessSubmit: React.PropTypes.func,
       onHotKey: React.PropTypes.func
     },
+    setFocus: function() {
+      this.inputBox.focus();
+    },
     getInitialState: function() {
       return {guessText: ''};
     },
@@ -46,7 +49,9 @@ define([
               placeholder="Guess"
               onChange={this.handleGuessChange}
               value={this.state.guessText}
-              onKeyPress={this.handleKeyPress} />
+              onKeyPress={this.handleKeyPress}
+              ref={(ib) => this.inputBox = ib}/>
+
           </div>
           <div className="col-sm-6">
             <span className="text-muted">
