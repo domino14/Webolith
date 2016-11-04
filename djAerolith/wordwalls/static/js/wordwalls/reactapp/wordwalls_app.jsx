@@ -1,4 +1,4 @@
-/* global JSON */
+/* global JSON, window */
 define([
   'react',
   'jquery',
@@ -18,7 +18,7 @@ define([
   'jsx!reactapp/user_box',
 
   'immutable',
-  'reactapp/wordwalls_game'
+  'reactapp/wordwalls_game',
 ], function(React, $, _, GameTimer, ShuffleButtons, StartButton, ListSaveBar,
     Preferences, ChatBox,
     GuessBox, GameBoard, PlayerRanks, UserBox,
@@ -47,7 +47,10 @@ define([
         totalWords: 0,
         answeredByMe: [],
         lastGuess: '',
-        displayStyle: this.props.displayStyle
+        displayStyle: this.props.displayStyle,
+        numberOfRounds: 0,
+        listName: this.props.listName,
+        autoSave: this.props.autoSave
       };
     },
 
@@ -78,49 +81,77 @@ define([
       return JSON.stringify(style);
     },
 
+    handleListNameChange: function(listName) {
+      this.setState({
+        listName: listName
+      });
+    },
+
+    handleAutoSaveChange: function(autoSave) {
+      this.setState({
+        autoSave: autoSave
+      });
+      if (autoSave) {
+        if (!this.state.gameGoing) {
+          this.saveGame();
+        }
+        this.addServerMessage(`Autosave is now on! Aerolith will save your
+          list progress to ${this.state.listName} at the end of every round.`);
+      } else {
+        this.addServerMessage(`Autosave is off.`, 'error');
+      }
+    },
+
     render: function() {
       return (
         <div>
           <div className="row">
-            <div className="col-sm-6">
-            <ListSaveBar
-              initialListName={this.props.listName}
-              initialAutoSave={this.props.autoSave}
-            />
+            <div
+              className="col-xs-6 col-sm-4 col-md-4 col-lg-4"
+            >
+              <ListSaveBar
+                listName={this.state.listName}
+                autoSave={this.state.autoSave}
+                onListNameChange={this.handleListNameChange}
+                onAutoSaveChange={this.handleAutoSaveChange}
+              />
             </div>
-            <div className="col-sm-1 col-sm-offset-1">
+            <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1">
               <Preferences
                 displayStyle={this.state.displayStyle}
                 onSave={this.setDisplayStyle}
               />
             </div>
-            <div className="col-sm-2 col-sm-offset-2">
+            <div className="col-xs-5 col-sm-3 col-md-2 col-lg-2">
               <StartButton
                 handleStart={this.handleStart}
                 handleGiveup={this.handleGiveup}
-                gameGoing={this.state.gameGoing} />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="col-sm-5">
-              <ShuffleButtons
-                shuffle={this.handleShuffleAll}
-                alphagram={this.handleAlphagram}
-                customOrder={this.handleCustomOrder}
+                gameGoing={this.state.gameGoing}
               />
-            </div>
-            <div className="col-sm-2 col-sm-offset-5">
               <GameTimer
                 initialGameTime={this.state.initialGameTime}
                 completeCallback={this.timerRanOut}
-                gameGoing={this.state.gameGoing} />
+                gameGoing={this.state.gameGoing}
+              />
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                top: '5px',
+                right: '5px',
+              }}
+            >
+              <span className="text-danger"><i
+                className="fa fa-times fa-2x"
+                onClick={() => (window.location = '/wordwalls')}
+              /></span>
             </div>
           </div>
 
           <div className="row">
-            <div className="col-lg-8 col-md-9">
+            <div className="col-xs-12 col-sm-9 col-md-9 col-lg-7">
               <GameBoard
+                numberOfRounds={this.state.numberOfRounds}
                 curQuestions={this.state.curQuestions}
                 origQuestions={this.state.origQuestions}
                 displayStyle={this.state.displayStyle}
@@ -130,9 +161,9 @@ define([
                 gameGoing={this.state.gameGoing}
                 markMissed={this.markMissed}
                 lexicon={this.props.lexicon}
-                />
+              />
             </div>
-            <div className="col-lg-2 col-md-3">
+            <div className="col-xs-4 col-sm-3 col-md-3 col-lg-2">
               <PlayerRanks/>
               <UserBox
                 showLexiconSymbols={
@@ -145,12 +176,19 @@ define([
           </div>
 
           <div className="row">
-            <div className="col-sm-9">
+            <div className="col-xs-4 col-sm-5 col-md-4 col-lg-4">
               <GuessBox
                 onGuessSubmit={this.onGuessSubmit}
                 lastGuess={this.state.lastGuess}
                 onHotKey={this.onHotKey}
                 ref={gb => this.guessBox = gb}
+              />
+            </div>
+            <div className="col-xs-8 col-sm-7 col-md-5 col-lg-5">
+              <ShuffleButtons
+                shuffle={this.handleShuffleAll}
+                alphagram={this.handleAlphagram}
+                customOrder={this.handleCustomOrder}
               />
             </div>
           </div>
@@ -186,31 +224,33 @@ define([
       .done(this.handleStartReceived)
       .fail(jqXHR => {
         this.addServerMessage(jqXHR.responseJSON.error, 'error');
+        // XXX: This is a hack; use proper error codes.
+        if (jqXHR.responseJSON.error.indexOf('currently running') !== -1) {
+          this.setState({
+            gameGoing: true
+          });
+        }
       });
     },
+
     handleStartReceived: function(data) {
       if (this.state.gameGoing) {
         return;
       }
       if (_.has(data, 'serverMsg')) {
-        this.addServerMessage(data['serverMsg']);
+        this.addServerMessage(data.serverMsg);
       }
       if (_.has(data, 'questions')) {
         game.init(data.questions);
         this.setState({
-          'origQuestions': game.getOriginalQuestionState(),
-          'curQuestions': game.getQuestionState(),
-          'totalWords': game.getTotalNumWords()
+          numberOfRounds: this.state.numberOfRounds + 1,
+          origQuestions: game.getOriginalQuestionState(),
+          curQuestions: game.getQuestionState(),
+          totalWords: game.getTotalNumWords()
         });
         this.guessBox.setFocus();
       }
-      if (_.has(data, 'error')) {
-        this.addServerMessage(data['error'], 'error');
-        // XXX: This is a temporary hack to make it possible to give up.
-        this.setState({
-          'gameGoing': true
-        });
-      }
+
       if (_.has(data, 'time')) {
         // Convert time to milliseconds.
         this.setState({
@@ -262,6 +302,10 @@ define([
 
     onGuessSubmit: function(guess) {
       var modifiedGuess;
+      if (!this.state.gameGoing) {
+        // Don't bother submitting guess if the game is over.
+        return;
+      }
       this.setState({'lastGuess': guess});
       modifiedGuess = this.maybeModifyGuess(guess);
       if (!game.answerExists(modifiedGuess)) {
@@ -310,14 +354,14 @@ define([
         dataType: 'json',
         data: {'idx': alphaIdx}
       })
-      .done(function(data) {
-        if (data && data.success) {
+      .done(data => {
+        if (data.success === true) {
           game.miss(alphagram);
           this.setState({
             'origQuestions': game.getOriginalQuestionState()
           });
         }
-      }.bind(this));
+      });
     },
 
     addServerMessage: function(serverMsg, optType) {
@@ -334,6 +378,34 @@ define([
     processGameEnded: function() {
       this.setState({
         gameGoing: false
+      });
+      if (this.state.autoSave) {
+        this.saveGame();
+      }
+    },
+
+    /**
+     * Save the game on the server.
+     */
+    saveGame: function() {
+      if (this.state.listName === '') {
+        this.addServerMessage('You must enter a list name for saving!',
+          'error');
+        return;
+      }
+      $.ajax({
+        url: this.props.tableUrl,
+        method: 'POST',
+        data: {action: 'save', listname: this.state.listName},
+        dataType: 'json'
+      }).
+      done(data => {
+        if (data.success === true) {
+          this.addServerMessage(`Saved as ${data.listname}`);
+        }
+        if (data.info) {
+          this.addServerMessage(data.info);
+        }
       });
     },
 

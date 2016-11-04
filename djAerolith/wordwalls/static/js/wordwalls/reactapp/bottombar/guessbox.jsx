@@ -55,7 +55,7 @@ define([
           </div>
           <div className="col-sm-6">
             <span className="text-muted">
-              Last guess: {this.props.lastGuess}
+              Last: {this.props.lastGuess}
             </span>
           </div>
         </div>

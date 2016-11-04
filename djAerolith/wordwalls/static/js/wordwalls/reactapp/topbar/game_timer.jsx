@@ -117,11 +117,16 @@ define([
         cn = "label label-info";
       }
       return (
-        <h4>
+        <h3
+          style={{
+            display: 'inline-block',
+            marginLeft: '5px',
+            marginTop: '0px' }}
+        >
           <span className={cn}>
             {this.getFormattedTime(this.state.timeRemaining)}
           </span>
-        </h4>
+        </h3>
       );
     }
   });

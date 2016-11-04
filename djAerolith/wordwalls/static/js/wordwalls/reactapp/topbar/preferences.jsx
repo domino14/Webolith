@@ -11,16 +11,18 @@ define([
     render: function() {
       return (
         <div>
-          <button
-            type="button"
+          <div
             data-toggle="modal"
             onClick={this.resetSettings}
-            data-target=".prefs-modal">
-            <i className="fa fa-cog fa-2x"
-              aria-hidden="true"></i>
-          </button>
+            data-target=".prefs-modal"
+          >
+            <i
+              className="fa fa-cog fa-2x"
+              aria-hidden="true"
+            />
+          </div>
           <PrefsModal
-            ref={(ref) => this.myPrefsModal = ref}
+            ref={ref => (this.myPrefsModal = ref)}
             displayStyle={this.props.displayStyle}
             onSave={this.props.onSave}
           />

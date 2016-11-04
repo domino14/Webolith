@@ -283,9 +283,10 @@ class WordwallsGame(object):
 
         if state['quizGoing']:
             logger.debug('The quiz is going, state %s', state)
+            # The quiz is running right now; do not attempt to start again
             return self.create_error_message(
                 _("The quiz is currently running."))
-                # the quiz is running right now; do not attempt to start again
+
         start_message = ""
         word_list = wgm.word_list
 

@@ -5,15 +5,13 @@ define([
   return React.createClass({
     getInitialState: function() {
       return {
-        listName: this.props.initialListName,
         inputEditable: false,
-        autoSave: this.props.initialAutoSave
       };
     },
     getDefaultProps: function() {
       return {
-        initialListName: '',
-        initialAutoSave: false
+        listName: '',
+        autoSave: false
       };
     },
     // When we edit, the input needs to become editable and shown.
@@ -23,16 +21,12 @@ define([
       });
     },
 
-    handleChange: function(event) {
-      this.setState({
-        listName: event.target.value
-      });
+    handleNameChange: function(event) {
+      this.props.onListNameChange(event.target.value);
     },
 
-    handleAutoSaveChange: function() {
-      this.setState({
-        autoSave: !this.state.autoSave
-      });
+    handleAutoSaveChange: function(event) {
+      this.props.onAutoSaveChange(event.target.checked);
     },
 
     handleKeyPress: function(e) {
@@ -40,9 +34,9 @@ define([
       keyCode = e.which || e.keyCode;
       if (keyCode === 13) {
         this.setState({
-          inputEditable: false,
-          listName: this.state.listName.trim()
+          inputEditable: false
         });
+        this.props.onListNameChange(e.target.value.trim());
       }
     },
     render: function() {
@@ -51,43 +45,55 @@ define([
         spanStyle = {'display': 'none'};
         pencilStyle = {'display': 'none'};
       } else {
+        spanStyle = {
+          'whiteSpace': 'nowrap',
+          'overflow': 'hidden',
+          'textOverflow': 'ellipsis',
+          'display': 'block',
+          'width': '100%'};
         inputStyle = {'display': 'none'};
         pencilStyle = {'marginLeft': '5px'};
       }
       return (
         <div>
           <div className="row">
-            <div className="col-md-8">
-              <span
-                style={spanStyle}>{this.state.listName}</span>
-              <input
-                type="text"
-                className="form-control input-sm"
-                style={inputStyle}
-                value={this.state.listName}
-                onChange={this.handleChange}
-                onKeyPress={this.handleKeyPress}
-                ref={function(input) {
-                  if (input != null) {
-                    input.focus();
-                  }
-                }}
-              />
-              <i className="fa fa-pencil"
-                aria-hidden="true"
-                style={pencilStyle}
-                onClick={this.handleEdit}></i>
-            </div>
+              <div className="col-xs-8">
+                <div className="row">
+                  <div className="col-xs-10">
+                    <span
+                      style={spanStyle}>{this.props.listName}
+                    </span>
+                  </div>
+                  <div className="col-xs-2">
+                    <i className="fa fa-pencil"
+                    aria-hidden="true"
+                    style={pencilStyle}
+                    onClick={this.handleEdit}></i>
+                  </div>
+                </div>
 
-          </div> {/* end of first row */}
-          <div className="row">
-            <div className="col-md-8">
-              <input
-                type="checkbox"
-                checked={this.state.autoSave}
-                onChange={this.handleAutoSaveChange}
-              />Autosave
-            </div>
+                <input
+                  type="text"
+                  className="form-control input-sm"
+                  style={inputStyle}
+                  value={this.props.listName}
+                  onChange={this.handleNameChange}
+                  onKeyPress={this.handleKeyPress}
+                  ref={function(input) {
+                    if (input != null) {
+                      input.focus();
+                    }
+                  }}
+                />
+              </div>
+              <div className="col-xs-4">
+                <label className="checkbox-inline">
+                  <input
+                    type="checkbox"
+                    checked={this.props.autoSave}
+                    onChange={this.handleAutoSaveChange}
+                  /> Autosave</label>
+              </div>
           </div>
         </div>
       );

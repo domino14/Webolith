@@ -84,7 +84,7 @@ define([
               wordSolved={word.get('solved', false)}
               correct={question.get('solved', false)}
               markMissed={this.props.markMissed}
-              />
+            />
           );
           wordIdx++;
         }, this);
@@ -100,7 +100,7 @@ define([
         <div
           style={{
             height: this.props.height,
-            overflow: 'scroll'
+            overflowX: 'hidden'
           }}>
           <div className="row">
             <div className="col-lg-12">

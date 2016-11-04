@@ -52,7 +52,7 @@ define([
       if (this.props.displayStyle.bc.showTable) {
         questionsClassName = 'tableBg';
       }
-      if (this.props.gameGoing) {
+      if (this.props.gameGoing || this.props.numberOfRounds === 0) {
         return (
           // Prevent default on mouse down to prevent taking focus in
           // case of misclick.
@@ -64,16 +64,18 @@ define([
             {questions}
           </svg>
         );
-      } else {
-        return <Solutions
+      }
+
+      return (
+        <Solutions
           questions={this.props.origQuestions}
           answeredByMe={this.props.answeredByMe}
           totalWords={this.props.totalWords}
           height={this.props.height}
           markMissed={this.props.markMissed}
           showLexiconSymbols={!this.props.displayStyle.bc.hideLexiconSymbols}
-        />;
-      }
+        />
+      );
     }
   });
 

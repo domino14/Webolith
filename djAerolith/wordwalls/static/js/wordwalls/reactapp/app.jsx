@@ -13,9 +13,10 @@ define([
    */
   App.prototype.initialize = function(options) {
     // WordwallsApp will be the holder of state.
-    var style, topClassName, listName, autoSave;
+    let style;
+    let listName;
+    let autoSave;
     console.log('addl params', options.addlParams);
-    topClassName = '';
 
     if (options.addlParams.style != null) {
       style = JSON.parse(options.addlParams.style);
@@ -31,12 +32,12 @@ define([
           blankCharacter: '?',
           font: 'mono',
           showChips: false,
-          bold: false
+          bold: false,
         },
         bc: {
           showBorders: false,
-          hideLexiconSymbols: false
-        }
+          hideLexiconSymbols: false,
+        },
       };
     }
     // Get the list name from one of two places.
@@ -55,7 +56,7 @@ define([
         autoSave={autoSave}
         lexicon={options.lexicon}
         displayStyle={style}
-        tableUrl={'/wordwalls/table/' + options.tablenum + '/'}
+        tableUrl={`/wordwalls/table/${options.tablenum}/`}
       />,
       document.getElementById('main-app-content')
     );

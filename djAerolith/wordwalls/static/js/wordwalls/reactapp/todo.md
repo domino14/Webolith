@@ -23,9 +23,12 @@
 -[x] submit guess if not solved locally
 -[x] end game properly when all words solved/time runs out
     - [x] start at end of game should not start timer/show giveup button.
--[ ] save behavior
--[ ] exit table
+-[x] save behavior
+    - [x] save at the very end of a round if the user forgot to click autosave
+-[x] exit table
     -[ ] exit behavior (auto give up if quiz going, etc.)
+-[x] visual rearrangement
+
 -[ ] daily challenge results
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
@@ -33,7 +36,7 @@
 -[ ] tests
 -[ ] compilation/deployment on dev
 -[ ] Search for XXX/TODO/etc.
--[ ] visual rearrangement
+
 
 Nice to haves:
 -[ ] on hover things
