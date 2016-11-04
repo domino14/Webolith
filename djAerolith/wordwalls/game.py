@@ -455,6 +455,9 @@ class WordwallsGame(object):
         return params
 
     def give_up_and_save(self, user, tablenum, listname):
+        logger.debug(
+            'table %s - User %s called give_up_and_save with params: %s',
+            tablenum, user, listname)
         if self.give_up(user, tablenum):
             return self.save(user, tablenum, listname)
         return {'success': False}

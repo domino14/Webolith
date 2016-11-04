@@ -26,7 +26,7 @@
 -[x] save behavior
     - [x] save at the very end of a round if the user forgot to click autosave
 -[x] exit table
-    -[ ] exit behavior (auto give up if quiz going, etc.)
+    -[x] exit behavior (auto give up if quiz going, etc.)
 -[x] visual rearrangement
 
 -[ ] daily challenge results

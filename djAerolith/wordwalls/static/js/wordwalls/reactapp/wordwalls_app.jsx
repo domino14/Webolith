@@ -30,6 +30,7 @@ define([
   game = new WordwallsGame();
 
   WordwallsApp = React.createClass({
+
     getInitialState: function() {
       return {
         gameGoing: false,
@@ -52,6 +53,27 @@ define([
         listName: this.props.listName,
         autoSave: this.props.autoSave
       };
+    },
+
+    componentDidMount: function () {
+      // Set up beforeUnloadEventHandler here.
+      window.onbeforeunload = this.beforeUnload;
+    },
+
+    beforeUnload: function() {
+      if (this.state.gameGoing) {
+        $.ajax({
+          url: this.props.tableUrl,
+          async: false,
+          data: {
+            action: 'giveUpAndSave',
+            // Fool the endpoint; if autosave is not on, don't actually
+            // save with a listname.
+            listname: this.state.autoSave ? this.state.listName : '',
+          },
+          method: 'POST',
+        });
+      }
     },
 
     /**

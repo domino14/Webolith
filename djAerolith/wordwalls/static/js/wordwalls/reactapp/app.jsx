@@ -1,4 +1,4 @@
-/*global JSON*/
+/*global JSON, document*/
 define([
   'react',
   'react-dom',
@@ -48,6 +48,7 @@ define([
       listName = options.addlParams.tempListName;
       autoSave = false;
     }
+
     // Render.
     ReactDOM.render(
       <WordwallsApp
