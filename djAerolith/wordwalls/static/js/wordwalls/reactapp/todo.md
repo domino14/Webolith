@@ -28,7 +28,9 @@
 -[x] exit table
     -[x] exit behavior (auto give up if quiz going, etc.)
 -[x] visual rearrangement
-
+-[x] FIREFOX SUCKS
+    - [x] Tiles not centering
+    - [ ] Backspace should not go back
 -[ ] daily challenge results
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)

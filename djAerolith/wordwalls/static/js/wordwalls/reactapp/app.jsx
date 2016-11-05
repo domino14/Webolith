@@ -21,8 +21,8 @@ define([
     if (options.addlParams.style != null) {
       style = JSON.parse(options.addlParams.style);
       // Add default options that may not have been there.
-      style.tc.showChips = false;
-      style.bc.hideLexiconSymbols = false;
+      style.tc.showChips = style.tc.showChips || false;
+      style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
     } else {
       // Default style.
       style = {

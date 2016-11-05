@@ -26,7 +26,9 @@ define([
           return; // ignore
         }
         guess = this.state.guessText.trim().toUpperCase();
-        this.setState({guessText: ''});
+        this.setState({
+          guessText: '',
+        });
         this.props.onGuessSubmit(guess);
       } else if (keyCode === 49) {
         this.props.onHotKey('1');
@@ -50,7 +52,11 @@ define([
               onChange={this.handleGuessChange}
               value={this.state.guessText}
               onKeyPress={this.handleKeyPress}
-              ref={(ib) => this.inputBox = ib}/>
+              ref={ib => (this.inputBox = ib)}
+              style={{
+                marginTop: '-5px',
+              }}
+            />
 
           </div>
           <div className="col-sm-6">

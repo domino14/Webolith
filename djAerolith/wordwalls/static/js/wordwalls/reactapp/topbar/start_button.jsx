@@ -24,6 +24,9 @@ define([
         <button
           className={buttonClass}
           onClick={this.handleButtonClick}
+          style={{
+            marginTop: '-4px',
+          }}
         >{buttonText}</button>
       );
     }

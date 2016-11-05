@@ -138,13 +138,18 @@ define([
                 onAutoSaveChange={this.handleAutoSaveChange}
               />
             </div>
-            <div className="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+            <div
+              className="col-xs-1 col-xs-offset-1 col-sm-1 col-md-1 col-lg-1"
+              style={{
+                marginTop: '-2px',
+              }}
+            >
               <Preferences
                 displayStyle={this.state.displayStyle}
                 onSave={this.setDisplayStyle}
               />
             </div>
-            <div className="col-xs-5 col-sm-3 col-md-2 col-lg-2">
+            <div className="col-xs-4 col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-1 col-lg-2">
               <StartButton
                 handleStart={this.handleStart}
                 handleGiveup={this.handleGiveup}
@@ -197,16 +202,26 @@ define([
             </div>
           </div>
 
-          <div className="row">
+          <div
+            className="row"
+            style={{
+              marginTop: '4px',
+            }}
+          >
             <div className="col-xs-4 col-sm-5 col-md-4 col-lg-4">
               <GuessBox
                 onGuessSubmit={this.onGuessSubmit}
                 lastGuess={this.state.lastGuess}
                 onHotKey={this.onHotKey}
-                ref={gb => this.guessBox = gb}
+                ref={gb => (this.guessBox = gb)}
               />
             </div>
-            <div className="col-xs-8 col-sm-7 col-md-5 col-lg-5">
+            <div
+              className="col-xs-8 col-sm-7 col-md-5 col-lg-5"
+              style={{
+                marginTop: '-3px',
+              }}
+            >
               <ShuffleButtons
                 shuffle={this.handleShuffleAll}
                 alphagram={this.handleAlphagram}
@@ -214,7 +229,12 @@ define([
               />
             </div>
           </div>
-          <div className="row">
+          <div
+            className="row"
+            style={{
+              marginTop: '4px',
+            }}
+          >
             <div className="col-sm-8">
               <ChatBox messages={this.state.messages}/>
             </div>

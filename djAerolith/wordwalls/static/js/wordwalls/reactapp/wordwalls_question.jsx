@@ -65,7 +65,7 @@ define([
         '4': ['#fce053', 1, '#3e3f3a', '#938231'], // A light yellow
         '3': ['#f47c3c', 1, '#ffffff', '#f47c3c'], // Orange
         '2': ['#d9534f', 1, '#ffffff', '#d9534f'], // Red
-        '1': ['#ffffff', 1, '#3e3f3a', '#3e3f3a'] // White tile, dark text.
+        '1': ['#ffffff', 1, '#3e3f3a', '#3e3f3a'], // White tile, dark text.
       }[String(numAnagrams)];
     },
 
@@ -83,7 +83,7 @@ define([
         strokeWidth="1px"
         fill="none"
         strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
-        ></rect>);
+      />);
     },
 
     render: function() {
@@ -105,8 +105,8 @@ define([
       tileHeight = dims[1];
       heightPct = tileHeight / this.props.ySize;
 
-      y = this.props.gridY + this.props.ySize * (1 - heightPct) / 2;
-      xPadding = this.props.gridX + tileWidth * 0.1;
+      y = this.props.gridY + (this.props.ySize * ((1 - heightPct) / 2));
+      xPadding = this.props.gridX + (tileWidth * 0.1);
       // XXX: This is a bit of an ugly formula, but it's fast.
       // See http://stackoverflow.com/a/22580176/1737333 for perhaps
       // a better approach.
@@ -115,22 +115,23 @@ define([
       countFrom = 0;
       if (this.props.displayStyle.showChips) {
         tiles.push(<Chip
-          radius={tileWidth/2}
+          radius={tileWidth / 2}
           x={xPadding}
           y={y}
           color={color}
           fontSize={numberFontSize}
           number={this.props.words.size}
-          key={"q" + this.props.qNumber + "chip"}/>);
+          key={`q${this.props.qNumber}chip`}
+        />);
         countFrom = 1;
       }
 
       if (this.props.displayStyle.on) {
         for (var i = countFrom, letterIdx = 0;
-             i < this.props.letters.length+countFrom;
+             i < this.props.letters.length + countFrom;
              i++, letterIdx++) {
-          x = xPadding + i * (tileWidth + 1);
-          key = "q" + this.props.qNumber + "tile" + letterIdx;
+          x = xPadding + (i * (tileWidth + 1));
+          key = `q${this.props.qNumber}tile${letterIdx}`;
           letter = this.props.letters[letterIdx];
           if (letter === DEFAULT_BLANK_CHARACTER &&
               this.props.displayStyle.blankCharacter !== '') {
@@ -145,7 +146,8 @@ define([
               width={tileWidth}
               height={tileHeight}
               fontSize={letterFontSize}
-              letter={letter}/>);
+              letter={letter}
+            />);
         }
       } else {
         // Tiles are off, just use a <text>
@@ -154,9 +156,9 @@ define([
             font={this.props.displayStyle.font}
             bold={this.props.displayStyle.bold}
             color={color}
-            key={"q" + this.props.qNumber + "qtext"}
-            x={xPadding + countFrom * (tileWidth + 1)}
-            y={this.props.gridY + this.props.ySize/2}
+            key={`q${this.props.qNumber}qtext`}
+            x={xPadding + (countFrom * (tileWidth + 1))}
+            y={this.props.gridY + (this.props.ySize / 2)}
             fontSize={letterFontSize}
             letters={this.props.letters}
           />);
@@ -167,9 +169,10 @@ define([
         <g
           onMouseDown={this.mouseDown}
           onClick={this.clickedQ}
-          style={{cursor: 'default'}}
-        >{tiles}{this.borderRectangle()}
-        </g>
+          style={{
+            cursor: 'default',
+          }}
+        >{tiles}{this.borderRectangle()}</g>
       );
     },
 

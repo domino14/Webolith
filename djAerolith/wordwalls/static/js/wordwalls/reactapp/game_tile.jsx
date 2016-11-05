@@ -3,9 +3,18 @@ define([
 ], function(React) {
   "use strict";
   return React.createClass({
+    propTypes: {
+      width: React.PropTypes.number,
+      height: React.PropTypes.number,
+      letter: React.PropTypes.string,
+      fontSize: React.PropTypes.number,
+      x: React.PropTypes.number,
+      y: React.PropTypes.number,
+      color: React.PropTypes.array,
+    },
     render: function() {
       var transform, fontFamily, letter, fontSize;
-      transform = "translate(" + this.props.x + "," + this.props.y + ")";
+      transform = `translate(${this.props.x},${this.props.y})`;
       fontFamily = 'Menlo,Consolas,"Ubuntu Mono",monospace';
 
       letter = this.props.letter;
@@ -26,6 +35,8 @@ define([
         case 'Ñ':
           letter = 'ñ';
           break;
+        default:
+          break;
       }
 
       return (
@@ -38,17 +49,19 @@ define([
             fill={this.props.color[0]}
             opacity={this.props.color[1]}
             rx={1}  /* radiuses */
-            ry={1}/>
+            ry={1}
+          />
           <text
-            x={this.props.width/2}
-            y={this.props.height/2}
+            x={this.props.width / 2}
+            y={this.props.height / 2}
             textAnchor="middle"
-            alignmentBaseline="central"
+            dominantBaseline="central"
             fontFamily={fontFamily}
-            fontSize={fontSize + '%'}
+            fontSize={`${fontSize}%`}
             stroke={this.props.color[2]}
             fill={this.props.color[2]}
-            strokeWidth="0.75px">{letter}</text>
+            strokeWidth="0.75px"
+          >{letter}</text>
         </g>
       );
     }
