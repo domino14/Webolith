@@ -1,4 +1,4 @@
-/* global JSON, window */
+/* global JSON, window, document */
 define([
   'react',
   'jquery',
@@ -58,6 +58,17 @@ define([
     componentDidMount: function () {
       // Set up beforeUnloadEventHandler here.
       window.onbeforeunload = this.beforeUnload;
+      // Disallow backspace to go back to previous page.
+      $(document).bind('keydown keypress', function(e) {
+        if (e.which === 8) {
+          // 8 == backspace
+          if (e.target.tagName !== 'INPUT' || e.target.disabled ||
+              e.target.readOnly) {
+            console.log('Hey hey goodbye');
+            e.preventDefault();
+          }
+        }
+      });
     },
 
     beforeUnload: function() {
@@ -82,7 +93,7 @@ define([
      */
     setDisplayStyle: function(style) {
       this.setState({
-        displayStyle: style
+        displayStyle: style,
       });
       // Also persist to the backend.
       $.ajax({
@@ -103,17 +114,17 @@ define([
       return JSON.stringify(style);
     },
 
-    handleListNameChange: function(listName) {
+    handleListNameChange: function(newListName) {
       this.setState({
-        listName: listName
+        listName: newListName,
       });
     },
 
-    handleAutoSaveChange: function(autoSave) {
+    handleAutoSaveChange: function(newAutosave) {
       this.setState({
-        autoSave: autoSave
+        autoSave: newAutosave,
       });
-      if (autoSave) {
+      if (newAutosave) {
         if (!this.state.gameGoing) {
           this.saveGame();
         }
@@ -191,7 +202,7 @@ define([
               />
             </div>
             <div className="col-xs-4 col-sm-3 col-md-3 col-lg-2">
-              <PlayerRanks/>
+              <PlayerRanks />
               <UserBox
                 showLexiconSymbols={
                   !this.state.displayStyle.bc.hideLexiconSymbols}
@@ -208,7 +219,7 @@ define([
               marginTop: '4px',
             }}
           >
-            <div className="col-xs-4 col-sm-5 col-md-4 col-lg-4">
+            <div className="col-xs-4 col-sm-5 col-md-5 col-lg-3">
               <GuessBox
                 onGuessSubmit={this.onGuessSubmit}
                 lastGuess={this.state.lastGuess}
@@ -235,8 +246,8 @@ define([
               marginTop: '4px',
             }}
           >
-            <div className="col-sm-8">
-              <ChatBox messages={this.state.messages}/>
+            <div className="col-xs-12 col-sm-10 col-md-9 col-lg-7">
+              <ChatBox messages={this.state.messages} />
             </div>
           </div>
         </div>
@@ -261,15 +272,17 @@ define([
         url: this.props.tableUrl,
         method: 'POST',
         dataType: 'json',
-        data: {action: 'start'}
+        data: {
+          action: 'start',
+        },
       })
       .done(this.handleStartReceived)
-      .fail(jqXHR => {
+      .fail((jqXHR) => {
         this.addServerMessage(jqXHR.responseJSON.error, 'error');
         // XXX: This is a hack; use proper error codes.
         if (jqXHR.responseJSON.error.indexOf('currently running') !== -1) {
           this.setState({
-            gameGoing: true
+            gameGoing: true,
           });
         }
       });
@@ -288,7 +301,8 @@ define([
           numberOfRounds: this.state.numberOfRounds + 1,
           origQuestions: game.getOriginalQuestionState(),
           curQuestions: game.getQuestionState(),
-          totalWords: game.getTotalNumWords()
+          answeredByMe: game.getAnsweredByMe(),
+          totalWords: game.getTotalNumWords(),
         });
         this.guessBox.setFocus();
       }
@@ -296,12 +310,14 @@ define([
       if (_.has(data, 'time')) {
         // Convert time to milliseconds.
         this.setState({
-          'initialGameTime': data.time * 1000,
-          'gameGoing': true
+          initialGameTime: data.time * 1000,
+          gameGoing: true,
         });
       }
       if (_.has(data, 'gameType')) {
-        this.setState({'isChallenge': data.gameType === 'challenge'});
+        this.setState({
+          isChallenge: data.gameType === 'challenge',
+        });
       }
     },
 
@@ -348,7 +364,9 @@ define([
         // Don't bother submitting guess if the game is over.
         return;
       }
-      this.setState({'lastGuess': guess});
+      this.setState({
+        lastGuess: guess
+      });
       modifiedGuess = this.maybeModifyGuess(guess);
       if (!game.answerExists(modifiedGuess)) {
         // If the guess wasn't valid, don't bother submitting it to
@@ -360,7 +378,10 @@ define([
         method: 'POST',
         dataType: 'json',
         // That's a lot of guess
-        data: {action: 'guess', guess: modifiedGuess}
+        data: {
+          action: 'guess',
+          guess: modifiedGuess
+        }
       })
       .done(this.handleGuessResponse)
       .fail(this.handleGuessFailure);
@@ -372,9 +393,9 @@ define([
           // data.C contains the alphagram.
           game.solve(data.w, data.C);
           this.setState({
-            'curQuestions': game.getQuestionState(),
-            'origQuestions': game.getOriginalQuestionState(),
-            'answeredByMe': game.getAnsweredByMe()
+            curQuestions: game.getQuestionState(),
+            origQuestions: game.getOriginalQuestionState(),
+            answeredByMe: game.getAnsweredByMe(),
           });
         }
       }
@@ -465,21 +486,21 @@ define([
     handleShuffleAll: function() {
       game.shuffleAll();
       this.setState({
-        'curQuestions': game.getQuestionState()
+        curQuestions: game.getQuestionState()
       });
     },
 
     onShuffleQuestion: function(idx) {
       game.shuffle(idx);
       this.setState({
-        'curQuestions': game.getQuestionState()
+        curQuestions: game.getQuestionState()
       });
     },
 
     handleAlphagram: function() {
       game.resetAllOrders();
       this.setState({
-        'curQuestions': game.getQuestionState()
+        curQuestions: game.getQuestionState()
       });
     },
 
@@ -489,7 +510,7 @@ define([
       }
       game.setCustomLetterOrder(this.state.displayStyle.tc.customOrder);
       this.setState({
-        'curQuestions': game.getQuestionState()
+        curQuestions: game.getQuestionState()
       });
     }
   });

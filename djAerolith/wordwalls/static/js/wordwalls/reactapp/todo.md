@@ -30,13 +30,17 @@
 -[x] visual rearrangement
 -[x] FIREFOX SUCKS
     - [x] Tiles not centering
-    - [ ] Backspace should not go back
+    - [x] Backspace should not go back
+-[x] > 100% solved sometimes (35/31 ?)
+    happens when you click start after going through a set of questions
 -[ ] daily challenge results
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
 -[x] autofocus guess on start
 -[ ] tests
 -[ ] compilation/deployment on dev
+    - [ ] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
+-[ ] guess error behavior
 -[ ] Search for XXX/TODO/etc.
 
 

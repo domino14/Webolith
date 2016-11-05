@@ -66,6 +66,7 @@ define([
       this.savedListOptionChangeHandler();
       this.savedListChangeHandler();
       this.lexiconChanged();
+      $('.formSubmitButton').prop('disabled', false);
     },
     events: {
       'click #main-tab-nav li': 'tabClicked',

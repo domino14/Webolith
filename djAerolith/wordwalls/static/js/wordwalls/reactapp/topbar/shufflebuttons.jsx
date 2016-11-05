@@ -6,7 +6,7 @@ define([
     render: function() {
       return (
         <div className="row">
-          <div className="col-xs-3 col-sm-3">
+          <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <button
               className="btn btn-info btn-xs"
               style={{width: 125}}
@@ -16,7 +16,7 @@ define([
                 className="badge">1</span> Shuffle
             </button>
           </div>
-          <div className="col-xs-3 col-xs-offset-1 col-sm-3 col-sm-offset-0">
+          <div className="col-xs-3 col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 col-lg-3">
             <button
               className="btn btn-info btn-xs"
               style={{width: 125}}
@@ -26,7 +26,7 @@ define([
                 className="badge">2</span> Alphagram
             </button>
           </div>
-          <div className="col-xs-3 col-xs-offset-1 col-sm-3 col-sm-offset-0">
+          <div className="col-xs-3 col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 col-lg-3">
             <button
               className="btn btn-info btn-xs"
               style={{width: 125}}
