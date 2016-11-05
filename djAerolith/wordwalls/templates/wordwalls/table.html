@@ -82,7 +82,7 @@ mixpanel.identify("{{username}}");
 <script>
 var require = {
   config: {
-    'main': {
+    'mainreact': {
       addlParams: "{{addParams|escapejs}}",
       tablenum: {{tablenum}},
       lexicon: "{{lexicon.lexiconName}}",
@@ -96,7 +96,7 @@ var require = {
 require.config({
   {% if DEBUG_JS %}
     paths: {
-      'main': '/static/js/wordwalls/main-react'
+      'mainreact': '/static/js/wordwalls/mainreact'
     }
   {% else %}
     urlArgs: 'v={{CURRENT_VERSION}}',
@@ -105,68 +105,13 @@ require.config({
     }
   {% endif %}
 });
-require(['main']);
+require(['mainreact']);
 </script>
 
 <div class="container-fluid" style="padding-top: 10px;">
   <div id="main-app-content"></div>
 </div>
 
-
-<!-- <div id="customize_popup" class="popup_block customize_popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-
-    <div id="customSample">
-    <ul class="questionList" id="configQL">
-    </ul>
-    </div>
-    <BR>
-    <div id="customize_popup_content" style="clear: both;">
-        <h3>{% trans "Tiles" %}:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">{% trans "Don't use tiles" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">{% trans "Sans-serif font" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">{% trans "Bold letters" %}</input></span>
-        <span class="configInputSpan">{% trans "Tile style" %}:
-        <select id="tileStyleSelect" class="configInput">
-          <option value="1">{% trans "Style" %} 1</option>
-          <option value="2">{% trans "Style" %} 2</option>
-          <option value="3">{% trans "Style" %} 3</option>
-          <option value="4">{% trans "Style" %} 4</option>
-          <option value="5">{% trans "Style" %} 5</option>
-          <option value="6">{% trans "Style" %} 6</option>
-          <option value="7">{% trans "Style" %} 7</option>
-        </select></span>
-        <h3>{% trans "Table" %}:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">{% trans "Don't show green table" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">{% trans "Don't show canvas background" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">{% trans "Show borders around questions" %}</input></span>
-        <div>
-
-        <h3>{% trans "Other" %}:</h3>
-        <span class="configInputSpan">{% trans "Blank character" %}: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
-        <span class="configInputSpan">{% trans "Custom tile ordering" %}: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
-        <BR>
-        <button id="savePrefs">{% trans "Save preferences" %}</button><span id="prefsInfo"></span>
-        </div>
-    </div>
-</div> -->
-
-<!-- <div id="definitions_popup" class="popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <div id="defs_popup_content">
-    <h2>Nothing to see here</h2>
-    <p>You didn't say the magic word.</p>
-    </div>
-</div>
-
-<div id="addlInfo_popup" class="popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <H3><center>{% trans "Challenge results" %}</center></H3>
-    <div id="addlInfo_content">
-    <h2>Nothing to see here</h2>
-    <p>You didn't say the magic word.</p>
-    </div>
-</div> -->
 {% endblock %}
 
 <div id="netbookBorders">
