@@ -60,9 +60,8 @@ define([
               <div className="col-sm-4 col-md-4">
                 <span>{`${percentScore}%`}</span>
               </div>
-              <div
-                className="col-sm-8 col-md-6 col-md-offset-2"
-              ><span>{fractionScore}</span>
+              <div className="col-sm-8 col-md-6 col-md-offset-2">
+                <span>{fractionScore}</span>
               </div>
             </div>
           </div>

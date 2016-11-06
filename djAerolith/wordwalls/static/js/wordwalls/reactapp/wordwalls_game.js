@@ -178,41 +178,42 @@ define([
   };
 
   Game.prototype.resetAllOrders = function() {
+    let i;
+    const updateFunction = (aObj) => {
+      const modObj = aObj.set('displayedAs', aObj.get('a'));
+      return modObj;
+    };
     if (!this.curQuestions) {
       return;
     }
-    for (var i = 0; i < this.curQuestions.size; i++) {
-      this.curQuestions = this.curQuestions.update(i, function(aObj) {
-        aObj = aObj.set('displayedAs', aObj.get('a'));
-        return aObj;
-      });
+    for (i = 0; i < this.curQuestions.size; i += 1) {
+      this.curQuestions = this.curQuestions.update(i, updateFunction);
     }
   };
 
   Game.prototype.setCustomLetterOrder = function(order) {
-    var customOrder;
-    if (!order || !this.curQuestions) {
-      return;
-    }
-
+    let i;
     /**
      * Sorts a string into the custom order given by `order`.
      * @param  {string} letters
      * @return {string}
      */
-    customOrder = function(letters) {
-      letters = _.sortBy(letters, function(letter) {
-        return order.indexOf(letter);
-      });
-      return letters.join('');
+    const customOrder = (letters) => {
+      const sortedLetters = _.sortBy(letters, letter => order.indexOf(letter));
+      return sortedLetters.join('');
     };
 
-    // XXX: Don't make functions within a loop ??????
-    for (var i = 0; i < this.curQuestions.size; i++) {
-      this.curQuestions = this.curQuestions.update(i, function(aObj) {
-        aObj = aObj.set('displayedAs', customOrder(aObj.get('a')));
-        return aObj;
-      });
+    const updateFunction = (aObj) => {
+      const modObj = aObj.set('displayedAs', customOrder(aObj.get('a')));
+      return modObj;
+    };
+
+    if (!order || !this.curQuestions) {
+      return;
+    }
+
+    for (i = 0; i < this.curQuestions.size; i += 1) {
+      this.curQuestions = this.curQuestions.update(i, updateFunction);
     }
   };
   return Game;

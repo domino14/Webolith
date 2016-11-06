@@ -16,13 +16,16 @@ define([
   'jsx!reactapp/gameboard',
   'jsx!reactapp/player_ranks',
   'jsx!reactapp/user_box',
+  'jsx!reactapp/challenge_results',
 
   'immutable',
   'reactapp/wordwalls_game',
+
+  'reactapp/test_challenge_results'
 ], function(React, $, _, GameTimer, ShuffleButtons, StartButton, ListSaveBar,
     Preferences, ChatBox,
-    GuessBox, GameBoard, PlayerRanks, UserBox,
-    Immutable, WordwallsGame) {
+    GuessBox, GameBoard, PlayerRanks, UserBox, ChallengeResults,
+    Immutable, WordwallsGame, TestChallengeResults) {
 
   "use strict";
   var WordwallsApp, game;
@@ -48,6 +51,7 @@ define([
         totalWords: 0,
         answeredByMe: [],
         lastGuess: '',
+        challengeData: {},
         displayStyle: this.props.displayStyle,
         numberOfRounds: 0,
         listName: this.props.listName,
@@ -131,7 +135,7 @@ define([
         this.addServerMessage(`Autosave is now on! Aerolith will save your
           list progress to ${this.state.listName} at the end of every round.`);
       } else {
-        this.addServerMessage(`Autosave is off.`, 'error');
+        this.addServerMessage('Autosave is off.', 'error');
       }
     },
 
@@ -250,6 +254,9 @@ define([
               <ChatBox messages={this.state.messages} />
             </div>
           </div>
+          <ChallengeResults
+            challengeData={this.state.challengeData}
+          />
         </div>
       );
     },
@@ -258,9 +265,11 @@ define([
         url: this.props.tableUrl,
         method: 'POST',
         dataType: 'json',
-        data: {action: 'giveUp'}
+        data: {
+          action: 'giveUp',
+        }
       })
-      .done(data => {
+      .done((data) => {
         if (_.has(data, 'g') && !data.g) {
           this.processGameEnded();
         }
@@ -428,22 +437,42 @@ define([
     },
 
     addServerMessage: function(serverMsg, optType) {
-      var messages = this.state.messages;
-      messages.push({
-        'author': '',
-        'id': _.uniqueId('msg_'),
-        'content': serverMsg,
-        'type': optType || 'server'
+      const curMessages = this.state.messages;
+      curMessages.push({
+        author: '',
+        id: _.uniqueId('msg_'),
+        content: serverMsg,
+        type: optType || 'server',
       });
-      this.setState({'messages': messages});
+      this.setState({
+        messages: curMessages,
+      });
     },
 
     processGameEnded: function() {
       this.setState({
-        gameGoing: false
+        gameGoing: false,
       });
       if (this.state.autoSave) {
         this.saveGame();
+      }
+      if (this.state.numberOfRounds === 1 && this.state.isChallenge) {
+        // XXX: Kind of ugly, breaks encapsulation.
+        $.ajax({
+          url: this.tableUrl,
+          method: 'POST',
+          data: {
+            action: 'getDcData',
+          },
+          dataType: 'json'
+        }).done(data => {
+          this.setState({
+            challengeData: data,
+          });
+          $('.challenge-results-modal').modal();
+        });
+
+
       }
     },
 

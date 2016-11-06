@@ -33,18 +33,20 @@
     - [x] Backspace should not go back
 -[x] > 100% solved sometimes (35/31 ?)
     happens when you click start after going through a set of questions
--[ ] daily challenge results
+-[x] daily challenge results
+-[ ] guess error behavior
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
 -[x] autofocus guess on start
--[ ] tests
 -[ ] compilation/deployment on dev
     - [ ] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
--[ ] guess error behavior
+    - [ ] Probably turn everything into ES6 / remove require... ;(
 -[ ] Search for XXX/TODO/etc.
 
 
 Nice to haves:
+-[ ] tests
+    - need to learn how to write front end tests.
 -[ ] on hover things
     - show alphagrams solved, number of alphagrams, etc
     - show definitions for words.
