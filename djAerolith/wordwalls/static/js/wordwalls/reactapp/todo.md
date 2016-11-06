@@ -34,7 +34,7 @@
 -[x] > 100% solved sometimes (35/31 ?)
     happens when you click start after going through a set of questions
 -[x] daily challenge results
--[ ] guess error behavior
+-[x] guess error behavior
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
 -[x] autofocus guess on start

@@ -43,7 +43,7 @@ define([
       const maxScore = this.props.challengeData.maxScore;
       this.props.challengeData.entries.forEach((entry, index) => {
         const userLink = ResultsComponent.getUserLink(entry.user, entry.addl);
-        entries.push(<tr>
+        entries.push(<tr key={index}>
           <td>{index + 1}</td>
           <td>{userLink}</td>
           <td>{`${(100 * (entry.score / maxScore)).toFixed(1)}%`}</td>
@@ -105,7 +105,7 @@ define([
   }
 
   ResultsComponent.propTypes = {
-    challengeData: React.PropTypes.array,
+    challengeData: React.PropTypes.object,
   };
 
   return ResultsComponent;

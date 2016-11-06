@@ -267,7 +267,7 @@ define([
         dataType: 'json',
         data: {
           action: 'giveUp',
-        }
+        },
       })
       .done((data) => {
         if (_.has(data, 'g') && !data.g) {
@@ -368,15 +368,14 @@ define([
     },
 
     onGuessSubmit: function(guess) {
-      var modifiedGuess;
+      const modifiedGuess = this.maybeModifyGuess(guess);
       if (!this.state.gameGoing) {
         // Don't bother submitting guess if the game is over.
         return;
       }
       this.setState({
-        lastGuess: guess
+        lastGuess: guess,
       });
-      modifiedGuess = this.maybeModifyGuess(guess);
       if (!game.answerExists(modifiedGuess)) {
         // If the guess wasn't valid, don't bother submitting it to
         // the server.
@@ -389,11 +388,11 @@ define([
         // That's a lot of guess
         data: {
           action: 'guess',
-          guess: modifiedGuess
-        }
+          guess: modifiedGuess,
+        },
       })
       .done(this.handleGuessResponse)
-      .fail(this.handleGuessFailure);
+      .fail(this.handleGuessFailure.bind(this));
     },
 
     handleGuessResponse: function(data) {
@@ -413,9 +412,16 @@ define([
       }
     },
 
-    // TODO: handle guess failure the old way.
-    handleGuessFailure: function() {
-
+    handleGuessFailure: function(jqXHR) {
+      if (jqXHR.status !== 400 && jqXHR.status !== 0) {
+        // TODO: Log this error.
+      }
+      if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
+          jqXHR.statusText === 'error') {
+        this.addServerMessage(
+          'Error - please check your internet connection and try again.',
+          'red');
+      }
     },
 
     markMissed: function(alphaIdx, alphagram) {
