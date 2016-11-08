@@ -1,12 +1,11 @@
 *.pyc
-*.tmproj
 settings_local.py
 settings_local_prod.py
 *~
 gunicorn.log
 words/*.trie
 words/*.txt
-node/node_modules/*
+node_modules
 djAerolith/static/img/avatars/*
 wordsdir/
 djAerolith/logs
@@ -14,6 +13,7 @@ djAerolith/logs
 *.sublime-project
 namedLists.json
 djAerolith/static/build/*
+djAerolith/static/built/*
 dump.rdb
 db/*.db
 *.mo
@@ -23,3 +23,6 @@ config/local_config.env
 config/prod_config.env
 config/dev_config.env
 *.DS_Store
+npm-debug.log
+yarn-error.log
+dist/client-bundle.js*

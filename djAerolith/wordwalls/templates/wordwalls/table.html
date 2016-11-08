@@ -76,33 +76,45 @@ mixpanel.identify("{{username}}");
 <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 <!-- http://stackoverflow.com/questions/9916073/how-to-load-bootstrapped-models-in-backbone-js-while-using-amd-require-js -->
 <script>
-var require = {
-  config: {
-    'mainreact': {
-      addlParams: "{{addParams|escapejs}}",
-      tablenum: {{tablenum}},
-      lexicon: "{{lexicon.lexiconName}}",
-      username: "{{username}}"
-    }
-  }
-}
+// var require = {
+//   config: {
+//     'mainreact': {
+//       addlParams: "{{addParams|escapejs}}",
+//       tablenum: {{tablenum}},
+//       lexicon: "{{lexicon.lexiconName}}",
+//       username: "{{username}}"
+//     }
+//   }
+// }
 </script>
-<script src="/static/lib/require/require-min.js"></script>
+<!--<script src="/static/lib/require/require-min.js"></script>-->
 <script>
-require.config({
-  {% if DEBUG_JS %}
-    paths: {
-      'mainreact': '/static/js/wordwalls/mainreact'
-    }
-  {% else %}
-    urlArgs: 'v={{CURRENT_VERSION}}',
-    paths: {
-      'main': '/static/build/table-main-built'
-    }
-  {% endif %}
-});
-require(['mainreact']);
+// require.config({
+//   {% if DEBUG_JS %}
+//     paths: {
+//       'mainreact': '/static/js/wordwalls/mainreact'
+//     }
+//   {% else %}
+//     urlArgs: 'v={{CURRENT_VERSION}}',
+//     paths: {
+//       'main': '/static/build/table-main-built'
+//     }
+//   {% endif %}
+// });
+// require(['mainreact']);
 </script>
+
+<script>
+  // Our entry point will use window.TableGlobals to pass these in to the app.
+  var TableGlobals = {
+    addlParams: '{{addParams | escapejs }}',
+    tablenum: '{{tablenum}}',
+    lexicon: '{{lexicon.lexiconName}}',
+    username: '{{username}}'
+  };
+</script>
+
+<script src="/static/built/table-client-bundle.js"></script>
 
 <div class="container-fluid" style="padding-top: 10px;">
   <div id="main-app-content"></div>
@@ -118,6 +130,6 @@ require(['mainreact']);
 
 </body>
 <script>
-mixpanel.name_tag("{{username}}");
+mixpanel.name_tag('{{username}}');
 </script>
 </html>

@@ -1,0 +1,32 @@
+{
+  "name": "webolith",
+  "version": "1.0.0",
+  "description": "A word study app",
+  "main": "index.js",
+  "repository": {
+    "url": "git@github.com:domino14/webolith",
+    "type": "git"
+  },
+  "author": "César Del Solar",
+  "license": "GPLv3",
+  "scripts": {
+    "start": "gulp"
+  },
+  "devDependencies": {
+    "babel-loader": "^6.2.7",
+    "babel-preset-latest": "^6.16.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^3.0.1",
+    "webpack-stream": "^3.2.0"
+  },
+  "babel": {
+    "presets": [
+      "latest"
+    ]
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.16.0"
+  }
+}

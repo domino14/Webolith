@@ -35,13 +35,16 @@
     happens when you click start after going through a set of questions
 -[x] daily challenge results
 -[x] guess error behavior
--[ ] optimization (don't handle unseen elements, etc)
-    - [ ] check on slower computers (my old macbook)
--[x] autofocus guess on start
 -[ ] compilation/deployment on dev
     - [ ] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
     - [ ] Probably turn everything into ES6 / remove require... ;(
--[ ] Search for XXX/TODO/etc.
+-[ ] optimization (don't handle unseen elements, etc)
+    - [ ] check on slower computers (my old macbook)
+-[x] autofocus guess on start
+-[x] Search for XXX/TODO/etc.
+-[x] ran out of time too early bug :(
+    -  Pretty sure this has to do with bringing computer back from sleep and
+    starting game too soon afterwards.
 
 
 Nice to haves:

@@ -392,7 +392,7 @@ define([
         },
       })
       .done(this.handleGuessResponse)
-      .fail(this.handleGuessFailure.bind(this));
+      .fail(this.handleGuessFailure);
     },
 
     handleGuessResponse: function(data) {
@@ -470,7 +470,7 @@ define([
           data: {
             action: 'getDcData',
           },
-          dataType: 'json'
+          dataType: 'json',
         }).done(data => {
           this.setState({
             challengeData: data,
