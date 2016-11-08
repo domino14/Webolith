@@ -6,7 +6,7 @@ settings_local_prod.py
 gunicorn.log
 words/*.trie
 words/*.txt
-node/node_modules/*
+node_modules
 djAerolith/static/img/avatars/*
 wordsdir/
 djAerolith/logs

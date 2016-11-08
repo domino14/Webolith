@@ -15,13 +15,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
+import logging
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_delete
 
 from base.models import Lexicon, WordList
 from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
+logger = logging.getLogger(__name__)
 
 
 class DailyChallengeName(models.Model):
@@ -124,3 +127,14 @@ class NamedList(models.Model):
     wordLength = models.IntegerField()
     isRange = models.BooleanField()
     questions = models.TextField(validators=[named_list_format_validator])
+
+
+logger.debug('I am right here')
+
+
+def entry_deleted_handler(sender, instance, **kwargs):
+    logger.error('In deleted handler: %s, %s, %s', sender, instance, kwargs)
+
+
+post_delete.connect(entry_deleted_handler, DailyChallengeLeaderboardEntry)
+logger.debug('And here')

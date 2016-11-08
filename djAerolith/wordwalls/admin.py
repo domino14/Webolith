@@ -41,7 +41,7 @@ class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
     fields = ['user', 'score', 'timeRemaining', 'board', 'additionalData',
               'qualifyForAward']
     search_fields = ['user__username', 'board__challenge__name__name']
-    list_display = ['user', 'score', 'timeRemaining', 'board']
+    list_display = ['user', 'score', 'timeRemaining', 'board', 'qualifyForAward']
     readonly_fields = ('board',)
 
 
