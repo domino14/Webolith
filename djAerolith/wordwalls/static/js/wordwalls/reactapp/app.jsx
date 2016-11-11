@@ -1,17 +1,15 @@
-/*global JSON, document*/
-define([
-  'react',
-  'react-dom',
-  'jsx!reactapp/wordwalls_app'
-], function(React, ReactDOM, WordwallsApp) {
-  "use strict";
-  var App = function() {};
+/* global document*/
+import React from 'react';
+import ReactDOM from 'react-dom';
 
+import WordwallsApp from './wordwalls_app';
+
+class App {
   /**
    * Initialize the app.
    * @param  {Object} options
    */
-  App.prototype.initialize = function(options) {
+  static initialize(options) {
     // WordwallsApp will be the holder of state.
     let style;
     let listName;
@@ -61,7 +59,8 @@ define([
       />,
       document.getElementById('main-app-content')
     );
-  };
+  }
+}
 
-  return App;
-});
+export default App;
+

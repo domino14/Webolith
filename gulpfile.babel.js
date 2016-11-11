@@ -12,9 +12,9 @@ const paths = {
   libDir: 'djAerolith/static/built',
   gulpFile: 'gulpfile.babel.js',
   webpackFile: 'webpack.config.babel.js',
-  distDir: 'dist',
+  distDir: 'djAerolith/static/dist',
   clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/index.js',
-  clientBundle: 'dist/client-bundle.js?(.map)',
+  clientBundle: 'djAerolith/static/dist/client-bundle.js?(.map)',
 };
 
 gulp.task('clean', () => del([

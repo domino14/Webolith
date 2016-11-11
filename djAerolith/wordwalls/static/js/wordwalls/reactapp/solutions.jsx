@@ -1,136 +1,90 @@
-define([
-  'react',
-  'jsx!reactapp/word_part_display'
-], function(React, WordPartDisplay) {
-  "use strict";
-  var Solutions, Solution;
+import React from 'react';
+import Solution from './solution';
 
-  Solution = React.createClass({
-    markMissed: function() {
-      this.props.markMissed(this.props.idx, this.props.alphagram);
-    },
-    render: function() {
-      var qTdClass, wTdClass, wordDisplay, alphagram, markMissedBtn = '';
-      qTdClass = '';
-      if (!this.props.correct) {
-        qTdClass = 'danger';
-      }
-      wTdClass = 'text-nowrap';
-      if (!this.props.wordSolved) {
-        wTdClass += ' danger';
-      }
-      wordDisplay = (this.props.innerFrontHook ? '･' : '') + this.props.word +
-       (this.props.innerBackHook ? '･' : '') + this.props.lexiconSymbols;
-
-      if (this.props.correct && this.props.wordPos === 0) {
-        markMissedBtn = (
-          <button
-            className="btn btn-sm btn-danger"
-            onClick={this.markMissed}>Mark missed</button>
-        );
-      }
-      alphagram = (
-        this.props.wordPos === 0 ? <WordPartDisplay
-          text={this.props.alphagram}/> : '');
-      return (
-        <tr>
-          <td>{this.props.wordPos === 0 ?
-               this.props.probability : ''}</td>
-          <td
-            className={qTdClass}>{alphagram}</td>
-          <td
-            className="text-right">
-            <WordPartDisplay
-              classes="text-info small"
-              text={this.props.frontHooks}/></td>
-          <td className={wTdClass}>
-            <WordPartDisplay
-              text={wordDisplay}/></td>
-          <td
-            className="text-left">
-            <WordPartDisplay
-              classes="text-info small"
-              text={this.props.backHooks}/></td>
-          <td>{this.props.definition}</td>
-          <td>{markMissedBtn}</td>
-        </tr>
+const Solutions = (props) => {
+  // var tableRows, wordIdx, statsStr, numCorrect;
+  const tableRows = [];
+  let wordIdx = 0;
+  props.questions.forEach((question) => {
+    question.get('ws').forEach((word, wordPos) => {
+      tableRows.push(
+        <Solution
+          key={wordIdx}
+          wordPos={wordPos}
+          idx={question.get('idx')}
+          probability={question.get('p')}
+          alphagram={question.get('a')}
+          frontHooks={word.get('fh')}
+          backHooks={word.get('bh')}
+          word={word.get('w')}
+          innerFrontHook={word.get('ifh')}
+          innerBackHook={word.get('ibh')}
+          lexiconSymbols={props.showLexiconSymbols ?
+            word.get('s') : ''}
+          definition={word.get('d')}
+          wordSolved={word.get('solved', false)}
+          correct={question.get('solved', false)}
+          markMissed={props.markMissed}
+        />
       );
-    }
+      wordIdx += 1;
+    });
   });
 
+  const numCorrect = props.answeredByMe.length;
+  let statsStr;
 
-  Solutions = React.createClass({
-    render: function() {
-      var tableRows, wordIdx, statsStr, numCorrect;
-      tableRows = [];
-      wordIdx = 0;
-      this.props.questions.forEach(function(question) {
-        question.get('ws').forEach(function(word, wordPos) {
-          tableRows.push(
-            <Solution
-              key={wordIdx}
-              wordPos={wordPos}
-              idx={question.get('idx')}
-              probability={question.get('p')}
-              alphagram={question.get('a')}
-              frontHooks={word.get('fh')}
-              backHooks={word.get('bh')}
-              word={word.get('w')}
-              innerFrontHook={word.get('ifh')}
-              innerBackHook={word.get('ibh')}
-              lexiconSymbols={this.props.showLexiconSymbols ?
-                word.get('s') : ''}
-              definition={word.get('d')}
-              wordSolved={word.get('solved', false)}
-              correct={question.get('solved', false)}
-              markMissed={this.props.markMissed}
-            />
-          );
-          wordIdx++;
-        }, this);
-      }, this);
-      numCorrect = this.props.answeredByMe.length;
-      if (this.props.totalWords > 0) {
-        statsStr = `Correct: ${numCorrect} / ${this.props.totalWords}
-          (${(100 * numCorrect / this.props.totalWords).toFixed(1)}%)`;
-      }
+  if (props.totalWords > 0) {
+    statsStr = `Correct: ${numCorrect} / ${props.totalWords}
+      (${((100 * numCorrect) / props.totalWords).toFixed(1)}%)`;
+  }
 
-      console.log('rendering Solutions', JSON.stringify(this.props.questions));
-      return (
-        <div
-          style={{
-            height: this.props.height,
-            overflowX: 'hidden'
-          }}>
-          <div className="row">
-            <div className="col-lg-12">
-              {statsStr}
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-lg-12">
-              <table
-                className="table table-condensed table-bordered">
-                <thead>
-                  <tr>
-                    <th>Probability</th>
-                    <th>Alphagram</th>
-                    <th>&lt;</th>
-                    <th>Word</th>
-                    <th>&gt;</th>
-                    <th>Definition</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableRows}
-                </tbody>
-              </table>
-            </div>
-          </div>
+  // console.log('rendering Solutions', JSON.stringify(this.props.questions));
+  return (
+    <div
+      style={{
+        height: props.height,
+        overflowX: 'hidden',
+      }}
+    >
+      <div className="row">
+        <div className="col-lg-12">
+          {statsStr}
         </div>
-      );
-    }
-  });
-  return Solutions;
-});
+      </div>
+      <div className="row">
+        <div className="col-lg-12">
+          <table
+            className="table table-condensed table-bordered"
+          >
+            <thead>
+              <tr>
+                <th>Probability</th>
+                <th>Alphagram</th>
+                <th>&lt;</th>
+                <th>Word</th>
+                <th>&gt;</th>
+                <th>Definition</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableRows}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Solutions.propTypes = {
+  questions: React.PropTypes.any,
+  answeredByMe: React.PropTypes.array,
+  totalWords: React.PropTypes.number,
+  height: React.PropTypes.number,
+  markMissed: React.PropTypes.func,
+  showLexiconSymbols: React.PropTypes.bool,
+};
+
+export default Solutions;

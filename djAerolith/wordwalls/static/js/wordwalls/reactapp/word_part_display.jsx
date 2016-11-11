@@ -2,22 +2,17 @@
  * @fileOverview A simple React component that displays a word, or
  * a set of front/back hooks.
  */
-define([
-  'react',
-  'reactapp/utils'
-], function(React, Utils) {
-  "use strict";
+import React from 'react';
+import Utils from './utils';
 
-  return React.createClass({
-    render: function() {
-      var text;
-      text = Utils.displaySpanishDigraphs(this.props.text);
+const WordPartDisplay = props =>
+  <span
+    className={props.classes}
+  >{Utils.displaySpanishDigraphs(props.text)}</span>;
 
-      return (
-        <span
-          className={this.props.classes}
-        >{text}</span>
-      );
-    }
-  });
-});
+WordPartDisplay.propTypes = {
+  classes: React.PropTypes.string,
+  text: React.PropTypes.string,
+};
+
+export default WordPartDisplay;

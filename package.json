@@ -8,14 +8,21 @@
     "type": "git"
   },
   "author": "César Del Solar",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "scripts": {
-    "start": "gulp"
+    "start": "gulp",
+    "lint": "gulp lint"
   },
   "devDependencies": {
     "babel-loader": "^6.2.7",
     "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
     "del": "^2.2.2",
+    "eslint": "3.8.1",
+    "eslint-config-airbnb": "12.0.0",
+    "eslint-plugin-import": "2.0.1",
+    "eslint-plugin-jsx-a11y": "2.2.3",
+    "eslint-plugin-react": "6.4.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
@@ -23,10 +30,17 @@
   },
   "babel": {
     "presets": [
-      "latest"
+      "latest",
+      "react"
     ]
   },
   "dependencies": {
-    "babel-polyfill": "^6.16.0"
+    "babel-polyfill": "^6.16.0",
+    "bootstrap": "^3.3.7",
+    "immutable": "^3.8.1",
+    "jquery": "^3.1.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "underscore": "^1.8.3"
   }
 }
