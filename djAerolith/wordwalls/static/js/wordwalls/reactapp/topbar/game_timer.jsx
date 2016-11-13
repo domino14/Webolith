@@ -20,13 +20,14 @@ class GameTimer extends React.Component {
     return `${minutes}:${seconds}`;
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       timeRemaining: this.props.initialGameTime,
       timeoutId: null,
       prevTime: null,
     };
+    this.tick = this.tick.bind(this);
   }
 
   componentDidMount() {
@@ -97,7 +98,6 @@ class GameTimer extends React.Component {
       if (this.props.completeCallback) {
         this.props.completeCallback();
       }
-      return;
     }
   }
 

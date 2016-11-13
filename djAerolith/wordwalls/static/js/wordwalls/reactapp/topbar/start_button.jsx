@@ -1,6 +1,11 @@
 import React from 'react';
 
 class StartButton extends React.Component {
+  constructor() {
+    super();
+    this.handleButtonClick = this.handleButtonClick.bind(this);
+  }
+
   handleButtonClick() {
     if (this.props.gameGoing) {
       this.props.handleGiveup();

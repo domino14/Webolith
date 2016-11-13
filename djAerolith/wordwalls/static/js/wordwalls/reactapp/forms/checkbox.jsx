@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-for */
 /**
  * @fileOverview A Bootstrap-based checkbox component.
  */

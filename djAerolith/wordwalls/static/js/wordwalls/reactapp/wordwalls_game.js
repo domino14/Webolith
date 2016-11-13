@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 /**
  * @fileOverview Contains logic for wrong word hashes, etc. Used as a
  * helper to calculate state for the react app in app.jsx.
@@ -30,18 +31,18 @@ Game.prototype.init = function GameInit(questions) {
   this.answeredByMe = [];
   this.totalWords = 0;
   questions.forEach((question, aidx) => {
-    const wMap = {};
+    const newWMap = {};
     question.ws.forEach((word, idx) => {
       this.wrongWordsHash[word.w] = idx;
       this.totalWords += 1;
-      wMap[word.w] = word;
+      newWMap[word.w] = word;
     });
-    question.answersRemaining = question.ws.length;
+    question.answersRemaining = question.ws.length; // eslint-disable-line no-param-reassign
     this.alphaIndexHash[question.a] = aidx;
     qMap[question.a] = question;
     reducedQuestions.push({
       a: question.a,
-      wMap: wMap,
+      wMap: newWMap,
       displayedAs: question.a,
     });
   });
@@ -88,8 +89,7 @@ Game.prototype.solve = function GameSolve(word, alphagram) {
     [alphagram, 'ws', widx], (wObj) => {
       this.answeredByMe.push(wObj);
       return wObj.set('solved', true);
-    }
-  );
+    });
 
   // Look up the index of this alphagram in the alphaIndex hash.
   // This index is mutable and represents the current display position.

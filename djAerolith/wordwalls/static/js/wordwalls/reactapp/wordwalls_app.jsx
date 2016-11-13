@@ -1,5 +1,5 @@
 /* global JSON, window, document */
-/* eslint-disable new-cap*/
+/* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import $ from 'jquery';
 import Immutable from 'immutable';
@@ -20,8 +20,8 @@ import ChallengeResults from './challenge_results';
 const game = new WordwallsGame();
 
 class WordwallsApp extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       gameGoing: false,
       initialGameTime: 0,
@@ -44,6 +44,18 @@ class WordwallsApp extends React.Component {
       listName: this.props.listName,
       autoSave: this.props.autoSave,
     };
+    // Bindings:
+    this.timerRanOut = this.timerRanOut.bind(this);
+    this.handleStart = this.handleStart.bind(this);
+    this.handleAlphagram = this.handleAlphagram.bind(this);
+    this.handleAutoSaveChange = this.handleAutoSaveChange.bind(this);
+    this.handleCustomOrder = this.handleCustomOrder.bind(this);
+    this.handleGiveup = this.handleGiveup.bind(this);
+    this.handleListNameChange = this.handleListNameChange.bind(this);
+    this.handleShuffleAll = this.handleShuffleAll.bind(this);
+    this.onGuessSubmit = this.onGuessSubmit.bind(this);
+    this.onHotKey = this.onHotKey.bind(this);
+    this.beforeUnload = this.beforeUnload.bind(this);
   }
 
   componentDidMount() {
@@ -85,8 +97,8 @@ class WordwallsApp extends React.Component {
         guess: modifiedGuess,
       },
     })
-    .done(this.handleGuessResponse)
-    .fail(this.handleGuessFailure);
+    .done(this.handleGuessResponse.bind(this))
+    .fail(this.handleGuessFailure.bind(this));
   }
 
   onHotKey(key) {
@@ -97,6 +109,13 @@ class WordwallsApp extends React.Component {
       3: this.handleCustomOrder,
     };
     fnMap[key]();
+  }
+
+  onShuffleQuestion(idx) {
+    game.shuffle(idx);
+    this.setState({
+      curQuestions: game.getQuestionState(),
+    });
   }
 
   /**
@@ -162,7 +181,7 @@ class WordwallsApp extends React.Component {
         action: 'start',
       },
     })
-    .done(this.handleStartReceived)
+    .done(this.handleStartReceived.bind(this))
     .fail((jqXHR) => {
       this.addServerMessage(jqXHR.responseJSON.error, 'error');
       // XXX: This is a hack; use proper error codes.
@@ -368,13 +387,6 @@ class WordwallsApp extends React.Component {
    */
   handleShuffleAll() {
     game.shuffleAll();
-    this.setState({
-      curQuestions: game.getQuestionState(),
-    });
-  }
-
-  onShuffleQuestion(idx) {
-    game.shuffle(idx);
     this.setState({
       curQuestions: game.getQuestionState(),
     });

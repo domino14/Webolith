@@ -1,4 +1,3 @@
-/* global document*/
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -57,8 +56,7 @@ class App {
         displayStyle={style}
         tableUrl={`/wordwalls/table/${options.tablenum}/`}
       />,
-      document.getElementById('main-app-content')
-    );
+      document.getElementById('main-app-content'));
   }
 }
 

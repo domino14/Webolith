@@ -22,7 +22,7 @@ const ChatBox = (props) => {
           if (domNode === null) {
             return;
           }
-          domNode.scrollTop = domNode.scrollHeight;
+          domNode.scrollTop = domNode.scrollHeight; // eslint-disable-line no-param-reassign
         }}
       >{messageNodes}</div>
     </div>

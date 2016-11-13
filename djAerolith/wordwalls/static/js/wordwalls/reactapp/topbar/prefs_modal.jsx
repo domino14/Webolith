@@ -1,10 +1,11 @@
 import React from 'react';
+import _ from 'underscore';
 
 import PrefsModalBody from './prefs_modal_body';
 
 class PrefsModal extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       tilesOn: this.props.displayStyle.tc.on,
       customTileOrder: this.props.displayStyle.tc.customOrder,
@@ -17,7 +18,10 @@ class PrefsModal extends React.Component {
 
       saveAllowed: true,
     };
+    this.initialState = _.clone(this.state);
     this.onOptionsModify = this.onOptionsModify.bind(this);
+    this.saveChanges = this.saveChanges.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   /**
@@ -31,7 +35,7 @@ class PrefsModal extends React.Component {
   }
 
   reset() {
-    this.setState(this.getInitialState());
+    this.setState(this.initialState);
   }
 
   /**

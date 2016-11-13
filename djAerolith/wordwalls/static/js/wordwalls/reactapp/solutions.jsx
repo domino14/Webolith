@@ -2,9 +2,10 @@ import React from 'react';
 import Solution from './solution';
 
 const Solutions = (props) => {
-  // var tableRows, wordIdx, statsStr, numCorrect;
   const tableRows = [];
   let wordIdx = 0;
+  const showLexiconSymbols = props.showLexiconSymbols;
+  const markMissed = props.markMissed;
   props.questions.forEach((question) => {
     question.get('ws').forEach((word, wordPos) => {
       tableRows.push(
@@ -19,14 +20,12 @@ const Solutions = (props) => {
           word={word.get('w')}
           innerFrontHook={word.get('ifh')}
           innerBackHook={word.get('ibh')}
-          lexiconSymbols={props.showLexiconSymbols ?
-            word.get('s') : ''}
+          lexiconSymbols={showLexiconSymbols ? word.get('s') : ''}
           definition={word.get('d')}
           wordSolved={word.get('solved', false)}
           correct={question.get('solved', false)}
-          markMissed={props.markMissed}
-        />
-      );
+          markMissed={markMissed}
+        />);
       wordIdx += 1;
     });
   });

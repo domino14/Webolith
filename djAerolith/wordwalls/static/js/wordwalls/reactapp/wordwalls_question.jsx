@@ -91,8 +91,8 @@ class WordwallsQuestion extends React.Component {
       // No words for this question; return an empty g.
       return <g>{this.borderRectangle()}</g>;
     }
-    const color = this.getColorFromAnagrams(numAnagrams);
-    const dims = this.getTileDimensions(this.props.letters.length,
+    const color = WordwallsQuestion.getColorFromAnagrams(numAnagrams);
+    const dims = WordwallsQuestion.getTileDimensions(this.props.letters.length,
       this.props.displayStyle.showChips);
     const tileWidth = dims[0];
     const tileHeight = dims[1];

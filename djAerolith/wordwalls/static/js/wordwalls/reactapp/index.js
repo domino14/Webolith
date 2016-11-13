@@ -1,5 +1,8 @@
 /* global window */
 import App from './app';
+import Utils from './utils';
+
+Utils.setupCsrfAjax();
 
 App.initialize({
   lexicon: window.TableGlobals.lexicon,

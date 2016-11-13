@@ -18,17 +18,19 @@ class PrefsModalBody extends React.Component {
     return _.difference(allLetters.split(''), tileOrder.split('')).join('');
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       letters: 'ADEEMMO?',
-      tileOrderLettersRemaining: this.calculateLettersRemaining(
+      tileOrderLettersRemaining: PrefsModalBody.calculateLettersRemaining(
         this.props.customTileOrder),
       wMap: Immutable.fromJS({
         GAMODEME: {},
         HOMEMADE: {},
       }),
     };
+    this.onBlankCharChange = this.onBlankCharChange.bind(this);
+    this.onTileOrderChange = this.onTileOrderChange.bind(this);
   }
 
   onBlankCharChange(event) {
@@ -219,7 +221,7 @@ PrefsModalBody.propTypes = {
   showChips: React.PropTypes.bool,
   showBold: React.PropTypes.bool,
   hideLexiconSymbols: React.PropTypes.bool,
-  allowSave: React.PropTypes.bool,
+  allowSave: React.PropTypes.func,
 };
 
 export default PrefsModalBody;

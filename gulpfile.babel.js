@@ -14,7 +14,7 @@ const paths = {
   webpackFile: 'webpack.config.babel.js',
   distDir: 'djAerolith/static/dist',
   clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/index.js',
-  clientBundle: 'djAerolith/static/dist/client-bundle.js?(.map)',
+  clientBundle: 'djAerolith/static/dist/table-client-bundle.js?(.map)',
 };
 
 gulp.task('clean', () => del([
@@ -25,14 +25,18 @@ gulp.task('clean', () => del([
 gulp.task('build', ['lint', 'clean'], () =>
   gulp.src(paths.wordwallsSrcJS)
     .pipe(babel())
-    .pipe(gulp.dest(paths.libDir))
-);
+    .pipe(gulp.dest(paths.libDir)));
 // add 'lint' to the list below.
 gulp.task('main', ['clean'], () =>
   gulp.src(paths.clientEntryPoint)
     .pipe(webpack(webpackConfig))
-    .pipe(gulp.dest(paths.distDir))
-);
+    .pipe(gulp.dest(paths.distDir)));
+
+gulp.task('build-distribution', ['clean'], () =>
+  gulp.src(paths.clientEntryPoint)
+    .pipe(babel())
+    .pipe(webpack(webpackConfig))
+    .pipe(gulp.dest(paths.distDir)));
 
 gulp.task('lint', () =>
   gulp.src([
@@ -42,8 +46,7 @@ gulp.task('lint', () =>
   ])
   .pipe(eslint())
   .pipe(eslint.format())
- // .pipe(eslint.failAfterError())
-);
+  .pipe(eslint.failAfterError()));
 
 gulp.task('watch', () => {
   gulp.watch(paths.wordwallsSrcJS, ['main']);
