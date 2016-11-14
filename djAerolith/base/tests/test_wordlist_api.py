@@ -39,7 +39,7 @@ class WordwallsAPITest(TestCase):
         self.assertEqual(len(content['lists']), 4)
         profile = AerolithProfile.objects.get(user__username='cesar')
         self.assertEqual(profile.wordwallsSaveListSize,
-                         55781 - 11 - 52 - 50 -50)
+                         55781 - 11 - 52)
 
     def test_lists_delete_bad_id(self):
         resp = self.client.delete('/base/api/saved_lists/',
