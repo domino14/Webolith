@@ -6,6 +6,8 @@ import del from 'del';
 import eslint from 'gulp-eslint';
 import webpack from 'webpack-stream';
 import gzip from 'gulp-gzip';
+import rjs from 'gulp-requirejs';
+import uglify from 'gulp-uglify';
 
 import webpackConfig from './webpack.config.babel';
 import webpackProdConfig from './webpack.config-prod.babel';
@@ -52,7 +54,8 @@ gulp.task('watch', () => {
   gulp.watch(paths.wordwallsSrcJS, ['main']);
 });
 
-gulp.task('build-production', ['lint', 'clean'], () =>
+// Build the main "wordwalls" table production app.
+gulp.task('build-production', ['lint'], () =>
   gulp.src(paths.clientEntryPoint)
     .pipe(babel())
     .pipe(webpack(webpackProdConfig))
@@ -60,3 +63,30 @@ gulp.task('build-production', ['lint', 'clean'], () =>
     .pipe(gulp.dest(paths.distDir)));
 
 gulp.task('default', ['watch', 'main']);
+
+// Other gulp tasks for legacy apps that haven't been migrated to ES6/
+// react/etc.
+
+gulp.task('createTableBuild', () =>
+  rjs({
+    baseUrl: 'djAerolith/wordwalls/static/js/wordwalls',
+    mainConfigFile: 'djAerolith/wordwalls/static/js/wordwalls/create_table_main.js',
+    name: 'create_table_main',
+    out: 'create-table-main-built.js',
+  })
+    .pipe(uglify())
+    .pipe(gzip())
+    .pipe(gulp.dest(paths.distDir)));
+
+gulp.task('flashcardsBuild', () =>
+  rjs({
+    baseUrl: 'djAerolith/flashcards/static/js/flashcards',
+    mainConfigFile: 'djAerolith/flashcards/static/js/flashcards/main.js',
+    name: 'main',
+    out: 'flashcards-built.js',
+  })
+    .pipe(uglify())
+    .pipe(gzip())
+    .pipe(gulp.dest(paths.distDir)));
+
+gulp.task('full-prod-build', ['build-production', 'createTableBuild', 'flashcardsBuild']);

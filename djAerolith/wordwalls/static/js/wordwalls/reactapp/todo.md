@@ -35,9 +35,9 @@
     happens when you click start after going through a set of questions
 -[x] daily challenge results
 -[x] guess error behavior
--[ ] compilation/deployment on dev
-    - [ ] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
-    - [ ] Probably turn everything into ES6 / remove require... ;(
+-[x] compilation/deployment on dev
+    - [x] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
+    - [x] Probably turn everything into ES6 / remove require... ;(
 -[ ] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
 -[x] autofocus guess on start
