@@ -30,7 +30,12 @@ const ChatBox = (props) => {
 };
 
 ChatBox.propTypes = {
-  messages: React.PropTypes.array,
+  messages: React.PropTypes.arrayOf(React.PropTypes.shape({
+    author: React.PropTypes.string,
+    id: React.PropTypes.string,
+    content: React.PropTypes.string,
+    type: React.PropTypes.string,
+  })),
 };
 
 export default ChatBox;

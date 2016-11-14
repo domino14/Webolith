@@ -17,8 +17,8 @@ const QuestionText = (props) => {
       fontFamily={fontFamily}
       alignmentBaseline="central"
       fontSize={`${props.fontSize}%`}
-      stroke={props.color[3]}
-      fill={props.color[3]}
+      stroke={props.color.alternateTextColor}
+      fill={props.color.alternateTextColor}
       fontWeight={fontWeight}
       strokeWidth="0.5px"
     >{Utils.displaySpanishDigraphs(props.letters)}</text>
@@ -31,7 +31,12 @@ QuestionText.propTypes = {
   x: React.PropTypes.number,
   y: React.PropTypes.number,
   fontSize: React.PropTypes.number,
-  color: React.PropTypes.array,
+  color: React.PropTypes.shape({
+    color: React.PropTypes.string,
+    opacity: React.PropTypes.number,
+    textColor: React.PropTypes.string,
+    alternateTextColor: React.PropTypes.string,
+  }),
   letters: React.PropTypes.string,
 };
 

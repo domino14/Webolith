@@ -35,8 +35,8 @@ const GameTile = (props) => {
         height={props.height}
         strokeWidth="0.5px"
         stroke="black"
-        fill={props.color[0]}
-        opacity={props.color[1]}
+        fill={props.color.color}
+        opacity={props.color.opacity}
         rx={1}  /* radiuses */
         ry={1}
       />
@@ -47,8 +47,8 @@ const GameTile = (props) => {
         dominantBaseline="central"
         fontFamily={fontFamily}
         fontSize={`${fontSize}%`}
-        stroke={props.color[2]}
-        fill={props.color[2]}
+        stroke={props.color.textColor}
+        fill={props.color.textColor}
         strokeWidth="0.75px"
       >{letter}</text>
     </g>
@@ -62,7 +62,12 @@ GameTile.propTypes = {
   fontSize: React.PropTypes.number,
   x: React.PropTypes.number,
   y: React.PropTypes.number,
-  color: React.PropTypes.array,
+  color: React.PropTypes.shape({
+    color: React.PropTypes.string,
+    opacity: React.PropTypes.number,
+    textColor: React.PropTypes.string,
+    alternateTextColor: React.PropTypes.string,
+  }),
 };
 
 export default GameTile;

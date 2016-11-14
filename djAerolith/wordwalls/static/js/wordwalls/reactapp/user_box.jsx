@@ -1,4 +1,6 @@
 import React from 'react';
+import Immutable from 'immutable';
+
 import WordPartDisplay from './word_part_display';
 
 const UserBox = (props) => {
@@ -66,7 +68,8 @@ const UserBox = (props) => {
 };
 
 UserBox.propTypes = {
-  answeredByMe: React.PropTypes.array,
+  answeredByMe: React.PropTypes.arrayOf(
+    React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
   username: React.PropTypes.string,
 };

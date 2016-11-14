@@ -102,7 +102,10 @@ class ResultsComponent extends React.Component {
 }
 
 ResultsComponent.propTypes = {
-  challengeData: React.PropTypes.object,
+  challengeData: React.PropTypes.shape({
+    entries: React.PropTypes.array,
+    maxScore: React.PropTypes.number,
+  }),
 };
 
 export default ResultsComponent;

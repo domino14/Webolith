@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-// Used for development build.
+/* Use for production build. Minifies, etc. */
 const webpack = require('webpack');
 
 export default {
@@ -42,6 +42,14 @@ export default {
       $: 'jQuery',
       jQuery: 'jquery',
     }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        // For minifying React correctly.
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.AggressiveMergingPlugin(),
   ],
 };
-

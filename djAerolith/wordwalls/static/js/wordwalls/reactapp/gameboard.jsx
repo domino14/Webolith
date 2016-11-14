@@ -1,4 +1,6 @@
 import React from 'react';
+import Immutable from 'immutable';
+
 import WordwallsQuestion from './wordwalls_question';
 import Solutions from './solutions';
 
@@ -74,11 +76,15 @@ GameBoard.defaultProps = {
 
 GameBoard.propTypes = {
   numberOfRounds: React.PropTypes.number,
-  curQuestions: React.PropTypes.any,
-  origQuestions: React.PropTypes.any,
-  displayStyle: React.PropTypes.object,
+  curQuestions: React.PropTypes.instanceOf(Immutable.List),
+  origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
+  displayStyle: React.PropTypes.shape({
+    tc: React.PropTypes.object,
+    bc: React.PropTypes.object,
+  }),
   totalWords: React.PropTypes.number,
-  answeredByMe: React.PropTypes.array,
+  answeredByMe: React.PropTypes.arrayOf(
+    React.PropTypes.instanceOf(Immutable.Map)),
   onShuffle: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,

@@ -1,4 +1,6 @@
 import React from 'react';
+import Immutable from 'immutable';
+
 import Solution from './solution';
 
 const Solutions = (props) => {
@@ -78,8 +80,9 @@ const Solutions = (props) => {
 };
 
 Solutions.propTypes = {
-  questions: React.PropTypes.any,
-  answeredByMe: React.PropTypes.array,
+  questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
+  answeredByMe: React.PropTypes.arrayOf(
+    React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
   height: React.PropTypes.number,
   markMissed: React.PropTypes.func,

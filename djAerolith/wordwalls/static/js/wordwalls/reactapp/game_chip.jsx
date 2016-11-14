@@ -12,8 +12,8 @@ const GameChip = (props) => {
         r={props.radius}
         stroke="black"
         strokeWidth="0.5px"
-        fill={props.color[0]}
-        opacity={props.color[1]}
+        fill={props.color.color}
+        opacity={props.color.opacity}
       />
       <text
         x={0}
@@ -22,8 +22,8 @@ const GameChip = (props) => {
         dominantBaseline="central"
         fontFamily={fontFamily}
         fontSize={`${props.fontSize}%`}
-        stroke={props.color[2]}
-        fill={props.color[2]}
+        stroke={props.color.textColor}
+        fill={props.color.textColor}
         strokeWidth="1px"
       >{props.number}</text>
     </g>
@@ -34,7 +34,12 @@ GameChip.propTypes = {
   x: React.PropTypes.number,
   y: React.PropTypes.number,
   radius: React.PropTypes.number,
-  color: React.PropTypes.array,
+  color: React.PropTypes.shape({
+    color: React.PropTypes.string,
+    opacity: React.PropTypes.number,
+    textColor: React.PropTypes.string,
+    alternateTextColor: React.PropTypes.string,
+  }),
   fontSize: React.PropTypes.number,
   number: React.PropTypes.number,
 };

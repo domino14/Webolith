@@ -36,7 +36,10 @@ class Preferences extends React.Component {
 }
 
 Preferences.propTypes = {
-  displayStyle: React.PropTypes.object,
+  displayStyle: React.PropTypes.shape({
+    tc: React.PropTypes.object,
+    bc: React.PropTypes.object,
+  }),
   onSave: React.PropTypes.func,
 };
 

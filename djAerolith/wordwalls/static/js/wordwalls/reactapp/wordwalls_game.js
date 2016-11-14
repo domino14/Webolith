@@ -12,8 +12,9 @@ import _ from 'underscore';
 // at once (any more are outside of the viewport).
 const MAX_SCREEN_QUESTIONS = 50;
 const Game = function GameConstructor() {
+  console.log('Constructing.');
   this.curQuestions = Immutable.List();
-  this.origQuestions = Immutable.List();
+  this.origQuestions = Immutable.OrderedMap();
 };
 /**
  * Initializes the main data structures when a new array comes in.

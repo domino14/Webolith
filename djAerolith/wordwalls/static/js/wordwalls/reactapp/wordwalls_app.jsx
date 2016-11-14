@@ -2,7 +2,6 @@
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import $ from 'jquery';
-import Immutable from 'immutable';
 import _ from 'underscore';
 
 import WordwallsGame from './wordwalls_game';
@@ -25,14 +24,12 @@ class WordwallsApp extends React.Component {
     this.state = {
       gameGoing: false,
       initialGameTime: 0,
-      // Contains the original questions. This list should remain in
-      // a fixed order, and the only mutable things should be the
-      // "correct" state of words/alphagrams.
-      origQuestions: Immutable.List(),
+      // Contains the original questions.
+      origQuestions: game.getOriginalQuestionState(),
       // Similar to origQuestions, but this list is what is directly
       // being rendered in the game board. Questions should be removed
       // from it as they are solved, and they can be shuffled around.
-      curQuestions: Immutable.List(),
+      curQuestions: game.getQuestionState(),
       messages: [],
       isChallenge: false,
       totalWords: 0,
@@ -56,6 +53,8 @@ class WordwallsApp extends React.Component {
     this.onGuessSubmit = this.onGuessSubmit.bind(this);
     this.onHotKey = this.onHotKey.bind(this);
     this.beforeUnload = this.beforeUnload.bind(this);
+    this.setDisplayStyle = this.setDisplayStyle.bind(this);
+    this.onShuffleQuestion = this.onShuffleQuestion.bind(this);
   }
 
   componentDidMount() {
@@ -552,7 +551,10 @@ WordwallsApp.propTypes = {
   listName: React.PropTypes.string,
   autoSave: React.PropTypes.bool,
   lexicon: React.PropTypes.string,
-  displayStyle: React.PropTypes.object,
+  displayStyle: React.PropTypes.shape({
+    tc: React.PropTypes.object,
+    bc: React.PropTypes.object,
+  }),
   tableUrl: React.PropTypes.string,
 };
 

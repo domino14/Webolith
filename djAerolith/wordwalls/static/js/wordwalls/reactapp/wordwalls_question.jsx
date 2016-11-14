@@ -1,4 +1,5 @@
 import React from 'react';
+import Immutable from 'immutable';
 
 import Chip from './game_chip';
 import Tile from './game_tile';
@@ -39,22 +40,72 @@ class WordwallsQuestion extends React.Component {
    * Get the color for this tile given the number of anagrams.
    * Use the bootstrap theme's colors and ROYGBIV ordering.
    * @param  {number} numAnagrams - cannot be higher than 9.
-   * @return {Array.<String>} A color hex code, opacity, text color,
-   *  alternate text color tuple. The alternate text color is used
+   * @return {Object} A color hex code, opacity, text color,
+   *  alternate text color. The alternate text color is used
    *  for when tiles are off.
    */
   static getColorFromAnagrams(numAnagrams) {
     return {
-      9: ['#3e3f3a', 1, '#ffffff', '#800080'],  // dark (black)
-      8: ['#3e3f3a', 0.65, '#ffffff', '#400040'], // Gray tile.
-      7: ['#325d88', 1, '#ffffff', '#325d88'], // A dark blue.
-      6: ['#29abe0', 1, '#ffffff', '#29abe0'], // A lighter blue.
-      5: ['#93c54b', 1, '#ffffff', '#93c54b'], // A greenish color.
-      4: ['#fce053', 1, '#3e3f3a', '#938231'], // A light yellow
-      3: ['#f47c3c', 1, '#ffffff', '#f47c3c'], // Orange
-      2: ['#d9534f', 1, '#ffffff', '#d9534f'], // Red
-      1: ['#ffffff', 1, '#3e3f3a', '#3e3f3a'], // White tile, dark text.
+      9: {  // dark (black)
+        color: '#3e3f3a',
+        opacity: 1,
+        textColor: '#ffffff',
+        alternateTextColor: '#800080',
+      },
+      8: {  // Gray tile.
+        color: '#3e3f3a',
+        opacity: 0.65,
+        textColor: '#ffffff',
+        alternateTextColor: '#400040',
+      },
+      7: {  // Dark blue.
+        color: '#325d88',
+        opacity: 1,
+        textColor: '#ffffff',
+        alternateTextColor: '#325d88',
+      },
+      6: {  // Lighter blue.
+        color: '#29abe0',
+        opacity: 1,
+        textColor: '#ffffff',
+        alternateTextColor: '#29abe0',
+      },
+      5: {  // A greenish color.
+        color: '#93c54b',
+        opacity: 1,
+        textColor: '#ffffff',
+        alternateTextColor: '#93c54b',
+      },
+      4: {  // A light yellow
+        color: '#fce053',
+        opacity: 1,
+        textColor: '#3e3f3a',
+        alternateTextColor: '#938231',
+      },
+      3: {  // Orange
+        color: '#f47c3c',
+        opacity: 1,
+        textColor: '#ffffff',
+        alternateTextColor: '#f47c3c',
+      },
+      2: {  // Red
+        color: '#d9534f',
+        opacity: 1,
+        textColor: '#ffffff',
+        alternateTextColor: '#d9534f',
+      },
+      1: {  // White tile, dark text.
+        color: '#ffffff',
+        opacity: 1,
+        textColor: '#3e3f3a',
+        alternateTextColor: '#3e3f3a',
+      },
     }[String(numAnagrams)];
+  }
+
+  constructor() {
+    super();
+    this.clickedQ = this.clickedQ.bind(this);
   }
 
   /**
@@ -171,10 +222,17 @@ class WordwallsQuestion extends React.Component {
 }
 
 WordwallsQuestion.propTypes = {
-  displayStyle: React.PropTypes.object.isRequired,
+  displayStyle: React.PropTypes.shape({
+    showChips: React.PropTypes.bool,
+    on: React.PropTypes.bool,
+    font: React.PropTypes.string,
+    showBorders: React.PropTypes.bool,
+    bold: React.PropTypes.bool,
+    blankCharacter: React.PropTypes.string,
+  }),
   letters: React.PropTypes.string,
   qNumber: React.PropTypes.number.isRequired,
-  words: React.PropTypes.any,
+  words: React.PropTypes.instanceOf(Immutable.Map),
   gridX: React.PropTypes.number.isRequired,
   gridY: React.PropTypes.number.isRequired,
   xSize: React.PropTypes.number.isRequired,

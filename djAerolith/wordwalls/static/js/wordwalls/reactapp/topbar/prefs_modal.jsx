@@ -22,6 +22,7 @@ class PrefsModal extends React.Component {
     this.onOptionsModify = this.onOptionsModify.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
     this.reset = this.reset.bind(this);
+    this.allowSave = this.allowSave.bind(this);
   }
 
   /**
@@ -137,7 +138,10 @@ class PrefsModal extends React.Component {
 }
 
 PrefsModal.propTypes = {
-  displayStyle: React.PropTypes.object,
+  displayStyle: React.PropTypes.shape({
+    tc: React.PropTypes.object,
+    bc: React.PropTypes.object,
+  }),
   onSave: React.PropTypes.func,
 };
 

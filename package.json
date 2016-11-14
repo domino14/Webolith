@@ -12,7 +12,7 @@
   "scripts": {
     "start": "gulp",
     "lint": "gulp lint",
-    "build-distribution": "gulp build-distribution"
+    "build-production": "gulp build-production"
   },
   "devDependencies": {
     "babel-loader": "^6.2.7",
@@ -31,6 +31,7 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
+    "gulp-gzip": "^1.4.0",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
     "style-loader": "^0.13.1",
