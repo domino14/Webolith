@@ -10,7 +10,8 @@ from scripts.gen_firewall import gen_firewall
 curdir = os.path.dirname(__file__)
 print curdir
 
-env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
+# Don't specify a filename for the key - circle will do the right thing?
+# env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
     'prod': ['ubuntu@www.aerolith.org'],
     'dev': ['ubuntu@dev.aerolith.org'],
