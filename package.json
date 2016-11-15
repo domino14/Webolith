@@ -11,7 +11,9 @@
   "license": "GPL-3.0",
   "scripts": {
     "start": "gulp",
-    "lint": "gulp lint"
+    "lint": "gulp lint",
+    "clean": "gulp clean",
+    "full-prod-build": "gulp full-prod-build"
   },
   "devDependencies": {
     "babel-loader": "^6.2.7",

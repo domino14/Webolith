@@ -28,7 +28,6 @@ dependencies:
     - ~/.yarn-cache
   override:
     - yarn install
-    - yarn global add gulp-cli
 test:
   pre:
     - pip install setuptools>=0.19
@@ -40,8 +39,8 @@ test:
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
   override:
     # Build the js bundles. (And do FE testing later, hopefully!)
-    - gulp clean
-    - gulp full-prod-build
+    - yarn clean
+    - yarn full-prod-build
     # Test the app.
     - cd djAerolith && ./manage.py test -v2
 
