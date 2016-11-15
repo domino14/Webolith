@@ -13,7 +13,6 @@ class App {
     let style;
     let listName;
     let autoSave;
-    console.log('addl params', options.addlParams);
 
     if (options.addlParams.style != null) {
       style = JSON.parse(options.addlParams.style);

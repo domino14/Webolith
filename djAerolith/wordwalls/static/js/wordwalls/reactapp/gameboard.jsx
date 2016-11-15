@@ -23,7 +23,10 @@ class GameBoard extends React.Component {
       // Calculate top left X, Y based on dimensions.
       const gridX = (idx % this.props.gridWidth) * xSize;
       const gridY = Math.floor(idx / this.props.gridWidth) * ySize;
-
+      if (idx >= this.props.gridWidth * this.props.gridHeight) {
+        return;
+      }
+      // Only push questions that will fit on the game board.
       questions.push(
         <WordwallsQuestion
           displayStyle={questionDisplayStyle}

@@ -19,7 +19,6 @@
 -[x] shuffle/alpha/etc
 -[x] solutions
     -[x] mark missed
-    -[ ] click to show solutions? (if users were in the middle of typing)
 -[x] submit guess if not solved locally
 -[x] end game properly when all words solved/time runs out
     - [x] start at end of game should not start timer/show giveup button.
@@ -38,14 +37,20 @@
 -[x] compilation/deployment on dev
     - [x] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
     - [x] Probably turn everything into ES6 / remove require... ;(
--[ ] optimization (don't handle unseen elements, etc)
+-[x] optimization (don't handle unseen elements, etc)
     - [ ] check on slower computers (my old macbook)
 -[x] autofocus guess on start
 -[x] Search for XXX/TODO/etc.
 -[x] ran out of time too early bug :(
     -  Pretty sure this has to do with bringing computer back from sleep and
     starting game too soon afterwards.
-
+Minor tweaks:
+-[ ] Disable start briefly after pressing start.
+-[ ] click to show solutions? (if users were in the middle of typing)
+-[ ] Move X button somewhere nicer, maybe move a couple other things
+    - [ ] autosave, list display length, etc.
+-[x] Use bootstrap icons instead of font awesome.
+-[ ] As window shrinks UserBox should disappear or move elsewhere.
 
 Nice to haves:
 -[ ] tests

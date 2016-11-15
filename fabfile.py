@@ -134,6 +134,7 @@ def init_database():
     have been created.
 
     """
+    local('python manage.py createcachetable')
     local('python manage.py migrate')
     local('python manage.py loaddata wordwalls/fixtures/test/lexica.json')
     local('python manage.py loaddata dcNames')

@@ -75,7 +75,7 @@ class ListSaveBar extends React.Component {
               </div>
               <div className="col-xs-2">
                 <i
-                  className="fa fa-pencil"
+                  className="glyphicon glyphicon-pencil"
                   aria-hidden="true"
                   style={pencilStyle}
                   onClick={this.handleEdit}

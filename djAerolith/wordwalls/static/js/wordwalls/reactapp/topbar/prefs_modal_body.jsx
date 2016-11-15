@@ -112,7 +112,7 @@ class PrefsModalBody extends React.Component {
       letRem = (
         <span className="text-success">
           <i
-            className="fa fa-check-circle"
+            className="glyphicon glyphicon-ok"
             aria-hidden="true"
           />
         </span>);

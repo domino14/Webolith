@@ -2,6 +2,11 @@ import React from 'react';
 import WordPartDisplay from './word_part_display';
 
 class Solution extends React.Component {
+  constructor() {
+    super();
+    this.markMissed = this.markMissed.bind(this);
+  }
+
   markMissed() {
     this.props.markMissed(this.props.idx, this.props.alphagram);
   }

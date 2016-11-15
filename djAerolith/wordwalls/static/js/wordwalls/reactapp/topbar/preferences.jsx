@@ -21,7 +21,8 @@ class Preferences extends React.Component {
           data-target=".prefs-modal"
         >
           <i
-            className="fa fa-cog fa-2x"
+            className="glyphicon glyphicon-cog"
+            style={{ fontSize: '200%' }}
             aria-hidden="true"
           />
         </div>

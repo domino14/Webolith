@@ -12,7 +12,6 @@ import _ from 'underscore';
 // at once (any more are outside of the viewport).
 const MAX_SCREEN_QUESTIONS = 50;
 const Game = function GameConstructor() {
-  console.log('Constructing.');
   this.curQuestions = Immutable.List();
   this.origQuestions = Immutable.OrderedMap();
 };
@@ -127,7 +126,7 @@ Game.prototype.solve = function GameSolve(word, alphagram) {
       // alphagram (replace in place).
       this.alphaIndexHash[replacementAlpha.get('a')] = aidx;
     }
-    return aObj;
+    return newObj;
   });
 };
 /**

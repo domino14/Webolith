@@ -55,6 +55,7 @@ class WordwallsApp extends React.Component {
     this.beforeUnload = this.beforeUnload.bind(this);
     this.setDisplayStyle = this.setDisplayStyle.bind(this);
     this.onShuffleQuestion = this.onShuffleQuestion.bind(this);
+    this.markMissed = this.markMissed.bind(this);
   }
 
   componentDidMount() {
@@ -469,7 +470,8 @@ class WordwallsApp extends React.Component {
             }}
           >
             <span className="text-danger"><i
-              className="fa fa-times fa-2x"
+              className="glyphicon glyphicon-remove"
+              style={{ fontSize: '200%' }}
               onClick={() => (window.location = '/wordwalls')}
             /></span>
           </div>
