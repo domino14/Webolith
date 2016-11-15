@@ -1,7 +1,7 @@
 # Config file for CircleCI. See https://circleci.com/gh/domino14/Webolith
 machine:
   pre:
-    - mkdir ~/.yarn-cache
+    - mkdir ~/.cache
   node:
     version: stable
   python:
@@ -26,7 +26,7 @@ dependencies:
   pre:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
   cache_directories:
-    - ~/.yarn-cache
+    - ~/.cache
   override:
     - yarn install
     - yarn global add gulp-cli
