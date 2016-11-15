@@ -41,8 +41,9 @@ test:
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
   override:
     # Build the js bundles. (And do FE testing later, hopefully!)
-    - npm clean
-    - npm full-prod-build
+    - npm run clean
+    - npm run full-prod-build
+    # used to be yarn clean / yarn full-prod-build
     # Test the app.
     - cd djAerolith && ./manage.py test -v2
 
