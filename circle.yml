@@ -1,7 +1,5 @@
 # Config file for CircleCI. See https://circleci.com/gh/domino14/Webolith
 machine:
-  pre:
-    - mkdir ~/.cache
   node:
     version: stable
   python:
