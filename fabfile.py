@@ -46,9 +46,11 @@ def _deploy(role, skipjs):
         # Deploy JS build.
         if skipjs is False:
             deploy_js_build()
-        f = open('config/config.env', 'wb')
+        # Write a config file locally, and put it remotely.
+        f = open('temp_config.env', 'wb')
         f.write(base64.b64decode(os.getenv(config_envvar)))
         f.close()
+        put('temp_config.env', '/home/ubuntu/webolith/config/config.env')
         run("docker exec -it webolith_app_1 ../scripts/deploy.sh")
 
 
