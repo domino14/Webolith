@@ -10,7 +10,7 @@ import _ from 'underscore';
 
 // The maximum number of questions that can be displayed on a table
 // at once (any more are outside of the viewport).
-const MAX_SCREEN_QUESTIONS = 50;
+const MAX_SCREEN_QUESTIONS = 52;
 const Game = function GameConstructor() {
   this.curQuestions = Immutable.List();
   this.origQuestions = Immutable.OrderedMap();
@@ -81,7 +81,10 @@ Game.prototype.solve = function GameSolve(word, alphagram) {
   if (widx == null) {
     return;
   }
-
+  // Don't solve if the alphagram doesn't match.
+  if (!this.origQuestions.get(alphagram)) {
+    return;
+  }
   delete this.wrongWordsHash[word];
 
   // Update the word object; add a solved property.

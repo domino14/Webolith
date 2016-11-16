@@ -63,7 +63,7 @@ gulp.task('lint', () =>
   .pipe(eslint.failAfterError()));
 
 gulp.task('watch', () => {
-  gulp.watch(paths.wordwallsSrcJS, ['main']);
+  gulp.watch(paths.allWordwallsSrc, ['main']);
 });
 
 // Build the main "wordwalls" table production app.
