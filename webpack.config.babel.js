@@ -5,6 +5,7 @@ const webpack = require('webpack');
 export default {
   output: {
     filename: 'table-client-bundle.js',
+    publicPath: '/static/dist/',
   },
   devtool: 'source-map',
   module: {

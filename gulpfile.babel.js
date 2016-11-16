@@ -8,12 +8,17 @@ import webpack from 'webpack-stream';
 import gzip from 'gulp-gzip';
 import rjs from 'gulp-requirejs';
 import uglify from 'gulp-uglify';
+import mocha from 'gulp-mocha';
 
 import webpackConfig from './webpack.config.babel';
 import webpackProdConfig from './webpack.config-prod.babel';
 
 const paths = {
   wordwallsSrcJS: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/**/*.js?(x)',
+  wordwallsTestJS: 'djAerolith/wordwalls/static/js/wordwalls/test/**/*.js',
+  // TODO: merge this in once we move table create code to /js/wordwalls/
+  allWordwallsSrc: 'djAerolith/wordwalls/static/js/wordwalls/**/*.js?(x)',
+
   libDir: 'djAerolith/static/built',
   gulpFile: 'gulpfile.babel.js',
   webpackFile: 'webpack.config.babel.js',
@@ -21,6 +26,8 @@ const paths = {
   distDir: 'djAerolith/static/dist',
   clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/index.js',
   clientBundle: 'djAerolith/static/dist/table-client-bundle.js?(.map)',
+
+  allLibTests: 'djAerolith/static/built/test/**/*.js',
 };
 
 gulp.task('clean', () => del([
@@ -30,11 +37,15 @@ gulp.task('clean', () => del([
 ]));
 
 gulp.task('build', ['lint', 'clean'], () =>
-  gulp.src(paths.wordwallsSrcJS)
+  gulp.src(paths.allWordwallsSrc)
     .pipe(babel())
     .pipe(gulp.dest(paths.libDir)));
 
-gulp.task('main', ['lint', 'clean'], () =>
+gulp.task('test', ['build'], () =>
+  gulp.src(paths.allLibTests)
+    .pipe(mocha()));
+
+gulp.task('main', ['test'], () =>
   gulp.src(paths.clientEntryPoint)
     .pipe(webpack(webpackConfig))
     .pipe(gulp.dest(paths.distDir)));
@@ -42,6 +53,7 @@ gulp.task('main', ['lint', 'clean'], () =>
 gulp.task('lint', () =>
   gulp.src([
     paths.wordwallsSrcJS,
+    paths.wordwallsTestJS,
     paths.gulpFile,
     paths.webpackFile,
     paths.webpackProdFile,
@@ -55,7 +67,7 @@ gulp.task('watch', () => {
 });
 
 // Build the main "wordwalls" table production app.
-gulp.task('build-production', ['lint'], () =>
+gulp.task('build-production', ['test'], () =>
   gulp.src(paths.clientEntryPoint)
     .pipe(babel())
     .pipe(webpack(webpackProdConfig))
