@@ -11,6 +11,7 @@ const ChatBox = (props) => {
   return (
     <div
       className="panel panel-default"
+      style={{ marginBottom: '2px' }}
     >
       <div
         className="panel-body"

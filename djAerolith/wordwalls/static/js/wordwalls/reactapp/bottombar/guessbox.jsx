@@ -48,9 +48,9 @@ class GuessBox extends React.Component {
   render() {
     return (
       <div className="row">
-        <div className="col-sm-6">
+        <div className="col-xs-7 col-sm-6">
           <input
-            className="form-control input-sm"
+            className="form-control"
             type="text"
             placeholder="Guess"
             onChange={this.handleGuessChange}
@@ -62,9 +62,14 @@ class GuessBox extends React.Component {
             }}
           />
         </div>
-        <div className="col-sm-6">
+        <div className="hidden-xs col-sm-6">
           <span className="text-muted">
             Last: {this.props.lastGuess}
+          </span>
+        </div>
+        <div className="col-xs-5 visible-xs-inline-block">
+          <span className="text-muted">
+            {this.props.lastGuess}
           </span>
         </div>
       </div>

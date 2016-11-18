@@ -48,11 +48,11 @@
     - need to learn React tests.
 Minor tweaks:
 -[ ] Disable start briefly after pressing start.
--[ ] click to show solutions? (if users were in the middle of typing)
+~~-[ ] click to show solutions? (if users were in the middle of typing)~~
 -[ ] Move X button somewhere nicer, maybe move a couple other things
-    - [ ] autosave, list display length, etc.
+    - [x] autosave, list display length, etc.
 -[x] Use bootstrap icons instead of font awesome.
--[ ] As window shrinks UserBox should disappear or move elsewhere.
+-[x] As window shrinks UserBox should disappear or move elsewhere.
 
 Nice to haves:
 

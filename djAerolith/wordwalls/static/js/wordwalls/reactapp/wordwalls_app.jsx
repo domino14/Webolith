@@ -11,6 +11,7 @@ import StartButton from './topbar/start_button';
 import GameTimer from './topbar/game_timer';
 import GameBoard from './gameboard';
 import UserBox from './user_box';
+import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
@@ -403,6 +404,7 @@ class WordwallsApp extends React.Component {
     this.setState({
       curQuestions: game.getQuestionState(),
     });
+    this.guessBox.setFocus();
   }
 
   handleAlphagram() {
@@ -410,6 +412,7 @@ class WordwallsApp extends React.Component {
     this.setState({
       curQuestions: game.getQuestionState(),
     });
+    this.guessBox.setFocus();
   }
 
   handleCustomOrder() {
@@ -420,6 +423,7 @@ class WordwallsApp extends React.Component {
     this.setState({
       curQuestions: game.getQuestionState(),
     });
+    this.guessBox.setFocus();
   }
 
   handleGiveup() {
@@ -468,7 +472,7 @@ class WordwallsApp extends React.Component {
       <div>
         <div className="row">
           <div
-            className="col-xs-6 col-sm-4 col-md-4 col-lg-4"
+            className="col-xs-6 col-sm-4 col-md-3 col-lg-3"
           >
             <ListSaveBar
               listName={this.state.listName}
@@ -489,7 +493,7 @@ class WordwallsApp extends React.Component {
             />
           </div>
           <div
-            className="col-xs-4 col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-1 col-lg-2"
+            className="col-xs-4 col-sm-3 col-md-2 col-lg-2"
             style={{ whiteSpace: 'nowrap' }}
           >
             <StartButton
@@ -503,18 +507,12 @@ class WordwallsApp extends React.Component {
               gameGoing={this.state.gameGoing}
             />
           </div>
-          <div
-            style={{
-              position: 'absolute',
-              top: '5px',
-              right: '5px',
-            }}
-          >
-            <span className="text-danger"><i
-              className="glyphicon glyphicon-remove"
-              style={{ fontSize: '200%' }}
+          <div className="hidden-xs col-sm-2 col-md-1 col-lg-1">
+            <button
+              className="btn btn-danger btn-sm"
+              style={{ marginTop: '-6px' /* why? */}}
               onClick={() => (window.location = '/wordwalls')}
-            /></span>
+            >Exit</button>
           </div>
         </div>
 
@@ -553,7 +551,7 @@ class WordwallsApp extends React.Component {
             marginTop: '4px',
           }}
         >
-          <div className="col-xs-4 col-sm-5 col-md-5 col-lg-3">
+          <div className="col-xs-7 col-sm-5 col-md-5 col-lg-3">
             <GuessBox
               onGuessSubmit={this.onGuessSubmit}
               lastGuess={this.state.lastGuess}
@@ -562,7 +560,7 @@ class WordwallsApp extends React.Component {
             />
           </div>
           <div
-            className="col-xs-8 col-sm-7 col-md-5 col-lg-5"
+            className="col-xs-5 col-sm-7 col-md-5 col-lg-5"
             style={{
               marginTop: '-3px',
             }}
@@ -574,14 +572,20 @@ class WordwallsApp extends React.Component {
             />
           </div>
         </div>
-        <div
-          className="row"
-          style={{
-            marginTop: '4px',
-          }}
-        >
+        <div className="row" style={{ marginTop: '4px' }}>
           <div className="col-xs-12 col-sm-10 col-md-9 col-lg-7">
             <ChatBox messages={this.state.messages} />
+          </div>
+        </div>
+        <div
+          className="row visible-xs-block"
+        >
+          <div className="col-xs-12">
+            <ReducedUserBox
+              answeredByMe={this.state.answeredByMe}
+              totalWords={this.state.totalWords}
+              username={this.props.username}
+            />
           </div>
         </div>
         <ChallengeResults

@@ -4,7 +4,6 @@ import Immutable from 'immutable';
 import WordPartDisplay from './word_part_display';
 
 const UserBox = (props) => {
-  // var answers, percentScore, fractionScore;
   const answers = [];
   props.answeredByMe.forEach((word, idx) => {
     answers.push(
@@ -32,7 +31,7 @@ const UserBox = (props) => {
   const percentScore = props.totalWords > 0 ?
     (100 * (props.answeredByMe.length / props.totalWords)).toFixed(1) : 0;
 
-  const fractionScore = `${props.answeredByMe.length} / ${props.totalWords}`;
+  const fractionScore = `${props.answeredByMe.length}/${props.totalWords}`;
 
   return (
     <div className="panel panel-default">
@@ -56,10 +55,20 @@ const UserBox = (props) => {
       <div className="panel-footer">
         <div className="row">
           <div className="col-sm-4 col-md-4">
-            <span>{`${percentScore}%`}</span>
+            <span
+              style={{ fontSize: '2em' }}
+              className="text text-success"
+            >{`${percentScore}%`}</span>
           </div>
           <div className="col-sm-8 col-md-6 col-md-offset-2">
-            <span>{fractionScore}</span>
+            <div
+              style={{
+                fontSize: '2em',
+                whiteSpace: 'nowrap',
+                textAlign: 'right',
+              }}
+              className="text text-success"
+            >{fractionScore}</div>
           </div>
         </div>
       </div>

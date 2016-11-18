@@ -17,7 +17,9 @@ class App {
     if (options.addlParams.style != null) {
       style = JSON.parse(options.addlParams.style);
       // Add default options that may not have been there.
-      style.tc.showChips = style.tc.showChips || false;
+      if (style.tc.showChips !== false) {
+        style.tc.showChips = true;
+      }
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
     } else {
       // Default style.
@@ -27,7 +29,7 @@ class App {
           customOrder: '',
           blankCharacter: '?',
           font: 'mono',
-          showChips: false,
+          showChips: true,
           bold: false,
         },
         bc: {
