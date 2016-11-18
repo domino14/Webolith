@@ -40,12 +40,15 @@ class WordwallsApp extends React.Component {
       numberOfRounds: 0,
       listName: this.props.listName,
       autoSave: this.props.autoSave,
+
+      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth,
     };
     // Bindings:
     this.timerRanOut = this.timerRanOut.bind(this);
     this.handleStart = this.handleStart.bind(this);
     this.handleAlphagram = this.handleAlphagram.bind(this);
-    this.handleAutoSaveChange = this.handleAutoSaveChange.bind(this);
+    this.handleAutoSaveToggle = this.handleAutoSaveToggle.bind(this);
     this.handleCustomOrder = this.handleCustomOrder.bind(this);
     this.handleGiveup = this.handleGiveup.bind(this);
     this.handleListNameChange = this.handleListNameChange.bind(this);
@@ -71,6 +74,8 @@ class WordwallsApp extends React.Component {
         }
       }
     });
+
+    window.addEventListener('resize', this.handleResize.bind(this));
   }
 
   onGuessSubmit(guess) {
@@ -141,11 +146,12 @@ class WordwallsApp extends React.Component {
     });
   }
 
-  handleAutoSaveChange(newAutosave) {
+  handleAutoSaveToggle() {
+    const newAutoSave = !this.state.autoSave;
     this.setState({
-      autoSave: newAutosave,
+      autoSave: newAutoSave,
     });
-    if (newAutosave) {
+    if (newAutoSave) {
       if (!this.state.gameGoing) {
         this.saveGame();
       }
@@ -224,6 +230,13 @@ class WordwallsApp extends React.Component {
         isChallenge: data.gameType === 'challenge',
       });
     }
+  }
+
+  handleResize() {
+    this.setState({
+      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth,
+    });
   }
 
   /**
@@ -426,6 +439,31 @@ class WordwallsApp extends React.Component {
   }
 
   render() {
+    // Calculate board width, height, grid dimensions from window
+    // dimensions.
+    // This is the size of a question in pixels. We should make these
+    // dynamic later to allow users to zoom in, etc.
+    const questionWidth = 180;
+    const questionHeight = 30;
+    let boardGridWidth;
+    const boardGridHeight = 13;
+
+    // Magic numbers; if we modify these we'll have to figure something out.
+    if (this.state.windowWidth < 768) {
+      // We take up 100%.
+      boardGridWidth = Math.max(
+        Math.floor(this.state.windowWidth / questionWidth), 1);
+    } else if (this.state.windowWidth < 992) {
+      // This gets tricky because the UserBox component gets in the way.
+      boardGridWidth = 3;
+    } else {
+      boardGridWidth = 4;
+    }
+
+    const boardWidth = questionWidth * boardGridWidth;
+    const boardHeight = questionHeight * boardGridHeight;
+    game.setMaxOnScreenQuestions(boardGridWidth * boardGridHeight);
+
     return (
       <div>
         <div className="row">
@@ -436,13 +474,13 @@ class WordwallsApp extends React.Component {
               listName={this.state.listName}
               autoSave={this.state.autoSave}
               onListNameChange={this.handleListNameChange}
-              onAutoSaveChange={this.handleAutoSaveChange}
+              onAutoSaveToggle={this.handleAutoSaveToggle}
             />
           </div>
           <div
-            className="col-xs-1 col-xs-offset-1 col-sm-1 col-md-1 col-lg-1"
+            className="col-xs-1 col-sm-1 col-md-1 col-lg-1"
             style={{
-              marginTop: '-2px',
+              marginTop: '-4px',
             }}
           >
             <Preferences
@@ -450,7 +488,10 @@ class WordwallsApp extends React.Component {
               onSave={this.setDisplayStyle}
             />
           </div>
-          <div className="col-xs-4 col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-1 col-lg-2">
+          <div
+            className="col-xs-4 col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-1 col-lg-2"
+            style={{ whiteSpace: 'nowrap' }}
+          >
             <StartButton
               handleStart={this.handleStart}
               handleGiveup={this.handleGiveup}
@@ -489,9 +530,13 @@ class WordwallsApp extends React.Component {
               onShuffle={this.onShuffleQuestion}
               gameGoing={this.state.gameGoing}
               markMissed={this.markMissed}
+              width={boardWidth}
+              height={boardHeight}
+              gridWidth={boardGridWidth}
+              gridHeight={boardGridHeight}
             />
           </div>
-          <div className="col-xs-4 col-sm-3 col-md-3 col-lg-2">
+          <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
             <UserBox
               showLexiconSymbols={
                 !this.state.displayStyle.bc.hideLexiconSymbols}

@@ -70,13 +70,6 @@ class GameBoard extends React.Component {
   }
 }
 
-GameBoard.defaultProps = {
-  width: 720,
-  height: 390,
-  gridWidth: 4,
-  gridHeight: 13,
-};
-
 GameBoard.propTypes = {
   numberOfRounds: React.PropTypes.number,
   curQuestions: React.PropTypes.instanceOf(Immutable.List),

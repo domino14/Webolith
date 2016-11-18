@@ -10,7 +10,6 @@ import _ from 'underscore';
 
 // The maximum number of questions that can be displayed on a table
 // at once (any more are outside of the viewport).
-const MAX_SCREEN_QUESTIONS = 52;
 const Game = function GameConstructor() {
   this.curQuestions = Immutable.List();
   this.origQuestions = Immutable.OrderedMap();
@@ -30,6 +29,7 @@ Game.prototype.init = function GameInit(questions) {
   // Answered by me is a list of words answered by the current user.
   this.answeredByMe = [];
   this.totalWords = 0;
+  this.maxOnScreenQuestions = 52;  // Default.
   questions.forEach((question, aidx) => {
     const newWMap = {};
     question.ws.forEach((word, idx) => {
@@ -118,7 +118,7 @@ Game.prototype.solve = function GameSolve(word, alphagram) {
       // Create an empty map. This will not be rendered by the front end.
       Immutable.fromJS({}));
 
-    if (this.alphagramsLeft > MAX_SCREEN_QUESTIONS) {
+    if (this.alphagramsLeft >= this.maxOnScreenQuestions) {
       // If we can't fit all the words in the screen, we want to replace
       // the word we just solved.
       replacementAlpha = this.curQuestions.last();
@@ -131,6 +131,10 @@ Game.prototype.solve = function GameSolve(word, alphagram) {
     }
     return newObj;
   });
+};
+
+Game.prototype.setMaxOnScreenQuestions = function setMaxOnScreenQuestions(n) {
+  this.maxOnScreenQuestions = n;
 };
 /**
  * Get the current question state.

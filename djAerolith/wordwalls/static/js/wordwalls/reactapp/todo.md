@@ -38,12 +38,14 @@
     - [x] webpack, etc. require doesn't seem to work (maybe that's good and will force me to figure it out)
     - [x] Probably turn everything into ES6 / remove require... ;(
 -[x] optimization (don't handle unseen elements, etc)
-    - [ ] check on slower computers (my old macbook)
+    - [x] check on slower computers (my old macbook) --- it's pretty fast on Chromebits!
 -[x] autofocus guess on start
 -[x] Search for XXX/TODO/etc.
 -[x] ran out of time too early bug :(
     -  Pretty sure this has to do with bringing computer back from sleep and
     starting game too soon afterwards.
+-[x] tests (this one can be neverending, but some tests are ok, can always add more)
+    - need to learn React tests.
 Minor tweaks:
 -[ ] Disable start briefly after pressing start.
 -[ ] click to show solutions? (if users were in the middle of typing)
@@ -53,7 +55,7 @@ Minor tweaks:
 -[ ] As window shrinks UserBox should disappear or move elsewhere.
 
 Nice to haves:
--[ ] tests
+
     - need to learn how to write front end tests.
 -[ ] on hover things
     - show alphagrams solved, number of alphagrams, etc

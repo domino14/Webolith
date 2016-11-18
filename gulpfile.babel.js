@@ -45,7 +45,9 @@ gulp.task('test', ['build'], () =>
   gulp.src(paths.allLibTests)
     .pipe(mocha()));
 
-gulp.task('main', ['test'], () =>
+// Putting in 'test' in the dependencies below slows it down, but
+// we should run it before committing.
+gulp.task('main', ['lint', 'clean'], () =>
   gulp.src(paths.clientEntryPoint)
     .pipe(webpack(webpackConfig))
     .pipe(gulp.dest(paths.distDir)));

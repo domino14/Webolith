@@ -72,7 +72,7 @@ class ResultsComponent extends React.Component {
             </div>
 
             <div
-              className="modal-body"
+              className="modal-body table-responsive"
               style={{
                 overflowY: 'scroll',
                 height: '500px',

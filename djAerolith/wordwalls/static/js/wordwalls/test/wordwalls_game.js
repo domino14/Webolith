@@ -45,12 +45,21 @@ describe('Game State', () => {
       game.getAnsweredByMe().length.should.equal(0);
       game.getOriginalQuestionState().getIn(['DENOR',
         'answersRemaining']).should.equal(3);
+      game.alphagramsLeft.should.equal(7);
     });
     it('should not solve an alphagram that is not in the answers', () => {
       game.solve('ANEAR', 'AAAAA');
       game.getAnsweredByMe().length.should.equal(0);
       game.getOriginalQuestionState().getIn(['AAENR',
         'answersRemaining']).should.equal(2); // ANEAR ARENA
+    });
+    it('should correctly calculate alphagrams left', () => {
+      game.solve('ANEAR', 'AAENR');
+      game.solve('ARENA', 'AAENR');
+      game.getAnsweredByMe().length.should.equal(2);
+      game.getOriginalQuestionState().getIn(['AAENR',
+        'answersRemaining']).should.equal(0);
+      game.alphagramsLeft.should.equal(6);
     });
   });
 });

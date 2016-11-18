@@ -30,7 +30,7 @@ class StartButton extends React.Component {
         className={buttonClass}
         onClick={this.handleButtonClick}
         style={{
-          marginTop: '-4px',
+          marginTop: '-6px',
         }}
       >{buttonText}</button>
     );

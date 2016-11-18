@@ -7,7 +7,7 @@ export default {
     filename: 'table-client-bundle.js',
     publicPath: '/static/dist/',
   },
-  devtool: 'source-map',
+  devtool: 'eval-cheap-source-map',
   module: {
     loaders: [
       {

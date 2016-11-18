@@ -1,24 +1,27 @@
 import React from 'react';
-import _ from 'underscore';
 
 import PrefsModalBody from './prefs_modal_body';
 
 class PrefsModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tilesOn: this.props.displayStyle.tc.on,
-      customTileOrder: this.props.displayStyle.tc.customOrder,
-      blankCharacter: this.props.displayStyle.tc.blankCharacter,
-      fontSans: this.props.displayStyle.tc.font === 'sans',
-      showBorders: this.props.displayStyle.bc.showBorders,
-      showChips: this.props.displayStyle.tc.showChips,
-      showBold: this.props.displayStyle.tc.bold,
-      hideLexiconSymbols: this.props.displayStyle.bc.hideLexiconSymbols,
+  static styleToState(displayStyle) {
+    return {
+      tilesOn: displayStyle.tc.on,
+      customTileOrder: displayStyle.tc.customOrder,
+      blankCharacter: displayStyle.tc.blankCharacter,
+      fontSans: displayStyle.tc.font === 'sans',
+      showBorders: displayStyle.bc.showBorders,
+      showChips: displayStyle.tc.showChips,
+      showBold: displayStyle.tc.bold,
+      hideLexiconSymbols: displayStyle.bc.hideLexiconSymbols,
 
       saveAllowed: true,
     };
-    this.initialState = _.clone(this.state);
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = PrefsModal.styleToState(this.props.displayStyle);
+
     this.onOptionsModify = this.onOptionsModify.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
     this.reset = this.reset.bind(this);
@@ -35,8 +38,8 @@ class PrefsModal extends React.Component {
     this.setState(newState);
   }
 
-  reset() {
-    this.setState(this.initialState);
+  reset(displayStyle) {
+    this.setState(PrefsModal.styleToState(displayStyle));
   }
 
   /**

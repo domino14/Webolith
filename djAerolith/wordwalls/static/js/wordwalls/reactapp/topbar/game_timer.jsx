@@ -109,16 +109,12 @@ class GameTimer extends React.Component {
       cn = 'label label-info';
     }
     return (
-      <h3
-        style={{
-          display: 'inline-block',
-          marginLeft: '5px',
-          marginTop: '0px' }}
+      <span
+        className={cn}
+        style={{ fontSize: '1.3em', marginLeft: '2px' }}
       >
-        <span className={cn}>
-          {GameTimer.getFormattedTime(this.state.timeRemaining)}
-        </span>
-      </h3>
+        {GameTimer.getFormattedTime(this.state.timeRemaining)}
+      </span>
     );
   }
 }

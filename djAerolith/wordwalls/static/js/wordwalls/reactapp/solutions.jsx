@@ -54,7 +54,7 @@ const Solutions = (props) => {
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-12">
+        <div className="col-lg-12 table-responsive">
           <table
             className="table table-condensed table-bordered"
           >

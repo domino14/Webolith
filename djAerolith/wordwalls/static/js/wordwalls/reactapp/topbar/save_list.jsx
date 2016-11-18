@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 
 class ListSaveBar extends React.Component {
@@ -8,7 +9,7 @@ class ListSaveBar extends React.Component {
     };
     this.handleEdit = this.handleEdit.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleAutoSaveChange = this.handleAutoSaveChange.bind(this);
+    this.handleAutoSaveToggle = this.handleAutoSaveToggle.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
@@ -23,8 +24,8 @@ class ListSaveBar extends React.Component {
     this.props.onListNameChange(event.target.value);
   }
 
-  handleAutoSaveChange(event) {
-    this.props.onAutoSaveChange(event.target.checked);
+  handleAutoSaveToggle() {
+    this.props.onAutoSaveToggle();
   }
 
   handleKeyPress(e) {
@@ -38,78 +39,80 @@ class ListSaveBar extends React.Component {
   }
 
   render() {
-    let spanStyle;
+    let listNameStyle;
     let inputStyle;
     let pencilStyle;
+    let saveStyle;
+    let saveClass = '';
     if (this.state.inputEditable) {
-      spanStyle = {
+      listNameStyle = {
         display: 'none',
       };
       pencilStyle = {
         display: 'none',
       };
+      saveStyle = {
+        display: 'none',
+      };
     } else {
-      spanStyle = {
+      listNameStyle = {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        display: 'block',
-        width: '100%',
+        width: 'calc(100% - 10px - 2em)',
+        display: 'inline-block',
+      };
+      pencilStyle = {
+        marginLeft: '5px',
+        top: '-4px',
+        display: 'inline-block',
+      };
+      saveStyle = {
+        marginLeft: '5px',
+        display: 'inline-block',
       };
       inputStyle = {
         display: 'none',
       };
-      pencilStyle = {
-        marginLeft: '5px',
-      };
+    }
+    if (this.props.autoSave) {
+      saveClass = 'text-success';
     }
     return (
-      <div>
-        <div className="row">
-          <div className="col-xs-8">
-            <div className="row">
-              <div className="col-xs-10">
-                <span
-                  style={spanStyle}
-                >{this.props.listName}</span>
-              </div>
-              <div className="col-xs-2">
-                <i
-                  className="glyphicon glyphicon-pencil"
-                  aria-hidden="true"
-                  style={pencilStyle}
-                  onClick={this.handleEdit}
-                />
-              </div>
-            </div>
-
-            <input
-              type="text"
-              className="form-control input-sm"
-              style={inputStyle}
-              value={this.props.listName}
-              onChange={this.handleNameChange}
-              onKeyPress={this.handleKeyPress}
-              ref={(input) => {
-                if (input != null) {
-                  input.focus();
-                }
-              }}
-            />
-          </div>
-          <div className="col-xs-4">
-            <label
-              className="checkbox-inline"
-              htmlFor="auto-save-checkbox"
-            >
-              <input
-                id="auto-save-checkbox"
-                type="checkbox"
-                checked={this.props.autoSave}
-                onChange={this.handleAutoSaveChange}
-              /> Autosave</label>
-          </div>
+      <div
+        style={{ whiteSpace: 'nowrap' }}
+      >
+        <div
+          style={listNameStyle}
+        >{this.props.listName}</div>
+        <div
+          className="glyphicon glyphicon-pencil"
+          aria-hidden="true"
+          style={pencilStyle}
+          onClick={this.handleEdit}
+        />
+        <div
+          className={saveClass}
+          style={saveStyle}
+          onClick={this.handleAutoSaveToggle}
+        ><span
+          className="glyphicon glyphicon-hdd"
+          style={{ top: '-4px' }}
+        />
         </div>
+        <input
+          type="text"
+          className="form-control input-sm"
+          style={inputStyle}
+          value={this.props.listName}
+          onChange={this.handleNameChange}
+          onKeyPress={this.handleKeyPress}
+          ref={(input) => {
+            if (input != null) {
+              input.focus();
+            }
+          }}
+        />
       </div>
     );
   }
@@ -124,7 +127,7 @@ ListSaveBar.propTypes = {
   listName: React.PropTypes.string,
   autoSave: React.PropTypes.bool,
   onListNameChange: React.PropTypes.func,
-  onAutoSaveChange: React.PropTypes.func,
+  onAutoSaveToggle: React.PropTypes.func,
 };
 
 export default ListSaveBar;

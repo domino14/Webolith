@@ -9,7 +9,9 @@ class Preferences extends React.Component {
   }
 
   resetSettings() {
-    this.myPrefsModal.reset();
+    // Make sure that the preferences modal matches the display style
+    // currently in the props.
+    this.myPrefsModal.reset(this.props.displayStyle);
   }
 
   render() {
@@ -22,7 +24,7 @@ class Preferences extends React.Component {
         >
           <i
             className="glyphicon glyphicon-cog"
-            style={{ fontSize: '200%' }}
+            style={{ fontSize: '175%' }}
             aria-hidden="true"
           />
         </div>
