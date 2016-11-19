@@ -7,6 +7,16 @@ import QuestionText from './question_text';
 
 const DEFAULT_BLANK_CHARACTER = '?';
 
+const ColorConstants = {
+  White: '#feffa2',
+  Black: '#3e3f3a',
+  Green: '#5ef386',
+  Yellow: '#d3e948',
+  Blue: '#60c0dc',
+  Purple: '#725ef3',
+  Magenta: '#e95ad6',
+};
+
 class WordwallsQuestion extends React.Component {
   /**
    * Get the dimensions of a tile given the length of the word.
@@ -21,14 +31,14 @@ class WordwallsQuestion extends React.Component {
       newLength = length + 1;
     }
     if (newLength <= 8) {
-      return [18, 20];
+      return [18, 18];
     }
     return {
-      9: [17, 19],
-      10: [16, 18],
-      11: [14.5, 16],
-      12: [13, 14.5],
-      13: [12, 13],
+      9: [17, 17],
+      10: [16, 16],
+      11: [14.5, 14.5],
+      12: [13, 13],
+      13: [12, 12],
       14: [11.5, 11.5],
       15: [10.75, 10.75],
       // Only when a chip is added.
@@ -37,70 +47,71 @@ class WordwallsQuestion extends React.Component {
   }
 
   /**
-   * Get the color for this tile given the number of anagrams.
-   * Use the bootstrap theme's colors and ROYGBIV ordering.
-   * @param  {number} numAnagrams - cannot be higher than 9.
-   * @return {Object} A color hex code, opacity, text color,
-   *  alternate text color. The alternate text color is used
-   *  for when tiles are off.
+   * Get a color given the number of anagrams.
+   * @param  {number} numAnagrams
+   * @return {Object} A color hex code, opacity, text color, outline.
    */
   static getColorFromAnagrams(numAnagrams) {
+    let effectiveNumAnagrams = numAnagrams;
+    if (numAnagrams > 9) {
+      effectiveNumAnagrams = 9;
+    }
     return {
-      9: {  // dark (black)
-        color: '#3e3f3a',
+      9: {
+        color: ColorConstants.Black,
         opacity: 1,
-        textColor: '#ffffff',
-        alternateTextColor: '#800080',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      8: {  // Gray tile.
-        color: '#3e3f3a',
+      8: {
+        color: ColorConstants.Black,
         opacity: 0.65,
-        textColor: '#ffffff',
-        alternateTextColor: '#400040',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      7: {  // Dark blue.
+      7: {
         color: '#325d88',
         opacity: 1,
-        textColor: '#ffffff',
-        alternateTextColor: '#325d88',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      6: {  // Lighter blue.
-        color: '#29abe0',
+      6: {
+        color: ColorConstants.Blue,
         opacity: 1,
-        textColor: '#ffffff',
-        alternateTextColor: '#29abe0',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      5: {  // A greenish color.
-        color: '#93c54b',
+      5: {
+        color: ColorConstants.Green,
         opacity: 1,
-        textColor: '#ffffff',
-        alternateTextColor: '#93c54b',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      4: {  // A light yellow
-        color: '#fce053',
+      4: {
+        color: ColorConstants.Yellow,
         opacity: 1,
-        textColor: '#3e3f3a',
-        alternateTextColor: '#938231',
+        textColor: ColorConstants.Black,
+        outline: '#7e7f7a',
       },
-      3: {  // Orange
-        color: '#f47c3c',
+      3: {
+        color: ColorConstants.Magenta,
         opacity: 1,
-        textColor: '#ffffff',
-        alternateTextColor: '#f47c3c',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      2: {  // Red
-        color: '#d9534f',
+      2: {
+        color: ColorConstants.Purple,
         opacity: 1,
-        textColor: '#ffffff',
-        alternateTextColor: '#d9534f',
+        textColor: ColorConstants.White,
+        outline: '#7e7f7a',
       },
-      1: {  // White tile, dark text.
-        color: '#ffffff',
+      1: {
+        color: '#fff0a2',
         opacity: 1,
-        textColor: '#3e3f3a',
-        alternateTextColor: '#3e3f3a',
+        textColor: ColorConstants.Black,
+        outline: '#7e7f7a',
       },
-    }[String(numAnagrams)];
+    }[effectiveNumAnagrams];
   }
 
   constructor() {
@@ -118,7 +129,7 @@ class WordwallsQuestion extends React.Component {
       height={this.props.ySize}
       x={this.props.gridX}
       y={this.props.gridY}
-      stroke="#3e3f3a"
+      stroke="#7e7f7a"
       strokeWidth="1px"
       fill="none"
       strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
@@ -130,19 +141,13 @@ class WordwallsQuestion extends React.Component {
   }
 
   render() {
-    // var tiles, numAnagrams, x, y,
-      // tileWidth, tileHeight, key, heightPct, xPadding, dims, color,
-      // numberFontSize, letterFontSize, countFrom, letter;
     const tiles = [];
-    let numAnagrams;
 
-    if (this.props.words) {
-      numAnagrams = Math.min(this.props.words.size, 9);
-    } else {
+    if (!this.props.words) {
       // No words for this question; return an empty g.
       return <g>{this.borderRectangle()}</g>;
     }
-    const color = WordwallsQuestion.getColorFromAnagrams(numAnagrams);
+    const color = WordwallsQuestion.getColorFromAnagrams(this.props.words.size);
     const dims = WordwallsQuestion.getTileDimensions(this.props.letters.length,
       this.props.displayStyle.showChips);
     const tileWidth = dims[0];
@@ -172,7 +177,7 @@ class WordwallsQuestion extends React.Component {
     let x;
     let letter;
 
-    if (this.props.displayStyle.on) {
+    if (this.props.displayStyle.tilesOn) {
       for (let i = countFrom, letterIdx = 0;
             i < this.props.letters.length + countFrom;
             i += 1, letterIdx += 1) {
@@ -184,7 +189,7 @@ class WordwallsQuestion extends React.Component {
         }
         tiles.push(
           <Tile
-            color={color}
+            tileStyle={this.props.displayStyle.tileStyle}
             key={`q${this.props.qNumber}tile${letterIdx}`}
             x={x}
             y={y}
@@ -200,7 +205,6 @@ class WordwallsQuestion extends React.Component {
         <QuestionText
           font={this.props.displayStyle.font}
           bold={this.props.displayStyle.bold}
-          color={color}
           key={`q${this.props.qNumber}qtext`}
           x={xPadding + (countFrom * (tileWidth + 1))}
           y={this.props.gridY + (this.props.ySize / 2)}
@@ -224,7 +228,8 @@ class WordwallsQuestion extends React.Component {
 WordwallsQuestion.propTypes = {
   displayStyle: React.PropTypes.shape({
     showChips: React.PropTypes.bool,
-    on: React.PropTypes.bool,
+    tilesOn: React.PropTypes.bool,
+    tileStyle: React.PropTypes.string,
     font: React.PropTypes.string,
     showBorders: React.PropTypes.bool,
     bold: React.PropTypes.bool,

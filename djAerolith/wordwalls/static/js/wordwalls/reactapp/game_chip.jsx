@@ -10,7 +10,7 @@ const GameChip = (props) => {
         cx={0}
         cy={0}
         r={props.radius}
-        stroke="black"
+        stroke={props.color.outline}
         strokeWidth="0.5px"
         fill={props.color.color}
         opacity={props.color.opacity}
@@ -38,7 +38,7 @@ GameChip.propTypes = {
     color: React.PropTypes.string,
     opacity: React.PropTypes.number,
     textColor: React.PropTypes.string,
-    alternateTextColor: React.PropTypes.string,
+    outline: React.PropTypes.string,
   }),
   fontSize: React.PropTypes.number,
   number: React.PropTypes.number,

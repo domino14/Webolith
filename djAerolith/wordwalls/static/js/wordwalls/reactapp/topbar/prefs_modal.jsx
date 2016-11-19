@@ -6,6 +6,7 @@ class PrefsModal extends React.Component {
   static styleToState(displayStyle) {
     return {
       tilesOn: displayStyle.tc.on,
+      tileStyle: displayStyle.tc.selection,
       customTileOrder: displayStyle.tc.customOrder,
       blankCharacter: displayStyle.tc.blankCharacter,
       fontSans: displayStyle.tc.font === 'sans',
@@ -51,6 +52,7 @@ class PrefsModal extends React.Component {
     this.props.onSave({
       tc: {
         on: this.state.tilesOn,
+        selection: this.state.tileStyle,
         bold: this.state.showBold,
         customOrder: this.state.customTileOrder,
         blankCharacter: this.state.blankCharacter,
@@ -109,6 +111,7 @@ class PrefsModal extends React.Component {
               // as to what is checked/selected. This seems easiest.
               onOptionsModify={this.onOptionsModify}
               tilesOn={this.state.tilesOn}
+              tileStyle={this.state.tileStyle}
               customTileOrder={this.state.customTileOrder}
               blankCharacter={this.state.blankCharacter}
               fontSans={this.state.fontSans}

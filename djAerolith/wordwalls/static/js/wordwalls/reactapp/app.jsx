@@ -20,12 +20,16 @@ class App {
       if (style.tc.showChips !== false) {
         style.tc.showChips = true;
       }
+      if (!style.tc.selection) {
+        style.tc.selection = '1';
+      }
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
     } else {
       // Default style.
       style = {
         tc: {
           on: true,
+          selection: '1',
           customOrder: '',
           blankCharacter: '?',
           font: 'mono',

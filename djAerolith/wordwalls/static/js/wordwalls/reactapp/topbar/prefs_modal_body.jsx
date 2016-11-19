@@ -5,6 +5,7 @@ import _ from 'underscore';
 import WordwallsQuestion from '../wordwalls_question';
 import Checkbox from '../forms/checkbox';
 import TextInput from '../forms/text_input';
+import Select from '../forms/select';
 
 class PrefsModalBody extends React.Component {
   /**
@@ -16,6 +17,17 @@ class PrefsModalBody extends React.Component {
   static calculateLettersRemaining(tileOrder) {
     const allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ?';
     return _.difference(allLetters.split(''), tileOrder.split('')).join('');
+  }
+
+  static getTileStyleOptions() {
+    const options = [];
+    for (let i = 1; i < 10; i += 1) {
+      options.push({
+        value: String(i),
+        displayValue: `Style ${i}`,
+      });
+    }
+    return options;
   }
 
   constructor(props) {
@@ -31,10 +43,15 @@ class PrefsModalBody extends React.Component {
     };
     this.onBlankCharChange = this.onBlankCharChange.bind(this);
     this.onTileOrderChange = this.onTileOrderChange.bind(this);
+    this.onTileStyleChange = this.onTileStyleChange.bind(this);
   }
 
   onBlankCharChange(event) {
     this.props.onOptionsModify('blankCharacter', event.target.value);
+  }
+
+  onTileStyleChange(event) {
+    this.props.onOptionsModify('tileStyle', event.target.value);
   }
 
   onTileOrderChange(event) {
@@ -63,14 +80,22 @@ class PrefsModalBody extends React.Component {
     let formElements;
     if (this.props.tilesOn) {
       formElements = (
-        <TextInput
-          colSize={2}
-          label="Blank Character"
-          maxLength={1}
-          value={this.props.blankCharacter}
-          onChange={this.onBlankCharChange}
-          onKeyPress={() => {}}
-        />
+        <div>
+          <Select
+            label="Tile Style"
+            selectedValue={this.props.tileStyle}
+            onChange={this.onTileStyleChange}
+            options={PrefsModalBody.getTileStyleOptions()}
+          />
+          <TextInput
+            colSize={2}
+            label="Blank Character"
+            maxLength={1}
+            value={this.props.blankCharacter}
+            onChange={this.onBlankCharChange}
+            onKeyPress={() => {}}
+          />
+        </div>
       );
     } else {
       formElements = (
@@ -135,7 +160,8 @@ class PrefsModalBody extends React.Component {
                 xSize={180}
                 ySize={30}
                 displayStyle={{
-                  on: this.props.tilesOn,
+                  tilesOn: this.props.tilesOn,
+                  tileStyle: this.props.tileStyle,
                   customOrder: this.props.customTileOrder,
                   blankCharacter: this.props.blankCharacter,
                   font: this.props.fontSans ? 'sans' : 'mono',
@@ -214,6 +240,7 @@ class PrefsModalBody extends React.Component {
 PrefsModalBody.propTypes = {
   onOptionsModify: React.PropTypes.func,
   tilesOn: React.PropTypes.bool,
+  tileStyle: React.PropTypes.string,
   customTileOrder: React.PropTypes.string,
   blankCharacter: React.PropTypes.string,
   fontSans: React.PropTypes.bool,

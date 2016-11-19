@@ -5,15 +5,8 @@ import WordwallsQuestion from './wordwalls_question';
 import Solutions from './solutions';
 
 class GameBoard extends React.Component {
-  getQuestionStyle() {
-    const qStyle = this.props.displayStyle.tc;
-    qStyle.showBorders = this.props.displayStyle.bc.showBorders;
-    return qStyle;
-  }
-
   render() {
     const questions = [];
-    const questionDisplayStyle = this.getQuestionStyle();
     // xSize and ySize are the size that each question object takes
     // up.
     const xSize = this.props.width / this.props.gridWidth;
@@ -29,7 +22,15 @@ class GameBoard extends React.Component {
       // Only push questions that will fit on the game board.
       questions.push(
         <WordwallsQuestion
-          displayStyle={questionDisplayStyle}
+          displayStyle={{
+            tilesOn: this.props.displayStyle.tc.on,
+            tileStyle: this.props.displayStyle.tc.selection,
+            blankCharacter: this.props.displayStyle.tc.blankCharacter,
+            font: this.props.displayStyle.tc.font,
+            showChips: this.props.displayStyle.tc.showChips,
+            bold: this.props.displayStyle.tc.bold,
+            showBorders: this.props.displayStyle.bc.showBorders,
+          }}
           letters={question.get('displayedAs')}
           key={idx}
           qNumber={idx}
