@@ -1,4 +1,7 @@
 import React from 'react';
+import $ from 'jquery';
+
+const DISABLE_BUTTON_TIMEOUT = 1000;
 
 class StartButton extends React.Component {
   constructor() {
@@ -12,6 +15,9 @@ class StartButton extends React.Component {
     } else {
       this.props.handleStart();
     }
+    $(this.button).prop('disabled', true);
+    window.setTimeout(() => $(this.button).prop('disabled', false),
+      DISABLE_BUTTON_TIMEOUT);
   }
 
   render() {
@@ -28,6 +34,7 @@ class StartButton extends React.Component {
     return (
       <button
         className={buttonClass}
+        ref={btn => (this.button = btn)}
         onClick={this.handleButtonClick}
         style={{
           marginTop: '-6px',

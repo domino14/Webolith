@@ -77,6 +77,10 @@ class WordwallsApp extends React.Component {
     });
 
     window.addEventListener('resize', this.handleResize.bind(this));
+    // Tooltip.
+    $('.hovertip').tooltip({
+      placement: 'bottom',
+    });
   }
 
   onGuessSubmit(guess) {

@@ -82,6 +82,7 @@ class PrefsModalBody extends React.Component {
       formElements = (
         <div>
           <Select
+            colSize={2}
             label="Tile Style"
             selectedValue={this.props.tileStyle}
             onChange={this.onTileStyleChange}

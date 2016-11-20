@@ -43,7 +43,7 @@ class ListSaveBar extends React.Component {
     let inputStyle;
     let pencilStyle;
     let saveStyle;
-    let saveClass = '';
+    let saveClass = 'hovertip';
     if (this.state.inputEditable) {
       listNameStyle = {
         display: 'none',
@@ -76,7 +76,7 @@ class ListSaveBar extends React.Component {
       };
     }
     if (this.props.autoSave) {
-      saveClass = 'text-success';
+      saveClass = 'text-success hovertip';
     }
     return (
       <div
@@ -84,16 +84,24 @@ class ListSaveBar extends React.Component {
       >
         <div
           style={listNameStyle}
+          className="hovertip"
+          data-toggle="tooltip"
+          title={`This is the name of the word list. You can click the
+            pencil to change the name, or the disk icon to toggle autosave.`}
         >{this.props.listName}</div>
         <div
-          className="glyphicon glyphicon-pencil"
+          className="glyphicon glyphicon-pencil hovertip"
           aria-hidden="true"
           style={pencilStyle}
+          data-toggle="tooltip"
+          title="Edit the list name"
           onClick={this.handleEdit}
         />
         <div
           className={saveClass}
           style={saveStyle}
+          data-toggle="tooltip"
+          title="Click to toggle autosave at the end of each round."
           onClick={this.handleAutoSaveToggle}
         ><span
           className="glyphicon glyphicon-hdd"

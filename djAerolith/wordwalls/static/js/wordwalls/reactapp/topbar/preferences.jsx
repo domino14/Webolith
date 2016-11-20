@@ -19,13 +19,16 @@ class Preferences extends React.Component {
       <div>
         <div
           data-toggle="modal"
+          title="Preferences"
           onClick={this.resetSettings}
           data-target=".prefs-modal"
         >
           <i
-            className="glyphicon glyphicon-cog"
+            className="glyphicon glyphicon-cog hovertip"
             style={{ fontSize: '175%' }}
             aria-hidden="true"
+            title="Preferences"
+            data-toggle="tooltip"
           />
         </div>
         <PrefsModal
