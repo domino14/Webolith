@@ -56,14 +56,14 @@ const UserBox = (props) => {
         <div className="row">
           <div className="col-sm-4 col-md-4">
             <span
-              style={{ fontSize: '2em' }}
+              style={{ fontSize: '1.8em' }}
               className="text text-success"
             >{`${percentScore}%`}</span>
           </div>
           <div className="col-sm-8 col-md-6 col-md-offset-2">
             <div
               style={{
-                fontSize: '2em',
+                fontSize: '1.8em',
                 whiteSpace: 'nowrap',
                 textAlign: 'right',
               }}

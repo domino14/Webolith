@@ -40,11 +40,10 @@ const Solutions = (props) => {
       (${((100 * numCorrect) / props.totalWords).toFixed(1)}%)`;
   }
 
-  // console.log('rendering Solutions', JSON.stringify(this.props.questions));
   return (
     <div
       style={{
-        height: props.height,
+        // height: props.height,
         overflowX: 'hidden',
       }}
     >
@@ -55,9 +54,7 @@ const Solutions = (props) => {
       </div>
       <div className="row">
         <div className="col-lg-12 table-responsive">
-          <table
-            className="table table-condensed table-bordered"
-          >
+          <table className="table table-condensed table-bordered">
             <thead>
               <tr>
                 <th>Probability</th>
@@ -84,7 +81,7 @@ Solutions.propTypes = {
   answeredByMe: React.PropTypes.arrayOf(
     React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
-  height: React.PropTypes.number,
+ // height: React.PropTypes.number,
   markMissed: React.PropTypes.func,
   showLexiconSymbols: React.PropTypes.bool,
 };

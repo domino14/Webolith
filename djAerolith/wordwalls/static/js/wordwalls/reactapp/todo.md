@@ -47,9 +47,9 @@
 -[x] tests (this one can be neverending, but some tests are ok, can always add more)
     - need to learn React tests.
 Minor tweaks:
--[ ] Disable start briefly after pressing start.
+-[x] Disable start briefly after pressing start.
 ~~-[ ] click to show solutions? (if users were in the middle of typing)~~
--[ ] Move X button somewhere nicer, maybe move a couple other things
+-[x] Move X button somewhere nicer, maybe move a couple other things
     - [x] autosave, list display length, etc.
 -[x] Use bootstrap icons instead of font awesome.
 -[x] As window shrinks UserBox should disappear or move elsewhere.

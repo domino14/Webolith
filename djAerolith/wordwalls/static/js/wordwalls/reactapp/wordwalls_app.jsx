@@ -455,7 +455,6 @@ class WordwallsApp extends React.Component {
     const questionHeight = 30;
     let boardGridWidth;
     const boardGridHeight = 13;
-
     // Magic numbers; if we modify these we'll have to figure something out.
     if (this.state.windowWidth < 768) {
       // We take up 100%.
