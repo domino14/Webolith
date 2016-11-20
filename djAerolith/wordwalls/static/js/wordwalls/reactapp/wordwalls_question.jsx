@@ -7,16 +7,6 @@ import QuestionText from './question_text';
 
 const DEFAULT_BLANK_CHARACTER = '?';
 
-const ColorConstants = {
-  White: '#feffa2',
-  Black: '#3e3f3a',
-  Green: '#5ef386',
-  Yellow: '#d3e948',
-  Blue: '#60c0dc',
-  Purple: '#725ef3',
-  Magenta: '#e95ad6',
-};
-
 class WordwallsQuestion extends React.Component {
   /**
    * Get the dimensions of a tile given the length of the word.
@@ -31,87 +21,19 @@ class WordwallsQuestion extends React.Component {
       newLength = length + 1;
     }
     if (newLength <= 8) {
-      return [18, 18];
+      return [19, 19];
     }
     return {
-      9: [17, 17],
-      10: [16, 16],
-      11: [14.5, 14.5],
-      12: [13, 13],
-      13: [12, 12],
-      14: [11.5, 11.5],
-      15: [10.75, 10.75],
+      9: [18, 18],
+      10: [17, 17],
+      11: [15.5, 15.5],
+      12: [14, 14],
+      13: [13, 13],
+      14: [12.5, 12.5],
+      15: [11.75, 11.75],
       // Only when a chip is added.
-      16: [10, 10],
+      16: [11, 11],
     }[newLength];
-  }
-
-  /**
-   * Get a color given the number of anagrams.
-   * @param  {number} numAnagrams
-   * @return {Object} A color hex code, opacity, text color, outline.
-   */
-  static getColorFromAnagrams(numAnagrams) {
-    let effectiveNumAnagrams = numAnagrams;
-    if (numAnagrams > 9) {
-      effectiveNumAnagrams = 9;
-    }
-    return {
-      9: {
-        color: ColorConstants.Black,
-        opacity: 1,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      8: {
-        color: ColorConstants.Black,
-        opacity: 0.65,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      7: {
-        color: '#325d88',
-        opacity: 1,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      6: {
-        color: ColorConstants.Blue,
-        opacity: 1,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      5: {
-        color: ColorConstants.Green,
-        opacity: 1,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      4: {
-        color: ColorConstants.Yellow,
-        opacity: 1,
-        textColor: ColorConstants.Black,
-        outline: '#7e7f7a',
-      },
-      3: {
-        color: ColorConstants.Magenta,
-        opacity: 1,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      2: {
-        color: ColorConstants.Purple,
-        opacity: 1,
-        textColor: ColorConstants.White,
-        outline: '#7e7f7a',
-      },
-      1: {
-        color: '#fff0a2',
-        opacity: 1,
-        textColor: ColorConstants.Black,
-        outline: '#7e7f7a',
-      },
-    }[effectiveNumAnagrams];
   }
 
   constructor() {
@@ -147,7 +69,6 @@ class WordwallsQuestion extends React.Component {
       // No words for this question; return an empty g.
       return <g>{this.borderRectangle()}</g>;
     }
-    const color = WordwallsQuestion.getColorFromAnagrams(this.props.words.size);
     const dims = WordwallsQuestion.getTileDimensions(this.props.letters.length,
       this.props.displayStyle.showChips);
     const tileWidth = dims[0];
@@ -155,7 +76,7 @@ class WordwallsQuestion extends React.Component {
     const heightPct = tileHeight / this.props.ySize;
 
     const y = this.props.gridY + (this.props.ySize * ((1 - heightPct) / 2));
-    const xPadding = this.props.gridX + (tileWidth * 0.1);
+    const xPadding = this.props.gridX + 0.5;
     // XXX: This is a bit of an ugly formula, but it's fast.
     // See http://stackoverflow.com/a/22580176/1737333 for perhaps
     // a better approach.
@@ -164,10 +85,9 @@ class WordwallsQuestion extends React.Component {
     let countFrom = 0;
     if (this.props.displayStyle.showChips) {
       tiles.push(<Chip
-        radius={tileWidth / 2}
-        x={xPadding}
-        y={y}
-        color={color}
+        radius={(tileWidth / 2) - 1}
+        x={xPadding + 0.5}
+        y={y + 0.5}
         fontSize={numberFontSize}
         number={this.props.words.size}
         key={`q${this.props.qNumber}chip`}
@@ -181,7 +101,7 @@ class WordwallsQuestion extends React.Component {
       for (let i = countFrom, letterIdx = 0;
             i < this.props.letters.length + countFrom;
             i += 1, letterIdx += 1) {
-        x = xPadding + (i * (tileWidth + 1));
+        x = xPadding + (i * tileWidth);
         letter = this.props.letters[letterIdx];
         if (letter === DEFAULT_BLANK_CHARACTER &&
             this.props.displayStyle.blankCharacter !== '') {
