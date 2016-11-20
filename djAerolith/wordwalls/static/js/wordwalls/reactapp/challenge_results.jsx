@@ -22,10 +22,10 @@ class ResultsComponent extends React.Component {
     const parsedAddl = JSON.parse(addlData);
     const medalName = ResultsComponent.getMedalName(
       parsedAddl ? parsedAddl.medal.toLowerCase() : null);
-    const medal = medalName ? <img
+    const medal = medalName ? (<img
       src={`/static/img/aerolith/${medalName}_16x16.png`}
       alt={medalName}
-    /> : '';
+    />) : '';
     return (<a
       href={`/accounts/profile/${user}`}
       target="_blank"

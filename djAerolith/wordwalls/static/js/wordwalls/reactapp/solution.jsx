@@ -34,9 +34,9 @@ class Solution extends React.Component {
       );
     }
     const alphagram = (
-      this.props.wordPos === 0 ? <WordPartDisplay
+      this.props.wordPos === 0 ? (<WordPartDisplay
         text={this.props.alphagram}
-      /> : '');
+      />) : '');
 
     return (
       <tr>
