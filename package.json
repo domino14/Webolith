@@ -1,0 +1,67 @@
+{
+  "name": "webolith",
+  "version": "1.0.0",
+  "description": "A word study app",
+  "main": "index.js",
+  "repository": {
+    "url": "git@github.com:domino14/webolith",
+    "type": "git"
+  },
+  "author": "César Del Solar",
+  "license": "GPL-3.0",
+  "scripts": {
+    "start": "gulp",
+    "lint": "gulp lint",
+    "clean": "gulp clean",
+    "full-prod-build": "gulp full-prod-build",
+    "test": "gulp test"
+  },
+  "devDependencies": {
+    "babel-loader": "^6.2.7",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "bootstrap-webpack": "^0.0.5",
+    "chai": "^3.5.0",
+    "css-loader": "^0.25.0",
+    "del": "^2.2.2",
+    "eslint": "^3.9.1",
+    "eslint-config-airbnb": "latest",
+    "eslint-plugin-import": "^2.1.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.6.0",
+    "file-loader": "^0.9.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^3.0.1",
+    "gulp-gzip": "^1.4.0",
+    "gulp-mocha": "^3.0.1",
+    "gulp-requirejs": "^0.3.0",
+    "gulp-uglify": "^2.0.0",
+    "less": "^2.7.1",
+    "less-loader": "^2.2.3",
+    "mocha": "^3.1.2",
+    "react-addons-test-utils": "^15.3.2",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.3",
+    "webpack-stream": "^3.2.0"
+  },
+  "babel": {
+    "presets": [
+      "latest",
+      "react"
+    ]
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.16.0",
+    "bootstrap": "^3.3.7",
+    "immutable": "^3.8.1",
+    "jquery": "^3.1.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "underscore": "^1.8.3"
+  }
+}

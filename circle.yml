@@ -1,5 +1,7 @@
 # Config file for CircleCI. See https://circleci.com/gh/domino14/Webolith
 machine:
+  node:
+    version: stable
   python:
     # This is not quite the newest 2.7, but 2.7.12 takes an extra
     # two minutes to download every time. This really should not
@@ -18,6 +20,14 @@ machine:
     DICT_FILE_URL: https://s3-us-west-1.amazonaws.com/aerolith-files/dicts.tar.bz.enc
     # The password is in the circleci env.
     WORD_DB_LOCATION: /home/ubuntu/db
+dependencies:
+  pre:
+    - mkdir -p ~/.yarn-cache
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+  cache_directories:
+    - ~/.yarn-cache
+  override:
+    - yarn install
 test:
   pre:
     - pip install setuptools>=0.19
@@ -28,4 +38,20 @@ test:
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
   override:
+    # Build the js bundles.
+    - yarn full-prod-build
+    # Test the app.
     - cd djAerolith && ./manage.py test -v2
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - fab deploy:prod
+  staging:
+    branch: staging
+    commands:
+      - fab deploy:dev
+
+  # Don't deploy other branches.
+

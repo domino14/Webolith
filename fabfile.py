@@ -1,13 +1,17 @@
+import os
+import base64
+
 from fabric.api import (env, run, roles, cd, settings, prefix, lcd, put, local,
                         execute, sudo)
-import os
+
 from scripts.digoceanssh import get_servers
 from scripts.gen_firewall import gen_firewall
 
 curdir = os.path.dirname(__file__)
 print curdir
 
-env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
+# Don't specify a filename for the key - circle will do the right thing?
+# env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
     'prod': ['ubuntu@www.aerolith.org'],
     'dev': ['ubuntu@dev.aerolith.org'],
@@ -19,18 +23,34 @@ def deploy(role, skipjs=False):
     execute(_deploy, role, skipjs, role=role)
 
 
+def create_base64_env_file(role):
+    if role == 'prod':
+        config_file = 'config/prod_config.env'
+    elif role == 'dev':
+        config_file = 'config/dev_config.env'
+
+    f = open(config_file)
+    contents = f.read()
+    f.close()
+
+    print base64.b64encode(contents)
+
+
 def _deploy(role, skipjs):
     if role == 'prod':
-        config_file = 'prod_config.env'
+        config_envvar = 'PROD_CONFIG_FILE_B64'
     elif role == 'dev':
-        config_file = 'dev_config.env'
+        config_envvar = 'DEV_CONFIG_FILE_B64'
     with cd("webolith"):
         run("git pull")
         # Deploy JS build.
         if skipjs is False:
             deploy_js_build()
-        put(os.path.join(curdir, 'config', config_file),
-            'config/config.env')
+        # Write a config file locally, and put it remotely.
+        f = open('temp_config.env', 'wb')
+        f.write(base64.b64decode(os.getenv(config_envvar)))
+        f.close()
+        put('temp_config.env', '/home/ubuntu/webolith/config/config.env')
         run("docker exec -it webolith_app_1 ../scripts/deploy.sh")
 
 
@@ -47,35 +67,13 @@ def _deploy_word_db(lexicon_name, role):
             '%s.db' % lexicon_name)
 
 
-def create_js_build():
-    """
-        Uses r.js to generate a build.
-
-        Requires node.js on host computer, and
-
-        `npm install -g requirejs` for the r.js executable.
-    """
-    with lcd(os.path.join(curdir, 'djAerolith')):
-        local("r.js -o js_build/create_table_wordwalls.js")
-        local("r.js -o js_build/table_wordwalls.js")
-        local("r.js -o js_build/flashcards.js")
-        with settings(warn_only=True):
-            local("rm static/build/*.gz")
-        local("gzip -c static/build/table-main-built.js > "
-              "static/build/table-main-built.js.gz")
-        local("gzip -c static/build/create-table-main-built.js > "
-              "static/build/create-table-main-built.js.gz")
-        local("gzip -c static/build/flashcards-built.js > "
-              "static/build/flashcards-built.js.gz")
-
-
 def deploy_js_build():
-    create_js_build()
+    """ Assumes build has already been created with yarn. """
     with settings(warn_only=True):
         with cd("djAerolith/static"):
-            run("mkdir build")
-    put(os.path.join(curdir, 'djAerolith', 'static/build/*.gz'),
-        '/home/ubuntu/webolith/djAerolith/static/build/')
+            run("mkdir dist")
+    put(os.path.join(curdir, 'djAerolith', 'static/dist/*.gz'),
+        '/home/ubuntu/webolith/djAerolith/static/dist/')
 
 
 @roles('prod')
@@ -138,6 +136,7 @@ def init_database():
     have been created.
 
     """
+    local('python manage.py createcachetable')
     local('python manage.py migrate')
     local('python manage.py loaddata wordwalls/fixtures/test/lexica.json')
     local('python manage.py loaddata dcNames')

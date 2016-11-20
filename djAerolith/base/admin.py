@@ -15,8 +15,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from base.models import Lexicon, Maintenance
+from base.models import Lexicon, Maintenance, WordList
 from django.contrib import admin
 
 admin.site.register(Lexicon)
 admin.site.register(Maintenance)
+
+
+class WordwallsWordListAdmin(admin.ModelAdmin):
+    fields = ['user', 'name', 'lexicon', 'created', 'lastSaved',
+              'numAlphagrams', 'numCurAlphagrams', 'goneThruOnce', 'missed',
+              'firstMissed', 'origQuestions', 'curQuestions', 'is_temporary',
+              'version', 'questionIndex']
+    search_fields = ['user__username', 'name', 'lexicon__lexiconName']
+    list_display = ['user', 'name', 'lexicon', 'created', 'lastSaved',
+                    'is_temporary']
+    readonly_fields = ('lastSaved', 'created', 'is_temporary')
+
+
+admin.site.register(WordList, WordwallsWordListAdmin)

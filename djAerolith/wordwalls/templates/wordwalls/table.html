@@ -17,16 +17,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 To contact the author, please email delsolar at gmail dot com
 {% endcomment %}
 {% load i18n %}
-<!DOCTYPE html>
-<html>
-<head>
-<link rel="shortcut icon" href="/static/favicon.ico" />
-<title>WordWalls - table {{tablenum}}</title>
+
 {% load value_from_settings %}
 {% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
 {% value_from_settings DEBUG_JS as DEBUG_JS %}
-<link href="/static/css/wordwalls/wordwallsTableSS.css" rel="stylesheet">
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/static/favicon.ico" />
+  <title>WordWalls - table {{tablenum}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,  maximum-scale=1, user-scalable=no">
+
+  <link href="/static/lib/bootstrap/css/bootstrap-sandstone.min.css" rel="stylesheet">
+  <style>
+  svg.gameboard {
+    background-image: url("/static/img/aerolith/crossword.png");
+  }
+  </style>
+
+
 {% if USE_GA %}
 <script type="text/javascript">
 
@@ -49,147 +61,31 @@ mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
 mixpanel.identify("{{username}}");
 </script><!-- end Mixpanel -->
 {% else %}
-<script>
-var mixpanel = {};
-mixpanel.track = function() {};
-mixpanel.name_tag = function() {};
-</script>
+  <script>
+  var mixpanel = {};
+  mixpanel.track = function() {};
+  mixpanel.name_tag = function() {};
+  </script>
 {% endif %}
 </head>
+
+
 <body>
 {% block content %}
-<script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
-<!-- http://stackoverflow.com/questions/9916073/how-to-load-bootstrapped-models-in-backbone-js-while-using-amd-require-js -->
 <script>
-var require = {
-  config: {
-    'main': {
-      addlParams: "{{addParams|escapejs}}",
-      tablenum: {{tablenum}},
-      lexicon: "{{lexicon.lexiconName}}"
-    }
-  }
-}
-</script>
-<script src="/static/lib/require/require-min.js"></script>
-<script>
-require.config({
-  {% if DEBUG_JS %}
-    paths: {
-      'main': '/static/js/wordwalls/main'
-    }
-  {% else %}
-    urlArgs: 'v={{CURRENT_VERSION}}',
-    paths: {
-      'main': '/static/build/table-main-built'
-    }
-  {% endif %}
-});
-require(['main']);
+  // Our entry point will use window.TableGlobals to pass these in to the app.
+  var TableGlobals = {
+    addlParams: '{{addParams | escapejs }}',
+    tablenum: '{{tablenum}}',
+    lexicon: '{{lexicon.lexiconName}}',
+    username: '{{username}}'
+  };
 </script>
 
-<div id="topBar">
-<span id="start" onClick="mixpanel.track('request start');" class="tableButton">{% trans "Start" %}</span>
-<span id="gameTimer"> : </span>
-<span id="giveup" onClick="mixpanel.track('give up');" class="tableButton">{% trans "Give up" %}</span>
-<span id="solutions" onClick="mixpanel.track('show solutions');" class="tableButton">{% trans "Solutions" %}</span>
-
-<span id="save" onClick="mixpanel.track('save game');" class="tableButton">{% trans "Save" context "table" %}</span>
-<input type="text" size="20" id="saveListName">
-<span id="customize" onClick="mixpanel.track('clicked customize');" class="tableButton">{% trans "Preferences" %}</span>
-<span id="horSep1"></span>
-<span id="exit" onClick="mixpanel.track('clicked exit');" class="tableButton">{% trans "Exit" %}</span>
+<div class="container-fluid" style="padding-top: 10px;">
+  <div id="main-app-content"></div>
 </div>
 
-<div id="encloser">
-    <div id="questions">
-        <ul class="questionList"></ul>
-    </div>
-
-    <div id="playerRanks">
-    </div>
-
-    <div id="userBox">
-        <span id="avatarLabel"></span>
-        <span id="usernameLabel">{{username}}</span>
-        <span id="pointsLabelPercent"></span>
-        <span id="pointsLabelFraction"></span>
-        <div id="correctAnswers"></div>
-    </div>
-</div>
-
-
-
-<div id="bottomBar">
-<label for="guessText">{% trans "Guess" %}: </label><input type="text" name="Guess" size="15" id="guessText"/>
-<span id="horSep2"></span>
-<span id="shuffle" class="utilityButton">{% trans "Shuffle" %} (1)</span>
-<span id="alphagram" class="utilityButton">{% trans "Alphagram" %} (2)</span>
-<span id="customOrder" class="utilityButton">{% trans "Custom" %} (3)</span>
-{% if user.is_superuser %}
-<span id="testWordwalls" class="utilityButton">Test (4)</span>
-{% endif %}
-</div>
-
-<div id="textBar">
-<div id="messages"></div>
-{% trans "Guesses" %}:
-<div id="guesses"></div>
-</div>
-<div id="customize_popup" class="popup_block customize_popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-
-    <div id="customSample">
-    <ul class="questionList" id="configQL">
-    </ul>
-    </div>
-    <BR>
-    <div id="customize_popup_content" style="clear: both;">
-        <h3>{% trans "Tiles" %}:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontUseTiles" class="configInput">{% trans "Don't use tiles" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="useSans" class="configInput">{% trans "Sans-serif font" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="tilesBold" class="configInput">{% trans "Bold letters" %}</input></span>
-        <span class="configInputSpan">{% trans "Tile style" %}:
-        <select id="tileStyleSelect" class="configInput">
-          <option value="1">{% trans "Style" %} 1</option>
-          <option value="2">{% trans "Style" %} 2</option>
-          <option value="3">{% trans "Style" %} 3</option>
-          <option value="4">{% trans "Style" %} 4</option>
-          <option value="5">{% trans "Style" %} 5</option>
-          <option value="6">{% trans "Style" %} 6</option>
-          <option value="7">{% trans "Style" %} 7</option>
-        </select></span>
-        <h3>{% trans "Table" %}:</h3>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowTable" class="configInput">{% trans "Don't show green table" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="dontShowCanvas" class="configInput">{% trans "Don't show canvas background" %}</input></span>
-        <span class="configInputSpan"><input type="checkbox" id="showBorders" class="configInput">{% trans "Show borders around questions" %}</input></span>
-        <div>
-
-        <h3>{% trans "Other" %}:</h3>
-        <span class="configInputSpan">{% trans "Blank character" %}: <input type="text" id="blankCharacter" maxlength="1" class="configInput"></input></span>
-        <span class="configInputSpan">{% trans "Custom tile ordering" %}: <input type="text" id="customTileOrdering" maxlength="27"></input></span>
-        <BR>
-        <button id="savePrefs">{% trans "Save preferences" %}</button><span id="prefsInfo"></span>
-        </div>
-    </div>
-</div>
-
-<div id="definitions_popup" class="popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <div id="defs_popup_content">
-    <h2>Nothing to see here</h2>
-    <p>You didn't say the magic word.</p>
-    </div>
-</div>
-
-<div id="addlInfo_popup" class="popup_block">
-    <img src="{{ STATIC_URL }}img/wordwalls/close_pop1.png" class="btn_close" title="Close Window" alt="Close" />
-    <H3><center>{% trans "Challenge results" %}</center></H3>
-    <div id="addlInfo_content">
-    <h2>Nothing to see here</h2>
-    <p>You didn't say the magic word.</p>
-    </div>
-</div>
 {% endblock %}
 
 <div id="netbookBorders">
@@ -198,8 +94,10 @@ require(['main']);
 <div id="fade"></div>
 <div id="infoDialog" title=""></div>
 
+<script src="/static/dist/table-client-bundle.js?v={{CURRENT_VERSION}}"></script>
+
 </body>
 <script>
-mixpanel.name_tag("{{username}}");
+mixpanel.name_tag('{{username}}');
 </script>
 </html>

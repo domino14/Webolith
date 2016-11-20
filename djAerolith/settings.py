@@ -103,7 +103,9 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get('SECRET_KEY')
+PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
+STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, 'static')]
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -123,8 +125,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'urls'
-
-PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 TEMPLATES = [
     {
@@ -237,10 +237,6 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'webmaster@aerolith.mailgun.org'
 
 LOGIN_URL = "/accounts/login"
-
-STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, 'static'),
-#                    os.path.join(PROJECT_ROOT, 'blog/static'),
-                    )
 
 IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt')
