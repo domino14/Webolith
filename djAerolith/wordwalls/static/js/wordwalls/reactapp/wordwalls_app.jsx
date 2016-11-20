@@ -4,6 +4,7 @@ import React from 'react';
 import $ from 'jquery';
 import _ from 'underscore';
 
+import backgroundURL from './background';
 import Styling from './style';
 import WordwallsGame from './wordwalls_game';
 import ListSaveBar from './topbar/save_list';
@@ -82,6 +83,10 @@ class WordwallsApp extends React.Component {
     $('.hovertip').tooltip({
       placement: 'bottom',
     });
+
+    $('body').css({
+      'background-image': backgroundURL(this.props.displayStyle.bodyBackground),
+    });
   }
 
   onGuessSubmit(guess) {
@@ -143,6 +148,9 @@ class WordwallsApp extends React.Component {
       method: 'POST',
       dataType: 'json',
       data: JSON.stringify(style),
+    });
+    $('body').css({
+      'background-image': backgroundURL(style.bodyBackground),
     });
   }
 

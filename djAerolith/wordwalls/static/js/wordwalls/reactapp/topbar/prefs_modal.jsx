@@ -94,7 +94,8 @@ class PrefsModal extends React.Component {
               showChips={this.state.style.showChips}
               showBold={this.state.style.showBold}
               hideLexiconSymbols={this.state.style.hideLexiconSymbols}
-              showTable={this.state.style.showTable}
+              background={this.state.style.background}
+              bodyBackground={this.state.style.bodyBackground}
               allowSave={this.allowSave}
             />
 

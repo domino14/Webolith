@@ -80,8 +80,8 @@ class WordwallsQuestion extends React.Component {
     // XXX: This is a bit of an ugly formula, but it's fast.
     // See http://stackoverflow.com/a/22580176/1737333 for perhaps
     // a better approach.
-    const letterFontSize = dims[0] * 8;
-    const numberFontSize = dims[0] * 5;
+    const letterFontSize = dims[0] * 7.5;
+    const numberFontSize = dims[0] * 4;
     let countFrom = 0;
     if (this.props.displayStyle.showChips) {
       tiles.push(<Chip

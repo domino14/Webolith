@@ -4,6 +4,7 @@ import Immutable from 'immutable';
 import WordwallsQuestion from './wordwalls_question';
 import Solutions from './solutions';
 import Styling from './style';
+import SVGBoard from './svg_board';
 
 class GameBoard extends React.Component {
   render() {
@@ -49,14 +50,11 @@ class GameBoard extends React.Component {
       return (
         // Prevent default on mouse down to prevent taking focus in
         // case of misclick.
-        <svg
-          className="gameboard"
-          onMouseDown={(e) => { e.preventDefault(); }}
+        <SVGBoard
+          background={this.props.displayStyle.background}
           width={this.props.width}
           height={this.props.height}
-        >
-          {questions}
-        </svg>
+        >{questions}</SVGBoard>
       );
     }
 

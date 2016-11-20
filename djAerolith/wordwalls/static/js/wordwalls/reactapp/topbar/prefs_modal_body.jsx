@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 import _ from 'underscore';
 
 import WordwallsQuestion from '../wordwalls_question';
+import SVGBoard from '../svg_board';
 import Checkbox from '../forms/checkbox';
 import TextInput from '../forms/text_input';
 import Select from '../forms/select';
@@ -28,6 +29,39 @@ class PrefsModalBody extends React.Component {
       });
     }
     return options;
+  }
+
+  /**
+   * Get background options.
+   */
+  static getBackgroundOptions() {
+    return [
+      {
+        value: '',
+        displayValue: 'None',
+      }, {
+        value: 'pool_table',
+        displayValue: 'Green table',
+      }, {
+        value: 'pink_rice',
+        displayValue: 'Pink rice (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'scribble_light',
+        displayValue: 'Scribble light (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'canvas',
+        displayValue: 'Canvas (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'cork_wallet',
+        displayValue: 'Cork wallet (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'hexellence',
+        displayValue: 'Hexellence (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'black_linen',
+        displayValue: 'Black Linen (subtlepatterns.com, CC BY-SA 3.0)',
+      },
+    ];
   }
 
   constructor(props) {
@@ -128,6 +162,7 @@ class PrefsModalBody extends React.Component {
 
   render() {
     const stateLetRem = this.state.tileOrderLettersRemaining;
+    const questions = [];
     let letRem;
     // If it's not totally empty (or not totally full)
     if (stateLetRem.length !== 0 && stateLetRem.length !== 27) {
@@ -147,41 +182,43 @@ class PrefsModalBody extends React.Component {
           />
         </span>);
     }
+    questions.push(
+      <WordwallsQuestion
+        key={1}
+        letters={this.state.letters}
+        qNumber={0}
+        words={this.state.wMap}
+        gridX={0}
+        gridY={0}
+        xSize={180}
+        ySize={30}
+        displayStyle={{
+          tilesOn: this.props.tilesOn,
+          tileStyle: this.props.tileStyle,
+          customOrder: this.props.customTileOrder,
+          blankCharacter: this.props.blankCharacter,
+          font: this.props.font,
+          showChips: this.props.showChips,
+          bold: this.props.showBold,
+          showBorders: this.props.showBorders,
+        }}
+        onShuffle={() => {
+          const shuffledLetters = _.shuffle(this.state.letters);
+          this.setState({
+            letters: ''.join(shuffledLetters),
+          });
+        }}
+      />);
 
     return (
       <div className="modal-body">
         <div className="row">
           <div className="col-lg-12">
-            <svg
-              width="180"
-              height="30"
-            >
-              <WordwallsQuestion
-                letters={this.state.letters}
-                qNumber={0}
-                words={this.state.wMap}
-                gridX={0}
-                gridY={0}
-                xSize={180}
-                ySize={30}
-                displayStyle={{
-                  tilesOn: this.props.tilesOn,
-                  tileStyle: this.props.tileStyle,
-                  customOrder: this.props.customTileOrder,
-                  blankCharacter: this.props.blankCharacter,
-                  font: this.props.font,
-                  showChips: this.props.showChips,
-                  bold: this.props.showBold,
-                  showBorders: this.props.showBorders,
-                }}
-                onShuffle={() => {
-                  const shuffledLetters = _.shuffle(this.state.letters);
-                  this.setState({
-                    letters: ''.join(shuffledLetters),
-                  });
-                }}
-              />
-            </svg>
+            <SVGBoard
+              background={this.props.background}
+              width={180}
+              height={30}
+            >{questions}</SVGBoard>
           </div>
         </div>
 
@@ -198,6 +235,7 @@ class PrefsModalBody extends React.Component {
                 label="Show tiles"
               />
               {this.getTileDependentForm()}
+              <hr />
               <TextInput
                 colSize={6}
                 label="Custom Tile Order"
@@ -211,14 +249,26 @@ class PrefsModalBody extends React.Component {
                   Letters remaining: {letRem}
                 </div>
               </div>
-              <Checkbox
-                on={this.props.showTable}
+              <hr />
+              <Select
+                colSize={5}
+                label="Game board background"
+                selectedValue={this.props.background}
                 onChange={(event) => {
-                  this.props.onOptionsModify(
-                    'showTable', event.target.checked);
+                  this.props.onOptionsModify('background', event.target.value);
                 }}
-                label="Show green background table"
+                options={PrefsModalBody.getBackgroundOptions()}
               />
+              <Select
+                colSize={5}
+                label="Body background"
+                selectedValue={this.props.bodyBackground}
+                onChange={(event) => {
+                  this.props.onOptionsModify('bodyBackground', event.target.value);
+                }}
+                options={PrefsModalBody.getBackgroundOptions()}
+              />
+              <hr />
               <Checkbox
                 on={this.props.showBorders}
                 onChange={(event) => {
@@ -260,7 +310,8 @@ PrefsModalBody.propTypes = {
   showBorders: React.PropTypes.bool,
   showChips: React.PropTypes.bool,
   showBold: React.PropTypes.bool,
-  showTable: React.PropTypes.bool,
+  background: React.PropTypes.string,
+  bodyBackground: React.PropTypes.string,
   hideLexiconSymbols: React.PropTypes.bool,
   allowSave: React.PropTypes.func,
 };

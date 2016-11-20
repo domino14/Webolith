@@ -19,9 +19,6 @@ class Styling {
       if (style.tc.showChips !== false) {
         style.tc.showChips = true;
       }
-      if (style.tc.showTable !== false) {
-        style.tc.showTable = true;
-      }
 
       if (!style.tc.selection) {
         style.tc.selection = '1';
@@ -33,6 +30,8 @@ class Styling {
         style.tc.blankCharacter = '?';
       }
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
+      style.bc.background = style.bc.background || '';
+      style.bc.bodyBackground = style.bc.bodyBackground || '';
     } else {
       // Default style.
       style = {
@@ -46,7 +45,8 @@ class Styling {
           bold: false,
         },
         bc: {
-          showTable: true,
+          background: '',
+          bodyBackground: '',
           showBorders: false,
           hideLexiconSymbols: false,
         },
@@ -102,14 +102,19 @@ class Styling {
     return this.style.getIn(['bc', 'showBorders']);
   }
 
-  get showTable() {
-    return this.style.getIn(['bc', 'showTable']);
+  get background() {
+    return this.style.getIn(['bc', 'background']);
   }
+
+  get bodyBackground() {
+    return this.style.getIn(['bc', 'bodyBackground']);
+  }
+
 
   /**
    * Set the style key to the given value. This function takes care of
    * parsing where in the tree the key is stored.
-   * @param {string} key A key such as 'showTable'.
+   * @param {string} key A key such as 'showBorders'.
    * @param {any} value A value for this key, usually a string or a bool.
    */
   setStyleKey(key, value) {
@@ -123,7 +128,8 @@ class Styling {
       showBold: ['tc', 'bold'],
       hideLexiconSymbols: ['bc', 'hideLexiconSymbols'],
       showBorders: ['bc', 'showBorders'],
-      showTable: ['bc', 'showTable'],
+      background: ['bc', 'background'],
+      bodyBackground: ['bc', 'bodyBackground'],
     };
     if (!treeKeys[key]) {
       throw new Error(`The key ${key} was not found in the tree.`);
