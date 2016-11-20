@@ -4,6 +4,7 @@ import React from 'react';
 import $ from 'jquery';
 import _ from 'underscore';
 
+import Styling from './style';
 import WordwallsGame from './wordwalls_game';
 import ListSaveBar from './topbar/save_list';
 import Preferences from './topbar/preferences';
@@ -129,8 +130,8 @@ class WordwallsApp extends React.Component {
   }
 
   /**
-   * Set the display style. (Yes, this is a useless comment)
-   * @param {Object} style
+   * Set the current display style, and persist to backend.
+   * @param {Styling} style
    */
   setDisplayStyle(style) {
     this.setState({
@@ -420,10 +421,7 @@ class WordwallsApp extends React.Component {
   }
 
   handleCustomOrder() {
-    if (!(this.state.displayStyle && this.state.displayStyle.tc)) {
-      return;
-    }
-    game.setCustomLetterOrder(this.state.displayStyle.tc.customOrder);
+    game.setCustomLetterOrder(this.state.displayStyle.customOrder);
     this.setState({
       curQuestions: game.getQuestionState(),
     });
@@ -540,7 +538,7 @@ class WordwallsApp extends React.Component {
           <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
             <UserBox
               showLexiconSymbols={
-                !this.state.displayStyle.bc.hideLexiconSymbols}
+                !this.state.displayStyle.hideLexiconSymbols}
               answeredByMe={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
@@ -605,10 +603,7 @@ WordwallsApp.propTypes = {
   listName: React.PropTypes.string,
   autoSave: React.PropTypes.bool,
   lexicon: React.PropTypes.string,
-  displayStyle: React.PropTypes.shape({
-    tc: React.PropTypes.object,
-    bc: React.PropTypes.object,
-  }),
+  displayStyle: React.PropTypes.instanceOf(Styling),
   tableUrl: React.PropTypes.string,
 };
 

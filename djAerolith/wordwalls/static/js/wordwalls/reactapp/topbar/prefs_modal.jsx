@@ -1,28 +1,17 @@
 import React from 'react';
 
 import PrefsModalBody from './prefs_modal_body';
+import Styling from '../style';
 
 class PrefsModal extends React.Component {
-  static styleToState(displayStyle) {
-    return {
-      tilesOn: displayStyle.tc.on,
-      tileStyle: displayStyle.tc.selection,
-      customTileOrder: displayStyle.tc.customOrder,
-      blankCharacter: displayStyle.tc.blankCharacter,
-      fontSans: displayStyle.tc.font === 'sans',
-      showBorders: displayStyle.bc.showBorders,
-      showChips: displayStyle.tc.showChips,
-      showBold: displayStyle.tc.bold,
-      hideLexiconSymbols: displayStyle.bc.hideLexiconSymbols,
-
-      saveAllowed: true,
-    };
-  }
-
   constructor(props) {
     super(props);
-    this.state = PrefsModal.styleToState(this.props.displayStyle);
-
+    // Create a copy of this.props.displayStyle, used only for
+    // rendering preferences.
+    this.state = {
+      saveAllowed: true,
+      style: this.props.displayStyle.copy(),
+    };
     this.onOptionsModify = this.onOptionsModify.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
     this.reset = this.reset.bind(this);
@@ -34,13 +23,17 @@ class PrefsModal extends React.Component {
    * which will update the state accordingly.
    */
   onOptionsModify(stateKey, value) {
-    const newState = {};
-    newState[stateKey] = value;
-    this.setState(newState);
+    this.state.style.setStyleKey(stateKey, value);
+    this.setState({
+      style: this.state.style,
+    });
   }
 
   reset(displayStyle) {
-    this.setState(PrefsModal.styleToState(displayStyle));
+    this.setState({
+      saveAllowed: true,
+      style: displayStyle.copy(),
+    });
   }
 
   /**
@@ -49,21 +42,7 @@ class PrefsModal extends React.Component {
    * persisting the state itself, which should track all of the changes.
    */
   saveChanges() {
-    this.props.onSave({
-      tc: {
-        on: this.state.tilesOn,
-        selection: this.state.tileStyle,
-        bold: this.state.showBold,
-        customOrder: this.state.customTileOrder,
-        blankCharacter: this.state.blankCharacter,
-        font: this.state.fontSans ? 'sans' : 'mono',
-        showChips: this.state.showChips,
-      },
-      bc: {
-        showBorders: this.state.showBorders,
-        hideLexiconSymbols: this.state.hideLexiconSymbols,
-      },
-    });
+    this.props.onSave(this.state.style);
   }
 
   allowSave(allow) {
@@ -105,20 +84,17 @@ class PrefsModal extends React.Component {
             </div>
 
             <PrefsModalBody
-              // The displayStyle in the modal body will be initialized
-              // with whatever the user originally has saved.
-              // However, the PrefsModalBody will keep its own state
-              // as to what is checked/selected. This seems easiest.
               onOptionsModify={this.onOptionsModify}
-              tilesOn={this.state.tilesOn}
-              tileStyle={this.state.tileStyle}
-              customTileOrder={this.state.customTileOrder}
-              blankCharacter={this.state.blankCharacter}
-              fontSans={this.state.fontSans}
-              showBorders={this.state.showBorders}
-              showChips={this.state.showChips}
-              showBold={this.state.showBold}
-              hideLexiconSymbols={this.state.hideLexiconSymbols}
+              tilesOn={this.state.style.tilesOn}
+              tileStyle={this.state.style.tileStyle}
+              customTileOrder={this.state.style.customOrder}
+              blankCharacter={this.state.style.blankCharacter}
+              font={this.state.style.font}
+              showBorders={this.state.style.showBorders}
+              showChips={this.state.style.showChips}
+              showBold={this.state.style.showBold}
+              hideLexiconSymbols={this.state.style.hideLexiconSymbols}
+              showTable={this.state.style.showTable}
               allowSave={this.allowSave}
             />
 
@@ -144,10 +120,7 @@ class PrefsModal extends React.Component {
 }
 
 PrefsModal.propTypes = {
-  displayStyle: React.PropTypes.shape({
-    tc: React.PropTypes.object,
-    bc: React.PropTypes.object,
-  }),
+  displayStyle: React.PropTypes.instanceOf(Styling),
   onSave: React.PropTypes.func,
 };
 

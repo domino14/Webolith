@@ -41,17 +41,7 @@ class PrefsModalBody extends React.Component {
         HOMEMADE: {},
       }),
     };
-    this.onBlankCharChange = this.onBlankCharChange.bind(this);
     this.onTileOrderChange = this.onTileOrderChange.bind(this);
-    this.onTileStyleChange = this.onTileStyleChange.bind(this);
-  }
-
-  onBlankCharChange(event) {
-    this.props.onOptionsModify('blankCharacter', event.target.value);
-  }
-
-  onTileStyleChange(event) {
-    this.props.onOptionsModify('tileStyle', event.target.value);
   }
 
   onTileOrderChange(event) {
@@ -85,7 +75,9 @@ class PrefsModalBody extends React.Component {
             colSize={2}
             label="Tile Style"
             selectedValue={this.props.tileStyle}
-            onChange={this.onTileStyleChange}
+            onChange={(event) => {
+              this.props.onOptionsModify('tileStyle', event.target.value);
+            }}
             options={PrefsModalBody.getTileStyleOptions()}
           />
           <TextInput
@@ -93,8 +85,10 @@ class PrefsModalBody extends React.Component {
             label="Blank Character"
             maxLength={1}
             value={this.props.blankCharacter}
-            onChange={this.onBlankCharChange}
-            onKeyPress={() => {}}
+            onChange={(event) => {
+              this.props.onOptionsModify('blankCharacter', event.target.value);
+            }}
+            onKeyPress={() => { }}
           />
         </div>
       );
@@ -108,12 +102,22 @@ class PrefsModalBody extends React.Component {
             }}
             label="Bold font"
           />
-          <Checkbox
-            on={this.props.fontSans}
+          <Select
+            colSize={2}
+            label="Font"
+            selectedValue={this.props.font}
             onChange={(event) => {
-              this.props.onOptionsModify('fontSans', event.target.checked);
+              this.props.onOptionsModify('font', event.target.value);
             }}
-            label="Sans-serif font"
+            options={[
+              {
+                value: 'sans',
+                displayValue: 'Sans-serif',
+              }, {
+                value: 'mono',
+                displayValue: 'Mono-spaced',
+              },
+            ]}
           />
         </div>
       );
@@ -165,7 +169,7 @@ class PrefsModalBody extends React.Component {
                   tileStyle: this.props.tileStyle,
                   customOrder: this.props.customTileOrder,
                   blankCharacter: this.props.blankCharacter,
-                  font: this.props.fontSans ? 'sans' : 'mono',
+                  font: this.props.font,
                   showChips: this.props.showChips,
                   bold: this.props.showBold,
                   showBorders: this.props.showBorders,
@@ -173,7 +177,7 @@ class PrefsModalBody extends React.Component {
                 onShuffle={() => {
                   const shuffledLetters = _.shuffle(this.state.letters);
                   this.setState({
-                    letters: shuffledLetters,
+                    letters: ''.join(shuffledLetters),
                   });
                 }}
               />
@@ -207,6 +211,14 @@ class PrefsModalBody extends React.Component {
                   Letters remaining: {letRem}
                 </div>
               </div>
+              <Checkbox
+                on={this.props.showTable}
+                onChange={(event) => {
+                  this.props.onOptionsModify(
+                    'showTable', event.target.checked);
+                }}
+                label="Show green background table"
+              />
               <Checkbox
                 on={this.props.showBorders}
                 onChange={(event) => {
@@ -244,10 +256,11 @@ PrefsModalBody.propTypes = {
   tileStyle: React.PropTypes.string,
   customTileOrder: React.PropTypes.string,
   blankCharacter: React.PropTypes.string,
-  fontSans: React.PropTypes.bool,
+  font: React.PropTypes.string,
   showBorders: React.PropTypes.bool,
   showChips: React.PropTypes.bool,
   showBold: React.PropTypes.bool,
+  showTable: React.PropTypes.bool,
   hideLexiconSymbols: React.PropTypes.bool,
   allowSave: React.PropTypes.func,
 };

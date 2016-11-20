@@ -6,7 +6,7 @@
 import React from 'react';
 
 const TextInput = (props) => {
-  const inputColSizeClass = `col-lg-${props.colSize}`;
+  const inputColSizeClass = `col-md-${props.colSize}`;
   return (
     <div className="form-group">
       <div className="row">

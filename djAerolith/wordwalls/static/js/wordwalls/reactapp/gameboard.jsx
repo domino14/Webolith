@@ -3,6 +3,7 @@ import Immutable from 'immutable';
 
 import WordwallsQuestion from './wordwalls_question';
 import Solutions from './solutions';
+import Styling from './style';
 
 class GameBoard extends React.Component {
   render() {
@@ -11,6 +12,15 @@ class GameBoard extends React.Component {
     // up.
     const xSize = this.props.width / this.props.gridWidth;
     const ySize = this.props.height / this.props.gridHeight;
+    const questionDisplayStyle = {
+      tilesOn: this.props.displayStyle.tilesOn,
+      tileStyle: this.props.displayStyle.tileStyle,
+      blankCharacter: this.props.displayStyle.blankCharacter,
+      font: this.props.displayStyle.font,
+      showChips: this.props.displayStyle.showChips,
+      bold: this.props.displayStyle.showBold,
+      showBorders: this.props.displayStyle.showBorders,
+    };
     // curQuestions is an Immutable List of Maps
     this.props.curQuestions.forEach((question, idx) => {
       // Calculate top left X, Y based on dimensions.
@@ -22,15 +32,7 @@ class GameBoard extends React.Component {
       // Only push questions that will fit on the game board.
       questions.push(
         <WordwallsQuestion
-          displayStyle={{
-            tilesOn: this.props.displayStyle.tc.on,
-            tileStyle: this.props.displayStyle.tc.selection,
-            blankCharacter: this.props.displayStyle.tc.blankCharacter,
-            font: this.props.displayStyle.tc.font,
-            showChips: this.props.displayStyle.tc.showChips,
-            bold: this.props.displayStyle.tc.bold,
-            showBorders: this.props.displayStyle.bc.showBorders,
-          }}
+          displayStyle={questionDisplayStyle}
           letters={question.get('displayedAs')}
           key={idx}
           qNumber={idx}
@@ -65,7 +67,7 @@ class GameBoard extends React.Component {
         totalWords={this.props.totalWords}
         height={this.props.height}
         markMissed={this.props.markMissed}
-        showLexiconSymbols={!this.props.displayStyle.bc.hideLexiconSymbols}
+        showLexiconSymbols={!this.props.displayStyle.hideLexiconSymbols}
       />
     );
   }
@@ -75,10 +77,7 @@ GameBoard.propTypes = {
   numberOfRounds: React.PropTypes.number,
   curQuestions: React.PropTypes.instanceOf(Immutable.List),
   origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  displayStyle: React.PropTypes.shape({
-    tc: React.PropTypes.object,
-    bc: React.PropTypes.object,
-  }),
+  displayStyle: React.PropTypes.instanceOf(Styling),
   totalWords: React.PropTypes.number,
   answeredByMe: React.PropTypes.arrayOf(
     React.PropTypes.instanceOf(Immutable.Map)),
