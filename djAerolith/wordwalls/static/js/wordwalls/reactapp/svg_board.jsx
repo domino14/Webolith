@@ -10,11 +10,12 @@ const SVGBoard = (props) => {
     // Stretch this one.
     style.backgroundSize = '100% 100%';
   }
+  // Add some margins to the SVG.
   return (
     <svg
       style={style}
-      width={props.width}
-      height={props.height}
+      width={props.width + 10}
+      height={props.height + 8}
       onMouseDown={(e) => { e.preventDefault(); }}
     >{props.children}</svg>
   );

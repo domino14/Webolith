@@ -38,8 +38,8 @@ class GameBoard extends React.Component {
           key={idx}
           qNumber={idx}
           words={question.get('wMap')}
-          gridX={gridX}
-          gridY={gridY}
+          gridX={gridX + 5}
+          gridY={gridY + 4}
           ySize={ySize}
           xSize={xSize}
           onShuffle={this.props.onShuffle}

@@ -43,7 +43,7 @@ const Solutions = (props) => {
   return (
     <div
       style={{
-        // height: props.height,
+        backgroundColor: 'white',
         overflowX: 'hidden',
       }}
     >

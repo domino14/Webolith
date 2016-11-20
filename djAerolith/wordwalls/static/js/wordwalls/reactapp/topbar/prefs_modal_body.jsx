@@ -188,8 +188,8 @@ class PrefsModalBody extends React.Component {
         letters={this.state.letters}
         qNumber={0}
         words={this.state.wMap}
-        gridX={0}
-        gridY={0}
+        gridX={5}
+        gridY={4}
         xSize={180}
         ySize={30}
         displayStyle={{
