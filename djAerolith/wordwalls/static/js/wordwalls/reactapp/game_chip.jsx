@@ -43,7 +43,7 @@ function getColorFromAnagrams(numAnagrams) {
     5: {
       color: ColorConstants.Green,
       opacity: 1,
-      textColor: ColorConstants.White,
+      textColor: ColorConstants.Black,
       outline: '#7e7f7a',
     },
     4: {
