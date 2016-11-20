@@ -23,6 +23,9 @@ class App {
       if (!style.tc.selection) {
         style.tc.selection = '1';
       }
+      if (!style.tc.customOrder) {
+        style.tc.customOrder = '';
+      }
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
     } else {
       // Default style.
