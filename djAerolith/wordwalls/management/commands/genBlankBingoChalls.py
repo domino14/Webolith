@@ -3,7 +3,6 @@ from django.conf import settings
 from subprocess import Popen
 import datetime
 import os
-import glob
 
 MAX_ANSWERS_PER_QUESTION = 5
 
@@ -22,7 +21,7 @@ class Command(BaseCommand):
         executable = os.path.join(settings.UJAMAA_PATH, 'src', 'anagrammer',
                                   'blank_challenges')
         gaddag_path = os.path.join(settings.UJAMAA_PATH, 'words')
-        for lexicon in ('CSW12', 'CSW15', 'America'):
+        for lexicon in ('CSW12', 'CSW15', 'America', 'America2016'):
             for length in (7, 8):
                 path = os.path.join(os.getenv("HOME"), 'blanks',
                                     '%s-%s-%ss.txt' % (
