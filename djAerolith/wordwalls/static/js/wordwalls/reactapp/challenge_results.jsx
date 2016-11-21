@@ -78,7 +78,7 @@ class ResultsComponent extends React.Component {
                 height: '500px',
               }}
             >
-              <table className="table table-condensed table-bordered">
+              <table className="table table-condensed">
                 <thead>
                   <tr>
                     <th>#</th>

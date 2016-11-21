@@ -54,7 +54,7 @@ const Solutions = (props) => {
       </div>
       <div className="row">
         <div className="col-lg-12 table-responsive">
-          <table className="table table-condensed table-bordered">
+          <table className="table table-condensed">
             <thead>
               <tr>
                 <th>Probability</th>
