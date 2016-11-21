@@ -81,7 +81,6 @@ Solutions.propTypes = {
   answeredByMe: React.PropTypes.arrayOf(
     React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
- // height: React.PropTypes.number,
   markMissed: React.PropTypes.func,
   showLexiconSymbols: React.PropTypes.bool,
 };

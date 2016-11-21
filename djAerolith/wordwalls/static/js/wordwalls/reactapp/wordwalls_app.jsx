@@ -429,7 +429,7 @@ class WordwallsApp extends React.Component {
   }
 
   handleCustomOrder() {
-    game.setCustomLetterOrder(this.state.displayStyle.customOrder);
+    game.setCustomLetterOrder(this.state.displayStyle.customTileOrder);
     this.setState({
       curQuestions: game.getQuestionState(),
     });

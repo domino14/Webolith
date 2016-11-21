@@ -29,6 +29,9 @@ class Styling {
       if (!style.tc.blankCharacter) {
         style.tc.blankCharacter = '?';
       }
+      if (!style.tc.fontMultiplier) {
+        style.tc.fontMultiplier = 1;
+      }
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
       style.bc.background = style.bc.background || '';
       style.bc.bodyBackground = style.bc.bodyBackground || '';
@@ -40,6 +43,7 @@ class Styling {
           selection: '1',
           customOrder: '',
           blankCharacter: '?',
+          fontMultiplier: 1,
           font: 'mono',
           showChips: true,
           bold: false,
@@ -65,8 +69,11 @@ class Styling {
    * Getters are provided here so that the underlying users of this
    * class don't need to know the structure of the `style` object.
    */
+  get fontMultiplier() {
+    return this.style.getIn(['tc', 'fontMultiplier']);
+  }
 
-  get customOrder() {
+  get customTileOrder() {
     return this.style.getIn(['tc', 'customOrder']);
   }
 
@@ -110,7 +117,6 @@ class Styling {
     return this.style.getIn(['bc', 'bodyBackground']);
   }
 
-
   /**
    * Set the style key to the given value. This function takes care of
    * parsing where in the tree the key is stored.
@@ -123,9 +129,11 @@ class Styling {
       tilesOn: ['tc', 'on'],
       tileStyle: ['tc', 'selection'],
       blankCharacter: ['tc', 'blankCharacter'],
+      fontMultiplier: ['tc', 'fontMultiplier'],
       font: ['tc', 'font'],
       showChips: ['tc', 'showChips'],
       showBold: ['tc', 'bold'],
+
       hideLexiconSymbols: ['bc', 'hideLexiconSymbols'],
       showBorders: ['bc', 'showBorders'],
       background: ['bc', 'background'],

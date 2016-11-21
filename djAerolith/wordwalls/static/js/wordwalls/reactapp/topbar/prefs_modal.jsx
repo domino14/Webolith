@@ -85,17 +85,7 @@ class PrefsModal extends React.Component {
 
             <PrefsModalBody
               onOptionsModify={this.onOptionsModify}
-              tilesOn={this.state.style.tilesOn}
-              tileStyle={this.state.style.tileStyle}
-              customTileOrder={this.state.style.customOrder}
-              blankCharacter={this.state.style.blankCharacter}
-              font={this.state.style.font}
-              showBorders={this.state.style.showBorders}
-              showChips={this.state.style.showChips}
-              showBold={this.state.style.showBold}
-              hideLexiconSymbols={this.state.style.hideLexiconSymbols}
-              background={this.state.style.background}
-              bodyBackground={this.state.style.bodyBackground}
+              displayStyle={this.state.style}
               allowSave={this.allowSave}
             />
 

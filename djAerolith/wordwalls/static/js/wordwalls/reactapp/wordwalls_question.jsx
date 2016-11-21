@@ -110,12 +110,14 @@ class WordwallsQuestion extends React.Component {
         tiles.push(
           <Tile
             tileStyle={this.props.displayStyle.tileStyle}
+            font={this.props.displayStyle.font}
+            bold={this.props.displayStyle.bold}
             key={`q${this.props.qNumber}tile${letterIdx}`}
             x={x}
             y={y}
             width={tileWidth}
             height={tileHeight}
-            fontSize={letterFontSize}
+            fontSize={letterFontSize * this.props.displayStyle.fontMultiplier}
             letter={letter}
           />);
       }
@@ -128,7 +130,7 @@ class WordwallsQuestion extends React.Component {
           key={`q${this.props.qNumber}qtext`}
           x={xPadding + (countFrom * (tileWidth + 1))}
           y={this.props.gridY + (this.props.ySize / 2)}
-          fontSize={letterFontSize}
+          fontSize={letterFontSize * 1.2 * this.props.displayStyle.fontMultiplier}
           letters={this.props.letters}
         />);
     }
@@ -150,6 +152,7 @@ WordwallsQuestion.propTypes = {
     showChips: React.PropTypes.bool,
     tilesOn: React.PropTypes.bool,
     tileStyle: React.PropTypes.string,
+    fontMultiplier: React.PropTypes.number,
     font: React.PropTypes.string,
     showBorders: React.PropTypes.bool,
     bold: React.PropTypes.bool,
