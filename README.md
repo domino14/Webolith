@@ -12,7 +12,17 @@ The bulk of the back-end code is written in Python 2.7, using Django 1.8.x.
 
 ### Javascript
 
-Front-end code is Javascript (ES5 mostly), using Backbone, Underscore, and RequireJS.
+Front-end code for Wordwalls is Javascript (ES6 mostly), using React. The rest of the app is moving to React as well. 
+
+In order to get Webpack, etc working on your system, you need to do the following:
+
+- Install the latest version of Node.js
+- npm install -g yarn
+- In the webolith directory, do `yarn install`
+- Then `yarn start` will start a process that will watch your JS files for modifications and re-compile them, using Gulp, Babel, Webpack, etc. It takes a few seconds to compile on my machine, which kind of sucks.
+
+Javascript code uses the Airbnb eslint config. (See their style guide: https://github.com/airbnb/javascript/)
+If you wish to contribute, please use this same config in your code editor, as code will not deploy without passing this first linting step.
 
 ### word_db_maker
 
