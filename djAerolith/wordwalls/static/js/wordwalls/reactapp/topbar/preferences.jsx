@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import PrefsModal from './prefs_modal';
+import Styling from '../style';
 
 class Preferences extends React.Component {
   constructor() {
@@ -42,10 +43,7 @@ class Preferences extends React.Component {
 }
 
 Preferences.propTypes = {
-  displayStyle: React.PropTypes.shape({
-    tc: React.PropTypes.object,
-    bc: React.PropTypes.object,
-  }),
+  displayStyle: React.PropTypes.instanceOf(Styling),
   onSave: React.PropTypes.func,
 };
 

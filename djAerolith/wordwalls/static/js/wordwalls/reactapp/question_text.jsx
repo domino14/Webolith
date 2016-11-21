@@ -7,6 +7,8 @@ const QuestionText = (props) => {
     fontFamily = '"Courier New",monospace';
   } else if (props.font === 'sans') {
     fontFamily = 'Arial,Geneva,Helvetica,Helv,sans-serif';
+  } else if (props.font === 'sansmono') {
+    fontFamily = 'Monaco,Consolas,"Ubuntu Mono",monospace';
   }
   const fontWeight = props.bold ? 'bold' : 'normal';
 
@@ -17,8 +19,8 @@ const QuestionText = (props) => {
       fontFamily={fontFamily}
       dominantBaseline="central"
       fontSize={`${props.fontSize}%`}
-      stroke="#3e3f3a"
-      fill="#3e3f3a"
+      stroke="#000000"
+      fill="#000000"
       fontWeight={fontWeight}
       strokeWidth="0.5px"
     >{Utils.displaySpanishDigraphs(props.letters)}</text>

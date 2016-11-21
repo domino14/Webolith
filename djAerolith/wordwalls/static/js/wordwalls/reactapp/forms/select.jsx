@@ -3,7 +3,7 @@
 import React from 'react';
 
 const Select = (props) => {
-  const inputColSizeClass = `col-lg-${props.colSize}`;
+  const inputColSizeClass = `col-md-${props.colSize}`;
   const options = [];
   props.options.forEach((element, idx) =>
     options.push(<option
@@ -33,7 +33,7 @@ Select.propTypes = {
     value: React.PropTypes.string,
     displayValue: React.PropTypes.string,
   })),
-  colSize: React.PropTypes.string,
+  colSize: React.PropTypes.number,
   label: React.PropTypes.string,
   selectedValue: React.PropTypes.string,
   onChange: React.PropTypes.func,
