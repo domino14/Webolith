@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import Styling from './style';
 import WordwallsApp from './wordwalls_app';
 
 class App {
@@ -10,41 +11,10 @@ class App {
    */
   static initialize(options) {
     // WordwallsApp will be the holder of state.
-    let style;
     let listName;
     let autoSave;
 
-    if (options.addlParams.style != null) {
-      style = JSON.parse(options.addlParams.style);
-      // Add default options that may not have been there.
-      if (style.tc.showChips !== false) {
-        style.tc.showChips = true;
-      }
-      if (!style.tc.selection) {
-        style.tc.selection = '1';
-      }
-      if (!style.tc.customOrder) {
-        style.tc.customOrder = '';
-      }
-      style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
-    } else {
-      // Default style.
-      style = {
-        tc: {
-          on: true,
-          selection: '1',
-          customOrder: '',
-          blankCharacter: '?',
-          font: 'mono',
-          showChips: true,
-          bold: false,
-        },
-        bc: {
-          showBorders: false,
-          hideLexiconSymbols: false,
-        },
-      };
-    }
+    const style = new Styling(options.addlParams.style);
     // Get the list name from one of two places.
     if (options.addlParams.saveName) {
       listName = options.addlParams.saveName;

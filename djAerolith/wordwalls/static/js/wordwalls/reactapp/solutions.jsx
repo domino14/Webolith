@@ -43,7 +43,7 @@ const Solutions = (props) => {
   return (
     <div
       style={{
-        // height: props.height,
+        backgroundColor: 'white',
         overflowX: 'hidden',
       }}
     >
@@ -54,7 +54,7 @@ const Solutions = (props) => {
       </div>
       <div className="row">
         <div className="col-lg-12 table-responsive">
-          <table className="table table-condensed table-bordered">
+          <table className="table table-condensed">
             <thead>
               <tr>
                 <th>Probability</th>
@@ -81,7 +81,6 @@ Solutions.propTypes = {
   answeredByMe: React.PropTypes.arrayOf(
     React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
- // height: React.PropTypes.number,
   markMissed: React.PropTypes.func,
   showLexiconSymbols: React.PropTypes.bool,
 };

@@ -57,11 +57,21 @@ function colorFromTileStyle(style) {
 const GameTile = (props) => {
   let letter;
   let fontSize;
+  let fontFamily;
+  fontSize = props.fontSize;
   const transform = `translate(${props.x},${props.y})`;
-  const fontFamily = '"Courier New",monospace';
+  if (props.font === 'mono') {
+    fontFamily = '"Courier New",monospace';
+    fontSize *= 1.1;
+  } else if (props.font === 'sans') {
+    fontFamily = 'Arial,Geneva,Helvetica,Helv,sans-serif';
+  } else if (props.font === 'sansmono') {
+    fontFamily = 'Monaco,Consolas,"Ubuntu Mono",monospace';
+  }
+  const fontWeight = props.bold ? 'bold' : 'normal';
   const color = colorFromTileStyle(props.tileStyle);
   letter = props.letter;
-  fontSize = props.fontSize;
+
   switch (letter) {
     case '1':
       letter = 'CH';
@@ -99,6 +109,7 @@ const GameTile = (props) => {
         textAnchor="middle"
         dominantBaseline="central"
         fontFamily={fontFamily}
+        fontWeight={fontWeight}
         fontSize={`${fontSize}%`}
         stroke={color.textColor}
         fill={color.textColor}
@@ -113,6 +124,8 @@ GameTile.propTypes = {
   letter: React.PropTypes.string,
   fontSize: React.PropTypes.number,
   tileStyle: React.PropTypes.string,
+  font: React.PropTypes.string,
+  bold: React.PropTypes.bool,
   x: React.PropTypes.number,
   y: React.PropTypes.number,
 };

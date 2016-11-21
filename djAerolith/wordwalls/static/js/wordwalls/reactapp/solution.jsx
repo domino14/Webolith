@@ -15,6 +15,7 @@ class Solution extends React.Component {
     let qTdClass = '';
     let wTdClass = 'text-nowrap';
     let markMissedBtn;
+    let rowStyle = {};
 
     if (!this.props.correct) {
       qTdClass = 'danger';
@@ -38,33 +39,41 @@ class Solution extends React.Component {
         text={this.props.alphagram}
       />) : '');
 
+    // Visually separate different alphagrams.
+    if (this.props.wordPos === 0) {
+      rowStyle = { borderTop: '1px solid #777777' };
+    }
+
     return (
       <tr>
-        <td>{
+        <td style={rowStyle}>{
           this.props.wordPos === 0 ? this.props.probability : ''}</td>
         <td
+          style={rowStyle}
           className={qTdClass}
         >{alphagram}</td>
         <td
+          style={rowStyle}
           className="text-right"
         >
           <WordPartDisplay
             classes="text-info small"
             text={this.props.frontHooks}
           /></td>
-        <td className={wTdClass}>
+        <td className={wTdClass} style={rowStyle}>
           <WordPartDisplay
             text={wordDisplay}
           /></td>
         <td
           className="text-left"
+          style={rowStyle}
         >
           <WordPartDisplay
             classes="text-info small"
             text={this.props.backHooks}
           /></td>
-        <td>{this.props.definition}</td>
-        <td>{markMissedBtn}</td>
+        <td style={rowStyle}>{this.props.definition}</td>
+        <td style={rowStyle}>{markMissedBtn}</td>
       </tr>
     );
   }

@@ -2,10 +2,11 @@ import React from 'react';
 import Immutable from 'immutable';
 import _ from 'underscore';
 
-import WordwallsQuestion from '../wordwalls_question';
+import SVGBoard from '../svg_board';
 import Checkbox from '../forms/checkbox';
 import TextInput from '../forms/text_input';
 import Select from '../forms/select';
+import Styling from '../style';
 
 class PrefsModalBody extends React.Component {
   /**
@@ -30,28 +31,57 @@ class PrefsModalBody extends React.Component {
     return options;
   }
 
+  /**
+   * Get background options.
+   */
+  static getBackgroundOptions() {
+    return [
+      {
+        value: '',
+        displayValue: 'None',
+      }, {
+        value: 'pool_table',
+        displayValue: 'Green table',
+      }, {
+        value: 'pink_rice',
+        displayValue: 'Pink rice (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'scribble_light',
+        displayValue: 'Scribble light (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'canvas',
+        displayValue: 'Canvas (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'cork_wallet',
+        displayValue: 'Cork wallet (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'hexellence',
+        displayValue: 'Hexellence (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'black_linen',
+        displayValue: 'Black Linen (subtlepatterns.com, CC BY-SA 3.0)',
+      },
+    ];
+  }
+
   constructor(props) {
     super(props);
     this.state = {
-      letters: 'ADEEMMO?',
       tileOrderLettersRemaining: PrefsModalBody.calculateLettersRemaining(
-        this.props.customTileOrder),
-      wMap: Immutable.fromJS({
-        GAMODEME: {},
-        HOMEMADE: {},
-      }),
+        props.displayStyle.customTileOrder),
+      questions: Immutable.fromJS([
+        {
+          a: 'ADEEMMO?',
+          wMap: {
+            GAMODEME: {},
+            HOMEMADE: {},
+          },
+          displayedAs: 'ADEEMMO?',
+        },
+      ]),
     };
-    this.onBlankCharChange = this.onBlankCharChange.bind(this);
     this.onTileOrderChange = this.onTileOrderChange.bind(this);
-    this.onTileStyleChange = this.onTileStyleChange.bind(this);
-  }
-
-  onBlankCharChange(event) {
-    this.props.onOptionsModify('blankCharacter', event.target.value);
-  }
-
-  onTileStyleChange(event) {
-    this.props.onOptionsModify('tileStyle', event.target.value);
+    this.handleShuffle = this.handleShuffle.bind(this);
   }
 
   onTileOrderChange(event) {
@@ -78,48 +108,48 @@ class PrefsModalBody extends React.Component {
    */
   getTileDependentForm() {
     let formElements;
-    if (this.props.tilesOn) {
+    if (this.props.displayStyle.tilesOn) {
       formElements = (
         <div>
           <Select
             colSize={2}
             label="Tile Style"
-            selectedValue={this.props.tileStyle}
-            onChange={this.onTileStyleChange}
+            selectedValue={this.props.displayStyle.tileStyle}
+            onChange={(event) => {
+              this.props.onOptionsModify('tileStyle', event.target.value);
+            }}
             options={PrefsModalBody.getTileStyleOptions()}
           />
           <TextInput
             colSize={2}
             label="Blank Character"
             maxLength={1}
-            value={this.props.blankCharacter}
-            onChange={this.onBlankCharChange}
-            onKeyPress={() => {}}
+            value={this.props.displayStyle.blankCharacter}
+            onChange={(event) => {
+              this.props.onOptionsModify('blankCharacter', event.target.value);
+            }}
+            onKeyPress={() => { }}
           />
         </div>
       );
     } else {
       formElements = (
-        <div>
-          <Checkbox
-            on={this.props.showBold}
-            onChange={(event) => {
-              this.props.onOptionsModify('showBold', event.target.checked);
-            }}
-            label="Bold font"
-          />
-          <Checkbox
-            on={this.props.fontSans}
-            onChange={(event) => {
-              this.props.onOptionsModify('fontSans', event.target.checked);
-            }}
-            label="Sans-serif font"
-          />
-        </div>
+        <div />
       );
     }
 
     return formElements;
+  }
+
+  handleShuffle(idx) {
+    // XXX: This should be moved into a utility shuffle function or something.
+    const newQuestions = this.state.questions.update(idx, (aObj) => {
+      const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a')).join(''));
+      return newObj;
+    });
+    this.setState({
+      questions: newQuestions,
+    });
   }
 
   render() {
@@ -148,36 +178,15 @@ class PrefsModalBody extends React.Component {
       <div className="modal-body">
         <div className="row">
           <div className="col-lg-12">
-            <svg
-              width="180"
-              height="30"
-            >
-              <WordwallsQuestion
-                letters={this.state.letters}
-                qNumber={0}
-                words={this.state.wMap}
-                gridX={0}
-                gridY={0}
-                xSize={180}
-                ySize={30}
-                displayStyle={{
-                  tilesOn: this.props.tilesOn,
-                  tileStyle: this.props.tileStyle,
-                  customOrder: this.props.customTileOrder,
-                  blankCharacter: this.props.blankCharacter,
-                  font: this.props.fontSans ? 'sans' : 'mono',
-                  showChips: this.props.showChips,
-                  bold: this.props.showBold,
-                  showBorders: this.props.showBorders,
-                }}
-                onShuffle={() => {
-                  const shuffledLetters = _.shuffle(this.state.letters);
-                  this.setState({
-                    letters: shuffledLetters,
-                  });
-                }}
-              />
-            </svg>
+            <SVGBoard
+              width={180}
+              height={30}
+              gridWidth={1}
+              gridHeight={1}
+              onShuffle={this.handleShuffle}
+              displayStyle={this.props.displayStyle}
+              questions={this.state.questions}
+            />
           </div>
         </div>
 
@@ -186,7 +195,7 @@ class PrefsModalBody extends React.Component {
 
             <form>
               <Checkbox
-                on={this.props.tilesOn}
+                on={this.props.displayStyle.tilesOn}
                 onChange={(event) => {
                   this.props.onOptionsModify(
                     'tilesOn', event.target.checked);
@@ -194,10 +203,38 @@ class PrefsModalBody extends React.Component {
                 label="Show tiles"
               />
               {this.getTileDependentForm()}
+              <Checkbox
+                on={this.props.displayStyle.showBold}
+                onChange={(event) => {
+                  this.props.onOptionsModify('showBold', event.target.checked);
+                }}
+                label="Bold font"
+              />
+              <Select
+                colSize={2}
+                label="Font"
+                selectedValue={this.props.displayStyle.font}
+                onChange={(event) => {
+                  this.props.onOptionsModify('font', event.target.value);
+                }}
+                options={[
+                  {
+                    value: 'sans',
+                    displayValue: 'Sans-serif',
+                  }, {
+                    value: 'mono',
+                    displayValue: 'Serifed Mono',
+                  }, {
+                    value: 'sansmono',
+                    displayValue: 'Sans-serif Mono',
+                  },
+                ]}
+              />
+              <hr />
               <TextInput
                 colSize={6}
                 label="Custom Tile Order"
-                value={this.props.customTileOrder}
+                value={this.props.displayStyle.customTileOrder}
                 maxLength={30}
                 onChange={this.onTileOrderChange}
                 onKeyPress={() => {}}
@@ -207,8 +244,28 @@ class PrefsModalBody extends React.Component {
                   Letters remaining: {letRem}
                 </div>
               </div>
+              <hr />
+              <Select
+                colSize={5}
+                label="Game board background"
+                selectedValue={this.props.displayStyle.background}
+                onChange={(event) => {
+                  this.props.onOptionsModify('background', event.target.value);
+                }}
+                options={PrefsModalBody.getBackgroundOptions()}
+              />
+              <Select
+                colSize={5}
+                label="Body background"
+                selectedValue={this.props.displayStyle.bodyBackground}
+                onChange={(event) => {
+                  this.props.onOptionsModify('bodyBackground', event.target.value);
+                }}
+                options={PrefsModalBody.getBackgroundOptions()}
+              />
+              <hr />
               <Checkbox
-                on={this.props.showBorders}
+                on={this.props.displayStyle.showBorders}
                 onChange={(event) => {
                   this.props.onOptionsModify('showBorders',
                     event.target.checked);
@@ -216,7 +273,7 @@ class PrefsModalBody extends React.Component {
                 label="Show borders around questions"
               />
               <Checkbox
-                on={this.props.showChips}
+                on={this.props.displayStyle.showChips}
                 onChange={(event) => {
                   this.props.onOptionsModify('showChips',
                     event.target.checked);
@@ -224,7 +281,7 @@ class PrefsModalBody extends React.Component {
                 label="Show number of anagrams"
               />
               <Checkbox
-                on={this.props.hideLexiconSymbols}
+                on={this.props.displayStyle.hideLexiconSymbols}
                 onChange={(event) => {
                   this.props.onOptionsModify('hideLexiconSymbols',
                     event.target.checked);
@@ -240,15 +297,7 @@ class PrefsModalBody extends React.Component {
 
 PrefsModalBody.propTypes = {
   onOptionsModify: React.PropTypes.func,
-  tilesOn: React.PropTypes.bool,
-  tileStyle: React.PropTypes.string,
-  customTileOrder: React.PropTypes.string,
-  blankCharacter: React.PropTypes.string,
-  fontSans: React.PropTypes.bool,
-  showBorders: React.PropTypes.bool,
-  showChips: React.PropTypes.bool,
-  showBold: React.PropTypes.bool,
-  hideLexiconSymbols: React.PropTypes.bool,
+  displayStyle: React.PropTypes.instanceOf(Styling),
   allowSave: React.PropTypes.func,
 };
 
