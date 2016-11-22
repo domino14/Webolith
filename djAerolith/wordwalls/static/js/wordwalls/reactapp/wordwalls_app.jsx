@@ -11,13 +11,12 @@ import ListSaveBar from './topbar/save_list';
 import Preferences from './topbar/preferences';
 import StartButton from './topbar/start_button';
 import GameTimer from './topbar/game_timer';
-import GameBoard from './gameboard';
+import GameArea from './gamearea';
 import UserBox from './user_box';
 import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
-import ChallengeResults from './challenge_results';
 
 const game = new WordwallsGame();
 
@@ -375,7 +374,6 @@ class WordwallsApp extends React.Component {
         this.setState({
           challengeData: data,
         });
-        $('.challenge-results-modal').modal();
       });
     }
   }
@@ -527,8 +525,9 @@ class WordwallsApp extends React.Component {
 
         <div className="row">
           <div className="col-xs-12 col-sm-9 col-md-9 col-lg-7">
-            <GameBoard
+            <GameArea
               numberOfRounds={this.state.numberOfRounds}
+              isChallenge={this.state.isChallenge}
               curQuestions={this.state.curQuestions}
               origQuestions={this.state.origQuestions}
               displayStyle={this.state.displayStyle}
@@ -541,6 +540,7 @@ class WordwallsApp extends React.Component {
               height={boardHeight}
               gridWidth={boardGridWidth}
               gridHeight={boardGridHeight}
+              challengeData={this.state.challengeData}
             />
           </div>
           <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
@@ -597,9 +597,6 @@ class WordwallsApp extends React.Component {
             />
           </div>
         </div>
-        <ChallengeResults
-          challengeData={this.state.challengeData}
-        />
       </div>
     );
   }
