@@ -17,7 +17,6 @@ import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
-import ChallengeResults from './challenge_results';
 
 const game = new WordwallsGame();
 
@@ -375,7 +374,6 @@ class WordwallsApp extends React.Component {
         this.setState({
           challengeData: data,
         });
-        $('.challenge-results-modal').modal();
       });
     }
   }
@@ -542,6 +540,7 @@ class WordwallsApp extends React.Component {
               height={boardHeight}
               gridWidth={boardGridWidth}
               gridHeight={boardGridHeight}
+              challengeData={this.state.challengeData}
             />
           </div>
           <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
@@ -598,9 +597,6 @@ class WordwallsApp extends React.Component {
             />
           </div>
         </div>
-        <ChallengeResults
-          challengeData={this.state.challengeData}
-        />
       </div>
     );
   }

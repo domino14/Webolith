@@ -31,6 +31,7 @@ const GameArea = (props) => {
       markMissed={props.markMissed}
       showLexiconSymbols={!props.displayStyle.hideLexiconSymbols}
       isChallenge={props.isChallenge}
+      challengeData={props.challengeData}
     />
   );
 };
@@ -47,6 +48,10 @@ GameArea.propTypes = {
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,
 
+  challengeData: React.PropTypes.shape({
+    entries: React.PropTypes.array,
+    maxScore: React.PropTypes.number,
+  }),
   isChallenge: React.PropTypes.bool,
   width: React.PropTypes.number,
   height: React.PropTypes.number,
