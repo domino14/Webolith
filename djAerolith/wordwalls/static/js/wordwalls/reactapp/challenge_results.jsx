@@ -36,7 +36,7 @@ class ResultsComponent extends React.Component {
   render() {
     const entries = [];
     if (!this.props.challengeData.entries) {
-      return <div />;
+      return null;
     }
     const maxScore = this.props.challengeData.maxScore;
     this.props.challengeData.entries.forEach((entry, index) => {
