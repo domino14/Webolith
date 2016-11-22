@@ -1,11 +1,11 @@
 import React from 'react';
 import Immutable from 'immutable';
 
-import Solutions from './solutions';
+import GameEndDialog from './game_end_dialog';
 import Styling from './style';
 import SVGBoard from './svg_board';
 
-const GameBoard = (props) => {
+const GameArea = (props) => {
   if (props.gameGoing || props.numberOfRounds === 0) {
     return (
       // Prevent default on mouse down to prevent taking focus in
@@ -23,18 +23,19 @@ const GameBoard = (props) => {
   }
 
   return (
-    <Solutions
+    <GameEndDialog
       questions={props.origQuestions}
       answeredByMe={props.answeredByMe}
       totalWords={props.totalWords}
       height={props.height}
       markMissed={props.markMissed}
       showLexiconSymbols={!props.displayStyle.hideLexiconSymbols}
+      isChallenge={props.isChallenge}
     />
   );
 };
 
-GameBoard.propTypes = {
+GameArea.propTypes = {
   numberOfRounds: React.PropTypes.number,
   curQuestions: React.PropTypes.instanceOf(Immutable.List),
   origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
@@ -46,10 +47,11 @@ GameBoard.propTypes = {
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,
 
+  isChallenge: React.PropTypes.bool,
   width: React.PropTypes.number,
   height: React.PropTypes.number,
   gridWidth: React.PropTypes.number,
   gridHeight: React.PropTypes.number,
 };
 
-export default GameBoard;
+export default GameArea;

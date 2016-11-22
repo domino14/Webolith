@@ -11,7 +11,7 @@ import ListSaveBar from './topbar/save_list';
 import Preferences from './topbar/preferences';
 import StartButton from './topbar/start_button';
 import GameTimer from './topbar/game_timer';
-import GameBoard from './gameboard';
+import GameArea from './gamearea';
 import UserBox from './user_box';
 import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
@@ -527,8 +527,9 @@ class WordwallsApp extends React.Component {
 
         <div className="row">
           <div className="col-xs-12 col-sm-9 col-md-9 col-lg-7">
-            <GameBoard
+            <GameArea
               numberOfRounds={this.state.numberOfRounds}
+              isChallenge={this.state.isChallenge}
               curQuestions={this.state.curQuestions}
               origQuestions={this.state.origQuestions}
               displayStyle={this.state.displayStyle}

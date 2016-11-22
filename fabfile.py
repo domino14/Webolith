@@ -120,7 +120,7 @@ def deploy_all_firewalls(servers):
         secGroup = 'Dev'
     gen_firewall(secGroup, servers)
 
-    # write the firewall to the /etc/iptables.up.rules file
+    # write the firewall to the /etc/iptables.up.rulesk file
     put('iptables.%s.rules' % secGroup, '/etc/iptables.up.rules',
         use_sudo=True)
     sudo('iptables-restore < /etc/iptables.up.rules')
