@@ -479,7 +479,7 @@ class WordwallsApp extends React.Component {
       <div>
         <div className="row">
           <div
-            className="col-xs-6 col-sm-4 col-md-3 col-lg-3"
+            className="col-xs-6 col-sm-4 col-md-4 col-lg-4"
           >
             <ListSaveBar
               listName={this.state.listName}

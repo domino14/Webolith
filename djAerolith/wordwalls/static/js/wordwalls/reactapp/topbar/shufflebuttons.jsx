@@ -2,11 +2,11 @@ import React from 'react';
 
 const ShuffleButton = props =>
   <div style={{ display: 'inline-block' }}>
-    <div className="hidden-xs col-sm-3 col-md-3 col-lg-3">
+    <div className="hidden-xs hidden-sm col-md-3 col-lg-3">
       <button
         className="btn btn-info btn-xs"
         style={{
-          width: 125,
+          width: 105,
         }}
         type="button"
         onClick={props.trigger}
@@ -16,10 +16,13 @@ const ShuffleButton = props =>
         >{props.hotKey}</span> {props.buttonText}
       </button>
     </div>
-    <div className="visible-xs-inline-block">
+    <div className="visible-xs-inline-block visible-sm-inline-block">
       <button
         className="btn btn-info btn-xs"
         type="button"
+        style={{
+          marginLeft: '0.5em',
+        }}
         onClick={props.trigger}
       >
         <span

@@ -539,6 +539,9 @@ class WordwallsGame(object):
             ret['info'] = _('Cannot save - you already have a word list '
                             'with that name!')
             return ret
+        except Exception:
+            logger.exception('Error saving.')
+            ret['info'] = _('Unable to save for another reason.')
         ret['success'] = True
         ret['listname'] = listname
         state['saveName'] = listname
@@ -583,7 +586,10 @@ class WordwallsGame(object):
                 logger.debug('Creating first missed list from missed')
                 word_list.firstMissed = word_list.missed
                 word_list.numFirstMissed = word_list.numMissed
-        word_list.save()
+        try:
+            word_list.save()
+        except Exception:
+            logger.exception('Error saving.')
 
     def create_challenge_leaderboard_entry(self, state, tablenum):
         """

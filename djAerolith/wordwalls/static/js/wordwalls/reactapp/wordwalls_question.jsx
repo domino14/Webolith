@@ -132,6 +132,8 @@ class WordwallsQuestion extends React.Component {
           y={this.props.gridY + (this.props.ySize / 2)}
           fontSize={letterFontSize * 1.2 * this.props.displayStyle.fontMultiplier}
           letters={this.props.letters}
+          background={this.props.displayStyle.background}
+          bodyBackground={this.props.displayStyle.bodyBackground}
         />);
     }
 
@@ -157,6 +159,8 @@ WordwallsQuestion.propTypes = {
     showBorders: React.PropTypes.bool,
     bold: React.PropTypes.bool,
     blankCharacter: React.PropTypes.string,
+    background: React.PropTypes.string,
+    bodyBackground: React.PropTypes.string,
   }),
   letters: React.PropTypes.string,
   qNumber: React.PropTypes.number.isRequired,
