@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
 
+const MAXIMUM_LIST_NAME_SIZE = 50;
+
 class ListSaveBar extends React.Component {
   constructor() {
     super();
@@ -43,7 +45,7 @@ class ListSaveBar extends React.Component {
     let inputStyle;
     let pencilStyle;
     let saveStyle;
-    let saveClass = 'hovertip';
+    let saveClass = 'hovertip hidden-md hidden-lg';
     if (this.state.inputEditable) {
       listNameStyle = {
         display: 'none',
@@ -59,7 +61,7 @@ class ListSaveBar extends React.Component {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        width: 'calc(100% - 10px - 2em)',
+        maxWidth: 'calc(100% - 5px)',
         display: 'inline-block',
       };
       pencilStyle = {
@@ -68,7 +70,6 @@ class ListSaveBar extends React.Component {
         display: 'inline-block',
       };
       saveStyle = {
-        marginLeft: '5px',
         display: 'inline-block',
       };
       inputStyle = {
@@ -76,51 +77,74 @@ class ListSaveBar extends React.Component {
       };
     }
     if (this.props.autoSave) {
-      saveClass = 'text-success hovertip';
+      saveClass = 'text-success hovertip hidden-md hidden-lg';
     }
     return (
       <div
         style={{ whiteSpace: 'nowrap' }}
+        className="row"
       >
-        <div
-          style={listNameStyle}
-          className="hovertip"
-          data-toggle="tooltip"
-          title={`This is the name of the word list. You can click the
-            pencil to change the name, or the disk icon to toggle autosave.`}
-        >{this.props.listName}</div>
-        <div
-          className="glyphicon glyphicon-pencil hovertip"
-          aria-hidden="true"
-          style={pencilStyle}
-          data-toggle="tooltip"
-          title="Edit the list name"
-          onClick={this.handleEdit}
-        />
-        <div
-          className={saveClass}
-          style={saveStyle}
-          data-toggle="tooltip"
-          title="Click to toggle autosave at the end of each round."
-          onClick={this.handleAutoSaveToggle}
-        ><span
-          className="glyphicon glyphicon-hdd"
-          style={{ top: '-4px' }}
-        />
+        <div className="col-xs-10 col-md-8">
+          <div
+            style={listNameStyle}
+            className="hovertip"
+            data-toggle="tooltip"
+            title={`This is the name of the word list. You can click the
+              pencil to change the name, or the disk icon to toggle autosave.`}
+          >{this.props.listName}</div>
+          <div
+            className="glyphicon glyphicon-pencil hovertip"
+            aria-hidden="true"
+            style={pencilStyle}
+            data-toggle="tooltip"
+            title="Edit the list name"
+            onClick={this.handleEdit}
+          />
         </div>
-        <input
-          type="text"
-          className="form-control input-sm"
-          style={inputStyle}
-          value={this.props.listName}
-          onChange={this.handleNameChange}
-          onKeyPress={this.handleKeyPress}
-          ref={(input) => {
-            if (input != null) {
-              input.focus();
-            }
-          }}
-        />
+
+        <div className="col-xs-2 col-md-4">
+          <div
+            className={saveClass}
+            style={saveStyle}
+            data-toggle="tooltip"
+            title="Click to toggle autosave at the end of each round."
+            onClick={this.handleAutoSaveToggle}
+          ><span
+            className="glyphicon glyphicon-hdd"
+          />
+          </div>
+          <div>
+            <label
+              className="checkbox-inline hidden-xs hidden-sm"
+              style={saveStyle}
+              htmlFor="auto-save-checkbox"
+            ><input
+              type="checkbox"
+              id="auto-save-checkbox"
+              checked={this.props.autoSave}
+              onChange={this.handleAutoSaveToggle}
+              value="autoSaveSomething"
+            /> Autosave
+            </label>
+          </div>
+        </div>
+
+        <div className="col-xs-12">
+          <input
+            type="text"
+            className="form-control input-sm"
+            style={inputStyle}
+            value={this.props.listName}
+            onChange={this.handleNameChange}
+            onKeyPress={this.handleKeyPress}
+            maxLength={MAXIMUM_LIST_NAME_SIZE}
+            ref={(input) => {
+              if (input != null) {
+                input.focus();
+              }
+            }}
+          />
+        </div>
       </div>
     );
   }
