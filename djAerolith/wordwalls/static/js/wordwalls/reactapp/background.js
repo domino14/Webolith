@@ -20,7 +20,8 @@ function backgroundURL(option) {
   }
   return `url("${backgroundImageUrl}")`;
 }
-
+const darkBackgrounds = new Set(['black_linen']);
 
 export default backgroundURL;
 
+export { darkBackgrounds };

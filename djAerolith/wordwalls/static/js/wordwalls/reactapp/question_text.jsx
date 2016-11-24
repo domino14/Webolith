@@ -1,8 +1,17 @@
 import React from 'react';
 import Utils from './utils';
 
+import { darkBackgrounds } from './background';
+
 const QuestionText = (props) => {
   let fontFamily;
+  let fontColor = '#111111';
+  // If the background is dark, make the text white.
+  if (darkBackgrounds.has(props.background) ||
+      (props.background === '' && darkBackgrounds.has(props.bodyBackground))) {
+    fontColor = '#eeeeee';
+  }
+
   if (props.font === 'mono') {
     fontFamily = '"Courier New",monospace';
   } else if (props.font === 'sans') {
@@ -19,8 +28,8 @@ const QuestionText = (props) => {
       fontFamily={fontFamily}
       dominantBaseline="central"
       fontSize={`${props.fontSize}%`}
-      stroke="#000000"
-      fill="#000000"
+      stroke={fontColor}
+      fill={fontColor}
       fontWeight={fontWeight}
       strokeWidth="0.5px"
     >{Utils.displaySpanishDigraphs(props.letters)}</text>
@@ -34,6 +43,8 @@ QuestionText.propTypes = {
   y: React.PropTypes.number,
   fontSize: React.PropTypes.number,
   letters: React.PropTypes.string,
+  background: React.PropTypes.string,
+  bodyBackground: React.PropTypes.string,
 };
 
 export default QuestionText;

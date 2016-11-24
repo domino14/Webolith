@@ -30,6 +30,8 @@ const SVGBoard = (props) => {
     bold: props.displayStyle.showBold,
     showBorders: props.displayStyle.showBorders,
     fontMultiplier: props.displayStyle.fontMultiplier,
+    background: props.displayStyle.background,
+    bodyBackground: props.displayStyle.bodyBackground,
   };
   // curQuestions is an Immutable List of Maps
   props.questions.forEach((question, idx) => {
