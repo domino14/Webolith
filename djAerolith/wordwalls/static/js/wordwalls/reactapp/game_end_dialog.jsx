@@ -8,7 +8,7 @@ import Immutable from 'immutable';
 import $ from 'jquery';
 
 import Solutions from './solutions';
-import ChallengeResults from './challenge_results';
+import ChallengeResultsModal from './challenge_results_modal';
 
 const DIALOG_TYPE_CHOOSER = 1;
 const DIALOG_TYPE_SOLUTIONS = 2;
@@ -44,7 +44,7 @@ class GameEndDialog extends React.Component {
         </div>
       );
       challengeModal = (
-        <ChallengeResults
+        <ChallengeResultsModal
           challengeData={this.props.challengeData}
         />);
     }

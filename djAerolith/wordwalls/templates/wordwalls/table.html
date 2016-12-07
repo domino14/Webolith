@@ -32,6 +32,7 @@ To contact the author, please email delsolar at gmail dot com
   <meta name="viewport" content="width=device-width, initial-scale=1.0,  maximum-scale=1, user-scalable=no">
 
   <link href="/static/lib/bootstrap/css/bootstrap-sandstone.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-datepicker-1.6.4.min.css" rel="stylesheet">
 
 {% if USE_GA %}
 <script type="text/javascript">
@@ -72,7 +73,10 @@ mixpanel.identify("{{username}}");
     addlParams: '{{addParams | escapejs }}',
     tablenum: '{{tablenum}}',
     lexicon: '{{lexicon.lexiconName}}',
-    username: '{{username}}'
+    username: '{{username}}',
+    availableLexica: '{{available_lexica|escapejs}}',
+    defaultLexicon: {{default_lexicon}},
+    challengeInfo: '{{challenge_info|escapejs}}',
   };
 </script>
 

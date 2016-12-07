@@ -1,6 +1,6 @@
 import React from 'react';
 
-class ResultsComponent extends React.Component {
+class ChallengeResults extends React.Component {
 
   static getMedalName(medal) {
     if (!medal) {
@@ -20,7 +20,7 @@ class ResultsComponent extends React.Component {
    */
   static getUserLink(user, addlData) {
     const parsedAddl = JSON.parse(addlData);
-    const medalName = ResultsComponent.getMedalName(
+    const medalName = ChallengeResults.getMedalName(
       parsedAddl ? parsedAddl.medal.toLowerCase() : null);
     const medal = medalName ? (<img
       src={`/static/img/aerolith/${medalName}_16x16.png`}
@@ -40,7 +40,7 @@ class ResultsComponent extends React.Component {
     }
     const maxScore = this.props.challengeData.maxScore;
     this.props.challengeData.entries.forEach((entry, index) => {
-      const userLink = ResultsComponent.getUserLink(entry.user, entry.addl);
+      const userLink = ChallengeResults.getUserLink(entry.user, entry.addl);
       entries.push(<tr key={index}>
         <td>{index + 1}</td>
         <td>{userLink}</td>
@@ -51,62 +51,36 @@ class ResultsComponent extends React.Component {
 
     return (
       <div
-        className="modal fade challenge-results-modal"
-        role="dialog"
-        tabIndex="-1"
+        className="modal-body table-responsive"
+        style={{
+          overflowY: 'scroll',
+          height: '500px',
+        }}
       >
-        <div
-          className="modal-dialog"
-          role="document"
-        >
-          <div className="modal-content">
-            <div className="modal-header">
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              ><span aria-hidden="true">&times;</span>
-              </button>
-              <h4 className="modal-title">Challenge Results</h4>
-            </div>
-
-            <div
-              className="modal-body table-responsive"
-              style={{
-                overflowY: 'scroll',
-                height: '500px',
-              }}
-            >
-              <table className="table table-condensed">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>User</th>
-                    <th>Score</th>
-                    <th>Remaining</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {entries}
-                </tbody>
-              </table>
-
-            </div>
-          </div>
-        </div>
+        <table className="table table-condensed">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Score</th>
+              <th>Remaining</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries}
+          </tbody>
+        </table>
       </div>
-
     );
   }
 }
 
-ResultsComponent.propTypes = {
+ChallengeResults.propTypes = {
   challengeData: React.PropTypes.shape({
     entries: React.PropTypes.array,
     maxScore: React.PropTypes.number,
   }),
 };
 
-export default ResultsComponent;
+export default ChallengeResults;
 

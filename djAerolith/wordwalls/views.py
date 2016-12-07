@@ -35,7 +35,7 @@ from gargoyle import gargoyle
 from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm, NumQuestionsForm)
-from base.models import Lexicon, WordList
+from base.models import Lexicon, WordList, EXCLUDED_LEXICA
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
 from lib.word_db_helper import WordDB
@@ -381,13 +381,34 @@ def table(request, id):
         if style != "":
             params['style'] = style
 
+        challenge_info = []
+        for i in DailyChallengeName.objects.all():
+            challenge_info.append({
+                'id': i.pk,
+                'seconds': i.timeSecs,
+                'numQuestions': i.num_questions,
+                'name': i.name,
+                'orderPriority': i.orderPriority,
+            })
+        lexica = []
+        for l in Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA):
+            lexica.append({
+                'id': l.pk,
+                'lexicon': l.lexiconName,
+                'description': l.lexiconDescription,
+                'lengthCounts': json.loads(l.lengthCounts),
+            })
+
         return render(request, 'wordwalls/table.html',
                       {'tablenum': id,
                        'username': request.user.username,
                        'addParams': json.dumps(params),
                        'avatarUrl': profile.avatarUrl,
                        'CURRENT_VERSION': CURRENT_VERSION,
-                       'lexicon': wwg.get_wgm(id).lexicon
+                       'lexicon': wwg.get_wgm(id).lexicon,
+                       'default_lexicon': profile.defaultLexicon.pk,
+                       'challenge_info': json.dumps(challenge_info),
+                       'available_lexica': json.dumps(lexica),
                        })
 
 

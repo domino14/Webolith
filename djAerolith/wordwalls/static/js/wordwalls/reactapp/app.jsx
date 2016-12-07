@@ -33,6 +33,9 @@ class App {
         lexicon={options.lexicon}
         displayStyle={style}
         tableUrl={`/wordwalls/table/${options.tablenum}/`}
+        defaultLexicon={options.defaultLexicon}
+        challengeInfo={options.challengeInfo}
+        availableLexica={options.availableLexica}
       />,
       document.getElementById('main-app-content'));
   }

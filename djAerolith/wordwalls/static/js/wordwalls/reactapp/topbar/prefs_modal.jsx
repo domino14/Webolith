@@ -1,5 +1,6 @@
 import React from 'react';
 
+import ModalSkeleton from '../modal_skeleton';
 import PrefsModalBody from './prefs_modal_body';
 import Styling from '../style';
 
@@ -59,53 +60,29 @@ class PrefsModal extends React.Component {
     }
 
     return (
-      <div
-        className="modal fade prefs-modal"
-        role="dialog"
-        tabIndex="-1"
+      <ModalSkeleton
+        title="Preferences"
+        modalClass="prefs-modal"
       >
-        <div
-          className="modal-dialog modal-lg"
-          role="document"
-        >
-          <div className="modal-content">
-            <div className="modal-header">
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-              <h4
-                className="modal-title"
-              >Preferences</h4>
-            </div>
-
-            <PrefsModalBody
-              onOptionsModify={this.onOptionsModify}
-              displayStyle={this.state.style}
-              allowSave={this.allowSave}
-            />
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-default"
-                data-dismiss="modal"
-              >Close</button>
-              <button
-                type="button"
-                className={savebtnClass}
-                onClick={this.saveChanges}
-                data-dismiss="modal"
-              >Save changes</button>
-            </div>
-
-          </div>
+        <PrefsModalBody
+          onOptionsModify={this.onOptionsModify}
+          displayStyle={this.state.style}
+          allowSave={this.allowSave}
+        />
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-default"
+            data-dismiss="modal"
+          >Close</button>
+          <button
+            type="button"
+            className={savebtnClass}
+            onClick={this.saveChanges}
+            data-dismiss="modal"
+          >Save changes</button>
         </div>
-      </div>
+      </ModalSkeleton>
     );
   }
 }

@@ -10,6 +10,7 @@ import WordwallsGame from './wordwalls_game';
 import ListSaveBar from './topbar/save_list';
 import Preferences from './topbar/preferences';
 import StartButton from './topbar/start_button';
+import NewButton from './newtable/new_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
 import UserBox from './user_box';
@@ -514,12 +515,13 @@ class WordwallsApp extends React.Component {
               gameGoing={this.state.gameGoing}
             />
           </div>
+
           <div className="hidden-xs col-sm-2 col-md-1 col-lg-1">
-            <button
-              className="btn btn-danger btn-sm"
-              style={{ marginTop: '-6px' /* why? */}}
-              onClick={() => (window.location = '/wordwalls')}
-            >Exit</button>
+            <NewButton
+              defaultLexicon={this.props.defaultLexicon}
+              challengeInfo={this.props.challengeInfo}
+              availableLexica={this.props.availableLexica}
+            />
           </div>
         </div>
 
@@ -610,6 +612,19 @@ WordwallsApp.propTypes = {
   lexicon: React.PropTypes.string,
   displayStyle: React.PropTypes.instanceOf(Styling),
   tableUrl: React.PropTypes.string,
+  defaultLexicon: React.PropTypes.number,
+  challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
+    id: React.PropTypes.number,
+    name: React.PropTypes.string,
+    questions: React.PropTypes.number,
+    seconds: React.PropTypes.number,
+  })),
+  availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
+    id: React.PropTypes.number,
+    lexicon: React.PropTypes.string,
+    description: React.PropTypes.string,
+    counts: React.PropTypes.object,
+  })),
 };
 
 export default WordwallsApp;
