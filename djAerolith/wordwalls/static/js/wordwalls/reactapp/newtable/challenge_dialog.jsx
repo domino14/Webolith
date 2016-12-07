@@ -5,112 +5,103 @@ import DatePicker from '../forms/date_picker';
 import ChallengeResults from '../challenge_results';
 import ChallengeButton, { ChallengeButtonRow } from './challenge_button';
 
-class ChallengeDialog extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      challengeData: {},
-    };
+const ChallengeDialog = (props) => {
+  // For the different order priorities, make different buttons.
+  const rows = [];
+  const challs = props.challengesDoneAtDate.map(el => el.challengeID);
+  // Add the challenges one by one.
+  // rows.push(
+  //   <ChallengeButtonRow title="Common Words" size="md" key="ch1">
+  //     <ChallengeButton
+  //       challenge={{ name: 'Common Words (short)' }}
+  //       onClick={() => {}}
+  //     />
+  //     <ChallengeButton
+  //       challenge={{ name: 'Common Words (long)' }}
+  //       onClick={() => {}}
+  //     />
+  //   </ChallengeButtonRow>);
+  // Common letter lengths.
+  let buttons = [];
+  for (let i = 3; i <= 9; i += 1) {
+    buttons.push(
+      <ChallengeButton
+        challenge={{ name: `${i}` }}
+        key={i}
+        onClick={props.onChallengeSelected(i - 1)}
+        active={challs.includes(i - 1)/* XXX: Hardcode for now. Fix later.*/}
+      />);
   }
+  rows.push(
+    <ChallengeButtonRow title="By Word Length" size="lg" key="ch2">
+      {buttons}
+    </ChallengeButtonRow>);
 
-  render() {
-    // For the different order priorities, make different buttons.
-    const rows = [];
-    const challs = this.props.challengesDoneAtDate.map(el => el.challengeID);
-    // Add the challenges one by one.
-    // rows.push(
-    //   <ChallengeButtonRow title="Common Words" size="md" key="ch1">
-    //     <ChallengeButton
-    //       challenge={{ name: 'Common Words (short)' }}
-    //       onClick={() => {}}
-    //     />
-    //     <ChallengeButton
-    //       challenge={{ name: 'Common Words (long)' }}
-    //       onClick={() => {}}
-    //     />
-    //   </ChallengeButtonRow>);
-    // Common letter lengths.
-    let buttons = [];
-    for (let i = 3; i <= 9; i += 1) {
-      buttons.push(
-        <ChallengeButton
-          challenge={{ name: `${i}` }}
-          key={i}
-          onClick={() => {}}
-          active={challs.includes(i - 1)/* XXX: Hardcode for now. Fix later.*/}
-        />);
+  // Hard challenges
+  rows.push(
+    <ChallengeButtonRow title="Tougher Challenges" size="sm" key="ch3">
+      <ChallengeButton
+        challenge={{ name: 'Week\'s Bingo Toughies' }}
+        onClick={props.onChallengeSelected(15)}
+        active={challs.includes(15)}
+      />
+      <ChallengeButton
+        challenge={{ name: 'Bingo Marathon' }}
+        onClick={props.onChallengeSelected(17)}
+        active={challs.includes(17)}
+      />
+      <ChallengeButton
+        challenge={{ name: 'Blank Bingos' }}
+        onClick={props.onChallengeSelected(16)}
+        active={challs.includes(16)}
+      />
+    </ChallengeButtonRow>);
+
+  // Finally, some uncommon challenges.
+  buttons = [];
+  for (let i = 2; i <= 15; i += 1) {
+    if (i >= 3 && i <= 9) {
+      continue; // eslint-disable-line no-continue
     }
-    rows.push(
-      <ChallengeButtonRow title="By Word Length" size="lg" key="ch2">
-        {buttons}
-      </ChallengeButtonRow>);
+    buttons.push(
+      <ChallengeButton
+        challenge={{ name: `${i}` }}
+        key={i}
+        onClick={props.onChallengeSelected(i - 1)}
+        active={challs.includes(i - 1)}
+      />);
+  }
+  rows.push(
+    <ChallengeButtonRow title="Other Word Lengths" size="sm" key="ch4">
+      {buttons}
+    </ChallengeButtonRow>);
 
-    // Hard challenges
-    rows.push(
-      <ChallengeButtonRow title="Tougher Challenges" size="sm" key="ch3">
-        <ChallengeButton
-          challenge={{ name: 'Week\'s Bingo Toughies' }}
-          onClick={() => {}}
-          active={challs.includes(15)}
+  return (
+    <div className="row">
+      <div className="col-sm-8">
+        <DatePicker
+          id="challenge-date"
+          label="Challenge Date"
+          value={props.currentDate}
+          onDateChange={props.onDateChange}
+          startDate={new Date(2011, 5, 14)}
         />
-        <ChallengeButton
-          challenge={{ name: 'Bingo Marathon' }}
-          onClick={() => {}}
-          active={challs.includes(17)}
-        />
-        <ChallengeButton
-          challenge={{ name: 'Blank Bingos' }}
-          onClick={() => {}}
-          active={challs.includes(16)}
-        />
-      </ChallengeButtonRow>);
 
-    // Finally, some uncommon challenges.
-    buttons = [];
-    for (let i = 2; i <= 15; i += 1) {
-      if (i >= 3 && i <= 9) {
-        continue; // eslint-disable-line no-continue
-      }
-      buttons.push(
-        <ChallengeButton
-          challenge={{ name: `${i}` }}
-          key={i}
-          onClick={() => {}}
-          active={challs.includes(i - 1)}
-        />);
-    }
-    rows.push(
-      <ChallengeButtonRow title="Other Word Lengths" size="sm" key="ch4">
-        {buttons}
-      </ChallengeButtonRow>);
+        {rows}
 
-    return (
-      <div className="row">
-        <div className="col-sm-8">
-          <DatePicker
-            id="challenge-date"
-            label="Challenge Date"
-            value={this.props.currentDate}
-            onDateChange={this.props.onDateChange}
-            startDate={new Date(2011, 5, 14)}
-          />
-
-          {rows}
-
-          <button
-            className="btn btn-info"
-            style={{ marginTop: '0.75em' }}
-          >Play!</button>
-        </div>
-        <div className="col-sm-4">
-          <ChallengeResults
-            challengeData={this.state.challengeData}
-          />
-        </div>
+        <button
+          className="btn btn-info"
+          style={{ marginTop: '0.75em' }}
+        >Play!</button>
       </div>
-    );
-  }
-}
+      <div className="col-sm-4">
+        <ChallengeResults
+          challengeData={props.challengeData}
+        />
+      </div>
+    </div>
+  );
+};
 
 ChallengeDialog.propTypes = {
   // challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
@@ -125,6 +116,17 @@ ChallengeDialog.propTypes = {
   })),
   currentDate: React.PropTypes.instanceOf(moment),
   onDateChange: React.PropTypes.func,
+  onChallengeSelected: React.PropTypes.func,
+  challengeData: React.PropTypes.shape({
+    entries: React.PropTypes.arrayOf(React.PropTypes.shape({
+      user: React.PropTypes.string,
+      score: React.PropTypes.number,
+      tr: React.PropTypes.number,
+      addl: React.PropTypes.string,
+    })),
+    challengeName: React.PropTypes.string,
+    lexicon: React.PropTypes.string,
+  }),
 };
 
 export default ChallengeDialog;

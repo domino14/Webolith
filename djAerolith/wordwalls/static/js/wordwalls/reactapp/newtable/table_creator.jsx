@@ -47,6 +47,9 @@ class TableCreator extends React.Component {
       currentLexicon: String(this.props.defaultLexicon),
       currentDate: moment(),
       challengesDoneAtDate: [],
+      // Challenge data is leaderboard data.
+      challengeData: {},
+      currentChallenge: null,
     };
   }
 
@@ -66,6 +69,19 @@ class TableCreator extends React.Component {
         (prevState.currentDate !== this.state.currentDate)) {
       this.loadTableCreationInfo();
     }
+    if (prevState.currentChallenge !== this.state.currentChallenge) {
+      // The challenge changed. We should load challenge leaderboard data.
+      $.ajax({
+        url: '/wordwalls/api/challengers/',
+        data: {
+          lexicon: this.state.currentLexicon,
+          date: this.state.currentDate.format('YYYY-MM-DD'),
+          challenge: this.state.currentChallenge,
+        },
+        method: 'GET',
+      })
+      .done(data => this.setState({ challengeData: data || {} }));
+    }
   }
 
   loadTableCreationInfo() {
@@ -78,11 +94,7 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done((data) => {
-      this.setState({
-        challengesDoneAtDate: data,
-      });
-    });
+    .done(data => this.setState({ challengesDoneAtDate: data }));
   }
 
   render() {
@@ -93,10 +105,16 @@ class TableCreator extends React.Component {
           <ChallengeDialog
             challengeInfo={this.props.challengeInfo}
             challengesDoneAtDate={this.state.challengesDoneAtDate}
+            challengeData={this.state.challengeData}
             currentDate={this.state.currentDate}
             onDateChange={(date) => {
               this.setState({
                 currentDate: moment(date),
+              });
+            }}
+            onChallengeSelected={challID => () => {
+              this.setState({
+                currentChallenge: challID,
               });
             }}
           />);
