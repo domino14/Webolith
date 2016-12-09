@@ -117,6 +117,7 @@ class TableCreator extends React.Component {
                 currentChallenge: challID,
               });
             }}
+            currentChallenge={this.state.currentChallenge}
           />);
         break;
       // case SEARCH_TYPE_WORDSEARCH:

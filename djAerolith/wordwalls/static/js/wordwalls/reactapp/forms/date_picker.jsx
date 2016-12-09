@@ -39,7 +39,7 @@ class DatePicker extends React.Component {
           htmlFor={this.props.id}
           style={{ marginTop: '0.75em' }}
         >{this.props.label}</label>
-        <div className="input-group date col-sm-5">
+        <div className="input-group date col-sm-6">
           <input
             type="text"
             className="form-control"

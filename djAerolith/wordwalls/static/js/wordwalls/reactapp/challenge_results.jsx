@@ -77,7 +77,14 @@ class ChallengeResults extends React.Component {
 
 ChallengeResults.propTypes = {
   challengeData: React.PropTypes.shape({
-    entries: React.PropTypes.array,
+    entries: React.PropTypes.arrayOf(React.PropTypes.shape({
+      user: React.PropTypes.string,
+      score: React.PropTypes.number,
+      tr: React.PropTypes.number,
+      addl: React.PropTypes.string,
+    })),
+    challengeName: React.PropTypes.string,
+    lexicon: React.PropTypes.string,
     maxScore: React.PropTypes.number,
   }),
 };
