@@ -66,6 +66,7 @@ const ChallengeDialog = (props) => {
         <button
           className="btn btn-info"
           style={{ marginTop: '0.75em' }}
+          onClick={props.onChallengeSubmit}
         >Play!</button>
       </div>
       <div className="col-sm-5">
@@ -91,6 +92,7 @@ ChallengeDialog.propTypes = {
   currentDate: React.PropTypes.instanceOf(moment),
   onDateChange: React.PropTypes.func,
   onChallengeSelected: React.PropTypes.func,
+  onChallengeSubmit: React.PropTypes.func,
   challengeData: React.PropTypes.shape({
     entries: React.PropTypes.arrayOf(React.PropTypes.shape({
       user: React.PropTypes.string,

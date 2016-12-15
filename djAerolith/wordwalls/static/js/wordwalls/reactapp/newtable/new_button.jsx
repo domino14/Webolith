@@ -19,6 +19,7 @@ const NewTable = props =>
       defaultLexicon={props.defaultLexicon}
       availableLexica={props.availableLexica}
       challengeInfo={props.challengeInfo}
+      tablenum={props.tablenum}
     />
   </div>);
 
@@ -37,6 +38,7 @@ NewTable.propTypes = {
     name: React.PropTypes.string,
     orderPriority: React.PropTypes.number,
   })),
+  tablenum: React.PropTypes.number,
 };
 
 export default NewTable;

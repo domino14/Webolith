@@ -4,13 +4,16 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.http import require_GET, require_POST
 
 from wordwalls.models import (
-    DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry)
+    DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry,
+    WordwallsGameModel)
 from base.models import Lexicon
 from lib.response import response, StatusCode
 from wordwalls.views import getLeaderboardData
 from wordwalls.challenges import toughies_challenge_date
+from wordwalls.game import WordwallsGame
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +37,7 @@ def api_challengers(request):
         return response('Must use GET.', StatusCode.BAD_REQUEST)
     lex = request.GET.get('lexicon')
     ch_id = request.GET.get('challenge')
-    ch_date = date_from_request(request)
+    ch_date = date_from_request_dict(request.GET)
 
     return response(challengers(ch_date, lex, ch_id))
 
@@ -42,12 +45,12 @@ def api_challengers(request):
 ## Other API views with required auth.
 
 @login_required
+@require_GET
 def challenges_played(request):
     """ Get the challenges for the given day, played by the logged-in user. """
-    if request.method != 'GET':
-        return response('Must use GET.', StatusCode.BAD_REQUEST)
+
     lex = request.GET.get('lexicon')
-    ch_date = date_from_request(request)
+    ch_date = date_from_request_dict(request.GET)
     try:
         lex = Lexicon.objects.get(pk=lex)
     except Lexicon.DoesNotExist:
@@ -81,15 +84,65 @@ def challenges_played(request):
     return response(resp)
 
 
+@login_required
+@require_POST
+def new_challenge(request):
+    """
+    Load a new challenge into this table.
+
+    """
+    body = json.loads(request.body)
+    # First verify that the user has access to this table.
+    # XXX Later: assign a table num if not provided, etc.
+    if not access_to_table(body['tablenum'], request.user):
+        return response('User is not in this table.', StatusCode.BAD_REQUEST)
+
+    dt = date_from_request_dict(body)
+    lex = body['lexicon']
+    ch_id = body['challenge']
+    # Load or create new challenge.
+    try:
+        lex = Lexicon.objects.get(pk=lex)
+    except Lexicon.DoesNotExist:
+        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
+    try:
+        challenge_name = DailyChallengeName.objects.get(pk=ch_id)
+    except DailyChallengeName.DoesNotExist:
+        return response('Bad challenge.', StatusCode.BAD_REQUEST)
+
+    game = WordwallsGame()
+    tablenum = game.initialize_daily_challenge(
+        request.user, lex, challenge_name, dt, use_table=body['tablenum'])
+
+    return response({
+        'tablenum': tablenum,
+        'list_name': game.get_wgm(tablenum, lock=False).word_list.name
+    })
+    # XXX: Need to write tests around this behavior.
+
+
 # api views helpers
-def date_from_request(request):
-    """ Get the date from the given GET request. """
+
+def access_to_table(tablenum, user):
+    """ Return whether user has access to table. For now we just use
+    the wordwalls game model. We should fix the logic for multiplayer
+    afterwards. """
+    game = WordwallsGame()
+    return game.permit(user, tablenum)
+
+
+def date_from_request_dict(request_dict):
+    """ Get the date from the given request dictionary. """
     # YYYY-mm-dd
-    dt = request.GET.get('date')
+    dt = request_dict.get('date')
+    today = date.today()
     try:
         ch_date = datetime.strptime(dt, '%Y-%m-%d').date()
     except (ValueError, TypeError):
-        ch_date = date.today()
+        ch_date = today
+
+    if ch_date > today:
+        ch_date = today
 
     return ch_date
 

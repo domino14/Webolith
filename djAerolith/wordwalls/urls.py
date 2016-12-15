@@ -37,5 +37,6 @@ urlpatterns = patterns('',
     url(r'^leaderboard/$', 'wordwalls.stats.leaderboard'),
     url(r'^leaderboard/getboard/$', 'wordwalls.stats.get_medals'),
     url(r'^stats/$', 'wordwalls.stats.main'),
-    url(r'^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$', 'wordwalls.stats.get_stats'),
+    url(r'^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$',
+        'wordwalls.stats.get_stats'),
 )

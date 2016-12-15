@@ -18,6 +18,7 @@ const SEARCH_TYPE_WORDSEARCH = 'Word Search';
 const SEARCH_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const SEARCH_TYPE_SAVED_LIST = 'My saved lists';
 
+const DATE_FORMAT_STRING = 'YYYY-MM-DD';
 /**
  * Get lexicon options from the given object in a Select-friendly format.
  * @param  {Array.<Object>} lexicaObject
@@ -75,7 +76,7 @@ class TableCreator extends React.Component {
         url: '/wordwalls/api/challengers/',
         data: {
           lexicon: this.state.currentLexicon,
-          date: this.state.currentDate.format('YYYY-MM-DD'),
+          date: this.state.currentDate.format(DATE_FORMAT_STRING),
           challenge: this.state.currentChallenge,
         },
         method: 'GET',
@@ -84,13 +85,30 @@ class TableCreator extends React.Component {
     }
   }
 
+  /**
+   * Submit a challenge to the backend.
+   */
+  challengeSubmit() {
+    $.ajax({
+      url: '/wordwalls/api/new_challenge',
+      data: JSON.stringify({
+        lexicon: this.state.currentLexicon,
+        date: this.state.currentDate.format(DATE_FORMAT_STRING),
+        challenge: this.state.currentChallenge,
+        tablenum: this.props.tablenum,
+      }),
+      method: 'POST',
+    })
+    .done(data => console.log(data));
+  }
+
   loadTableCreationInfo() {
     // Load the challenge-related stuff.
     $.ajax({
       url: '/wordwalls/api/challenges_played/',
       data: {
         lexicon: this.state.currentLexicon,
-        date: this.state.currentDate.format('YYYY-MM-DD'),
+        date: this.state.currentDate.format(DATE_FORMAT_STRING),
       },
       method: 'GET',
     })
@@ -112,6 +130,7 @@ class TableCreator extends React.Component {
                 currentDate: moment(date),
               });
             }}
+            onChallengeSubmit={this.challengeSubmit}
             onChallengeSelected={challID => () => {
               this.setState({
                 currentChallenge: challID,
@@ -202,6 +221,7 @@ TableCreator.propTypes = {
     name: React.PropTypes.string,
     orderPriority: React.PropTypes.number,
   })),
+  tablenum: React.PropTypes.number,
 };
 
 

@@ -405,7 +405,7 @@ def table(request, id):
                        'addParams': json.dumps(params),
                        'avatarUrl': profile.avatarUrl,
                        'CURRENT_VERSION': CURRENT_VERSION,
-                       'lexicon': wwg.get_wgm(id).lexicon,
+                       'lexicon': wwg.get_wgm(id, False).lexicon,
                        'default_lexicon': profile.defaultLexicon.pk,
                        'challenge_info': json.dumps(challenge_info),
                        'available_lexica': json.dumps(lexica),

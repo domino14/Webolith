@@ -23,5 +23,6 @@ urlpatterns = patterns('',
     url(r'^challengers/$', 'wordwalls.api.api_challengers'),
     url(r'^configure/$', 'wordwalls.api.configure'),
     url(r'^challenges_played/$', 'wordwalls.api.challenges_played'),
+    url(r'^new_challenge/$', 'wordwalls.api.new_challenge'),
    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
     )

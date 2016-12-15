@@ -521,6 +521,7 @@ class WordwallsApp extends React.Component {
               defaultLexicon={this.props.defaultLexicon}
               challengeInfo={this.props.challengeInfo}
               availableLexica={this.props.availableLexica}
+              tablenum={this.props.tablenum}
             />
           </div>
         </div>
@@ -612,6 +613,7 @@ WordwallsApp.propTypes = {
   lexicon: React.PropTypes.string,
   displayStyle: React.PropTypes.instanceOf(Styling),
   tableUrl: React.PropTypes.string,
+  tablenum: React.PropTypes.number,
   defaultLexicon: React.PropTypes.number,
   challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.number,
