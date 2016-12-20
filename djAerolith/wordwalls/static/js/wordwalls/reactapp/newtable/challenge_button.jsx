@@ -16,7 +16,7 @@ const ChallengeButton = (props) => {
   if (props.selectedChallenge === props.challenge.id) {
     extraClassName = 'btn-info';
   } else if (props.activeChalls.includes(props.challenge.id)) {
-    extraClassName = 'btn-danger';
+    extraClassName = 'btn-success';
   }
   const btnClassName = `btn btn-default ${extraClassName}`;
   return (

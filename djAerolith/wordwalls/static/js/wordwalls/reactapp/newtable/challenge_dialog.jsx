@@ -67,6 +67,7 @@ const ChallengeDialog = (props) => {
           className="btn btn-info"
           style={{ marginTop: '0.75em' }}
           onClick={props.onChallengeSubmit}
+          data-dismiss="modal"
         >Play!</button>
       </div>
       <div className="col-sm-5">

@@ -6,6 +6,7 @@ from django.test import TestCase, Client, RequestFactory
 from django.db import connection
 
 from wordwalls.api import date_from_request_dict
+from wordwalls.game import WordwallsGame
 from base.models import WordList
 logger = logging.getLogger(__name__)
 
@@ -118,8 +119,9 @@ class WordwallsNewChallengeTest(TestCase):
         self.assertEqual(result_obj['tablenum'], tablenum)
         expected_list_name = 'CSW15 Today\'s 8s - 2016-10-12'
         self.assertEqual(result_obj['list_name'], expected_list_name)
-        wl = WordList.objects.get(name=expected_list_name)
+        self.assertFalse(result_obj['autosave'])
+        game = WordwallsGame()
+        wl = game.get_wgm(tablenum, lock=False).word_list
         orig_questions = json.loads(wl.origQuestions)
         self.assertEqual(len(orig_questions), 50)
         self.assertEqual(len(orig_questions[28]['q']), 8)
-

@@ -11,6 +11,7 @@ from wordwalls.models import (
     WordwallsGameModel)
 from base.models import Lexicon
 from lib.response import response, StatusCode
+from lib.word_searches import SearchDescription
 from wordwalls.views import getLeaderboardData
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame
@@ -111,14 +112,57 @@ def new_challenge(request):
         return response('Bad challenge.', StatusCode.BAD_REQUEST)
 
     game = WordwallsGame()
+
     tablenum = game.initialize_daily_challenge(
         request.user, lex, challenge_name, dt, use_table=body['tablenum'])
-
+    addl_params = game.get_add_params(tablenum)
     return response({
         'tablenum': tablenum,
-        'list_name': game.get_wgm(tablenum, lock=False).word_list.name
+        'list_name': addl_params['tempListName'],
+        'autosave': True if addl_params.get('saveName') else False
     })
-    # XXX: Need to write tests around this behavior.
+
+
+@login_required
+@require_POST
+def new_search(request):
+    """
+    Load a new search into this table.
+
+    """
+    body = json.loads(request.body)
+    # First verify that the user has access to this table.
+    # XXX Later: assign a table num if not provided, etc.
+    if not access_to_table(body['tablenum'], request.user):
+        return response('User is not in this table.', StatusCode.BAD_REQUEST)
+
+    lex = body['lexicon']
+    desired_time = body['desiredTime']
+    # Convert to seconds:
+    quiz_time_secs = int(round(desired_time * 60))
+    questions_per_round = body['questionsPerRound']
+    if questions_per_round > 200 or questions_per_round < 15:
+        return response('Questions per round must be between 15 and 200.',
+                        StatusCode.BAD_REQUEST)
+    # Load or create new challenge.
+    try:
+        lex = Lexicon.objects.get(pk=lex)
+    except Lexicon.DoesNotExist:
+        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
+    search = SearchDescription.probability_range(
+        body['probMin'], body['probMax'], body['wordLength'], lex)
+
+    game = WordwallsGame()
+
+    tablenum = game.initialize_by_search_params(
+        request.user, search, quiz_time_secs, questions_per_round,
+        use_table=body['tablenum'])
+    addl_params = game.get_add_params(tablenum)
+    return response({
+        'tablenum': tablenum,
+        'list_name': addl_params['tempListName'],
+        'autosave': True if addl_params.get('saveName') else False
+    })
 
 
 # api views helpers

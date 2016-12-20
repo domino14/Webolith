@@ -3,6 +3,7 @@ import React from 'react';
 const classMap = {
   server: 'text-muted',
   error: 'text-danger',
+  info: 'text-info',
   chat: '',
 };
 

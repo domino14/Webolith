@@ -202,7 +202,7 @@ class WordwallsGame(object):
         return qs, secs, dc
 
     def initialize_by_search_params(self, user, search_description, time_secs,
-                                    questions_per_round=None):
+                                    questions_per_round=None, use_table=None):
         lexicon = search_description['lexicon']
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
@@ -213,7 +213,7 @@ class WordwallsGame(object):
             search_description['max']
         )
         wgm = self.create_or_update_game_instance(
-            user, lexicon, wl, None, timerSecs=time_secs,
+            user, lexicon, wl, use_table, timerSecs=time_secs,
             temp_list_name=temporary_list_name,
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!

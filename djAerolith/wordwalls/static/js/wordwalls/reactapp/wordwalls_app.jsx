@@ -3,6 +3,7 @@
 import React from 'react';
 import $ from 'jquery';
 import _ from 'underscore';
+import Immutable from 'immutable';
 
 import backgroundURL from './background';
 import Styling from './style';
@@ -20,6 +21,7 @@ import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
 
 const game = new WordwallsGame();
+const MAX_MESSAGES = 200;
 
 class WordwallsApp extends React.Component {
   constructor(props) {
@@ -62,6 +64,7 @@ class WordwallsApp extends React.Component {
     this.setDisplayStyle = this.setDisplayStyle.bind(this);
     this.onShuffleQuestion = this.onShuffleQuestion.bind(this);
     this.markMissed = this.markMissed.bind(this);
+    this.handleLoadNewList = this.handleLoadNewList.bind(this);
   }
 
   componentDidMount() {
@@ -165,10 +168,14 @@ class WordwallsApp extends React.Component {
     this.setState({
       autoSave: newAutoSave,
     });
-    if (newAutoSave) {
-      if (!this.state.gameGoing) {
-        this.saveGame();
-      }
+    if (newAutoSave && !this.state.gameGoing) {
+      this.saveGame();
+    }
+    this.showAutosaveMessage(newAutoSave);
+  }
+
+  showAutosaveMessage(autosave) {
+    if (autosave) {
       this.addServerMessage(`Autosave is now on! Aerolith will save your
         list progress to ${this.state.listName} at the end of every round.`);
     } else {
@@ -350,6 +357,9 @@ class WordwallsApp extends React.Component {
       content: serverMsg,
       type: optType || 'server',
     });
+    if (curMessages.length > MAX_MESSAGES) {
+      curMessages.shift();
+    }
     this.setState({
       messages: curMessages,
     });
@@ -451,6 +461,21 @@ class WordwallsApp extends React.Component {
     });
   }
 
+  /**
+   * Handle the loading of a new list into a table.
+   * @param  {Object} data
+   */
+  handleLoadNewList(data) {
+    this.setState({
+      listName: data.list_name,
+      autoSave: data.autosave,
+      numberOfRounds: 0,
+      curQuestions: Immutable.List(),
+    });
+    this.addServerMessage(`Loaded new list: ${data.list_name}`, 'info');
+    this.showAutosaveMessage(data.autosave);
+  }
+
   render() {
     // Calculate board width, height, grid dimensions from window
     // dimensions.
@@ -522,6 +547,8 @@ class WordwallsApp extends React.Component {
               challengeInfo={this.props.challengeInfo}
               availableLexica={this.props.availableLexica}
               tablenum={this.props.tablenum}
+              onLoadNewList={this.handleLoadNewList}
+              gameGoing={this.state.gameGoing}
             />
           </div>
         </div>

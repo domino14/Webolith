@@ -3,25 +3,42 @@ import React from 'react';
 import TableCreator from './table_creator';
 
 
-const NewTable = props =>
-  (<div>
-    <div
-      data-toggle="modal"
-      title="New Table"
-      data-target=".table-modal"
-    >
-      <button
-        className="btn btn-danger btn-sm"
-        style={{ marginTop: '-6px' /* why? */}}
-      >New</button>
-    </div>
-    <TableCreator
-      defaultLexicon={props.defaultLexicon}
-      availableLexica={props.availableLexica}
-      challengeInfo={props.challengeInfo}
-      tablenum={props.tablenum}
-    />
-  </div>);
+class NewTable extends React.Component {
+  constructor() {
+    super();
+    this.loadTableCreationInfo = this.loadTableCreationInfo.bind(this);
+  }
+
+  loadTableCreationInfo() {
+    this.myTableCreator.loadTableCreationInfo();
+  }
+
+  render() {
+    return (
+      <div>
+        <div
+          data-toggle="modal"
+          title="New Table"
+          data-target=".table-modal"
+        >
+          <button
+            className="btn btn-danger btn-sm"
+            style={{ marginTop: '-6px' /* why? */}}
+            onClick={this.loadTableCreationInfo}
+          >New</button>
+        </div>
+        <TableCreator
+          ref={ref => (this.myTableCreator = ref)}
+          defaultLexicon={this.props.defaultLexicon}
+          availableLexica={this.props.availableLexica}
+          challengeInfo={this.props.challengeInfo}
+          tablenum={this.props.tablenum}
+          onLoadNewList={this.props.onLoadNewList}
+          gameGoing={this.props.gameGoing}
+        />
+      </div>);
+  }
+}
 
 NewTable.propTypes = {
   defaultLexicon: React.PropTypes.number,
@@ -39,6 +56,8 @@ NewTable.propTypes = {
     orderPriority: React.PropTypes.number,
   })),
   tablenum: React.PropTypes.number,
+  onLoadNewList: React.PropTypes.func,
+  gameGoing: React.PropTypes.bool,
 };
 
 export default NewTable;

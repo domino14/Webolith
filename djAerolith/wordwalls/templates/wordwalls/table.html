@@ -71,7 +71,7 @@ mixpanel.identify("{{username}}");
   // Our entry point will use window.TableGlobals to pass these in to the app.
   var TableGlobals = {
     addlParams: '{{addParams | escapejs }}',
-    tablenum: '{{tablenum}}',
+    tablenum: {{tablenum}},
     lexicon: '{{lexicon.lexiconName}}',
     username: '{{username}}',
     availableLexica: '{{available_lexica|escapejs}}',
