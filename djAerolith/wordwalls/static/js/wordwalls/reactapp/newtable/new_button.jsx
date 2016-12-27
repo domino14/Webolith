@@ -6,11 +6,11 @@ import TableCreator from './table_creator';
 class NewTable extends React.Component {
   constructor() {
     super();
-    this.loadTableCreationInfo = this.loadTableCreationInfo.bind(this);
+    this.resetDialog = this.resetDialog.bind(this);
   }
 
-  loadTableCreationInfo() {
-    this.myTableCreator.loadTableCreationInfo();
+  resetDialog() {
+    this.myTableCreator.resetDialog();
   }
 
   render() {
@@ -24,7 +24,7 @@ class NewTable extends React.Component {
           <button
             className="btn btn-danger btn-sm"
             style={{ marginTop: '-6px' /* why? */}}
-            onClick={this.loadTableCreationInfo}
+            onClick={this.resetDialog}
           >New</button>
         </div>
         <TableCreator

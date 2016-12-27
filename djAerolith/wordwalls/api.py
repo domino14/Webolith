@@ -8,9 +8,9 @@ from django.views.decorators.http import require_GET, require_POST
 
 from wordwalls.models import (
     DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry,
-    WordwallsGameModel)
+    NamedList)
 from base.models import Lexicon
-from lib.response import response, StatusCode
+from lib.response import response, bad_request
 from lib.word_searches import SearchDescription
 from wordwalls.views import getLeaderboardData
 from wordwalls.challenges import toughies_challenge_date
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 def configure(request):
     if request.method != "POST":
-        return response("Must use POST.", StatusCode.FORBIDDEN)
+        return bad_request("Must use POST.")
     # XXX: User can put any old JSON here. We should do some backend
     # validation.
     prefs = json.loads(request.body)
@@ -35,7 +35,7 @@ def configure(request):
 # API Views. No Auth required.
 def api_challengers(request):
     if request.method != 'GET':
-        return response('Must use GET.', StatusCode.BAD_REQUEST)
+        return bad_request('Must use GET.')
     lex = request.GET.get('lexicon')
     ch_id = request.GET.get('challenge')
     ch_date = date_from_request_dict(request.GET)
@@ -55,7 +55,7 @@ def challenges_played(request):
     try:
         lex = Lexicon.objects.get(pk=lex)
     except Lexicon.DoesNotExist:
-        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
+        return bad_request('Bad lexicon.')
 
     challenges = DailyChallenge.objects.filter(date=ch_date, lexicon=lex)
     entries = DailyChallengeLeaderboardEntry.objects.filter(
@@ -85,84 +85,144 @@ def challenges_played(request):
     return response(resp)
 
 
+def load_new_words(f):
+    def wrap(request, *args, **kwargs):
+        """ A decorator for all the functions that load new words. """
+        try:
+            body = json.loads(request.body)
+        except (TypeError, ValueError):
+            return bad_request('Badly formatted body.')
+        # First verify that the user has access to this table.
+        # XXX Later: assign a table num if not provided, etc.
+        if not access_to_table(body['tablenum'], request.user):
+            return bad_request('User is not in this table.')
+
+        parsed_req = {
+            'tablenum': body['tablenum']
+        }
+
+        lex_id = body.get('lexicon')
+        try:
+            lexicon = Lexicon.objects.get(pk=lex_id)
+        except Lexicon.DoesNotExist:
+            return bad_request('Bad lexicon.')
+        parsed_req['lexicon'] = lexicon
+        parsed_req['challenge'] = body.get('challenge')
+        parsed_req['dt'] = body.get('date')
+
+        if 'desiredTime' in body:
+            quiz_time_secs = int(round(body['desiredTime'] * 60))
+            if quiz_time_secs < 1 or quiz_time_secs > 3600:
+                return bad_request('Desired time must be between 1 and 3600 '
+                                   'seconds.')
+            parsed_req['quiz_time_secs'] = quiz_time_secs
+
+        parsed_req['questions_per_round'] = body.get('questionsPerRound', 50)
+        if (parsed_req['questions_per_round'] > 200 or
+                parsed_req['questions_per_round'] < 15):
+            return bad_request(
+                'Questions per round must be between 15 and 200.')
+        parsed_req['prob_min'] = body.get('probMin')
+        parsed_req['prob_max'] = body.get('probMax')
+        parsed_req['word_length'] = body.get('wordLength')
+
+        parsed_req['selectedList'] = body.get('selectedList')
+
+        return f(request, parsed_req, *args, **kwargs)
+
+    return wrap
+
+
+def new_table_response(tablenum):
+    game = WordwallsGame()
+    addl_params = game.get_add_params(tablenum)
+    return response({
+        'tablenum': tablenum,
+        'list_name': addl_params['tempListName'],
+        'autosave': True if addl_params.get('saveName') else False
+    })
+
+
 @login_required
 @require_POST
-def new_challenge(request):
+@load_new_words
+def new_challenge(request, parsed_req_body):
     """
     Load a new challenge into this table.
 
     """
-    body = json.loads(request.body)
-    # First verify that the user has access to this table.
-    # XXX Later: assign a table num if not provided, etc.
-    if not access_to_table(body['tablenum'], request.user):
-        return response('User is not in this table.', StatusCode.BAD_REQUEST)
-
-    dt = date_from_request_dict(body)
-    lex = body['lexicon']
-    ch_id = body['challenge']
-    # Load or create new challenge.
     try:
-        lex = Lexicon.objects.get(pk=lex)
-    except Lexicon.DoesNotExist:
-        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
-    try:
-        challenge_name = DailyChallengeName.objects.get(pk=ch_id)
+        challenge_name = DailyChallengeName.objects.get(
+            pk=parsed_req_body['challenge'])
     except DailyChallengeName.DoesNotExist:
-        return response('Bad challenge.', StatusCode.BAD_REQUEST)
+        return bad_request('Bad challenge.')
+    tablenum = WordwallsGame().initialize_daily_challenge(
+        request.user, parsed_req_body['lexicon'],
+        challenge_name,
+        date_from_str(parsed_req_body['dt']),
+        use_table=parsed_req_body['tablenum'])
 
-    game = WordwallsGame()
-
-    tablenum = game.initialize_daily_challenge(
-        request.user, lex, challenge_name, dt, use_table=body['tablenum'])
-    addl_params = game.get_add_params(tablenum)
-    return response({
-        'tablenum': tablenum,
-        'list_name': addl_params['tempListName'],
-        'autosave': True if addl_params.get('saveName') else False
-    })
+    return new_table_response(tablenum)
 
 
 @login_required
 @require_POST
-def new_search(request):
+@load_new_words
+def new_search(request, parsed_req_body):
     """
     Load a new search into this table.
 
     """
-    body = json.loads(request.body)
-    # First verify that the user has access to this table.
-    # XXX Later: assign a table num if not provided, etc.
-    if not access_to_table(body['tablenum'], request.user):
-        return response('User is not in this table.', StatusCode.BAD_REQUEST)
 
-    lex = body['lexicon']
-    desired_time = body['desiredTime']
-    # Convert to seconds:
-    quiz_time_secs = int(round(desired_time * 60))
-    questions_per_round = body['questionsPerRound']
-    if questions_per_round > 200 or questions_per_round < 15:
-        return response('Questions per round must be between 15 and 200.',
-                        StatusCode.BAD_REQUEST)
-    # Load or create new challenge.
-    try:
-        lex = Lexicon.objects.get(pk=lex)
-    except Lexicon.DoesNotExist:
-        return response('Bad lexicon.', StatusCode.BAD_REQUEST)
     search = SearchDescription.probability_range(
-        body['probMin'], body['probMax'], body['wordLength'], lex)
+        parsed_req_body['prob_min'], parsed_req_body['prob_max'],
+        parsed_req_body['word_length'], parsed_req_body['lexicon'])
 
-    game = WordwallsGame()
+    tablenum = WordwallsGame().initialize_by_search_params(
+        request.user, search, parsed_req_body['quiz_time_secs'],
+        parsed_req_body['questions_per_round'],
+        use_table=parsed_req_body['tablenum'])
 
-    tablenum = game.initialize_by_search_params(
-        request.user, search, quiz_time_secs, questions_per_round,
-        use_table=body['tablenum'])
-    addl_params = game.get_add_params(tablenum)
-    return response({
-        'tablenum': tablenum,
-        'list_name': addl_params['tempListName'],
-        'autosave': True if addl_params.get('saveName') else False
-    })
+    return new_table_response(tablenum)
+
+
+@login_required
+@require_POST
+@load_new_words
+def load_aerolith_list(request, parsed_req_body):
+    """ Load an Aerolith list into this table. """
+
+    try:
+        named_list = NamedList.objects.get(pk=parsed_req_body['selectedList'])
+    except NamedList.DoesNotExist:
+        return bad_request('List does not exist.')
+    tablenum = WordwallsGame().initialize_by_named_list(
+        parsed_req_body['lexicon'], request.user, named_list,
+        parsed_req_body['quiz_time_secs'],
+        parsed_req_body['questions_per_round'],
+        use_table=parsed_req_body['tablenum'])
+    return new_table_response(tablenum)
+
+
+@login_required
+@require_GET
+def default_lists(request):
+    lex_id = request.GET.get('lexicon')
+    try:
+        lex = Lexicon.objects.get(pk=lex_id)
+    except Lexicon.DoesNotExist:
+        return bad_request('Bad lexicon.')
+
+    ret_data = []
+    for nl in NamedList.objects.filter(lexicon=lex):
+        ret_data.append({
+            'name': nl.name,
+            'lexicon': nl.lexicon.lexiconName,
+            'numAlphas': nl.numQuestions,
+            'wordLength': nl.wordLength,
+            'id': nl.pk,
+        })
+    return response(ret_data)
 
 
 # api views helpers
@@ -179,6 +239,16 @@ def date_from_request_dict(request_dict):
     """ Get the date from the given request dictionary. """
     # YYYY-mm-dd
     dt = request_dict.get('date')
+    return date_from_str(dt)
+
+
+def date_from_str(dt):
+    """
+    Return a date given a string in YYYY-MM-DD format, that is no bigger
+    than today.
+
+    """
+
     today = date.today()
     try:
         ch_date = datetime.strptime(dt, '%Y-%m-%d').date()
@@ -196,6 +266,6 @@ def challengers(dt, lex, ch_id):
         lex = Lexicon.objects.get(pk=lex)
         ch_name = DailyChallengeName.objects.get(pk=ch_id)
     except ObjectDoesNotExist:
-        return response('Bad lexicon or challenge.', StatusCode.BAD_REQUEST)
+        return bad_request('Bad lexicon or challenge.')
 
     return getLeaderboardData(lex, ch_name, dt)

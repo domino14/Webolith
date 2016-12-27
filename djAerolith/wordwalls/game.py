@@ -219,7 +219,7 @@ class WordwallsGame(object):
         return wgm.pk   # this is a table number id!
 
     def initialize_by_named_list(self, lex, user, named_list, secs,
-                                 questions_per_round=None):
+                                 questions_per_round=None, use_table=None):
         qs = json.loads(named_list.questions)
         db = WordDB(lex.lexiconName)
         if named_list.isRange:
@@ -232,7 +232,7 @@ class WordwallsGame(object):
             wl.initialize_list(qs, lex, user, shuffle=True)
 
         wgm = self.create_or_update_game_instance(
-            user, lex, wl, None, timerSecs=secs,
+            user, lex, wl, use_table, timerSecs=secs,
             temp_list_name=named_list.name,
             questionsToPull=questions_per_round)
         return wgm.pk

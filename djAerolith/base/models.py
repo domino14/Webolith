@@ -198,6 +198,11 @@ class SavedList(models.Model):
             'goneThruOnce': self.goneThruOnce,
             'questionIndex': self.questionIndex,
             'version': self.version,
+            # Note: This time is given in the Django installation's local
+            # time (which happens to be Los Angeles). It is probably better
+            # to make the local time UTC, and then do the transformation
+            # client side. In this case, we'll have to transform the
+            # time client side from Los Angeles time >.<
             'lastSaved': self.lastSaved.strftime('%Y-%m-%d %H:%M'),
             'id': self.pk,
             'temporary': self.is_temporary

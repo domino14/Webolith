@@ -16,15 +16,28 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.conf.urls import *
+from django.conf.urls import patterns, url
 
+from wordwalls.api import (
+    api_challengers,
+    configure,
+    challenges_played,
+    default_lists,
+    new_challenge,
+    new_search,
+    load_aerolith_list,
+)
 
-urlpatterns = patterns('',
-    url(r'^challengers/$', 'wordwalls.api.api_challengers'),
-    url(r'^configure/$', 'wordwalls.api.configure'),
-    url(r'^challenges_played/$', 'wordwalls.api.challenges_played'),
-    url(r'^new_challenge/$', 'wordwalls.api.new_challenge'),
-    url(r'^new_search/$', 'wordwalls.api.new_search'),
+urlpatterns = patterns(
+    '',
+    url(r'^challengers/$', api_challengers),
+    url(r'^configure/$', configure),
+    url(r'^challenges_played/$', challenges_played),
+    url(r'^default_lists/$', default_lists),
+    url(r'^new_challenge/$', new_challenge),
+    url(r'^new_search/$', new_search),
+    url(r'^load_aerolith_list/$', load_aerolith_list),
 
-   # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature', name='get_new_signature')
-    )
+    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
+    # name='get_new_signature')
+)

@@ -5,12 +5,15 @@ import React from 'react';
 const Select = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
   const options = [];
+  const additionalSelectProps = {};
   props.options.forEach((element, idx) =>
     options.push(<option
       value={element.value}
       key={idx}
     >{element.displayValue}</option>));
-
+  if (props.numItems > 1) {
+    additionalSelectProps.size = props.numItems;
+  }
   return (
     <div className="form-group">
       <div className="row">
@@ -20,6 +23,7 @@ const Select = (props) => {
             value={props.selectedValue}
             onChange={props.onChange}
             className="form-control"
+            {...additionalSelectProps}
           >
             {options}
           </select>
@@ -37,6 +41,7 @@ Select.propTypes = {
   label: React.PropTypes.string,
   selectedValue: React.PropTypes.string,
   onChange: React.PropTypes.func,
+  numItems: React.PropTypes.number,
 };
 
 

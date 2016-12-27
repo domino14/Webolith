@@ -14,3 +14,7 @@ def response(obj, status=StatusCode.OK):
                         content_type="application/json; charset=utf-8",
                         status=status)
     return resp
+
+
+def bad_request(obj):
+    return response(obj, StatusCode.BAD_REQUEST)

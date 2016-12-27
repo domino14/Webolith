@@ -125,3 +125,62 @@ class WordwallsNewChallengeTest(TestCase):
         orig_questions = json.loads(wl.origQuestions)
         self.assertEqual(len(orig_questions), 50)
         self.assertEqual(len(orig_questions[28]['q']), 8)
+
+
+class WordwallsNewSearchTest(TestCase):
+    """ Test the new search behavior. """
+    fixtures = ['test/lexica.json',
+                'test/users.json',
+                'test/profiles.json',
+                'test/word_lists.json',
+                'dcNames.json',
+                'test/daily_challenge.json']
+
+    USER = 'cesar'
+    PASSWORD = 'foobar'
+
+    def setUp(self):
+        # XXX: Figure out a better way of doing this.
+        cursor = connection.cursor()
+        cursor.execute("select setval('%s_id_seq', %d, True)" % (
+            'wordwalls_savedlist', 123456))
+        self.client = Client()
+        result = self.client.login(username=self.USER, password=self.PASSWORD)
+        self.assertTrue(result)
+
+    def test_replace_with_wordlist(self):
+        # First, load a challenge the old way.
+        # XXX: Note that this should be removed/replaced at some point.
+        # We will not have a lot of the /wordwalls endpoint functions.
+        result = self.client.post('/wordwalls/', {
+            'action': 'challengeSubmit',
+            'lexicon': 7,
+            'challenge': 14,
+            'challengeDate': '2013-11-29'
+        })
+        content = json.loads(result.content)
+        response = self.client.get(content['url'])
+        addl_params = json.loads(response.context['addParams'])
+        tablenum = int(response.context['tablenum'])
+        self.assertEqual(addl_params['tempListName'],
+                         'America Today\'s 15s - 2013-11-29')
+        # Now load a new search
+        result = self.client.post('/wordwalls/api/new_search/',
+                                  data=json.dumps({'tablenum': tablenum,
+                                                   'lexicon': 1,
+                                                   'desiredTime': 4.5,
+                                                   'questionsPerRound': 75,
+                                                   'probMin': 84,
+                                                   'probMax': 223,
+                                                   'wordLength': 9}),
+                                  content_type='application/json')
+        result_obj = json.loads(result.content)
+        self.assertEqual(result_obj['tablenum'], tablenum)
+        expected_list_name = 'CSW15 9s (84 - 223)'
+        self.assertEqual(result_obj['list_name'], expected_list_name)
+        self.assertFalse(result_obj['autosave'])
+        game = WordwallsGame()
+        wl = game.get_wgm(tablenum, lock=False).word_list
+        orig_questions = json.loads(wl.origQuestions)
+        self.assertEqual(len(orig_questions), 140)
+        self.assertEqual(len(orig_questions[18]['q']), 9)

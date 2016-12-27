@@ -7,10 +7,11 @@ import ModalSkeleton from '../modal_skeleton';
 import Select from '../forms/select';
 import NumberInput from '../forms/number_input';
 import Pills from './pills';
+import Notifications from '../notifications';
+
 import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
-import Notifications from '../notifications';
-// import SavedListDialog from './saved_list_dialog';
+import SavedListDialog from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 
 const GAME_TYPE_NEW = 'New';
@@ -64,18 +65,21 @@ class TableCreator extends React.Component {
       probMin: '1',
       probMax: '50',
       wordLength: 2,
+      // Aerolith lists
+      aerolithLists: [],
+      selectedList: '',
+      // Saved lists - the format here is a little different because
+      // we are using another API 😐
+      savedLists: { lists: [], count: 0 },
+      selectedSavedList: '',
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
     this.searchParamChange = this.searchParamChange.bind(this);
+    this.selectedListChange = this.selectedListChange.bind(this);
+    this.selectedSavedListChange = this.selectedSavedListChange.bind(this);
     this.searchSubmit = this.searchSubmit.bind(this);
-  }
-
-  // On mounting of this element, we need to create the various things
-  // it needs from the backend - the saved lists, named lists, and
-  // challenge-related information.
-  componentDidMount() {
-    this.loadTableCreationInfo();
+    this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
   }
 
   /**
@@ -84,8 +88,9 @@ class TableCreator extends React.Component {
    */
   componentDidUpdate(prevProps, prevState) {
     if ((prevState.currentLexicon !== this.state.currentLexicon) ||
-        (prevState.currentDate !== this.state.currentDate)) {
-      this.loadChallengePlayedInfo();
+        (prevState.currentDate.format(DATE_FORMAT_STRING) !==
+         this.state.currentDate.format(DATE_FORMAT_STRING))) {
+      this.loadInfoForSearchType(this.state.activeSearchType);
     }
     if (prevState.currentChallenge !== this.state.currentChallenge) {
       // The challenge changed. We should load challenge leaderboard data.
@@ -109,6 +114,32 @@ class TableCreator extends React.Component {
       desiredTime: challenge.seconds / 60,
       questionsPerRound: challenge.numQuestions,
     });
+  }
+
+  loadInfoForSearchType(option) {
+    switch (option) {
+      case SEARCH_TYPE_CHALLENGE:
+        this.loadChallengePlayedInfo();
+        break;
+
+      case SEARCH_TYPE_SAVED_LIST:
+        this.loadSavedListInfo();
+        break;
+
+      case SEARCH_TYPE_AEROLITH_LISTS:
+        this.loadAerolithListInfo();
+        break;
+      default:
+        // ?
+        break;
+    }
+  }
+
+  // Reset dialog is called from the parent. This is a bit of an anti
+  // pattern. We just make sure we reload any lists/etc when a user
+  // reopens the dialog.
+  resetDialog() {
+    this.loadInfoForSearchType(this.state.activeSearchType);
   }
 
   /**
@@ -157,6 +188,27 @@ class TableCreator extends React.Component {
       `Failed to load search: ${jqXHR.responseJSON}`));
   }
 
+  aerolithListSubmit() {
+    if (this.props.gameGoing) {
+      Notifications.alert('small', 'Error', NO_LOAD_WHILE_PLAYING);
+      return;
+    }
+    $.ajax({
+      url: '/wordwalls/api/load_aerolith_list/',
+      data: JSON.stringify({
+        lexicon: this.state.currentLexicon,
+        desiredTime: this.state.desiredTime,
+        questionsPerRound: this.state.questionsPerRound,
+        selectedList: this.state.selectedList,
+        tablenum: this.props.tablenum,
+      }),
+      method: 'POST',
+    })
+    .done(data => this.props.onLoadNewList(data))
+    .fail(jqXHR => Notifications.alert('small', 'Error',
+      `Failed to load search: ${jqXHR.responseJSON}`));
+  }
+
   loadChallengePlayedInfo() {
     // Load the challenge-related stuff.
     $.ajax({
@@ -170,14 +222,48 @@ class TableCreator extends React.Component {
     .done(data => this.setState({ challengesDoneAtDate: data }));
   }
 
-  loadTableCreationInfo() {
-    this.loadChallengePlayedInfo();
+  loadAerolithListInfo() {
+    $.ajax({
+      url: '/wordwalls/api/default_lists/',
+      data: {
+        lexicon: this.state.currentLexicon,
+      },
+      method: 'GET',
+    })
+    .done(data => this.setState({ aerolithLists: data }));
+  }
+
+  loadSavedListInfo() {
+    $.ajax({
+      url: '/base/api/saved_lists/',
+      data: {
+        // Note the API is slightly different. We're using the cards
+        // API here to avoid writing yet another saved list API.
+        lexicon_id: this.state.currentLexicon,
+        order_by: 'modified',
+        temp: 0,
+      },
+      method: 'GET',
+    })
+    .done(data => this.setState({ savedLists: data }));
   }
 
   searchParamChange(paramName, paramValue) {
     const curState = {};
     curState[paramName] = paramValue;
     this.setState(curState);
+  }
+
+  selectedListChange(listId) {
+    this.setState({
+      selectedList: listId,
+    });
+  }
+
+  selectedSavedListChange(listId) {
+    this.setState({
+      selectedSavedList: listId,
+    });
   }
 
   render() {
@@ -213,11 +299,23 @@ class TableCreator extends React.Component {
           />);
 
         break;
-      // case SEARCH_TYPE_SAVED_LIST:
-      //   selectedQuizSearchDialog = SavedListDialog;
-      //   break;
+      case SEARCH_TYPE_SAVED_LIST:
+        selectedQuizSearchDialog = (
+          <SavedListDialog
+            listOptions={this.state.savedLists}
+            selectedList={this.state.selectedSavedList}
+            onSelectedListChange={this.selectedSavedListChange}
+            onListSubmit={this.savedListSubmit}
+          />);
+        break;
       case SEARCH_TYPE_AEROLITH_LISTS:
-        selectedQuizSearchDialog = AerolithListDialog;
+        selectedQuizSearchDialog = (
+          <AerolithListDialog
+            listOptions={this.state.aerolithLists}
+            selectedList={this.state.selectedList}
+            onSelectedListChange={this.selectedListChange}
+            onListSubmit={this.aerolithListSubmit}
+          />);
         break;
       default:
         selectedQuizSearchDialog = null;
@@ -292,6 +390,7 @@ class TableCreator extends React.Component {
                       questionsPerRound: 50,
                     });
                   }
+                  this.loadInfoForSearchType(option);
                 }}
               />
               {selectedQuizSearchDialog}
