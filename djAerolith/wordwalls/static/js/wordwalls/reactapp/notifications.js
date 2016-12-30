@@ -6,6 +6,12 @@ class Notifications {
       size, title, message,
     });
   }
+
+  static confirm(title, message, callback) {
+    bootbox.confirm({
+      title, message, callback: (confirmed) => { if (confirmed) { callback(); } },
+    });
+  }
 }
 
 export default Notifications;

@@ -36,6 +36,7 @@ from forms import TimeForm, DailyChallengesForm
 from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm, NumQuestionsForm)
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
+from lib.dates import pretty_date
 from wordwalls.game import WordwallsGame
 from lib.word_searches import SearchDescription
 from lib.word_db_helper import WordDB
@@ -569,44 +570,6 @@ def getLeaderboardData(lex, chName, challengeDate):
         return None  # daily challenge doesn't exist
 
     return getLeaderboardDataDcInstance(dc)
-
-
-def pretty_date(now, time):
-    """
-    Get a datetime object and return a
-    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
-    'just now', etc
-    """
-
-    diff = now - time
-    second_diff = diff.seconds
-    day_diff = diff.days
-
-    if day_diff < 0:
-        return ''
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return _("just now")
-        if second_diff < 60:
-            return _("%(seconds)s seconds ago") % {'seconds': second_diff}
-        if second_diff < 120:
-            return _("a minute ago")
-        if second_diff < 3600:
-            return _("%(minutes)s minutes ago") % {'minutes': second_diff / 60}
-        if second_diff < 7200:
-            return _("an hour ago")
-        if second_diff < 86400:
-            return _("%(hours)s hours ago") % {'hours': second_diff / 3600}
-    if day_diff == 1:
-        return _("Yesterday")
-    if day_diff < 7:
-        return _("%(day_diff)s days ago") % {'day_diff': day_diff}
-    if day_diff < 31:
-        return _("%(week)s weeks ago") % {'week': day_diff / 7}
-    if day_diff < 365:
-        return _("%(month)s months ago") % {'month': day_diff / 30}
-    return _("%(year)s years ago") % {'year': day_diff / 365}
 
 
 def getSavedListList(lex, user):

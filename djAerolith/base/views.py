@@ -107,6 +107,7 @@ def saved_lists_get(request):
     lexicon = query_params.get('lexicon')
     lexicon_id = query_params.get('lexicon_id')
     temporary = query_params.get('temp')
+    last_saved_human = False
     order_by = 'id'
     if lexicon:
         # Search by name
@@ -118,9 +119,12 @@ def saved_lists_get(request):
         qargs['is_temporary'] = temporary == '1'
     if query_params.get('order_by') == 'modified':
         order_by = '-lastSaved'
+    if query_params.get('last_saved') == 'human':
+        last_saved_human = True
 
     lists = WordList.objects.filter(**qargs).order_by(order_by)
-    return response({'lists': [sl.to_python_reduced() for sl in lists],
+    return response({'lists': [sl.to_python_reduced(last_saved_human)
+                               for sl in lists],
                      'count': lists.count()})
 
 

@@ -71,15 +71,14 @@ class TableCreator extends React.Component {
       // Saved lists - the format here is a little different because
       // we are using another API 😐
       savedLists: { lists: [], count: 0 },
-      selectedSavedList: '',
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
     this.searchParamChange = this.searchParamChange.bind(this);
     this.selectedListChange = this.selectedListChange.bind(this);
-    this.selectedSavedListChange = this.selectedSavedListChange.bind(this);
     this.searchSubmit = this.searchSubmit.bind(this);
     this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
+    this.savedListSubmit = this.savedListSubmit.bind(this);
   }
 
   /**
@@ -209,6 +208,14 @@ class TableCreator extends React.Component {
       `Failed to load search: ${jqXHR.responseJSON}`));
   }
 
+  savedListSubmit(listID, action, theargs) {
+    if (this.props.gameGoing) {
+      Notifications.alert('small', 'Error', NO_LOAD_WHILE_PLAYING);
+      return;
+    }
+    console.log('called savedListSubmit with listID', listID, action, theargs);
+  }
+
   loadChallengePlayedInfo() {
     // Load the challenge-related stuff.
     $.ajax({
@@ -242,6 +249,7 @@ class TableCreator extends React.Component {
         lexicon_id: this.state.currentLexicon,
         order_by: 'modified',
         temp: 0,
+        last_saved: 'human',
       },
       method: 'GET',
     })
@@ -257,12 +265,6 @@ class TableCreator extends React.Component {
   selectedListChange(listId) {
     this.setState({
       selectedList: listId,
-    });
-  }
-
-  selectedSavedListChange(listId) {
-    this.setState({
-      selectedSavedList: listId,
     });
   }
 
@@ -282,7 +284,8 @@ class TableCreator extends React.Component {
               });
             }}
             onChallengeSubmit={this.challengeSubmit}
-            onChallengeSelected={challID => () => this.onChallengeSelected(challID)}
+            onChallengeSelected={/* currying */
+              challID => () => this.onChallengeSelected(challID)}
             currentChallenge={this.state.currentChallenge}
           />);
         break;
@@ -303,8 +306,6 @@ class TableCreator extends React.Component {
         selectedQuizSearchDialog = (
           <SavedListDialog
             listOptions={this.state.savedLists}
-            selectedList={this.state.selectedSavedList}
-            onSelectedListChange={this.selectedSavedListChange}
             onListSubmit={this.savedListSubmit}
           />);
         break;
