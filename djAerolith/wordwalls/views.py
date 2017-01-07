@@ -37,7 +37,7 @@ from base.forms import (FindWordsForm, UserListForm, SavedListForm,
                         LexiconForm, NamedListForm, NumQuestionsForm)
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
 from lib.dates import pretty_date
-from wordwalls.game import WordwallsGame
+from wordwalls.game import WordwallsGame, GameInitException
 from lib.word_searches import SearchDescription
 from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
@@ -175,8 +175,10 @@ def challenge_submit(user, post):
     if not chDate or chDate > date.today():
         chDate = date.today()
 
-    tablenum = wwg.initialize_daily_challenge(user, lex, challengeName, chDate)
-    if tablenum == 0:
+    try:
+        tablenum = wwg.initialize_daily_challenge(user, lex, challengeName,
+                                                  chDate)
+    except GameInitException:
         return response({'success': False,
                          'error': _('Challenge does not exist.')})
 
@@ -231,11 +233,12 @@ def saved_lists_submit(user, post):
     quizTime = int(
         round(timeForm.cleaned_data['quizTime'] * 60))
     wwg = WordwallsGame()
-    tablenum = wwg.initialize_by_saved_list(
-        lex, user, slForm.cleaned_data['wordList'],
-        slForm.cleaned_data['listOption'], quizTime,
-        num_q_form.cleaned_data['num_questions'])
-    if tablenum == 0:
+    try:
+        tablenum = wwg.initialize_by_saved_list(
+            lex, user, slForm.cleaned_data['wordList'],
+            slForm.cleaned_data['listOption'], quizTime,
+            num_q_form.cleaned_data['num_questions'])
+    except GameInitException:
         raise Http404
     return response({'url': reverse('wordwalls_table',
                                     args=(tablenum,)),

@@ -9,12 +9,13 @@ from django.views.decorators.http import require_GET, require_POST
 from wordwalls.models import (
     DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry,
     NamedList)
-from base.models import Lexicon
+from base.models import Lexicon, WordList
+from base.forms import SavedListForm
 from lib.response import response, bad_request
 from lib.word_searches import SearchDescription
 from wordwalls.views import getLeaderboardData
 from wordwalls.challenges import toughies_challenge_date
-from wordwalls.game import WordwallsGame
+from wordwalls.game import WordwallsGame, GameInitException
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +126,7 @@ def load_new_words(f):
         parsed_req['prob_min'] = body.get('probMin')
         parsed_req['prob_max'] = body.get('probMax')
         parsed_req['word_length'] = body.get('wordLength')
-
+        parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
 
         return f(request, parsed_req, *args, **kwargs)
@@ -136,10 +137,19 @@ def load_new_words(f):
 def new_table_response(tablenum):
     game = WordwallsGame()
     addl_params = game.get_add_params(tablenum)
+
+    # Sometimes, 'tempListName' will not be in addl_params, when this
+    # is loading an already existing saved list. Instead, get from saveName.
+    if 'saveName' in addl_params:
+        autosave = True
+        list_name = addl_params['saveName']
+    else:
+        autosave = False
+        list_name = addl_params['tempListName']
     return response({
         'tablenum': tablenum,
-        'list_name': addl_params['tempListName'],
-        'autosave': True if addl_params.get('saveName') else False
+        'list_name': list_name,
+        'autosave': autosave
     })
 
 
@@ -190,7 +200,7 @@ def new_search(request, parsed_req_body):
 @require_POST
 @load_new_words
 def load_aerolith_list(request, parsed_req_body):
-    """ Load an Aerolith list into this table. """
+    """ Load an Aerolith list (a pre-defined list) into this table. """
 
     try:
         named_list = NamedList.objects.get(pk=parsed_req_body['selectedList'])
@@ -201,6 +211,29 @@ def load_aerolith_list(request, parsed_req_body):
         parsed_req_body['quiz_time_secs'],
         parsed_req_body['questions_per_round'],
         use_table=parsed_req_body['tablenum'])
+    return new_table_response(tablenum)
+
+
+@login_required
+@require_POST
+@load_new_words
+def load_saved_list(request, parsed_req_body):
+    """ Load a user Saved List into this table. """
+
+    try:
+        saved_list = WordList.objects.get(user=request.user,
+                                          pk=parsed_req_body['selectedList'])
+    except WordList.DoesNotExist:
+        return bad_request('List does not exist.')
+    try:
+        tablenum = WordwallsGame().initialize_by_saved_list(
+            parsed_req_body['lexicon'], request.user, saved_list,
+            convert_to_form_option(parsed_req_body['list_option']),
+            parsed_req_body['quiz_time_secs'],
+            parsed_req_body['questions_per_round'],
+            use_table=parsed_req_body['tablenum'])
+    except GameInitException as e:
+        return bad_request(str(e))
     return new_table_response(tablenum)
 
 
@@ -226,6 +259,22 @@ def default_lists(request):
 
 
 # api views helpers
+
+def convert_to_form_option(list_option):
+    """
+    Convert the list option, which is a string, to a numeric form
+    option as defined in SavedListForm.
+
+    """
+    try:
+        return {
+            'firstmissed': SavedListForm.FIRST_MISSED_CHOICE,
+            'continue': SavedListForm.CONTINUE_LIST_CHOICE,
+            'startover': SavedListForm.RESTART_LIST_CHOICE,
+        }[list_option]
+    except KeyError:
+        return None
+
 
 def access_to_table(tablenum, user):
     """ Return whether user has access to table. For now we just use

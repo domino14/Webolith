@@ -205,15 +205,44 @@ class TableCreator extends React.Component {
     })
     .done(data => this.props.onLoadNewList(data))
     .fail(jqXHR => Notifications.alert('small', 'Error',
-      `Failed to load search: ${jqXHR.responseJSON}`));
+      `Failed to load list: ${jqXHR.responseJSON}`));
   }
 
-  savedListSubmit(listID, action, theargs) {
+  savedListSubmit(listID, action) {
+    if (action === 'delete') {
+      $.ajax({
+        url: `/base/api/saved_list/${listID}`,
+        method: 'DELETE',
+      })
+      // XXX: Probably should do smart updating instead of reloading
+      // from the server.
+      .done(() => this.loadSavedListInfo())
+      .fail(jqXHR => Notifications.alert('small', 'Error',
+        `Failed to delete list: ${jqXHR.responseJSON}`));
+      return;
+    }
     if (this.props.gameGoing) {
       Notifications.alert('small', 'Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
-    console.log('called savedListSubmit with listID', listID, action, theargs);
+    $.ajax({
+      url: '/wordwalls/api/load_saved_list/',
+      data: JSON.stringify({
+        lexicon: this.state.currentLexicon,
+        desiredTime: this.state.desiredTime,
+        questionsPerRound: this.state.questionsPerRound,
+        selectedList: listID,
+        tablenum: this.props.tablenum,
+        listOption: action,
+      }),
+      method: 'POST',
+    })
+    .done((data) => {
+      this.props.onLoadNewList(data);
+      this.modal.dismiss();
+    })
+    .fail(jqXHR => Notifications.alert('small', 'Error',
+      `Failed to load list: ${jqXHR.responseJSON}`));
   }
 
   loadChallengePlayedInfo() {
@@ -325,6 +354,7 @@ class TableCreator extends React.Component {
       <ModalSkeleton
         title="New Table"
         modalClass="table-modal"
+        ref={el => (this.modal = el)}
       >
         <div className="modal-body">
           <div className="row">

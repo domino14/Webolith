@@ -67,7 +67,7 @@ class SavedListDialog extends React.Component {
             played through once.
           </div>
           <div
-            className="row"
+            className="row table-scroller"
             style={{ maxHeight: 450, minHeight: 350, overflow: 'scroll' }}
           >
             <ListTable

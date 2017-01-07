@@ -26,6 +26,7 @@ from wordwalls.api import (
     new_challenge,
     new_search,
     load_aerolith_list,
+    load_saved_list,
 )
 
 urlpatterns = patterns(
@@ -37,6 +38,7 @@ urlpatterns = patterns(
     url(r'^new_challenge/$', new_challenge),
     url(r'^new_search/$', new_search),
     url(r'^load_aerolith_list/$', load_aerolith_list),
+    url(r'^load_saved_list/$', load_saved_list),
 
     # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')

@@ -49,7 +49,7 @@ export default {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      $: 'jQuery',
+      $: 'jquery',
       jQuery: 'jquery',
     }),
     new webpack.optimize.CommonsChunkPlugin({

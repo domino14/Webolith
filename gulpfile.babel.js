@@ -9,6 +9,7 @@ import gzip from 'gulp-gzip';
 import rjs from 'gulp-requirejs';
 import uglify from 'gulp-uglify';
 import mocha from 'gulp-mocha';
+import count from 'gulp-count';
 
 import webpackConfig from './webpack.config.babel';
 import webpackProdConfig from './webpack.config-prod.babel';
@@ -60,6 +61,7 @@ gulp.task('lint', () =>
     paths.webpackFile,
     paths.webpackProdFile,
   ])
+  .pipe(count())
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failAfterError()));

@@ -41,6 +41,10 @@ from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
 logger = logging.getLogger(__name__)
 
 
+class GameInitException(Exception):
+    pass
+
+
 class WordwallsGame(object):
     def _initial_state(self):
         """ Return an initial state object, for a brand new game. """
@@ -153,7 +157,8 @@ class WordwallsGame(object):
 
         ret = self.get_or_create_dc(ch_date, ch_lex, ch_name)
         if ret is None:
-            return 0
+            raise GameInitException('Unable to create daily challenge {0}'.
+                                    format(ch_name))
         qs, secs, dc = ret
         wl = self.initialize_word_list(qs, ch_lex, user)
         temporary_list_name = '{0} {1} - {2}'.format(
@@ -238,23 +243,27 @@ class WordwallsGame(object):
         return wgm.pk
 
     def initialize_by_saved_list(self, lex, user, saved_list, list_option,
-                                 secs, questions_per_round=None):
+                                 secs, questions_per_round=None,
+                                 use_table=None):
         if saved_list.user != user:
             # Maybe this isn't a big deal.
             logger.warning('Saved list user does not match user %s %s',
                            saved_list.user, user)
-            return 0
+            raise GameInitException('Saved list user does not match user.')
+        if list_option is None:
+            logger.warning('Invalid list_option.')
+            raise GameInitException('Invalid list option.')
 
         if (list_option == SavedListForm.FIRST_MISSED_CHOICE and
                 saved_list.goneThruOnce is False):
             logger.warning('Error, first missed list only valid if player has '
                            'gone thru list once.')
-            return 0    # Can't do a 'first missed' list if we haven't gone
-                        # through it once!
+            raise GameInitException('Cannot quiz on first missed unless you '
+                                    'have gone through list once.')
 
         self.maybe_modify_word_list(saved_list, list_option)
         wgm = self.create_or_update_game_instance(
-            user, lex, saved_list, None,
+            user, lex, saved_list, use_table,
             saveName=saved_list.name,
             timerSecs=secs,
             questionsToPull=questions_per_round)
@@ -264,6 +273,8 @@ class WordwallsGame(object):
         """
         Modifies the passed-in word list based on the options. If the
         user chose to continue, does not modify word list.
+
+        Note that this saves the word list.
 
         """
 
