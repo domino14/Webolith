@@ -79,6 +79,7 @@ class TableCreator extends React.Component {
     this.searchSubmit = this.searchSubmit.bind(this);
     this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
     this.savedListSubmit = this.savedListSubmit.bind(this);
+    this.listUpload = this.listUpload.bind(this);
   }
 
   /**
@@ -285,6 +286,23 @@ class TableCreator extends React.Component {
     .done(data => this.setState({ savedLists: data }));
   }
 
+  listUpload(files) {
+    const data = new FormData();
+    data.append('file', files[0]);
+    data.append('lexicon', this.state.currentLexicon);
+
+    $.ajax({
+      url: '/wordwalls/ajax_upload/',
+      method: 'POST',
+      data,
+      processData: false,
+      contentType: false,
+    })
+    .done(() => this.loadSavedListInfo())
+    .fail(jqXHR => Notifications.alert('small', 'Error',
+      `Failed to upload list: ${jqXHR.responseJSON}`));
+  }
+
   searchParamChange(paramName, paramValue) {
     const curState = {};
     curState[paramName] = paramValue;
@@ -336,6 +354,7 @@ class TableCreator extends React.Component {
           <SavedListDialog
             listOptions={this.state.savedLists}
             onListSubmit={this.savedListSubmit}
+            onListUpload={this.listUpload}
           />);
         break;
       case SEARCH_TYPE_AEROLITH_LISTS:

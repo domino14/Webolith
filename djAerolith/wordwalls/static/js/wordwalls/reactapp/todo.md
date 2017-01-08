@@ -66,6 +66,16 @@ Nice to haves:
 
 (Can release part 1)
 
+Single-Page App:
+-[x] Lots of stuff
+-[x] Dropzone
+-[ ] Save limits
+-[ ] Flashcard link (use old flashcard app for now in new page)
+-[ ] Get rid of all old app code, move reactapp
+-[ ] Fix routes so that /wordwalls, /wordwalls/table/{x} are the same page
+    - Load new table dialog based on route
+    - Alternative for mobile
+
 For multiplayer
 -[ ] More player boxes (only show on bigger screens?)
 -[ ] Chat submit box
