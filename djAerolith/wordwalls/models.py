@@ -94,7 +94,8 @@ class DailyChallengeLeaderboardEntry(models.Model):
 
 
 class WordwallsGameModel(GenericTableGameModel):
-    word_list = models.ForeignKey(WordList)
+    word_list = models.ForeignKey(WordList,
+                                  on_delete=models.SET_NULL, null=True)
 
 
 class DailyChallengeMissedBingos(models.Model):

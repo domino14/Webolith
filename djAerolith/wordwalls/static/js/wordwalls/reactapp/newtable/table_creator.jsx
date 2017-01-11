@@ -25,6 +25,9 @@ const DATE_FORMAT_STRING = 'YYYY-MM-DD';
 
 const NO_LOAD_WHILE_PLAYING = (
   'Cannot load a game while you are in the middle of another one...');
+
+const NO_DELETE_WHILE_PLAYING = (
+  'Please wait until the end of the game to delete a list.');
 /**
  * Get lexicon options from the given object in a Select-friendly format.
  * @param  {Array.<Object>} lexicaObject
@@ -70,7 +73,14 @@ class TableCreator extends React.Component {
       selectedList: '',
       // Saved lists - the format here is a little different because
       // we are using another API 😐
-      savedLists: { lists: [], count: 0 },
+      savedLists: {
+        lists: [],
+        count: 0,
+        limits: {
+          total: 0,
+          current: 0,
+        },
+      },
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
@@ -210,6 +220,11 @@ class TableCreator extends React.Component {
   }
 
   savedListSubmit(listID, action) {
+    if (this.props.gameGoing) {
+      Notifications.alert('small', 'Error',
+        action !== 'delete' ? NO_LOAD_WHILE_PLAYING : NO_DELETE_WHILE_PLAYING);
+      return;
+    }
     if (action === 'delete') {
       $.ajax({
         url: `/base/api/saved_list/${listID}`,
@@ -220,10 +235,6 @@ class TableCreator extends React.Component {
       .done(() => this.loadSavedListInfo())
       .fail(jqXHR => Notifications.alert('small', 'Error',
         `Failed to delete list: ${jqXHR.responseJSON}`));
-      return;
-    }
-    if (this.props.gameGoing) {
-      Notifications.alert('small', 'Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
     $.ajax({

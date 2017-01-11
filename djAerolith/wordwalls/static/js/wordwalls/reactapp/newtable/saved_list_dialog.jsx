@@ -29,7 +29,6 @@ class SavedListDialog extends React.Component {
   }
 
   onDrop(files) {
-    console.log('Dropped files', files);
     this.props.onListUpload(files);
   }
 
@@ -66,19 +65,28 @@ class SavedListDialog extends React.Component {
   }
 
   render() {
+    const listInfo = `You currently have ${this.props.listOptions.limits.current}
+    alphagrams all over your lists. `;
+    let limitInfo = '';
+    if (this.props.listOptions.limits.total !== 0) {
+      limitInfo = `Your limit is ${this.props.listOptions.limits.total}.`;
+    }
+
     return (
       <div className="row">
         <div className="col-sm-11">
           <div className="row">
             <div className="col-sm-12">
-              Please select a list from below. Lists that are highlighted
-              in <span className="bg-success">green</span> have already been
-              played through once.
+              <p>Please select a list from below. Lists that are highlighted
+              in <span className="bg-success">green</span> have already
+              been played through once.</p>
+              <p>{listInfo}{limitInfo}</p>
             </div>
+
           </div>
           <div
             className="row table-scroller"
-            style={{ maxHeight: 450, minHeight: 350, overflow: 'scroll' }}
+            style={{ height: 350, overflow: 'scroll' }}
           >
             <ListTable
               lists={this.props.listOptions.lists}
@@ -90,8 +98,9 @@ class SavedListDialog extends React.Component {
           </div>
           <div className="row">
             <div className="col-sm-12">
+              <p>
               You can also upload your own list with the button below. The list
-              must consist of just words, one per line.
+              must consist of just words, one per line.</p>
             </div>
           </div>
           <div>
@@ -129,6 +138,10 @@ SavedListDialog.propTypes = {
       lastSavedDT: React.PropTypes.string,
     })),
     count: React.PropTypes.number,
+    limits: React.PropTypes.shape({
+      total: React.PropTypes.number,
+      current: React.PropTypes.number,
+    }),
   }),
   onListSubmit: React.PropTypes.func,
   onListUpload: React.PropTypes.func,

@@ -414,7 +414,9 @@ class WordwallsApp extends React.Component {
       if (data.info) {
         this.addServerMessage(data.info);
       }
-    });
+    })
+    .fail(jqXHR => this.addServerMessage(
+      `Error saving: ${jqXHR.responseJSON.error}`));
   }
 
   /**

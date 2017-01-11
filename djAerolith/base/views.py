@@ -123,9 +123,18 @@ def saved_lists_get(request):
         last_saved_human = True
 
     lists = WordList.objects.filter(**qargs).order_by(order_by)
+    profile = request.user.aerolithprofile
+    limit = 0
+    if not profile.member:
+        limit = settings.SAVE_LIST_LIMIT_NONMEMBER
     return response({'lists': [sl.to_python_reduced(last_saved_human)
                                for sl in lists],
-                     'count': lists.count()})
+                     'count': lists.count(),
+                     'limits': {
+                         'total': limit,
+                         'current': profile.wordwallsSaveListSize,
+                     }
+                     })
 
 
 def saved_lists_delete(request):

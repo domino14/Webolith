@@ -311,7 +311,9 @@ class WordwallsGame(object):
         word_list = wgm.word_list
 
         if not word_list:
-            raise Exception('Did not migrate word list for this table.')
+            return self.create_error_message(
+                _('It appears this word list has been deleted. Please '
+                  'load or create a new word list.'))
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += _("Now quizzing on missed list.") + "\r\n"
@@ -501,6 +503,9 @@ class WordwallsGame(object):
             # things a lot easier. we can change this later.
             logger.warning('Unable to save, quiz is going.')
             return _('You can only save the game at the end of a round.')
+        if not wgm.word_list:
+            return _('The word list associated with this table seems to have '
+                     'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
         logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
@@ -522,7 +527,6 @@ class WordwallsGame(object):
                               make_permanent_list=False):
         """
         Save a word list, return a response object.
-
 
         """
         ret = {'success': False}
