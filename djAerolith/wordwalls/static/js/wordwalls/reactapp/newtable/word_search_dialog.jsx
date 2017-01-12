@@ -76,6 +76,12 @@ class WordSearchDialog extends React.Component {
             onClick={this.props.onSearchSubmit}
             data-dismiss="modal"
           >Play!</button>
+          <button
+            className="btn btn-info"
+            style={{ marginTop: '0.75em', marginLeft: '1em' }}
+            onClick={this.props.onFlashcardSubmit}
+            data-dismiss="modal"
+          >Flashcard</button>
         </div>
       </div>
     );
@@ -88,6 +94,7 @@ WordSearchDialog.propTypes = {
   probMin: React.PropTypes.string,
   probMax: React.PropTypes.string,
   onSearchSubmit: React.PropTypes.func,
+  onFlashcardSubmit: React.PropTypes.func,
   availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.number,
     lexicon: React.PropTypes.string,

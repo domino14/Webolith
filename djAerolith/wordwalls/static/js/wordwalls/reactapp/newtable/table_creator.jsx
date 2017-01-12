@@ -11,7 +11,7 @@ import Notifications from '../notifications';
 
 import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
-import SavedListDialog from './saved_list_dialog';
+import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 
 const GAME_TYPE_NEW = 'New';
@@ -20,6 +20,7 @@ const SEARCH_TYPE_CHALLENGE = 'Challenges';
 const SEARCH_TYPE_WORDSEARCH = 'Word Search';
 const SEARCH_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const SEARCH_TYPE_SAVED_LIST = 'My saved lists';
+const FLASHCARD_URL = '/flashcards/';
 
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
 
@@ -46,6 +47,15 @@ function getLexiconOptions(lexicaObject) {
  * WordwallsApp, even though it is a part of it.
  */
 class TableCreator extends React.Component {
+
+  /**
+   * Redirect to the given URL. This forces the user to leave the table
+   * they are currently in.
+   * @param  {string} url
+   */
+  static redirectUrl(url) {
+    window.location.href = url;
+  }
   // We must pass the props to the constructor if we want to use
   // them in the state initializer.
   constructor(props) {
@@ -87,8 +97,11 @@ class TableCreator extends React.Component {
     this.searchParamChange = this.searchParamChange.bind(this);
     this.selectedListChange = this.selectedListChange.bind(this);
     this.searchSubmit = this.searchSubmit.bind(this);
+    this.flashcardSearchSubmit = this.flashcardSearchSubmit.bind(this);
     this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
+    this.flashcardAerolithListSubmit = this.flashcardAerolithListSubmit.bind(this);
     this.savedListSubmit = this.savedListSubmit.bind(this);
+    this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
   }
 
@@ -157,7 +170,7 @@ class TableCreator extends React.Component {
    */
   challengeSubmit() {
     if (this.props.gameGoing) {
-      Notifications.alert('small', 'error', NO_LOAD_WHILE_PLAYING);
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
     $.ajax({
@@ -171,13 +184,13 @@ class TableCreator extends React.Component {
       method: 'POST',
     })
     .done(data => this.props.onLoadNewList(data))
-    .fail(jqXHR => Notifications.alert('small', 'Error',
+    .fail(jqXHR => Notifications.alert('Error',
       `Failed to load challenge: ${jqXHR.responseJSON}`));
   }
 
   searchSubmit() {
     if (this.props.gameGoing) {
-      Notifications.alert('small', 'Error', NO_LOAD_WHILE_PLAYING);
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
     $.ajax({
@@ -194,13 +207,39 @@ class TableCreator extends React.Component {
       method: 'POST',
     })
     .done(data => this.props.onLoadNewList(data))
-    .fail(jqXHR => Notifications.alert('small', 'Error',
+    .fail(jqXHR => Notifications.alert('Error',
       `Failed to load search: ${jqXHR.responseJSON}`));
+  }
+
+  /**
+   * Submit search params to flashcard function. We use a legacy
+   * "WhitleyCards" API here, which is not quite JSON. This will have
+   * to be moved over to my new Cards program in the future.
+   */
+  flashcardSearchSubmit() {
+    if (this.props.gameGoing) {
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
+      return;
+    }
+    $.ajax({
+      url: FLASHCARD_URL,
+      method: 'POST',
+      data: {
+        action: 'searchParamsFlashcard',
+        lexicon: this.state.currentLexicon,
+        wordLength: this.state.wordLength,
+        probabilityMin: parseInt(this.state.probMin, 10),
+        probabilityMax: parseInt(this.state.probMax, 10),
+      },
+    })
+    .done(data => TableCreator.redirectUrl(data.url))
+    .fail(jqXHR => Notifications.alert('Error',
+      `Failed to process: ${jqXHR.responseJSON.error}`));
   }
 
   aerolithListSubmit() {
     if (this.props.gameGoing) {
-      Notifications.alert('small', 'Error', NO_LOAD_WHILE_PLAYING);
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
     $.ajax({
@@ -215,17 +254,37 @@ class TableCreator extends React.Component {
       method: 'POST',
     })
     .done(data => this.props.onLoadNewList(data))
-    .fail(jqXHR => Notifications.alert('small', 'Error',
+    .fail(jqXHR => Notifications.alert('Error',
       `Failed to load list: ${jqXHR.responseJSON}`));
+  }
+
+  flashcardAerolithListSubmit() {
+    if (this.props.gameGoing) {
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
+      return;
+    }
+    $.ajax({
+      url: FLASHCARD_URL,
+      method: 'POST',
+      data: {
+        action: 'namedListsFlashcard',
+        lexicon: this.state.currentLexicon,
+        namedList: this.state.selectedList,
+      },
+    })
+    .done(data => TableCreator.redirectUrl(data.url))
+    .fail(jqXHR => Notifications.alert('Error',
+      `Failed to process: ${jqXHR.responseJSON.error}`));
   }
 
   savedListSubmit(listID, action) {
     if (this.props.gameGoing) {
-      Notifications.alert('small', 'Error',
-        action !== 'delete' ? NO_LOAD_WHILE_PLAYING : NO_DELETE_WHILE_PLAYING);
+      Notifications.alert('Error',
+        action !== PlayOptions.PLAY_DELETE ? NO_LOAD_WHILE_PLAYING :
+          NO_DELETE_WHILE_PLAYING);
       return;
     }
-    if (action === 'delete') {
+    if (action === PlayOptions.PLAY_DELETE) {
       $.ajax({
         url: `/base/api/saved_list/${listID}`,
         method: 'DELETE',
@@ -233,7 +292,7 @@ class TableCreator extends React.Component {
       // XXX: Probably should do smart updating instead of reloading
       // from the server.
       .done(() => this.loadSavedListInfo())
-      .fail(jqXHR => Notifications.alert('small', 'Error',
+      .fail(jqXHR => Notifications.alert('Error',
         `Failed to delete list: ${jqXHR.responseJSON}`));
       return;
     }
@@ -253,8 +312,27 @@ class TableCreator extends React.Component {
       this.props.onLoadNewList(data);
       this.modal.dismiss();
     })
-    .fail(jqXHR => Notifications.alert('small', 'Error',
+    .fail(jqXHR => Notifications.alert('Error',
       `Failed to load list: ${jqXHR.responseJSON}`));
+  }
+
+  flashcardSavedListSubmit(listID, action) {
+    $.ajax({
+      url: FLASHCARD_URL,
+      method: 'POST',
+      data: {
+        action,
+        lexicon: this.state.currentLexicon,
+        wordList: listID,
+        listOption: '1',  // This is a hack to make the form validator pass.
+                          // This variable has no effect.
+                          // XXX: This flashcard app is a legacy app and we
+                          // will hopefully replace it soon.
+      },
+    })
+    .done(data => TableCreator.redirectUrl(data.url))
+    .fail(jqXHR => Notifications.alert('Error',
+      `Failed to process: ${jqXHR.responseJSON.error}`));
   }
 
   loadChallengePlayedInfo() {
@@ -310,7 +388,7 @@ class TableCreator extends React.Component {
       contentType: false,
     })
     .done(() => this.loadSavedListInfo())
-    .fail(jqXHR => Notifications.alert('small', 'Error',
+    .fail(jqXHR => Notifications.alert('Error',
       `Failed to upload list: ${jqXHR.responseJSON}`));
   }
 
@@ -353,6 +431,7 @@ class TableCreator extends React.Component {
             lexicon={this.state.currentLexicon}
             availableLexica={this.props.availableLexica}
             onSearchSubmit={this.searchSubmit}
+            onFlashcardSubmit={this.flashcardSearchSubmit}
             onSearchParamChange={this.searchParamChange}
             wordLength={this.state.wordLength}
             probMin={this.state.probMin}
@@ -366,6 +445,7 @@ class TableCreator extends React.Component {
             listOptions={this.state.savedLists}
             onListSubmit={this.savedListSubmit}
             onListUpload={this.listUpload}
+            onListFlashcard={this.flashcardSavedListSubmit}
           />);
         break;
       case SEARCH_TYPE_AEROLITH_LISTS:
@@ -375,6 +455,7 @@ class TableCreator extends React.Component {
             selectedList={this.state.selectedList}
             onSelectedListChange={this.selectedListChange}
             onListSubmit={this.aerolithListSubmit}
+            onFlashcardSubmit={this.flashcardAerolithListSubmit}
           />);
         break;
       default:

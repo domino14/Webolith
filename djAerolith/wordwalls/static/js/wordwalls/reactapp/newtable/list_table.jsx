@@ -11,6 +11,8 @@ const SavedListTable = (props) => {
   const playFirstMissed = props.playFirstMissed;
   const resetStartOver = props.resetStartOver;
   const deleteList = props.deleteList;
+  const flashcardList = props.flashcardList;
+  const flashcardFirstMissed = props.flashcardFirstMissed;
 
   const rows = props.lists.map((option, idx) => (
     <SavedListRow
@@ -22,6 +24,8 @@ const SavedListTable = (props) => {
       playFirstMissed={playFirstMissed}
       resetStartOver={resetStartOver}
       deleteList={deleteList}
+      flashcardList={flashcardList}
+      flashcardFirstMissed={flashcardFirstMissed}
     />
   ));
 
@@ -60,6 +64,8 @@ SavedListTable.propTypes = {
   playFirstMissed: React.PropTypes.func,
   resetStartOver: React.PropTypes.func,
   deleteList: React.PropTypes.func,
+  flashcardList: React.PropTypes.func,
+  flashcardFirstMissed: React.PropTypes.func,
 };
 
 export default SavedListTable;

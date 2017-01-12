@@ -28,6 +28,12 @@ class AerolithListDialog extends React.Component {
             onClick={this.props.onListSubmit}
             data-dismiss="modal"
           >Play!</button>
+          <button
+            className="btn btn-info"
+            style={{ marginTop: '0.75em', marginLeft: '1em' }}
+            onClick={this.props.onFlashcardSubmit}
+            data-dismiss="modal"
+          >Flashcard</button>
         </div>
       </div>
     );
@@ -45,6 +51,7 @@ AerolithListDialog.propTypes = {
     wordLength: React.PropTypes.number,
   })),
   onListSubmit: React.PropTypes.func,
+  onFlashcardSubmit: React.PropTypes.func,
 };
 
 export default AerolithListDialog;

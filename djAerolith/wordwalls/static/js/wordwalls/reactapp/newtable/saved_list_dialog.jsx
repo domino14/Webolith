@@ -6,6 +6,15 @@ import Notifications from '../notifications';
 
 import ListTable from './list_table';
 
+const PlayOptions = {
+  FLASHCARD_ENTIRE: 'savedListsFlashcardEntire',
+  FLASHCARD_FIRST_MISSED: 'savedListsFlashcardFM',
+  PLAY_CONTINUE: 'continue',
+  PLAY_FIRST_MISSED: 'firstmissed',
+  PLAY_START_OVER: 'startover',
+  PLAY_DELETE: 'delete',
+};
+
 class SavedListDialog extends React.Component {
   static genOptions(listOptions) {
     const opts = listOptions.lists.map(option => ({
@@ -39,14 +48,14 @@ class SavedListDialog extends React.Component {
       'Are you sure?',
       `Are you sure you wish to continue this list? You will lose any
       unsaved progress on your current lists.`,
-      () => this.props.onListSubmit(listID, 'continue'));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_CONTINUE));
   }
 
   playFirstMissed(listID) {
     Notifications.confirm(
       'Are you sure?',
       'Are you sure you wish to quiz on first missed? This will reset the list.',
-      () => this.props.onListSubmit(listID, 'firstmissed'));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_FIRST_MISSED));
   }
 
   resetStartOver(listID) {
@@ -54,14 +63,22 @@ class SavedListDialog extends React.Component {
       'Are you sure?',
       `Are you sure you wish to start over?
       You will lose all data (including first missed) for this list!`,
-      () => this.props.onListSubmit(listID, 'startover'));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_START_OVER));
   }
 
   deleteList(listID) {
     Notifications.confirm(
       'Are you sure?',
       'Do you wish to delete this list for good? It can not be recovered!',
-      () => this.props.onListSubmit(listID, 'delete'));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_DELETE));
+  }
+
+  flashcardList(listID) {
+    this.props.onListFlashcard(listID, PlayOptions.FLASHCARD_ENTIRE);
+  }
+
+  flashcardFirstMissed(listID) {
+    this.props.onListFlashcard(listID, PlayOptions.FLASHCARD_FIRST_MISSED);
   }
 
   render() {
@@ -84,9 +101,13 @@ class SavedListDialog extends React.Component {
             </div>
 
           </div>
+          {/* XXX: position: 'relative' is required here in order to get the
+          play button to position its dropdown correctly (it uses offsetParent).
+          this is an unfortunate hack, open to suggestions.
+          see play_button.jsx */}
           <div
             className="row table-scroller"
-            style={{ height: 350, overflow: 'scroll' }}
+            style={{ height: 350, overflow: 'scroll', position: 'relative' }}
           >
             <ListTable
               lists={this.props.listOptions.lists}
@@ -94,6 +115,8 @@ class SavedListDialog extends React.Component {
               playFirstMissed={listID => () => this.playFirstMissed(listID)}
               resetStartOver={listID => () => this.resetStartOver(listID)}
               deleteList={listID => () => this.deleteList(listID)}
+              flashcardList={listID => () => this.flashcardList(listID)}
+              flashcardFirstMissed={listID => () => this.flashcardFirstMissed(listID)}
             />
           </div>
           <div className="row">
@@ -144,7 +167,9 @@ SavedListDialog.propTypes = {
     }),
   }),
   onListSubmit: React.PropTypes.func,
+  onListFlashcard: React.PropTypes.func,
   onListUpload: React.PropTypes.func,
 };
 
 export default SavedListDialog;
+export { PlayOptions };

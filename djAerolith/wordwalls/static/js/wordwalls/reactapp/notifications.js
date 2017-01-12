@@ -1,9 +1,13 @@
 import bootbox from 'bootbox';
 
 class Notifications {
-  static alert(size, title, message) {
+  static alert(title, message, size) {
+    let displaySize = 'large';
+    if (size) {
+      displaySize = size;
+    }
     bootbox.alert({
-      size, title, message,
+      displaySize, title, message,
     });
   }
 

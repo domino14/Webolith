@@ -21,6 +21,8 @@ const SavedListRow = props => (
         continueList={props.continueList}
         playFirstMissed={props.playFirstMissed}
         resetStartOver={props.resetStartOver}
+        flashcardList={props.flashcardList}
+        flashcardFirstMissed={props.flashcardFirstMissed}
         deleteList={props.deleteList}
         onDropdownClicked={props.onDropdownClicked}
       />
@@ -46,6 +48,8 @@ SavedListRow.propTypes = {
   continueList: React.PropTypes.func,
   playFirstMissed: React.PropTypes.func,
   resetStartOver: React.PropTypes.func,
+  flashcardList: React.PropTypes.func,
+  flashcardFirstMissed: React.PropTypes.func,
   deleteList: React.PropTypes.func,
   onDropdownClicked: React.PropTypes.func,
 };

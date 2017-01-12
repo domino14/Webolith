@@ -490,7 +490,9 @@ def create_user_list(contents, filename, lex, user):
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
 
     if (num_saved_alphas + len(alphas)) > limit and not profile.member:
-        return False, _("This list would exceed your total list size limit")
+        return False, _(
+            'This list would exceed your total list size limit. You can '
+            'remove this limit by upgrading your membership!')
     db = WordDB(lex.lexiconName)
 
     questions = db.get_questions(alphas)

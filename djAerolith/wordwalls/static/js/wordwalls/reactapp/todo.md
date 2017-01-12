@@ -70,10 +70,12 @@ Single-Page App:
 -[x] Lots of stuff
 -[x] Dropzone
 -[x] Save limits
+    - [x] Test that they still work (hey it's my moneymaker)
 -[x] Deleting word list should not invalidate table.
     - [ ] Will require a migration prior to deploy.
--[ ] Flashcard link (use old flashcard app for now in new page)
+-[x] Flashcard link (use old flashcard app for now in new page)
 -[ ] Get rid of all old app code, move reactapp
+-[ ] Add license text for csw
 -[ ] Fix routes so that /wordwalls, /wordwalls/table/{x} are the same page
     - Load new table dialog based on route
     - Alternative for mobile

@@ -62,9 +62,10 @@ class PlayButton extends React.Component {
           <li><a role="button" onClick={this.props.resetStartOver(this.props.listID)}>
             Reset and start over</a></li>
           <li role="separator" className="divider" />
-          <li><a role="button">Flashcard</a></li>
-          <li><a role="button">Flashcard first missed</a></li>
-          <li><a role="button">Flashcard from beginning</a></li>
+          <li><a role="button" onClick={this.props.flashcardList(this.props.listID)}>
+            Flashcard entire list</a></li>
+          <li><a role="button" onClick={this.props.flashcardFirstMissed(this.props.listID)}>
+            Flashcard first missed</a></li>
           <li role="separator" className="divider" />
           <li><a role="button" onClick={this.props.deleteList(this.props.listID)}>
             <span className="text-danger">Delete</span></a></li>
@@ -79,6 +80,8 @@ PlayButton.propTypes = {
   playFirstMissed: React.PropTypes.func,
   resetStartOver: React.PropTypes.func,
   deleteList: React.PropTypes.func,
+  flashcardList: React.PropTypes.func,
+  flashcardFirstMissed: React.PropTypes.func,
 
   listID: React.PropTypes.number,
 };
