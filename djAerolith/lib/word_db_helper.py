@@ -304,6 +304,8 @@ class WordDB(object):
         repeatedly.
 
         """
+        import time
+        t = time.time()
         c = self.conn.cursor()
         query = """
             SELECT lexicon_symbols, definition, front_hooks, back_hooks,
@@ -318,7 +320,10 @@ class WordDB(object):
             query = query + "ORDER BY alphagrams.probability"
         c.execute(query, (length, probability_min, probability_max))
         rows = c.fetchall()
-        return self.process_question_query(rows)
+        questions = self.process_question_query(rows)
+        logger.debug('Time taken: %s s. (params: %s, %s-%s)', time.time() - t,
+                     length, probability_min, probability_max)
+        return questions
 
     def get_questions_from_alph_dicts(self, alph_objects):
         """

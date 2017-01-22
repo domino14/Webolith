@@ -63,6 +63,7 @@ class PrefsModal extends React.Component {
       <ModalSkeleton
         title="Preferences"
         modalClass="prefs-modal"
+        size="modal-xl"
       >
         <PrefsModalBody
           onOptionsModify={this.onOptionsModify}

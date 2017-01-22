@@ -19,7 +19,7 @@ class ModalSkeleton extends React.Component {
         ref={domNode => (this.modal = domNode)}
       >
         <div
-          className="modal-dialog modal-lg"
+          className={`modal-dialog ${this.props.size}`}
           role="document"
         >
           <div className="modal-content">
@@ -45,6 +45,7 @@ class ModalSkeleton extends React.Component {
 
 ModalSkeleton.propTypes = {
   title: React.PropTypes.string,
+  size: React.PropTypes.string,
   modalClass: React.PropTypes.string,
   children: React.PropTypes.node,
 };

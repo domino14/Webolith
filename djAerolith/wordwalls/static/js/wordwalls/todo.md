@@ -48,7 +48,7 @@
     - need to learn React tests.
 Minor tweaks:
 -[x] Disable start briefly after pressing start.
-~~-[ ] click to show solutions? (if users were in the middle of typing)~~
+-[x] click to show solutions? (if users were in the middle of typing)~~
 -[x] Move X button somewhere nicer, maybe move a couple other things
     - [x] autosave, list display length, etc.
 -[x] Use bootstrap icons instead of font awesome.
@@ -75,13 +75,25 @@ Single-Page App:
     - [ ] Will require a migration prior to deploy.
 -[x] Flashcard link (use old flashcard app for now in new page)
 -[ ] Get rid of all old app code, move reactapp
--[ ] Add license text for csw
+    - [x] Quickly look through for features we may have forgotten.
+    - [x] Disable first missed options if list not complete.
+    - [x] Add license text for csw
+    - [ ] Add spinners when waiting for stuff (We riding spinnas.. also, ___)
+    - [ ] Links for all other things! (edit profile, stats, hall of fame, etc...) 
+        - Maybe it's ok to keep these on the "main" page?
 -[ ] Fix routes so that /wordwalls, /wordwalls/table/{x} are the same page
     - Load new table dialog based on route
     - Alternative for mobile
+-[ ] Fix deploy process completely (this should be a separate branch)
+    -[ ] use Docker images + simple haproxy-based LB
+    -[ ] fix America2016 mess
+
+(Can release part 2)
 
 For multiplayer
--[ ] More player boxes (only show on bigger screens?)
--[ ] Chat submit box
--[ ] Hijack tab key to change between guess/chat
--[ ] All the relevant multiplayer logic
+- [ ] Investigate socket program / method to use. Options are: Django Channels, Go & Websockets, rewrite entire app in Elixir/Scala/etc
+    - [ ] Should at least write a POC with channels so that I don't discard it outright.
+- [ ] More player boxes (only show on bigger screens?)
+- [ ] Chat submit box
+- [ ] Hijack tab key to change between guess/chat
+- [ ] All the relevant multiplayer logic

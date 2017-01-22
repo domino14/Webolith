@@ -7,6 +7,7 @@ const ResultsModal = props => (
   <ModalSkeleton
     title="Challenge Results"
     modalClass="challenge-results-modal"
+    size="modal-lg"
   >
     <ChallengeResults
       challengeData={props.challengeData}

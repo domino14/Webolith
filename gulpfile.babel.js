@@ -15,7 +15,7 @@ import webpackConfig from './webpack.config.babel';
 import webpackProdConfig from './webpack.config-prod.babel';
 
 const paths = {
-  wordwallsSrcJS: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/**/*.js?(x)',
+  wordwallsSrcJS: 'djAerolith/wordwalls/static/js/wordwalls/**/*.js?(x)',
   wordwallsTestJS: 'djAerolith/wordwalls/static/js/wordwalls/test/**/*.js',
   // TODO: merge this in once we move table create code to /js/wordwalls/
   allWordwallsSrc: 'djAerolith/wordwalls/static/js/wordwalls/**/*.js?(x)',
@@ -25,7 +25,7 @@ const paths = {
   webpackFile: 'webpack.config.babel.js',
   webpackProdFile: 'webpack.config-prod.babel.js',
   distDir: 'djAerolith/static/dist',
-  clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/index.js',
+  clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/index.js',
   clientBundle: 'djAerolith/static/dist/table-client-bundle.js?(.map)',
 
   allLibTests: 'djAerolith/static/built/test/**/*.js',

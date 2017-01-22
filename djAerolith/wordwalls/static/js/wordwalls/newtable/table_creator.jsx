@@ -4,10 +4,10 @@ import $ from 'jquery';
 import moment from 'moment';
 
 import ModalSkeleton from '../modal_skeleton';
-import Select from '../forms/select';
-import NumberInput from '../forms/number_input';
 import Pills from './pills';
 import Notifications from '../notifications';
+import Sidebar from './sidebar';
+import Spinner from '../spinner';
 
 import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
@@ -29,17 +29,11 @@ const NO_LOAD_WHILE_PLAYING = (
 
 const NO_DELETE_WHILE_PLAYING = (
   'Please wait until the end of the game to delete a list.');
-/**
- * Get lexicon options from the given object in a Select-friendly format.
- * @param  {Array.<Object>} lexicaObject
- * @return {Array.<Object>}
- */
-function getLexiconOptions(lexicaObject) {
-  return lexicaObject.map(obj => ({
-    value: String(obj.id),
-    displayValue: obj.lexicon,
-  }));
-}
+
+const COLLINS_LEX_ID = 1;
+const COLLINS_LICENSE_TEXT = `
+The Collins Official Scrabble Words 2015 (CSW15) is copyright of
+HarperCollins Publishers 2015 and used with permission.`;
 
 /**
  * TableCreator should mostly manage its own state, do its own AJAX queries,
@@ -91,6 +85,8 @@ class TableCreator extends React.Component {
           current: 0,
         },
       },
+      loadingData: false,
+
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
@@ -113,10 +109,12 @@ class TableCreator extends React.Component {
     if ((prevState.currentLexicon !== this.state.currentLexicon) ||
         (prevState.currentDate.format(DATE_FORMAT_STRING) !==
          this.state.currentDate.format(DATE_FORMAT_STRING))) {
+      // We may need to load new lists or challenges.
       this.loadInfoForSearchType(this.state.activeSearchType);
     }
     if (prevState.currentChallenge !== this.state.currentChallenge) {
       // The challenge changed. We should load challenge leaderboard data.
+      this.showSpinner();
       $.ajax({
         url: '/wordwalls/api/challengers/',
         data: {
@@ -126,7 +124,8 @@ class TableCreator extends React.Component {
         },
         method: 'GET',
       })
-      .done(data => this.setState({ challengeData: data || {} }));
+      .done(data => this.setState({ challengeData: data || {} }))
+      .always(() => this.hideSpinner());
     }
   }
 
@@ -153,7 +152,7 @@ class TableCreator extends React.Component {
         this.loadAerolithListInfo();
         break;
       default:
-        // ?
+        // ??
         break;
     }
   }
@@ -165,6 +164,13 @@ class TableCreator extends React.Component {
     this.loadInfoForSearchType(this.state.activeSearchType);
   }
 
+  showSpinner() {
+    this.setState({ loadingData: true });
+  }
+
+  hideSpinner() {
+    this.setState({ loadingData: false });
+  }
   /**
    * Submit a challenge to the backend.
    */
@@ -173,6 +179,7 @@ class TableCreator extends React.Component {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
+    this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_challenge/',
       data: JSON.stringify({
@@ -185,7 +192,8 @@ class TableCreator extends React.Component {
     })
     .done(data => this.props.onLoadNewList(data))
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load challenge: ${jqXHR.responseJSON}`));
+      `Failed to load challenge: ${jqXHR.responseJSON}`))
+    .always(() => this.hideSpinner());
   }
 
   searchSubmit() {
@@ -193,6 +201,7 @@ class TableCreator extends React.Component {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
+    this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
       data: JSON.stringify({
@@ -208,7 +217,8 @@ class TableCreator extends React.Component {
     })
     .done(data => this.props.onLoadNewList(data))
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load search: ${jqXHR.responseJSON}`));
+      `Failed to load search: ${jqXHR.responseJSON}`))
+    .always(() => this.hideSpinner());
   }
 
   /**
@@ -221,6 +231,7 @@ class TableCreator extends React.Component {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
+    this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
       method: 'POST',
@@ -234,7 +245,8 @@ class TableCreator extends React.Component {
     })
     .done(data => TableCreator.redirectUrl(data.url))
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to process: ${jqXHR.responseJSON.error}`));
+      `Failed to process: ${jqXHR.responseJSON.error}`))
+    .always(() => this.hideSpinner());
   }
 
   aerolithListSubmit() {
@@ -242,6 +254,7 @@ class TableCreator extends React.Component {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
+    this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/load_aerolith_list/',
       data: JSON.stringify({
@@ -255,7 +268,8 @@ class TableCreator extends React.Component {
     })
     .done(data => this.props.onLoadNewList(data))
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load list: ${jqXHR.responseJSON}`));
+      `Failed to load list: ${jqXHR.responseJSON}`))
+    .always(() => this.hideSpinner());
   }
 
   flashcardAerolithListSubmit() {
@@ -263,6 +277,7 @@ class TableCreator extends React.Component {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
       return;
     }
+    this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
       method: 'POST',
@@ -274,7 +289,8 @@ class TableCreator extends React.Component {
     })
     .done(data => TableCreator.redirectUrl(data.url))
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to process: ${jqXHR.responseJSON.error}`));
+      `Failed to process: ${jqXHR.responseJSON.error}`))
+    .always(() => this.hideSpinner());
   }
 
   savedListSubmit(listID, action) {
@@ -284,6 +300,7 @@ class TableCreator extends React.Component {
           NO_DELETE_WHILE_PLAYING);
       return;
     }
+    this.showSpinner();
     if (action === PlayOptions.PLAY_DELETE) {
       $.ajax({
         url: `/base/api/saved_list/${listID}`,
@@ -291,9 +308,12 @@ class TableCreator extends React.Component {
       })
       // XXX: Probably should do smart updating instead of reloading
       // from the server.
-      .done(() => this.loadSavedListInfo())
-      .fail(jqXHR => Notifications.alert('Error',
-        `Failed to delete list: ${jqXHR.responseJSON}`));
+      .done(() => this.loadSavedListInfo()) // This will hide when it's over.
+      .fail((jqXHR) => {
+        Notifications.alert('Error',
+          `Failed to delete list: ${jqXHR.responseJSON}`);
+        this.hideSpinner();
+      });
       return;
     }
     $.ajax({
@@ -313,10 +333,12 @@ class TableCreator extends React.Component {
       this.modal.dismiss();
     })
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load list: ${jqXHR.responseJSON}`));
+      `Failed to load list: ${jqXHR.responseJSON}`))
+    .always(() => this.hideSpinner());
   }
 
   flashcardSavedListSubmit(listID, action) {
+    this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
       method: 'POST',
@@ -332,11 +354,13 @@ class TableCreator extends React.Component {
     })
     .done(data => TableCreator.redirectUrl(data.url))
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to process: ${jqXHR.responseJSON.error}`));
+      `Failed to process: ${jqXHR.responseJSON.error}`))
+    .always(() => this.hideSpinner());
   }
 
   loadChallengePlayedInfo() {
     // Load the challenge-related stuff.
+    this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/challenges_played/',
       data: {
@@ -345,10 +369,12 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ challengesDoneAtDate: data }));
+    .done(data => this.setState({ challengesDoneAtDate: data }))
+    .always(() => this.hideSpinner());
   }
 
   loadAerolithListInfo() {
+    this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/default_lists/',
       data: {
@@ -356,10 +382,12 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ aerolithLists: data }));
+    .done(data => this.setState({ aerolithLists: data }))
+    .always(() => this.hideSpinner());
   }
 
   loadSavedListInfo() {
+    this.showSpinner();
     $.ajax({
       url: '/base/api/saved_lists/',
       data: {
@@ -372,14 +400,15 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ savedLists: data }));
+    .done(data => this.setState({ savedLists: data }))
+    .always(() => this.hideSpinner());
   }
 
   listUpload(files) {
     const data = new FormData();
     data.append('file', files[0]);
     data.append('lexicon', this.state.currentLexicon);
-
+    this.showSpinner();
     $.ajax({
       url: '/wordwalls/ajax_upload/',
       method: 'POST',
@@ -389,7 +418,8 @@ class TableCreator extends React.Component {
     })
     .done(() => this.loadSavedListInfo())
     .fail(jqXHR => Notifications.alert('Error',
-      `Failed to upload list: ${jqXHR.responseJSON}`));
+      `Failed to upload list: ${jqXHR.responseJSON}`))
+    .always(() => this.hideSpinner());
   }
 
   searchParamChange(paramName, paramValue) {
@@ -466,51 +496,36 @@ class TableCreator extends React.Component {
         title="New Table"
         modalClass="table-modal"
         ref={el => (this.modal = el)}
+        size="modal-xl"
       >
+        <Spinner
+          visible={this.state.loadingData}
+        />
         <div className="modal-body">
           <div className="row">
             <div className="col-sm-2">
-              <Pills
-                stacked
-                options={[GAME_TYPE_NEW, GAME_TYPE_JOIN]}
-                activePill={this.state.activeGameType}
-                onPillClick={option => () => this.setState({
+              <Sidebar
+                gameTypes={[GAME_TYPE_NEW, GAME_TYPE_JOIN]}
+                activeGameType={this.state.activeGameType}
+                setGameType={option => () => this.setState({
                   activeGameType: option,
                 })}
+                currentLexicon={this.state.currentLexicon}
+                availableLexica={this.props.availableLexica}
+                setLexicon={lex => this.setState({
+                  currentLexicon: lex,
+                })}
+                desiredTime={this.state.desiredTime}
+                setTime={t => this.setState({
+                  desiredTime: t,
+                })}
+                questionsPerRound={this.state.questionsPerRound}
+                setQuestionsPerRound={q => this.setState({
+                  questionsPerRound: q,
+                })}
+                disabledInputs={
+                  this.state.activeSearchType === SEARCH_TYPE_CHALLENGE}
               />
-              <div className="row">
-                <div className="col-sm-12">
-                  <form>
-                    <Select
-                      colSize={10}
-                      label="Lexicon"
-                      selectedValue={String(this.state.currentLexicon)}
-                      options={getLexiconOptions(this.props.availableLexica)}
-                      onChange={e => this.setState({
-                        currentLexicon: parseInt(e.target.value, 10),
-                      })}
-                    />
-                    <NumberInput
-                      colSize={10}
-                      label="Minutes"
-                      value={String(this.state.desiredTime)}
-                      onChange={e => this.setState({
-                        desiredTime: parseFloat(e.target.value, 10),
-                      })}
-                      disabled={this.state.activeSearchType === SEARCH_TYPE_CHALLENGE}
-                    />
-                    <NumberInput
-                      colSize={10}
-                      label="Questions Per Round"
-                      value={String(this.state.questionsPerRound)}
-                      onChange={e => this.setState({
-                        questionsPerRound: parseFloat(e.target.value, 10),
-                      })}
-                      disabled={this.state.activeSearchType === SEARCH_TYPE_CHALLENGE}
-                    />
-                  </form>
-                </div>
-              </div>
             </div>
             <div className="col-sm-10">
               <Pills
@@ -539,6 +554,10 @@ class TableCreator extends React.Component {
             </div>
 
           </div>
+        </div>
+        <div className="modal-footer">
+          <small>{this.state.currentLexicon === COLLINS_LEX_ID ?
+            COLLINS_LICENSE_TEXT : ''}</small>
         </div>
       </ModalSkeleton>
     );

@@ -57,15 +57,17 @@ class PlayButton extends React.Component {
         ><span className="caret" /></button>
 
         <ul className="dropdown-menu">
-          <li><a role="button" onClick={this.props.playFirstMissed(this.props.listID)}>
-            Play first missed</a></li>
+          {this.props.goneThruOnce ?
+            (<li><a role="button" onClick={this.props.playFirstMissed(this.props.listID)}>
+              Play first missed</a></li>) : null}
           <li><a role="button" onClick={this.props.resetStartOver(this.props.listID)}>
             Reset and start over</a></li>
           <li role="separator" className="divider" />
           <li><a role="button" onClick={this.props.flashcardList(this.props.listID)}>
             Flashcard entire list</a></li>
-          <li><a role="button" onClick={this.props.flashcardFirstMissed(this.props.listID)}>
-            Flashcard first missed</a></li>
+          {this.props.goneThruOnce ?
+            (<li><a role="button" onClick={this.props.flashcardFirstMissed(this.props.listID)}>
+            Flashcard first missed</a></li>) : null}
           <li role="separator" className="divider" />
           <li><a role="button" onClick={this.props.deleteList(this.props.listID)}>
             <span className="text-danger">Delete</span></a></li>
@@ -84,6 +86,7 @@ PlayButton.propTypes = {
   flashcardFirstMissed: React.PropTypes.func,
 
   listID: React.PropTypes.number,
+  goneThruOnce: React.PropTypes.bool,
 };
 
 export default PlayButton;
