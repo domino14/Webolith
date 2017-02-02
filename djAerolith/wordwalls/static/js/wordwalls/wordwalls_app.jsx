@@ -11,7 +11,6 @@ import WordwallsGame from './wordwalls_game';
 import ListSaveBar from './topbar/save_list';
 import Preferences from './topbar/preferences';
 import StartButton from './topbar/start_button';
-import NewButton from './newtable/new_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
 import UserBox from './user_box';
@@ -19,6 +18,8 @@ import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
+import TableCreator from './newtable/table_creator';
+import Spinner from './spinner';
 
 const game = new WordwallsGame();
 const MAX_MESSAGES = 200;
@@ -45,6 +46,8 @@ class WordwallsApp extends React.Component {
       numberOfRounds: 0,
       listName: this.props.listName,
       autoSave: this.props.autoSave,
+      loadingData: false,
+      tablenum: this.props.tablenum,
 
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
@@ -65,6 +68,7 @@ class WordwallsApp extends React.Component {
     this.onShuffleQuestion = this.onShuffleQuestion.bind(this);
     this.markMissed = this.markMissed.bind(this);
     this.handleLoadNewList = this.handleLoadNewList.bind(this);
+    this.resetTableCreator = this.resetTableCreator.bind(this);
   }
 
   componentDidMount() {
@@ -90,6 +94,15 @@ class WordwallsApp extends React.Component {
     $('body').css({
       'background-image': backgroundURL(this.props.displayStyle.bodyBackground),
     });
+
+    // Finally, show table creation modal if tablenum is 0. This whole
+    // thing is a bit of an anti-pattern because of our modals/Bootstrap/etc
+    // Maybe there's a better way to hide/show modals using more React
+    // idioms.
+    if (this.state.tablenum === 0) {
+      this.myTableCreator.showModal();
+      this.myTableCreator.resetDialog();
+    }
   }
 
   onGuessSubmit(guess) {
@@ -107,7 +120,7 @@ class WordwallsApp extends React.Component {
       return;
     }
     $.ajax({
-      url: this.props.tableUrl,
+      url: this.tableUrl(),
       method: 'POST',
       dataType: 'json',
       // That's a lot of guess
@@ -165,6 +178,9 @@ class WordwallsApp extends React.Component {
 
   handleAutoSaveToggle() {
     const newAutoSave = !this.state.autoSave;
+    if (newAutoSave && !this.state.listName) {
+      return;   // There is no list name, don't toggle the checkbox.
+    }
     this.setState({
       autoSave: newAutoSave,
     });
@@ -186,7 +202,7 @@ class WordwallsApp extends React.Component {
   beforeUnload() {
     if (this.state.gameGoing) {
       $.ajax({
-        url: this.props.tableUrl,
+        url: this.tableUrl(),
         async: false,
         data: {
           action: 'giveUpAndSave',
@@ -201,7 +217,7 @@ class WordwallsApp extends React.Component {
 
   handleStart() {
     $.ajax({
-      url: this.props.tableUrl,
+      url: this.tableUrl(),
       method: 'POST',
       dataType: 'json',
       data: {
@@ -270,7 +286,7 @@ class WordwallsApp extends React.Component {
       return;
     }
     $.ajax({
-      url: this.props.tableUrl,
+      url: this.tableUrl(),
       method: 'POST',
       data: {
         action: 'gameEnded',
@@ -282,6 +298,22 @@ class WordwallsApp extends React.Component {
         this.processGameEnded();
       }
     });
+  }
+
+  /**
+   * Compute the tableUrl based on the optional table number, or the
+   * table number in the state.
+   * @param  {number?} optTablenum
+   * @return {string}
+   */
+  tableUrl(optTablenum) {
+    let tablenum;
+    if (optTablenum) {
+      tablenum = optTablenum;
+    } else {
+      tablenum = this.state.tablenum;
+    }
+    return `/wordwalls/table/${tablenum}/`;
   }
 
   /**
@@ -332,7 +364,7 @@ class WordwallsApp extends React.Component {
   markMissed(alphaIdx, alphagram) {
     // Mark the alphagram missed.
     $.ajax({
-      url: `${this.props.tableUrl}missed/`,
+      url: `${this.tableUrl()}missed/`,
       method: 'POST',
       dataType: 'json',
       data: {
@@ -375,7 +407,7 @@ class WordwallsApp extends React.Component {
     if (this.state.numberOfRounds === 1 && this.state.isChallenge) {
       // XXX: Kind of ugly, breaks encapsulation.
       $.ajax({
-        url: this.tableUrl,
+        url: this.tableUrl(),
         method: 'POST',
         data: {
           action: 'getDcData',
@@ -399,7 +431,7 @@ class WordwallsApp extends React.Component {
       return;
     }
     $.ajax({
-      url: this.props.tableUrl,
+      url: this.tableUrl(),
       method: 'POST',
       data: {
         action: 'save',
@@ -449,7 +481,7 @@ class WordwallsApp extends React.Component {
 
   handleGiveup() {
     $.ajax({
-      url: this.props.tableUrl,
+      url: this.tableUrl(),
       method: 'POST',
       dataType: 'json',
       data: {
@@ -468,14 +500,40 @@ class WordwallsApp extends React.Component {
    * @param  {Object} data
    */
   handleLoadNewList(data) {
+    let changeUrl = false;
+    // let useReplaceState = false;
+    if (data.tablenum !== this.state.tablenum) {
+      changeUrl = true;
+      // if (this.state.tablenum !== 0) {
+      //   useReplaceState = true; // Replace instead of push if we already have
+      //                           // a table num. This will probably come in use
+      //                           // for multiplayer mode. This prevents the user
+      //                           // from having to click back hella times.
+      // }
+    }
     this.setState({
       listName: data.list_name,
       autoSave: data.autosave,
+      tablenum: data.tablenum,
       numberOfRounds: 0,
       curQuestions: Immutable.List(),
     });
     this.addServerMessage(`Loaded new list: ${data.list_name}`, 'info');
     this.showAutosaveMessage(data.autosave);
+    if (changeUrl) {
+      // The .bind(history) is important because otherwise `this` changes
+      // and we get an "illegal invocation". 😒
+      // let stateChanger = history.pushState.bind(history);
+      // if (useReplaceState) {
+      //   stateChanger = history.replaceState.bind(history);
+      // }
+      history.replaceState({}, `Table ${data.tablenum}`,
+        this.tableUrl(data.tablenum));
+    }
+  }
+
+  resetTableCreator() {
+    this.myTableCreator.resetDialog();
   }
 
   render() {
@@ -505,6 +563,22 @@ class WordwallsApp extends React.Component {
 
     return (
       <div>
+        <Spinner
+          visible={this.state.loadingData}
+        />
+        <TableCreator
+          // Normally this is invisible. It is shown by the
+          // new-button modal or other conditions (route).
+          ref={ref => (this.myTableCreator = ref)}
+          defaultLexicon={this.props.defaultLexicon}
+          availableLexica={this.props.availableLexica}
+          challengeInfo={this.props.challengeInfo}
+          tablenum={this.state.tablenum}
+          onLoadNewList={this.handleLoadNewList}
+          gameGoing={this.state.gameGoing}
+          setLoadingData={loading => this.setState({ loadingData: loading })}
+        />
+
         <div className="row">
           <div
             className="col-xs-6 col-sm-4 col-md-4 col-lg-4"
@@ -544,15 +618,20 @@ class WordwallsApp extends React.Component {
           </div>
 
           <div className="hidden-xs col-sm-2 col-md-1 col-lg-1">
-            <NewButton
-              defaultLexicon={this.props.defaultLexicon}
-              challengeInfo={this.props.challengeInfo}
-              availableLexica={this.props.availableLexica}
-              tablenum={this.props.tablenum}
-              onLoadNewList={this.handleLoadNewList}
-              gameGoing={this.state.gameGoing}
-            />
+            <div
+              data-toggle="modal"
+              title="New Table"
+              data-target=".table-modal"
+              // This will show the table creator modal.
+            >
+              <button
+                className="btn btn-danger btn-sm"
+                style={{ marginTop: '-6px' /* why? */}}
+                onClick={this.resetTableCreator}
+              >New</button>
+            </div>
           </div>
+
         </div>
 
         <div className="row">
@@ -641,7 +720,6 @@ WordwallsApp.propTypes = {
   autoSave: React.PropTypes.bool,
   lexicon: React.PropTypes.string,
   displayStyle: React.PropTypes.instanceOf(Styling),
-  tableUrl: React.PropTypes.string,
   tablenum: React.PropTypes.number,
   defaultLexicon: React.PropTypes.number,
   challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({

@@ -28,7 +28,7 @@ To contact the author, please email delsolar at gmail dot com
 <head>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="/static/favicon.ico" />
-  <title>WordWalls - table {{tablenum}}</title>
+  <title>{% if tablenum %}WordWalls - table {{tablenum}}{% else %}Wordwalls - Create Table{% endif %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0,  maximum-scale=1, user-scalable=no">
 
   <link href="/static/lib/bootstrap/css/bootstrap-sandstone.min.css" rel="stylesheet">
@@ -80,7 +80,8 @@ mixpanel.identify("{{username}}");
   var TableGlobals = {
     addlParams: '{{addParams | escapejs }}',
     tablenum: {{tablenum}},
-    lexicon: '{{lexicon.lexiconName}}',
+    lexicon: '{{lexicon.lexiconName}}',   // Lexicon used to modify guesses
+                                          // in case of FISE e.g.
     username: '{{username}}',
     availableLexica: '{{available_lexica|escapejs}}',
     defaultLexicon: {{default_lexicon}},

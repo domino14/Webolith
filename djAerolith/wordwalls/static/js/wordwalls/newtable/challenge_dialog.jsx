@@ -73,6 +73,7 @@ const ChallengeDialog = (props) => {
       <div className="col-sm-5">
         <ChallengeResults
           challengeData={props.challengeData}
+          height={400}
         />
       </div>
     </div>

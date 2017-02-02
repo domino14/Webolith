@@ -25,10 +25,10 @@ js_info_dict = {
 }
 
 urlpatterns = patterns('',
-    url(r'^$', 'wordwalls.views.homepage', name='wordwalls_create_table'),
-    url(r'^table/(?P<id>\d+)/$', 'wordwalls.views.table',
+    url(r'^$', 'wordwalls.views.table'),
+    url(r'^table/(?P<tableid>\d+)/$', 'wordwalls.views.table',
         name='wordwalls_table'),
-    url(r'^table/(?P<id>\d+)/missed/$', 'wordwalls.views.mark_missed'),
+    url(r'^table/(?P<tableid>\d+)/missed/$', 'wordwalls.views.mark_missed'),
     url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload'),
     url(r'^api/', include('wordwalls.api_urls')),
    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',

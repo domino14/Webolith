@@ -7,7 +7,6 @@ import ModalSkeleton from '../modal_skeleton';
 import Pills from './pills';
 import Notifications from '../notifications';
 import Sidebar from './sidebar';
-import Spinner from '../spinner';
 
 import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
@@ -85,7 +84,6 @@ class TableCreator extends React.Component {
           current: 0,
         },
       },
-      loadingData: false,
 
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
@@ -164,12 +162,16 @@ class TableCreator extends React.Component {
     this.loadInfoForSearchType(this.state.activeSearchType);
   }
 
+  showModal() {
+    this.modal.show();
+  }
+
   showSpinner() {
-    this.setState({ loadingData: true });
+    this.props.setLoadingData(true);
   }
 
   hideSpinner() {
-    this.setState({ loadingData: false });
+    this.props.setLoadingData(false);
   }
   /**
    * Submit a challenge to the backend.
@@ -498,9 +500,6 @@ class TableCreator extends React.Component {
         ref={el => (this.modal = el)}
         size="modal-xl"
       >
-        <Spinner
-          visible={this.state.loadingData}
-        />
         <div className="modal-body">
           <div className="row">
             <div className="col-sm-2">
@@ -556,8 +555,15 @@ class TableCreator extends React.Component {
           </div>
         </div>
         <div className="modal-footer">
-          <small>{this.state.currentLexicon === COLLINS_LEX_ID ?
-            COLLINS_LICENSE_TEXT : ''}</small>
+          <small
+            style={{ marginRight: 10 }}
+          >{this.state.currentLexicon === COLLINS_LEX_ID ? COLLINS_LICENSE_TEXT : ''}
+          </small>
+          <a
+            role="button"
+            className="btn btn-danger btn-xs"
+            onClick={() => (window.location.href = '/')}
+          >Back to main page</a>
         </div>
       </ModalSkeleton>
     );
@@ -582,6 +588,7 @@ TableCreator.propTypes = {
   tablenum: React.PropTypes.number,
   onLoadNewList: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
+  setLoadingData: React.PropTypes.func,
 };
 
 

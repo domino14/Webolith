@@ -32,7 +32,6 @@ class App {
         autoSave={autoSave}
         lexicon={options.lexicon}
         displayStyle={style}
-        tableUrl={`/wordwalls/table/${options.tablenum}/`}
         tablenum={options.tablenum}
         defaultLexicon={options.defaultLexicon}
         challengeInfo={options.challengeInfo}

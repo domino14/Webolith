@@ -11,7 +11,8 @@ const Spinner = props => (
       position: 'fixed',
       left: '50%',
       top: '20%',
-      zIndex: '10',
+      zIndex: 10000,   // Default z-index for Bootstrap modal is 1050, need
+                       // this higher than that.
     }}
   />
 );

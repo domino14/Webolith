@@ -7,13 +7,21 @@ from django.core.urlresolvers import reverse
 
 from lib.word_db_helper import WordDB
 from lib.response import response
-from wordwalls.views import searchForAlphagrams
+from lib.word_searches import SearchDescription
 from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList
 from base.models import Lexicon, WordList
 logger = logging.getLogger(__name__)
 
 QUIZ_CHUNK_SIZE = 5000
+
+
+def searchForAlphagrams(data, lex):
+    """ Searches for alphagrams using form data """
+    length = int(data['wordLength'])
+    return SearchDescription.probability_range(data['probabilityMin'],
+                                               data['probabilityMax'],
+                                               length, lex)
 
 
 @login_required

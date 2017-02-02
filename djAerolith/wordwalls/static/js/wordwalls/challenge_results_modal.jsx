@@ -11,6 +11,7 @@ const ResultsModal = props => (
   >
     <ChallengeResults
       challengeData={props.challengeData}
+      height={500}
     />
   </ModalSkeleton>);
 

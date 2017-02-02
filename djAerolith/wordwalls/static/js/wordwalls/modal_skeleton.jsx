@@ -10,6 +10,10 @@ class ModalSkeleton extends React.Component {
     $(this.modal).modal('hide');
   }
 
+  show() {
+    $(this.modal).modal('show');
+  }
+
   render() {
     return (
       <div

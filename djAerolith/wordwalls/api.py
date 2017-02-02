@@ -99,7 +99,10 @@ def load_new_words(f):
             return bad_request('User is not in this table.')
 
         parsed_req = {
-            'tablenum': body['tablenum']
+            # If tablenum is None, the utility functions in game.py know
+            # to create a new table, instead of using an existing table
+            # number.
+            'tablenum': body['tablenum'] if body['tablenum'] != 0 else None
         }
 
         lex_id = body.get('lexicon')
@@ -134,7 +137,7 @@ def load_new_words(f):
     return wrap
 
 
-def new_table_response(tablenum):
+def table_response(tablenum):
     game = WordwallsGame()
     addl_params = game.get_add_params(tablenum)
 
@@ -172,7 +175,7 @@ def new_challenge(request, parsed_req_body):
         date_from_str(parsed_req_body['dt']),
         use_table=parsed_req_body['tablenum'])
 
-    return new_table_response(tablenum)
+    return table_response(tablenum)
 
 
 @login_required
@@ -193,7 +196,7 @@ def new_search(request, parsed_req_body):
         parsed_req_body['questions_per_round'],
         use_table=parsed_req_body['tablenum'])
 
-    return new_table_response(tablenum)
+    return table_response(tablenum)
 
 
 @login_required
@@ -211,7 +214,7 @@ def load_aerolith_list(request, parsed_req_body):
         parsed_req_body['quiz_time_secs'],
         parsed_req_body['questions_per_round'],
         use_table=parsed_req_body['tablenum'])
-    return new_table_response(tablenum)
+    return table_response(tablenum)
 
 
 @login_required
@@ -234,7 +237,7 @@ def load_saved_list(request, parsed_req_body):
             use_table=parsed_req_body['tablenum'])
     except GameInitException as e:
         return bad_request(str(e))
-    return new_table_response(tablenum)
+    return table_response(tablenum)
 
 
 @login_required
@@ -280,6 +283,10 @@ def access_to_table(tablenum, user):
     """ Return whether user has access to table. For now we just use
     the wordwalls game model. We should fix the logic for multiplayer
     afterwards. """
+    if tablenum == 0:
+        # A table num of 0 implies that the user is not currently in a
+        # table. Return true to allow the logic to proceed.
+        return True
     game = WordwallsGame()
     return game.permit(user, tablenum)
 

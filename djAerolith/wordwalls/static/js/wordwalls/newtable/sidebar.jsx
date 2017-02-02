@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Pills from './pills';
+// import Pills from './pills';
 import Select from '../forms/select';
 import NumberInput from '../forms/number_input';
 
@@ -18,12 +18,14 @@ function getLexiconOptions(lexicaObject) {
 
 const Sidebar = props => (
   <div>
+    { /* bring this back when we add multiplayer.
     <Pills
       stacked
       options={props.gameTypes}
       activePill={props.activeGameType}
       onPillClick={props.setGameType}
     />
+    */}
     <div className="row">
       <div className="col-sm-12">
         <form>
@@ -58,9 +60,9 @@ const Sidebar = props => (
 );
 
 Sidebar.propTypes = {
-  gameTypes: React.PropTypes.arrayOf(React.PropTypes.string),
-  activeGameType: React.PropTypes.string,
-  setGameType: React.PropTypes.func,
+  // gameTypes: React.PropTypes.arrayOf(React.PropTypes.string),
+  // activeGameType: React.PropTypes.string,
+  // setGameType: React.PropTypes.func,
   currentLexicon: React.PropTypes.number,
   // XXX: Something is terribly wrong with eslint; these props are
   // clearly used.
@@ -68,7 +70,7 @@ Sidebar.propTypes = {
   desiredTime: React.PropTypes.number,
   setTime: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
   questionsPerRound: React.PropTypes.number,
-  setQuestionsPerRound: React.PropTypes.func,
+  setQuestionsPerRound: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
   disabledInputs: React.PropTypes.bool,
 
   availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({

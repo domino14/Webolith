@@ -19,7 +19,7 @@ from django.contrib import admin
 
 from wordwalls.models import (
     DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry,
-    DailyChallengeName)
+    DailyChallengeName, NamedList)
 from wordwalls.models import WordwallsGameModel, DailyChallengeMissedBingos
 
 
@@ -62,6 +62,13 @@ class DailyChallengeMissedBingosAdmin(admin.ModelAdmin):
     readonly_fields = ('challenge', 'alphagram_string', 'numTimesMissed')
 
 
+class NamedListAdmin(admin.ModelAdmin):
+    fields = ['lexicon', 'name']
+    search_fields = ['lexicon__lexiconName', 'name']
+    list_display = ('lexicon', 'name', 'numQuestions', 'wordLength', 'isRange')
+    readonly_fields = ['questions']
+
+
 admin.site.register(DailyChallengeMissedBingos,
                     DailyChallengeMissedBingosAdmin)
 admin.site.register(DailyChallengeLeaderboard, DailyChallengeLeaderboardAdmin)
@@ -69,3 +76,4 @@ admin.site.register(DailyChallengeLeaderboardEntry,
                     DailyChallengeLeaderboardEntryAdmin)
 admin.site.register(DailyChallenge, DailyChallengeAdmin)
 admin.site.register(DailyChallengeName)
+admin.site.register(NamedList, NamedListAdmin)

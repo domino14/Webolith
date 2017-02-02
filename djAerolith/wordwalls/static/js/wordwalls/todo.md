@@ -74,14 +74,14 @@ Single-Page App:
 -[x] Deleting word list should not invalidate table.
     - [ ] Will require a migration prior to deploy.
 -[x] Flashcard link (use old flashcard app for now in new page)
--[ ] Get rid of all old app code, move reactapp
+-[x] Get rid of all old app code, move reactapp
     - [x] Quickly look through for features we may have forgotten.
     - [x] Disable first missed options if list not complete.
     - [x] Add license text for csw
-    - [ ] Add spinners when waiting for stuff (We riding spinnas.. also, ___)
-    - [ ] Links for all other things! (edit profile, stats, hall of fame, etc...) 
-        - Maybe it's ok to keep these on the "main" page?
--[ ] Fix routes so that /wordwalls, /wordwalls/table/{x} are the same page
+    - [x] Add spinners when waiting for stuff (We riding spinnas.. also, ___)
+    ~~- [ ] Links for all other things! (edit profile, stats, hall of fame, etc...)~~
+        - Maybe it's ok to keep these on the "main" page? - yes, let's add a back button. later on we can figure out how to add a nav bar.
+-[x] Fix routes so that /wordwalls, /wordwalls/table/{x} are the same page
     - Load new table dialog based on route
     - Alternative for mobile
 -[ ] Fix deploy process completely (this should be a separate branch)

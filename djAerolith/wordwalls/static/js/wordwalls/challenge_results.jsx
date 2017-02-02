@@ -54,7 +54,7 @@ class ChallengeResults extends React.Component {
         className="modal-body table-responsive"
         style={{
           overflowY: 'scroll',
-          height: '500px',
+          height: this.props.height,
         }}
       >
         <table className="table table-condensed">
@@ -87,6 +87,7 @@ ChallengeResults.propTypes = {
     lexicon: React.PropTypes.string,
     maxScore: React.PropTypes.number,
   }),
+  height: React.PropTypes.number,
 };
 
 export default ChallengeResults;
