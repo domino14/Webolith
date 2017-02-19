@@ -11,7 +11,7 @@ recaptcha-client
 wsgiref
 redis
 jsonschema
-python-social-auth==0.2.21
+social-auth-app-django
 requests-oauthlib
 python-openid
 psycopg2

@@ -42,6 +42,7 @@ networks:
   aeronet:
     driver: bridge
 
+
 # best way to load data into db
 # docker-compose up pgdb
 # docker exec -it webolith_pgdb_1 bash

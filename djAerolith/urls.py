@@ -84,7 +84,7 @@ urlpatterns = [
     url(r'^accounts/username/change/done/$',
         TemplateView.as_view(template_name='accounts/edit_username_done.html')
         ),
-    url('', include('social.apps.django_app.urls', namespace='social')),
+    url('', include('social_django.urls', namespace='social')),
     url(r'^login_error/', login_error),
     url(r'^new_users/', new_social_user),
     url(r'^accounts/', include('registration.backends.simple.urls')),
