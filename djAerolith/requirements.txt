@@ -17,7 +17,7 @@ pystache
 boto
 mock
 jsonschema
-python-social-auth
+python-social-auth==0.2.21
 requests-oauthlib
 python-openid
 psycopg2
