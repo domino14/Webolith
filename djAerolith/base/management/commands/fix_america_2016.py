@@ -5,6 +5,8 @@ instead migrate everyone over transparently, especially since no words
 were deleted. This script should do a number of things, along with the
 rest of the PR this is in.
 
+Test this on a prod dump first.
+
 0. We should set a planned downtime
 1. Copy the probability orders from America to America2016 for lengths 2-8
 2. Migrate everyone that's on America2016 to America
@@ -14,7 +16,8 @@ there are no name collisions.
 5. ~~_Rename_ the America lexicon to America2016 or similar~~  (No need)
 6. Fix genNamedLists script to add words added in 2016 option
 7. Change America lengthCounts.
-8. Bring back site.
+8. Reload new db and gaddag, etc into macondo.
+9. Bring back site.
 
 """
 import sqlite3
