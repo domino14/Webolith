@@ -11,16 +11,21 @@ rest of the PR this is in.
 3. Hide or somehow remove the America2016 lexicon
 4. Migrate everyone's America2016 lists to America, checking to see that
 there are no name collisions.
-5. _Rename_ the America lexicon to America2016 or similar
+5. ~~_Rename_ the America lexicon to America2016 or similar~~  (No need)
 6. Fix genNamedLists script to add words added in 2016 option
-7. Bring back site.
+7. Change America lengthCounts.
+8. Bring back site.
 
 """
 import sqlite3
 import os
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.db import IntegrityError
+
+from base.models import Lexicon, WordList
+from accounts.models import AerolithProfile
 
 
 def fixup_america2016():
@@ -56,6 +61,44 @@ def fixup_america2016():
     conn_2016.close()
 
 
+def migrate_users_to_America():
+    """ Migrate all users on America2016 to America as their default lex. """
+    # Get all America2016 profiles
+    profiles = AerolithProfile.objects.filter(
+        defaultLexicon__lexiconName='America2016')
+    ct = profiles.count()
+    america = Lexicon.objects.get(lexiconName='America')
+    print 'Need to migrate {0} profiles'.format(ct)
+    for profile in profiles:
+        profile.defaultLexicon = america
+        profile.save()
+    print 'Migrated {0} profiles'.format(ct)
+
+
+def migrate_lists_to_America():
+    """ Migrate all America2016 lists to America. """
+    lists = WordList.objects.filter(
+        lexicon__lexiconName='America2016'
+    )
+    america = Lexicon.objects.get(lexiconName='America')
+    for wl in lists:
+        wl.lexicon = america
+        try:
+            wl.save()
+        except IntegrityError:
+            print "Could not migrate list; name collision: {0}".format(wl)
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        fixup_america2016()
+        # XXX: This is commented because we've already generated the file;
+        # we can upload the file directly to prod.
+        # fixup_america2016()
+        migrate_users_to_America()
+        migrate_lists_to_America()
+        # Change America length counts.
+        america = Lexicon.objects.get(lexiconName='America')
+        america2016 = Lexicon.objects.get(lexiconName='America2016')
+        america.lengthCounts = america2016.lengthCounts
+        america.save()
+

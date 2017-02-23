@@ -190,22 +190,13 @@ def create_wl_lists(i, lex, db):
                 lex, len(qs), i, False, json.dumps(qs),
                 'America JQXZ 6s not in OWL2')
 
-    if lex.lexiconName == 'America2016':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('%' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'America2016 {} not in America'.format(friendly_number_map[i]))
-
-        qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
-            lambda w: ('$' in w.lexicon_symbols),
-            condition_type=Condition.WORD)
-        create_named_list(
-            lex, len(qs), i, False, json.dumps(qs),
-            'America2016 {} not in CSW15'.format(friendly_number_map[i]))
+            'America {} added in 2016'.format(friendly_number_map[i]))
 
     if lex.lexiconName == 'CSW15':
         qs = get_questions_by_condition(
@@ -328,11 +319,11 @@ class Command(NoArgsCommand):
     help = """Populates database with named lists"""
 
     def handle_noargs(self, **options):
-        createNamedLists(Lexicon.objects.get(lexiconName='America2016'))
+        createNamedLists(Lexicon.objects.get(lexiconName='America'))
         return
 
         NamedList.objects.all().delete()
         for lex in Lexicon.objects.filter(
-                lexiconName__in=['America', 'CSW2015', 'America2016']):
+                lexiconName__in=['America', 'CSW2015']):
             createNamedLists(lex)
         create_spanish_lists()
