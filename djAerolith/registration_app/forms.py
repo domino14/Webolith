@@ -56,3 +56,9 @@ class RecaptchaRegistrationForm(RegistrationFormUniqueEmail):
             raise ValidationError(ugettext(
                 'A user with that username already exists.'), code='invalid')
         return self.cleaned_data['username']
+
+
+def get_registration_form(debug):
+    if debug:
+        return RegistrationFormUniqueEmail
+    return RecaptchaRegistrationForm
