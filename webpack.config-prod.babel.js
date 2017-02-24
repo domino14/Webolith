@@ -13,6 +13,10 @@ const prodConfig = _.defaults(
         $: 'jQuery',
         jQuery: 'jquery',
       }),
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'vendor',
+        filename: 'vendor.js',
+      }),
       new webpack.DefinePlugin({
         'process.env': {
           // For minifying React correctly.
