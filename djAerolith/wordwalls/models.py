@@ -124,3 +124,29 @@ class NamedList(models.Model):
     wordLength = models.IntegerField()
     isRange = models.BooleanField()
     questions = models.TextField(validators=[named_list_format_validator])
+
+
+class Medal(models.Model):
+    """
+    A medal is a sort of badge awarded for high performance at a challenge.
+
+    """
+    TYPE_BRONZE = 'B'
+    TYPE_SILVER = 'S'
+    TYPE_GOLD = 'G'
+    TYPE_PLATINUM = 'PS'
+    TYPE_GOLD_STAR = 'GS'
+
+    MEDAL_TYPES = (
+        (TYPE_BRONZE, 'Bronze'),
+        (TYPE_SILVER, 'Silver'),
+        (TYPE_GOLD, 'Gold'),
+        (TYPE_PLATINUM, 'Platinum'),
+        (TYPE_GOLD_STAR, 'GoldStar')
+    )
+
+    lb_entry = models.OneToOneField(DailyChallengeLeaderboardEntry)
+    medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
+
+    def __unicode__(self):
+        return u'%s (%s)'.format(self.medal_type, self.lb_entry)

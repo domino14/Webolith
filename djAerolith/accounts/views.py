@@ -76,7 +76,6 @@ def viewProfile(request, username):
     except (ValueError, TypeError):
         wwMedals = {}
 
-    print wwMedals
     return render(request, 'accounts/profile.html',
                   {'profile': profile,
                    'wwMedals': wwMedals})
