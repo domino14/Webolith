@@ -13,11 +13,15 @@ pgdb_data:
   image: tianon/true
   volumes:
     - /var/lib/postgresql/data
-
+    - /Users/cesar/Downloads:/opt/downloads
 # best way to load data into db
-# add volume below to app (mount sql file location as /opt/downloads .e.g)
-# then docker exec -it webolith_app_1 bash
-# then go to /opt/downloads and do mysql -u root -p djAerolith -h db < file.sql
+# docker-compose up pgdb
+# docker exec -it webolith_pgdb_1 bash
+# psql -U postgres
+# drop database djaerolith;
+# create database djaerolith;
+# exit out
+# then go to /opt/downloads and do psql -U postgres djaerolith < file.sql
 
 app:
   env_file:
@@ -27,7 +31,6 @@ app:
   volumes:
     - .:/opt/webolith:rw
     - ./db:/db
-    - /Users/cesar/Downloads:/opt/downloads
   ports:
     - 8000:8000
   links:
