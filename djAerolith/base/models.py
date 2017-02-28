@@ -27,7 +27,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from base.validators import word_list_format_validator
-EXCLUDED_LEXICA = ['OWL2', 'CSW07', 'CSW12', 'America2016']
+EXCLUDED_LEXICA = [
+    'OWL2',
+    'CSW07',
+    'CSW12',
+    'America2016',
+]
 
 # XXX: This handles both the Spanish and English case, but alphagrammize
 # will need to be reworked with lexicon-specific ordering if we add

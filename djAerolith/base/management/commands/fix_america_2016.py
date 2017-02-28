@@ -83,6 +83,11 @@ def migrate_lists_to_America():
     lists = WordList.objects.filter(
         lexicon__lexiconName='America2016'
     )
+    print 'Need to migrate {0} lists'.format(lists.count())
+    print 'Non-temp lists are'
+    for wl in lists:
+        if not wl.is_temporary:
+            print wl
     america = Lexicon.objects.get(lexiconName='America')
     for wl in lists:
         wl.lexicon = america
@@ -90,6 +95,7 @@ def migrate_lists_to_America():
             wl.save()
         except IntegrityError:
             print "Could not migrate list; name collision: {0}".format(wl)
+    print 'Migrated the lists!'
 
 
 class Command(BaseCommand):
@@ -104,4 +110,3 @@ class Command(BaseCommand):
         america2016 = Lexicon.objects.get(lexiconName='America2016')
         america.lengthCounts = america2016.lengthCounts
         america.save()
-
