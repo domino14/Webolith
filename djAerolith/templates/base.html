@@ -109,27 +109,27 @@
     {% endblock %}
     </div>
     <div class="container">
-    {% if show_maintenance %}
-    <div class="alert alert-info" id="maintenance-schedule">
-      <p>There is a maintenance period scheduled for {{info.maintenance_date}}. It
-      will last approximately {{info.maintenance_duration}}.</p>
-      <p>{{info.additional_maintenance_info}}</p>
-      <p>During this time, the site will be offline. Please plan accordingly!</p>
-    </div>
-    {% endif %}
+      {% if show_maintenance %}
+      <div class="alert alert-info" id="maintenance-schedule">
+        <p>There is a maintenance period scheduled for {{info.maintenance_date}}. It
+        will last approximately {{info.maintenance_duration}}.</p>
+        <p>{{info.additional_maintenance_info}}</p>
+        <p>During this time, the site will be offline. Please plan accordingly!</p>
+      </div>
+      {% endif %}
       {% block content %}
         <div class="row">
         {% if user.username == "" %}
-        <p>{% trans "Welcome to Aerolith 2.0!" %}</p>
-    <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
-    <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
+          <p>{% trans "Welcome to Aerolith 2.0!" %}</p>
+          <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
+          <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
 
-        <p style="margin-top: 70px;">
-        {% blocktrans %}Or <a href="accounts/register">register</a> with a username and password...{% endblocktrans %}
-        </p>
+          <p style="margin-top: 70px;">
+          {% blocktrans %}Or <a href="accounts/register">register</a> with a username and password...{% endblocktrans %}
+          </p>
         {% else %}
-        {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
-        <a href="wordwalls" class="btn btn-primary">{% trans "Play WordWalls" %}</a><BR>
+          {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
+          <a href="wordwalls" class="btn btn-primary">{% trans "Play WordWalls" %}</a><BR>
         {% endif %}
         </div>
         {% if USE_FB %}

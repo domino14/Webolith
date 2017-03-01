@@ -36,12 +36,21 @@ export default {
   resolve: {
     extensions: ['', '.js', '.jsx'],
   },
-  entry: ['bootstrap-webpack',
-    './djAerolith/wordwalls/static/js/wordwalls/reactapp/index'],
+  entry: {
+    vendor: [
+      'bootstrap-webpack', 'jquery', 'react', 'react-dom', 'immutable',
+      'underscore',
+    ],
+    app: './djAerolith/wordwalls/static/js/wordwalls/reactapp/index',
+  },
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jQuery',
       jQuery: 'jquery',
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.js',
     }),
   ],
 };

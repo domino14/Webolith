@@ -18,12 +18,13 @@
 
 import gargoyle
 
+from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import *
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
-from registration_app.forms import RecaptchaRegistrationForm
+from registration_app.forms import get_registration_form
 from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
@@ -50,7 +51,7 @@ urlpatterns = patterns('',
     (r'^accounts/social/$', 'accounts.views.social'),
     (r'^accounts/profile/', include('accounts.urls')),
     (r'^accounts/register/$', AerolithRegistrationView.as_view(
-        form_class=RecaptchaRegistrationForm)),
+        form_class=get_registration_form(settings.DEBUG))),
 
     #override the default registration urls
     url(r'^accounts/password/change/$',
