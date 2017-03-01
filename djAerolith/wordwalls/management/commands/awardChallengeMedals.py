@@ -1,76 +1,63 @@
-# Cleans up DailyChallenges that are older than specified number of days
-# in the past
+# Awards challenge medals.
+import json
+from datetime import date
 
 from django.core.management.base import BaseCommand
+
 from wordwalls.models import (DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeName)
-from datetime import date
+                              DailyChallengeName, Medal)
 from wordwalls.challenges import toughies_challenge_date
-import json
 
 
 class Command(BaseCommand):
+    def award_medals(self, leaderboard):
+        """ Award medals for a given leaderboard. """
+        lbes = DailyChallengeLeaderboardEntry.objects.filter(
+            board=leaderboard, qualifyForAward=True)
+        if len(lbes) < 8:
+            leaderboard.medalsAwarded = True   # meh, this is ugly.
+            leaderboard.save()
+            return  # Do not award medals; too few players.
+
+        lbes = sorted(lbes, cmp=sort_cmp)
+        if leaderboard.challenge.name == self.toughies:
+            # Award extra medal.
+            medals = [Medal.TYPE_PLATINUM, Medal.TYPE_GOLD, Medal.TYPE_SILVER,
+                      Medal.TYPE_BRONZE]
+        elif leaderboard.challenge.name in (self.blankies, self.marathons):
+            medals = [Medal.TYPE_GOLD_STAR, Medal.TYPE_GOLD, Medal.TYPE_SILVER,
+                      Medal.TYPE_BRONZE]
+        else:
+            medals = [Medal.TYPE_GOLD, Medal.TYPE_SILVER, Medal.TYPE_BRONZE]
+
+        for i in range(len(medals)):
+            Medal.objects.create(lb_entry=lbes[i], medal_type=medals[i])
+
+        print 'awarded medals', leaderboard
+        leaderboard.medalsAwarded = True
+        leaderboard.save()
+
     def handle(self, *args, **options):
         today = date.today()
-        toughies = DailyChallengeName.objects.get(
+        self.toughies = DailyChallengeName.objects.get(
             name=DailyChallengeName.WEEKS_BINGO_TOUGHIES)
-        blankies = DailyChallengeName.objects.get(
+        self.blankies = DailyChallengeName.objects.get(
             name=DailyChallengeName.BLANK_BINGOS)
-        marathons = DailyChallengeName.objects.get(
+        self.marathons = DailyChallengeName.objects.get(
             name=DailyChallengeName.BINGO_MARATHON)
         lbs = DailyChallengeLeaderboard.objects.filter(
             medalsAwarded=False, challenge__date__lt=today)
         for lb in lbs:
             award = True
-            if lb.challenge.name == toughies:
+            if lb.challenge.name == self.toughies:
                 chDate = toughies_challenge_date(today)
                 # Toughies challenge still ongoing
                 if chDate == lb.challenge.date:
                     award = False
-            if award:
-                lbes = DailyChallengeLeaderboardEntry.objects.filter(
-                    board=lb, qualifyForAward=True)
-                if len(lbes) < 8:
-                    lb.medalsAwarded = True
-                    lb.save()
-                    continue    # do not award
-                lbes = sorted(lbes, cmp=sort_cmp)
-
-                if lb.challenge.name == toughies:
-                    # Award extra medal.
-                    medals = ['Platinum', 'Gold', 'Silver', 'Bronze']
-                elif lb.challenge.name in (blankies, marathons):
-                    medals = ['GoldStar', 'Gold', 'Silver', 'Bronze']
-                else:
-                    medals = ['Gold', 'Silver', 'Bronze']
-
-                for i in range(len(medals)):
-                    try:
-                        lbes[i].additionalData = json.dumps(
-                            {'medal': medals[i]})
-                    except IndexError:
-                        break
-                    lbes[i].save()
-                    profile = lbes[i].user.aerolithprofile
-                    try:
-                        userMedals = json.loads(profile.wordwallsMedals)
-                    except (TypeError, ValueError):
-                        userMedals = {'medals': {}}
-                    if 'medals' not in userMedals:
-                        userMedals = {'medals': {}}
-                    if medals[i] in userMedals['medals']:
-                        userMedals['medals'][medals[i]] += 1
-                    else:
-                        userMedals['medals'][medals[i]] = 1
-
-                    profile.wordwallsMedals = json.dumps(userMedals)
-                    profile.save()
-                    print profile.user.username, profile.wordwallsMedals
-
-                print 'awarded medals', lb
-                lb.medalsAwarded = True
-                lb.save()
+            if not award:
+                continue
+            self.award_medals(lb)
 
 
 def sort_cmp(e1, e2):

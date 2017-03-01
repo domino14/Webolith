@@ -61,6 +61,7 @@ class AerolithProfile(models.Model):
     # specific per game
     customWordwallsStyle = models.CharField(max_length=1000, blank=True)
     wordwallsSaveListSize = models.IntegerField(default=0)
+    # XXX: This field to be removed.
     wordwallsMedals = models.TextField(null=True, blank=True)
 
     # project-wide

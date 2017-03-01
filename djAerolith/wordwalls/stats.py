@@ -72,7 +72,7 @@ def leaderboard(request):
     return render(request, 'wordwalls/leaderboard.html')
 
 
-@cache_page(12*60*60) #12 hours
+# @cache_page(12*60*60) #12 hours
 @login_required
 def get_medals(request):
 
@@ -80,12 +80,6 @@ def get_medals(request):
 
     # {user, dict of medals}
     all_medals = []
-
-    # {user: sum of their medals}
-    medal_totals = {}
-
-    # The user with the most medals
-    top_user_score = {}
 
     # List of user objects
     users_medals_totals = []

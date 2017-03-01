@@ -38,23 +38,18 @@ class Command(BaseCommand):
     all_medals = [Medal.TYPE_BRONZE, Medal.TYPE_SILVER, Medal.TYPE_GOLD,
                   Medal.TYPE_GOLD_STAR, Medal.TYPE_PLATINUM]
 
-    def handle(self, *args, **options):
-        # Get only medal entries.
-        entries = DailyChallengeLeaderboardEntry.objects.exclude(
-            additionalData__isnull=True)
-        print 'Migrating {0} medals'.format(entries.count())
-
-        for entry in entries:
-            addl_data = json.loads(entry.additionalData)
-            # Make this idempotent
-            medal, created = Medal.objects.get_or_create(
-                lb_entry=entry,
-                medal_type=convert_to_medal_type(addl_data['medal'])
-            )
+    def verify_counts(self):
         # Verify that counts match.
         profiles = AerolithProfile.objects.all()
         for profile in profiles:
-            medals = json.loads(profile.wordwallsMedals)
+            try:
+                medals = json.loads(profile.wordwallsMedals)
+            except (TypeError, ValueError):
+                # No medals.
+                continue
+            medals = medals.get('medals', {})
+            if not medals:
+                continue
             # Verify for each medal type.
             for medal_type in self.all_medals:
                 num_medals_model = Medal.objects.filter(
@@ -68,4 +63,26 @@ class Command(BaseCommand):
                         'and {3} {2} medals in Medal model'.format(
                             profile.user, num_medals_profile, medal_type,
                             num_medals_model))
+
+    def migrate(self):
+        entries = DailyChallengeLeaderboardEntry.objects.exclude(
+            additionalData__isnull=True)
+        print 'Migrating {0} medals'.format(entries.count())
+
+        for idx, entry in enumerate(entries):
+            if idx % 1000 == 0:
+                print idx, '...'
+            addl_data = json.loads(entry.additionalData)
+            # Make this idempotent
+            medal, created = Medal.objects.get_or_create(
+                lb_entry=entry,
+                medal_type=convert_to_medal_type(addl_data['medal'])
+            )
+        print idx
+
+    def handle(self, *args, **options):
+        # Get only medal entries.
+        self.migrate()
+        self.verify_counts()
+
         print 'Done!'
