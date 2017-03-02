@@ -53,7 +53,7 @@ class Command(BaseCommand):
             # Verify for each medal type.
             for medal_type in self.all_medals:
                 num_medals_model = Medal.objects.filter(
-                    lb_entry__user=profile.user,
+                    user=profile.user,
                     medal_type=medal_type).count()
                 num_medals_profile = medals.get(
                     convert_from_medal_type(medal_type), 0)
@@ -69,16 +69,18 @@ class Command(BaseCommand):
             additionalData__isnull=True)
         print 'Migrating {0} medals'.format(entries.count())
 
-        for idx, entry in enumerate(entries):
-            if idx % 1000 == 0:
-                print idx, '...'
-            addl_data = json.loads(entry.additionalData)
-            # Make this idempotent
-            medal, created = Medal.objects.get_or_create(
-                lb_entry=entry,
-                medal_type=convert_to_medal_type(addl_data['medal'])
-            )
-        print idx
+        batch_size = 5000
+        for i in range(0, len(entries), batch_size):
+            batch = []
+            for j in range(i, min(i + batch_size, len(entries))):
+                entry = entries[j]
+                addl_data = json.loads(entry.additionalData)
+                batch.append(Medal(
+                    leaderboard=entry.board,
+                    user=entry.user,
+                    medal_type=convert_to_medal_type(addl_data['medal'])))
+            Medal.objects.bulk_create(batch)
+            print i, '... batch_size:', len(batch)
 
     def handle(self, *args, **options):
         # Get only medal entries.

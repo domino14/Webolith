@@ -226,7 +226,7 @@ $(document).ready(function() {
         }
 
         // Call the info function for each row in the leaderboard
-        for (var i = 0; i < Math.min(entriesSorted, 10); i++) {
+        for (var i = 0; i < Math.min(entriesSorted.length, 10); i++) {
 
             goThroughEntries(entriesSorted, i)
 

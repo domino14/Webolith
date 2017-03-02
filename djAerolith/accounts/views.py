@@ -64,7 +64,7 @@ def editProfile(request):
 
 def calculate_medals(user):
     # Later have time selection, etc.
-    medals = Medal.objects.filter(lb_entry__user=user)
+    medals = Medal.objects.filter(user=user)
     obj = {'medals': {}}
     # The object looks like {'medals': {'Gold': 35, ...}}
     for medal_type in Medal.MEDAL_TYPES:

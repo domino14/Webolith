@@ -144,9 +144,12 @@ class Medal(models.Model):
         (TYPE_PLATINUM, 'Platinum'),
         (TYPE_GOLD_STAR, 'GoldStar')
     )
-
-    lb_entry = models.OneToOneField(DailyChallengeLeaderboardEntry)
+    user = models.ForeignKey(User)
+    leaderboard = models.ForeignKey(DailyChallengeLeaderboard)
     medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
 
     def __unicode__(self):
         return u'%s (%s)'.format(self.medal_type, self.lb_entry)
+
+    class Meta:
+        unique_together = ('user', 'leaderboard')

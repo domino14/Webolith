@@ -499,8 +499,6 @@ def getLeaderboardDataDcInstance(dc):
     Returns a dictionary of `entry`s.
 
     """
-    import time
-    ts = time.time()
     try:
         lb = DailyChallengeLeaderboard.objects.get(challenge=dc)
     except DailyChallengeLeaderboard.DoesNotExist:
@@ -508,18 +506,18 @@ def getLeaderboardDataDcInstance(dc):
 
     lbes = DailyChallengeLeaderboardEntry.objects.filter(board=lb)
     retData = {'maxScore': lb.maxScore, 'entries': []}
-    medals = Medal.objects.filter(lb_entry__board=lb)
+    medals = Medal.objects.filter(leaderboard=lb)
     medal_hash = {}
     for m in medals:
-        medal_hash[m.lb_entry] = m.get_medal_type_display()
+        medal_hash[m.user] = m.get_medal_type_display()
     entries = []
     for lbe in lbes:
         # Check if this user has a medal.
         # XXX: This can be made faster later by just returning the medals
         # and letting the front end calculate what medal belongs where.
         addl_data = None
-        if lbe in medal_hash:
-            addl_data = json.dumps({'medal': medal_hash[lbe]})
+        if lbe.user in medal_hash:
+            addl_data = json.dumps({'medal': medal_hash[lbe.user]})
         entry = {'user': lbe.user.username,
                  'score': lbe.score, 'tr': lbe.timeRemaining,
                  'addl': addl_data}
@@ -535,7 +533,6 @@ def getLeaderboardDataDcInstance(dc):
     retData['entries'] = entries
     retData['challengeName'] = dc.name.name
     retData['lexicon'] = dc.lexicon.lexiconName
-    print 'elapsed', time.time() - ts
     return retData
 
 

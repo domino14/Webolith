@@ -1,5 +1,5 @@
 # Awards challenge medals.
-import json
+import logging
 from datetime import date
 
 from django.core.management.base import BaseCommand
@@ -8,6 +8,7 @@ from wordwalls.models import (DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
                               DailyChallengeName, Medal)
 from wordwalls.challenges import toughies_challenge_date
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -32,9 +33,12 @@ class Command(BaseCommand):
             medals = [Medal.TYPE_GOLD, Medal.TYPE_SILVER, Medal.TYPE_BRONZE]
 
         for i in range(len(medals)):
-            Medal.objects.create(lb_entry=lbes[i], medal_type=medals[i])
+            Medal.objects.create(
+                user=lbes[i].user,
+                leaderboard=lbes[i].board,
+                medal_type=medals[i])
 
-        print 'awarded medals', leaderboard
+        logger.debug('awarded medals for %s', leaderboard)
         leaderboard.medalsAwarded = True
         leaderboard.save()
 
@@ -48,6 +52,7 @@ class Command(BaseCommand):
             name=DailyChallengeName.BINGO_MARATHON)
         lbs = DailyChallengeLeaderboard.objects.filter(
             medalsAwarded=False, challenge__date__lt=today)
+        logger.debug('Need to award medals for %s leaderboards', lbs.count())
         for lb in lbs:
             award = True
             if lb.challenge.name == self.toughies:
@@ -55,6 +60,8 @@ class Command(BaseCommand):
                 # Toughies challenge still ongoing
                 if chDate == lb.challenge.date:
                     award = False
+                    logger.debug('%s: Toughies still ongoing, do not award.',
+                                 lb)
             if not award:
                 continue
             self.award_medals(lb)
