@@ -84,18 +84,9 @@ def viewProfile(request, username):
     except AerolithProfile.DoesNotExist:
         raise Http404
         # although this shouldn't happen!! every user should have a profile
-    import time
-    # try:
-    #     wwMedals = json.loads(profile.wordwallsMedals)
-    # except (ValueError, TypeError):
-    #     wwMedals = {}
-    ts = time.time()
-    # Calculate medals
-    wwMedals = calculate_medals(user)
-    logger.debug('Calculated medals: %s secs', time.time() - ts)
     return render(request, 'accounts/profile.html',
                   {'profile': profile,
-                   'wwMedals': wwMedals})
+                   'wwMedals': calculate_medals(user)})
 
 
 @login_required

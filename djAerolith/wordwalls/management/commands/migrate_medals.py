@@ -1,7 +1,7 @@
 """
 
 Migrate to the new medals model. This should be a two-part
-migration.
+migration. The second part will delete the appropriate additionalData rows.
 
 """
 import json
