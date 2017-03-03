@@ -41,7 +41,7 @@ from lib.word_searches import SearchDescription
 from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeName, NamedList)
+                              DailyChallengeName, NamedList, Medal)
 import wordwalls.settings
 from lib.response import response, StatusCode
 from base.utils import get_alphas_from_words, UserListParseException
@@ -506,12 +506,21 @@ def getLeaderboardDataDcInstance(dc):
 
     lbes = DailyChallengeLeaderboardEntry.objects.filter(board=lb)
     retData = {'maxScore': lb.maxScore, 'entries': []}
-
+    medals = Medal.objects.filter(leaderboard=lb)
+    medal_hash = {}
+    for m in medals:
+        medal_hash[m.user] = m.get_medal_type_display()
     entries = []
     for lbe in lbes:
+        # Check if this user has a medal.
+        # XXX: This can be made faster later by just returning the medals
+        # and letting the front end calculate what medal belongs where.
+        addl_data = None
+        if lbe.user in medal_hash:
+            addl_data = json.dumps({'medal': medal_hash[lbe.user]})
         entry = {'user': lbe.user.username,
                  'score': lbe.score, 'tr': lbe.timeRemaining,
-                 'addl': lbe.additionalData}
+                 'addl': addl_data}
         entries.append(entry)
 
     def cmpFunction(e1, e2):
@@ -524,7 +533,6 @@ def getLeaderboardDataDcInstance(dc):
     retData['entries'] = entries
     retData['challengeName'] = dc.name.name
     retData['lexicon'] = dc.lexicon.lexiconName
-
     return retData
 
 

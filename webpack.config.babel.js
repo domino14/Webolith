@@ -38,7 +38,11 @@ export default {
   },
   entry: {
     vendor: [
-      'bootstrap-webpack', 'jquery', 'react', 'react-dom', 'immutable',
+      'bootstrap-webpack',
+      'jquery',
+      'react',
+      'react-dom',
+      'immutable',
       'underscore',
     ],
     app: './djAerolith/wordwalls/static/js/wordwalls/reactapp/index',

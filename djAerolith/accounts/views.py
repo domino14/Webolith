@@ -16,6 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 import json
+import logging
 
 from django.http import HttpResponseRedirect, Http404
 from django.utils.translation import LANGUAGE_SESSION_KEY
@@ -25,7 +26,9 @@ from django.shortcuts import render
 
 from accounts.models import AerolithProfile
 from accounts.forms import ProfileEditForm, UsernameEditForm
+from wordwalls.models import Medal
 
+logger = logging.getLogger(__name__)
 DEFAULT_LANGUAGE = 'en'
 
 
@@ -59,6 +62,17 @@ def editProfile(request):
              LANGUAGE_SESSION_KEY, DEFAULT_LANGUAGE)})
 
 
+def calculate_medals(user):
+    # Later have time selection, etc.
+    medals = Medal.objects.filter(user=user)
+    obj = {'medals': {}}
+    # The object looks like {'medals': {'Gold': 35, ...}}
+    for medal_type in Medal.MEDAL_TYPES:
+        obj['medals'][medal_type[1]] = medals.filter(
+            medal_type=medal_type[0]).count()
+    return obj
+
+
 def viewProfile(request, username):
     try:
         user = User.objects.get(username=username)
@@ -70,16 +84,9 @@ def viewProfile(request, username):
     except AerolithProfile.DoesNotExist:
         raise Http404
         # although this shouldn't happen!! every user should have a profile
-
-    try:
-        wwMedals = json.loads(profile.wordwallsMedals)
-    except (ValueError, TypeError):
-        wwMedals = {}
-
-    print wwMedals
     return render(request, 'accounts/profile.html',
                   {'profile': profile,
-                   'wwMedals': wwMedals})
+                   'wwMedals': calculate_medals(user)})
 
 
 @login_required
