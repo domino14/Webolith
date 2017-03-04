@@ -84,8 +84,8 @@ Single-Page App:
 -[x] Fix routes so that /wordwalls, /wordwalls/table/{x} are the same page
     - Load new table dialog based on route
     - Alternative for mobile
--[ ] Aerolith lists out of order
--[ ] Switching challenge dates while challenge is selected does not render 
+-~~[x] Aerolith lists out of order~~ Not an issue
+-[x] Switching challenge dates while challenge is selected does not render 
 correct leaderboards.
 
 -[ ] Fix deploy process completely (this should be a separate branch)

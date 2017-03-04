@@ -104,13 +104,16 @@ class TableCreator extends React.Component {
    * some network requests.
    */
   componentDidUpdate(prevProps, prevState) {
+    let challengeParamsChanged = false;
     if ((prevState.currentLexicon !== this.state.currentLexicon) ||
         (prevState.currentDate.format(DATE_FORMAT_STRING) !==
          this.state.currentDate.format(DATE_FORMAT_STRING))) {
       // We may need to load new lists or challenges.
       this.loadInfoForSearchType(this.state.activeSearchType);
+      challengeParamsChanged = true;
     }
-    if (prevState.currentChallenge !== this.state.currentChallenge) {
+    if (prevState.currentChallenge !== this.state.currentChallenge ||
+        challengeParamsChanged) {
       // The challenge changed. We should load challenge leaderboard data.
       this.showSpinner();
       $.ajax({
