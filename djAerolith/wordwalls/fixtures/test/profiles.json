@@ -12,7 +12,6 @@
     "member": true,
     "user": 1,
     "defaultLexicon": 1,
-    "wordwallsMedals": "{\"medals\": {\"Bronze\": 3, \"Silver\": 4, \"Gold\": 4}}",
     "additional_data": "{\"disableChat\": false}"
   },
   "model": "accounts.aerolithprofile",

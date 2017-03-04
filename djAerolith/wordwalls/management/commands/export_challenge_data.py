@@ -16,7 +16,7 @@ class Command(BaseCommand):
         # like that.
         query = """
             select date, username, name, maxScore, score, timeRemaining,
-                lexiconName, additionalData
+                lexiconName
                 from wordwalls_dailychallengeleaderboardentry e
             inner join auth_user u on
                 e.user_id = u.id
@@ -34,12 +34,8 @@ class Command(BaseCommand):
         with open(FILENAME, 'wb') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['Date', 'Username', 'Challenge Name', 'Max Score',
-                             'Score', 'Time Remaining', 'Lexicon', 'Medal'])
+                             'Score', 'Time Remaining', 'Lexicon'])
             row = cursor.fetchone()
             while row is not None:
-                try:
-                    medal = json.loads(row[-1]).get('medal')
-                except (TypeError, ValueError):
-                    medal = ''
-                writer.writerow(list(row[0:-1]) + [medal])
+                writer.writerow(row)
                 row = cursor.fetchone()
