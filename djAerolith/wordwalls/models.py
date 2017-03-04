@@ -80,8 +80,6 @@ class DailyChallengeLeaderboardEntry(models.Model):
     timeRemaining = models.IntegerField()
     # only qualify for award if entry is in allowable range
     qualifyForAward = models.BooleanField(default=True)
-    # awards, anything else?
-    additionalData = models.TextField(null=True)
 
     def __unicode__(self):
         return "%s --- %s %d (%d s.)" % (
