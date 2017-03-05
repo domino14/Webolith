@@ -87,6 +87,7 @@ Single-Page App:
 -~~[x] Aerolith lists out of order~~ Not an issue
 -[x] Switching challenge dates while challenge is selected does not render 
 correct leaderboards.
+-[x] Fix some broken tests
 
 -[ ] Fix deploy process completely (this should be a separate branch)
     -[ ] use Docker images + simple haproxy-based LB

@@ -193,6 +193,7 @@ class TableCreator extends React.Component {
         challenge: this.state.currentChallenge,
         tablenum: this.props.tablenum,
       }),
+      contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
     .done(data => this.props.onLoadNewList(data))
@@ -218,6 +219,7 @@ class TableCreator extends React.Component {
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
       }),
+      contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
     .done(data => this.props.onLoadNewList(data))
@@ -269,6 +271,7 @@ class TableCreator extends React.Component {
         selectedList: this.state.selectedList,
         tablenum: this.props.tablenum,
       }),
+      contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
     .done(data => this.props.onLoadNewList(data))
@@ -331,6 +334,7 @@ class TableCreator extends React.Component {
         tablenum: this.props.tablenum,
         listOption: action,
       }),
+      contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
     .done((data) => {

@@ -94,7 +94,6 @@ def load_new_words(f):
         except (TypeError, ValueError):
             return bad_request('Badly formatted body.')
         # First verify that the user has access to this table.
-        # XXX Later: assign a table num if not provided, etc.
         if not access_to_table(body['tablenum'], request.user):
             return bad_request('User is not in this table.')
 

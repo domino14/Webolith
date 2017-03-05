@@ -164,6 +164,7 @@ class WordwallsApp extends React.Component {
       method: 'POST',
       dataType: 'json',
       data: JSON.stringify(style),
+      contentType: 'application/json; charset=utf-8',
     });
     $('body').css({
       'background-image': backgroundURL(style.bodyBackground),

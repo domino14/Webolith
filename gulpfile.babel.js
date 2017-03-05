@@ -83,17 +83,6 @@ gulp.task('default', ['watch', 'main']);
 // Other gulp tasks for legacy apps that haven't been migrated to ES6/
 // react/etc.
 
-gulp.task('createTableBuild', () =>
-  rjs({
-    baseUrl: 'djAerolith/wordwalls/static/js/wordwalls',
-    mainConfigFile: 'djAerolith/wordwalls/static/js/wordwalls/create_table_main.js',
-    name: 'create_table_main',
-    out: 'create-table-main-built.js',
-  })
-    .pipe(uglify())
-    .pipe(gzip())
-    .pipe(gulp.dest(paths.distDir)));
-
 gulp.task('flashcardsBuild', () =>
   rjs({
     baseUrl: 'djAerolith/flashcards/static/js/flashcards',
@@ -105,4 +94,4 @@ gulp.task('flashcardsBuild', () =>
     .pipe(gzip())
     .pipe(gulp.dest(paths.distDir)));
 
-gulp.task('full-prod-build', ['build-production', 'createTableBuild', 'flashcardsBuild']);
+gulp.task('full-prod-build', ['build-production', 'flashcardsBuild']);

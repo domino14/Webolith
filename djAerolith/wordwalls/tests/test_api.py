@@ -97,14 +97,18 @@ class WordwallsNewChallengeTest(TestCase):
         self.assertTrue(result)
 
     def test_replace_challenge(self):
-        result = self.client.post('/wordwalls/', {
-            'action': 'challengeSubmit',
-            'lexicon': 7,
-            'challenge': 14,
-            'challengeDate': '2013-11-29'
-        })
+        result = self.client.post(
+            '/wordwalls/api/new_challenge/',
+            data=json.dumps({
+                'lexicon': 7,
+                'challenge': 14,
+                'date': '2013-11-29',
+                'tablenum': 0
+            }), content_type='application/json')
+        self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(content['url'])
+        response = self.client.get('/wordwalls/table/{0}/'.format(
+            content['tablenum']))
         addl_params = json.loads(response.context['addParams'])
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
@@ -149,17 +153,19 @@ class WordwallsNewSearchTest(TestCase):
         self.assertTrue(result)
 
     def test_replace_with_wordlist(self):
-        # First, load a challenge the old way.
-        # XXX: Note that this should be removed/replaced at some point.
-        # We will not have a lot of the /wordwalls endpoint functions.
-        result = self.client.post('/wordwalls/', {
-            'action': 'challengeSubmit',
-            'lexicon': 7,
-            'challenge': 14,
-            'challengeDate': '2013-11-29'
-        })
+        # First, load a challenge.
+        result = self.client.post(
+            '/wordwalls/api/new_challenge/',
+            data=json.dumps({
+                'lexicon': 7,
+                'challenge': 14,
+                'tablenum': 0,
+                'date': '2013-11-29'
+            }), content_type='application/json')
+        self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(content['url'])
+        response = self.client.get('/wordwalls/table/{0}/'.format(
+            content['tablenum']))
         addl_params = json.loads(response.context['addParams'])
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],

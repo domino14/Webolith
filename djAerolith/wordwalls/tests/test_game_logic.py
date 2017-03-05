@@ -16,7 +16,7 @@ from django.test.utils import override_settings
 from django.db import connection
 
 from base.forms import SavedListForm
-from wordwalls.game import WordwallsGame
+from wordwalls.game import WordwallsGame, GameInitException
 from wordwalls.models import DailyChallengeName, NamedList, DailyChallenge
 from wordwalls.tests.mixins import WordListAssertMixin
 from lib.word_searches import SearchDescription
@@ -366,10 +366,11 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
     def test_firstmissed_not_allowed(self):
         LIST_NAME = "i live in a giant bucket"
         word_list = WordList.objects.get(name=LIST_NAME)
-        table_id = self.wwg.initialize_by_saved_list(
-            self.lex, self.user, word_list, SavedListForm.FIRST_MISSED_CHOICE,
-            240)
-        self.assertEqual(table_id, 0)
+        with self.assertRaises(GameInitException):
+            self.wwg.initialize_by_saved_list(
+                self.lex, self.user, word_list,
+                SavedListForm.FIRST_MISSED_CHOICE,
+                240)
 
     def test_restart_unfinished_list(self):
         LIST_NAME = "i live in a giant bucket"
