@@ -502,7 +502,7 @@ class TableCreator extends React.Component {
     }
     return (
       <ModalSkeleton
-        title="New Table"
+        title="New Word List"
         modalClass="table-modal"
         ref={el => (this.modal = el)}
         size="modal-xl"

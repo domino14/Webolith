@@ -619,18 +619,13 @@ class WordwallsApp extends React.Component {
           </div>
 
           <div className="hidden-xs col-sm-2 col-md-1 col-lg-1">
-            <div
-              data-toggle="modal"
-              title="New Table"
+            <button
+              className="btn btn-danger btn-sm"
+              style={{ marginTop: '-6px' /* why? */}}
+              onClick={this.resetTableCreator}
               data-target=".table-modal"
-              // This will show the table creator modal.
-            >
-              <button
-                className="btn btn-danger btn-sm"
-                style={{ marginTop: '-6px' /* why? */}}
-                onClick={this.resetTableCreator}
-              >New</button>
-            </div>
+              data-toggle="modal"
+            >New</button>
           </div>
 
         </div>
@@ -701,12 +696,20 @@ class WordwallsApp extends React.Component {
         <div
           className="row visible-xs-block"
         >
-          <div className="col-xs-12">
+          <div className="col-xs-6">
             <ReducedUserBox
               answeredByMe={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
             />
+          </div>
+          <div className="col-xs-6">
+            <button
+              className="btn btn-danger btn-xs"
+              onClick={this.resetTableCreator}
+              data-target=".table-modal"
+              data-toggle="modal"
+            >Load New Word List</button>
           </div>
         </div>
       </div>

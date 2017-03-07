@@ -88,7 +88,9 @@ Single-Page App:
 -[x] Switching challenge dates while challenge is selected does not render 
 correct leaderboards.
 -[x] Fix some broken tests
--[ ] Test old table creation endpoints on new code (what happens?)
+-[x] Test old table creation endpoints on new code (what happens?)
+    -[ ] Infinite spinner, consider showing an error msg of some sort.
+-[x] New table button for mobile.
 
 -[ ] Fix deploy process completely (this should be a separate branch)
     -[ ] use Docker images + simple haproxy-based LB
