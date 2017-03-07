@@ -89,7 +89,7 @@ Single-Page App:
 correct leaderboards.
 -[x] Fix some broken tests
 -[x] Test old table creation endpoints on new code (what happens?)
-    -[ ] Infinite spinner, consider showing an error msg of some sort.
+    -[x] Infinite spinner, consider showing an error msg of some sort.
 -[x] New table button for mobile.
 
 -[ ] Fix deploy process completely (this should be a separate branch)
