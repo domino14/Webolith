@@ -71,7 +71,7 @@ class WordSearchDialog extends React.Component {
             onChange={this.handleMaxProbChange}
           />
           <button
-            className="btn btn-info"
+            className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
             onClick={this.props.onSearchSubmit}
             data-dismiss="modal"

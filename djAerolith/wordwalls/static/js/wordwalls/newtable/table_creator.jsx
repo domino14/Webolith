@@ -566,11 +566,6 @@ class TableCreator extends React.Component {
             style={{ marginRight: 10 }}
           >{this.state.currentLexicon === COLLINS_LEX_ID ? COLLINS_LICENSE_TEXT : ''}
           </small>
-          <a
-            role="button"
-            className="btn btn-danger btn-xs"
-            onClick={() => (window.location.href = '/')}
-          >Back to main page</a>
         </div>
       </ModalSkeleton>
     );

@@ -64,7 +64,7 @@ const ChallengeDialog = (props) => {
         {rows}
 
         <button
-          className="btn btn-info"
+          className="btn btn-primary"
           style={{ marginTop: '0.75em' }}
           onClick={props.onChallengeSubmit}
           data-dismiss="modal"

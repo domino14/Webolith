@@ -45,12 +45,12 @@ class PlayButton extends React.Component {
       >
         <button
           type="button"
-          className="btn btn-info btn-xs"
+          className="btn btn-primary btn-xs"
           onClick={this.props.continueList(this.props.listID)}
         >Continue</button>
         <button
           type="button"
-          className="btn btn-info dropdown-toggle btn-xs"
+          className="btn btn-primary dropdown-toggle btn-xs"
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"

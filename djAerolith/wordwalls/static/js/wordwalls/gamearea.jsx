@@ -1,12 +1,12 @@
 import React from 'react';
 import Immutable from 'immutable';
 
-import GameEndDialog from './game_end_dialog';
+import GameInactiveArea from './game_inactive_area';
 import Styling from './style';
 import SVGBoard from './svg_board';
 
 const GameArea = (props) => {
-  if (props.gameGoing || props.numberOfRounds === 0) {
+  if (props.gameGoing) {
     return (
       // Prevent default on mouse down to prevent taking focus in
       // case of misclick.
@@ -23,7 +23,7 @@ const GameArea = (props) => {
   }
 
   return (
-    <GameEndDialog
+    <GameInactiveArea
       questions={props.origQuestions}
       answeredByMe={props.answeredByMe}
       totalWords={props.totalWords}
@@ -32,6 +32,10 @@ const GameArea = (props) => {
       showLexiconSymbols={!props.displayStyle.hideLexiconSymbols}
       isChallenge={props.isChallenge}
       challengeData={props.challengeData}
+      numberOfRounds={props.numberOfRounds}
+      resetTableCreator={props.resetTableCreator}
+      tableCreatorModalSelector={props.tableCreatorModalSelector}
+      listName={props.listName}
     />
   );
 };
@@ -57,6 +61,9 @@ GameArea.propTypes = {
   height: React.PropTypes.number,
   gridWidth: React.PropTypes.number,
   gridHeight: React.PropTypes.number,
+  resetTableCreator: React.PropTypes.func,
+  tableCreatorModalSelector: React.PropTypes.string,
+  listName: React.PropTypes.string,
 };
 
 export default GameArea;

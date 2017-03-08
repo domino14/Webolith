@@ -15,10 +15,12 @@ const ChallengeButton = (props) => {
 
   if (props.selectedChallenge === props.challenge.id) {
     extraClassName = 'btn-info';
-  } else if (props.activeChalls.includes(props.challenge.id)) {
-    extraClassName = 'btn-success';
+  } else if (props.solvedChallenges.includes(props.challenge.id)) {
+    extraClassName = 'btn-grayed-out';
+  } else {
+    extraClassName = 'btn-default';
   }
-  const btnClassName = `btn btn-default ${extraClassName}`;
+  const btnClassName = `btn ${extraClassName}`;
   return (
     <button
       type="button"
@@ -38,7 +40,7 @@ ChallengeButton.propTypes = {
     orderPriority: React.PropTypes.number,
   }),
   onClick: React.PropTypes.func,
-  activeChalls: React.PropTypes.arrayOf(React.PropTypes.number),
+  solvedChallenges: React.PropTypes.arrayOf(React.PropTypes.number),
   selectedChallenge: React.PropTypes.number,
 };
 
@@ -58,7 +60,7 @@ const ChallengeButtonRow = (props) => {
         key={challenge.id}
         challenge={challenge}
         onClick={onChallengeClick}
-        activeChalls={solvedChallenges}
+        solvedChallenges={solvedChallenges}
         selectedChallenge={props.selectedChallenge}
       />);
   });
@@ -68,7 +70,7 @@ const ChallengeButtonRow = (props) => {
       <div className="col-sm-12">
         <div className="row">
           <div className="col-sm-12">
-            <span className="label label-info">{props.title}</span>
+            <span className="label label-default">{props.title}</span>
           </div>
         </div>
 

@@ -23,7 +23,7 @@ class AerolithListDialog extends React.Component {
             options={AerolithListDialog.genOptions(this.props.listOptions)}
           />
           <button
-            className="btn btn-info"
+            className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
             onClick={this.props.onListSubmit}
             data-dismiss="modal"

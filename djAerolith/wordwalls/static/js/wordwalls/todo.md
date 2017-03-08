@@ -90,7 +90,11 @@ correct leaderboards.
 -[x] Fix some broken tests
 -[x] Test old table creation endpoints on new code (what happens?)
     -[x] Infinite spinner, consider showing an error msg of some sort.
--[x] New table button for mobile.
+~~-[x] New table button for mobile.~~
+-[x] New button should be gigantic and in hero unit.
+    -[x] Should show hero unit instead of table at beginning.
+-[x] Provide way to exit solutions display. Otherwise can't load a new word list once the user is done with existing list.
+-[ ] Change title of page once the user "Creates a table"
 
 -[ ] Fix deploy process completely (this should be a separate branch)
     -[ ] use Docker images + simple haproxy-based LB

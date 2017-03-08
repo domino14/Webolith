@@ -617,17 +617,6 @@ class WordwallsApp extends React.Component {
               gameGoing={this.state.gameGoing}
             />
           </div>
-
-          <div className="hidden-xs col-sm-2 col-md-1 col-lg-1">
-            <button
-              className="btn btn-danger btn-sm"
-              style={{ marginTop: '-6px' /* why? */}}
-              onClick={this.resetTableCreator}
-              data-target=".table-modal"
-              data-toggle="modal"
-            >New</button>
-          </div>
-
         </div>
 
         <div className="row">
@@ -648,6 +637,9 @@ class WordwallsApp extends React.Component {
               gridWidth={boardGridWidth}
               gridHeight={boardGridHeight}
               challengeData={this.state.challengeData}
+              resetTableCreator={this.resetTableCreator}
+              tableCreatorModalSelector=".table-modal"
+              listName={this.state.listName}
             />
           </div>
           <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
@@ -702,14 +694,6 @@ class WordwallsApp extends React.Component {
               totalWords={this.state.totalWords}
               username={this.props.username}
             />
-          </div>
-          <div className="col-xs-6">
-            <button
-              className="btn btn-danger btn-xs"
-              onClick={this.resetTableCreator}
-              data-target=".table-modal"
-              data-toggle="modal"
-            >Load New Word List</button>
           </div>
         </div>
       </div>
