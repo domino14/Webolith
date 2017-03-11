@@ -324,8 +324,7 @@ class WordwallsGame(object):
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return self.create_error_message(
-                _("The quiz is done. Please exit the table and have a nice "
-                  "day!"))
+                _("The quiz is done. Please load a new word list!"))
 
         cur_questions_obj = json.loads(word_list.curQuestions)
         idx = word_list.questionIndex

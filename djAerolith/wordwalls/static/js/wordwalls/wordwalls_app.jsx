@@ -530,6 +530,7 @@ class WordwallsApp extends React.Component {
       // }
       history.replaceState({}, `Table ${data.tablenum}`,
         this.tableUrl(data.tablenum));
+      document.title = `Wordwalls - table ${data.tablenum}`;
     }
   }
 
