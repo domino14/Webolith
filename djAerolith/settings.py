@@ -231,10 +231,10 @@ LOGIN_REDIRECT_URL = "/"
 LOGIN_ERROR_URL = '/login_error/'
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'
+EMAIL_HOST_USER = 'postmaster@mg.aerolith.org'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'webmaster@aerolith.mailgun.org'
+DEFAULT_FROM_EMAIL = 'postmaster@mg.aerolith.org'
 
 LOGIN_URL = "/accounts/login"
 
