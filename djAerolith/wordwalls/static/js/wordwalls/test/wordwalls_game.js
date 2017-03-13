@@ -3,7 +3,7 @@
 import { should } from 'chai';
 import { describe, it, beforeEach } from 'mocha';
 
-import WordwallsGame from '../reactapp/wordwalls_game';
+import WordwallsGame from '../wordwalls_game';
 
 const hadBetter = should();
 

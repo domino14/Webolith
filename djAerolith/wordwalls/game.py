@@ -41,6 +41,10 @@ from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
 logger = logging.getLogger(__name__)
 
 
+class GameInitException(Exception):
+    pass
+
+
 class WordwallsGame(object):
     def _initial_state(self):
         """ Return an initial state object, for a brand new game. """
@@ -72,7 +76,8 @@ class WordwallsGame(object):
             repeat += 1
         return list_name
 
-    def create_game_instance(self, host, lex, word_list, **state_kwargs):
+    def create_or_update_game_instance(self, host, lex, word_list, use_table,
+                                       **state_kwargs):
         state = self._initial_state()
         if 'temp_list_name' in state_kwargs:
             state_kwargs['temp_list_name'] = self.maybe_modify_list_name(
@@ -84,12 +89,20 @@ class WordwallsGame(object):
         if state['questionsToPull'] is None:
             state['questionsToPull'] = settings.WORDWALLS_QUESTIONS_PER_ROUND
 
-        wgm = WordwallsGameModel(
-            host=host, currentGameState=json.dumps(state),
-            gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
-            playerType=GenericTableGameModel.SINGLEPLAYER_GAME,
-            lexicon=lex,
-            word_list=word_list)
+        if use_table is None:
+            wgm = WordwallsGameModel(
+                host=host, currentGameState=json.dumps(state),
+                gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
+                playerType=GenericTableGameModel.SINGLEPLAYER_GAME,
+                lexicon=lex,
+                word_list=word_list)
+        else:
+            wgm = self.get_wgm(tablenum=use_table, lock=True)
+            wgm.currentGameState = json.dumps(state)
+            wgm.lexicon = lex
+            wgm.word_list = word_list
+        wgm.save()
+
         return wgm
 
     def initialize_word_list(self, questions, lexicon, user):
@@ -119,7 +132,8 @@ class WordwallsGame(object):
         secs = dc.seconds
         return qs, secs, dc
 
-    def initialize_daily_challenge(self, user, ch_lex, ch_name, ch_date):
+    def initialize_daily_challenge(self, user, ch_lex, ch_name, ch_date,
+                                   use_table=None):
         """
         Initializes a WordwallsGame daily challenge.
 
@@ -143,7 +157,8 @@ class WordwallsGame(object):
 
         ret = self.get_or_create_dc(ch_date, ch_lex, ch_name)
         if ret is None:
-            return 0
+            raise GameInitException('Unable to create daily challenge {0}'.
+                                    format(ch_name))
         qs, secs, dc = ret
         wl = self.initialize_word_list(qs, ch_lex, user)
         temporary_list_name = '{0} {1} - {2}'.format(
@@ -151,15 +166,15 @@ class WordwallsGame(object):
             ch_name.name,
             ch_date.strftime('%Y-%m-%d')
         )
-        wgm = self.create_game_instance(user, ch_lex, wl,
-                                        # Extra parameters to be put in 'state'
-                                        gameType='challenge',
-                                        questionsToPull=qs.size(),
-                                        challengeId=dc.pk,
-                                        timerSecs=secs,
-                                        temp_list_name=temporary_list_name,
-                                        qualifyForAward=qualify_for_award)
-        wgm.save()
+        wgm = self.create_or_update_game_instance(
+            user, ch_lex, wl, use_table,
+            # Extra parameters to be put in 'state'
+            gameType='challenge',
+            questionsToPull=qs.size(),
+            challengeId=dc.pk,
+            timerSecs=secs,
+            temp_list_name=temporary_list_name,
+            qualifyForAward=qualify_for_award)
         return wgm.pk   # the table number
 
     def get_or_create_dc(self, ch_date, ch_lex, ch_name):
@@ -192,7 +207,7 @@ class WordwallsGame(object):
         return qs, secs, dc
 
     def initialize_by_search_params(self, user, search_description, time_secs,
-                                    questions_per_round=None):
+                                    questions_per_round=None, use_table=None):
         lexicon = search_description['lexicon']
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
@@ -202,14 +217,14 @@ class WordwallsGame(object):
             search_description['min'],
             search_description['max']
         )
-        wgm = self.create_game_instance(user, lexicon, wl, timerSecs=time_secs,
-                                        temp_list_name=temporary_list_name,
-                                        questionsToPull=questions_per_round)
-        wgm.save()
+        wgm = self.create_or_update_game_instance(
+            user, lexicon, wl, use_table, timerSecs=time_secs,
+            temp_list_name=temporary_list_name,
+            questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 
     def initialize_by_named_list(self, lex, user, named_list, secs,
-                                 questions_per_round=None):
+                                 questions_per_round=None, use_table=None):
         qs = json.loads(named_list.questions)
         db = WordDB(lex.lexiconName)
         if named_list.isRange:
@@ -221,40 +236,45 @@ class WordwallsGame(object):
             wl = WordList()
             wl.initialize_list(qs, lex, user, shuffle=True)
 
-        wgm = self.create_game_instance(user, lex, wl, timerSecs=secs,
-                                        temp_list_name=named_list.name,
-                                        questionsToPull=questions_per_round)
-        wgm.save()
+        wgm = self.create_or_update_game_instance(
+            user, lex, wl, use_table, timerSecs=secs,
+            temp_list_name=named_list.name,
+            questionsToPull=questions_per_round)
         return wgm.pk
 
     def initialize_by_saved_list(self, lex, user, saved_list, list_option,
-                                 secs, questions_per_round=None):
+                                 secs, questions_per_round=None,
+                                 use_table=None):
         if saved_list.user != user:
             # Maybe this isn't a big deal.
             logger.warning('Saved list user does not match user %s %s',
                            saved_list.user, user)
-            return 0
+            raise GameInitException('Saved list user does not match user.')
+        if list_option is None:
+            logger.warning('Invalid list_option.')
+            raise GameInitException('Invalid list option.')
 
         if (list_option == SavedListForm.FIRST_MISSED_CHOICE and
                 saved_list.goneThruOnce is False):
             logger.warning('Error, first missed list only valid if player has '
                            'gone thru list once.')
-            return 0    # Can't do a 'first missed' list if we haven't gone
-                        # through it once!
+            raise GameInitException('Cannot quiz on first missed unless you '
+                                    'have gone through list once.')
 
         self.maybe_modify_word_list(saved_list, list_option)
-        wgm = self.create_game_instance(user, lex, saved_list,
-                                        saveName=saved_list.name,
-                                        timerSecs=secs,
-                                        questionsToPull=questions_per_round)
-
-        wgm.save()
+        wgm = self.create_or_update_game_instance(
+            user, lex, saved_list, use_table,
+            saveName=saved_list.name,
+            timerSecs=secs,
+            questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 
     def maybe_modify_word_list(self, word_list, list_option):
         """
         Modifies the passed-in word list based on the options. If the
         user chose to continue, does not modify word list.
+
+        Note that this saves the word list.
 
         """
 
@@ -291,7 +311,9 @@ class WordwallsGame(object):
         word_list = wgm.word_list
 
         if not word_list:
-            raise Exception('Did not migrate word list for this table.')
+            return self.create_error_message(
+                _('It appears this word list has been deleted. Please '
+                  'load or create a new word list.'))
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += _("Now quizzing on missed list.") + "\r\n"
@@ -302,8 +324,7 @@ class WordwallsGame(object):
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return self.create_error_message(
-                _("The quiz is done. Please exit the table and have a nice "
-                  "day!"))
+                _("The quiz is done. Please load a new word list!"))
 
         cur_questions_obj = json.loads(word_list.curQuestions)
         idx = word_list.questionIndex
@@ -481,6 +502,9 @@ class WordwallsGame(object):
             # things a lot easier. we can change this later.
             logger.warning('Unable to save, quiz is going.')
             return _('You can only save the game at the end of a round.')
+        if not wgm.word_list:
+            return _('The word list associated with this table seems to have '
+                     'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
         logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
@@ -502,7 +526,6 @@ class WordwallsGame(object):
                               make_permanent_list=False):
         """
         Save a word list, return a response object.
-
 
         """
         ret = {'success': False}

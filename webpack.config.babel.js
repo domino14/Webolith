@@ -45,11 +45,11 @@ export default {
       'immutable',
       'underscore',
     ],
-    app: './djAerolith/wordwalls/static/js/wordwalls/reactapp/index',
+    app: './djAerolith/wordwalls/static/js/wordwalls/index',
   },
   plugins: [
     new webpack.ProvidePlugin({
-      $: 'jQuery',
+      $: 'jquery',
       jQuery: 'jquery',
     }),
     new webpack.optimize.CommonsChunkPlugin({

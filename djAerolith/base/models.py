@@ -23,10 +23,13 @@ import random
 import json
 import uuid
 
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
 from base.validators import word_list_format_validator
+from lib.dates import pretty_date
+
 EXCLUDED_LEXICA = [
     'OWL2',
     'CSW07',
@@ -182,7 +185,12 @@ class SavedList(models.Model):
             'temporary': self.is_temporary
         }
 
-    def to_python_reduced(self):
+    def date_to_str(self, dt, human):
+        if not human:
+            return dt.strftime('%Y-%m-%d %H:%M')
+        return pretty_date(datetime.now(), dt)
+
+    def to_python_reduced(self, last_saved_human=False):
         """
         Converts to a Python object, but this is a reduced form. This
         should be used for "get_all" type responses.
@@ -198,7 +206,14 @@ class SavedList(models.Model):
             'goneThruOnce': self.goneThruOnce,
             'questionIndex': self.questionIndex,
             'version': self.version,
-            'lastSaved': self.lastSaved.strftime('%Y-%m-%d %H:%M'),
+            # Note: This time is given in the Django installation's local
+            # time (which happens to be Los Angeles). It is probably better
+            # to make the local time UTC, and then do the transformation
+            # client side. In this case, we'll have to transform the
+            # time client side from Los Angeles time >.<
+            # XXX: We should turn on time zone support, etc.
+            'lastSaved': self.date_to_str(self.lastSaved, last_saved_human),
+            'lastSavedDT': self.date_to_str(self.lastSaved, False),
             'id': self.pk,
             'temporary': self.is_temporary
         }

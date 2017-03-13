@@ -9,12 +9,13 @@ import gzip from 'gulp-gzip';
 import rjs from 'gulp-requirejs';
 import uglify from 'gulp-uglify';
 import mocha from 'gulp-mocha';
+import count from 'gulp-count';
 
 import webpackConfig from './webpack.config.babel';
 import webpackProdConfig from './webpack.config-prod.babel';
 
 const paths = {
-  wordwallsSrcJS: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/**/*.js?(x)',
+  wordwallsSrcJS: 'djAerolith/wordwalls/static/js/wordwalls/**/*.js?(x)',
   wordwallsTestJS: 'djAerolith/wordwalls/static/js/wordwalls/test/**/*.js',
   // TODO: merge this in once we move table create code to /js/wordwalls/
   allWordwallsSrc: 'djAerolith/wordwalls/static/js/wordwalls/**/*.js?(x)',
@@ -24,7 +25,7 @@ const paths = {
   webpackFile: 'webpack.config.babel.js',
   webpackProdFile: 'webpack.config-prod.babel.js',
   distDir: 'djAerolith/static/dist',
-  clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/reactapp/index.js',
+  clientEntryPoint: 'djAerolith/wordwalls/static/js/wordwalls/index.js',
   clientBundle: 'djAerolith/static/dist/table-client-bundle.js?(.map)',
 
   allLibTests: 'djAerolith/static/built/test/**/*.js',
@@ -60,6 +61,7 @@ gulp.task('lint', () =>
     paths.webpackFile,
     paths.webpackProdFile,
   ])
+  .pipe(count())
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failAfterError()));
@@ -81,17 +83,6 @@ gulp.task('default', ['watch', 'main']);
 // Other gulp tasks for legacy apps that haven't been migrated to ES6/
 // react/etc.
 
-gulp.task('createTableBuild', () =>
-  rjs({
-    baseUrl: 'djAerolith/wordwalls/static/js/wordwalls',
-    mainConfigFile: 'djAerolith/wordwalls/static/js/wordwalls/create_table_main.js',
-    name: 'create_table_main',
-    out: 'create-table-main-built.js',
-  })
-    .pipe(uglify())
-    .pipe(gzip())
-    .pipe(gulp.dest(paths.distDir)));
-
 gulp.task('flashcardsBuild', () =>
   rjs({
     baseUrl: 'djAerolith/flashcards/static/js/flashcards',
@@ -103,4 +94,4 @@ gulp.task('flashcardsBuild', () =>
     .pipe(gzip())
     .pipe(gulp.dest(paths.distDir)));
 
-gulp.task('full-prod-build', ['build-production', 'createTableBuild', 'flashcardsBuild']);
+gulp.task('full-prod-build', ['build-production', 'flashcardsBuild']);

@@ -19,6 +19,11 @@
 
     <link href="/static/lib/bootstrap/css/bootstrap-yeti.min.css" rel="stylesheet">
     <link href="/static/css/aerolith/aerolith.css" rel="stylesheet">
+    <style>
+    .space-down {
+      margin-bottom: 10px;
+    }
+    </style>
     {% block ss %}
     {% endblock %}
 
@@ -129,7 +134,10 @@
           </p>
         {% else %}
           {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
-          <a href="wordwalls" class="btn btn-primary">{% trans "Play WordWalls" %}</a><BR>
+          <a href="wordwalls" class="btn btn-primary space-down">{% trans "Play WordWalls" %}</a><BR>
+          <a href="/wordwalls/stats" class="btn btn-sm btn-info space-down">{% trans "See your WordWalls statistics" %}</a><BR>
+          <a href="/wordwalls/leaderboard" class="btn btn-sm btn-info space-down">{% trans "See Hall of Fame" %}</a><BR>
+          <a href="/accounts/profile/{{user}}" class="btn btn-sm btn-info space-down">{% trans "Edit your profile and preferences" %}</a><BR>
         {% endif %}
         </div>
         {% if USE_FB %}

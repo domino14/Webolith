@@ -228,13 +228,14 @@ SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/accounts/social/'
 
 ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
+# Used by social auth.
 LOGIN_ERROR_URL = '/login_error/'
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'postmaster@aerolith.mailgun.org'
+EMAIL_HOST_USER = 'postmaster@mg.aerolith.org'
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'webmaster@aerolith.mailgun.org'
+DEFAULT_FROM_EMAIL = 'postmaster@mg.aerolith.org'
 
 LOGIN_URL = "/accounts/login"
 
@@ -249,7 +250,7 @@ from logging_filters import skip_suspicious_operations
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'filters': {
         'skip_suspicious_operations': {
             '()': 'django.utils.log.CallbackFilter',
@@ -266,14 +267,10 @@ LOGGING = {
         },
     },
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'verbose'
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -285,7 +282,12 @@ LOGGING = {
     'loggers': {
         'django.db': {
             'handlers': ['console'],
-            'level': 'INFO'
+            'level': 'INFO',
+        },
+        'social': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
         },
         '': {   # catch-all
             'handlers': ['console', 'mail_admins'],
@@ -303,21 +305,27 @@ if tobool(os.environ.get('PROD_LOGGING', False)):
         'formatter': 'verbose',
         'backupCount': 10
     }
-    LOGGING['loggers']['django.db'] = {
-        'handlers': ['log_file'],
-        'level': 'INFO'
+
+    LOGGING['loggers'] = {
+        'django.db': {
+            'handlers': ['log_file', 'mail_admins'],
+            'level': 'INFO'
+        },
+        '': {
+            'handlers': ['log_file', 'mail_admins'],
+            'level': 'DEBUG',
+        }
     }
-    LOGGING['loggers']['django.request'] = {
-        'handlers': ['mail_admins'],
-        'level': 'ERROR',
-        'propagate': True,
-    }
-    LOGGING['loggers'][''] = {
-        'handlers': ['log_file', 'mail_admins'],
-        'level': 'DEBUG',
-        'propagate': True,
-    }
-    LOGGING['disable_existing_loggers'] = False
+    # We might swallow errors if we uncomment the following. The
+    # issue is that the social exception middleware does a logger.error
+    # even though it handles the exception, and this causes the mailer
+    # to mail us.
+    # LOGGING['loggers']['social'] = {
+    #     'handlers': ['log_file'],
+    #     'level': 'ERROR',
+    #     'propagate': False,
+    # }
+
 
 USE_MX = tobool(os.environ.get('USE_MX'))
 USE_GA = tobool(os.environ.get('USE_GA'))
