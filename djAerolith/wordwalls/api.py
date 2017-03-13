@@ -41,7 +41,13 @@ def api_challengers(request):
     ch_id = request.GET.get('challenge')
     ch_date = date_from_request_dict(request.GET)
 
-    return response(challengers(ch_date, lex, ch_id))
+    try:
+        lex = Lexicon.objects.get(pk=lex)
+        ch_name = DailyChallengeName.objects.get(pk=ch_id)
+    except (ObjectDoesNotExist, ValueError, TypeError):
+        return bad_request('Bad lexicon or challenge.')
+
+    return response(getLeaderboardData(lex, ch_name, ch_date))
 
 
 ## Other API views with required auth.
@@ -81,8 +87,8 @@ def challenges_played(request):
                 board__challenge=relevant_toughie, user=request.user)
         except DailyChallengeLeaderboardEntry.DoesNotExist:
             return response(resp)
+        resp.append({'challengeID': entry.board.challenge.name.pk})
 
-    resp.append({'challengeID': entry.board.challenge.name.pk})
     return response(resp)
 
 
@@ -314,13 +320,3 @@ def date_from_str(dt):
         ch_date = today
 
     return ch_date
-
-
-def challengers(dt, lex, ch_id):
-    try:
-        lex = Lexicon.objects.get(pk=lex)
-        ch_name = DailyChallengeName.objects.get(pk=ch_id)
-    except ObjectDoesNotExist:
-        return bad_request('Bad lexicon or challenge.')
-
-    return getLeaderboardData(lex, ch_name, dt)
