@@ -105,6 +105,9 @@ class TableCreator extends React.Component {
    */
   componentDidUpdate(prevProps, prevState) {
     let challengeParamsChanged = false;
+    // If the lexicon changes, we have to load new word lists no matter what.
+    // If the date changes, we are in the challenges window. We should
+    // mark challenge parameters as having changed.
     if ((prevState.currentLexicon !== this.state.currentLexicon) ||
         (prevState.currentDate.format(DATE_FORMAT_STRING) !==
          this.state.currentDate.format(DATE_FORMAT_STRING))) {
@@ -115,18 +118,7 @@ class TableCreator extends React.Component {
     if (prevState.currentChallenge !== this.state.currentChallenge ||
         challengeParamsChanged) {
       // The challenge changed. We should load challenge leaderboard data.
-      this.showSpinner();
-      $.ajax({
-        url: '/wordwalls/api/challengers/',
-        data: {
-          lexicon: this.state.currentLexicon,
-          date: this.state.currentDate.format(DATE_FORMAT_STRING),
-          challenge: this.state.currentChallenge,
-        },
-        method: 'GET',
-      })
-      .done(data => this.setState({ challengeData: data || {} }))
-      .always(() => this.hideSpinner());
+      this.loadChallengeLeaderboardData();
     }
   }
 
@@ -137,6 +129,24 @@ class TableCreator extends React.Component {
       desiredTime: challenge.seconds / 60,
       questionsPerRound: challenge.numQuestions,
     });
+  }
+
+  loadChallengeLeaderboardData() {
+    if (!this.state.currentChallenge) {
+      return;
+    }
+    this.showSpinner();
+    $.ajax({
+      url: '/wordwalls/api/challengers/',
+      data: {
+        lexicon: this.state.currentLexicon,
+        date: this.state.currentDate.format(DATE_FORMAT_STRING),
+        challenge: this.state.currentChallenge,
+      },
+      method: 'GET',
+    })
+    .done(data => this.setState({ challengeData: data || {} }))
+    .always(() => this.hideSpinner());
   }
 
   loadInfoForSearchType(option) {
@@ -163,6 +173,9 @@ class TableCreator extends React.Component {
   // reopens the dialog.
   resetDialog() {
     this.loadInfoForSearchType(this.state.activeSearchType);
+    if (this.state.activeSearchType === SEARCH_TYPE_CHALLENGE) {
+      this.loadChallengeLeaderboardData();
+    }
   }
 
   showModal() {
