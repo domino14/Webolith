@@ -230,6 +230,7 @@ ACCOUNT_ACTIVATION_DAYS = 2
 LOGIN_REDIRECT_URL = "/"
 # Used by social auth.
 LOGIN_ERROR_URL = '/login_error/'
+SERVER_EMAIL = 'django_server@aerolith.org'
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'postmaster@mg.aerolith.org'
@@ -281,17 +282,23 @@ LOGGING = {
     },
     'loggers': {
         'django.db': {
-            'handlers': ['console'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
+            'propagate': False,
         },
         'social': {
             'handlers': ['console'],
             'level': 'ERROR',
             'propagate': False,
         },
-        '': {   # catch-all
+        'django': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'DEBUG'
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        '': {    # catch-all
+            'handlers': ['console', 'mail_admins'],
+            'level': 'DEBUG',
         }
     }
 }
@@ -309,7 +316,13 @@ if tobool(os.environ.get('PROD_LOGGING', False)):
     LOGGING['loggers'] = {
         'django.db': {
             'handlers': ['log_file', 'mail_admins'],
-            'level': 'INFO'
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['log_file', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
         '': {
             'handlers': ['log_file', 'mail_admins'],

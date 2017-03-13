@@ -93,6 +93,7 @@ urlpatterns = patterns('',
     (r'^socket_token/', 'views.socket_token'),
     (r'^base/', include('base.urls')),
     (r'^js_errors/', 'views.js_error'),
+    (r'^500tester/', 'views.test_500'),
 )
 
 urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true

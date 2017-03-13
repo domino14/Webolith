@@ -87,3 +87,8 @@ def js_error(request):
         logger.debug('To: %s', [admin[1] for admin in settings.ADMINS])
 
     return response('OK')
+
+
+@login_required
+def test_500(request):
+    raise Exception('A test 500')
