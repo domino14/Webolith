@@ -120,19 +120,6 @@ def handle_table_post(request, tableid):
     logger.debug(u'user=%s, action=%s, table=%s', request.user, action,
                  tableid)
 
-    # XXX: Remove this shortly after deploying SPA. This is just for the
-    # transition period.
-    if action in ['challengeSubmit', 'searchParamsSubmit', 'savedListsSubmit',
-                  'namedListsSubmit']:
-        # This is one of the old actions, for the old app (not the SPA).
-        # Return an error message using the old formatting for the app.
-        # Note the implicit 200 status code.
-        return response({
-            'success': False,
-            'error': 'Aerolith has been updated; please refresh your browser.'
-        })
-    # XXX: End of transition code.
-
     if not tableid or int(tableid) == 0:   # Kind of hacky.
         return response({
             'success': False,

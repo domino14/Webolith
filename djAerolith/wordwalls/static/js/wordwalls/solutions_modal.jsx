@@ -10,7 +10,7 @@ const SolutionsModal = props => (
     modalClass="solutions-modal"
     size="modal-lg"
   >
-    <div className="modal-body">
+    <div className="modal-body" style={{ height: '80vh', overflowY: 'auto' }} >
       <Solutions
         questions={props.questions}
         answeredByMe={props.answeredByMe}

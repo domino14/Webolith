@@ -404,7 +404,10 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ aerolithLists: data }))
+    .done(data => this.setState({
+      aerolithLists: data,
+      selectedList: data[0] ? String(data[0].id) : '',
+    }))
     .always(() => this.hideSpinner());
   }
 
