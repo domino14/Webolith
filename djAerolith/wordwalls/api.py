@@ -257,7 +257,7 @@ def default_lists(request):
         return bad_request('Bad lexicon.')
 
     ret_data = []
-    for nl in NamedList.objects.filter(lexicon=lex):
+    for nl in NamedList.objects.filter(lexicon=lex).order_by('id'):
         ret_data.append({
             'name': nl.name,
             'lexicon': nl.lexicon.lexiconName,
