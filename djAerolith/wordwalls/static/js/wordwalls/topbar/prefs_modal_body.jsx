@@ -175,7 +175,7 @@ class PrefsModalBody extends React.Component {
     }
 
     return (
-      <div className="modal-body">
+      <div className="modal-body" style={{ height: '70vh', overflowY: 'auto' }}>
         <div className="row">
           <div className="col-lg-12">
             <SVGBoard

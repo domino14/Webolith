@@ -214,6 +214,8 @@ def load_aerolith_list(request, parsed_req_body):
         named_list = NamedList.objects.get(pk=parsed_req_body['selectedList'])
     except NamedList.DoesNotExist:
         return bad_request('List does not exist.')
+    except (TypeError, ValueError):
+        return bad_request('Please select a list.')
     tablenum = WordwallsGame().initialize_by_named_list(
         parsed_req_body['lexicon'], request.user, named_list,
         parsed_req_body['quiz_time_secs'],
