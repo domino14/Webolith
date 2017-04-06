@@ -1,0 +1,43 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: macondo
+  labels:
+    app: webolith
+    component: macondo
+spec:
+  selector:
+    app: webolith
+    component: macondo
+  ports:
+    - port: 8088
+      name: macondo-port
+
+---
+
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: macondo-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: macondo
+    spec:
+      containers:
+      - name: macondo-container
+        image: domino14/macondo
+        volumeMounts:
+        - mountPath: /dawgs
+          name: dawg-data
+
+      volumes:
+      - name: dawg-data
+        hostPath:
+          # Change this path to relevant dawg path.
+          path: /Users/cesar/coding/gocode/src/github.com/domino14/macondo/dawgs
+
+      restartPolicy: Always

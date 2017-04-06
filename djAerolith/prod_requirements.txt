@@ -1,23 +1,20 @@
-django==1.8.11
+# These are the requirements for the prod Docker file.
+
+django>=1.8.0,<1.9.0
 six >= 1.7
-Fabric
 Markdown
 django-registration-redux
 gargoyle
-markup
 gunicorn
-pycrypto
 requests==2.9.1
-python-dateutil
 recaptcha-client
 wsgiref
 redis
-supervisor
-pystache
 boto
-mock
 jsonschema
 python-social-auth==0.2.21
 requests-oauthlib
 python-openid
 psycopg2
+Fabric
+PyYAML

@@ -1,0 +1,112 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: webolith-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: django
+    spec:
+      containers:
+      - name: webolith-container
+        image: domino14/webolith:{{ BUILD_NUM }}
+
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /opt/webolith/djAerolith/test_requirements.txt
+          successThreshold: 1
+          failureThreshold: 2
+          periodSeconds: 5
+          initialDelaySeconds: 5
+
+        lifecycle:
+          preStop:
+            exec:
+              # A hack to try to get 0% downtime during deploys. This should
+              # help ensure k8s eventually stops giving this node traffic.
+              command: ["sh", "-c", "rm /opt/webolith/djAerolith/test_requirements.txt && sleep 20"]
+
+        env:
+          - name: DEBUG
+            value: 'off'
+          - name: DEBUG_JS
+            value: 'off'
+          - name: PGSQL_DB_NAME
+            value: {{ PGSQL_DB_NAME }}
+          - name: PGSQL_USER
+            value: {{ PGSQL_USER }}
+
+          - name: MACONDO_ADDRESS
+            value: {{ MACONDO_ADDRESS }}
+          - name: RECAPTCHA_SSL
+            value: 'on'
+          - name: WORD_DB_LOCATION
+            value: /db
+          - name: AWS_ACCESS_KEY_ID
+            value: {{ AWS_ACCESS_KEY_ID }}
+          - name: SOCIAL_AUTH_FACEBOOK_KEY
+            value: {{ SOCIAL_AUTH_FACEBOOK_KEY }}
+          - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+            value: {{ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+
+          # Secrets follow
+          - name: PGSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: pgsql_password
+          - name: PGSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: pgsql_host
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: django_secret_key
+          - name: EMAIL_PW
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: mailgun_pw
+          - name: RECAPTCHA_PRIVATE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: recaptcha_private_key
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: aws_secret_access_key
+          - name: SOCIAL_AUTH_FACEBOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: social_auth_facebook_secret
+          - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: social_auth_google_oauth2_secret
+
+        volumeMounts:
+        # This should be the same as the WORD_DB_LOCATION env var.
+        - mountPath: /db
+          name: word-db-data
+
+      volumes:
+      - name: word-db-data
+        hostPath:
+          # Change this path to the relevant db path.
+          path: {{ WORD_DB_DIR }}
+          # Manually put this in servers in the node(s) until we figure
+          # out a better way
+
+      restartPolicy: Always

@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: webolith
+  labels:
+    app: webolith
+spec:
+  selector:
+    app: webolith
+    component: django
+  ports:
+    - port: 8000
+      name: django-port
+  type: NodePort

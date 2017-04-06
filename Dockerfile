@@ -1,10 +1,9 @@
-FROM ubuntu:16.04
+FROM domino14/webolith-base-pkg
 MAINTAINER Cesar Del Solar <delsolar@gmail.com>
 
-ENV PYTHONUNBUFFERED 1
-
-RUN apt-get update && apt-get install -y python python-pip \
-    python-dev gettext libpq-dev postgresql-client-9.5
 COPY . /opt/webolith/
-RUN pip install -r /opt/webolith/djAerolith/requirements.txt
-WORKDIR /opt/webolith/
+WORKDIR /opt/webolith/djAerolith
+
+EXPOSE 8000
+# Run command in exec form because /bin/sh does not pass signals to its children.
+CMD ["gunicorn", "wsgi:application", "--config", "gunicorn.py"]

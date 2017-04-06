@@ -1,5 +1,4 @@
 import os
-import popen2
 import time
 from optparse import make_option
 import logging
@@ -99,7 +98,7 @@ class Command(BaseCommand):
         k.set_contents_from_filename(filename)
 
     def do_compress(self, infile, outfile):
-        os.system('gzip --stdout %s > %s' % (infile, outfile))
+        os.system('gzip -c %s > %s' % (infile, outfile))
         os.system('rm %s' % infile)
 
     def do_mysql_backup(self, outfile):
