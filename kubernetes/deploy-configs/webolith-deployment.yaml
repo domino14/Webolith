@@ -59,42 +59,42 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: pgsql_password
+                key: PGSQL_PASSWORD
           - name: PGSQL_HOST
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: pgsql_host
+                key: PGSQL_HOST
           - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: django_secret_key
+                key: DJANGO_SECRET_KEY
           - name: EMAIL_PW
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: mailgun_pw
+                key: MAILGUN_PW
           - name: RECAPTCHA_PRIVATE_KEY
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: recaptcha_private_key
+                key: RECAPTCHA_PRIVATE_KEY
           - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: aws_secret_access_key
+                key: AWS_SECRET_ACCESS_KEY
           - name: SOCIAL_AUTH_FACEBOOK_SECRET
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: social_auth_facebook_secret
+                key: SOCIAL_AUTH_FACEBOOK_SECRET
           - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
             valueFrom:
               secretKeyRef:
                 name: webolith-secrets
-                key: social_auth_google_oauth2_secret
+                key: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
 
         volumeMounts:
         # This should be the same as the WORD_DB_LOCATION env var.

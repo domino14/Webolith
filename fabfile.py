@@ -21,7 +21,7 @@ def create_k8s_configs(role):
 
 
 def _create_k8s_configs(role):
-    build(role)
+        build(role)
 
 
 def deploy(role):
