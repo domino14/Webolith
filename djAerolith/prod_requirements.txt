@@ -16,6 +16,5 @@ python-social-auth==0.2.21
 requests-oauthlib
 python-openid
 psycopg2
-supervisor
 Fabric
 PyYAML

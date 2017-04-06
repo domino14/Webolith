@@ -41,6 +41,9 @@ test:
     - mkdir $WORD_DB_LOCATION
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - sudo mv ./kubectl /usr/local/bin/kubectl
   override:
     # Build the js bundles.
     - yarn full-prod-build
@@ -89,7 +92,8 @@ deployment:
       # Delete the static files.
       - rm -rf $STATIC_ROOT
       - docker push domino14/webolith:$CIRCLE_BUILD_NUM
-
+      # Decrypt the kubectl config file and place in the home directory.
+      - openssl des3 -d -in $REPO/kubernetes/deploy-configs/dev-kubeconfig.enc -out ~/dev-kubeconfig -pass env:KUBECFG_PASSWORD
       # We need to create the kubernetes service yaml files, and apply new
       # ones from config vars.
       - fab create_k8s_configs:dev

@@ -72,7 +72,7 @@ def build_webolith_deployment(role):
 
     context = {}
     for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER', 'MACONDO_ADDRESS',
-                     'RECAPTCHA_SSL', 'AWS_ACCESS_KEY_ID',
+                     'AWS_ACCESS_KEY_ID',
                      'SOCIAL_AUTH_FACEBOOK_KEY',
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']:
         context[var_name] = get_env_var(role, var_name)

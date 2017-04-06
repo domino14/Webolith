@@ -33,9 +33,9 @@ spec:
 
         env:
           - name: DEBUG
-            value: off
+            value: 'off'
           - name: DEBUG_JS
-            value: off
+            value: 'off'
           - name: PGSQL_DB_NAME
             value: {{ PGSQL_DB_NAME }}
           - name: PGSQL_USER
@@ -44,7 +44,7 @@ spec:
           - name: MACONDO_ADDRESS
             value: {{ MACONDO_ADDRESS }}
           - name: RECAPTCHA_SSL
-            value: {{ RECAPTCHA_SSL }}
+            value: 'on'
           - name: WORD_DB_LOCATION
             value: /db
           - name: AWS_ACCESS_KEY_ID

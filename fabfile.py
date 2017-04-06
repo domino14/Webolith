@@ -36,8 +36,19 @@ def _deploy(role):
     # To deploy,
     # kubectl --kubeconfig admin.conf apply -f whatever.yaml
     # etc.
-    # Maybe this can be done just locally?
-    pass
+    kubecfgstr = '--kubeconfig=~/{0}-kubeconfig'.format(role)
+    for f in [
+        '{0}-webolith-secrets'.format(role),
+        '{0}-webolith-deployment'.format(role),
+        'webolith-service',
+        '{0}-webolith-ingress'.format(role),
+        '{0}-webolith-maintenance'.format(role),
+        '{0}-nginx-static-deployment'.format(role),
+        'nginx-static-service',
+        'nginx-ingress-rc',
+    ]:
+        local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml {1}'.format(
+            f, kubecfgstr))
 
 # @roles('prod')
 # def prod_fixtures():
