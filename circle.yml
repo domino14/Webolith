@@ -54,14 +54,7 @@ test:
     - cd djAerolith && ./manage.py compilemessages
   post:
     - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM .
-    # We need to do a sanity check here.
-    - docker run --rm --name webolith_ctr -e SECRET_KEY=abcdef -p 8000:8000 domino14/webolith:$CIRCLE_BUILD_NUM :
-          background: true
-    - sleep 5
-    - curl --fail -vvv http://localhost:8000
-    # If the curl above returns a non-200 status code we are probably missing
-    # a requirement and need to rebuild the base dockerfile?
-    - docker stop webolith_ctr
+    # Should make sure base docker container is always up to date.
 deployment:
   production:
     branch: master
