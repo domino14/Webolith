@@ -80,7 +80,7 @@ deployment:
         cd $REPO/kubernetes &&
         docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
         -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
-      - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD
+      - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD --username domino14
       - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
       # Delete the static files.
       - rm -rf $STATIC_ROOT
