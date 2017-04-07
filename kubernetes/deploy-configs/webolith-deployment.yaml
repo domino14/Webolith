@@ -50,7 +50,7 @@ spec:
           - name: AWS_ACCESS_KEY_ID
             value: {{ AWS_ACCESS_KEY_ID }}
           - name: SOCIAL_AUTH_FACEBOOK_KEY
-            value: {{ SOCIAL_AUTH_FACEBOOK_KEY }}
+            value: "{{ SOCIAL_AUTH_FACEBOOK_KEY }}"
           - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
             value: {{ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
 

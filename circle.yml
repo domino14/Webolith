@@ -37,7 +37,7 @@ test:
     - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git
     - openssl des3 -d -in ./webolith-private/dicts.tar.bz.enc -out ./dicts.tar.bz -pass env:DICT_FILE_PW
     # Decrypt the kubectl config file and place in the home directory.
-    - openssl des3 -d -in ./kubernetes/deploy-configs/dev-kubeconfig.enc -out ./dev-kubeconfig -pass env:KUBECFG_PASSWORD
+    - openssl des3 -d -in ./kubernetes/deploy-configs/dev-kubeconfig.enc -out /home/ubuntu/dev-kubeconfig -pass env:KUBECFG_PASSWORD
     - mkdir $WORD_DB_LOCATION
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz

@@ -34,7 +34,7 @@ def _deploy(role):
     # To deploy,
     # kubectl --kubeconfig admin.conf apply -f whatever.yaml
     # etc.
-    kubecfgstr = '--kubeconfig=/home/ubuntu/Webolith/{0}-kubeconfig'.format(role)
+    kubecfgstr = '--kubeconfig=/home/ubuntu/{0}-kubeconfig'.format(role)
     for f in [
         '{0}-webolith-secrets'.format(role),
         '{0}-webolith-deployment'.format(role),

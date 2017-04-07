@@ -11,7 +11,7 @@ import uuid
 import sys
 
 
-CURLIES_RE = r'{{\s(.+)\s}}'
+CURLIES_RE = r'{{\s*(\w+)\s*}}'
 
 
 def curlies_render(template, context):
