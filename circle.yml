@@ -17,8 +17,6 @@ machine:
     DEBUG_JS: false
     # Just some random secret key
     SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
-    # The password is in the circleci env.
-    DICT_FILE_URL: https://s3-us-west-1.amazonaws.com/aerolith-files/dicts.tar.bz.enc
     WORD_DB_LOCATION: /home/ubuntu/db
     # For collecting static files to later copy into Nginx. This
     # dir must be in the context of the build, so inside the kubernetes dir.
@@ -36,8 +34,10 @@ test:
     - pip install setuptools>=0.19
     - pip install -r djAerolith/test_requirements.txt
     - pip install -r djAerolith/prod_requirements.txt
-    - wget $DICT_FILE_URL
-    - openssl des3 -d -in dicts.tar.bz.enc -out dicts.tar.bz -pass env:DICT_FILE_PW
+    - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git
+    - openssl des3 -d -in ./webolith-private/dicts.tar.bz.enc -out ./dicts.tar.bz -pass env:DICT_FILE_PW
+    # Decrypt the kubectl config file and place in the home directory.
+    - openssl des3 -d -in ./kubernetes/deploy-configs/dev-kubeconfig.enc -out ./dev-kubeconfig -pass env:KUBECFG_PASSWORD
     - mkdir $WORD_DB_LOCATION
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
@@ -85,8 +85,6 @@ deployment:
       # Delete the static files.
       - rm -rf $STATIC_ROOT
       - docker push domino14/webolith:$CIRCLE_BUILD_NUM
-      # Decrypt the kubectl config file and place in the home directory.
-      - openssl des3 -d -in $REPO/kubernetes/deploy-configs/dev-kubeconfig.enc -out $REPO/dev-kubeconfig -pass env:KUBECFG_PASSWORD
       # We need to create the kubernetes service yaml files, and apply new
       # ones from config vars.
       - fab create_k8s_configs:dev
