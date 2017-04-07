@@ -10,14 +10,12 @@ print curdir
 # Don't specify a filename for the key - circle will do the right thing?
 # env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"
 env.roledefs = {
-    'prod': ['ubuntu@www.aerolith.org'],
-    'dev': ['ubuntu@dev.aerolith.org'],
     'prod_db': ['ubuntu@159.203.220.140']
 }
 
 
 def create_k8s_configs(role):
-    execute(_create_k8s_configs, role, role=role)
+    execute(_create_k8s_configs, role)
 
 
 def _create_k8s_configs(role):
@@ -25,7 +23,7 @@ def _create_k8s_configs(role):
 
 
 def deploy(role):
-    execute(_deploy, role, role=role)
+    execute(_deploy, role)
 
 
 def _deploy(role):
@@ -36,7 +34,7 @@ def _deploy(role):
     # To deploy,
     # kubectl --kubeconfig admin.conf apply -f whatever.yaml
     # etc.
-    kubecfgstr = '--kubeconfig=~/{0}-kubeconfig'.format(role)
+    kubecfgstr = '--kubeconfig=/home/ubuntu/venom/{0}-kubeconfig'.format(role)
     for f in [
         '{0}-webolith-secrets'.format(role),
         '{0}-webolith-deployment'.format(role),

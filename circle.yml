@@ -86,7 +86,7 @@ deployment:
       - rm -rf $STATIC_ROOT
       - docker push domino14/webolith:$CIRCLE_BUILD_NUM
       # Decrypt the kubectl config file and place in the home directory.
-      - openssl des3 -d -in $REPO/kubernetes/deploy-configs/dev-kubeconfig.enc -out ~/dev-kubeconfig -pass env:KUBECFG_PASSWORD
+      - openssl des3 -d -in $REPO/kubernetes/deploy-configs/dev-kubeconfig.enc -out $REPO/dev-kubeconfig -pass env:KUBECFG_PASSWORD
       # We need to create the kubernetes service yaml files, and apply new
       # ones from config vars.
       - fab create_k8s_configs:dev

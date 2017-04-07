@@ -48,8 +48,8 @@ def build(role):
 
 def get_env_var(role, var, secret=False):
     key = (role + '_' + var).upper()
-    env_var = os.getenv(key, '')
-    if not env_var:
+    env_var = os.getenv(key)
+    if env_var is None:
         sys.exit('Environment variable ' + key + ' must be provided.')
     if secret:
         return base64.b64encode(env_var)
