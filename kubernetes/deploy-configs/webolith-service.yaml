@@ -11,4 +11,3 @@ spec:
   ports:
     - port: 8000
       name: django-port
-  type: NodePort
