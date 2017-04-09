@@ -39,7 +39,6 @@ def _deploy(role):
         '{0}-webolith-deployment'.format(role),
         'webolith-service',
         '{0}-webolith-ingress'.format(role),
-        '{0}-webolith-maintenance'.format(role),
         '{0}-nginx-static-deployment'.format(role),
         'nginx-static-service',
         'nginx-ingress-rc',
