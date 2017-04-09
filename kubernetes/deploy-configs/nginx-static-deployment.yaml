@@ -13,8 +13,6 @@ spec:
       containers:
         - name: nginx
           image: domino14/webolith-nginx
-          imagePullPolicy: Never
-
           readinessProbe:
             exec:
               command:

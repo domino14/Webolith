@@ -15,7 +15,6 @@ spec:
     spec:
       containers:
       - image: nginxdemos/nginx-ingress:0.7.0
-        imagePullPolicy: Never
         name: nginx-ingress
         ports:
         - containerPort: 80
