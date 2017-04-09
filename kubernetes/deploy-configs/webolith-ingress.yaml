@@ -3,10 +3,6 @@ kind: Ingress
 metadata:
   name: webolith-ingress
 spec:
-  backend:
-    # The default backend.
-    serviceName: webolith
-    servicePort: 8000
   tls:
   - hosts:
     - {{ HOST_NAME }}
@@ -23,3 +19,8 @@ spec:
         backend:
           serviceName: nginx-static-svc
           servicePort: 80
+      - path: /
+        backend:
+          serviceName: webolith
+          servicePort: 8000
+

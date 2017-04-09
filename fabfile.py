@@ -41,7 +41,6 @@ def _deploy(role):
         '{0}-webolith-ingress'.format(role),
         '{0}-nginx-static-deployment'.format(role),
         'nginx-static-service',
-        'nginx-ingress-rc',
     ]:
         local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml'.format(f))
 
