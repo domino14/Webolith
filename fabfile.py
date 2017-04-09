@@ -34,7 +34,6 @@ def _deploy(role):
     # To deploy,
     # kubectl --kubeconfig admin.conf apply -f whatever.yaml
     # etc.
-    kubecfgstr = '--kubeconfig=/home/ubuntu/{0}-kubeconfig'.format(role)
     for f in [
         '{0}-webolith-secrets'.format(role),
         '{0}-webolith-deployment'.format(role),
@@ -45,43 +44,7 @@ def _deploy(role):
         'nginx-static-service',
         'nginx-ingress-rc',
     ]:
-        local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml {1}'.format(
-            f, kubecfgstr))
-
-# @roles('prod')
-# def prod_fixtures():
-#     with cd("webolith"):
-#         with cd("djAerolith"):
-#             with prefix("workon aeroenv"):
-#                 run("python manage.py loaddata dcNames")
-
-
-# def deploy_firewalls():
-#     servers = get_servers()
-#     execute(deploy_all_firewalls, servers)
-
-
-# @roles('prod_db')
-# def deploy_all_firewalls(servers):
-#     # DON'T DEPLOY THIS TO THE WEB ROLE!!!
-#     # DOCKER MAKES ITS OWN CHAINS AND SCREWS EVERYTHING UP!!
-#     secGroup = None
-#     if env.host_string in env.roledefs['prod']:
-#         secGroup = 'Web'
-#     elif env.host_string in env.roledefs['prod_db']:
-#         secGroup = 'Database'
-#     elif env.host_string in env.roledefs['dev']:
-#         secGroup = 'Dev'
-#     gen_firewall(secGroup, servers)
-
-#     # write the firewall to the /etc/iptables.up.rules file
-#     put('iptables.%s.rules' % secGroup, '/etc/iptables.up.rules',
-#         use_sudo=True)
-#     sudo('iptables-restore < /etc/iptables.up.rules')
-#     os.remove('iptables.%s.rules' % secGroup)
-#     # Put this in /etc/network/interfaces:
-#     # pre-up iptables-restore < /etc/iptables.up.rules
-#     # So that the firewalls get restored on restart
+        local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml'.format(f))
 
 
 def init_database():

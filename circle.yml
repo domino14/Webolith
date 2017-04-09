@@ -36,8 +36,7 @@ test:
     - pip install -r djAerolith/prod_requirements.txt
     - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git
     - openssl des3 -d -in ./webolith-private/dicts.tar.bz.enc -out ./dicts.tar.bz -pass env:DICT_FILE_PW
-    # Decrypt the kubectl config file and place in the home directory.
-    - openssl des3 -d -in ./kubernetes/deploy-configs/dev-kubeconfig.enc -out /home/ubuntu/dev-kubeconfig -pass env:KUBECFG_PASSWORD
+    - cp ./webolith-private/admin.conf /home/ubuntu/admin.conf
     - mkdir $WORD_DB_LOCATION
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
@@ -56,23 +55,23 @@ test:
     - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM .
     # Should make sure base docker container is always up to date.
 deployment:
-  production:
-    branch: master
-    commands:
-      - >
-        cd $REPO/kubernetes &&
-        docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-        -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
-      - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD
-      - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-      # Delete the static files.
-      - rm -rf $STATIC_ROOT
-      - docker push domino14/webolith:$CIRCLE_BUILD_NUM
+  # production:
+  #   branch: master
+  #   commands:
+  #     - >
+  #       cd $REPO/kubernetes &&
+  #       docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+  #       -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
+  #     - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD
+  #     - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+  #     # Delete the static files.
+  #     - rm -rf $STATIC_ROOT
+  #     - docker push domino14/webolith:$CIRCLE_BUILD_NUM
 
-      # We need to create the kubernetes service yaml files, and apply new
-      # ones from config vars.
-      - fab create_k8s_configs:prod
-      - fab deploy:prod
+  #     # We need to create the kubernetes service yaml files, and apply new
+  #     # ones from config vars.
+  #     - fab create_k8s_configs:prod
+  #     - fab deploy:prod
   staging:
     branch: staging
     commands:

@@ -147,22 +147,6 @@ def build_macondo_deployment(role):
         f.write(rendered)
 
 
-def create_ssl_secret(key_file, crt_file, role):
-    with open(key_file) as f:
-        contents = f.read()
-    enc_key = base64.b64encode(contents)
-    with open(crt_file) as f:
-        contents = f.read()
-    enc_crt = base64.b64encode(contents)
-    with open('kubernetes/deploy-configs/secret-tls.yaml') as f:
-        template = yaml.load(f)
-    template['data']['tls.crt'] = enc_crt
-    template['data']['tls.key'] = enc_key
-    with open('kubernetes/deploy-configs/{role}-secret-tls.yaml'.format(
-            role=role), 'wb') as f:
-        f.write(yaml.dump(template, default_flow_style=False))
-
-
 if __name__ == '__main__':
     # create_ssl_secret(sys.argv[1], sys.argv[2], 'dev')
     build_webolith_ingress('dev')
