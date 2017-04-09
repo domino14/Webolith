@@ -31,12 +31,11 @@ dependencies:
     - yarn install
 test:
   pre:
-    - pip install setuptools>=0.19
     - pip install -r djAerolith/test_requirements.txt
     - pip install -r djAerolith/prod_requirements.txt
-    - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git
-    - openssl des3 -d -in ./webolith-private/dicts.tar.bz.enc -out ./dicts.tar.bz -pass env:DICT_FILE_PW
-    - cp ./webolith-private/admin.conf /home/ubuntu/admin.conf
+    - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /home/ubuntu/webolith-private
+    - cp /home/ubuntu/webolith-private/admin.conf /home/ubuntu/admin.conf
+    - openssl des3 -d -in /home/ubuntu/webolith-private/dicts.tar.bz.enc -out ./dicts.tar.bz -pass env:DICT_FILE_PW
     - mkdir $WORD_DB_LOCATION
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz

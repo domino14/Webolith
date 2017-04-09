@@ -23,6 +23,6 @@ spec:
           hostPort: 443
         # Uncomment the lines below to enable extensive logging and/or customization of
         # NGINX configuration with configmaps
-        #args:
-         #- -v=3
+        args:
+         - -v=3
          #- -nginx-configmaps=default/nginx-config
