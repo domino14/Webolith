@@ -23,6 +23,14 @@ spec:
             periodSeconds: 3
             initialDelaySeconds: 3
 
+          livenessProbe:
+            httpGet:
+              path: /static/favicon.ico
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 5
+
           lifecycle:
             preStop:
               exec:
