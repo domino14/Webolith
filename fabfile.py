@@ -2,7 +2,12 @@ import os
 
 from fabric.api import env, local, execute
 
-from kubernetes.build_configs import build
+try:
+    from kubernetes.build_configs import build
+except ImportError:
+    # In case we are in a container and we want to run fab.
+    # Note the container doesn't get the k8s stuff copied to it.
+    print 'Warning: Failed to import k8s build_configs'
 
 curdir = os.path.dirname(__file__)
 print curdir
