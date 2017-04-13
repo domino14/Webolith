@@ -104,6 +104,8 @@ def test_500(request):
 
 @csrf_exempt
 def healthz(request):
+    if request.method == 'OPTIONS':
+        return response('OK')
     if request.method == 'GET':
         return response('OK')
     elif request.method == 'POST':

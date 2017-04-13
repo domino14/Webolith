@@ -1,0 +1,332 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webolith-ingress
+spec:
+  tls:
+  - hosts:
+    - minikube.aerolith.org
+    secretName: tls-secret
+  rules:
+  - host: minikube.aerolith.org
+    http:
+      paths:
+      - path: /static
+        backend:
+          serviceName: nginx-static-svc
+          servicePort: 80
+      - path: /hackpath123
+        backend:
+          serviceName: nginx-static-svc
+          servicePort: 80
+      - path: /
+        backend:
+          serviceName: webolith
+          servicePort: 8000
+
+
+
+---
+
+# This nginx container is only used for static serving. Annoyingly
+# we need another outer one as an ingress, but that's cool.
+# All TLS is done on the outer Ingress.
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-static-svc
+spec:
+  selector:
+    app: webolith
+    component: nginx
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 80
+      name: http
+
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-static-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: domino14/webolith-nginx:241
+          readinessProbe:
+            exec:
+              command:
+              - cat
+              - /usr/share/nginx/html/50x.html
+            successThreshold: 1
+            failureThreshold: 2
+            periodSeconds: 3
+            initialDelaySeconds: 3
+
+          livenessProbe:
+            httpGet:
+              path: /static/favicon.ico
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 5
+
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "rm /usr/share/nginx/html/50x.html && sleep 15 && /usr/sbin/nginx -s quit"]
+
+---
+
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: webolith-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: django
+    spec:
+      containers:
+      - name: webolith-container
+        image: domino14/webolith:241
+        imagePullPolicy: Never
+
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /opt/webolith/djAerolith/test_requirements.txt
+          successThreshold: 1
+          failureThreshold: 2
+          periodSeconds: 5
+          initialDelaySeconds: 5
+
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 5
+
+        lifecycle:
+          preStop:
+            exec:
+              # A hack to try to get 0% downtime during deploys. This should
+              # help ensure k8s eventually stops giving this node traffic.
+              command: ["sh", "-c", "rm /opt/webolith/djAerolith/test_requirements.txt && sleep 20"]
+
+        env:
+          - name: DEBUG
+            value: 'off'
+          - name: DEBUG_JS
+            value: 'off'
+          - name: PGSQL_DB_NAME
+            value: djaerolith
+          - name: PGSQL_PASSWORD
+            value: pass
+          - name: PGSQL_USER
+            value: postgres
+          - name: PGSQL_HOST
+            value: postgres
+          - name: SECRET_KEY
+            value: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+          - name: MACONDO_ADDRESS
+            value: http://macondo:8088
+          - name: RECAPTCHA_SSL
+            value: 'on'
+          - name: WORD_DB_LOCATION
+            value: /db
+          - name: SOCIAL_AUTH_FACEBOOK_KEY
+            value: "10154121300449470"
+          - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+            value: "876672922819-a953537d9jga3a69c8ifl1qb3cgfnlsa.apps.googleusercontent.com"
+
+          - name: EMAIL_PW
+            value: "doesntwork"
+          - name: RECAPTCHA_PRIVATE_KEY
+            value: "doesntwork"
+          - name: SOCIAL_AUTH_FACEBOOK_SECRET
+            value: "doesntwork"
+          - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+            value: "doesntwork"
+
+        volumeMounts:
+        # This should be the same as the WORD_DB_LOCATION env var.
+        - mountPath: /db
+          name: word-db-data
+
+      volumes:
+      - name: word-db-data
+        hostPath:
+          # Change this path to the relevant db path.
+          path: /Users/cesar/coding/webolith/db
+          # Manually put this in servers in the node(s) until we figure
+          # out a better way
+
+      restartPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: webolith
+  labels:
+    app: webolith
+spec:
+  selector:
+    app: webolith
+    component: django
+  ports:
+    - port: 8000
+      name: django-port
+
+---
+
+apiVersion: v1
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNvVENDQWdvQ0NRRGlHRVNmQzlJZkJEQU5CZ2txaGtpRzl3MEJBUVVGQURDQmxERUxNQWtHQTFVRUJoTUMKVlZNeEV6QVJCZ05WQkFnVENrTmhiR2xtYjNKdWFXRXhGakFVQmdOVkJBY1REVk5oYmlCR2NtRnVZMmx6WTI4eApGVEFUQmdOVkJBb1RERUZsY205c2FYUm9MbTl5WnpFZU1Cd0dBMVVFQXhNVmJXbHVhV3QxWW1VdVlXVnliMnhwCmRHZ3ViM0puTVNFd0h3WUpLb1pJaHZjTkFRa0JGaEprWld4emIyeGhja0JuYldGcGJDNWpiMjB3SGhjTk1UY3cKTkRFeE1ETXhPVFF5V2hjTk1UZ3dOREV4TURNeE9UUXlXakNCbERFTE1Ba0dBMVVFQmhNQ1ZWTXhFekFSQmdOVgpCQWdUQ2tOaGJHbG1iM0p1YVdFeEZqQVVCZ05WQkFjVERWTmhiaUJHY21GdVkybHpZMjh4RlRBVEJnTlZCQW9UCkRFRmxjbTlzYVhSb0xtOXlaekVlTUJ3R0ExVUVBeE1WYldsdWFXdDFZbVV1WVdWeWIyeHBkR2d1YjNKbk1TRXcKSHdZSktvWklodmNOQVFrQkZoSmtaV3h6YjJ4aGNrQm5iV0ZwYkM1amIyMHdnWjh3RFFZSktvWklodmNOQVFFQgpCUUFEZ1kwQU1JR0pBb0dCQUxkb2ZuMDFvZmxmNlZTa2svbFJBcXZsU1BNZmd1SlY2MlJWaXR2eWQrbDR2cDNWClRRNmtkUitjUURzcW8vV3hSUzN3by9QcmEreGszR3V5a1BWOEhId1lKZzY2Q0c5SU8weGVkV29TZlV1MmtzeW8KSHZxRFBiK2JwOTBDODZOanNycm4zU2NGSkpKUk9FZDFtb3NDTzhWLys4L1NDeUcxYThlSDdNMXNIbkFMQWdNQgpBQUV3RFFZSktvWklodmNOQVFFRkJRQURnWUVBc1lEcTdXUHlxejNEdG5GM3REbk5GeVMycUVhWnVwb1VpRjV1Cm84NHc0alVKUGJpVkJiTVNVWU9DY0s0eUJadytEcWcwUktLWVk2MGFaRy9vdjVOOFh3QzJBKzN0c1RlVFQ5cXUKSzlINS93UmR1QnBLaklrMHlkREZocHdlNDZZNk0wK0svZ3lud09zNDA4Z29zSkxMT1hmbVF5RFFuK0xxNldXagpvY2JSbEVJPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlDWEFJQkFBS0JnUUMzYUg1OU5hSDVYK2xVcEpQNVVRS3I1VWp6SDRMaVZldGtWWXJiOG5mcGVMNmQxVTBPCnBIVWZuRUE3S3FQMXNVVXQ4S1B6NjJ2c1pOeHJzcEQxZkJ4OEdDWU91Z2h2U0R0TVhuVnFFbjFMdHBMTXFCNzYKZ3oyL202ZmRBdk9qWTdLNjU5MG5CU1NTVVRoSGRacUxBanZGZi92UDBnc2h0V3ZIaCt6TmJCNXdDd0lEQVFBQgpBb0dBWEpodDI4cjdCb3FzbzJZZnF1eUNXOFI3YXZ0S3VmaEV5amdCemYrQkdLYzBIVDAyRlNGa1hGd25kWGVXCnBaRWs2d2VsenB6WnROUkxFRGhyeFBRdThJRFl1ZXZFWW16V2hWb3ZRekl3SVUrV2lJaVV6VHF1RmtTVXB5U3MKYzU0eE1kN1g5V1pYZzZKZEx5dDVuK0VNZWRleEswTVlpc2dMaTcyMVlTYnBKWWtDUVFEZ01BS2cvbVc5K3IwaApUQXo1NnpwZklkUEFzNGZXUFdqajJxZE9XbWl2OTFyYUp6RHExSnhNcWxwVFhIUHVxaGM1Slc2ZWZobGRtYVI5CmZvbmhJRkNsQWtFQTBXOGEzVUJ0bW01WXY0MHRsQmVUblZjVkxyY1loclVrT2t3bDUxT2RtL01GUCs4akg0TXMKYnk2TndLSEQ5VjQ4czQxcklFbHZEcW5OKytZODB5ZXU3d0pCQUw4cXNWTXZHdnJnOEoyUUNCQ2tjT1htSm5iUApvQ2tqdkdsdmJmTDJUUWFmMml6ajltYUlYYTlTSkN1cFRvSlpMK3hlNnZEamZpVytlZkU1RWNHU21MRUNRQ1c5Cm9kZXhIbzh2eDJwdFpJTkZaR0o4S09NTU42MCt3MUtHR21aL1dPMmJjNXk3MlZaNmF1MTJOREU4ZFhXb0Q4UkQKZmNTSnR5dXJTZVZVN2kwVy81MENRRE9UZm1NcHQzUnQ5SWwvV3lIcXRTcjZ2aGl4djB2Q0ljU01CazdmMWVHVQppYWpaTm9hUytONVhhbHZkVkVsWG9pUHNQY3l2MmNMYnFhOG9EelhJWjdJPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+kind: Secret
+metadata:
+  name: tls-secret
+type: Opaque
+
+---
+
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: macondo-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: macondo
+    spec:
+      containers:
+      - name: macondo-container
+        image: domino14/macondo:latest
+        volumeMounts:
+        - mountPath: /dawgs
+          name: dawg-data
+
+      volumes:
+      - name: dawg-data
+        hostPath:
+          # Change this path to relevant dawg path.
+          path: /Users/cesar/coding/gocode/src/github.com/domino14/macondo/dawgs
+
+      restartPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: macondo
+  labels:
+    app: webolith
+    component: macondo
+spec:
+  selector:
+    app: webolith
+    component: macondo
+  ports:
+    - port: 8088
+      name: macondo-port
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0001
+  labels:
+    name: pg-data-disk
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/pv0001/
+
+---
+# A persistent volume claim for the Postgres pod.
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: webolith
+    component: db
+  ports:
+    - port: 5432
+      name: postgres-port
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: db
+    spec:
+      containers:
+      - name: pg-container
+        image: postgres:latest
+        env:
+          - name: POSTGRES_PASSWORD
+            value: pass
+        ports:
+          - containerPort: 5432
+        volumeMounts:
+          - name: postgresdata
+            mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgresdata
+        persistentVolumeClaim:
+          claimName: postgres-data
+
+---
+
