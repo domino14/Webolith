@@ -4,6 +4,9 @@ metadata:
   name: nginx-static-deployment
 spec:
   replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:

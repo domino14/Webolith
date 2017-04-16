@@ -54,6 +54,9 @@ metadata:
   name: nginx-static-deployment
 spec:
   replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -73,14 +76,6 @@ spec:
             periodSeconds: 3
             initialDelaySeconds: 3
 
-          livenessProbe:
-            httpGet:
-              path: /static/favicon.ico
-              port: 80
-              scheme: HTTP
-            initialDelaySeconds: 2
-            periodSeconds: 5
-
           lifecycle:
             preStop:
               exec:
@@ -94,6 +89,9 @@ metadata:
   name: webolith-deployment
 spec:
   replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -114,15 +112,6 @@ spec:
           failureThreshold: 2
           periodSeconds: 5
           initialDelaySeconds: 5
-
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8000
-            scheme: HTTP
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          periodSeconds: 5
 
         lifecycle:
           preStop:
@@ -217,6 +206,9 @@ metadata:
   name: macondo-deployment
 spec:
   replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:
