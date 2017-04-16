@@ -10,7 +10,6 @@ requests==2.9.1
 recaptcha-client
 wsgiref
 redis
-boto
 jsonschema
 python-social-auth==0.2.21
 requests-oauthlib

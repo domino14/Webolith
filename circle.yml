@@ -85,7 +85,7 @@ deployment:
       - docker push domino14/webolith:$CIRCLE_BUILD_NUM
       # We need to create the kubernetes service yaml files, and apply new
       # ones from config vars.
-      - fab create_k8s_configs:dev
-      - fab deploy:dev
+      - fab create_k8s_configs:prod
+      - fab deploy:prod
   # Don't deploy other branches.
 
