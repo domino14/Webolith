@@ -66,6 +66,7 @@ deployment:
       # Delete the static files.
       - rm -rf $STATIC_ROOT
       - docker push domino14/webolith:$CIRCLE_BUILD_NUM
+      - docker push domino14/webolith:latest
       # We need to create the kubernetes service yaml files, and apply new
       # ones from config vars.
       - fab create_k8s_configs:prod
