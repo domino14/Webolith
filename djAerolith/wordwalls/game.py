@@ -141,7 +141,7 @@ class WordwallsGame(object):
 
         # Does a daily challenge exist with this name and date?
         # If not, create it.
-        today = timezone.localtime(timezone.now())
+        today = timezone.localtime(timezone.now()).date()
         qualify_for_award = False
         if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
             # Repeat on Tuesday at midnight local time (ie beginning of

@@ -313,7 +313,7 @@ def date_from_str(dt):
 
     """
 
-    today = timezone.localtime(timezone.now())
+    today = timezone.localtime(timezone.now()).date()
     try:
         ch_date = datetime.strptime(dt, '%Y-%m-%d').date()
     except (ValueError, TypeError):

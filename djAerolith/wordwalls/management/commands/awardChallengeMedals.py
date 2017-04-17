@@ -43,7 +43,7 @@ class Command(BaseCommand):
         leaderboard.save()
 
     def handle(self, *args, **options):
-        today = timezone.localtime(timezone.now())
+        today = timezone.localtime(timezone.now()).date()
         self.toughies = DailyChallengeName.objects.get(
             name=DailyChallengeName.WEEKS_BINGO_TOUGHIES)
         self.blankies = DailyChallengeName.objects.get(

@@ -33,3 +33,5 @@ kubernetes/*.key
 kubernetes/*.crt
 kubernetes/deploy-configs/dev-*.yaml
 kubernetes/deploy-configs/prod-*.yaml
+.coverage
+djAerolith/htmlcov
