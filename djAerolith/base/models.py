@@ -23,7 +23,7 @@ import random
 import json
 import uuid
 
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -188,7 +188,7 @@ class SavedList(models.Model):
     def date_to_str(self, dt, human):
         if not human:
             return dt.strftime('%Y-%m-%d %H:%M')
-        return pretty_date(datetime.now(), dt)
+        return pretty_date(timezone.localtime(timezone.now()), dt)
 
     def to_python_reduced(self, last_saved_human=False):
         """

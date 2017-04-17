@@ -2,8 +2,10 @@
 # days in the past
 
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
+
 from wordwalls.models import WordwallsGameModel
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 class Command(BaseCommand):
@@ -17,7 +19,7 @@ class Command(BaseCommand):
             raise CommandError('There must be exactly one argument; the '
                                'number of days in the past')
         days = int(args[0])
-        delDate = datetime.now() - timedelta(days=days)
+        delDate = timezone.now() - timedelta(days=days)
         wgms = WordwallsGameModel.objects.filter(lastActivity__lt=delDate)
         numObjs = len(wgms)
         print "Found", numObjs, "objects to delete"
