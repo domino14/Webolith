@@ -61,7 +61,7 @@ def build_webolith_secret(role):
         secret_template = yaml.load(f)
     for var_name in ['PGSQL_PASSWORD', 'PGSQL_HOST', 'DJANGO_SECRET_KEY',
                      'MAILGUN_PW', 'RECAPTCHA_PRIVATE_KEY',
-                     'AWS_SECRET_ACCESS_KEY', 'SOCIAL_AUTH_FACEBOOK_SECRET',
+                     'SOCIAL_AUTH_FACEBOOK_SECRET',
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']:
         secret_template['data'][var_name] = get_env_var(role, var_name, True)
     with open('kubernetes/deploy-configs/{role}-webolith-secrets.yaml'.format(
@@ -76,7 +76,6 @@ def build_webolith_deployment(role):
 
     context = {}
     for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER', 'MACONDO_ADDRESS',
-                     'AWS_ACCESS_KEY_ID',
                      'SOCIAL_AUTH_FACEBOOK_KEY',
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']:
         context[var_name] = get_env_var(role, var_name)

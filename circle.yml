@@ -51,28 +51,11 @@ test:
     - cd djAerolith && ./manage.py collectstatic --noinput
     - cd djAerolith && ./manage.py compilemessages
   post:
-    - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM .
+    - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM -t domino14/webolith:latest .
     # Should make sure base docker container is always up to date.
 deployment:
-  # production:
-  #   branch: master
-  #   commands:
-  #     - >
-  #       cd $REPO/kubernetes &&
-  #       docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-  #       -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
-  #     - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD
-  #     - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-  #     # Delete the static files.
-  #     - rm -rf $STATIC_ROOT
-  #     - docker push domino14/webolith:$CIRCLE_BUILD_NUM
-
-  #     # We need to create the kubernetes service yaml files, and apply new
-  #     # ones from config vars.
-  #     - fab create_k8s_configs:prod
-  #     - fab deploy:prod
-  staging:
-    branch: staging
+  production:
+    branch: master
     commands:
       - >
         cd $REPO/kubernetes &&

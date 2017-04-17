@@ -50,8 +50,6 @@ spec:
             value: 'on'
           - name: WORD_DB_LOCATION
             value: /db
-          - name: AWS_ACCESS_KEY_ID
-            value: {{ AWS_ACCESS_KEY_ID }}
           - name: SOCIAL_AUTH_FACEBOOK_KEY
             value: "{{ SOCIAL_AUTH_FACEBOOK_KEY }}"
           - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
@@ -83,11 +81,6 @@ spec:
               secretKeyRef:
                 name: webolith-secrets
                 key: RECAPTCHA_PRIVATE_KEY
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: webolith-secrets
-                key: AWS_SECRET_ACCESS_KEY
           - name: SOCIAL_AUTH_FACEBOOK_SECRET
             valueFrom:
               secretKeyRef:
