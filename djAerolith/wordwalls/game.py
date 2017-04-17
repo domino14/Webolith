@@ -19,13 +19,13 @@
 import json
 import time
 import copy
-from datetime import date
 import logging
 import re
 
 from django.conf import settings
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions
@@ -141,7 +141,7 @@ class WordwallsGame(object):
 
         # Does a daily challenge exist with this name and date?
         # If not, create it.
-        today = date.today()
+        today = timezone.localtime(timezone.now()).date()
         qualify_for_award = False
         if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
             # Repeat on Tuesday at midnight local time (ie beginning of

@@ -5,6 +5,7 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_GET, require_POST
+from django.utils import timezone
 
 from wordwalls.models import (
     DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry,
@@ -312,7 +313,7 @@ def date_from_str(dt):
 
     """
 
-    today = date.today()
+    today = timezone.localtime(timezone.now()).date()
     try:
         ch_date = datetime.strptime(dt, '%Y-%m-%d').date()
     except (ValueError, TypeError):

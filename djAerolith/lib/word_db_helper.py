@@ -388,7 +388,7 @@ class WordDB(object):
         # Handle in 1000-alphagram chunks.
 
         idx = 0
-        CHUNK_SIZE = 10000
+        CHUNK_SIZE = 999
         while idx < len(alphagrams):
             these_alphagrams = alphagrams[idx:idx+CHUNK_SIZE]
             num_alphas = len(these_alphagrams)

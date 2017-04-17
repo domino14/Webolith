@@ -1,8 +1,8 @@
 # Awards challenge medals.
 import logging
-from datetime import date
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from wordwalls.models import (DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
@@ -43,7 +43,7 @@ class Command(BaseCommand):
         leaderboard.save()
 
     def handle(self, *args, **options):
-        today = date.today()
+        today = timezone.localtime(timezone.now()).date()
         self.toughies = DailyChallengeName.objects.get(
             name=DailyChallengeName.WEEKS_BINGO_TOUGHIES)
         self.blankies = DailyChallengeName.objects.get(
