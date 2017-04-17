@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webolith-ingress
+spec:
+  backend:
+    # The default backend.
+    serviceName: webolith
+    servicePort: 8000
+  tls:
+  - hosts:
+    - {{ HOST_NAME }}
+    secretName: tls-secret
+  rules:
+  - host: {{ HOST_NAME }}
+    http:
+      paths:
+      - path: /static
+        backend:
+          serviceName: nginx-static-svc
+          servicePort: 80
+      - path: {{ HACK_PATH }}
+        backend:
+          serviceName: nginx-static-svc
+          servicePort: 80
+
+

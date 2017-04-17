@@ -2,5 +2,7 @@ db/*
 words/*
 node/*
 .git/*
-*.pyc
+**/*.pyc
 config/*.env
+node_modules/*
+kubernetes/*

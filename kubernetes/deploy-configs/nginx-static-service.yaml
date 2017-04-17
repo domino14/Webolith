@@ -1,0 +1,16 @@
+# This nginx container is only used for static serving. Annoyingly
+# we need another outer one as an ingress, but that's cool.
+# All TLS is done on the outer Ingress.
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-static-svc
+spec:
+  selector:
+    app: webolith
+    component: nginx
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 80
+      name: http

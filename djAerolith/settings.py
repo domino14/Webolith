@@ -51,7 +51,7 @@ DATABASES = {
         'USER': os.environ.get('PGSQL_USER'),
         'PASSWORD': os.environ.get('PGSQL_PASSWORD'),
         'HOST': os.environ.get('PGSQL_HOST'),
-        'PORT': '5432',
+        'PORT': os.environ.get('PGSQL_PORT', '5432'),
         'ATOMIC_REQUESTS': True
     }
 }
@@ -303,47 +303,10 @@ LOGGING = {
     }
 }
 
-if tobool(os.environ.get('PROD_LOGGING', False)):
-    LOGGING['handlers']['log_file'] = {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.RotatingFileHandler',
-        'filename': os.path.join('/opt/logs', 'django.log'),
-        'maxBytes': 50000000,
-        'formatter': 'verbose',
-        'backupCount': 10
-    }
-
-    LOGGING['loggers'] = {
-        'django.db': {
-            'handlers': ['log_file', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['log_file', 'mail_admins'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        '': {
-            'handlers': ['log_file', 'mail_admins'],
-            'level': 'DEBUG',
-        }
-    }
-    # We might swallow errors if we uncomment the following. The
-    # issue is that the social exception middleware does a logger.error
-    # even though it handles the exception, and this causes the mailer
-    # to mail us.
-    # LOGGING['loggers']['social'] = {
-    #     'handlers': ['log_file'],
-    #     'level': 'ERROR',
-    #     'propagate': False,
-    # }
-
-
-USE_MX = tobool(os.environ.get('USE_MX'))
-USE_GA = tobool(os.environ.get('USE_GA'))
-USE_FB = tobool(os.environ.get('USE_FB'))
-USE_UV = tobool(os.environ.get('USE_UV'))
+USE_MX = tobool(os.environ.get('USE_MX', True))
+USE_GA = tobool(os.environ.get('USE_GA', True))
+USE_FB = tobool(os.environ.get('USE_FB', True))
+USE_UV = tobool(os.environ.get('USE_UV', True))
 
 # LOGGING config
 
@@ -383,6 +346,8 @@ BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
 SAVE_LIST_LIMIT_NONMEMBER = 15000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 if 'test' in sys.argv:
     CACHES = {

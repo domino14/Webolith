@@ -2,12 +2,12 @@
 machine:
   node:
     version: stable
+  services:
+    - docker
   python:
-    # This is not quite the newest 2.7, but 2.7.12 takes an extra
-    # two minutes to download every time. This really should not
-    # make a difference.
-    version: 2.7.11
+    version: 2.7.12
   environment:
+    REPO: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     PGSQL_DB_NAME: circle_test
     PGSQL_USER: ubuntu
     PGSQL_HOST: 127.0.0.1
@@ -17,9 +17,10 @@ machine:
     DEBUG_JS: false
     # Just some random secret key
     SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
-    DICT_FILE_URL: https://s3-us-west-1.amazonaws.com/aerolith-files/dicts.tar.bz.enc
-    # The password is in the circleci env.
     WORD_DB_LOCATION: /home/ubuntu/db
+    # For collecting static files to later copy into Nginx. This
+    # dir must be in the context of the build, so inside the kubernetes dir.
+    STATIC_ROOT: $REPO/kubernetes/webolith_static/
 dependencies:
   pre:
     - mkdir -p ~/.yarn-cache
@@ -30,28 +31,44 @@ dependencies:
     - yarn install
 test:
   pre:
-    - pip install setuptools>=0.19
-    - pip install -r djAerolith/requirements.txt
-    - wget $DICT_FILE_URL
-    - openssl des3 -d -in dicts.tar.bz.enc -out dicts.tar.bz -pass env:DICT_FILE_PW
+    - pip install -r djAerolith/test_requirements.txt
+    - pip install -r djAerolith/prod_requirements.txt
+    - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /home/ubuntu/webolith-private
+    - cp /home/ubuntu/webolith-private/admin.conf /home/ubuntu/admin.conf
+    - openssl des3 -d -in /home/ubuntu/webolith-private/dicts.tar.bz.enc -out ./dicts.tar.bz -pass env:DICT_FILE_PW
     - mkdir $WORD_DB_LOCATION
     - mv dicts.tar.bz $WORD_DB_LOCATION
     - cd $WORD_DB_LOCATION && tar xjvf dicts.tar.bz
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - sudo mv ./kubectl /usr/local/bin/kubectl
   override:
     # Build the js bundles.
     - yarn full-prod-build
     # Test the app.
     - cd djAerolith && ./manage.py test -v2
-
+    # Gather all JS files and compile messages for building into image.
+    - cd djAerolith && ./manage.py collectstatic --noinput
+    - cd djAerolith && ./manage.py compilemessages
+  post:
+    - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM -t domino14/webolith:latest .
+    # Should make sure base docker container is always up to date.
 deployment:
   production:
     branch: master
     commands:
+      - >
+        cd $REPO/kubernetes &&
+        docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+        -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
+      - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD --username domino14
+      - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+      # Delete the static files.
+      - rm -rf $STATIC_ROOT
+      - docker push domino14/webolith:$CIRCLE_BUILD_NUM
+      # We need to create the kubernetes service yaml files, and apply new
+      # ones from config vars.
+      - fab create_k8s_configs:prod
       - fab deploy:prod
-  staging:
-    branch: staging
-    commands:
-      - fab deploy:dev
-
   # Don't deploy other branches.
 

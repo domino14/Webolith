@@ -19,6 +19,7 @@ db/*.db
 *.mo
 *.gaddag
 *.dawg
+config/config.env
 config/local_config.env
 config/prod_config.env
 config/dev_config.env
@@ -26,3 +27,9 @@ config/dev_config.env
 npm-debug.log
 yarn-error.log
 djAerolith/static/dist/*
+kubernetes/secrets-*.yaml
+kubernetes/webolith_static/*
+kubernetes/*.key
+kubernetes/*.crt
+kubernetes/deploy-configs/dev-*.yaml
+kubernetes/deploy-configs/prod-*.yaml
