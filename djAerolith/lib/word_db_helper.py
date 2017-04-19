@@ -13,6 +13,7 @@ import sys
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+MAX_CHUNK_SIZE = 999
 
 
 class BadInput(Exception):
@@ -185,7 +186,6 @@ class WordDB(object):
                            lexicon_name))
         self.conn = sqlite3.connect(file_path)
 
-    # XXX: Only used by tests.
     def get_word_data(self, word):
         """
         Gets data for the word passed in.
@@ -207,18 +207,27 @@ class WordDB(object):
         """ Gets data for the words passed in. """
         logger.debug('Getting word data for %s words.', len(words))
         c = self.conn.cursor()
-        c.execute(""" SELECT lexicon_symbols, definition, front_hooks,
-                  back_hooks, inner_front_hook, inner_back_hook, alphagram,
-                  word FROM words WHERE word IN (%s) ORDER BY word""" %
-                  ','.join('?' * len(words)), words)
-        rows = c.fetchall()
-        words = []
-        for row in rows:
-            words.append(Word(word=row[7], definition=row[1],
-                              front_hooks=row[2], back_hooks=row[3],
-                              inner_front_hook=row[4], inner_back_hook=row[5],
-                              lexicon_symbols=row[0], alphagram=row[6]))
-        return words
+        idx = 0
+        word_data = []
+        while idx < len(words):
+            these_words = words[idx:idx+MAX_CHUNK_SIZE]
+            num_words = len(these_words)
+            query = """
+            SELECT lexicon_symbols, definition, front_hooks,
+            back_hooks, inner_front_hook, inner_back_hook, alphagram,
+            word FROM words WHERE word IN (%s) ORDER BY word
+            """ % ','.join('?' * num_words)
+            idx += MAX_CHUNK_SIZE
+            c.execute(query, these_words)
+            rows = c.fetchall()
+
+            for row in rows:
+                word_data.append(
+                    Word(word=row[7], definition=row[1],
+                         front_hooks=row[2], back_hooks=row[3],
+                         inner_front_hook=row[4], inner_back_hook=row[5],
+                         lexicon_symbols=row[0], alphagram=row[6]))
+        return word_data
 
     # XXX: Only used by tests.
     def get_alphagram_data(self, alphagram):
@@ -238,10 +247,21 @@ class WordDB(object):
 
         """
         c = self.conn.cursor()
-        c.execute('SELECT alphagram, probability, combinations FROM alphagrams'
-                  ' WHERE alphagram IN (%s)' % ','.join('?' * len(alphagrams)),
-                  alphagrams)
-        return self._alphagrams(c)
+        ret_alphagrams = []
+        idx = 0
+        while idx < len(alphagrams):
+            these_alphagrams = alphagrams[idx:idx+MAX_CHUNK_SIZE]
+            num_alphas = len(these_alphagrams)
+            c.execute(
+                'SELECT alphagram, probability, combinations FROM alphagrams'
+                ' WHERE alphagram IN (%s)' % ','.join('?' * num_alphas),
+                these_alphagrams)
+            ret_alphagrams.extend(self._alphagrams(c))
+            idx += MAX_CHUNK_SIZE
+
+        logger.debug('get_alphagrams_data returned %s alphagrams',
+                     len(ret_alphagrams))
+        return ret_alphagrams
 
     # XXX: Only used by tests.
     def probability(self, alphagram):
@@ -388,9 +408,8 @@ class WordDB(object):
         # Handle in 1000-alphagram chunks.
 
         idx = 0
-        CHUNK_SIZE = 999
         while idx < len(alphagrams):
-            these_alphagrams = alphagrams[idx:idx+CHUNK_SIZE]
+            these_alphagrams = alphagrams[idx:idx+MAX_CHUNK_SIZE]
             num_alphas = len(these_alphagrams)
             query = """
             SELECT lexicon_symbols, definition, front_hooks, back_hooks,
@@ -399,7 +418,7 @@ class WordDB(object):
             INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
             WHERE alphagrams.alphagram IN (%s) """ % ','.join('?' * num_alphas)
 
-            idx += CHUNK_SIZE
+            idx += MAX_CHUNK_SIZE
 
             c.execute(query, [a.alphagram for a in these_alphagrams])
 
