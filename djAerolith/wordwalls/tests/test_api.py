@@ -4,10 +4,10 @@ from datetime import date
 
 from django.test import TestCase, Client, RequestFactory
 from django.db import connection
+from django.utils import timezone
 
 from wordwalls.api import date_from_request_dict
 from wordwalls.game import WordwallsGame
-from base.models import WordList
 logger = logging.getLogger(__name__)
 
 
@@ -63,7 +63,7 @@ class WordwallsSaveListTest(TestCase):
             '/wordwalls/api/challenges_played/?lexicon=1&date=04032014')
         dt = date_from_request_dict(request.GET)
         # This test might fail if run exactly one nanosecond before midnight.
-        self.assertEqual(dt, date.today())
+        self.assertEqual(dt, timezone.localtime(timezone.now()).date())
 
     def test_future_date_from_request(self):
         """ Test that entering a future date results in today. """
@@ -72,7 +72,7 @@ class WordwallsSaveListTest(TestCase):
             '/wordwalls/api/challenges_played/?lexicon=1&date=2900-01-03')
         dt = date_from_request_dict(request.GET)
         # This test might fail if run exactly one nanosecond before midnight.
-        self.assertEqual(dt, date.today())
+        self.assertEqual(dt, timezone.localtime(timezone.now()).date())
 
 
 class WordwallsNewChallengeTest(TestCase):

@@ -4,15 +4,16 @@
 A class mostly to test the logic for wordwalls/game.py
 
 """
-from datetime import date
 import mock
 import re
 import json
 import logging
+from datetime import date
 
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test.utils import override_settings
+from django.utils import timezone
 from django.db import connection
 
 from base.forms import SavedListForm
@@ -591,7 +592,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         num_challenges = DailyChallenge.objects.count()
         challenge = DailyChallengeName.objects.get(name="Today's 6s")
         table_id = self.wwg.initialize_daily_challenge(
-            self.user, self.lex, challenge, date.today())
+            self.user, self.lex, challenge,
+            timezone.localtime(timezone.now()).date())
         # Assert that it created a challenge.
         self.assertEqual(num_challenges + 1, DailyChallenge.objects.count())
         wgm = self.wwg.get_wgm(table_id)
@@ -613,7 +615,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         """ Test bingo marathon challenge. """
         challenge = DailyChallengeName.objects.get(name='Bingo Marathon')
         table_id = self.wwg.initialize_daily_challenge(
-            self.user, self.lex, challenge, date.today())
+            self.user, self.lex, challenge,
+            timezone.localtime(timezone.now()).date())
         wgm = self.wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertTrue(state['qualifyForAward'])
@@ -647,7 +650,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         """ Test blank bingos. (This comment is unnecessary, right?)"""
         challenge = DailyChallengeName.objects.get(name='Blank Bingos')
         table_id = self.wwg.initialize_daily_challenge(
-            self.user, self.lex, challenge, date.today())
+            self.user, self.lex, challenge,
+            timezone.localtime(timezone.now()).date())
         wgm = self.wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertTrue(state['qualifyForAward'])

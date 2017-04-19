@@ -175,11 +175,14 @@ def new_challenge(request, parsed_req_body):
             pk=parsed_req_body['challenge'])
     except DailyChallengeName.DoesNotExist:
         return bad_request('Bad challenge.')
-    tablenum = WordwallsGame().initialize_daily_challenge(
-        request.user, parsed_req_body['lexicon'],
-        challenge_name,
-        date_from_str(parsed_req_body['dt']),
-        use_table=parsed_req_body['tablenum'])
+    try:
+        tablenum = WordwallsGame().initialize_daily_challenge(
+            request.user, parsed_req_body['lexicon'],
+            challenge_name,
+            date_from_str(parsed_req_body['dt']),
+            use_table=parsed_req_body['tablenum'])
+    except GameInitException as e:
+        return bad_request(str(e))
 
     return table_response(tablenum)
 

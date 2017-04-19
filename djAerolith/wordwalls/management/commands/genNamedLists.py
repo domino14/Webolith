@@ -69,6 +69,9 @@ def get_questions_by_condition(db, min_prob, max_prob, length, condition,
 
     """
     qs = Questions()
+    logger.debug('Condition: min_prob=%s max_prob=%s length=%s condition=%s '
+                 'condition_type=%s', min_prob, max_prob, length, condition,
+                 condition_type)
 
     to_filter = db.get_questions_for_probability_range(min_prob, max_prob,
                                                        length)
