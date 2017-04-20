@@ -12,13 +12,29 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    def award_medals(self, leaderboard):
+    def add_arguments(self, parser):
+        # Named (optional) arguments
+        parser.add_argument(
+            '--dry-run',
+            action='store_true',
+            dest='dry-run',
+            default=False,
+            help='Do not award medals; do a dry run instead.',
+        )
+
+    def award_medals(self, leaderboard, dryrun):
         """ Award medals for a given leaderboard. """
         lbes = DailyChallengeLeaderboardEntry.objects.filter(
             board=leaderboard, qualifyForAward=True)
+
         if len(lbes) < 8:
+            logger.debug('Entries for %s are %s, do not award',
+                         leaderboard, len(lbes))
             leaderboard.medalsAwarded = True   # meh, this is ugly.
-            leaderboard.save()
+            if not dryrun:
+                leaderboard.save()
+            else:
+                logger.debug('Dry run, not saving leaderboard.')
             return  # Do not award medals; too few players.
 
         lbes = sorted(lbes, cmp=sort_cmp)
@@ -40,10 +56,14 @@ class Command(BaseCommand):
 
         logger.debug('awarded medals for %s', leaderboard)
         leaderboard.medalsAwarded = True
-        leaderboard.save()
+        if not dryrun:
+            leaderboard.save()
+        else:
+            logger.debug('Dry run, not saving leaderboard.')
 
     def handle(self, *args, **options):
         today = timezone.localtime(timezone.now()).date()
+        logger.debug('Today is %s', today)
         self.toughies = DailyChallengeName.objects.get(
             name=DailyChallengeName.WEEKS_BINGO_TOUGHIES)
         self.blankies = DailyChallengeName.objects.get(
@@ -64,7 +84,7 @@ class Command(BaseCommand):
                                  lb)
             if not award:
                 continue
-            self.award_medals(lb)
+            self.award_medals(lb, options['dry-run'])
 
 
 def sort_cmp(e1, e2):

@@ -148,7 +148,8 @@ class Medal(models.Model):
     medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
 
     def __unicode__(self):
-        return u'%s (%s)'.format(self.medal_type, self.lb_entry)
+        return u'%s: %s (%s)'.format(self.user, self.medal_type,
+                                     self.leaderboard)
 
     class Meta:
         unique_together = ('user', 'leaderboard')
