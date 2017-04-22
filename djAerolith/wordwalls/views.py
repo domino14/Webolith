@@ -80,6 +80,7 @@ def table(request, tableid=None):
         request, 'wordwalls/table.html',
         {'tablenum': tableid if tableid else 0,
          'user': json.dumps(usermeta),
+         'socket_server': settings.SOCKET_SERVER,
          'addParams': json.dumps(params),
          'avatarUrl': profile.avatarUrl,
          'CURRENT_VERSION': CURRENT_VERSION,
@@ -148,9 +149,12 @@ def handle_table_post(request, tableid):
     if action == "start":
         return start_game(request, tableid)
     elif action == "guess":
-        logger.debug(u'guess=%s', request.POST['guess'])
+        # XXX: Deprecated, this is handled by socket in socket_consumers.py now
+        # Remove after deploy.
+        logger.debug(u'old-way guess=%s', request.POST['guess'])
         wwg = WordwallsGame()
-        state = wwg.guess(request.POST['guess'].strip(), tableid, request.user)
+        state = wwg.guess(request.POST['guess'].strip(), tableid,
+                          request.user)
         if state is None:
             return response(_('Quiz is already over.'),
                             status=StatusCode.BAD_REQUEST)
