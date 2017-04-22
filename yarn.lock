@@ -1330,6 +1330,12 @@ diff@1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-1.4.0.tgz#7f28d2eb9ee7b15a97efd89ce63dcfdaa3ccbabf"
 
+django-channels@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/django-channels/-/django-channels-1.1.3.tgz#cb7f1d7ddbf12e132d41c2aefba84f1c7a9120af"
+  dependencies:
+    reconnecting-websocket "^3.0.3"
+
 doctrine@1.5.0, doctrine@^1.2.2:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-1.5.0.tgz#379dce730f6166f76cefa4e6707a159b02c5a6fa"
@@ -3904,6 +3910,10 @@ rechoir@^0.6.2:
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
   dependencies:
     resolve "^1.1.6"
+
+reconnecting-websocket@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/reconnecting-websocket/-/reconnecting-websocket-3.0.3.tgz#69dcf183da484f1e6c137321a0058bf94423cb58"
 
 redent@^1.0.0:
   version "1.0.0"

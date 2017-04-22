@@ -4,6 +4,7 @@ import React from 'react';
 import $ from 'jquery';
 import _ from 'underscore';
 import Immutable from 'immutable';
+import { WebSocketBridge } from 'django-channels';
 
 import backgroundURL from './background';
 import Styling from './style';
@@ -69,6 +70,10 @@ class WordwallsApp extends React.Component {
     this.markMissed = this.markMissed.bind(this);
     this.handleLoadNewList = this.handleLoadNewList.bind(this);
     this.resetTableCreator = this.resetTableCreator.bind(this);
+    this.handleGuessResponse = this.handleGuessResponse.bind(this);
+    this.handleSocketMessages = this.handleSocketMessages.bind(this);
+
+    this.websocketBridge = new WebSocketBridge();
   }
 
   componentDidMount() {
@@ -103,6 +108,8 @@ class WordwallsApp extends React.Component {
       this.myTableCreator.showModal();
       this.myTableCreator.resetDialog();
     }
+
+    this.connectToSocket();
   }
 
   onGuessSubmit(guess) {
@@ -119,18 +126,25 @@ class WordwallsApp extends React.Component {
       // the server.
       return;
     }
-    $.ajax({
-      url: this.tableUrl(),
-      method: 'POST',
-      dataType: 'json',
-      // That's a lot of guess
-      data: {
-        action: 'guess',
-        guess: modifiedGuess,
+    // $.ajax({
+    //   url: this.tableUrl(),
+    //   method: 'POST',
+    //   dataType: 'json',
+    //   // That's a lot of guess
+    //   data: {
+    //     action: 'guess',
+    //     guess: modifiedGuess,
+    //   },
+    // })
+    // .done(this.handleGuessResponse.bind(this))
+    // .fail(this.handleGuessFailure.bind(this));
+    this.websocketBridge.send({
+      room: this.state.tablenum,
+      type: 'guess',
+      contents: {
+        guess,
       },
-    })
-    .done(this.handleGuessResponse.bind(this))
-    .fail(this.handleGuessFailure.bind(this));
+    });
   }
 
   onHotKey(key) {
@@ -171,10 +185,28 @@ class WordwallsApp extends React.Component {
     });
   }
 
+  connectToSocket() {
+    const url = `${this.props.socketServer}/wordwalls-socket`;
+    console.log('Socket url: ', url);
+    this.websocketBridge.connect(url);
+    this.websocketBridge.listen(this.handleSocketMessages);
+    this.websocketBridge.socket.addEventListener('open', () => {
+      if (this.state.tablenum !== 0) {
+        this.sendSocketJoin(this.state.tablenum);
+      }
+    });
+  }
+
   handleListNameChange(newListName) {
     this.setState({
       listName: newListName,
     });
+  }
+
+  handleSocketMessages(message) {
+    if (message.type === 'guessResponse') {
+      this.handleGuessResponse(message.contents);
+    }
   }
 
   handleAutoSaveToggle() {
@@ -350,17 +382,17 @@ class WordwallsApp extends React.Component {
     }
   }
 
-  handleGuessFailure(jqXHR) {
-    if (jqXHR.status !== 400 && jqXHR.status !== 0) {
-      // TODO: Log this error.
-    }
-    if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
-        jqXHR.statusText === 'error') {
-      this.addServerMessage(
-        'Error - please check your internet connection and try again.',
-        'red');
-    }
-  }
+  // handleGuessFailure(jqXHR) {
+  //   if (jqXHR.status !== 400 && jqXHR.status !== 0) {
+  //     // TODO: Log this error.
+  //   }
+  //   if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
+  //       jqXHR.statusText === 'error') {
+  //     this.addServerMessage(
+  //       'Error - please check your internet connection and try again.',
+  //       'red');
+  //   }
+  // }
 
   markMissed(alphaIdx, alphagram) {
     // Mark the alphagram missed.
@@ -531,7 +563,16 @@ class WordwallsApp extends React.Component {
       history.replaceState({}, `Table ${data.tablenum}`,
         this.tableUrl(data.tablenum));
       document.title = `Wordwalls - table ${data.tablenum}`;
+      this.sendSocketJoin(data.tablenum);
     }
+  }
+
+  sendSocketJoin(tablenum) {
+    this.websocketBridge.send({
+      room: tablenum,
+      type: 'join',
+      contents: {},
+    });
   }
 
   resetTableCreator() {
@@ -723,6 +764,7 @@ WordwallsApp.propTypes = {
     description: React.PropTypes.string,
     counts: React.PropTypes.object,
   })),
+  socketServer: React.PropTypes.string,
 };
 
 export default WordwallsApp;

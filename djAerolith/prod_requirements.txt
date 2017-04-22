@@ -18,3 +18,5 @@ psycopg2
 Fabric
 PyYAML
 pytz
+channels
+asgi_redis

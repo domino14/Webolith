@@ -34,6 +34,13 @@ services:
     networks:
       - aeronet
 
+  redis:
+    image: redis:alpine
+    ports:
+      - 6384:6379
+    networks:
+      - aeronet
+
 volumes:
   pg-data-volume:
     external: false
