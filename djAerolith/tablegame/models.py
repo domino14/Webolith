@@ -38,7 +38,6 @@ class GenericTableGameModel(models.Model):
         (MULTIPLAYER_GAME, "MultiPlayer"),
     )
     lexicon = models.ForeignKey(Lexicon)
-    # XXX: get rid of host and inTable
     host = models.ForeignKey(User, related_name="%(app_label)s_%(class)s_host")
     inTable = models.ManyToManyField(
         User, related_name="%(app_label)s_%(class)s_inTable")
@@ -54,9 +53,3 @@ class GenericTableGameModel(models.Model):
 
     class Meta:
         abstract = True
-
-EVENT_CHOICES = (
-    (1, "has changed the room's description."),
-    (2, "has joined the room."),
-    (3, "has left the room."),
-)

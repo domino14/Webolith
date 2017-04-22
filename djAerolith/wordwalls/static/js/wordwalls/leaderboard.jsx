@@ -1,10 +1,9 @@
 import React from 'react';
 import Immutable from 'immutable';
 
-// import { pointsForWord } from './build_mode';
 import WordPartDisplay from './word_part_display';
 
-const UserBox = (props) => {
+const Leaderboard = (props) => {
   const answers = [];
   props.answers.forEach((word, idx) => {
     answers.push(
@@ -77,11 +76,11 @@ const UserBox = (props) => {
   );
 };
 
-UserBox.propTypes = {
+Leaderboard.propTypes = {
   answers: React.PropTypes.arrayOf(
     React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
   username: React.PropTypes.string,
 };
 
-export default UserBox;
+export default Leaderboard;

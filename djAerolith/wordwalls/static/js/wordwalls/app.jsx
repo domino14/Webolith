@@ -36,6 +36,7 @@ class App {
         defaultLexicon={options.defaultLexicon}
         challengeInfo={options.challengeInfo}
         availableLexica={options.availableLexica}
+        socketServer={options.socketServer}
       />,
       document.getElementById('main-app-content'));
   }

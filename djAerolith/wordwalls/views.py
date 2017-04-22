@@ -35,7 +35,7 @@ from gargoyle import gargoyle
 
 from base.forms import LexiconForm
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
-from wordwalls.game import WordwallsGame
+from wordwalls.game import WordwallsGame, GiveUpException
 from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
@@ -80,6 +80,7 @@ def table(request, tableid=None):
         request, 'wordwalls/table.html',
         {'tablenum': tableid if tableid else 0,
          'user': json.dumps(usermeta),
+         'socket_server': settings.SOCKET_SERVER,
          'addParams': json.dumps(params),
          'avatarUrl': profile.avatarUrl,
          'CURRENT_VERSION': CURRENT_VERSION,
@@ -146,11 +147,16 @@ def handle_table_post(request, tableid):
             'error': _('Table does not exist, please load a new word list.')},
             status=StatusCode.BAD_REQUEST)
     if action == "start":
+        # XXX: Deprecated, this is handled by socket, remove after deploy.
+        logger.debug('old-way start')
         return start_game(request, tableid)
     elif action == "guess":
-        logger.debug(u'guess=%s', request.POST['guess'])
+        # XXX: Deprecated, this is handled by socket in socket_consumers.py now
+        # Remove after deploy.
+        logger.debug(u'old-way guess=%s', request.POST['guess'])
         wwg = WordwallsGame()
-        state = wwg.guess(request.POST['guess'].strip(), tableid, request.user)
+        state = wwg.guess(request.POST['guess'].strip(), tableid,
+                          request.user)
         if state is None:
             return response(_('Quiz is already over.'),
                             status=StatusCode.BAD_REQUEST)
@@ -165,8 +171,12 @@ def handle_table_post(request, tableid):
         return response({'g': not ret})
     elif action == "giveUp":
         wwg = WordwallsGame()
-        ret = wwg.give_up(request.user, tableid)
-        return response({'g': not ret})
+        try:
+            ret = wwg.give_up(request.user, tableid)
+            return response({'g': not ret})
+        except GiveUpException as e:
+            return response({'error': str(e)})
+
     elif action == "save":
         wwg = WordwallsGame()
         ret = wwg.save(request.user, tableid, request.POST['listname'])
