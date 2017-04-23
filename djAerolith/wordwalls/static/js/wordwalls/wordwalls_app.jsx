@@ -126,18 +126,7 @@ class WordwallsApp extends React.Component {
       // the server.
       return;
     }
-    // $.ajax({
-    //   url: this.tableUrl(),
-    //   method: 'POST',
-    //   dataType: 'json',
-    //   // That's a lot of guess
-    //   data: {
-    //     action: 'guess',
-    //     guess: modifiedGuess,
-    //   },
-    // })
-    // .done(this.handleGuessResponse.bind(this))
-    // .fail(this.handleGuessFailure.bind(this));
+
     this.websocketBridge.send({
       room: this.state.tablenum,
       type: 'guess',

@@ -28,6 +28,7 @@ def ws_disconnect(message):
     if 'room' in message.channel_session:
         room = message.channel_session['room']
         Group('table-{0}'.format(room)).discard(message.reply_channel)
+        logger.debug('User %s left table %s', message.user.username, room)
     Group('lobby').discard(message.reply_channel)
 
 
@@ -67,7 +68,6 @@ def table_guess(message, contents):
                        contents['room'], room)
         return
     guess = contents['contents']['guess']
-    logger.debug(u'guess=%s', guess)
     wwg = WordwallsGame()
     with transaction.atomic():
         # Replicate atomic request behavior. We need this for select_for_update

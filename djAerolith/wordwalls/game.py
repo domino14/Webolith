@@ -477,7 +477,7 @@ class WordwallsGame(object):
 
     def give_up_and_save(self, user, tablenum, listname):
         logger.debug(
-            'table %s - User %s called give_up_and_save with params: %s',
+            u'table %s - User %s called give_up_and_save with params: %s',
             tablenum, user, listname)
         if self.give_up(user, tablenum):
             return self.save(user, tablenum, listname)
@@ -507,7 +507,7 @@ class WordwallsGame(object):
                      'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
-        logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
+        logger.debug(u'user=%s, tablenum=%s, listname=%s, event=save',
                      user, tablenum, listname)
         wgm = self.get_wgm(tablenum)
         if not wgm:
@@ -534,7 +534,7 @@ class WordwallsGame(object):
         # Maybe we want a way to "save as" another list; think about
         # a list copy.
         word_list.name = listname
-        logger.debug('Saving word_list, name is %s (%s)', word_list.name,
+        logger.debug(u'Saving word_list, name is %s (%s)', word_list.name,
                      type(word_list.name))
         if make_permanent_list:
             word_list.is_temporary = False
