@@ -22,6 +22,9 @@ import json
 import time
 import os
 import logging
+import calendar
+import hmac
+import hashlib
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -71,10 +74,12 @@ def table(request, tableid=None):
         params['style'] = style
 
     meta_info = get_create_meta_info()
+    usermeta = get_user_meta_info(request.user)
+
     return render(
         request, 'wordwalls/table.html',
         {'tablenum': tableid if tableid else 0,
-         'username': request.user.username,
+         'user': json.dumps(usermeta),
          'addParams': json.dumps(params),
          'avatarUrl': profile.avatarUrl,
          'CURRENT_VERSION': CURRENT_VERSION,
@@ -83,10 +88,24 @@ def table(request, tableid=None):
          'default_lexicon': profile.defaultLexicon.pk,
          'challenge_info': json.dumps(meta_info['challenge_info']),
          'available_lexica': json.dumps(meta_info['lexica']),
+         'intercom_app_id': settings.INTERCOM_APP_ID,
          })
 
 
 # Helpers.
+def get_user_meta_info(user):
+    """ Get info from user, such as name, email, created date, etc. """
+    user_hash = hmac.new(
+        settings.INTERCOM_APP_SECRET_KEY, user.email, digestmod=hashlib.sha256
+    ).hexdigest()
+    return {
+        'name': u'{0} {1}'.format(user.first_name, user.last_name),
+        'username': user.username,
+        'email': user.email,
+        'createdAt': calendar.timegm(user.date_joined.utctimetuple()),
+        'user_hash': user_hash,
+    }
+
 
 def get_create_meta_info():
     """ Return meta info for table creation. This would be good to cache. """
