@@ -62,6 +62,7 @@ def build_webolith_secret(role):
     for var_name in ['PGSQL_PASSWORD', 'PGSQL_HOST', 'DJANGO_SECRET_KEY',
                      'MAILGUN_PW', 'RECAPTCHA_PRIVATE_KEY',
                      'SOCIAL_AUTH_FACEBOOK_SECRET',
+                     'INTERCOM_APP_SECRET_KEY',
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']:
         secret_template['data'][var_name] = get_env_var(role, var_name, True)
     with open('kubernetes/deploy-configs/{role}-webolith-secrets.yaml'.format(
@@ -76,7 +77,7 @@ def build_webolith_deployment(role):
 
     context = {}
     for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER', 'MACONDO_ADDRESS',
-                     'SOCIAL_AUTH_FACEBOOK_KEY',
+                     'SOCIAL_AUTH_FACEBOOK_KEY', 'INTERCOM_APP_ID',
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']:
         context[var_name] = get_env_var(role, var_name)
     context['BUILD_NUM'] = os.getenv('CIRCLE_BUILD_NUM', '')

@@ -19,7 +19,6 @@ To contact the author, please email delsolar at gmail dot com
 {% load i18n %}
 
 {% load value_from_settings %}
-{% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
 
 <!DOCTYPE html>
@@ -59,19 +58,9 @@ To contact the author, please email delsolar at gmail dot com
 
 </script>
 {% endif %}
-{% if USE_MX %}
-<!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
-for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
-mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
-mixpanel.identify("{{username}}");
-</script><!-- end Mixpanel -->
-{% else %}
-  <script>
-  var mixpanel = {};
-  mixpanel.track = function() {};
-  mixpanel.name_tag = function() {};
-  </script>
-{% endif %}
+
+<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/{{intercom_app_id}}';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()</script>
+
 </head>
 
 
@@ -84,10 +73,11 @@ mixpanel.identify("{{username}}");
     tablenum: {{tablenum}},
     lexicon: '{{lexicon.lexiconName}}',   // Lexicon used to modify guesses
                                           // in case of FISE e.g.
-    username: '{{username}}',
     availableLexica: '{{available_lexica|escapejs}}',
     defaultLexicon: {{default_lexicon}},
     challengeInfo: '{{challenge_info|escapejs}}',
+    user: '{{ user | escapejs }}',
+    intercomAppID: '{{intercom_app_id}}',
   };
 </script>
 
@@ -107,7 +97,4 @@ mixpanel.identify("{{username}}");
 <script src="/static/dist/table-client-bundle.js?v={{CURRENT_VERSION}}"></script>
 
 </body>
-<script>
-mixpanel.name_tag('{{username}}');
-</script>
 </html>

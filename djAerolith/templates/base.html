@@ -1,9 +1,7 @@
 {% load i18n %}
 {% load value_from_settings %}
-{% value_from_settings USE_MX as USE_MX %}
 {% value_from_settings USE_GA as USE_GA %}
 {% value_from_settings USE_FB as USE_FB %}
-{% value_from_settings USE_UV as USE_UV %}
 <!DOCTYPE html>
 <html lang="en">
 {% get_current_language as LANGUAGE_CODE %}
@@ -43,20 +41,6 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
 
-    </script>
-    {% endif %}
-    {% if USE_MX %}
-
-    <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
-    for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
-    mixpanel.init("4f8fd42d397696d3bdbe8d2b2d6607f5");
-    mixpanel.identify("{{user}}");
-    </script><!-- end Mixpanel -->
-    {% else %}
-    <script>
-    window.mixpanel = {};
-    window.mixpanel.track = function() {};
-    window.mixpanel.name_tag = function() {};
     </script>
     {% endif %}
 
@@ -147,38 +131,11 @@
       {% endblock %}
     </div> <!-- /container -->
 
-
-    {% if USE_UV %}
-    <!-- UserVoice JavaScript SDK (only needed once on a page) -->
-    <script>(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/0JhqmCWLicTNtQfGLppEA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})()</script>
-
-    <!-- A tab to launch the Classic Widget -->
-    <script>
-    UserVoice = window.UserVoice || [];
-    UserVoice.push(['showTab', 'classic_widget', {
-      mode: 'full',
-      primary_color: '#cc6d00',
-      link_color: '#007dbf',
-      default_mode: 'feedback',
-      forum_id: 187535,
-      tab_label: 'Feedback & Support',
-      tab_color: '#cc6d00',
-      tab_position: 'middle-right',
-      tab_inverted: false
-    }]);
-    </script>
-    {% endif %}
     <div class="push"></div>
     <div id="footer">
       <div class="container">
         <div id="copyright">&copy; 2007-{% now "Y" %} Cesarware. {% trans "All Rights Reserved." %}</div>
-        <div id="mixpanel">
-          <a href="https://mixpanel.com/f/partner"><img src="/static/img/aerolith/mixpanel_badge_light.png" alt="Mobile and Web Analytics" /></a>
-        </div>
       </div>
     </div>
   </body>
-<script>
-mixpanel.name_tag("{{user}}");
-</script>
 </html>

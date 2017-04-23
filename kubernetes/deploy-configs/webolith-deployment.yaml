@@ -54,6 +54,8 @@ spec:
             value: "{{ SOCIAL_AUTH_FACEBOOK_KEY }}"
           - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
             value: {{ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY }}
+          - name: INTERCOM_APP_ID
+            value: {{ INTERCOM_APP_ID }}
 
           # Secrets follow
           - name: PGSQL_PASSWORD
@@ -91,6 +93,11 @@ spec:
               secretKeyRef:
                 name: webolith-secrets
                 key: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+          - name: INTERCOM_APP_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: webolith-secrets
+                key: INTERCOM_APP_SECRET_KEY
 
         volumeMounts:
         # This should be the same as the WORD_DB_LOCATION env var.

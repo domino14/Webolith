@@ -304,11 +304,10 @@ LOGGING = {
     }
 }
 
-USE_MX = tobool(os.environ.get('USE_MX', True))
 USE_GA = tobool(os.environ.get('USE_GA', True))
 USE_FB = tobool(os.environ.get('USE_FB', True))
-USE_UV = tobool(os.environ.get('USE_UV', True))
-
+INTERCOM_APP_ID = os.environ.get('INTERCOM_APP_ID')
+INTERCOM_APP_SECRET_KEY = os.environ.get('INTERCOM_APP_SECRET_KEY')
 # LOGGING config
 
 NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
