@@ -37,7 +37,8 @@ class WordwallsApp extends React.Component {
       // being rendered in the game board. Questions should be removed
       // from it as they are solved, and they can be shuffled around.
       curQuestions: game.getQuestionState(),
-      messages: [],
+      tableMessages: [],
+      lobbyMessages: [],
       isChallenge: false,
       totalWords: 0,
       answeredByMe: [],
@@ -64,6 +65,7 @@ class WordwallsApp extends React.Component {
     this.handleListNameChange = this.handleListNameChange.bind(this);
     this.handleShuffleAll = this.handleShuffleAll.bind(this);
     this.onGuessSubmit = this.onGuessSubmit.bind(this);
+    this.onChatSubmit = this.onChatSubmit.bind(this);
     this.onHotKey = this.onHotKey.bind(this);
     this.beforeUnload = this.beforeUnload.bind(this);
     this.setDisplayStyle = this.setDisplayStyle.bind(this);
@@ -140,6 +142,17 @@ class WordwallsApp extends React.Component {
     });
   }
 
+  onChatSubmit(chat, channel) {
+    console.log('Should send chat to websocket', chat, channel);
+    this.websocketBridge.send({
+      room: 'lobby',
+      type: 'chat',
+      contents: {
+        chat,
+      },
+    });
+  }
+
   onHotKey(key) {
     // Hot key map.
     const fnMap = {
@@ -180,7 +193,6 @@ class WordwallsApp extends React.Component {
 
   connectToSocket() {
     const url = `${this.props.socketServer}/wordwalls-socket`;
-    console.log('Socket url: ', url);
     this.websocketBridge.connect(url);
     this.websocketBridge.listen(this.handleSocketMessages);
     this.websocketBridge.socket.addEventListener('open', () => {
@@ -199,6 +211,8 @@ class WordwallsApp extends React.Component {
   handleSocketMessages(message) {
     if (message.type === 'guessResponse') {
       this.handleGuessResponse(message.contents);
+    } else if (message.type === 'chat') {
+      this.handleChat(message.contents);
     }
   }
 
@@ -218,10 +232,10 @@ class WordwallsApp extends React.Component {
 
   showAutosaveMessage(autosave) {
     if (autosave) {
-      this.addServerMessage(`Autosave is now on! Aerolith will save your
+      this.addMessage(`Autosave is now on! Aerolith will save your
         list progress to ${this.state.listName} at the end of every round.`);
     } else {
-      this.addServerMessage('Autosave is off.', 'error');
+      this.addMessage('Autosave is off.', 'error');
     }
   }
 
@@ -252,7 +266,7 @@ class WordwallsApp extends React.Component {
     })
     .done(this.handleStartReceived.bind(this))
     .fail((jqXHR) => {
-      this.addServerMessage(jqXHR.responseJSON.error, 'error');
+      this.addMessage(jqXHR.responseJSON.error, 'error');
       // XXX: This is a hack; use proper error codes.
       if (jqXHR.responseJSON.error.indexOf('currently running') !== -1) {
         this.setState({
@@ -267,7 +281,7 @@ class WordwallsApp extends React.Component {
       return;
     }
     if (_.has(data, 'serverMsg')) {
-      this.addServerMessage(data.serverMsg);
+      this.addMessage(data.serverMsg);
     }
     if (_.has(data, 'questions')) {
       game.init(data.questions);
@@ -376,17 +390,11 @@ class WordwallsApp extends React.Component {
     }
   }
 
-  // handleGuessFailure(jqXHR) {
-  //   if (jqXHR.status !== 400 && jqXHR.status !== 0) {
-  //     // TODO: Log this error.
-  //   }
-  //   if (jqXHR.status === 0 && jqXHR.readyState === 0 &&
-  //       jqXHR.statusText === 'error') {
-  //     this.addServerMessage(
-  //       'Error - please check your internet connection and try again.',
-  //       'red');
-  //   }
-  // }
+  handleChat(data) {
+    if (data.room === 'lobby') {
+      this.addMessage(data.chat, 'chat', data.sender, true);
+    }  // TODO: otherwise send it to the relevant room with false.
+  }
 
   markMissed(alphaIdx, alphagram) {
     // Mark the alphagram missed.
@@ -408,10 +416,11 @@ class WordwallsApp extends React.Component {
     });
   }
 
-  addServerMessage(serverMsg, optType) {
-    const curMessages = this.state.messages;
+  addMessage(serverMsg, optType, optSender, optIsLobby) {
+    const curMessages = optIsLobby ? this.state.lobbyMessages :
+      this.state.tableMessages;
     curMessages.push({
-      author: '',
+      author: optSender || '',
       id: _.uniqueId('msg_'),
       content: serverMsg,
       type: optType || 'server',
@@ -419,9 +428,11 @@ class WordwallsApp extends React.Component {
     if (curMessages.length > MAX_MESSAGES) {
       curMessages.shift();
     }
-    this.setState({
-      messages: curMessages,
-    });
+    if (optIsLobby) {
+      this.setState({ lobbyMessages: curMessages });
+    } else {
+      this.setState({ tableMessages: curMessages });
+    }
   }
 
   processGameEnded() {
@@ -453,8 +464,7 @@ class WordwallsApp extends React.Component {
    */
   saveGame() {
     if (this.state.listName === '') {
-      this.addServerMessage('You must enter a list name for saving!',
-        'error');
+      this.addMessage('You must enter a list name for saving!', 'error');
       return;
     }
     $.ajax({
@@ -468,13 +478,13 @@ class WordwallsApp extends React.Component {
     })
     .done((data) => {
       if (data.success === true) {
-        this.addServerMessage(`Saved as ${data.listname}`);
+        this.addMessage(`Saved as ${data.listname}`);
       }
       if (data.info) {
-        this.addServerMessage(data.info);
+        this.addMessage(data.info);
       }
     })
-    .fail(jqXHR => this.addServerMessage(
+    .fail(jqXHR => this.addMessage(
       `Error saving: ${jqXHR.responseJSON.error}`));
   }
 
@@ -545,7 +555,7 @@ class WordwallsApp extends React.Component {
       numberOfRounds: 0,
       curQuestions: Immutable.List(),
     });
-    this.addServerMessage(`Loaded new list: ${data.list_name}`, 'info');
+    this.addMessage(`Loaded new list: ${data.list_name}`, 'info');
     this.showAutosaveMessage(data.autosave);
     if (changeUrl) {
       // The .bind(history) is important because otherwise `this` changes
@@ -614,6 +624,9 @@ class WordwallsApp extends React.Component {
           onLoadNewList={this.handleLoadNewList}
           gameGoing={this.state.gameGoing}
           setLoadingData={loading => this.setState({ loadingData: loading })}
+          username={this.props.username}
+          onChatSubmit={chat => this.onChatSubmit(chat, 'lobby')}
+          messages={this.state.lobbyMessages}
         />
 
         <div className="row">
@@ -719,7 +732,7 @@ class WordwallsApp extends React.Component {
         </div>
         <div className="row" style={{ marginTop: '4px' }}>
           <div className="col-xs-12 col-sm-10 col-md-9 col-lg-7">
-            <ChatBox messages={this.state.messages} />
+            <ChatBox messages={this.state.tableMessages} />
           </div>
         </div>
         <div

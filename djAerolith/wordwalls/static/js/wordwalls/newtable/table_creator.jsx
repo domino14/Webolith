@@ -12,6 +12,7 @@ import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
+import Lobby from '../lobby/main';
 
 const GAME_TYPE_NEW = 'New';
 const GAME_TYPE_JOIN = 'Join';
@@ -33,6 +34,8 @@ const COLLINS_LEX_ID = 1;
 const COLLINS_LICENSE_TEXT = `
 The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
+
+const DEFAULT_TIME_PER_QUIZ = '5';  // minutes
 
 /**
  * TableCreator should mostly manage its own state, do its own AJAX queries,
@@ -59,7 +62,7 @@ class TableCreator extends React.Component {
 
       currentLexicon: this.props.defaultLexicon,
 
-      desiredTime: '5',   // minutes
+      desiredTime: DEFAULT_TIME_PER_QUIZ,
       questionsPerRound: 50,
       // Challenge-related
       currentDate: moment(),
@@ -459,7 +462,7 @@ class TableCreator extends React.Component {
     });
   }
 
-  render() {
+  renderQuizSearch() {
     let selectedQuizSearchDialog;
     switch (this.state.activeSearchType) {
       case SEARCH_TYPE_CHALLENGE:
@@ -517,6 +520,51 @@ class TableCreator extends React.Component {
         selectedQuizSearchDialog = null;
     }
     return (
+      <div>
+        <Pills
+          options={[
+            SEARCH_TYPE_CHALLENGE,
+            SEARCH_TYPE_WORDSEARCH,
+            SEARCH_TYPE_AEROLITH_LISTS,
+            SEARCH_TYPE_SAVED_LIST,
+          ]}
+          activePill={this.state.activeSearchType}
+          onPillClick={option => () => {
+            this.setState({
+              activeSearchType: option,
+            });
+            if (option !== SEARCH_TYPE_CHALLENGE) {
+              // Reset the time back to the defaults.
+              this.setState({
+                desiredTime: DEFAULT_TIME_PER_QUIZ,
+                questionsPerRound: 50,
+              });
+            }
+            this.loadInfoForSearchType(option);
+          }}
+        />
+        {selectedQuizSearchDialog}
+      </div>);
+  }
+
+  renderLobbyAndJoin() {
+    return (
+      <Lobby
+        username={this.props.username}
+        onChatSubmit={this.props.onChatSubmit}
+        messages={this.props.messages}
+      />
+    );
+  }
+
+  render() {
+    let mainDialog = null;
+    if (this.state.activeGameType === GAME_TYPE_NEW) {
+      mainDialog = this.renderQuizSearch();
+    } else if (this.state.activeGameType === GAME_TYPE_JOIN) {
+      mainDialog = this.renderLobbyAndJoin();
+    }
+    return (
       <ModalSkeleton
         title="New Word List"
         modalClass="table-modal"
@@ -550,29 +598,7 @@ class TableCreator extends React.Component {
               />
             </div>
             <div className="col-sm-10">
-              <Pills
-                options={[
-                  SEARCH_TYPE_CHALLENGE,
-                  SEARCH_TYPE_WORDSEARCH,
-                  SEARCH_TYPE_AEROLITH_LISTS,
-                  SEARCH_TYPE_SAVED_LIST,
-                ]}
-                activePill={this.state.activeSearchType}
-                onPillClick={option => () => {
-                  this.setState({
-                    activeSearchType: option,
-                  });
-                  if (option !== SEARCH_TYPE_CHALLENGE) {
-                    // Reset the time back to the defaults.
-                    this.setState({
-                      desiredTime: '5',
-                      questionsPerRound: 50,
-                    });
-                  }
-                  this.loadInfoForSearchType(option);
-                }}
-              />
-              {selectedQuizSearchDialog}
+              {mainDialog}
             </div>
 
           </div>
@@ -607,6 +633,14 @@ TableCreator.propTypes = {
   onLoadNewList: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   setLoadingData: React.PropTypes.func,
+  username: React.PropTypes.string,
+  onChatSubmit: React.PropTypes.func,
+  messages: React.PropTypes.arrayOf(React.PropTypes.shape({
+    author: React.PropTypes.string,
+    id: React.PropTypes.string,
+    content: React.PropTypes.string,
+    type: React.PropTypes.string,
+  })),
 };
 
 

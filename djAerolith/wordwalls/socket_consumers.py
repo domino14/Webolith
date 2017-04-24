@@ -60,6 +60,9 @@ def ws_message(message):
     elif msg_contents['type'] == 'guess':
         table_guess(message, msg_contents)
 
+    elif msg_contents['type'] == 'chat':
+        chat(message, msg_contents)
+
 
 def table_guess(message, contents):
     room = message.channel_session['room']
@@ -91,3 +94,21 @@ def table_guess(message, contents):
         }
     }
     message.reply_channel.send({'text': json.dumps(msg)})
+
+
+def chat(message, contents):
+    room = contents['room']
+    msg = {
+        'type': 'chat',
+        'contents': {
+            'chat': contents['contents']['chat'],
+            'sender': message.user.username,
+            'room': room
+        }
+    }
+    if room == 'lobby':
+        Group('lobby').send({
+            'text': json.dumps(msg)
+        })
+    else:
+        pass  # TODO check channel session and accept message if user in room.
