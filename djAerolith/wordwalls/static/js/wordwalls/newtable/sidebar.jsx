@@ -3,6 +3,7 @@ import React from 'react';
 import Pills from './pills';
 import Select from '../forms/select';
 import NumberInput from '../forms/number_input';
+import CheckBox from '../forms/checkbox';
 
 /**
  * Get lexicon options from the given object in a Select-friendly format.
@@ -52,6 +53,14 @@ const Sidebar = props => (
               parseInt(e.target.value, 10))}
             disabled={props.disabledInputs}
           />
+          <CheckBox
+            on={props.multiplayerOn}
+            onChange={(event) => {
+              props.onMultiplayerModify(event.target.checked);
+            }}
+            label="Multiplayer"
+            disabled={props.disabledInputs}
+          />
         </form>
       </div>
     </div>
@@ -78,6 +87,8 @@ Sidebar.propTypes = {
     description: React.PropTypes.string,
     counts: React.PropTypes.object,
   })),
+  multiplayerOn: React.PropTypes.bool,
+  onMultiplayerModify: React.PropTypes.func,
 };
 
 export default Sidebar;

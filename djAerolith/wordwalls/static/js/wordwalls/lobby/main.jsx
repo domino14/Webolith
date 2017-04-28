@@ -10,63 +10,6 @@ import ChatBox from '../bottombar/chatbox';
 import Players from './players';
 import TableList from './table_list';
 
-// Dummy static data for now.
-const activeTables = [{
-  tablenum: 1234567,
-  admin: 'cesar',
-  users: ['cesar', 'drbing', 'wanderer', 'metallica'],
-  wordList: '7s (2001-3000)',
-  lexicon: 'CSW15',
-  secondsPerRound: 300,
-  questionsPerRound: 50,
-}, {
-  tablenum: 2313004,
-  admin: 'cats',
-  users: ['dogs', 'cats', 'weezer', 'whatever'],
-  wordList: 'Blank Bingos (2014-03-05)',
-  lexicon: 'America',
-  secondsPerRound: 240,
-  questionsPerRound: 25,
-},
-{
-  tablenum: 1234568,
-  admin: 'cesar',
-  users: ['cesar', 'drbing', 'wanderer', 'metallica'],
-  wordList: '7s (2001-3000)',
-  lexicon: 'CSW15',
-  secondsPerRound: 300,
-  questionsPerRound: 50,
-}, {
-  tablenum: 2313006,
-  admin: 'cats',
-  users: ['dogs', 'cats', 'weezer', 'whatever'],
-  wordList: 'Blank Bingos (2014-03-05)',
-  lexicon: 'America',
-  secondsPerRound: 240,
-  questionsPerRound: 25,
-},
-{
-  tablenum: 12345647,
-  admin: 'cesar',
-  users: ['cesar', 'drbing', 'wanderer', 'metallica'],
-  wordList: '7s (2001-3000)',
-  lexicon: 'CSW15',
-  secondsPerRound: 300,
-  questionsPerRound: 50,
-}, {
-  tablenum: 2314404,
-  admin: 'cats',
-  users: ['dogs', 'cats', 'weezer', 'whatever'],
-  wordList: 'Blank Bingos (2014-03-05)',
-  lexicon: 'America',
-  secondsPerRound: 240,
-  questionsPerRound: 25,
-}];
-
-const players = [
-  'cesar', 'drbing', 'wanderer', 'weezer', 'dogma', 'ozma',
-];
-
 class Lobby extends React.Component {
   foo() {
     this.bar = 3;
@@ -78,7 +21,7 @@ class Lobby extends React.Component {
         <div className="row">
           <div className="col-sm-12">
             <TableList
-              activeTables={activeTables}
+              activeTables={this.props.activeTables}
             />
           </div>
         </div>
@@ -93,13 +36,13 @@ class Lobby extends React.Component {
           <div className="col-sm-9">
             <ChatBox
               messages={this.props.messages}
-              height={200}
+              height={120}
             />
           </div>
           <div className="col-sm-3">
             <Players
-              players={players}
-              height={200}
+              players={this.props.users}
+              height={120}
             />
           </div>
         </div>
@@ -116,6 +59,16 @@ Lobby.propTypes = {
     id: React.PropTypes.string,
     content: React.PropTypes.string,
     type: React.PropTypes.string,
+  })),
+  users: React.PropTypes.arrayOf(React.PropTypes.string),
+  activeTables: React.PropTypes.arrayOf(React.PropTypes.shape({
+    tablenum: React.PropTypes.number.isRequired,
+    admin: React.PropTypes.string,
+    users: React.PropTypes.arrayOf(React.PropTypes.string),
+    wordList: React.PropTypes.string,
+    lexicon: React.PropTypes.string,
+    secondsPerRound: React.PropTypes.number,
+    questionsPerRound: React.PropTypes.number,
   })),
 };
 

@@ -24,6 +24,8 @@ import Spinner from './spinner';
 
 const game = new WordwallsGame();
 const MAX_MESSAGES = 200;
+const PRESENCE_TIMEOUT = 20000;  // 20 seconds.
+const GET_PRESENCES_INTERVAL = 90000; // 1.5 minutes
 
 class WordwallsApp extends React.Component {
   constructor(props) {
@@ -39,6 +41,9 @@ class WordwallsApp extends React.Component {
       curQuestions: game.getQuestionState(),
       tableMessages: [],
       lobbyMessages: [],
+      tableUsers: {},
+      lobbyUsers: {},
+      tableList: [],
       isChallenge: false,
       totalWords: 0,
       answeredByMe: [],
@@ -75,6 +80,9 @@ class WordwallsApp extends React.Component {
     this.resetTableCreator = this.resetTableCreator.bind(this);
     this.handleGuessResponse = this.handleGuessResponse.bind(this);
     this.handleSocketMessages = this.handleSocketMessages.bind(this);
+    this.sendPresence = this.sendPresence.bind(this);
+    this.getPresences = this.getPresences.bind(this);
+    this.handleTableList = this.handleTableList.bind(this);
 
     this.websocketBridge = new WebSocketBridge();
   }
@@ -113,6 +121,9 @@ class WordwallsApp extends React.Component {
     }
 
     this.connectToSocket();
+    // Start presence timer.
+    window.setInterval(this.sendPresence, PRESENCE_TIMEOUT);
+    window.setInterval(this.getPresences, GET_PRESENCES_INTERVAL);
   }
 
   onGuessSubmit(guess) {
@@ -191,6 +202,29 @@ class WordwallsApp extends React.Component {
     });
   }
 
+  getPresences() {
+    this.websocketBridge.send({
+      type: 'getPresence',
+      room: 'lobby',
+      contents: {},
+    });
+    if (this.state.tablenum !== 0) {
+      this.websocketBridge.send({
+        type: 'getPresence',
+        room: this.state.tablenum,
+        contents: {},
+      });
+    }
+  }
+
+  getTables() {
+    this.websocketBridge.send({
+      type: 'getTables',
+      room: 'lobby',
+      contents: {},
+    });
+  }
+
   connectToSocket() {
     const url = `${this.props.socketServer}/wordwalls-socket`;
     this.websocketBridge.connect(url);
@@ -199,6 +233,8 @@ class WordwallsApp extends React.Component {
       if (this.state.tablenum !== 0) {
         this.sendSocketJoin(this.state.tablenum);
       }
+      this.sendPresence();
+      this.getTables();
     });
   }
 
@@ -213,7 +249,30 @@ class WordwallsApp extends React.Component {
       this.handleGuessResponse(message.contents);
     } else if (message.type === 'chat') {
       this.handleChat(message.contents);
+    } else if (message.type === 'usersIn') {
+      this.handleUsersIn(message.contents);
+    } else if (message.type === 'joined') {
+      this.handleUserJoined(message.contents);
+    } else if (message.type === 'left') {
+      this.handleUserLeft(message.contents);
+    } else if (message.type === 'tableList') {
+      this.handleTableList(message.contents);
     }
+  }
+
+  handleUsersIn(contents) {
+    if (contents.room === 'lobby') {
+      this.setState({ lobbyUsers: {} });
+    }
+    this.addUsers(contents.users, contents.room);
+  }
+
+  handleUserJoined(contents) {
+    this.addUsers([contents.user], contents.room);
+  }
+
+  handleUserLeft(contents) {
+    this.removeUser(contents.user, contents.room);
   }
 
   handleAutoSaveToggle() {
@@ -236,6 +295,38 @@ class WordwallsApp extends React.Component {
         list progress to ${this.state.listName} at the end of every round.`);
     } else {
       this.addMessage('Autosave is off.', 'error');
+    }
+  }
+
+  addUsers(users, room) {
+    let newUsers;
+    if (room === 'lobby') {
+      newUsers = this.state.lobbyUsers;
+    } else {
+      newUsers = this.state.tableUsers;
+    }
+    users.forEach((user) => {
+      newUsers[user] = true;
+    });
+    if (room === 'lobby') {
+      this.setState({ lobbyUsers: newUsers });
+    } else {
+      this.setState({ tableUsers: newUsers });
+    }
+  }
+
+  removeUser(user, room) {
+    let newUsers;
+    if (room === 'lobby') {
+      newUsers = this.state.lobbyUsers;
+    } else {
+      newUsers = this.state.tableUsers;
+    }
+    delete newUsers[user];
+    if (room === 'lobby') {
+      this.setState({ lobbyUsers: newUsers });
+    } else {
+      this.setState({ tableUsers: newUsers });
     }
   }
 
@@ -316,6 +407,21 @@ class WordwallsApp extends React.Component {
     });
   }
 
+  sendPresence() {
+    this.websocketBridge.send({
+      type: 'presence',
+      room: 'lobby',
+      contents: {},
+    });
+    if (this.state.tablenum !== 0) {
+      this.websocketBridge.send({
+        type: 'presence',
+        room: this.state.tablenum,
+        contents: {},
+      });
+    }
+  }
+
   /**
    * Called when the front-end timer runs out. Make a call to the
    * back-end to possibly end the game.
@@ -394,6 +500,12 @@ class WordwallsApp extends React.Component {
     if (data.room === 'lobby') {
       this.addMessage(data.chat, 'chat', data.sender, true);
     }  // TODO: otherwise send it to the relevant room with false.
+  }
+
+  handleTableList(data) {
+    this.setState({
+      tableList: data,
+    });
   }
 
   markMissed(alphaIdx, alphagram) {
@@ -627,6 +739,8 @@ class WordwallsApp extends React.Component {
           username={this.props.username}
           onChatSubmit={chat => this.onChatSubmit(chat, 'lobby')}
           messages={this.state.lobbyMessages}
+          users={Object.keys(this.state.lobbyUsers)}
+          tableList={this.state.tableList}
         />
 
         <div className="row">

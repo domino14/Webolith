@@ -87,6 +87,7 @@ class TableCreator extends React.Component {
           current: 0,
         },
       },
+      multiplayerOn: false,
 
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
@@ -100,6 +101,7 @@ class TableCreator extends React.Component {
     this.savedListSubmit = this.savedListSubmit.bind(this);
     this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
+    this.onMultiplayerModify = this.onMultiplayerModify.bind(this);
   }
 
   /**
@@ -131,6 +133,13 @@ class TableCreator extends React.Component {
       currentChallenge: challID,
       desiredTime: String(challenge.seconds / 60),
       questionsPerRound: challenge.numQuestions,
+      multiplayerOn: false,
+    });
+  }
+
+  onMultiplayerModify(val) {
+    this.setState({
+      multiplayerOn: val,
     });
   }
 
@@ -234,6 +243,7 @@ class TableCreator extends React.Component {
         desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
+        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -286,6 +296,7 @@ class TableCreator extends React.Component {
         questionsPerRound: this.state.questionsPerRound,
         selectedList: this.state.selectedList,
         tablenum: this.props.tablenum,
+        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -349,6 +360,7 @@ class TableCreator extends React.Component {
         selectedList: listID,
         tablenum: this.props.tablenum,
         listOption: action,
+        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -553,6 +565,8 @@ class TableCreator extends React.Component {
         username={this.props.username}
         onChatSubmit={this.props.onChatSubmit}
         messages={this.props.messages}
+        users={this.props.users}
+        activeTables={this.props.tableList}
       />
     );
   }
@@ -595,6 +609,8 @@ class TableCreator extends React.Component {
                 })}
                 disabledInputs={
                   this.state.activeSearchType === SEARCH_TYPE_CHALLENGE}
+                multiplayerOn={this.state.multiplayerOn}
+                onMultiplayerModify={this.onMultiplayerModify}
               />
             </div>
             <div className="col-sm-10">
@@ -640,6 +656,16 @@ TableCreator.propTypes = {
     id: React.PropTypes.string,
     content: React.PropTypes.string,
     type: React.PropTypes.string,
+  })),
+  users: React.PropTypes.arrayOf(React.PropTypes.string),
+  tableList: React.PropTypes.arrayOf(React.PropTypes.shape({
+    tablenum: React.PropTypes.number.isRequired,
+    admin: React.PropTypes.string,
+    users: React.PropTypes.arrayOf(React.PropTypes.string),
+    wordList: React.PropTypes.string,
+    lexicon: React.PropTypes.string,
+    secondsPerRound: React.PropTypes.number,
+    questionsPerRound: React.PropTypes.number,
   })),
 };
 

@@ -137,6 +137,7 @@ def load_new_words(f):
         parsed_req['word_length'] = body.get('wordLength')
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
+        parsed_req['multiplayer'] = body.get('multiplayer')
 
         return f(request, parsed_req, *args, **kwargs)
 
@@ -203,7 +204,8 @@ def new_search(request, parsed_req_body):
     tablenum = WordwallsGame().initialize_by_search_params(
         request.user, search, parsed_req_body['quiz_time_secs'],
         parsed_req_body['questions_per_round'],
-        use_table=parsed_req_body['tablenum'])
+        use_table=parsed_req_body['tablenum'],
+        multiplayer=parsed_req_body['multiplayer'])
 
     return table_response(tablenum)
 
@@ -224,7 +226,8 @@ def load_aerolith_list(request, parsed_req_body):
         parsed_req_body['lexicon'], request.user, named_list,
         parsed_req_body['quiz_time_secs'],
         parsed_req_body['questions_per_round'],
-        use_table=parsed_req_body['tablenum'])
+        use_table=parsed_req_body['tablenum'],
+        multiplayer=parsed_req_body['multiplayer'])
     return table_response(tablenum)
 
 
@@ -245,7 +248,8 @@ def load_saved_list(request, parsed_req_body):
             convert_to_form_option(parsed_req_body['list_option']),
             parsed_req_body['quiz_time_secs'],
             parsed_req_body['questions_per_round'],
-            use_table=parsed_req_body['tablenum'])
+            use_table=parsed_req_body['tablenum'],
+            multiplayer=parsed_req_body['multiplayer'])
     except GameInitException as e:
         return bad_request(str(e))
     return table_response(tablenum)

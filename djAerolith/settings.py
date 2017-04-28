@@ -169,7 +169,7 @@ INSTALLED_APPS = (
     'base',
     'flashcards',
     'tablegame',
-    'wordwalls',
+    'wordwalls.apps.WordwallsAppConfig',
     'accounts',
     'django.contrib.staticfiles',
     'gunicorn',

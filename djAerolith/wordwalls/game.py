@@ -33,6 +33,7 @@ from lib.word_searches import word_search
 from wordwalls.challenges import generate_dc_questions
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
+
 from wordwalls.models import WordwallsGameModel
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
@@ -77,7 +78,7 @@ class WordwallsGame(object):
         return list_name
 
     def create_or_update_game_instance(self, host, lex, word_list, use_table,
-                                       **state_kwargs):
+                                       multiplayer, **state_kwargs):
         state = self._initial_state()
         if 'temp_list_name' in state_kwargs:
             state_kwargs['temp_list_name'] = self.maybe_modify_list_name(
@@ -89,20 +90,34 @@ class WordwallsGame(object):
         if state['questionsToPull'] is None:
             state['questionsToPull'] = settings.WORDWALLS_QUESTIONS_PER_ROUND
 
+        if multiplayer:
+            player_type = GenericTableGameModel.MULTIPLAYER_GAME
+        else:
+            player_type = GenericTableGameModel.SINGLEPLAYER_GAME
         if use_table is None:
             wgm = WordwallsGameModel(
                 host=host, currentGameState=json.dumps(state),
                 gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
-                playerType=GenericTableGameModel.SINGLEPLAYER_GAME,
-                lexicon=lex,
-                word_list=word_list)
+                playerType=player_type, lexicon=lex, word_list=word_list)
         else:
             wgm = self.get_wgm(tablenum=use_table, lock=True)
             wgm.currentGameState = json.dumps(state)
             wgm.lexicon = lex
             wgm.word_list = word_list
+            if 'challenge' in state.get('gameType'):
+                # Do not allow multiplayer!
+                if multiplayer:
+                    raise GameInitException(
+                        'Cannot do a daily challenge in multiplayer mode.')
+                wgm.playerType = player_type
+            # TODO: if we make a multiplayer game back into a single player
+            # game, this should just make a new table.
+            # TODO: deal with all sorts of permission issues; only hosts
+            # should be able to load a new list into this table, etc.
+            # Need testing.
         wgm.save()
-
+        from wordwalls.signal_handlers import game_important_save
+        game_important_save.send(sender=self.__class__, instance=wgm)
         return wgm
 
     def initialize_word_list(self, questions, lexicon, user):
@@ -167,7 +182,7 @@ class WordwallsGame(object):
             ch_date.strftime('%Y-%m-%d')
         )
         wgm = self.create_or_update_game_instance(
-            user, ch_lex, wl, use_table,
+            user, ch_lex, wl, use_table, False,
             # Extra parameters to be put in 'state'
             gameType='challenge',
             questionsToPull=qs.size(),
@@ -207,7 +222,8 @@ class WordwallsGame(object):
         return qs, secs, dc
 
     def initialize_by_search_params(self, user, search_description, time_secs,
-                                    questions_per_round=None, use_table=None):
+                                    questions_per_round=None, use_table=None,
+                                    multiplayer=None):
         lexicon = search_description['lexicon']
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
@@ -218,13 +234,14 @@ class WordwallsGame(object):
             search_description['max']
         )
         wgm = self.create_or_update_game_instance(
-            user, lexicon, wl, use_table, timerSecs=time_secs,
+            user, lexicon, wl, use_table, multiplayer, timerSecs=time_secs,
             temp_list_name=temporary_list_name,
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 
     def initialize_by_named_list(self, lex, user, named_list, secs,
-                                 questions_per_round=None, use_table=None):
+                                 questions_per_round=None, use_table=None,
+                                 multiplayer=None):
         qs = json.loads(named_list.questions)
         db = WordDB(lex.lexiconName)
         if named_list.isRange:
@@ -237,14 +254,14 @@ class WordwallsGame(object):
             wl.initialize_list(qs, lex, user, shuffle=True)
 
         wgm = self.create_or_update_game_instance(
-            user, lex, wl, use_table, timerSecs=secs,
+            user, lex, wl, use_table, multiplayer, timerSecs=secs,
             temp_list_name=named_list.name,
             questionsToPull=questions_per_round)
         return wgm.pk
 
     def initialize_by_saved_list(self, lex, user, saved_list, list_option,
                                  secs, questions_per_round=None,
-                                 use_table=None):
+                                 use_table=None, multiplayer=None):
         if saved_list.user != user:
             # Maybe this isn't a big deal.
             logger.warning('Saved list user does not match user %s %s',
@@ -263,7 +280,7 @@ class WordwallsGame(object):
 
         self.maybe_modify_word_list(saved_list, list_option)
         wgm = self.create_or_update_game_instance(
-            user, lex, saved_list, use_table,
+            user, lex, saved_list, use_table, multiplayer,
             saveName=saved_list.name,
             timerSecs=secs,
             questionsToPull=questions_per_round)

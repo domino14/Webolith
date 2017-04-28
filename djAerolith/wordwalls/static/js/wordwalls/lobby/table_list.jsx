@@ -59,7 +59,7 @@ const Table = props => (
     </div>
     <div className="row">
       <div className="col-sm-4">
-        <span className="text-info">List: {props.wordList}</span>
+        List: <span className="text-info">{props.wordList}</span>
       </div>
       <div className="col-sm-4">
         <span className="text-muted">In table: {props.users.join(' ')}</span>
