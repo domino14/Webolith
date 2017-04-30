@@ -1,8 +1,8 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
+from flashcards.views import main, new_quiz
 
-urlpatterns = patterns(
-    '',
-    url(r'^$', 'flashcards.views.main'),
-    url(r'^api/new_quiz$', 'flashcards.views.new_quiz'),
-)
+urlpatterns = [
+    url(r'^$', main),
+    url(r'^api/new_quiz$', new_quiz),
+]

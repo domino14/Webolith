@@ -2,8 +2,7 @@ import logging
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 
 from current_version import CURRENT_VERSION
 from base.models import Lexicon, WordList
@@ -16,13 +15,12 @@ logger = logging.getLogger(__name__)
 @login_required
 def main(request):
     quizzes = WordList.objects.filter(user=request.user, is_temporary=False)
-    return render_to_response("flashcards/index.html", {
-                              'numCards': 0,
-                              'savedLists': json.dumps(quizzes_response(
-                                                       quizzes)),
-                              'CURRENT_VERSION': CURRENT_VERSION,
-                              },
-                              context_instance=RequestContext(request))
+    return render(request, "flashcards/index.html", {
+                  'numCards': 0,
+                  'savedLists': json.dumps(quizzes_response(
+                                           quizzes)),
+                  'CURRENT_VERSION': CURRENT_VERSION,
+                  })
 
 
 def validate_params(min, max, length, lex):

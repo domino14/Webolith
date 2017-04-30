@@ -46,7 +46,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('PGSQL_DB_NAME'),
         'USER': os.environ.get('PGSQL_USER'),
         'PASSWORD': os.environ.get('PGSQL_PASSWORD'),
@@ -363,3 +363,13 @@ else:
             'TIMEOUT': 12*60*60,  # 12 hours
         }
     }
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    # XXX: This one is weak, but a lot of old users are on it.
+    'django.contrib.auth.hashers.SHA1PasswordHasher'
+]

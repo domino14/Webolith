@@ -84,7 +84,8 @@ def table(request, tableid=None):
          'avatarUrl': profile.avatarUrl,
          'CURRENT_VERSION': CURRENT_VERSION,
          'lexicon': (
-             wwg.get_wgm(tableid, False).lexicon if tableid else None),
+             wwg.get_wgm(tableid, False).lexicon.lexiconName
+             if tableid else None),
          'default_lexicon': profile.defaultLexicon.pk,
          'challenge_info': json.dumps(meta_info['challenge_info']),
          'available_lexica': json.dumps(meta_info['lexica']),

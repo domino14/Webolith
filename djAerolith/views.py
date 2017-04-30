@@ -19,7 +19,7 @@
 import logging
 import json
 
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -30,26 +30,6 @@ from lib.socket_helper import get_connection_token
 from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
-
-
-def homepage(request):
-    return render_to_response('base.html', {},
-                              context_instance=RequestContext(request))
-
-
-def supporter(request):
-    return render_to_response('support.html',
-                              context_instance=RequestContext(request))
-
-
-def oldhomepage(request):
-    return render_to_response('oldsite/index.html',
-                              context_instance=RequestContext(request))
-
-
-def about(request):
-    return render_to_response('about.html',
-                              context_instance=RequestContext(request))
 
 
 def health(request):

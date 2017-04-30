@@ -16,7 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from wordwalls.api import (
     api_challengers,
@@ -29,8 +29,7 @@ from wordwalls.api import (
     load_saved_list,
 )
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^challengers/$', api_challengers),
     url(r'^configure/$', configure),
     url(r'^challenges_played/$', challenges_played),
@@ -42,4 +41,4 @@ urlpatterns = patterns(
 
     # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
-)
+]
