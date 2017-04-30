@@ -8,6 +8,7 @@ from channels.auth import channel_session_user, channel_session_user_from_http
 from django.db import transaction
 from django.db.models import Q, F
 from django.utils import timezone
+from django.core.cache import cache
 
 from tablegame.models import Presence
 from wordwalls.game import WordwallsGame
@@ -77,7 +78,7 @@ def table_info(table):
     table_obj = {
         'lexicon': table.lexicon.lexiconName,
         'admin': table.host.username,
-        'users': [user.username for user in presences_in(table)],
+        'users': [user.username for user in table.inTable],
         'wordList': (
             table.word_list.name if not table.word_list.is_temporary
             else state['temp_list_name']),
@@ -223,11 +224,31 @@ def table_guess(message, contents):
 
 
 def send_presence(message, msg_contents):
-    """ Send presence info to the requester. """
+    """
+    Send presence info to the requester. This is an important function
+    whose results should be cached. It may be called many times at once,
+    and ideally, it would be a timed function but Channels doesn't really
+    support that, and using Celery or even cron seems a bit overkill.
+
+    We should cache the results, and also update the inTable of all
+    relevant tables.
+
+    """
+
     room = msg_contents['room']
-    message.reply_channel.send({
-        'text': json.dumps(users_in(room, message.user))
-    })
+    room_presences = cache.get('presence:{0}'.format(room))
+    if room_presences:
+        message.reply_channel.send({
+            'text': room_presences
+        })
+        return
+
+    # There was a cache miss.
+
+
+        # message.reply_channel.send({
+        #     'text': json.dumps(users_in(room, message.user))
+        # })
 
 
 def send_tables(message, msg_contents):
@@ -256,7 +277,7 @@ def chat(message, contents):
 
 
 def set_presence(message, contents):
-    """ This is a periodic ping from the server. Set the last ping time. """
+    """ This is a periodic ping from the client. Set the last ping time. """
     room = contents['room']
     user = message.user
     update_presence(user, room)
@@ -280,20 +301,23 @@ def update_presence(user, room, last_left=None):
                        room)
 
     if last_left:
-        # send_host_switch = False
+        send_host_switch = False
         # new_host = None
         # user just left, so exclude him.
         presences = presences_in(room).exclude(user=user)
         with transaction.atomic():
+            wgm.inTable.remove(user)
             if user == wgm.host and presences.count() > 0:
                 new_host = presences[0].user
                 wgm.host = new_host
                 wgm.save()
                 # XXX: signalhandler should take care of this, but test.
-                # send_host_switch = True
-            # Otherwise, don't change the host. That way maybe the
-            # original user can come back later, the way it used to be.
-        # if send_host_switch:
-        #     Group('table-{0}'.format(room)).send({
-        #         'text': json.dumps(host_switched_msg(new_host, room))
-        #     })
+                send_host_switch = True
+
+        if send_host_switch:
+            from wordwalls.signal_handlers import game_important_save
+            game_important_save.send(sender=None, instance=wgm)
+
+    else:
+        with transaction.atomic():
+            wgm.inTable.add(user)
