@@ -41,6 +41,7 @@ class WordwallsApp extends React.Component {
       totalWords: 0,
       answeredByMe: [],
       lastGuess: '',
+      lastGuessCorrectness: false,
       challengeData: {},
       displayStyle: this.props.displayStyle,
       numberOfRounds: 0,
@@ -117,6 +118,9 @@ class WordwallsApp extends React.Component {
     if (!game.answerExists(modifiedGuess)) {
       // If the guess wasn't valid, don't bother submitting it to
       // the server.
+      this.setState({
+        lastGuessCorrectness: false,
+      });
       return;
     }
     $.ajax({
@@ -342,6 +346,7 @@ class WordwallsApp extends React.Component {
           curQuestions: game.getQuestionState(),
           origQuestions: game.getOriginalQuestionState(),
           answeredByMe: game.getAnsweredByMe(),
+          lastGuessCorrectness: true,
         });
       }
     }
@@ -664,6 +669,7 @@ class WordwallsApp extends React.Component {
             <GuessBox
               onGuessSubmit={this.onGuessSubmit}
               lastGuess={this.state.lastGuess}
+              lastGuessCorrectness={this.state.lastGuessCorrectness}
               onHotKey={this.onHotKey}
               ref={gb => (this.guessBox = gb)}
             />

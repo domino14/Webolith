@@ -46,6 +46,10 @@ class GuessBox extends React.Component {
   }
 
   render() {
+    let guessClass = 'text-muted';
+    if (this.props.lastGuessCorrectness === false) {
+      guessClass = 'text-danger';
+    }
     return (
       <div className="row">
         <div className="col-xs-7 col-sm-6">
@@ -64,11 +68,10 @@ class GuessBox extends React.Component {
         </div>
         <div className="hidden-xs col-sm-6">
           <span className="text-muted">
-            Last: {this.props.lastGuess}
-          </span>
+            Last:</span> <span className={guessClass}>{this.props.lastGuess}</span>
         </div>
         <div className="col-xs-5 visible-xs-inline-block">
-          <span className="text-muted">
+          <span className={guessClass}>
             {this.props.lastGuess}
           </span>
         </div>
@@ -81,6 +84,7 @@ GuessBox.propTypes = {
   onGuessSubmit: React.PropTypes.func,
   onHotKey: React.PropTypes.func,
   lastGuess: React.PropTypes.string,
+  lastGuessCorrectness: React.PropTypes.bool,
 };
 
 export default GuessBox;
