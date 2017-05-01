@@ -40,9 +40,8 @@ const Sidebar = props => (
           <NumberInput
             colSize={10}
             label="Minutes"
-            value={String(props.desiredTime)}
-            onChange={e => props.setTime(
-              parseFloat(e.target.value, 10))}
+            value={props.desiredTime}
+            onChange={e => props.setTime(e.target.value)}
             disabled={props.disabledInputs}
           />
           <NumberInput
@@ -67,7 +66,7 @@ Sidebar.propTypes = {
   // XXX: Something is terribly wrong with eslint; these props are
   // clearly used.
   setLexicon: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-  desiredTime: React.PropTypes.number,
+  desiredTime: React.PropTypes.string,
   setTime: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
   questionsPerRound: React.PropTypes.number,
   setQuestionsPerRound: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
