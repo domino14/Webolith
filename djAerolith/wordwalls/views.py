@@ -35,7 +35,7 @@ from gargoyle import gargoyle
 
 from base.forms import LexiconForm
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
-from wordwalls.game import WordwallsGame
+from wordwalls.game import WordwallsGame, GiveUpException
 from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
@@ -169,8 +169,12 @@ def handle_table_post(request, tableid):
         return response({'g': not ret})
     elif action == "giveUp":
         wwg = WordwallsGame()
-        ret = wwg.give_up(request.user, tableid)
-        return response({'g': not ret})
+        try:
+            ret = wwg.give_up(request.user, tableid)
+            return response({'g': not ret})
+        except GiveUpException as e:
+            return response({'error': str(e)})
+
     elif action == "save":
         wwg = WordwallsGame()
         ret = wwg.save(request.user, tableid, request.POST['listname'])

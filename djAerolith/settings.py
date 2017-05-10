@@ -176,12 +176,9 @@ INSTALLED_APPS = (
     'whitleyCards',
     'gargoyle',
     'registration',
-<<<<<<< HEAD
     'social_django',
-=======
-    'social.apps.django_app.default',
     'channels',
->>>>>>> Already got guesses working. That was simple.
+    'channels_presence',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:

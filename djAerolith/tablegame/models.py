@@ -53,23 +53,3 @@ class GenericTableGameModel(models.Model):
 
     class Meta:
         abstract = True
-
-
-class Presence(models.Model):
-    """
-    A database-backed presence model. We should use this to keep
-    track of who is currently connected, in the lobby, or within tables.
-
-    This should be the source of truth for when we send presence messages
-    to everyone.
-
-    """
-    user = models.ForeignKey(User)
-    last_ping_time = models.DateTimeField(db_index=True, auto_now=True)
-    last_left = models.DateTimeField(null=True)
-    # The room is either 'lobby' or a table number for now. Maybe use UUIDs
-    # later.
-    room = models.CharField(max_length=32, db_index=True)
-
-    class Meta:
-        unique_together = ('user', 'room')

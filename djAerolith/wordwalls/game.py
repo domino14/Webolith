@@ -46,6 +46,10 @@ class GameInitException(Exception):
     pass
 
 
+class GiveUpException(Exception):
+    pass
+
+
 class WordwallsGame(object):
     def _initial_state(self):
         """ Return an initial state object, for a brand new game. """
@@ -109,7 +113,7 @@ class WordwallsGame(object):
                 if multiplayer:
                     raise GameInitException(
                         'Cannot do a daily challenge in multiplayer mode.')
-                wgm.playerType = player_type
+            wgm.playerType = player_type
             # TODO: if we make a multiplayer game back into a single player
             # game, this should just make a new table.
             # TODO: deal with all sorts of permission issues; only hosts
@@ -367,6 +371,7 @@ class WordwallsGame(object):
         state['answerHash'] = answer_hash
         state['originalAnswerHash'] = copy.deepcopy(answer_hash)
         state['numAnswersThisRound'] = len(answer_hash)
+        state['questions'] = questions
         wgm.currentGameState = json.dumps(state)
         wgm.save()
         word_list.save()
@@ -462,22 +467,39 @@ class WordwallsGame(object):
                     time.time(), state['quizGoing'])
         return False
 
+    def allow_give_up(self, wgm, user):
+        """
+        Determine whether to allow giving up. For a single player it
+        should always be true. For multiplayer:
+            - Give up if it's the host
+            - Otherwise we should let the other players know so and so
+            wants to give up.
+
+        """
+        state = json.loads(wgm.currentGameState)
+        if state['quizGoing'] is False:
+            return _('The quiz is''nt going, can''t give up.')
+        if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
+            return True
+        elif wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
+            if user == wgm.host:
+                return True
+            return _('Only the host {host} can give up').format(host=wgm.host)
+
     def give_up(self, user, tablenum):
         wgm = self.get_wgm(tablenum)
         if not wgm:
             return False
-        if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
+        allowed = self.allow_give_up(wgm, user)
+        if allowed is True:
             state = json.loads(wgm.currentGameState)
-            if state['quizGoing'] is False:
-                logger.info("the quiz isn't going. can't give up.")
-                return False
-
             state['timeRemaining'] = 0
             self.do_quiz_end_actions(state, tablenum, wgm)
             wgm.currentGameState = json.dumps(state)
             wgm.save()
             return True
-        return False
+        # Otherwise, return the reason we can't give up.
+        raise GiveUpException(allowed)
 
     def get_add_params(self, tablenum):
         wgm = self.get_wgm(tablenum, lock=False)
@@ -496,9 +518,11 @@ class WordwallsGame(object):
         logger.debug(
             u'table %s - User %s called give_up_and_save with params: %s',
             tablenum, user, listname)
-        if self.give_up(user, tablenum):
-            return self.save(user, tablenum, listname)
-        return {'success': False}
+        try:
+            if self.give_up(user, tablenum):
+                return self.save(user, tablenum, listname)
+        except GiveUpException:
+            return {'success': False}
 
     def validate_can_save(self, tablenum, listname, wgm, state):
         """
@@ -810,3 +834,21 @@ class WordwallsGame(object):
         if user != wgm.host:    # single player, return false!
             return False
         return True
+
+    def midgame_state(self, tablenum):
+        """
+        Get the game state while in the middle of the game. This
+        function may be later reused even when starting a game. This is
+        for socket broadcasting to all users in a multiplayer table.
+
+        """
+        wgm = self.get_wgm(tablenum, lock=False)
+        state = json.loads(wgm.currentGameState)
+
+        return {
+            'going': state['quizGoing'],
+            'time': state['timerSecs'] - (
+                time.time() - state['quizStartTime']),
+            'questions': state['questions'],
+            'gameType': state['gameType']
+        }

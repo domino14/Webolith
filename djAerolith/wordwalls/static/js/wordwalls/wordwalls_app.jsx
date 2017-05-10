@@ -25,7 +25,6 @@ import Spinner from './spinner';
 const game = new WordwallsGame();
 const MAX_MESSAGES = 200;
 const PRESENCE_TIMEOUT = 20000;  // 20 seconds.
-const GET_PRESENCES_INTERVAL = 90000; // 1.5 minutes
 
 class WordwallsApp extends React.Component {
   constructor(props) {
@@ -81,7 +80,6 @@ class WordwallsApp extends React.Component {
     this.handleGuessResponse = this.handleGuessResponse.bind(this);
     this.handleSocketMessages = this.handleSocketMessages.bind(this);
     this.sendPresence = this.sendPresence.bind(this);
-    this.getPresences = this.getPresences.bind(this);
     this.handleTableList = this.handleTableList.bind(this);
 
     this.websocketBridge = new WebSocketBridge();
@@ -123,7 +121,6 @@ class WordwallsApp extends React.Component {
     this.connectToSocket();
     // Start presence timer.
     window.setInterval(this.sendPresence, PRESENCE_TIMEOUT);
-    window.setInterval(this.getPresences, GET_PRESENCES_INTERVAL);
   }
 
   onGuessSubmit(guess) {
@@ -145,7 +142,7 @@ class WordwallsApp extends React.Component {
     }
 
     this.websocketBridge.send({
-      room: this.state.tablenum,
+      room: String(this.state.tablenum),
       type: 'guess',
       contents: {
         guess,
@@ -202,21 +199,6 @@ class WordwallsApp extends React.Component {
     });
   }
 
-  getPresences() {
-    this.websocketBridge.send({
-      type: 'getPresence',
-      room: 'lobby',
-      contents: {},
-    });
-    if (this.state.tablenum !== 0) {
-      this.websocketBridge.send({
-        type: 'getPresence',
-        room: this.state.tablenum,
-        contents: {},
-      });
-    }
-  }
-
   getTables() {
     this.websocketBridge.send({
       type: 'getTables',
@@ -245,18 +227,24 @@ class WordwallsApp extends React.Component {
   }
 
   handleSocketMessages(message) {
-    if (message.type === 'guessResponse') {
-      this.handleGuessResponse(message.contents);
-    } else if (message.type === 'chat') {
-      this.handleChat(message.contents);
-    } else if (message.type === 'usersIn') {
-      this.handleUsersIn(message.contents);
-    } else if (message.type === 'joined') {
-      this.handleUserJoined(message.contents);
-    } else if (message.type === 'left') {
-      this.handleUserLeft(message.contents);
-    } else if (message.type === 'tableList') {
-      this.handleTableList(message.contents);
+    switch (message.type) {
+      case 'guessResponse':
+        this.handleGuessResponse(message.contents);
+        break;
+      case 'chat':
+        this.handleChat(message.contents);
+        break;
+      case 'presence':
+        this.handleUsersIn(message.contents);
+        break;
+      case 'tableList':
+        this.handleTableList(message.contents);
+        break;
+      case 'gamePayload':
+        this.handleStartReceived(message.contents);
+        break;
+      default:
+        window.console.log('Received unrecognized message type:', message.type);
     }
   }
 
@@ -265,14 +253,6 @@ class WordwallsApp extends React.Component {
       this.setState({ lobbyUsers: {} });
     }
     this.addUsers(contents.users, contents.room);
-  }
-
-  handleUserJoined(contents) {
-    this.addUsers([contents.user], contents.room);
-  }
-
-  handleUserLeft(contents) {
-    this.removeUser(contents.user, contents.room);
   }
 
   handleAutoSaveToggle() {
@@ -416,7 +396,7 @@ class WordwallsApp extends React.Component {
     if (this.state.tablenum !== 0) {
       this.websocketBridge.send({
         type: 'presence',
-        room: this.state.tablenum,
+        room: String(this.state.tablenum),
         contents: {},
       });
     }
@@ -639,7 +619,10 @@ class WordwallsApp extends React.Component {
     })
     .done((data) => {
       if (_.has(data, 'g') && !data.g) {
-        this.processGameEnded();
+        this.processGameEnded(data);
+      }
+      if (_.has(data, 'error')) {
+        this.addMessage(data.error);
       }
     });
   }
@@ -685,7 +668,7 @@ class WordwallsApp extends React.Component {
 
   sendSocketJoin(tablenum) {
     this.websocketBridge.send({
-      room: tablenum,
+      room: String(tablenum),
       type: 'join',
       contents: {},
     });

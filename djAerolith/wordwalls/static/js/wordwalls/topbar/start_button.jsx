@@ -1,8 +1,7 @@
 import React from 'react';
 
-const BUTTON_STATE_START = 1;
-const BUTTON_STATE_GIVEUP = 2;
-const BUTTON_STATE_YOUSURE = 3;
+const BUTTON_STATE_IDLE = 1;
+const BUTTON_STATE_TIMING_OUT = 3;
 
 const YOU_SURE_TIMEOUT = 3000;
 
@@ -11,41 +10,32 @@ class StartButton extends React.Component {
     super();
     this.handleButtonClick = this.handleButtonClick.bind(this);
     this.state = {
-      buttonState: BUTTON_STATE_START,
+      buttonState: BUTTON_STATE_IDLE,
     };
   }
 
   handleButtonClick() {
     if (this.props.gameGoing) {
-      if (this.state.buttonState === BUTTON_STATE_GIVEUP) {
+      if (this.state.buttonState === BUTTON_STATE_IDLE) {
         this.setState({
-          buttonState: BUTTON_STATE_YOUSURE,
+          buttonState: BUTTON_STATE_TIMING_OUT,
         });
 
         window.setTimeout(() => {
-          if (this.props.gameGoing) {
-            this.setState({
-              buttonState: BUTTON_STATE_GIVEUP,
-            });
-          } else {
-            this.setState({
-              buttonState: BUTTON_STATE_START,
-            });
-          }
+          this.setState({
+            buttonState: BUTTON_STATE_IDLE,
+          });
         }, YOU_SURE_TIMEOUT);
-      } else if (this.state.buttonState === BUTTON_STATE_YOUSURE) {
+      } else if (this.state.buttonState === BUTTON_STATE_TIMING_OUT) {
         this.props.handleGiveup();
         window.clearTimeout(this.state.changeTimeout);
         this.setState({
-          buttonState: BUTTON_STATE_START,
+          buttonState: BUTTON_STATE_IDLE,
           changeTimeout: null,
         });
       }
     } else {
       this.props.handleStart();
-      this.setState({
-        buttonState: BUTTON_STATE_GIVEUP,
-      });
     }
   }
 
@@ -57,10 +47,10 @@ class StartButton extends React.Component {
     if (!this.props.gameGoing) {
       buttonText = 'Start';
       buttonClass = 'btn btn-primary btn-sm';
-    } else if (this.state.buttonState === BUTTON_STATE_GIVEUP) {
+    } else if (this.state.buttonState === BUTTON_STATE_IDLE) {
       buttonText = 'Give Up';
       buttonClass = 'btn btn-danger btn-sm';
-    } else if (this.state.buttonState === BUTTON_STATE_YOUSURE) {
+    } else if (this.state.buttonState === BUTTON_STATE_TIMING_OUT) {
       buttonText = 'Are you sure?';
       buttonClass = 'btn btn-danger btn-sm';
     }

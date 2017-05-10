@@ -19,6 +19,7 @@ Fabric
 PyYAML
 channels
 asgi_redis
+django-channels-presence
 
 # Not strictly a prod requirement. However, the main issue here
 # is that we can't run tests in the docker container otherwise.

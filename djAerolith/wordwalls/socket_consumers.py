@@ -1,43 +1,20 @@
 import logging
 import json
-from datetime import timedelta
 
-from channels import Channel, Group
-from channels.sessions import channel_session
+from channels import Group
 from channels.auth import channel_session_user, channel_session_user_from_http
+from channels_presence.models import Room, Presence
+from channels_presence.signals import presence_changed
 from django.db import transaction
-from django.db.models import Q, F
-from django.utils import timezone
-from django.core.cache import cache
+from django.dispatch import receiver
 
-from tablegame.models import Presence
 from wordwalls.game import WordwallsGame
 from wordwalls.models import WordwallsGameModel
 logger = logging.getLogger(__name__)
 
 
-LOBBY_TABLE = 0
+LOBBY_CHANNEL_NAME = 'lobby'
 ACTIVE_SECONDS = 60
-
-
-def joined_msg(user, room):
-    return {
-        'type': 'joined',
-        'contents': {
-            'user': user.username,
-            'room': room,
-        }
-    }
-
-
-def left_msg(user, room):
-    return {
-        'type': 'left',
-        'contents': {
-            'user': user.username,
-            'room': room,
-        }
-    }
 
 
 def host_switched_msg(user, room):
@@ -50,25 +27,12 @@ def host_switched_msg(user, room):
     }
 
 
-def presences_in(room):
-    now = timezone.now()
-    return Presence.objects.filter(
-        room=room,
-        last_ping_time__gt=(now - timedelta(seconds=ACTIVE_SECONDS))).filter(
-        Q(last_left__isnull=True) | Q(last_left__lt=F('last_ping_time')))
-
-
-def users_in(room, current_user):
-    # Find the users in the room.
-    # XXX: This still won't catch traumatic disconnections so presence
-    # info could be a little off for a little bit of time.
-
-    presences = presences_in(room)
+def users_in(room):
     return {
-        'type': 'usersIn',
+        'type': 'presence',
         'contents': {
-            'users': [presence.user.username for presence in presences],
-            'room': room,
+            'room': room.channel_name,
+            'users': [user.username for user in room.get_users()],
         }
     }
 
@@ -78,7 +42,7 @@ def table_info(table):
     table_obj = {
         'lexicon': table.lexicon.lexiconName,
         'admin': table.host.username,
-        'users': [user.username for user in table.inTable],
+        'users': [user.username for user in table.inTable.all()],
         'wordList': (
             table.word_list.name if not table.word_list.is_temporary
             else state['temp_list_name']),
@@ -91,14 +55,77 @@ def table_info(table):
 
 def active_tables():
     """ Get all active tables with at least one user in them. """
-    tables = WordwallsGameModel.objects.filter(
-        playerType=WordwallsGameModel.MULTIPLAYER_GAME
-    ).exclude(inTable=None)
+    rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
+    tables = []
+    for room in rooms:
+        try:
+            tables.append(WordwallsGameModel.objects.get(
+                playerType=WordwallsGameModel.MULTIPLAYER_GAME,
+                pk=room.channel_name))
+        except WordwallsGameModel.DoesNotExist:
+            pass
 
     return {
         'type': 'tableList',
         'contents': [table_info(table) for table in tables]
     }
+
+
+@receiver(presence_changed)
+def broadcast_presence(sender, room, **kwargs):
+    # Broadcast the new list of present users to the room.
+    logger.debug('Presence changed triggered')
+    presence_payload = {
+        'text': json.dumps(users_in(room))
+    }
+    # Instead of sending it to the group, send it to the lobby. Everyone
+    # is always in the lobby, so the front end logic will take care of
+    # showing presences.
+    Group(LOBBY_CHANNEL_NAME).send(presence_payload)
+
+
+@receiver(presence_changed)
+def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
+    """
+    When a presence changes, besides broadcasting it to the lobby, we
+    also need to update any table instances. It sucks to keep presence
+    in both places, in a way, but we should encapsulate our own access
+    (in wordwalls app) and not rely on the presence app to figure out
+    game-related logic... right?
+
+    """
+    logger.debug('Update in room called, room=%s', room)
+    if room.channel_name == LOBBY_CHANNEL_NAME:
+        return   # broadcast presence above is enough
+    # Otherwise, get the relevant table.
+    try:
+        table = WordwallsGameModel.objects.get(pk=room.channel_name)
+    except WordwallsGameModel.DoesNotExist:
+        logger.error('Table %s does not exist', room)
+        return
+    if added:
+        logger.debug('Adding user to inTable: %s', added)
+        table.inTable.add(added.user)
+    if removed:
+        logger.debug('Removing user from inTable: %s', removed)
+        table.inTable.remove(removed.user)
+    if bulk_change:
+        # Need to get set of users in table, and do some sort of intersection
+        # with the presences.
+        # From the codebase, it appears this only gets sent for a bulk
+        # remove, but we'll handle adds just in case. This only would also
+        # happen in a timed prune task, so there's not that much risk for
+        # race conditions.
+        intable = set([user for user in table.inTable.all()])
+        presences = set([user for user in room.get_users()])
+        to_add = presences - intable
+        to_remove = intable - presences
+        logger.debug('Bulk change - to_add: %s, to_remove: %s', to_add,
+                     to_remove)
+        for user in to_add:
+            table.inTable.add(user)
+        for user in to_remove:
+            table.inTable.remove(user)
 
 
 @channel_session_user_from_http
@@ -107,33 +134,21 @@ def ws_connect(message):
     # Accept connection
     message.reply_channel.send({'accept': True})
     # We always allow connections to the 'lobby'
-    message.channel_session['in_lobby'] = True
-    Group('lobby').add(message.reply_channel)
-    Group('lobby').send({
-        'text': json.dumps(joined_msg(message.user, 'lobby')),
-    })
-    update_presence(message.user, 'lobby')
+    Room.objects.add(LOBBY_CHANNEL_NAME, message.reply_channel.name,
+                     message.user)
     message.reply_channel.send({
-        'text': json.dumps(users_in('lobby', message.user))
+        'text': json.dumps(users_in(Room.objects.get(
+            channel_name=LOBBY_CHANNEL_NAME)))
     })
 
 
 @channel_session_user
 def ws_disconnect(message):
-    now = timezone.now()
     if 'room' in message.channel_session:
         room = message.channel_session['room']
-        Group('table-{0}'.format(room)).discard(message.reply_channel)
-        Group('table-{0}'.format(room)).send({
-            'text': json.dumps(left_msg(message.user, room))
-        })
+        Room.objects.remove(room, message.reply_channel.name)
         logger.debug('User %s left table %s', message.user.username, room)
-        update_presence(message.user, str(room), last_left=now)
-    Group('lobby').discard(message.reply_channel)
-    Group('lobby').send({
-        'text': json.dumps(left_msg(message.user, 'lobby'))
-    })
-    update_presence(message.user, 'lobby', last_left=now)
+    Room.objects.remove(LOBBY_CHANNEL_NAME, message.reply_channel.name)
 
 
 @channel_session_user
@@ -156,9 +171,6 @@ def ws_message(message):
     elif msg_contents['type'] == 'presence':
         set_presence(message, msg_contents)
 
-    elif msg_contents['type'] == 'getPresence':
-        send_presence(message, msg_contents)
-
     elif msg_contents['type'] == 'getTables':
         send_tables(message, msg_contents)
 
@@ -176,17 +188,23 @@ def table_join(message, contents):
         }
         message.reply_channel.send({'text': json.dumps(msg)})
         return
-    Group('table-{0}'.format(tableid)).add(message.reply_channel)
     logger.debug('User %s joined room %s', message.user.username, tableid)
-    update_presence(message.user, str(tableid))
+    Room.objects.add(tableid, message.reply_channel.name, message.user)
     message.channel_session['room'] = tableid
-    for group_name in ['table-{0}'.format(tableid), 'lobby']:
-        Group(group_name).send({
-            'text': json.dumps(joined_msg(message.user, tableid)),
-        })
+
     message.reply_channel.send({
-        'text': json.dumps(users_in('{0}'.format(tableid),
-                                    message.user))
+        'text': json.dumps(users_in(Room.objects.get(channel_name=tableid)))
+    })
+    # Also, send the user the current time left / game state if the game
+    # is already going.
+    state = wwg.midgame_state(tableid)
+    if not state['going']:
+        return
+    message.reply_channel.send({
+        'text': json.dumps({
+            'type': 'gamePayload',
+            'contents': state
+        })
     })
 
 
@@ -223,34 +241,6 @@ def table_guess(message, contents):
     message.reply_channel.send({'text': json.dumps(msg)})
 
 
-def send_presence(message, msg_contents):
-    """
-    Send presence info to the requester. This is an important function
-    whose results should be cached. It may be called many times at once,
-    and ideally, it would be a timed function but Channels doesn't really
-    support that, and using Celery or even cron seems a bit overkill.
-
-    We should cache the results, and also update the inTable of all
-    relevant tables.
-
-    """
-
-    room = msg_contents['room']
-    room_presences = cache.get('presence:{0}'.format(room))
-    if room_presences:
-        message.reply_channel.send({
-            'text': room_presences
-        })
-        return
-
-    # There was a cache miss.
-
-
-        # message.reply_channel.send({
-        #     'text': json.dumps(users_in(room, message.user))
-        # })
-
-
 def send_tables(message, msg_contents):
     """ Send info about current multiplayer tables. """
     message.reply_channel.send({
@@ -268,8 +258,8 @@ def chat(message, contents):
             'room': room
         }
     }
-    if room == 'lobby':
-        Group('lobby').send({
+    if room == LOBBY_CHANNEL_NAME:
+        Group(LOBBY_CHANNEL_NAME).send({
             'text': json.dumps(msg)
         })
     else:
@@ -278,46 +268,44 @@ def chat(message, contents):
 
 def set_presence(message, contents):
     """ This is a periodic ping from the client. Set the last ping time. """
-    room = contents['room']
-    user = message.user
-    update_presence(user, room)
+    Presence.objects.touch(message.reply_channel.name)
 
 
-def update_presence(user, room, last_left=None):
-    """
-    Update the presence, and if a table is involved, also update the
-    inTable info.
+# def update_presence(user, room, last_left=None):
+#     """
+#     Update the presence, and if a table is involved, also update the
+#     inTable info.
 
-    """
+#     """
 
-    Presence.objects.update_or_create(user=user, room=room,
-                                      defaults={'last_left': last_left})
-    if room == 'lobby':
-        return
-    try:
-        wgm = WordwallsGameModel.objects.get(pk=room)
-    except WordwallsGameModel.DoesNotExist:
-        logger.warning('update_presence for room %s which does not exist',
-                       room)
+#     Presence.objects.update_or_create(user=user, room=room,
+#                                       defaults={'last_left': last_left})
+#     if room == 'lobby':
+#         return
+#     try:
+#         wgm = WordwallsGameModel.objects.get(pk=room)
+#     except WordwallsGameModel.DoesNotExist:
+#         logger.warning('update_presence for room %s which does not exist',
+#                        room)
 
-    if last_left:
-        send_host_switch = False
-        # new_host = None
-        # user just left, so exclude him.
-        presences = presences_in(room).exclude(user=user)
-        with transaction.atomic():
-            wgm.inTable.remove(user)
-            if user == wgm.host and presences.count() > 0:
-                new_host = presences[0].user
-                wgm.host = new_host
-                wgm.save()
-                # XXX: signalhandler should take care of this, but test.
-                send_host_switch = True
+#     if last_left:
+#         send_host_switch = False
+#         # new_host = None
+#         # user just left, so exclude him.
+#         presences = presences_in(room).exclude(user=user)
+#         with transaction.atomic():
+#             wgm.inTable.remove(user)
+#             if user == wgm.host and presences.count() > 0:
+#                 new_host = presences[0].user
+#                 wgm.host = new_host
+#                 wgm.save()
+#                 # XXX: signalhandler should take care of this, but test.
+#                 send_host_switch = True
 
-        if send_host_switch:
-            from wordwalls.signal_handlers import game_important_save
-            game_important_save.send(sender=None, instance=wgm)
+#         if send_host_switch:
+#             from wordwalls.signal_handlers import game_important_save
+#             game_important_save.send(sender=None, instance=wgm)
 
-    else:
-        with transaction.atomic():
-            wgm.inTable.add(user)
+#     else:
+#         with transaction.atomic():
+#             wgm.inTable.add(user)
