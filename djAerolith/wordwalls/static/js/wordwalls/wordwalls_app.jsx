@@ -228,6 +228,9 @@ class WordwallsApp extends React.Component {
 
   handleSocketMessages(message) {
     switch (message.type) {
+      case 'server':
+        this.addMessage(message.contents.error);
+        break;
       case 'guessResponse':
         this.handleGuessResponse(message.contents);
         break;
@@ -242,6 +245,12 @@ class WordwallsApp extends React.Component {
         break;
       case 'gamePayload':
         this.handleStartReceived(message.contents);
+        break;
+      case 'gameGoingPayload':
+        this.handleGameGoingPayload(message.contents);
+        break;
+      case 'gameOver':
+        this.processGameEnded();
         break;
       default:
         window.console.log('Received unrecognized message type:', message.type);
@@ -327,24 +336,18 @@ class WordwallsApp extends React.Component {
   }
 
   handleStart() {
-    $.ajax({
-      url: this.tableUrl(),
-      method: 'POST',
-      dataType: 'json',
-      data: {
-        action: 'start',
-      },
-    })
-    .done(this.handleStartReceived.bind(this))
-    .fail((jqXHR) => {
-      this.addMessage(jqXHR.responseJSON.error, 'error');
-      // XXX: This is a hack; use proper error codes.
-      if (jqXHR.responseJSON.error.indexOf('currently running') !== -1) {
-        this.setState({
-          gameGoing: true,
-        });
-      }
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'start',
+      contents: {},
     });
+  }
+
+  handleGameGoingPayload(data) {
+    this.handleStartReceived(data);
+    if (_.has(data, 'time')) {
+      this.addMessage(`This round will be over in ${Math.round(data.time)} seconds`);
+    }
   }
 
   handleStartReceived(data) {
@@ -407,22 +410,10 @@ class WordwallsApp extends React.Component {
    * back-end to possibly end the game.
    */
   timerRanOut() {
-    // Only send this if the game is going.
-    if (!this.state.gameGoing) {
-      return;
-    }
-    $.ajax({
-      url: this.tableUrl(),
-      method: 'POST',
-      data: {
-        action: 'gameEnded',
-      },
-      dataType: 'json',
-    })
-    .done((data) => {
-      if (_.has(data, 'g') && !data.g) {
-        this.processGameEnded();
-      }
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'timerEnded',
+      contents: {},
     });
   }
 
@@ -470,9 +461,6 @@ class WordwallsApp extends React.Component {
           lastGuessCorrectness: true,
         });
       }
-    }
-    if (_.has(data, 'g') && !data.g) {
-      this.processGameEnded();
     }
   }
 
@@ -609,21 +597,10 @@ class WordwallsApp extends React.Component {
   }
 
   handleGiveup() {
-    $.ajax({
-      url: this.tableUrl(),
-      method: 'POST',
-      dataType: 'json',
-      data: {
-        action: 'giveUp',
-      },
-    })
-    .done((data) => {
-      if (_.has(data, 'g') && !data.g) {
-        this.processGameEnded(data);
-      }
-      if (_.has(data, 'error')) {
-        this.addMessage(data.error);
-      }
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'giveup',
+      contents: {},
     });
   }
 

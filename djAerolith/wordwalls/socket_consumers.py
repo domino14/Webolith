@@ -174,6 +174,15 @@ def ws_message(message):
     elif msg_contents['type'] == 'getTables':
         send_tables(message, msg_contents)
 
+    elif msg_contents['type'] == 'start':
+        table_start(message, msg_contents)
+
+    elif msg_contents['type'] == 'timerEnded':
+        table_timer_ended(message, msg_contents)
+
+    elif msg_contents['type'] == 'giveup':
+        table_giveup(message, msg_contents)
+
 
 def table_join(message, contents):
     wwg = WordwallsGame()
@@ -202,7 +211,7 @@ def table_join(message, contents):
         return
     message.reply_channel.send({
         'text': json.dumps({
-            'type': 'gamePayload',
+            'type': 'gameGoingPayload',
             'contents': state
         })
     })
@@ -241,10 +250,86 @@ def table_guess(message, contents):
     message.reply_channel.send({'text': json.dumps(msg)})
 
 
+def table_start(message, contents):
+    room = message.channel_session['room']
+    if room != contents['room']:
+        logger.warning('User sent message to room %s, but in room %s',
+                       contents['room'], room)
+        return
+    wwg = WordwallsGame()
+    with transaction.atomic():
+        quiz_params = wwg.start_quiz(room, message.user)
+    if 'error' in quiz_params:
+        msg = {
+            'type': 'server',
+            'contents': {
+                'error': quiz_params['error'],
+            }
+        }
+        Group(room).send({'text': json.dumps(msg)})
+        return
+    # Send the payload to everyone in the room.
+    Group(room).send({
+        'text': json.dumps({
+            'type': 'gamePayload',
+            'contents': quiz_params
+        })
+    })
+
+
+def table_giveup(message, contents):
+    room = message.channel_session['room']
+    if room != contents['room']:
+        logger.warning('User sent message to room %s, but in room %s',
+                       contents['room'], room)
+        return
+    wwg = WordwallsGame()
+    with transaction.atomic():
+        success = wwg.give_up(message.user, room)
+
+    if success is not True:
+        Group(room).send({
+            'text': json.dumps({
+                'type': 'server',
+                'contents': {
+                    'error': success
+                }
+            })
+        })
+        return
+    # No need to send the game over message, the send_game_ended function
+    # should be triggered below.
+
+
+def table_timer_ended(message, contents):
+    room = message.channel_session['room']
+    if room != contents['room']:
+        logger.warning('User sent message to room %s, but in room %s',
+                       contents['room'], room)
+        return
+    wwg = WordwallsGame()
+    with transaction.atomic():
+        wwg.check_game_ended(room)
+    # If the game ended this will get broadcast to everyone.
+
+
 def send_tables(message, msg_contents):
     """ Send info about current multiplayer tables. """
     message.reply_channel.send({
         'text': json.dumps(active_tables())
+    })
+
+
+def send_game_ended(tablenum):
+    """ This is called by the main game class when the game is ended. """
+    msg = {
+        'type': 'gameOver',
+        'contents': {
+            'room': tablenum
+        }
+    }
+    Group(tablenum).send({
+        'text': json.dumps(msg)
     })
 
 
@@ -269,43 +354,3 @@ def chat(message, contents):
 def set_presence(message, contents):
     """ This is a periodic ping from the client. Set the last ping time. """
     Presence.objects.touch(message.reply_channel.name)
-
-
-# def update_presence(user, room, last_left=None):
-#     """
-#     Update the presence, and if a table is involved, also update the
-#     inTable info.
-
-#     """
-
-#     Presence.objects.update_or_create(user=user, room=room,
-#                                       defaults={'last_left': last_left})
-#     if room == 'lobby':
-#         return
-#     try:
-#         wgm = WordwallsGameModel.objects.get(pk=room)
-#     except WordwallsGameModel.DoesNotExist:
-#         logger.warning('update_presence for room %s which does not exist',
-#                        room)
-
-#     if last_left:
-#         send_host_switch = False
-#         # new_host = None
-#         # user just left, so exclude him.
-#         presences = presences_in(room).exclude(user=user)
-#         with transaction.atomic():
-#             wgm.inTable.remove(user)
-#             if user == wgm.host and presences.count() > 0:
-#                 new_host = presences[0].user
-#                 wgm.host = new_host
-#                 wgm.save()
-#                 # XXX: signalhandler should take care of this, but test.
-#                 send_host_switch = True
-
-#         if send_host_switch:
-#             from wordwalls.signal_handlers import game_important_save
-#             game_important_save.send(sender=None, instance=wgm)
-
-#     else:
-#         with transaction.atomic():
-#             wgm.inTable.add(user)

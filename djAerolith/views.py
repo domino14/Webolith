@@ -20,7 +20,6 @@ import logging
 import json
 
 from django.shortcuts import render
-from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings

@@ -371,7 +371,6 @@ class WordwallsGame(object):
         state['answerHash'] = answer_hash
         state['originalAnswerHash'] = copy.deepcopy(answer_hash)
         state['numAnswersThisRound'] = len(answer_hash)
-        state['questions'] = questions
         wgm.currentGameState = json.dumps(state)
         wgm.save()
         word_list.save()
@@ -448,6 +447,9 @@ class WordwallsGame(object):
         # Called when javascript tells the server that time ran out on
         # its end. TODO think about what happens (on the front-end)
         # if javascript tells the server too early.
+        # XXX: This function could be called multiple times from different
+        # clients. The lock in get_wgm should do the right thing here,
+        # but we should figure out how to test this.
         wgm = self.get_wgm(tablenum)
         if not wgm:
             return False
@@ -484,7 +486,8 @@ class WordwallsGame(object):
         elif wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
             if user == wgm.host:
                 return True
-            return _('Only the host {host} can give up').format(host=wgm.host)
+            return _('{user} wants to give up, but only the host {host} '
+                     'can do that.').format(user=user, host=wgm.host)
 
     def give_up(self, user, tablenum):
         wgm = self.get_wgm(tablenum)
@@ -499,7 +502,7 @@ class WordwallsGame(object):
             wgm.save()
             return True
         # Otherwise, return the reason we can't give up.
-        raise GiveUpException(allowed)
+        return allowed
 
     def get_add_params(self, tablenum):
         wgm = self.get_wgm(tablenum, lock=False)
@@ -654,6 +657,8 @@ class WordwallsGame(object):
             word_list.save()
         except Exception:
             logger.exception('Error saving.')
+        from wordwalls.socket_consumers import send_game_ended
+        send_game_ended(tablenum)
 
     def create_challenge_leaderboard_entry(self, state, tablenum):
         """
@@ -849,6 +854,5 @@ class WordwallsGame(object):
             'going': state['quizGoing'],
             'time': state['timerSecs'] - (
                 time.time() - state['quizStartTime']),
-            'questions': state['questions'],
             'gameType': state['gameType']
         }

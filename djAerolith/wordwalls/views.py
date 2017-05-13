@@ -147,6 +147,8 @@ def handle_table_post(request, tableid):
             'error': _('Table does not exist, please load a new word list.')},
             status=StatusCode.BAD_REQUEST)
     if action == "start":
+        # XXX: Deprecated, this is handled by socket, remove after deploy.
+        logger.debug('old-way start')
         return start_game(request, tableid)
     elif action == "guess":
         # XXX: Deprecated, this is handled by socket in socket_consumers.py now
