@@ -16,27 +16,28 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.conf.urls import *
+from django.conf.urls import url, include
 from django.views.i18n import javascript_catalog
 
+from wordwalls.views import table, mark_missed, ajax_upload
+from wordwalls.stats import leaderboard, get_medals, main, get_stats
 
 js_info_dict = {
     'packages': ('wordwalls',),
 }
 
-urlpatterns = patterns('',
-    url(r'^$', 'wordwalls.views.table'),
-    url(r'^table/(?P<tableid>\d+)/$', 'wordwalls.views.table',
-        name='wordwalls_table'),
-    url(r'^table/(?P<tableid>\d+)/missed/$', 'wordwalls.views.mark_missed'),
-    url(r'^ajax_upload/$', 'wordwalls.views.ajax_upload', name='ajax_upload'),
+urlpatterns = [
+    url(r'^$', table),
+    url(r'^table/(?P<tableid>\d+)/$', table, name='wordwalls_table'),
+    url(r'^table/(?P<tableid>\d+)/missed/$', mark_missed),
+    url(r'^ajax_upload/$', ajax_upload, name='ajax_upload'),
     url(r'^api/', include('wordwalls.api_urls')),
-   # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
-   # name='get_new_signature')
+    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
+    # name='get_new_signature')
     url(r'^jsi18n/$', javascript_catalog, js_info_dict),
-    url(r'^leaderboard/$', 'wordwalls.stats.leaderboard'),
-    url(r'^leaderboard/getboard/$', 'wordwalls.stats.get_medals'),
-    url(r'^stats/$', 'wordwalls.stats.main'),
+    url(r'^leaderboard/$', leaderboard),
+    url(r'^leaderboard/getboard/$', get_medals),
+    url(r'^stats/$', main),
     url(r'^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$',
-        'wordwalls.stats.get_stats'),
-)
+        get_stats),
+]

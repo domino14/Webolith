@@ -59,7 +59,7 @@ class TableCreator extends React.Component {
 
       currentLexicon: this.props.defaultLexicon,
 
-      desiredTime: 5,   // minutes
+      desiredTime: '5',   // minutes
       questionsPerRound: 50,
       // Challenge-related
       currentDate: moment(),
@@ -126,7 +126,7 @@ class TableCreator extends React.Component {
     const challenge = this.props.challengeInfo.find(c => c.id === challID);
     this.setState({
       currentChallenge: challID,
-      desiredTime: challenge.seconds / 60,
+      desiredTime: String(challenge.seconds / 60),
       questionsPerRound: challenge.numQuestions,
     });
   }
@@ -228,7 +228,7 @@ class TableCreator extends React.Component {
         probMin: parseInt(this.state.probMin, 10),
         probMax: parseInt(this.state.probMax, 10),
         wordLength: this.state.wordLength,
-        desiredTime: this.state.desiredTime,
+        desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
       }),
@@ -279,7 +279,7 @@ class TableCreator extends React.Component {
       url: '/wordwalls/api/load_aerolith_list/',
       data: JSON.stringify({
         lexicon: this.state.currentLexicon,
-        desiredTime: this.state.desiredTime,
+        desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         selectedList: this.state.selectedList,
         tablenum: this.props.tablenum,
@@ -341,7 +341,7 @@ class TableCreator extends React.Component {
       url: '/wordwalls/api/load_saved_list/',
       data: JSON.stringify({
         lexicon: this.state.currentLexicon,
-        desiredTime: this.state.desiredTime,
+        desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         selectedList: listID,
         tablenum: this.props.tablenum,
@@ -565,7 +565,7 @@ class TableCreator extends React.Component {
                   if (option !== SEARCH_TYPE_CHALLENGE) {
                     // Reset the time back to the defaults.
                     this.setState({
-                      desiredTime: 5,
+                      desiredTime: '5',
                       questionsPerRound: 50,
                     });
                   }

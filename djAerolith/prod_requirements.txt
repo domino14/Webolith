@@ -1,12 +1,12 @@
 # These are the requirements for the prod Docker file.
 
-django>=1.8.0,<1.9.0
+django>=1.11
 six >= 1.7
 Markdown
 django-registration-redux
-gargoyle
+gargoyle-yplan
 gunicorn
-requests==2.9.1
+requests
 recaptcha-client
 wsgiref
 redis
@@ -17,4 +17,7 @@ python-openid
 psycopg2
 Fabric
 PyYAML
-pytz
+
+# Not strictly a prod requirement. However, the main issue here
+# is that we can't run tests in the docker container otherwise.
+mock

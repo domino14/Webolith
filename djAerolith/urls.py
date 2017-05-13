@@ -17,18 +17,21 @@
 # To contact the author, please email delsolar at gmail dot com
 
 import gargoyle
-
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf.urls import *
+from django.conf.urls import url, include
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
-from registration_app.forms import get_registration_form
-from registration.backends.simple.views import RegistrationView
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
+from registration_app.forms import get_registration_form
+from registration.backends.simple.views import RegistrationView
 
+from views import (health, login_error, new_social_user, js_error, test_500,
+                   healthz, socket_token)
+from accounts.views import social, username_change
+from base.views import listmanager
 gargoyle.autodiscover()
 
 
@@ -37,21 +40,21 @@ class AerolithRegistrationView(RegistrationView):
         return "/"
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Example:
     # (r'^djAerolith/', include('djAerolith.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^$', 'views.homepage'),
-    (r'^old/', 'views.oldhomepage'),
-    (r'^health/', 'views.health'),
-    (r'^about/', 'views.about'),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^accounts/social/$', 'accounts.views.social'),
-    (r'^accounts/profile/', include('accounts.urls')),
-    (r'^accounts/register/$', AerolithRegistrationView.as_view(
+    url(r'^$', TemplateView.as_view(template_name='base.html')),
+    url(r'^old/', TemplateView.as_view(template_name='oldsite/index.html')),
+    url(r'^health/', health),
+    url(r'^about/', TemplateView.as_view(template_name='about.html')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/social/$', social),
+    url(r'^accounts/profile/', include('accounts.urls')),
+    url(r'^accounts/register/$', AerolithRegistrationView.as_view(
         form_class=get_registration_form(settings.DEBUG))),
 
     #override the default registration urls
@@ -75,27 +78,27 @@ urlpatterns = patterns('',
         auth_views.password_reset_confirm,
         name='password_reset_confirm'),
 
-    url(r'^accounts/username/change/$',
-        'accounts.views.username_change',
+    url(r'^accounts/username/change/$', username_change,
         name='accounts_edit_username'),
 
     url(r'^accounts/username/change/done/$',
         TemplateView.as_view(template_name='accounts/edit_username_done.html')
         ),
     url('', include('social.apps.django_app.urls', namespace='social')),
-    url(r'^login_error/', 'views.login_error'),
-    url(r'^new_users/', 'views.new_social_user'),
-    (r'^accounts/', include('registration.backends.simple.urls')),
-    (r'^listmanager/', 'base.views.listmanager'),
-    (r'^supporter/', 'views.supporter'),
-    (r'^wordwalls/', include('wordwalls.urls')),
-    (r'^flashcards/', include('whitleyCards.urls')),
-    (r'^cards/', include('flashcards.urls')),
-    (r'^socket_token/', 'views.socket_token'),
-    (r'^base/', include('base.urls')),
-    (r'^js_errors/', 'views.js_error'),
-    (r'^500tester/', 'views.test_500'),
-    (r'^healthz/', 'views.healthz')
-)
+    url(r'^login_error/', login_error),
+    url(r'^new_users/', new_social_user),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
+    url(r'^listmanager/', listmanager),
+    url(r'^supporter/', TemplateView.as_view(template_name='support.html')),
+    url(r'^wordwalls/', include('wordwalls.urls')),
+    url(r'^flashcards/', include('whitleyCards.urls')),
+    url(r'^cards/', include('flashcards.urls')),
+    url(r'^socket_token/', socket_token),
+    url(r'^base/', include('base.urls')),
+    url(r'^js_errors/', js_error),
+    url(r'^500tester/', test_500),
+    url(r'^healthz/', healthz)
+]
 
-urlpatterns += staticfiles_urlpatterns()    # for static serving, only works if DEBUG is true
+urlpatterns += staticfiles_urlpatterns()    # for static serving, only works
+                                            # if DEBUG is true

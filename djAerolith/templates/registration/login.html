@@ -20,7 +20,7 @@
     {% endif %}
     <div class="old-login-form">
     <p></p>
-    <form class="form-horizontal" role="form" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+    <form class="form-horizontal" role="form" method="post" action="/accounts/login/">
      {% csrf_token %}
 
       <div class="form-group">

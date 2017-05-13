@@ -3,7 +3,7 @@ import logging
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from lib.word_db_helper import WordDB
 from lib.response import response
