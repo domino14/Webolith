@@ -158,8 +158,8 @@ ListSaveBar.defaultProps = {
 ListSaveBar.propTypes = {
   listName: React.PropTypes.string,
   autoSave: React.PropTypes.bool,
-  onListNameChange: React.PropTypes.func,
-  onAutoSaveToggle: React.PropTypes.func,
+  onListNameChange: React.PropTypes.func.isRequired,
+  onAutoSaveToggle: React.PropTypes.func.isRequired,
 };
 
 export default ListSaveBar;

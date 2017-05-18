@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Styling from './style';
-import WordwallsApp from './wordwalls_app';
+import WordwallsAppContainer from './wordwalls_app_container';
 
 class App {
   /**
@@ -26,7 +26,7 @@ class App {
 
     // Render.
     ReactDOM.render(
-      <WordwallsApp
+      <WordwallsAppContainer
         username={options.username}
         listName={listName}
         autoSave={autoSave}
