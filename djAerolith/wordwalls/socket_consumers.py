@@ -67,7 +67,9 @@ def active_tables():
 
     return {
         'type': 'tableList',
-        'contents': [table_info(table) for table in tables]
+        'contents': {
+            'tables': [table_info(table) for table in tables]
+        }
     }
 
 
@@ -303,7 +305,10 @@ def table_giveup(message, contents):
 
 
 def table_timer_ended(message, contents):
-    room = message.channel_session['room']
+    try:
+        room = message.channel_session['room']
+    except KeyError:
+        return
     if room != contents['room']:
         logger.warning('User sent message to room %s, but in room %s',
                        contents['room'], room)
@@ -349,7 +354,12 @@ def chat(message, contents):
             'text': json.dumps(msg)
         })
     else:
-        pass  # TODO check channel session and accept message if user in room.
+        session_room = message.channel_session['room']
+        if room != session_room:
+            return
+        Group(room).send({
+            'text': json.dumps(msg)
+        })
 
 
 def set_presence(message, contents):

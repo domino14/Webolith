@@ -17,7 +17,6 @@ def table_update(table):
             'room': 'lobby',
         }
     }
-    table_info(table)
 
 
 #   - changing the list, lexicon, playerType, etc (so right after loading a new

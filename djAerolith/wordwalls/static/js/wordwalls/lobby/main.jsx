@@ -10,46 +10,40 @@ import ChatBox from '../bottombar/chatbox';
 import Players from './players';
 import TableList from './table_list';
 
-class Lobby extends React.Component {
-  foo() {
-    this.bar = 3;
-  }
-
-  render() {
-    return (
-      <div>
-        <div className="row">
-          <div className="col-sm-12">
-            <TableList
-              activeTables={this.props.activeTables}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-12">
-            <ChatBar
-              onChatSubmit={this.props.onChatSubmit}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-9">
-            <ChatBox
-              messages={this.props.messages}
-              height={120}
-            />
-          </div>
-          <div className="col-sm-3">
-            <Players
-              players={this.props.users}
-              height={120}
-            />
-          </div>
-        </div>
+const Lobby = props => (
+  <div>
+    <div className="row">
+      <div className="col-sm-12">
+        <TableList
+          activeTables={props.activeTables}
+          onJoinClicked={props.onJoinClicked}
+        />
       </div>
-    );
-  }
-}
+    </div>
+    <div className="row">
+      <div className="col-sm-12">
+        <ChatBar
+          onChatSubmit={props.onChatSubmit}
+        />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-sm-9">
+        <ChatBox
+          messages={props.messages}
+          height={120}
+        />
+      </div>
+      <div className="col-sm-3">
+        <Players
+          players={props.users}
+          height={120}
+        />
+      </div>
+    </div>
+  </div>
+);
+
 
 Lobby.propTypes = {
   // username: React.PropTypes.string,
@@ -61,15 +55,17 @@ Lobby.propTypes = {
     type: React.PropTypes.string,
   })),
   users: React.PropTypes.arrayOf(React.PropTypes.string),
-  activeTables: React.PropTypes.arrayOf(React.PropTypes.shape({
-    tablenum: React.PropTypes.number.isRequired,
-    admin: React.PropTypes.string,
-    users: React.PropTypes.arrayOf(React.PropTypes.string),
-    wordList: React.PropTypes.string,
-    lexicon: React.PropTypes.string,
-    secondsPerRound: React.PropTypes.number,
-    questionsPerRound: React.PropTypes.number,
-  })),
+  // tables: React.PropTypes.arrayOf(React.PropTypes.shape({
+  //   tablenum: React.PropTypes.number.isRequired,
+  //   admin: React.PropTypes.string,
+  //   users: React.PropTypes.arrayOf(React.PropTypes.string),
+  //   wordList: React.PropTypes.string,
+  //   lexicon: React.PropTypes.string,
+  //   secondsPerRound: React.PropTypes.number,
+  //   questionsPerRound: React.PropTypes.number,
+  // })),
+  activeTables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
+  onJoinClicked: React.PropTypes.func,
 };
 
 export default Lobby;

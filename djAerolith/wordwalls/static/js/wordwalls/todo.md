@@ -96,16 +96,42 @@ correct leaderboards.
 -[x] Provide way to exit solutions display. Otherwise can't load a new word list once the user is done with existing list.
 -[x] Change title of page once the user "Creates a table"
 
--[ ] Fix deploy process completely (this should be a separate branch)
-    -[ ] use Docker images + simple haproxy-based LB
+-[x] Fix deploy process completely (this should be a separate branch)
+    -[x] use Docker images + ~~simple haproxy-based LB~~ Kubernetes :D
     -[x] fix America2016 mess
 
 (Can release part 2)
 
 For multiplayer
-- [ ] Investigate socket program / method to use. Options are: Django Channels, Go & Websockets, rewrite entire app in Elixir/Scala/etc
-    - [ ] Should at least write a POC with channels so that I don't discard it outright.
-- [ ] More player boxes (only show on bigger screens?)
-- [ ] Chat submit box
+- [x] Investigate socket program / method to use. Options are: Django Channels, Go & Websockets, rewrite entire app in Elixir/Scala/etc
+    - [x] Should at least write a POC with channels so that I don't discard it outright.
+- ~~[ ] More player boxes (only show on bigger screens?)~~
+- [x] Current player leaderboard
+    - [ ] Make it nicer
+- [x] Chat submit box
 - [ ] Hijack tab key to change between guess/chat
+    - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
 - [ ] All the relevant multiplayer logic
+    - [x] Join a table
+    - [x] Presence inside a table (This will take some time to do properly)
+        - [x] When a user changes room, should immediately send this to the backend so that their presence can be removed.
+        - [x] Propagate presences to list of tables (this must have broken)
+        - [ ] prune_rooms should remove empty rooms from front end too
+    - [ ] Turn multiplayer back into single player table
+    - [ ] Switch hosts seamlessly
+    - [ ] Test multiple clients solving all words at the same time
+    - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
+    - [ ] What if a user is in multiple rooms in multiple tabs?
+    - [ ] Kick players out? Make private? etc?
+    - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.
+- [ ] Disable save in multiplayer game on front-end too
+- [ ] "Social" aspect - number of alphagrams solved per user per day/week/etc
+- [x] Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window
+Testing:
+- [x] Solve all words among all players and game should end properly
+- [ ] Only host should start, maybe after some delay, or a quorum can be reached.
+- [ ] Fix Django tests, look into Channels tests, front end tests, etc
+
+Deployment:
+    - [ ] Create Celery container for pruning presences/rooms periodically
+    - [ ] Create Daphne containers for workers and the socket channel handlers

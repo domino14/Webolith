@@ -115,7 +115,7 @@ class GameInactiveArea extends React.Component {
         />
         <SolutionsModal
           questions={this.props.questions}
-          answeredByMe={this.props.answeredByMe}
+          numCorrect={this.props.numCorrect}
           totalWords={this.props.totalWords}
           height={this.props.height}
           markMissed={this.props.markMissed}
@@ -138,8 +138,7 @@ class GameInactiveArea extends React.Component {
 
 GameInactiveArea.propTypes = {
   questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   totalWords: React.PropTypes.number,
   height: React.PropTypes.number,
   markMissed: React.PropTypes.func,

@@ -60,6 +60,7 @@ class GuessBox extends React.Component {
             onChange={this.handleGuessChange}
             value={this.state.guessText}
             onKeyPress={this.handleKeyPress}
+            onBlur={this.props.onBlur}
             ref={ib => (this.inputBox = ib)}
             style={{
               marginTop: '-5px',
@@ -82,6 +83,7 @@ class GuessBox extends React.Component {
 
 GuessBox.propTypes = {
   onGuessSubmit: React.PropTypes.func,
+  onBlur: React.PropTypes.func,
   onHotKey: React.PropTypes.func,
   lastGuess: React.PropTypes.string,
   lastGuessCorrectness: React.PropTypes.bool,

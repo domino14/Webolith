@@ -52,6 +52,11 @@ class TableCreator extends React.Component {
   static redirectUrl(url) {
     window.location.href = url;
   }
+
+  static joinClicked(tablenum) {
+    TableCreator.redirectUrl(`/wordwalls/table/${tablenum}`);
+  }
+
   // We must pass the props to the constructor if we want to use
   // them in the state initializer.
   constructor(props) {
@@ -566,7 +571,8 @@ class TableCreator extends React.Component {
         onChatSubmit={this.props.onChatSubmit}
         messages={this.props.messages}
         users={this.props.users}
-        activeTables={this.props.tableList}
+        activeTables={this.props.tables}
+        onJoinClicked={TableCreator.joinClicked}
       />
     );
   }
@@ -658,15 +664,16 @@ TableCreator.propTypes = {
     type: React.PropTypes.string,
   })),
   users: React.PropTypes.arrayOf(React.PropTypes.string),
-  tableList: React.PropTypes.arrayOf(React.PropTypes.shape({
-    tablenum: React.PropTypes.number.isRequired,
-    admin: React.PropTypes.string,
-    users: React.PropTypes.arrayOf(React.PropTypes.string),
-    wordList: React.PropTypes.string,
-    lexicon: React.PropTypes.string,
-    secondsPerRound: React.PropTypes.number,
-    questionsPerRound: React.PropTypes.number,
-  })),
+  // tables: React.PropTypes.shape({React.PropTypes.shape({
+  //   tablenum: React.PropTypes.number.isRequired,
+  //   admin: React.PropTypes.string,
+  //   users: React.PropTypes.arrayOf(React.PropTypes.string),
+  //   wordList: React.PropTypes.string,
+  //   lexicon: React.PropTypes.string,
+  //   secondsPerRound: React.PropTypes.number,
+  //   questionsPerRound: React.PropTypes.number,
+  // })),
+  tables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
 };
 
 

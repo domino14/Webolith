@@ -50,6 +50,7 @@ class ChatBar extends React.Component {
             onChange={this.handleChatChange}
             value={this.state.chatText}
             onKeyPress={this.handleKeyPress}
+            onBlur={this.props.onBlur || (() => {})}
             ref={ib => (this.inputBox = ib)}
           />
         </div>
@@ -61,6 +62,7 @@ class ChatBar extends React.Component {
 
 ChatBar.propTypes = {
   onChatSubmit: React.PropTypes.func,
+  onBlur: React.PropTypes.func,
 };
 
 export default ChatBar;

@@ -36,7 +36,7 @@ const GameArea = (props) => {
   return (
     <GameInactiveArea
       questions={props.origQuestions}
-      answeredByMe={props.answeredByMe}
+      numCorrect={props.numCorrect}
       totalWords={props.totalWords}
       height={props.height}
       markMissed={props.markMissed}
@@ -57,8 +57,7 @@ GameArea.propTypes = {
   origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
   displayStyle: React.PropTypes.instanceOf(Styling),
   totalWords: React.PropTypes.number,
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   onShuffle: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,
