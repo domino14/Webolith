@@ -15,6 +15,7 @@ import StartButton from './topbar/start_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
 import UserBox from './user_box';
+import Leaderboard from './leaderboard';
 import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
@@ -454,6 +455,7 @@ class WordwallsApp extends React.Component {
       if (data.C !== '') {
         // data.C contains the alphagram.
         game.solve(data.w, data.C);
+        this.addMessage(`${data.s} solved ${data.w}`);
         this.setState({
           curQuestions: game.getQuestionState(),
           origQuestions: game.getOriginalQuestionState(),
@@ -769,9 +771,23 @@ class WordwallsApp extends React.Component {
             <UserBox
               showLexiconSymbols={
                 !this.state.displayStyle.hideLexiconSymbols}
-              answeredByMe={this.state.answeredByMe}
+              answers={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div
+            className={`hidden-xs col-sm-offset-9 col-sm-3 col-md-offset-9
+              col-md-3 col-lg-offset-7 col-lg-2`}
+          >
+            <Leaderboard
+              showLexiconSymbols={
+                !this.state.displayStyle.hideLexiconSymbols}
+              answers={this.state.answeredByMe}
+              totalWords={this.state.totalWords}
+              username={`${this.props.username}foo`}
             />
           </div>
         </div>

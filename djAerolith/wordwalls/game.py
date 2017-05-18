@@ -60,7 +60,8 @@ class WordwallsGame(object):
             'quizGoing': False,
             'quizStartTime': 0,
             'numAnswersThisRound': 0,
-            'gameType': 'regular'
+            'gameType': 'regular',
+            'solvers': {},
         }
 
     def maybe_modify_list_name(self, list_name, user):
@@ -775,6 +776,13 @@ class WordwallsGame(object):
         logger.debug('Missed: %s', word_list.missed)
         return True
 
+    def add_to_solvers(self, state, guess, username):
+        if 'solvers' not in state:
+            state['solvers'] = {}
+        if username not in state['solvers']:
+            state['solvers'][username] = []
+        state['solvers'][username].append(guess)
+
     def guess(self, guess_str, tablenum, user):
         """ Handle a guess submission from the front end. """
         guess_str = guess_str.upper()
@@ -798,6 +806,7 @@ class WordwallsGame(object):
             alpha = state['answerHash'][guess_str]
             # state['answerHash'] is modified here
             del state['answerHash'][guess_str]
+            self.add_to_solvers(state, guess_str, user.username)
             state_modified = True
             if len(state['answerHash']) == 0:
                 time_remaining = (state['quizStartTime'] +
@@ -826,6 +835,7 @@ class WordwallsGame(object):
         return {'going': state['quizGoing'],
                 'word': guess_str,
                 'alphagram': last_correct,
+                'solver': user.username,
                 'already_solved': False}
 
     def permit(self, user, tablenum):

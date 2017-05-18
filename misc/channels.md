@@ -37,3 +37,13 @@ Can we combine these?
 - just using inTable is hard because then the lobby sort of needs to be a table.
 
 tentative solution: get rid of inTable and just use Presences table. For the most part we will not have lag and things will be fine.
+
+Solution: Use django-channels-presence and celery to run presence cleanup once every couple minutes.
+
+----
+Layout
+
+To get two column layout, need to divide the entire viewport into a row of two columns. Then within each column layout the remainder of the app. 
+
+Issues:
+- Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window

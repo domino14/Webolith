@@ -245,9 +245,10 @@ def table_guess(message, contents):
             'C': state['alphagram'],
             'w': state['word'],
             'a': state['already_solved'],
+            's': state['solver'],
         }
     }
-    message.reply_channel.send({'text': json.dumps(msg)})
+    Group(room).send({'text': json.dumps(msg)})
 
 
 def table_start(message, contents):
