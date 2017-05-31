@@ -42,7 +42,7 @@ class WordwallsAppContainer extends React.Component {
       tableList: [],
       isChallenge: false,
       totalWords: 0,
-      answeredByMe: [],
+      answeredBy: game.getAnsweredBy(),
       lastGuess: '',
       lastGuessCorrectness: false,
       challengeData: {},
@@ -148,9 +148,8 @@ class WordwallsAppContainer extends React.Component {
   }
 
   onChatSubmit(chat, channel) {
-    console.log('Should send chat to websocket', chat, channel);
     this.websocketBridge.send({
-      room: 'lobby',
+      room: channel,
       type: 'chat',
       contents: {
         chat,
@@ -343,7 +342,8 @@ class WordwallsAppContainer extends React.Component {
   handleGameGoingPayload(data) {
     this.handleStartReceived(data);
     if (_.has(data, 'time')) {
-      this.addMessage(`This round will be over in ${Math.round(data.time)} seconds`);
+      this.addMessage(`This round will be over in ${Math.round(data.time)} seconds.
+        Please wait to join the next round.`);
     }
   }
 
@@ -360,7 +360,7 @@ class WordwallsAppContainer extends React.Component {
         numberOfRounds: this.state.numberOfRounds + 1,
         origQuestions: game.getOriginalQuestionState(),
         curQuestions: game.getQuestionState(),
-        answeredByMe: game.getAnsweredByMe(),
+        answeredBy: game.getAnsweredBy(),
         totalWords: game.getTotalNumWords(),
       });
       this.wwApp.setGuessBoxFocus();
@@ -450,12 +450,12 @@ class WordwallsAppContainer extends React.Component {
     if (_.has(data, 'C')) {
       if (data.C !== '') {
         // data.C contains the alphagram.
-        game.solve(data.w, data.C);
+        game.solve(data.w, data.C, data.s);
         this.addMessage(`${data.s} solved ${data.w}`);
         this.setState({
           curQuestions: game.getQuestionState(),
           origQuestions: game.getOriginalQuestionState(),
-          answeredByMe: game.getAnsweredByMe(),
+          answeredBy: game.getAnsweredBy(),
           lastGuessCorrectness: true,
         });
       }
@@ -463,9 +463,7 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleChat(data) {
-    if (data.room === 'lobby') {
-      this.addMessage(data.chat, 'chat', data.sender, true);
-    }  // TODO: otherwise send it to the relevant room with false.
+    this.addMessage(data.chat, 'chat', data.sender, data.room === 'lobby');
   }
 
   handleTableList(data) {
@@ -725,7 +723,7 @@ class WordwallsAppContainer extends React.Component {
           curQuestions={this.state.curQuestions}
           origQuestions={this.state.origQuestions}
           totalWords={this.state.totalWords}
-          answeredByMe={this.state.answeredByMe}
+          answeredBy={this.state.answeredBy}
           onShuffleQuestion={this.onShuffleQuestion}
           markMissed={this.markMissed}
           challengeData={this.state.challengeData}
@@ -742,6 +740,7 @@ class WordwallsAppContainer extends React.Component {
           handleAlphagram={this.handleAlphagram}
           handleCustomOrder={this.handleCustomOrder}
           tableMessages={this.state.tableMessages}
+          onChatSubmit={chat => this.onChatSubmit(chat, String(this.state.tablenum))}
 
           ref={wwApp => (this.wwApp = wwApp)}
         />

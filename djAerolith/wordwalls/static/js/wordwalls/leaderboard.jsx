@@ -4,83 +4,70 @@ import Immutable from 'immutable';
 import WordPartDisplay from './word_part_display';
 
 const Leaderboard = (props) => {
-  const answers = [];
-  props.answers.forEach((word, idx) => {
-    answers.push(
-      <div
-        key={idx}
-        data-toggle="tooltip"
-        data-placement="left"
-        title={word.get('d')}
-      >
-        <WordPartDisplay
-          text={`${word.get('fh')} `}
-          classes="text-info small"
-        />
-        <WordPartDisplay
-          text={word.get('w') + (props.showLexiconSymbols ?
-            word.get('s') : '')}
-        />
-        <WordPartDisplay
-          text={` ${word.get('bh')}`}
-          classes="text-info small"
-        />
-      </div>);
+  const leaderboard = [];
+  const displayLeaderboard = [];
+  // Take the map and turn it into a data structure suitable for sorting
+  // and displaying as a leaderboard.
+  props.answerers.forEach((answered, player) => {
+    leaderboard.push({
+      player,
+      correct: answered.size,
+      lastAnswer: answered.get(-1),
+    });
   });
-  // console.log('The answers are ', answers);
-  const percentScore = props.totalWords > 0 ?
-    (100 * (props.answers.length / props.totalWords)).toFixed(1) : 0;
-
-  const fractionScore = `${props.answers.length}/${props.totalWords}`;
+  leaderboard.sort((a, b) => {
+    if (a.correct < b.correct) {
+      return 1;
+    } else if (a.correct > b.correct) {
+      return -1;
+    }
+    return 0;
+  });
+  const showLexiconSymbols = props.showLexiconSymbols;
+  leaderboard.forEach((item, idx) => {
+    const word = item.lastAnswer;
+    displayLeaderboard.push(
+      <tr key={idx}>
+        <td>
+          <div className="row">
+            <div className="col-sm-3 text-info">{item.correct}</div>
+            <div className="col-sm-9">{item.player}</div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              Last:
+              <WordPartDisplay
+                text={` ${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
+                classes="text-info small"
+              />
+            </div>
+          </div>
+        </td>
+      </tr>);
+  });
 
   return (
     <div className="panel panel-default">
-      <div className="panel-heading">
-        <span>{props.username}</span>
-      </div>
       <div
         className="panel-body"
         style={{
-          height: 200,
+          height: 300,
           overflow: 'auto',
         }}
-        ref={(domNode) => {
-          if (domNode === null) {
-            return;
-          }
-          domNode.scrollTop = domNode.scrollHeight; // eslint-disable-line no-param-reassign
-        }}
-      >{answers}
-      </div>
-      <div className="panel-footer">
-        <div className="row">
-          <div className="col-sm-4 col-md-4">
-            <span
-              style={{ fontSize: '1.8em' }}
-              className="text text-success"
-            >{`${percentScore}%`}</span>
-          </div>
-          <div className="col-sm-8 col-md-6 col-md-offset-2">
-            <div
-              style={{
-                fontSize: '1.8em',
-                whiteSpace: 'nowrap',
-                textAlign: 'right',
-              }}
-              className="text text-success"
-            >{fractionScore}</div>
-          </div>
-        </div>
+      >
+        <table className="table table-condensed">
+          <tbody>
+            {displayLeaderboard}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 };
 
 Leaderboard.propTypes = {
-  answers: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
-  totalWords: React.PropTypes.number,
-  username: React.PropTypes.string,
+  answerers: React.PropTypes.instanceOf(Immutable.Map),
+  showLexiconSymbols: React.PropTypes.bool,
 };
 
 export default Leaderboard;

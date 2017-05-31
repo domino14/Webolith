@@ -4,7 +4,7 @@ First move all the interaction code (guesses, start, etc) to use Channels:
 
 - start  -- move, since this will require broadcast to everyone else, and possibly no db persistence?
 - guess -- definitely move 
-- gameEnded -- probably can get rid of this, as server will tell client when game ends
+- gameEnded -- ~~probably can get rid of this, as server will tell client when game ends~~ Actually no, not always.
 - giveUp -- will require broadcast, but probably should not be allowed in multiplayer mode. keep in API probably.
 - save -- will probably not be in multiplayer mode. Keep in API.
 - giveUpAndSave -- keep in API
@@ -45,5 +45,3 @@ Layout
 
 To get two column layout, need to divide the entire viewport into a row of two columns. Then within each column layout the remainder of the app. 
 
-Issues:
-- Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window

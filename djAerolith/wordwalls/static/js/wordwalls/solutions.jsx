@@ -32,12 +32,11 @@ const Solutions = (props) => {
     });
   });
 
-  const numCorrect = props.answeredByMe.length;
   let statsStr;
 
   if (props.totalWords > 0) {
-    statsStr = `Correct: ${numCorrect} / ${props.totalWords}
-      (${((100 * numCorrect) / props.totalWords).toFixed(1)}%)`;
+    statsStr = `Correct: ${props.numCorrect} / ${props.totalWords}
+      (${((100 * props.numCorrect) / props.totalWords).toFixed(1)}%)`;
   }
 
   return (
@@ -78,8 +77,7 @@ const Solutions = (props) => {
 
 Solutions.propTypes = {
   questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   totalWords: React.PropTypes.number,
   markMissed: React.PropTypes.func,
   showLexiconSymbols: React.PropTypes.bool,

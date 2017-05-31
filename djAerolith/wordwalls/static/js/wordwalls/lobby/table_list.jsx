@@ -4,42 +4,7 @@
 import React from 'react';
 // omg eslint
 const Table = props => (
-  // let colorModifier;
-  // if (props.lexicon === 'CSW15') {
-  //   colorModifier = 'panel-danger';  // redcoats
-  // } else if (props.lexicon === 'America') {
-  //   colorModifier = 'panel-info';  // light blue
-  // } // Otherwise no modifier.
-  // return (
-  /*
-    <div className={`panel ${colorModifier}`}>
-      <div className="panel-heading">
-        <div className="row">
-          <div className="col-sm-4">
-            Table {props.tablenum} ({props.lexicon})
-          </div>
-          <div className="col-sm-4">
-            Host: {props.admin}
-          </div>
-        </div>
-      </div>
-      <div className="panel-body">
-        <div className="row">
-          <div className="col-sm-4">
-            List: {props.wordList}
-          </div>
-          <div className="col-sm-4">
-            In table: {props.users.join(' ')}
-          </div>
-          <div className="col-sm-4">
-            <button
-              className="btn btn-sm btn-info"
-            >Join</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  */
+
   <li className="list-group-item">
     <div className="row">
       <div className="col-sm-2">
@@ -54,6 +19,7 @@ const Table = props => (
       <div className="col-sm-3">
         <button
           className="btn btn-info"
+          onClick={() => props.onJoinClicked(props.tablenum)}
         >Join</button>
       </div>
     </div>
@@ -67,8 +33,6 @@ const Table = props => (
     </div>
 
   </li>
-
-
 );
 
 
@@ -78,13 +42,10 @@ Table.propTypes = {
   wordList: React.PropTypes.string,
   admin: React.PropTypes.string,
   users: React.PropTypes.arrayOf(React.PropTypes.string),
+  onJoinClicked: React.PropTypes.func,
 };
 
 class TableList extends React.Component {
-  foo() {
-    this.bar = 3;
-  }
-
   renderTables() {
     const tables = this.props.activeTables.map((table, idx) => (
       <Table
@@ -96,6 +57,7 @@ class TableList extends React.Component {
         admin={table.admin}
         secondsPerRound={table.secondsPerRound}
         questionsPerRound={table.questionsPerRound}
+        onJoinClicked={this.props.onJoinClicked}
       />
     ));
     return tables;
@@ -122,6 +84,7 @@ TableList.propTypes = {
     secondsPerRound: React.PropTypes.number,
     questionsPerRound: React.PropTypes.number,
   })),
+  onJoinClicked: React.PropTypes.func,
 };
 
 export default TableList;

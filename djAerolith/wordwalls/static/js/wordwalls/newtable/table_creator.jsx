@@ -52,6 +52,11 @@ class TableCreator extends React.Component {
   static redirectUrl(url) {
     window.location.href = url;
   }
+
+  static joinClicked(tablenum) {
+    TableCreator.redirectUrl(`/wordwalls/table/${tablenum}`);
+  }
+
   // We must pass the props to the constructor if we want to use
   // them in the state initializer.
   constructor(props) {
@@ -567,6 +572,7 @@ class TableCreator extends React.Component {
         messages={this.props.messages}
         users={this.props.users}
         activeTables={this.props.tableList}
+        onJoinClicked={TableCreator.joinClicked}
       />
     );
   }
