@@ -13,6 +13,7 @@ import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
 import ChatBar from './lobby/chat_bar';
+import Players from './lobby/players';
 
 import Styling from './style';
 
@@ -156,8 +157,14 @@ class WordwallsApp extends React.Component {
         </div>
 
         <div className="row" style={{ marginTop: '4px' }}>
-          <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div className="col-xs-8 col-sm-9 col-md-9 col-lg-9">
             <ChatBox messages={this.props.tableMessages} />
+          </div>
+          <div className="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+            <Players
+              players={this.props.usersInTable}
+              height={100}
+            />
           </div>
         </div>
 
@@ -256,7 +263,7 @@ WordwallsApp.propTypes = {
   resetTableCreator: React.PropTypes.func,
   tableCreatorModalSelector: React.PropTypes.string,
   username: React.PropTypes.string,
-
+  usersInTable: React.PropTypes.arrayOf(React.PropTypes.string),
   onGuessSubmit: React.PropTypes.func,
   lastGuess: React.PropTypes.string,
   lastGuessCorrectness: React.PropTypes.bool,

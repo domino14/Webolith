@@ -254,8 +254,14 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleUsersIn(contents) {
+    // The presence payload always gets sent to everyone currently online.
+    // This provides a convenient way for the front end to update presence
+    // lists inside tables, in the lobby, and on the table displayer thing.
+    // This might not be scalable as we get more users.
     if (contents.room === 'lobby') {
       this.setState({ lobbyUsers: {} });
+    } else {
+      this.setState({ tableUsers: {} });
     }
     this.addUsers(contents.users, contents.room);
   }
@@ -295,22 +301,7 @@ class WordwallsAppContainer extends React.Component {
     });
     if (room === 'lobby') {
       this.setState({ lobbyUsers: newUsers });
-    } else {
-      this.setState({ tableUsers: newUsers });
-    }
-  }
-
-  removeUser(user, room) {
-    let newUsers;
-    if (room === 'lobby') {
-      newUsers = this.state.lobbyUsers;
-    } else {
-      newUsers = this.state.tableUsers;
-    }
-    delete newUsers[user];
-    if (room === 'lobby') {
-      this.setState({ lobbyUsers: newUsers });
-    } else {
+    } else if (room === String(this.state.tablenum)) {
       this.setState({ tableUsers: newUsers });
     }
   }
@@ -741,6 +732,7 @@ class WordwallsAppContainer extends React.Component {
           handleCustomOrder={this.handleCustomOrder}
           tableMessages={this.state.tableMessages}
           onChatSubmit={chat => this.onChatSubmit(chat, String(this.state.tablenum))}
+          usersInTable={Object.keys(this.state.tableUsers)}
 
           ref={wwApp => (this.wwApp = wwApp)}
         />
