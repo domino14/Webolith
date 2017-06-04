@@ -11,9 +11,9 @@ import _ from 'underscore';
 import Immutable from 'immutable';
 import { WebSocketBridge } from 'django-channels';
 
-import backgroundURL from './background';
-import Styling from './style';
-import WordwallsGame from './wordwalls_game';
+import backgroundURL from '../background';
+import Styling from '../style';
+import WordwallsGame from '../wordwalls_game';
 import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';

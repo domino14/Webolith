@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 import Styling from './style';
-import WordwallsAppContainer from './wordwalls_app_container';
+import WordwallsAppContainer from './containers/wordwalls_app';
+import wordwallsApp from './reducers';
 
 class App {
   /**
@@ -23,21 +26,24 @@ class App {
       listName = options.addlParams.tempListName;
       autoSave = false;
     }
+    const store = createStore(wordwallsApp);
 
     // Render.
     ReactDOM.render(
-      <WordwallsAppContainer
-        username={options.username}
-        listName={listName}
-        autoSave={autoSave}
-        lexicon={options.lexicon}
-        displayStyle={style}
-        tablenum={options.tablenum}
-        defaultLexicon={options.defaultLexicon}
-        challengeInfo={options.challengeInfo}
-        availableLexica={options.availableLexica}
-        socketServer={options.socketServer}
-      />,
+      <Provider store={store}>
+        <WordwallsAppContainer
+          username={options.username}
+          listName={listName}
+          autoSave={autoSave}
+          lexicon={options.lexicon}
+          displayStyle={style}
+          tablenum={options.tablenum}
+          defaultLexicon={options.defaultLexicon}
+          challengeInfo={options.challengeInfo}
+          availableLexica={options.availableLexica}
+          socketServer={options.socketServer}
+        />
+      </Provider>,
       document.getElementById('main-app-content'));
   }
 }

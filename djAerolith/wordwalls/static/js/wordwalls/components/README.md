@@ -1,0 +1,1 @@
+Redux-unaware components should go here. We might have some small components with state, such as the timer. Let's see.

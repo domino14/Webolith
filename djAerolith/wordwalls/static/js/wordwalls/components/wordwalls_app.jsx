@@ -15,7 +15,7 @@ import ChatBox from './bottombar/chatbox';
 import ChatBar from './lobby/chat_bar';
 import Players from './lobby/players';
 
-import Styling from './style';
+import Styling from '../style';
 
 class WordwallsApp extends React.Component {
   constructor() {

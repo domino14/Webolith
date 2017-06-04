@@ -70,6 +70,7 @@
     "react-dropzone": "^3.8.0",
     "react-redux": "^5.0.5",
     "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0",
     "underscore": "^1.8.3"
   }
 }
