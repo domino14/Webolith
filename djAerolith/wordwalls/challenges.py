@@ -13,7 +13,8 @@ from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
 from lib.word_db_helper import WordDB, Question, Questions, Alphagram
-from lib.macondo_interface import gen_blank_challenges, MacondoError
+from lib.macondo_interface import (gen_blank_challenges, gen_build_challenge,
+                                   MacondoError)
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +60,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         random.shuffle(alphagrams)
         return db.get_questions(alphagrams), challenge_name.timeSecs
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
-        questions = generate_blank_bingos_challenge(lex, challenge_date)
+        questions = generate_blank_bingos_challenge(lex)
         questions.shuffle()
         return questions, challenge_name.timeSecs
     elif challenge_name.name == DailyChallengeName.BINGO_MARATHON:
@@ -78,6 +79,17 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     #         challenge_name.name)
     #     random.shuffle(questions)
     #     return questions, challenge_name.timeSecs
+
+    # Try to match to build challenges.
+    m = re.match(r'Word Builder \((?P<lmin>[0-9]+)-(?P<lmax>[0-9]+)\)',
+                 challenge_name.name)
+    if m:
+        lmin = int(m.group('lmin'))
+        lmax = int(m.group('lmax'))
+        questions = generate_word_builder_challenge(lex, lmin, lmax)
+        return questions, challenge_name.timeSecs
+
+    # Nothing matched, we done here.
     return None
 
 
@@ -91,7 +103,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
 #     return pks[:50]
 
 
-def generate_blank_bingos_challenge(lex, ch_date):
+def generate_blank_bingos_challenge(lex):
     """
     Contact blank challenges server and generate said challenges.
 
@@ -109,6 +121,42 @@ def generate_blank_bingos_challenge(lex, ch_date):
             question.set_answers_from_word_list(chall['a'])
             bingos.append(question)
     return bingos
+
+
+def generate_word_builder_challenge(lex, lmin, lmax):
+    """ Contact builder server and generate builder challenges. """
+    # Require the lmax rack to have a word in it some percentage of the time.
+    min_sols_mu = 0
+    min_sols_sigma = 0
+    max_sols_mu = 0
+    max_sols_sigma = 0
+
+    if lmax == 6:
+        min_sols_mu, min_sols_sigma = 10, 2
+        max_sols_mu, max_sols_sigma = 30, 5
+        require_word = random.randint(1, 10) > 2  # 80%
+    elif lmax == 7:
+        min_sols_mu, min_sols_sigma = 15, 3
+        max_sols_mu, max_sols_sigma = 50, 6
+        require_word = random.randint(1, 10) > 5  # 50%
+    elif lmax == 8:
+        min_sols_mu, min_sols_sigma = 20, 4
+        max_sols_mu, max_sols_sigma = 75, 8
+        require_word = random.randint(1, 10) > 7  # 30%
+
+    min_sols = max(int(random.gauss(min_sols_mu, min_sols_sigma)), 1)
+    max_sols = min(int(random.gauss(max_sols_mu, max_sols_sigma)), 100)
+    min_sols, max_sols = min(min_sols, max_sols), max(min_sols, max_sols)
+
+    logger.debug('min_sols: %s, max_sols: %s, require_word: %s',
+                 min_sols, max_sols, require_word)
+    question, num_answers = gen_build_challenge(
+        lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols)
+    q_struct = Questions()
+    ret_question = Question(Alphagram(question['q']), [])
+    ret_question.set_answers_from_word_list(question['a'])
+    q_struct.append(ret_question)
+    return q_struct
 
 
 # XXX: This appears to be an expensive function; about 0.75 secs on my

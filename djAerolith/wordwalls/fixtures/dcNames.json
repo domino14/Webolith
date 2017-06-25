@@ -172,5 +172,32 @@
       "timeSecs": 360,
       "orderPriority": 2
     }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 20,
+    "fields": {
+      "name": "Word Builder (3-6)",
+      "timeSecs": 210,
+      "orderPriority": 4
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 21,
+    "fields": {
+      "name": "Word Builder (4-7)",
+      "timeSecs": 270,
+      "orderPriority": 4
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 22,
+    "fields": {
+      "name": "Word Builder (5-8)",
+      "timeSecs": 300,
+      "orderPriority": 4
+    }
   }
 ]

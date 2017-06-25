@@ -38,6 +38,22 @@ def gen_blank_challenges(length, lexicon_name, num_2_blanks, num_questions,
     return resp['questions']
 
 
+def gen_build_challenge(min_length, max_length, lexicon_name,
+                        require_length_solution, min_solutions,
+                        max_solutions):
+    logger.debug('in gen_build_challenge')
+    resp = make_rpc_call(
+        'AnagramService.BuildChallenge', {
+            'wordLength': max_length,
+            'minWordLength': min_length,
+            'lexicon': lexicon_name,
+            'requireLengthSolution': require_length_solution,
+            'minSolutions': min_solutions,
+            'maxSolutions': max_solutions
+        })
+    return resp['question'], resp['numAnswers']
+
+
 def anagram_letters(lexicon_name, letters):
     resp = make_rpc_call('AnagramService.Anagram', {
         'lexicon': lexicon_name,
