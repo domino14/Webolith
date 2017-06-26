@@ -30,14 +30,13 @@ from django.utils import timezone
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions
 from lib.word_searches import word_search
-from wordwalls.challenges import generate_dc_questions
+from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
-from wordwalls.models import WordwallsGameModel
-from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeMissedBingos, DailyChallengeName)
+                              DailyChallengeMissedBingos, DailyChallengeName,
+                              WordwallsGameModel)
 logger = logging.getLogger(__name__)
 
 
@@ -342,9 +341,10 @@ class WordwallsGame(object):
         qs_set = set(qs)
         if len(qs_set) != len(qs):
             logger.error("Question set is not unique!!")
+        orig_questions = json.loads(word_list.origQuestions)
 
         questions, answer_hash = self.load_questions(
-            qs, json.loads(word_list.origQuestions), word_list.lexicon)
+            qs, orig_questions, word_list.lexicon)
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answer_hash
@@ -353,9 +353,12 @@ class WordwallsGame(object):
         wgm.currentGameState = json.dumps(state)
         wgm.save()
         word_list.save()
+        game_type = state['gameType']
+        if len(orig_questions) and orig_questions[0].get('build_mode'):
+            game_type += '_build'   # This is hell of ghetto.
         ret = {'questions': questions,
                'time': state['timerSecs'],
-               'gameType': state['gameType'],
+               'gameType': game_type,
                'serverMsg': start_message}
 
         return ret
@@ -598,7 +601,7 @@ class WordwallsGame(object):
         logger.info("%d missed this round, %d missed total",
                     len(missed_indices), len(missed))
         if state['gameType'] == 'challenge':
-            state['gameType'] = 'challengeOver'
+            state['gameType'] = 'regular'
             self.create_challenge_leaderboard_entry(state, tablenum)
 
         # check if we've gone thru the quiz once.

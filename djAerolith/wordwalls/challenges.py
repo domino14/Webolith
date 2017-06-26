@@ -147,15 +147,20 @@ def generate_word_builder_challenge(lex, lmin, lmax):
     min_sols = max(int(random.gauss(min_sols_mu, min_sols_sigma)), 1)
     max_sols = min(int(random.gauss(max_sols_mu, max_sols_sigma)), 100)
     min_sols, max_sols = min(min_sols, max_sols), max(min_sols, max_sols)
-
     logger.debug('min_sols: %s, max_sols: %s, require_word: %s',
                  min_sols, max_sols, require_word)
-    question, num_answers = gen_build_challenge(
-        lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols)
     q_struct = Questions()
+
+    try:
+        question, num_answers = gen_build_challenge(
+            lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols)
+    except MacondoError:
+        logger.exception(u'[event=macondoerror]')
+        return q_struct
     ret_question = Question(Alphagram(question['q']), [])
     ret_question.set_answers_from_word_list(question['a'])
     q_struct.append(ret_question)
+    q_struct.set_build_mode()
     return q_struct
 
 

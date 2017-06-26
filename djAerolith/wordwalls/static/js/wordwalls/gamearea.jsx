@@ -4,12 +4,22 @@ import Immutable from 'immutable';
 import GameInactiveArea from './game_inactive_area';
 import Styling from './style';
 import SVGBoard from './svg_board';
+import BuildBoard from './build_board';
 
 const GameArea = (props) => {
   if (props.gameGoing) {
+    if (props.isBuild) {
+      return (
+        <BuildBoard
+          onShuffle={props.onShuffle}
+          displayStyle={props.displayStyle}
+          width={props.width}
+          height={props.height}
+          questions={props.curQuestions}
+        />
+      );
+    }
     return (
-      // Prevent default on mouse down to prevent taking focus in
-      // case of misclick.
       <SVGBoard
         onShuffle={props.onShuffle}
         displayStyle={props.displayStyle}
@@ -57,6 +67,7 @@ GameArea.propTypes = {
     maxScore: React.PropTypes.number,
   }),
   isChallenge: React.PropTypes.bool,
+  isBuild: React.PropTypes.bool,
   width: React.PropTypes.number,
   height: React.PropTypes.number,
   gridWidth: React.PropTypes.number,
