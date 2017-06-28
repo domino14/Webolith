@@ -5,70 +5,149 @@ import Styling from './style';
 import WordwallsQuestion from './wordwalls_question';
 import backgroundURL from './background';
 
-const BuildBoard = (props) => {
-  const leftMargin = 5;
-  const topMargin = 4;
-  const questions = [];
-  const style = {
-    backgroundImage: backgroundURL(props.displayStyle.background),
-  };
-  if (props.displayStyle.background === 'pool_table') {
-    // Stretch this one.
-    style.backgroundSize = '100% 100%';
+const SolutionPanel = (props) => {
+  let words = props.solvedWords.map(word => (
+    <span>{word} </span>
+  ));
+  if (!words.length) {
+    words = (
+      <span className="text-muted">
+        {`${props.totalCount} words of length ${props.wordLength}`}
+      </span>);
+  }
+  const panel = (
+    <li className="list-group-item">
+      <span className="badge">
+        {`${props.totalCount - props.solvedWords.length}`}
+      </span>
+      <span
+        className={
+          `${props.totalCount === props.solvedWords.length ? 'text-success' : ''}`}
+      >
+        {words}
+      </span>
+    </li>
+  );
+  return panel;
+};
+
+SolutionPanel.propTypes = {
+  wordLength: React.PropTypes.number,
+  totalCount: React.PropTypes.number,
+  solvedWords: React.PropTypes.arrayOf(React.PropTypes.string),
+};
+
+class BuildBoard extends React.Component {
+  renderAnswers() {
+    // XXX: This is slowish. Maybe it's still fast enough for all intents
+    // and purposes.
+    // Render the user's answers.
+    // An array of 15 elements, one for each possible word length.
+    const solsarr = [];
+    const solscounts = [];
+    for (let i = 0; i < 15; i += 1) {
+      solsarr.push([]);
+      solscounts.push(0);
+    }
+    const origQuestion = this.props.origQuestions.get(this.alphagram);
+    // count words of each length.
+    if (!origQuestion) {
+      return null;
+    }
+    const words = origQuestion.get('ws');
+    if (!words) {
+      return null;
+    }
+    words.forEach((word) => {
+      solscounts[word.get('w').length - 1] += 1;
+    });
+    this.props.answered.forEach((word) => {
+      solsarr[word.get('w').length - 1].push(<span>{word.get('w')} </span>);
+    });
+    const answers = [];
+    solscounts.forEach((ct, idx) => {
+      if (ct !== 0) {
+        answers.push(
+          <SolutionPanel
+            key={idx}
+            wordLength={idx + 1}
+            totalCount={ct}
+            solvedWords={this.props.answered.map(word => word.get('w')).filter(
+              word => word.length === idx + 1)}
+          />);
+      }
+    });
+    return answers;
   }
 
-  // xSize and ySize are the size that each question object takes
-  // up.
-  const xSize = props.width / 3;
-  const ySize = props.height / 10;
-  const questionDisplayStyle = {
-    tilesOn: props.displayStyle.tilesOn,
-    tileStyle: props.displayStyle.tileStyle,
-    blankCharacter: props.displayStyle.blankCharacter,
-    font: props.displayStyle.font,
-    showChips: props.displayStyle.showChips,
-    bold: props.displayStyle.showBold,
-    showBorders: props.displayStyle.showBorders,
-    fontMultiplier: props.displayStyle.fontMultiplier,
-    background: props.displayStyle.background,
-    bodyBackground: props.displayStyle.bodyBackground,
-  };
-  // questions is an Immutable List of Maps. It only has one question,
-  // because we are in build mode.
-  props.questions.forEach((question, idx) => {
-    // Calculate top left X, Y based on dimensions.
-    const gridX = props.width / 3;
-    const gridY = props.height / 10;
-    questions.push(
-      <WordwallsQuestion
-        displayStyle={questionDisplayStyle}
-        letters={question.get('displayedAs')}
-        key={idx}
-        qNumber={idx}
-        words={question.get('wMap')}
-        gridX={gridX + leftMargin}
-        gridY={gridY + topMargin}
-        ySize={ySize}
-        xSize={xSize}
-        onShuffle={props.onShuffle}
-      />);
-  });
+  render() {
+    const leftMargin = 5;
+    const topMargin = 4;
+    const style = {
+      backgroundImage: backgroundURL(this.props.displayStyle.background),
+    };
+    if (this.props.displayStyle.background === 'pool_table') {
+      // Stretch this one.
+      style.backgroundSize = '100% 100%';
+    }
 
-  return (
-    <svg
-      style={style}
-      width={props.width + (2 * leftMargin)}
-      height={props.height + (2 * topMargin)}
-      onMouseDown={(e) => { e.preventDefault(); }}
-    >{questions}</svg>
-  );
-};
+    // xSize and ySize are the size that each question object takes
+    // up.
+    const questionDisplayStyle = {
+      tilesOn: this.props.displayStyle.tilesOn,
+      tileStyle: this.props.displayStyle.tileStyle,
+      blankCharacter: this.props.displayStyle.blankCharacter,
+      font: this.props.displayStyle.font,
+      showChips: this.props.displayStyle.showChips,
+      bold: this.props.displayStyle.showBold,
+      showBorders: this.props.displayStyle.showBorders,
+      fontMultiplier: this.props.displayStyle.fontMultiplier,
+      background: this.props.displayStyle.background,
+      bodyBackground: this.props.displayStyle.bodyBackground,
+    };
+    const question = this.props.questions.get(0);
+    this.alphagram = question.get('a');
+    let renderedQuestion = null;
+    if (question) {
+      renderedQuestion = (
+        <WordwallsQuestion
+          displayStyle={questionDisplayStyle}
+          letters={question.get('displayedAs')}
+          qNumber={0}
+          words={question.get('wMap')}
+          gridX={(this.props.width > 320 ? this.props.width / 8.0 : 30)}
+          gridY={0}
+          ySize={40}
+          xSize={200}
+          onShuffle={this.props.onShuffle}
+          scaleTransform={1.75}
+        />);
+    }
+
+    return (
+      <div>
+        <svg
+          style={style}
+          width={this.props.width + (2 * leftMargin)}
+          height={60 + (2 * topMargin)}
+          onMouseDown={(e) => { e.preventDefault(); }}
+        >{renderedQuestion}</svg>
+        <ul className="list-group">
+          {this.renderAnswers()}
+        </ul>
+      </div>
+    );
+  }
+}
 
 BuildBoard.propTypes = {
   displayStyle: React.PropTypes.instanceOf(Styling),
   width: React.PropTypes.number,
-  height: React.PropTypes.number,
   questions: React.PropTypes.instanceOf(Immutable.List),
+  onShuffle: React.PropTypes.func.isRequired,
+  answered: React.PropTypes.arrayOf(
+    React.PropTypes.instanceOf(Immutable.Map)),
+  origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
 };
 
 export default BuildBoard;

@@ -12,10 +12,11 @@ const GameArea = (props) => {
       return (
         <BuildBoard
           onShuffle={props.onShuffle}
+          answered={props.answeredByMe}
           displayStyle={props.displayStyle}
           width={props.width}
-          height={props.height}
           questions={props.curQuestions}
+          origQuestions={props.origQuestions}
         />
       );
     }

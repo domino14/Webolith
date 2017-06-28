@@ -144,6 +144,8 @@ class WordwallsQuestion extends React.Component {
         style={{
           cursor: 'default',
         }}
+        transform={
+          `scale(${this.props.scaleTransform ? this.props.scaleTransform : 1.0})`}
       >{tiles}{this.borderRectangle()}</g>
     );
   }
@@ -170,6 +172,7 @@ WordwallsQuestion.propTypes = {
   xSize: React.PropTypes.number.isRequired,
   ySize: React.PropTypes.number.isRequired,
   onShuffle: React.PropTypes.func.isRequired,
+  scaleTransform: React.PropTypes.number,
 };
 
 export default WordwallsQuestion;

@@ -658,6 +658,7 @@ class WordwallsApp extends React.Component {
               answeredByMe={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
+              isBuild={this.state.isBuild}
             />
           </div>
         </div>
@@ -703,6 +704,7 @@ class WordwallsApp extends React.Component {
               answeredByMe={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
+              isBuild={this.state.isBuild}
             />
           </div>
         </div>
