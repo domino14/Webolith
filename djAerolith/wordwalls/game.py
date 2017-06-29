@@ -518,7 +518,7 @@ class WordwallsGame(object):
                      'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
-        logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
+        logger.debug(u'user=%s, tablenum=%s, listname=%s, event=save',
                      user, tablenum, listname)
         wgm = self.get_wgm(tablenum)
         if not wgm:
