@@ -104,7 +104,8 @@ class WordwallsGame(object):
 
         return wgm
 
-    def initialize_word_list(self, questions, lexicon, user):
+    def initialize_word_list(self, questions, lexicon, user,
+                             category=WordList.CATEGORY_ANAGRAM):
         """
         Initializes a word list with the given questions and
         returns it.
@@ -115,7 +116,8 @@ class WordwallsGame(object):
 
         """
         wl = WordList()
-        wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True)
+        wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True,
+                           category=category)
         return wl
 
     def get_dc(self, ch_date, ch_lex, ch_name):
@@ -159,7 +161,10 @@ class WordwallsGame(object):
             raise GameInitException('Unable to create daily challenge {0}'.
                                     format(ch_name))
         qs, secs, dc = ret
-        wl = self.initialize_word_list(qs, ch_lex, user)
+        list_category = WordList.CATEGORY_ANAGRAM
+        if dc.category == DailyChallenge.CATEGORY_BUILD:
+            list_category = WordList.CATEGORY_BUILD
+        wl = self.initialize_word_list(qs, ch_lex, user, list_category)
         temporary_list_name = '{0} {1} - {2}'.format(
             ch_lex.lexiconName,
             ch_name.name,
@@ -192,9 +197,12 @@ class WordwallsGame(object):
             if qs.size() == 0:
                 logger.error('Empty questions.')
                 return None
-            dc = DailyChallenge(date=ch_date, lexicon=ch_lex,
-                                name=ch_name, seconds=secs,
-                                alphagrams=qs.to_json())
+            ch_category = DailyChallenge.CATEGORY_ANAGRAM
+            if qs.build_mode:
+                ch_category = DailyChallenge.CATEGORY_BUILD
+            dc = DailyChallenge(date=ch_date, lexicon=ch_lex, name=ch_name,
+                                seconds=secs, alphagrams=qs.to_json(),
+                                category=ch_category)
             try:
                 dc.save()
             except IntegrityError:
@@ -354,7 +362,7 @@ class WordwallsGame(object):
         wgm.save()
         word_list.save()
         game_type = state['gameType']
-        if len(orig_questions) and orig_questions[0].get('build_mode'):
+        if word_list.category == WordList.CATEGORY_BUILD:
             game_type += '_build'   # This is hell of ghetto.
         ret = {'questions': questions,
                'time': state['timerSecs'],

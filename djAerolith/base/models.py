@@ -75,6 +75,16 @@ class Lexicon(models.Model):
 
 
 class SavedList(models.Model):
+    CATEGORY_ANAGRAM = 'A'      # Regular word walls
+    CATEGORY_BUILD = 'B'        # Subwords
+    CATEGORY_THROUGH_TILES = 'T'
+
+    LIST_CATEGORIES = (
+        (CATEGORY_ANAGRAM, 'Anagram'),
+        (CATEGORY_BUILD, 'Build'),
+        (CATEGORY_THROUGH_TILES, 'Through')
+    )
+
     lexicon = models.ForeignKey(Lexicon)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
@@ -99,9 +109,12 @@ class SavedList(models.Model):
     # that should set it back to False is a save.
     is_temporary = models.BooleanField(default=False)
     version = models.IntegerField(default=2)
+    category = models.CharField(choices=LIST_CATEGORIES, max_length=2,
+                                default=CATEGORY_ANAGRAM)
 
     def initialize_list(self, questions, lexicon, user, shuffle=False,
-                        keep_old_name=False, save=True):
+                        keep_old_name=False, save=True,
+                        category=CATEGORY_ANAGRAM):
         """
         Initialize a list with the passed in questions. Optionally saves
         it to the database.
@@ -135,6 +148,7 @@ class SavedList(models.Model):
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])
         self.version = 2
+        self.category = category
         if save:
             self.user = user
             self.save()
@@ -143,7 +157,7 @@ class SavedList(models.Model):
         """ Restart this list; save it back to the database. """
         self.initialize_list(json.loads(self.origQuestions),
                              self.lexicon, self.user, shuffle,
-                             keep_old_name=True)
+                             keep_old_name=True, category=self.category)
 
     def set_to_first_missed(self):
         """ Set this list to quiz on first missed questions; save. """
@@ -182,7 +196,8 @@ class SavedList(models.Model):
             'firstMissed': json.loads(self.firstMissed),
             'version': self.version,
             'id': self.pk,
-            'temporary': self.is_temporary
+            'temporary': self.is_temporary,
+            'category': self.category,
         }
 
     def date_to_str(self, dt, human):
@@ -215,7 +230,8 @@ class SavedList(models.Model):
             'lastSaved': self.date_to_str(self.lastSaved, last_saved_human),
             'lastSavedDT': self.date_to_str(self.lastSaved, False),
             'id': self.pk,
-            'temporary': self.is_temporary
+            'temporary': self.is_temporary,
+            'category': self.category,
         }
 
     def __unicode__(self):

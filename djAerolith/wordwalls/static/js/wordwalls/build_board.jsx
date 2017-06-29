@@ -6,8 +6,8 @@ import WordwallsQuestion from './wordwalls_question';
 import backgroundURL from './background';
 
 const SolutionPanel = (props) => {
-  let words = props.solvedWords.map(word => (
-    <span>{word} </span>
+  let words = props.solvedWords.map((word, idx) => (
+    <span key={idx}>{word} </span>
   ));
   if (!words.length) {
     words = (

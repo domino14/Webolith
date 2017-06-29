@@ -70,12 +70,13 @@ class Alphagram(object):
 class Questions(object):
     def __init__(self):
         self.questions = []
+        self.build_mode = False
 
     def questions_array(self):
         return self.questions
 
     def set_build_mode(self):
-        self.questions[0].set_build_mode()
+        self.build_mode = True
 
     def append(self, question):
         self.questions.append(question)
@@ -101,10 +102,8 @@ class Questions(object):
     def set_from_json(self, json_string):
         """
         Set Questions from a JSON string. Useful when loading from a
-        word list or challenge. We will be missing meta info as this
-        only loads words and alphagram strings.
-
-        See Question.to_python for format.
+        challenge. We will be missing meta info as this only loads
+        words and alphagram strings.
 
         """
         qs = json.loads(json_string)
@@ -130,22 +129,17 @@ class Question(object):
         """
         self.alphagram = alphagram
         self.answers = answers
-        self.build_mode = False
 
     def set_answers_from_word_list(self, word_list):
         self.answers = []
         for word in word_list:
             self.answers.append(Word(word=word))
 
-    def set_build_mode(self):
-        self.build_mode = True
-
     def to_python_full(self):
         """ A complete representation of question. """
         q = {
             'question': self.alphagram.alphagram,
             'probability': self.alphagram.probability,
-            'build_mode': self.build_mode,
             'answers': []
         }
         for a in self.answers:
@@ -162,7 +156,6 @@ class Question(object):
 
     def to_python(self):
         return {'q': self.alphagram.alphagram,
-                'build_mode': self.build_mode,
                 'a': [w.word for w in self.answers]}
 
     def set_from_obj(self, obj):
