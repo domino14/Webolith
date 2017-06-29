@@ -30,14 +30,13 @@ from django.utils import timezone
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions
 from lib.word_searches import word_search
-from wordwalls.challenges import generate_dc_questions
+from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
-from wordwalls.models import WordwallsGameModel
-from wordwalls.challenges import toughies_challenge_date
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeMissedBingos, DailyChallengeName)
+                              DailyChallengeMissedBingos, DailyChallengeName,
+                              WordwallsGameModel)
 logger = logging.getLogger(__name__)
 
 
@@ -105,7 +104,8 @@ class WordwallsGame(object):
 
         return wgm
 
-    def initialize_word_list(self, questions, lexicon, user):
+    def initialize_word_list(self, questions, lexicon, user,
+                             category=WordList.CATEGORY_ANAGRAM):
         """
         Initializes a word list with the given questions and
         returns it.
@@ -116,7 +116,8 @@ class WordwallsGame(object):
 
         """
         wl = WordList()
-        wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True)
+        wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True,
+                           category=category)
         return wl
 
     def get_dc(self, ch_date, ch_lex, ch_name):
@@ -160,7 +161,10 @@ class WordwallsGame(object):
             raise GameInitException('Unable to create daily challenge {0}'.
                                     format(ch_name))
         qs, secs, dc = ret
-        wl = self.initialize_word_list(qs, ch_lex, user)
+        list_category = WordList.CATEGORY_ANAGRAM
+        if dc.category == DailyChallenge.CATEGORY_BUILD:
+            list_category = WordList.CATEGORY_BUILD
+        wl = self.initialize_word_list(qs, ch_lex, user, list_category)
         temporary_list_name = '{0} {1} - {2}'.format(
             ch_lex.lexiconName,
             ch_name.name,
@@ -193,9 +197,12 @@ class WordwallsGame(object):
             if qs.size() == 0:
                 logger.error('Empty questions.')
                 return None
-            dc = DailyChallenge(date=ch_date, lexicon=ch_lex,
-                                name=ch_name, seconds=secs,
-                                alphagrams=qs.to_json())
+            ch_category = DailyChallenge.CATEGORY_ANAGRAM
+            if qs.build_mode:
+                ch_category = DailyChallenge.CATEGORY_BUILD
+            dc = DailyChallenge(date=ch_date, lexicon=ch_lex, name=ch_name,
+                                seconds=secs, alphagrams=qs.to_json(),
+                                category=ch_category)
             try:
                 dc.save()
             except IntegrityError:
@@ -342,9 +349,10 @@ class WordwallsGame(object):
         qs_set = set(qs)
         if len(qs_set) != len(qs):
             logger.error("Question set is not unique!!")
+        orig_questions = json.loads(word_list.origQuestions)
 
         questions, answer_hash = self.load_questions(
-            qs, json.loads(word_list.origQuestions), word_list.lexicon)
+            qs, orig_questions, word_list.lexicon)
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answer_hash
@@ -353,9 +361,12 @@ class WordwallsGame(object):
         wgm.currentGameState = json.dumps(state)
         wgm.save()
         word_list.save()
+        game_type = state['gameType']
+        if word_list.category == WordList.CATEGORY_BUILD:
+            game_type += '_build'   # This is hell of ghetto.
         ret = {'questions': questions,
                'time': state['timerSecs'],
-               'gameType': state['gameType'],
+               'gameType': game_type,
                'serverMsg': start_message}
 
         return ret
@@ -507,7 +518,7 @@ class WordwallsGame(object):
                      'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
-        logger.debug('user=%s, tablenum=%s, listname=%s, event=save',
+        logger.debug(u'user=%s, tablenum=%s, listname=%s, event=save',
                      user, tablenum, listname)
         wgm = self.get_wgm(tablenum)
         if not wgm:
@@ -598,7 +609,7 @@ class WordwallsGame(object):
         logger.info("%d missed this round, %d missed total",
                     len(missed_indices), len(missed))
         if state['gameType'] == 'challenge':
-            state['gameType'] = 'challengeOver'
+            state['gameType'] = 'regular'
             self.create_challenge_leaderboard_entry(state, tablenum)
 
         # check if we've gone thru the quiz once.

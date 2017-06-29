@@ -20,6 +20,7 @@ UserBox.propTypes = {
     React.PropTypes.instanceOf(Immutable.Map)),
   totalWords: React.PropTypes.number,
   username: React.PropTypes.string,
+  // isBuild: React.PropTypes.bool,
 };
 
 export default UserBox;

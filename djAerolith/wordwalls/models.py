@@ -46,13 +46,27 @@ class DailyChallengeName(models.Model):
 
 
 class DailyChallenge(models.Model):
+    CATEGORY_ANAGRAM = 'A'
+    CATEGORY_BUILD = 'B'
+    CATEGORY_THROUGH_TILES = 'T'
+
+    CHALLENGE_CATEGORIES = (
+        (CATEGORY_ANAGRAM, 'Anagram'),
+        (CATEGORY_BUILD, 'Build'),
+        (CATEGORY_THROUGH_TILES, 'Through'),
+    )
+
     lexicon = models.ForeignKey(Lexicon)
     # set the date to now when an instance is created
     date = models.DateField()
     name = models.ForeignKey(DailyChallengeName)
+    # XXX: alphagrams should be more aptly renamed to 'questions' in order
+    # to make challenges more generic (subwords, through-tiles, etc)
     alphagrams = models.TextField()
     # the number of seconds alloted for this challenge
     seconds = models.IntegerField()
+    category = models.CharField(choices=CHALLENGE_CATEGORIES, max_length=2,
+                                default=CATEGORY_ANAGRAM)
 
     def __unicode__(self):
         return "%s %s (%s)" % (self.date, self.name.name,

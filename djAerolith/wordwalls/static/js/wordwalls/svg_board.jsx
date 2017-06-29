@@ -33,6 +33,7 @@ const SVGBoard = (props) => {
     background: props.displayStyle.background,
     bodyBackground: props.displayStyle.bodyBackground,
   };
+  const onShuffle = props.onShuffle;
   // curQuestions is an Immutable List of Maps
   props.questions.forEach((question, idx) => {
     // Calculate top left X, Y based on dimensions.
@@ -53,7 +54,7 @@ const SVGBoard = (props) => {
         gridY={gridY + topMargin}
         ySize={ySize}
         xSize={xSize}
-        onShuffle={props.onShuffle}
+        onShuffle={onShuffle}
       />);
   });
 
@@ -74,6 +75,7 @@ SVGBoard.propTypes = {
   gridWidth: React.PropTypes.number,
   gridHeight: React.PropTypes.number,
   questions: React.PropTypes.instanceOf(Immutable.List),
+  onShuffle: React.PropTypes.func.isRequired,
 };
 
 export default SVGBoard;

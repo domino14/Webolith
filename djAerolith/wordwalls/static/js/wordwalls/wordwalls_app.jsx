@@ -38,6 +38,7 @@ class WordwallsApp extends React.Component {
       curQuestions: game.getQuestionState(),
       messages: [],
       isChallenge: false,
+      isBuild: false,
       totalWords: 0,
       answeredByMe: [],
       lastGuess: '',
@@ -269,7 +270,8 @@ class WordwallsApp extends React.Component {
     }
     if (_.has(data, 'gameType')) {
       this.setState({
-        isChallenge: data.gameType === 'challenge',
+        isChallenge: data.gameType.includes('challenge'),
+        isBuild: data.gameType.includes('build'),
       });
     }
   }
@@ -630,6 +632,7 @@ class WordwallsApp extends React.Component {
             <GameArea
               numberOfRounds={this.state.numberOfRounds}
               isChallenge={this.state.isChallenge}
+              isBuild={this.state.isBuild}
               curQuestions={this.state.curQuestions}
               origQuestions={this.state.origQuestions}
               displayStyle={this.state.displayStyle}
@@ -655,6 +658,7 @@ class WordwallsApp extends React.Component {
               answeredByMe={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
+              isBuild={this.state.isBuild}
             />
           </div>
         </div>
@@ -700,6 +704,7 @@ class WordwallsApp extends React.Component {
               answeredByMe={this.state.answeredByMe}
               totalWords={this.state.totalWords}
               username={this.props.username}
+              isBuild={this.state.isBuild}
             />
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import Immutable from 'immutable';
 
+// import { pointsForWord } from './build_mode';
 import WordPartDisplay from './word_part_display';
 
 const UserBox = (props) => {

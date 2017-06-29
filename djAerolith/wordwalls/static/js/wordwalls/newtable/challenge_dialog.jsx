@@ -21,6 +21,17 @@ const ChallengeDialog = (props) => {
       selectedChallenge={props.currentChallenge}
     />);
 
+  rows.push(
+    <ChallengeButtonRow
+      title="Word Builder"
+      size="sm"
+      key="ch5"
+      challenges={props.challengeInfo.filter(ch => ch.orderPriority === 4)}
+      onChallengeClick={props.onChallengeSelected}
+      solvedChallenges={challs}
+      selectedChallenge={props.currentChallenge}
+    />);
+
   // Hard challenges
   rows.push(
     <ChallengeButtonRow

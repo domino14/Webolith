@@ -70,9 +70,13 @@ class Alphagram(object):
 class Questions(object):
     def __init__(self):
         self.questions = []
+        self.build_mode = False
 
     def questions_array(self):
         return self.questions
+
+    def set_build_mode(self):
+        self.build_mode = True
 
     def append(self, question):
         self.questions.append(question)
@@ -98,10 +102,8 @@ class Questions(object):
     def set_from_json(self, json_string):
         """
         Set Questions from a JSON string. Useful when loading from a
-        word list or challenge. We will be missing meta info as this
-        only loads words and alphagram strings.
-
-        See Question.to_python for format.
+        challenge. We will be missing meta info as this only loads
+        words and alphagram strings.
 
         """
         qs = json.loads(json_string)
