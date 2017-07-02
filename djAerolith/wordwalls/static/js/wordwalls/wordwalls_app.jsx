@@ -113,6 +113,7 @@ class WordwallsApp extends React.Component {
               resetTableCreator={this.props.resetTableCreator}
               tableCreatorModalSelector={this.props.tableCreatorModalSelector}
               listName={this.props.listName}
+              answerers={this.props.answeredBy}
             />
           </div>
         </div>

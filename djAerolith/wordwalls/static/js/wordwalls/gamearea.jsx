@@ -12,7 +12,7 @@ const GameArea = (props) => {
       return (
         <BuildBoard
           onShuffle={props.onShuffle}
-          answered={props.answeredByMe}
+          answerers={props.answerers}
           displayStyle={props.displayStyle}
           width={props.width}
           questions={props.curQuestions}
@@ -61,6 +61,7 @@ GameArea.propTypes = {
   onShuffle: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,
+  answerers: React.PropTypes.instanceOf(Immutable.Map),
 
   challengeData: React.PropTypes.shape({
     entries: React.PropTypes.array,
