@@ -22,9 +22,9 @@ type: Opaque
 
 @task
 def regen():
-    host = 'dev.aerolith.org'
-    key_file = '/home/ubuntu/certbot/live/{0}/privkey.pem'.format(host)
-    crt_file = '/home/ubuntu/certbot/live/{0}/fullchain.pem'.format(host)
+    host = 'www.aerolith.org'
+    key_file = '/home/ubuntu/privkey.pem'
+    crt_file = '/home/ubuntu/fullchain.pem'
     create_ssl_secret(key_file, crt_file)
 
 
@@ -50,7 +50,7 @@ def create_ssl_secret(key_file, crt_file):
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print 'Usage'
-        print 'sudo fab -f ssl-renewer.py <mode>'
+        print 'fab -f ssl-renewer.py <mode>'
         print '  modes:'
         print 'renew - Run script to renew cert'
         print 'regen - Run script to regenerate secret template'
