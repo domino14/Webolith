@@ -15,6 +15,10 @@ spec:
   - host: {{ HOST_NAME }}
     http:
       paths:
+      - path: /.well-known
+        backend:
+          serviceName: nginx-static-svc
+          servicePort: 80
       - path: /static
         backend:
           serviceName: nginx-static-svc
