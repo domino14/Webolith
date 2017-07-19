@@ -21,10 +21,11 @@ type: Opaque
 
 
 @task
-def regen():
-    host = 'www.aerolith.org'
-    key_file = '/home/ubuntu/privkey.pem'
-    crt_file = '/home/ubuntu/fullchain.pem'
+def regen(regid):
+    key_file = '/etc/letsencrypt/archive/aerolith.org/privkey{0}.pem'.format(
+        regid)
+    crt_file = '/etc/letsencrypt/archive/aerolith.org/fullchain{0}.pem'.format(
+        regid)
     create_ssl_secret(key_file, crt_file)
 
 
@@ -58,4 +59,4 @@ if __name__ == '__main__':
     if sys.argv[1] == 'renew':
         renew()
     elif sys.argv[1] == 'regen':
-        regen()
+        regen(sys.argv[2])
