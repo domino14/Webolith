@@ -116,9 +116,11 @@ For multiplayer
     - [x] Presence inside a table (This will take some time to do properly)
         - [x] When a user changes room, should immediately send this to the backend so that their presence can be removed.
         - [x] Propagate presences to list of tables (this must have broken)
-        - [ ] prune_rooms should remove empty rooms from front end too
-    - [ ] Turn multiplayer back into single player table
-    - [ ] Switch hosts seamlessly
+        - [ ] prune_rooms should remove empty rooms from front end too (Note - this doesn't broadcast a signal. Instead we should have logic where we don't display empty tables, or let them expire, etc.)
+    - [ ] **Turn multiplayer back into single player table**
+    - [ ] **Switch hosts seamlessly**
+    - [ ] **Should tables be deleted at some point?**
+    - [ ] Hide join button if user is already in this table
     - [ ] Test multiple clients solving all words at the same time
     - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
     - [ ] What if a user is in multiple rooms in multiple tabs?
@@ -129,7 +131,7 @@ For multiplayer
 - [x] Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window
 Testing:
 - [x] Solve all words among all players and game should end properly
-- [ ] Only host should start, maybe after some delay, or a quorum can be reached.
+- [ ] **Only host should start, maybe after some delay, or a quorum can be reached.**
 - [ ] Fix Django tests, look into Channels tests, front end tests, etc
 
 Deployment:
