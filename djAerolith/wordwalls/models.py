@@ -137,6 +137,30 @@ class NamedList(models.Model):
     wordLength = models.IntegerField()
     isRange = models.BooleanField()
     questions = models.TextField(validators=[named_list_format_validator])
+    description = models.CharField(max_length=2048, blank=True)
+
+
+class SavedNamedList(models.Model):
+    """
+    We try to establish a relation between a "named list" and a "saved list".
+    Oftentimes, a "saved list" is created from a "named list", but this
+    doesn't always have to be the case. If we keep track of the relationship
+    here, we can load the saved version of a named list rather than creating a
+    new one from scratch.
+
+    """
+    named_list = models.ForeignKey(NamedList)
+    word_list = models.ForeignKey(WordList)
+
+
+class ListStudy(models.Model):
+    """
+    ListStudy is used for "guided study" mode. We keep track of which
+    lists the user has studied.
+
+    """
+    named_list = models.ForeignKey(NamedList)
+    user = models.ForeignKey(User)
 
 
 class Medal(models.Model):

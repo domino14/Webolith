@@ -12,9 +12,11 @@ import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
+import GuidedStudyDialog from './guided_study_dialog';
 
 const GAME_TYPE_NEW = 'New';
 const GAME_TYPE_JOIN = 'Join';
+const SEARCH_TYPE_BEGINNERS = 'Guided Study';
 const SEARCH_TYPE_CHALLENGE = 'Challenges';
 const SEARCH_TYPE_WORDSEARCH = 'Word Search';
 const SEARCH_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
@@ -462,6 +464,13 @@ class TableCreator extends React.Component {
   render() {
     let selectedQuizSearchDialog;
     switch (this.state.activeSearchType) {
+      case SEARCH_TYPE_BEGINNERS:
+        selectedQuizSearchDialog = (
+          <GuidedStudyDialog
+            lexicon={this.state.currentLexicon}
+          />
+        );
+        break;
       case SEARCH_TYPE_CHALLENGE:
         selectedQuizSearchDialog = (
           <ChallengeDialog
@@ -552,6 +561,7 @@ class TableCreator extends React.Component {
             <div className="col-sm-10">
               <Pills
                 options={[
+                  SEARCH_TYPE_BEGINNERS,
                   SEARCH_TYPE_CHALLENGE,
                   SEARCH_TYPE_WORDSEARCH,
                   SEARCH_TYPE_AEROLITH_LISTS,
