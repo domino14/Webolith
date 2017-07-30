@@ -50,7 +50,7 @@ class Presence {
       return;
     }
     // Update the specific table with the list of users.
-    if (!this.tables.get(room)) {
+    if (!this.tables.has(room)) {
       // This can happen rarely, if the user joined notification comes
       // before the table creation notification. Just ignore it if that
       // happens, for now.
@@ -58,6 +58,18 @@ class Presence {
     }
     this.tables = this.tables.update(room,
       existingMap => existingMap.set('users', userList));
+  }
+  /**
+   * Set the "host" in the room to the passed-in host.
+   * @param {string} host
+   * @param {string} room
+   */
+  setHost(host, room) {
+    if (!this.tables.has(room)) {
+      return;
+    }
+    this.tables = this.tables.update(room,
+      existingMap => existingMap.set('host', host));
   }
   /**
    * Idempotently set tables to the passed in list.

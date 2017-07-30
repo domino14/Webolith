@@ -95,7 +95,7 @@ describe('Presence', () => {
       presenceHelper.tablesToAdd = [
         {
           lexicon: 'foo',
-          admin: 'bar',
+          host: 'bar',
           users: ['cesar', 'michael'],
           wordList: 'the 16s',
           tablenum: 27,
@@ -104,7 +104,7 @@ describe('Presence', () => {
         },
         {
           lexicon: 'bar',
-          admin: 'baz',
+          host: 'baz',
           users: ['joshua', 'jackson'],
           wordList: 'the cats',
           tablenum: 45,
@@ -132,7 +132,7 @@ describe('Presence', () => {
       presenceHelper.addTables(presenceHelper.tablesToAdd);
       presenceHelper.updateTable({
         lexicon: 'bar',
-        admin: 'cats',
+        host: 'cats',
         users: ['cats'],
         wordList: 'the cats',
         tablenum: 45,
@@ -142,14 +142,14 @@ describe('Presence', () => {
       const newUsers = presenceHelper.getTables().get('45').get('users');
       newUsers.size.should.equal(1);
       newUsers.get(0).should.equal('cats');
-      presenceHelper.getTables().get('45').get('admin').should.equal('cats');
+      presenceHelper.getTables().get('45').get('host').should.equal('cats');
       presenceHelper.getTables().size.should.equal(2);
     });
     it('should add single new table', () => {
       presenceHelper.addTables(presenceHelper.tablesToAdd);
       presenceHelper.updateTable({
         lexicon: 'OWL2',
-        admin: 'aiur',
+        host: 'aiur',
         users: ['cesar', 'conditar', 'jesse'],
         wordList: 'OWL2 4s',
         tablenum: 87,
@@ -158,6 +158,22 @@ describe('Presence', () => {
       });
       presenceHelper.getTables().get('87').get('users').size.should.equal(3);
       presenceHelper.getTables().size.should.equal(3);
+    });
+
+    it('should change the host of a table', () => {
+      presenceHelper.addTables(presenceHelper.tablesToAdd);
+      presenceHelper.setHost('bernie', '45');
+      presenceHelper.getTables().get('45').get('host').should.equal('bernie');
+      presenceHelper.getTables().size.should.equal(2);
+    });
+
+    it('should ignore change host events for nonexistent tables', () => {
+      presenceHelper.addTables(presenceHelper.tablesToAdd);
+      presenceHelper.setHost('bernie', '50');
+      hadBetter.not.exist(presenceHelper.getTables().get('50'));
+      presenceHelper.getTables().size.should.equal(2);
+      presenceHelper.getTables().get('27').get('host').should.equal('bar');
+      presenceHelper.getTables().get('45').get('host').should.equal('baz');
     });
   });
 });

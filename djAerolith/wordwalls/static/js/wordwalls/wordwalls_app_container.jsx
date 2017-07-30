@@ -252,6 +252,9 @@ class WordwallsAppContainer extends React.Component {
       case 'gameOver':
         this.processGameEnded();
         break;
+      case 'newHost':
+        this.handleNewHost(message.contents);
+        break;
       default:
         window.console.log('Received unrecognized message type:', message.type);
     }
@@ -267,6 +270,14 @@ class WordwallsAppContainer extends React.Component {
       users: presence.getUsers(),
       tables: presence.getTables(),
     });
+  }
+
+  handleNewHost(contents) {
+    presence.setHost(contents.host, contents.room);
+    this.setState({
+      tables: presence.getTables(),
+    });
+    this.addMessage(`The host of this table is now ${contents.host}`);
   }
 
   handleAutoSaveToggle() {

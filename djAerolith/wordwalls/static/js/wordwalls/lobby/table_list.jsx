@@ -2,67 +2,39 @@
  * @fileOverview A list of tables that have at least one player in them.
  */
 import React from 'react';
-// omg eslint
-const Table = props => (
 
-  <li className="list-group-item">
-    <div className="row">
-      <div className="col-sm-2">
-        Table {props.tablenum}
-      </div>
-      <div className="col-sm-3">
-        <b>{props.lexicon}</b>
-      </div>
-      <div className="col-sm-4">
-        <span className="text-muted">Host: {props.admin}</span>
-      </div>
-      <div className="col-sm-3">
-        <button
-          className="btn btn-info"
-          onClick={() => props.onJoinClicked(props.tablenum)}
-        >Join</button>
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-sm-4">
-        List: <span className="text-info">{props.wordList}</span>
-      </div>
-      <div className="col-sm-4">
-        <span className="text-muted">In table: {props.users.join(' ')}</span>
-      </div>
-    </div>
-
-  </li>
-);
-
-
-Table.propTypes = {
-  tablenum: React.PropTypes.number,
-  lexicon: React.PropTypes.string,
-  wordList: React.PropTypes.string,
-  admin: React.PropTypes.string,
-  users: React.PropTypes.arrayOf(React.PropTypes.string),
-  onJoinClicked: React.PropTypes.func,
-};
+import Table from './table';
 
 class TableList extends React.Component {
   renderTables() {
     console.log('da tables', this.props.activeTables);
-    return Object.keys(this.props.activeTables).map((tableid) => {
+    const privateTableList = [];
+    const publicTableList = [];
+
+    Object.keys(this.props.activeTables).forEach((tableid) => {
       const table = this.props.activeTables[tableid];
-      return (
+      const tNode = (
         <Table
           key={tableid}
           tablenum={table.tablenum}
           lexicon={table.lexicon}
           wordList={table.wordList}
           users={table.users}
-          admin={table.admin}
+          host={table.host}
+          multiplayer={table.multiplayer}
           secondsPerRound={table.secondsPerRound}
           questionsPerRound={table.questionsPerRound}
           onJoinClicked={this.props.onJoinClicked}
         />);
+      if (table.multiplayer) {
+        publicTableList.push(tNode);
+      } else {
+        privateTableList.push(tNode);
+      }
     });
+    // Sort public tables before private tables
+    publicTableList.push(...privateTableList);
+    return publicTableList;
   }
 
   render() {

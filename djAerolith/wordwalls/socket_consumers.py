@@ -22,7 +22,7 @@ def host_switched_msg(user, room):
         'type': 'newHost',
         'contents': {
             'host': user.username,
-            'room': room,
+            'room': room.channel_name,
         }
     }
 
@@ -41,7 +41,7 @@ def table_info(table):
     state = json.loads(table.currentGameState)
     table_obj = {
         'lexicon': table.lexicon.lexiconName,
-        'admin': table.host.username,
+        'host': table.host.username,
         'users': [user.username for user in table.inTable.all()],
         'wordList': (
             table.word_list.name if not table.word_list.is_temporary
@@ -49,6 +49,7 @@ def table_info(table):
         'tablenum': table.pk,
         'secondsPerRound': state['timerSecs'],
         'questionsPerRound': state['questionsToPull'],
+        'multiplayer': table.playerType == WordwallsGameModel.MULTIPLAYER_GAME
     }
     return table_obj
 
@@ -59,9 +60,7 @@ def active_tables():
     tables = []
     for room in rooms:
         try:
-            tables.append(WordwallsGameModel.objects.get(
-                playerType=WordwallsGameModel.MULTIPLAYER_GAME,
-                pk=room.channel_name))
+            tables.append(WordwallsGameModel.objects.get(pk=room.channel_name))
         except WordwallsGameModel.DoesNotExist:
             pass
 
@@ -76,7 +75,7 @@ def active_tables():
 @receiver(presence_changed)
 def broadcast_presence(sender, room, **kwargs):
     # Broadcast the new list of present users to the room.
-    logger.debug('Presence changed triggered')
+    logger.debug('Presence changed triggered, users: %s', room.get_users())
     presence_payload = {
         'text': json.dumps(users_in(room))
     }
@@ -111,6 +110,9 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
     if removed:
         logger.debug('Removing user from inTable: %s', removed)
         table.inTable.remove(removed.user)
+        if removed.user == table.host:
+            # Change host.
+            change_host(table, room)
     if bulk_change:
         # Need to get set of users in table, and do some sort of intersection
         # with the presences.
@@ -128,6 +130,26 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
             table.inTable.add(user)
         for user in to_remove:
             table.inTable.remove(user)
+            if user == table.host:
+                change_host(table, room)
+
+
+def change_host(table, room):
+    """
+    Change the host of a table to, I suppose, the "next" user in that
+    table.
+
+    """
+    logger.debug('Changing the host of room %s', room)
+    still_there = table.inTable.all()
+    if still_there.count():
+        new_host = still_there[0]
+        table.host = new_host
+        table.save()
+        logger.debug('The new host is %s', new_host)
+        Group(LOBBY_CHANNEL_NAME).send({
+            'text': json.dumps(host_switched_msg(new_host, room))
+        })
 
 
 @channel_session_user_from_http
@@ -150,6 +172,7 @@ def ws_disconnect(message):
         room = message.channel_session['room']
         Room.objects.remove(room, message.reply_channel.name)
         logger.debug('User %s left table %s', message.user.username, room)
+    logger.debug('User %s left lobby', message.user.username)
     Room.objects.remove(LOBBY_CHANNEL_NAME, message.reply_channel.name)
 
 

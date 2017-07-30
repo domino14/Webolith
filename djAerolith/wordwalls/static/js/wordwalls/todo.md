@@ -117,17 +117,22 @@ For multiplayer
         - [x] When a user changes room, should immediately send this to the backend so that their presence can be removed.
         - [x] Propagate presences to list of tables (this must have broken)
         - [ ] prune_rooms should remove empty rooms from front end too (Note - this doesn't broadcast a signal. Instead we should have logic where we don't display empty tables, or let them expire, etc.)
+        - [ ] creating a new table broadcasts the table to everyone, even if it's not a multiplayer table.
     - [ ] **Turn multiplayer back into single player table**
-    - [ ] **Switch hosts seamlessly**
+    - [x] **Switch hosts seamlessly**
     - [ ] **Should tables be deleted at some point?**
     - [ ] Hide join button if user is already in this table
+    - [ ] Show current host of table
+    - [ ] Countdown to start game
     - [ ] Test multiple clients solving all words at the same time
     - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
     - [ ] What if a user is in multiple rooms in multiple tabs?
-    - [ ] Kick players out? Make private? etc?
+
     - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.
+    - [x] ~~two players were in lobby. one was in a table. the one in table went to google.com. the other player in the lobby never saw him leave.~~
+        ~~Issue was that we need to call prune_presences occasionally~~
 - [ ] Disable save in multiplayer game on front-end too
-- [ ] "Social" aspect - number of alphagrams solved per user per day/week/etc
+
 - [x] Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window
 Testing:
 - [x] Solve all words among all players and game should end properly
@@ -137,3 +142,8 @@ Testing:
 Deployment:
     - [ ] Create Celery container for pruning presences/rooms periodically
     - [ ] Create Daphne containers for workers and the socket channel handlers
+    - [ ] Create Redis container for channels/asgi (and the Celery queue)
+
+Nice to haves:
+- [ ] "Social" aspect - number of alphagrams solved per user per day/week/etc
+- [ ] Kick players out? Make private? etc?

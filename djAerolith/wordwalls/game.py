@@ -335,6 +335,12 @@ class WordwallsGame(object):
             return self.create_error_message(
                 _("The quiz is currently running."))
 
+        if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
+            if user != wgm.host:
+                return self.create_error_message(
+                    _('{user} wants to start the game, but only the host '
+                      '{host} can do that.').format(user=user, host=wgm.host))
+
         start_message = ""
         word_list = wgm.word_list
 
