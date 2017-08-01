@@ -104,9 +104,12 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
     except WordwallsGameModel.DoesNotExist:
         logger.error('Table %s does not exist', room)
         return
+    table_was_empty = table.inTable.all().count() == 0
     if added:
         logger.debug('Adding user to inTable: %s', added)
         table.inTable.add(added.user)
+        if table_was_empty and table.host != added.user:
+            change_host(table, room)
     if removed:
         logger.debug('Removing user from inTable: %s', removed)
         table.inTable.remove(removed.user)
@@ -128,6 +131,8 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
                      to_remove)
         for user in to_add:
             table.inTable.add(user)
+        if table_was_empty and table.host not in to_add:
+            change_host(table, room)
         for user in to_remove:
             table.inTable.remove(user)
             if user == table.host:
@@ -150,6 +155,9 @@ def change_host(table, room):
         Group(LOBBY_CHANNEL_NAME).send({
             'text': json.dumps(host_switched_msg(new_host, room))
         })
+    else:
+        logger.debug('Was not able to change host, since there is no one in '
+                     'this room! room=%s', room)
 
 
 @channel_session_user_from_http
@@ -187,6 +195,8 @@ def ws_message(message):
     #   'contents' - The chat, the message, the guess, etc.
     if msg_contents['type'] == 'join':
         table_join(message, msg_contents)
+    elif msg_contents['type'] == 'replaceTable':
+        table_replace(message, msg_contents)
     elif msg_contents['type'] == 'guess':
         table_guess(message, msg_contents)
 
@@ -212,7 +222,7 @@ def ws_message(message):
 def table_join(message, contents):
     wwg = WordwallsGame()
     tableid = contents['room']
-    permitted = wwg.permit(message.user, tableid)
+    permitted = wwg.allow_access(message.user, tableid)
     if not permitted:
         msg = {
             'type': 'server',
@@ -240,6 +250,15 @@ def table_join(message, contents):
             'contents': state
         })
     })
+
+
+def table_replace(message, contents):
+    tableid = contents['contents']['oldTable']
+    logger.debug('ReplaceTable: User %s left room %s',
+                 message.user.username, tableid)
+    Room.objects.remove(tableid, message.reply_channel.name)
+    # This will trigger the presence changed signal above, too.
+    table_join(message, contents)
 
 
 # XXX: Could move to another worker

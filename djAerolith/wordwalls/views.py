@@ -46,7 +46,6 @@ from base.utils import get_alphas_from_words, UserListParseException
 from current_version import CURRENT_VERSION
 from wordwalls.challenges import toughies_challenge_date
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -59,7 +58,7 @@ def table(request, tableid=None):
     wwg = WordwallsGame()
     if tableid:
         # Check if the user is allowed to enter this table.
-        permitted = wwg.permit(request.user, tableid)
+        permitted = wwg.allow_access(request.user, tableid)
         if gargoyle.is_active('disable_games', request):
             permitted = False
         if not permitted:

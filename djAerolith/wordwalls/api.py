@@ -303,7 +303,7 @@ def access_to_table(tablenum, user):
         # table. Return true to allow the logic to proceed.
         return True
     game = WordwallsGame()
-    return game.permit(user, tablenum)
+    return game.allow_access(user, tablenum)
 
 
 def date_from_request_dict(request_dict):

@@ -97,27 +97,37 @@ class WordwallsGame(object):
             player_type = GenericTableGameModel.MULTIPLAYER_GAME
         else:
             player_type = GenericTableGameModel.SINGLEPLAYER_GAME
-        if use_table is None:
-            wgm = WordwallsGameModel(
+
+        def new_wgm():
+            return WordwallsGameModel(
                 host=host, currentGameState=json.dumps(state),
                 gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
                 playerType=player_type, lexicon=lex, word_list=word_list)
+
+        if use_table is None:
+            wgm = new_wgm()
         else:
             wgm = self.get_wgm(tablenum=use_table, lock=True)
-            wgm.currentGameState = json.dumps(state)
-            wgm.lexicon = lex
-            wgm.word_list = word_list
-            if 'challenge' in state.get('gameType'):
-                # Do not allow multiplayer!
-                if multiplayer:
-                    raise GameInitException(
-                        'Cannot do a daily challenge in multiplayer mode.')
-            wgm.playerType = player_type
-            # TODO: if we make a multiplayer game back into a single player
-            # game, this should just make a new table.
-            # TODO: deal with all sorts of permission issues; only hosts
-            # should be able to load a new list into this table, etc.
-            # Need testing.
+            if multiplayer and wgm.host != host:
+                # It's a multiplayer game, but we are not the host and thus
+                # cannot load a new list into this table.
+                wgm = new_wgm()
+            elif (not multiplayer and
+                    wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME):
+                # Game used to be a multiplayer game, and now we want to
+                # make it a single player game. Instead of kicking everyone
+                # out, create a new table.
+                wgm = new_wgm()
+            else:
+                wgm.currentGameState = json.dumps(state)
+                wgm.lexicon = lex
+                wgm.word_list = word_list
+                if 'challenge' in state.get('gameType'):
+                    # Do not allow multiplayer!
+                    if multiplayer:
+                        raise GameInitException(
+                            'Cannot do a daily challenge in multiplayer mode.')
+                wgm.playerType = player_type
         wgm.save()
         from wordwalls.signal_handlers import game_important_save
         game_important_save.send(sender=self.__class__, instance=wgm)
@@ -854,7 +864,7 @@ class WordwallsGame(object):
                 'solver': user.username,
                 'already_solved': False}
 
-    def permit(self, user, tablenum):
+    def allow_access(self, user, tablenum):
         wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return False

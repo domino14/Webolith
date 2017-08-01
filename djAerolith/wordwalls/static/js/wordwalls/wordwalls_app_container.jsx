@@ -379,16 +379,7 @@ class WordwallsAppContainer extends React.Component {
   sendPresence() {
     this.websocketBridge.send({
       type: 'presence',
-      room: 'lobby',
-      contents: {},
     });
-    if (this.state.tablenum !== 0) {
-      this.websocketBridge.send({
-        type: 'presence',
-        room: String(this.state.tablenum),
-        contents: {},
-      });
-    }
   }
 
   /**
@@ -598,8 +589,9 @@ class WordwallsAppContainer extends React.Component {
    */
   handleLoadNewList(data) {
     let changeUrl = false;
+    const oldTablenum = this.state.tablenum;
     // let useReplaceState = false;
-    if (data.tablenum !== this.state.tablenum) {
+    if (data.tablenum !== oldTablenum) {
       changeUrl = true;
       // if (this.state.tablenum !== 0) {
       //   useReplaceState = true; // Replace instead of push if we already have
@@ -627,7 +619,11 @@ class WordwallsAppContainer extends React.Component {
       history.replaceState({}, `Table ${data.tablenum}`,
         this.tableUrl(data.tablenum));
       document.title = `Wordwalls - table ${data.tablenum}`;
-      this.sendSocketJoin(data.tablenum);
+      if (oldTablenum !== 0) {
+        this.sendSocketTableReplace(oldTablenum, data.tablenum);
+      } else {
+        this.sendSocketJoin(data.tablenum);
+      }
     }
   }
 
@@ -636,6 +632,16 @@ class WordwallsAppContainer extends React.Component {
       room: String(tablenum),
       type: 'join',
       contents: {},
+    });
+  }
+
+  sendSocketTableReplace(oldTablenum, tablenum) {
+    this.websocketBridge.send({
+      room: String(tablenum),
+      type: 'replaceTable',
+      contents: {
+        oldTable: oldTablenum,
+      },
     });
   }
 
