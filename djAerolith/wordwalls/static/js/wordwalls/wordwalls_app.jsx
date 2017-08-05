@@ -166,6 +166,7 @@ class WordwallsApp extends React.Component {
             <Players
               players={this.props.usersInTable}
               height={100}
+              currentHost={this.props.currentHost}
             />
           </div>
         </div>
@@ -269,6 +270,7 @@ WordwallsApp.propTypes = {
   tableCreatorModalSelector: React.PropTypes.string,
   username: React.PropTypes.string,
   usersInTable: React.PropTypes.arrayOf(React.PropTypes.string),
+  currentHost: React.PropTypes.string,
   onGuessSubmit: React.PropTypes.func,
   lastGuess: React.PropTypes.string,
   lastGuessCorrectness: React.PropTypes.bool,

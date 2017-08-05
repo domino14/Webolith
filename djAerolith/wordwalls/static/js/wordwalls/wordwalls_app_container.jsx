@@ -53,6 +53,8 @@ class WordwallsAppContainer extends React.Component {
       autoSave: this.props.autoSave,
       loadingData: false,
       tablenum: this.props.tablenum,
+      currentHost: this.props.currentHost,
+      tableIsMultiplayer: this.props.tableIsMultiplayer,
 
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
@@ -269,6 +271,7 @@ class WordwallsAppContainer extends React.Component {
     this.setState({
       users: presence.getUsers(),
       tables: presence.getTables(),
+      currentHost: presence.getHost(String(this.state.tablenum)),
     });
   }
 
@@ -277,7 +280,12 @@ class WordwallsAppContainer extends React.Component {
     this.setState({
       tables: presence.getTables(),
     });
-    this.addMessage(`The host of this table is now ${contents.host}`);
+    if (contents.room === String(this.state.tablenum)) {
+      this.addMessage(`The host of this table is now ${contents.host}`);
+      this.setState({
+        currentHost: contents.host,
+      });
+    }
   }
 
   handleAutoSaveToggle() {
@@ -450,6 +458,7 @@ class WordwallsAppContainer extends React.Component {
     presence.addTables(data.tables);
     this.setState({
       tables: presence.getTables(),
+      currentHost: presence.getHost(String(this.state.tablenum)),
     });
   }
 
@@ -458,6 +467,11 @@ class WordwallsAppContainer extends React.Component {
     this.setState({
       tables: presence.getTables(),
     });
+    if (data.table.tablenum === this.state.tablenum) {
+      this.setState({
+        currentHost: presence.getHost(String(this.state.tablenum)),
+      });
+    }
   }
 
   markMissed(alphaIdx, alphagram) {
@@ -673,7 +687,6 @@ class WordwallsAppContainer extends React.Component {
     const boardWidth = questionWidth * boardGridWidth;
     const boardHeight = questionHeight * boardGridHeight;
     game.setMaxOnScreenQuestions(boardGridWidth * boardGridHeight);
-    console.log('Redenring, tables:', this.state.tables.toJS());
     return (
       <div>
         <Spinner
@@ -687,6 +700,7 @@ class WordwallsAppContainer extends React.Component {
           availableLexica={this.props.availableLexica}
           challengeInfo={this.props.challengeInfo}
           tablenum={this.state.tablenum}
+          currentHost={this.state.currentHost}
           onLoadNewList={this.handleLoadNewList}
           gameGoing={this.state.gameGoing}
           setLoadingData={loading => this.setState({ loadingData: loading })}
@@ -695,6 +709,7 @@ class WordwallsAppContainer extends React.Component {
           messages={this.state.messages.get('lobby', Immutable.List()).toJS()}
           users={this.state.users.get('lobby', Immutable.List()).toJS()}
           tables={this.state.tables.toJS()}
+          tableIsMultiplayer={this.state.tableIsMultiplayer}
         />
         <WordwallsApp
           boardWidth={boardWidth}
@@ -730,6 +745,7 @@ class WordwallsAppContainer extends React.Component {
           resetTableCreator={this.resetTableCreator}
           tableCreatorModalSelector=".table-modal"
           username={this.props.username}
+          currentHost={this.state.currentHost}
 
           onGuessSubmit={this.onGuessSubmit}
           lastGuess={this.state.lastGuess}
@@ -759,6 +775,8 @@ WordwallsAppContainer.propTypes = {
   lexicon: React.PropTypes.string,
   displayStyle: React.PropTypes.instanceOf(Styling),
   tablenum: React.PropTypes.number,
+  tableIsMultiplayer: React.PropTypes.bool,
+  currentHost: React.PropTypes.string,
   defaultLexicon: React.PropTypes.number,
   challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
     id: React.PropTypes.number,

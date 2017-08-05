@@ -33,6 +33,8 @@ class App {
         lexicon={options.lexicon}
         displayStyle={style}
         tablenum={options.tablenum}
+        tableIsMultiplayer={options.multiplayer}
+        currentHost={options.currentHost}
         defaultLexicon={options.defaultLexicon}
         challengeInfo={options.challengeInfo}
         availableLexica={options.availableLexica}

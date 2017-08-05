@@ -25,10 +25,7 @@ const FLASHCARD_URL = '/flashcards/';
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
 
 const NO_LOAD_WHILE_PLAYING = (
-  'Cannot load a game while you are in the middle of another one...');
-
-const NO_DELETE_WHILE_PLAYING = (
-  'Please wait until the end of the game to delete a list.');
+  'Please wait until the end of the game to perform that action.');
 
 const COLLINS_LEX_ID = 1;
 const COLLINS_LICENSE_TEXT = `
@@ -210,10 +207,6 @@ class TableCreator extends React.Component {
    * Submit a challenge to the backend.
    */
   challengeSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_challenge/',
@@ -233,10 +226,6 @@ class TableCreator extends React.Component {
   }
 
   searchSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
@@ -265,10 +254,6 @@ class TableCreator extends React.Component {
    * to be moved over to my new Cards program in the future.
    */
   flashcardSearchSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
@@ -288,10 +273,6 @@ class TableCreator extends React.Component {
   }
 
   aerolithListSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/load_aerolith_list/',
@@ -313,10 +294,6 @@ class TableCreator extends React.Component {
   }
 
   flashcardAerolithListSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
@@ -334,12 +311,6 @@ class TableCreator extends React.Component {
   }
 
   savedListSubmit(listID, action) {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error',
-        action !== PlayOptions.PLAY_DELETE ? NO_LOAD_WHILE_PLAYING :
-          NO_DELETE_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     if (action === PlayOptions.PLAY_DELETE) {
       $.ajax({
@@ -478,6 +449,34 @@ class TableCreator extends React.Component {
       selectedList: listId,
     });
   }
+  /**
+   * This hook gets called prior to every submit function, in order to
+   * check common things such as the host of the table and whether a game
+   * is running.
+   * @param {Function} callback
+   * @param {string} name
+   */
+  preSubmitHook(callback) {
+    if (this.props.gameGoing &&
+        this.props.currentHost === this.props.username) {
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
+    } else if (this.props.tablenum !== 0 &&
+        this.props.currentHost !== this.props.username) {
+      Notifications.confirm('Are you sure?',
+        'You are trying to load a new word list, but you are not the host ' +
+        'of this table. This will create a new table. ' +
+        'Are you sure you wish to continue?', callback);
+    } else if (this.props.tablenum !== 0 && !this.state.multiplayerOn &&
+      this.props.tableIsMultiplayer) {
+      // We are in a multiplayer table, but trying to load single player game.
+      Notifications.confirm('Are you sure?',
+        'You are trying to create a new single player game. ' +
+        'This will remove you from your current multiplayer table and ' +
+        'create a new table. Are you sure you wish to continue?', callback);
+    } else {
+      callback();
+    }
+  }
 
   renderQuizSearch() {
     let selectedQuizSearchDialog;
@@ -494,7 +493,7 @@ class TableCreator extends React.Component {
                 currentDate: moment(date),
               });
             }}
-            onChallengeSubmit={this.challengeSubmit}
+            onChallengeSubmit={() => this.preSubmitHook(this.challengeSubmit)}
             onChallengeSelected={/* currying */
               challID => () => this.onChallengeSelected(challID)}
             currentChallenge={this.state.currentChallenge}
@@ -505,8 +504,9 @@ class TableCreator extends React.Component {
           <WordSearchDialog
             lexicon={this.state.currentLexicon}
             availableLexica={this.props.availableLexica}
-            onSearchSubmit={this.searchSubmit}
-            onFlashcardSubmit={this.flashcardSearchSubmit}
+            onSearchSubmit={() => this.preSubmitHook(this.searchSubmit)}
+            onFlashcardSubmit={() => this.preSubmitHook(
+              this.flashcardSearchSubmit)}
             onSearchParamChange={this.searchParamChange}
             wordLength={this.state.wordLength}
             probMin={this.state.probMin}
@@ -518,9 +518,11 @@ class TableCreator extends React.Component {
         selectedQuizSearchDialog = (
           <SavedListDialog
             listOptions={this.state.savedLists}
-            onListSubmit={this.savedListSubmit}
+            onListSubmit={(listID, action) => this.preSubmitHook(
+              () => this.savedListSubmit(listID, action))}
             onListUpload={this.listUpload}
-            onListFlashcard={this.flashcardSavedListSubmit}
+            onListFlashcard={(listID, action) => this.preSubmitHook(
+              () => this.flashcardSavedListSubmit(listID, action))}
           />);
         break;
       case SEARCH_TYPE_AEROLITH_LISTS:
@@ -529,8 +531,9 @@ class TableCreator extends React.Component {
             listOptions={this.state.aerolithLists}
             selectedList={this.state.selectedList}
             onSelectedListChange={this.selectedListChange}
-            onListSubmit={this.aerolithListSubmit}
-            onFlashcardSubmit={this.flashcardAerolithListSubmit}
+            onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
+            onFlashcardSubmit={() => this.preSubmitHook(
+              this.flashcardAerolithListSubmit)}
           />);
         break;
       default:
@@ -652,6 +655,8 @@ TableCreator.propTypes = {
     orderPriority: React.PropTypes.number,
   })),
   tablenum: React.PropTypes.number,
+  currentHost: React.PropTypes.string,
+  tableIsMultiplayer: React.PropTypes.bool,
   onLoadNewList: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   setLoadingData: React.PropTypes.func,

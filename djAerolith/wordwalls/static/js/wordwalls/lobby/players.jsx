@@ -2,7 +2,11 @@ import React from 'react';
 
 const Players = (props) => {
   const playerNodes = props.players.map((player, idx) =>
-    <div key={idx}>{player}</div>);
+    <div
+      key={idx}
+      style={{ whiteSpace: 'nowrap' }}
+    >{player === props.currentHost ? `${player} (Host)` : player}
+    </div>);
   return (
     <div
       className="panel panel-default"
@@ -20,6 +24,7 @@ const Players = (props) => {
 
 Players.propTypes = {
   players: React.PropTypes.arrayOf(React.PropTypes.string),
+  currentHost: React.PropTypes.string,
   height: React.PropTypes.number,
 };
 

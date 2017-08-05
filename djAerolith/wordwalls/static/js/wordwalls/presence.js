@@ -71,6 +71,18 @@ class Presence {
     this.tables = this.tables.update(room,
       existingMap => existingMap.set('host', host));
   }
+
+  /**
+   * Get the host for the current room, or an empty string.
+   * @param  {string} room
+   * @return {string}
+   */
+  getHost(room) {
+    if (!this.tables.has(room)) {
+      return '';
+    }
+    return this.tables.get(room).get('host');
+  }
   /**
    * Idempotently set tables to the passed in list.
    * @param {Array.<Object>} tables

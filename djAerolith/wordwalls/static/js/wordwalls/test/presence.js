@@ -175,5 +175,16 @@ describe('Presence', () => {
       presenceHelper.getTables().get('27').get('host').should.equal('bar');
       presenceHelper.getTables().get('45').get('host').should.equal('baz');
     });
+
+    it('should get the host of a table', () => {
+      presenceHelper.addTables(presenceHelper.tablesToAdd);
+      presenceHelper.getHost('27').should.equal('bar');
+    });
+
+    it('should get the host of a table after a change', () => {
+      presenceHelper.addTables(presenceHelper.tablesToAdd);
+      presenceHelper.setHost('bernie', '45');
+      presenceHelper.getHost('45').should.equal('bernie');
+    });
   });
 });

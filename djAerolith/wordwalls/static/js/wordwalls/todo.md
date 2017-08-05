@@ -125,14 +125,13 @@ For multiplayer
     - [ ] **Should tables be deleted at some point?**
     - [x] **Only hosts should load new lists**
         - [x] Bug: Non-host loaded new list, but inTable still shows him as in old table (and new table). Seems like all presences for the same channel_name get updated even if we're not pinging that channel name. Refreshing causes a new channel name, and prune_presences eventually gets rid of the old presence.
-    - [ ] **UI confirm for two cases: load singleplayer game into multiplayer game as host, and as guest**
+    - [x] **UI confirm for two cases: load singleplayer game into multiplayer game as host, and as guest**
     - [ ] Hide join button if user is already in this table
-    - [ ] Show current host of table
+    - [x] Show current host of table
     - [ ] Countdown to start game
     - [ ] Test multiple clients solving all words at the same time
     - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
     - [ ] What if a user is in multiple rooms in multiple tabs?
-
     - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.
     - [x] ~~two players were in lobby. one was in a table. the one in table went to google.com. the other player in the lobby never saw him leave.~~
         ~~Issue was that we need to call prune_presences occasionally~~
@@ -141,7 +140,7 @@ For multiplayer
 - [x] Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window
 Testing:
 - [x] Solve all words among all players and game should end properly
-- [ ] **Only host should start, maybe after some delay, or a quorum can be reached.**
+- [x] **Only host should start, maybe after some delay, or a quorum can be reached.**
 - [ ] Fix Django tests, look into Channels tests, front end tests, etc
 
 Deployment:

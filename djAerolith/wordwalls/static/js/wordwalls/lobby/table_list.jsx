@@ -7,7 +7,6 @@ import Table from './table';
 
 class TableList extends React.Component {
   renderTables() {
-    console.log('da tables', this.props.activeTables);
     const privateTableList = [];
     const publicTableList = [];
 
