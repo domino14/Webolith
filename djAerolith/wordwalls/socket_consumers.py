@@ -56,6 +56,7 @@ def table_info(table):
 
 def active_tables():
     """ Get all active tables with at least one user in them. """
+    logger.debug('In active_tables function, getting active tables')
     rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
     tables = []
     for room in rooms:
@@ -363,8 +364,10 @@ def table_timer_ended(message, contents):
 
 def send_tables(message, msg_contents):
     """ Send info about current multiplayer tables. """
+    tables = active_tables()
+    logger.debug('Sending active tables: %s', tables)
     message.reply_channel.send({
-        'text': json.dumps(active_tables())
+        'text': json.dumps(tables)
     })
 
 

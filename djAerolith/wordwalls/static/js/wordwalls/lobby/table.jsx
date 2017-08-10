@@ -3,15 +3,22 @@ import React from 'react';
 const Table = (props) => {
   let button;
   let lock;
+  const userInTable = props.users.includes(props.username);
+  const joinButton = (
+    <button
+      className="btn btn-info"
+      onClick={() => props.onJoinClicked(props.tablenum)}
+    >Join</button>);
   if (props.multiplayer) {
-    button = (
-      <button
-        className="btn btn-info"
-        onClick={() => props.onJoinClicked(props.tablenum)}
-      >Join</button>);
+    if (!userInTable) {
+      button = joinButton;
+    }
   } else {
     lock = (
       <span className="glyphicon glyphicon-lock" aria-hidden="true" />);
+    if (!userInTable && props.host === props.username) {
+      button = joinButton;
+    }
   }
   return (
     <li className="list-group-item">
@@ -49,6 +56,7 @@ Table.propTypes = {
   users: React.PropTypes.arrayOf(React.PropTypes.string),
   onJoinClicked: React.PropTypes.func,
   multiplayer: React.PropTypes.bool,
+  username: React.PropTypes.string,
 };
 
 export default Table;

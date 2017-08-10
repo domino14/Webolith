@@ -17,6 +17,7 @@ const Lobby = props => (
         <TableList
           activeTables={props.activeTables}
           onJoinClicked={props.onJoinClicked}
+          username={props.username}
         />
       </div>
     </div>
@@ -54,6 +55,7 @@ Lobby.propTypes = {
     content: React.PropTypes.string,
     type: React.PropTypes.string,
   })),
+  username: React.PropTypes.string,
   users: React.PropTypes.arrayOf(React.PropTypes.string),
   // tables: React.PropTypes.arrayOf(React.PropTypes.shape({
   //   tablenum: React.PropTypes.number.isRequired,

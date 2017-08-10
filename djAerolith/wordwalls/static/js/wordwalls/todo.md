@@ -107,7 +107,7 @@ For multiplayer
     - [x] Should at least write a POC with channels so that I don't discard it outright.
 - ~~[ ] More player boxes (only show on bigger screens?)~~
 - [x] Current player leaderboard
-    - [ ] Make it nicer
+    - [x] Make it nicer
 - [x] Chat submit box
 - [ ] Hijack tab key to change between guess/chat
     - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
@@ -126,7 +126,7 @@ For multiplayer
     - [x] **Only hosts should load new lists**
         - [x] Bug: Non-host loaded new list, but inTable still shows him as in old table (and new table). Seems like all presences for the same channel_name get updated even if we're not pinging that channel name. Refreshing causes a new channel name, and prune_presences eventually gets rid of the old presence.
     - [x] **UI confirm for two cases: load singleplayer game into multiplayer game as host, and as guest**
-    - [ ] Hide join button if user is already in this table
+    - [x] Hide join button if user is already in this table
     - [x] Show current host of table
     - [ ] Countdown to start game
     - [ ] Test multiple clients solving all words at the same time
@@ -141,6 +141,8 @@ For multiplayer
 Testing:
 - [x] Solve all words among all players and game should end properly
 - [x] **Only host should start, maybe after some delay, or a quorum can be reached.**
+- [x] There might be a race condition when joining a new table. There is a presence change signal, but what if it comes before the server gets the request for the table list? Also when refreshing the app when in a table!
+    - [x] Yes, all sorts of race conditions. Rethink the lifecycle, don't do so many requests, etc etc.
 - [ ] Fix Django tests, look into Channels tests, front end tests, etc
 
 Deployment:

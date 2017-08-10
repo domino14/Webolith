@@ -23,7 +23,7 @@ const game = new WordwallsGame();
 const presence = new Presence();
 
 const PRESENCE_TIMEOUT = 20000;  // 20 seconds.
-
+const GET_TABLES_INIT_TIMEOUT = 1500;
 
 class WordwallsAppContainer extends React.Component {
   constructor(props) {
@@ -151,6 +151,18 @@ class WordwallsAppContainer extends React.Component {
   }
 
   onChatSubmit(chat, channel) {
+    if (chat[0] === '/') {
+      // Command
+      const command = chat.substring(1);
+      switch (command) {
+        case 'getTables':
+          this.getTables();
+          break;
+        default:
+          break;
+      }
+      return;
+    }
     this.websocketBridge.send({
       room: channel,
       type: 'chat',
@@ -215,7 +227,8 @@ class WordwallsAppContainer extends React.Component {
         this.sendSocketJoin(this.state.tablenum);
       }
       this.sendPresence();
-      this.getTables();
+      // Avoid a race condition; get tables at beginning after a short break.
+      window.setTimeout(() => this.getTables(), GET_TABLES_INIT_TIMEOUT);
     });
   }
 
@@ -598,7 +611,9 @@ class WordwallsAppContainer extends React.Component {
   }
 
   /**
-   * Handle the loading of a new list into a table.
+   * Handle the loading of a new list into a table. This only gets triggered
+   * when the user loads a new list, and not when the user clicks join on a
+   * table. XXX: This may be a code smell, why use parallel paths?
    * @param  {Object} data
    */
   handleLoadNewList(data) {

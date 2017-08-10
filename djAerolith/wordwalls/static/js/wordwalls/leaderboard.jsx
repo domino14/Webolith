@@ -15,6 +15,31 @@ const Leaderboard = (props) => {
       lastAnswer: answered.get(-1),
     });
   });
+  // leaderboard.push({
+  //   player: 'frankie',
+  //   correct: 3,
+  //   lastAnswer: Immutable.fromJS({ w: 'WECHED', s: '!' }),
+  // });
+  // leaderboard.push({
+  //   player: 'joey jo jo jr shabadoo',
+  //   correct: 6,
+  //   lastAnswer: Immutable.fromJS({ w: 'JOEY', s: '' }),
+  // });
+  // leaderboard.push({
+  //   player: 'matthewoconnorisaphonier',
+  //   correct: 5,
+  //   lastAnswer: Immutable.fromJS({ w: 'WECH', s: '😂' }),
+  // });
+  // leaderboard.push({
+  //   player: 'mina',
+  //   correct: 7,
+  //   lastAnswer: Immutable.fromJS({ w: '😍', s: '' }),
+  // });
+  // leaderboard.push({
+  //   player: 'dogs',
+  //   correct: 2,
+  //   lastAnswer: Immutable.fromJS({ w: 'hmmmm', s: '' }),
+  // });
   leaderboard.sort((a, b) => {
     if (a.correct < b.correct) {
       return 1;
@@ -27,23 +52,24 @@ const Leaderboard = (props) => {
   leaderboard.forEach((item, idx) => {
     const word = item.lastAnswer;
     displayLeaderboard.push(
-      <tr key={idx}>
-        <td>
-          <div className="row">
-            <div className="col-sm-3 text-info">{item.correct}</div>
-            <div className="col-sm-9">{item.player}</div>
+      <li className="list-group-item" key={idx}>
+        <div className="row">
+          <div className="col-sm-3 text-info">{item.correct}</div>
+          <div
+            className="col-sm-9"
+            style={{ whiteSpace: 'nowrap', overflowX: 'hidden' }}
+          >{item.player}</div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            Last:
+            <WordPartDisplay
+              text={` ${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
+              classes="text-info small"
+            />
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              Last:
-              <WordPartDisplay
-                text={` ${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
-                classes="text-info small"
-              />
-            </div>
-          </div>
-        </td>
-      </tr>);
+        </div>
+      </li>);
   });
 
   return (
@@ -55,11 +81,9 @@ const Leaderboard = (props) => {
           overflow: 'auto',
         }}
       >
-        <table className="table table-condensed">
-          <tbody>
-            {displayLeaderboard}
-          </tbody>
-        </table>
+        <ul className="list-group">
+          {displayLeaderboard}
+        </ul>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ class TableList extends React.Component {
           secondsPerRound={table.secondsPerRound}
           questionsPerRound={table.questionsPerRound}
           onJoinClicked={this.props.onJoinClicked}
+          username={this.props.username}
         />);
       if (table.multiplayer) {
         publicTableList.push(tNode);
@@ -59,6 +60,7 @@ TableList.propTypes = {
   // })),
   activeTables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
   onJoinClicked: React.PropTypes.func,
+  username: React.PropTypes.string,
 };
 
 export default TableList;

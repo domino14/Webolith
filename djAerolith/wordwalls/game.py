@@ -566,7 +566,7 @@ class WordwallsGame(object):
         if s is None:
             return _('Please enter a valid list name!')
         if not wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
-            return _('Your game must be a single player game!')
+            return _('Cannot save - your game must be a single player game!')
         if state['quizGoing']:
             # TODO actually should check if time ran out
             # this seems like an arbitrary limitation but it makes
