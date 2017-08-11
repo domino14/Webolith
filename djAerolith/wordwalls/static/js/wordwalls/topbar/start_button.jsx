@@ -5,7 +5,7 @@ const BUTTON_STATE_COUNTING_DOWN = 2;
 const BUTTON_STATE_GIVEUP_TIMING_OUT = 3;
 
 const YOU_SURE_TIMEOUT = 3000;
-const COUNTDOWN = 3000;
+const COUNTDOWN_SECS = 3;
 
 class StartButton extends React.Component {
   constructor() {
@@ -49,17 +49,26 @@ class StartButton extends React.Component {
 
   handleClickOutsideOfGame() {
     if (this.state.buttonState === BUTTON_STATE_IDLE) {
-      this.setState({
-        buttonState: BUTTON_STATE_COUNTING_DOWN,
-      });
-      this.countdownTimeout = window.setTimeout(() => {
+      if (this.props.canStartAndGiveUp) {
+        this.setState({
+          buttonState: BUTTON_STATE_COUNTING_DOWN,
+        });
+        this.countdownTimeout = window.setTimeout(() => {
+          this.props.handleStart();
+        }, COUNTDOWN_SECS * 1000);
+        this.props.handleStartCountdown(COUNTDOWN_SECS);
+      } else {
+        // Try to start the game right away. This will send a message to the
+        // server telling everyone that this user wants to start the game,
+        // but won't actually start it.
         this.props.handleStart();
-      }, COUNTDOWN);
+      }
     } else if (this.state.buttonState === BUTTON_STATE_COUNTING_DOWN) {
       this.setState({
         buttonState: BUTTON_STATE_IDLE,
       });
       window.clearTimeout(this.countdownTimeout);
+      this.props.handleStartCountdownCancel();
     }
   }
 
@@ -108,6 +117,9 @@ StartButton.propTypes = {
   gameGoing: React.PropTypes.bool,
   handleGiveup: React.PropTypes.func,
   handleStart: React.PropTypes.func,
+  handleStartCountdown: React.PropTypes.func,
+  handleStartCountdownCancel: React.PropTypes.func,
+  canStartAndGiveUp: React.PropTypes.bool,
 };
 
 export default StartButton;

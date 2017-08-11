@@ -47,6 +47,8 @@ const GameArea = (props) => {
       resetTableCreator={props.resetTableCreator}
       tableCreatorModalSelector={props.tableCreatorModalSelector}
       listName={props.listName}
+      startCountdown={props.startCountdown}
+      startCountingDown={props.startCountingDown}
     />
   );
 };
@@ -76,6 +78,9 @@ GameArea.propTypes = {
   resetTableCreator: React.PropTypes.func,
   tableCreatorModalSelector: React.PropTypes.string,
   listName: React.PropTypes.string,
+
+  startCountdown: React.PropTypes.number,
+  startCountingDown: React.PropTypes.bool,
 };
 
 export default GameArea;

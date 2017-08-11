@@ -75,7 +75,10 @@ class WordwallsApp extends React.Component {
           <StartButton
             handleStart={this.props.handleStart}
             handleGiveup={this.props.handleGiveup}
+            handleStartCountdown={this.props.handleStartCountdown}
+            handleStartCountdownCancel={this.props.handleStartCountdownCancel}
             gameGoing={this.props.gameGoing}
+            canStartAndGiveUp={this.props.currentHost === this.props.username}
           />
           <GameTimer
             initialGameTime={this.props.initialGameTime}
@@ -114,6 +117,8 @@ class WordwallsApp extends React.Component {
               tableCreatorModalSelector={this.props.tableCreatorModalSelector}
               listName={this.props.listName}
               answerers={this.props.answeredBy}
+              startCountdown={this.props.startCountdown}
+              startCountingDown={this.props.startCountingDown}
             />
           </div>
         </div>
@@ -243,10 +248,15 @@ WordwallsApp.propTypes = {
 
   handleStart: React.PropTypes.func,
   handleGiveup: React.PropTypes.func,
+  handleStartCountdown: React.PropTypes.func,
+  handleStartCountdownCancel: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
 
   initialGameTime: React.PropTypes.number,
   timerRanOut: React.PropTypes.func,
+
+  startCountdown: React.PropTypes.number,
+  startCountingDown: React.PropTypes.bool,
 
   numberOfRounds: React.PropTypes.number,
   isChallenge: React.PropTypes.bool,

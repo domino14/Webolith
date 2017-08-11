@@ -67,7 +67,15 @@ class GameInactiveArea extends React.Component {
         />
       );
     }
-    if (this.props.numberOfRounds > 0) {
+    if (this.props.startCountingDown) {
+      const s = this.props.startCountdown > 1 ? 's' : '';
+      const str = `Game starting in ${this.props.startCountdown} second${s}...`;
+      jumbotronHeader = (
+        <div>
+          <h1>{str}</h1>
+        </div>
+      );
+    } else if (this.props.numberOfRounds > 0) {
       jumbotronHeader = (
         <div>
           <h1>Game over!</h1>
@@ -152,6 +160,8 @@ GameInactiveArea.propTypes = {
   resetTableCreator: React.PropTypes.func,
   tableCreatorModalSelector: React.PropTypes.string,
   listName: React.PropTypes.string,
+  startCountdown: React.PropTypes.number,
+  startCountingDown: React.PropTypes.bool,
 };
 
 export default GameInactiveArea;

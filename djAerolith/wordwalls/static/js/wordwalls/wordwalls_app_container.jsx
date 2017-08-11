@@ -24,6 +24,7 @@ const presence = new Presence();
 
 const PRESENCE_TIMEOUT = 20000;  // 20 seconds.
 const GET_TABLES_INIT_TIMEOUT = 1500;
+const FAKE_SECOND = 950;
 
 class WordwallsAppContainer extends React.Component {
   constructor(props) {
@@ -56,6 +57,10 @@ class WordwallsAppContainer extends React.Component {
       currentHost: this.props.currentHost,
       tableIsMultiplayer: this.props.tableIsMultiplayer,
 
+      startCountingDown: false,
+      startCountdown: 0,
+      startCountdownTimer: null,
+
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
     };
@@ -81,6 +86,9 @@ class WordwallsAppContainer extends React.Component {
     this.handleSocketMessages = this.handleSocketMessages.bind(this);
     this.sendPresence = this.sendPresence.bind(this);
     this.handleTables = this.handleTables.bind(this);
+    this.handleStartCountdown = this.handleStartCountdown.bind(this);
+    this.handleStartCountdownCancel = this.handleStartCountdownCancel.bind(this);
+    this.countdownTimeout = this.countdownTimeout.bind(this);
 
     this.websocketBridge = new WebSocketBridge();
   }
@@ -270,6 +278,12 @@ class WordwallsAppContainer extends React.Component {
       case 'newHost':
         this.handleNewHost(message.contents);
         break;
+      case 'startCountdown':
+        this.handleStartCountdownFromServer(message.contents);
+        break;
+      case 'startCountdownCancel':
+        this.handleStartCountdownCancelFromServer();
+        break;
       default:
         window.console.log('Received unrecognized message type:', message.type);
     }
@@ -294,7 +308,7 @@ class WordwallsAppContainer extends React.Component {
       tables: presence.getTables(),
     });
     if (contents.room === String(this.state.tablenum)) {
-      this.addMessage(`The host of this table is now ${contents.host}`);
+      this.addMessage(`The host of this table is now ${contents.host}`, 'info');
       this.setState({
         currentHost: contents.host,
       });
@@ -318,7 +332,8 @@ class WordwallsAppContainer extends React.Component {
   showAutosaveMessage(autosave) {
     if (autosave) {
       this.addMessage(`Autosave is now on! Aerolith will save your
-        list progress to ${this.state.listName} at the end of every round.`);
+        list progress to ${this.state.listName} at the end of every round.`,
+        'info');
     } else {
       this.addMessage('Autosave is off.', 'error');
     }
@@ -348,11 +363,29 @@ class WordwallsAppContainer extends React.Component {
     });
   }
 
+  handleStartCountdown(countdownSec) {
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'startCountdown',
+      contents: {
+        countdown: countdownSec,
+      },
+    });
+  }
+
+  handleStartCountdownCancel() {
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'startCountdownCancel',
+      contents: {},
+    });
+  }
+
   handleGameGoingPayload(data) {
     this.handleStartReceived(data);
     if (_.has(data, 'time')) {
       this.addMessage(`This round will be over in ${Math.round(data.time)} seconds.
-        Please wait to join the next round.`);
+        Please wait to join the next round.`, 'info');
     }
   }
 
@@ -395,6 +428,45 @@ class WordwallsAppContainer extends React.Component {
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
     });
+  }
+
+  countdownTimeout() {
+    console.log('I am in this timer, ', this.state.startCountdown,
+      this.state.startCountingDown);
+    const newCountdown = this.state.startCountdown - 1;
+    this.setState({
+      startCountdown: newCountdown,
+    });
+    if (newCountdown >= 0) {
+      this.setState({
+        startCountdownTimer: window.setTimeout(this.countdownTimeout,
+          FAKE_SECOND),
+      });
+    } else {
+      this.setState({
+        startCountingDown: false,
+      });
+    }
+  }
+
+  handleStartCountdownFromServer(contents) {
+    this.setState({
+      startCountingDown: true,
+      startCountdown: contents,
+      // Account for ping delay. XXX: This is ugly...
+      startCountdownTimer: window.setTimeout(this.countdownTimeout,
+        FAKE_SECOND),
+    });
+  }
+
+  handleStartCountdownCancelFromServer() {
+    window.clearInterval(this.state.startCountdownTimer);
+    this.setState({
+      startCountingDown: false,
+      startCountdown: 0,
+      startCountdownTimer: null,
+    });
+    this.addMessage('The start of the game was canceled!', 'error');
   }
 
   sendPresence() {
@@ -452,7 +524,7 @@ class WordwallsAppContainer extends React.Component {
       if (data.C !== '') {
         // data.C contains the alphagram.
         game.solve(data.w, data.C, data.s);
-        this.addMessage(`${data.s} solved ${data.w}`);
+        this.addMessage(`${data.s} solved ${data.w}`, 'info');
         this.setState({
           curQuestions: game.getQuestionState(),
           origQuestions: game.getOriginalQuestionState(),
@@ -564,14 +636,14 @@ class WordwallsAppContainer extends React.Component {
     })
     .done((data) => {
       if (data.success === true) {
-        this.addMessage(`Saved as ${data.listname}`);
+        this.addMessage(`Saved as ${data.listname}`, 'info');
       }
       if (data.info) {
         this.addMessage(data.info);
       }
     })
     .fail(jqXHR => this.addMessage(
-      `Error saving: ${jqXHR.responseJSON.error}`));
+      `Error saving: ${jqXHR.responseJSON.error}`, 'error'));
   }
 
   /**
@@ -775,6 +847,10 @@ class WordwallsAppContainer extends React.Component {
           usersInTable={this.state.users.get(
             String(this.state.tablenum), Immutable.List()).toJS()}
 
+          startCountdown={this.state.startCountdown}
+          startCountingDown={this.state.startCountingDown}
+          handleStartCountdown={this.handleStartCountdown}
+          handleStartCountdownCancel={this.handleStartCountdownCancel}
           ref={wwApp => (this.wwApp = wwApp)}
         />
       </div>

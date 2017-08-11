@@ -219,6 +219,12 @@ def ws_message(message):
     elif msg_contents['type'] == 'giveup':
         table_giveup(message, msg_contents)
 
+    elif msg_contents['type'] == 'startCountdown':
+        start_countdown(message, msg_contents)
+
+    elif msg_contents['type'] == 'startCountdownCancel':
+        start_countdown_cancel(message, msg_contents)
+
 
 def table_join(message, contents):
     wwg = WordwallsGame()
@@ -319,6 +325,36 @@ def table_start(message, contents):
         'text': json.dumps({
             'type': 'gamePayload',
             'contents': quiz_params
+        })
+    })
+
+
+def start_countdown(message, contents):
+    room = message.channel_session['room']
+    if room != contents['room']:
+        logger.warning('User sent message to room %s, but in room %s',
+                       contents['room'], room)
+        return
+    # This is just a simple hack. The front end sends the start after
+    # a countdown, so we don't have to do any countdown on the back end.
+    Group(room).send({
+        'text': json.dumps({
+            'type': 'startCountdown',
+            'contents': contents['contents']['countdown']
+        })
+    })
+
+
+def start_countdown_cancel(message, contents):
+    room = message.channel_session['room']
+    if room != contents['room']:
+        logger.warning('User sent message to room %s, but in room %s',
+                       contents['room'], room)
+        return
+    Group(room).send({
+        'text': json.dumps({
+            'type': 'startCountdownCancel',
+            'contents': {}
         })
     })
 

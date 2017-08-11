@@ -128,7 +128,7 @@ For multiplayer
     - [x] **UI confirm for two cases: load singleplayer game into multiplayer game as host, and as guest**
     - [x] Hide join button if user is already in this table
     - [x] Show current host of table
-    - [ ] Countdown to start game
+    - [x] Countdown to start game
     - [ ] Test multiple clients solving all words at the same time
     - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
     - [ ] What if a user is in multiple rooms in multiple tabs?
