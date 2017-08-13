@@ -9,16 +9,19 @@ from datetime import timedelta
 
 
 class Command(BaseCommand):
-    args = 'days'
     help = """
     Deletes Wordwalls Table Games that are older than d days in the past
     """
 
+    def add_arguments(self, parser):
+        parser.add_argument('days', type=int)
+
     def handle(self, *args, **options):
-        if len(args) != 1:
+        if 'days' not in options:
             raise CommandError('There must be exactly one argument; the '
                                'number of days in the past')
-        days = int(args[0])
+
+        days = options['days']
         delDate = timezone.now() - timedelta(days=days)
         wgms = WordwallsGameModel.objects.filter(lastActivity__lt=delDate)
         numObjs = len(wgms)
@@ -26,7 +29,4 @@ class Command(BaseCommand):
         if numObjs > 0:
             for wgm in wgms:
                 print "Delete", wgm
-                if wgm.word_list and wgm.word_list.is_temporary:
-                    print "-- Delete", wgm.word_list
-                    wgm.word_list.delete()
                 wgm.delete()

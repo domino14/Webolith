@@ -131,8 +131,11 @@ For multiplayer
     - [x] Countdown to start game
     - [ ] Test multiple clients solving all words at the same time
     - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
-    - [ ] What if a user is in multiple rooms in multiple tabs?
+    - [x] What if a user is in multiple rooms in multiple tabs? 
+        Everything works as expected! (?)
     - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.
+    - [ ] Differentiate between single and multiplayer tables a bit more. Disable some elements, remove chat bar, remove guess chats, remove start delay, etc.
+    - [x] **Fix bug with temporary word lists not getting deleted when replaced**
     - [x] ~~two players were in lobby. one was in a table. the one in table went to google.com. the other player in the lobby never saw him leave.~~
         ~~Issue was that we need to call prune_presences occasionally~~
 - [ ] Disable save in multiplayer game on front-end too
@@ -143,10 +146,13 @@ Testing:
 - [x] **Only host should start, maybe after some delay, or a quorum can be reached.**
 - [x] There might be a race condition when joining a new table. There is a presence change signal, but what if it comes before the server gets the request for the table list? Also when refreshing the app when in a table!
     - [x] Yes, all sorts of race conditions. Rethink the lifecycle, don't do so many requests, etc etc.
-- [ ] Fix Django tests, look into Channels tests, front end tests, etc
+- [x] Fix Django tests 
+- [ ] look into Channels tests
+- [ ] front end tests, etc
 
 Deployment:
     - [ ] Create Celery container for pruning presences/rooms periodically
+        - [ ] May be ok creating a cronjob container, but need to enable this on kubernetes.
     - [ ] Create Daphne containers for workers and the socket channel handlers
     - [ ] Create Redis container for channels/asgi (and the Celery queue)
 

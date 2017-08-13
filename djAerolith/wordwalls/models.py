@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
+import logging
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -22,6 +23,7 @@ from django.contrib.auth.models import User
 from base.models import Lexicon, WordList
 from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
+logger = logging.getLogger(__name__)
 
 
 class DailyChallengeName(models.Model):
@@ -110,6 +112,13 @@ class DailyChallengeLeaderboardEntry(models.Model):
 class WordwallsGameModel(GenericTableGameModel):
     word_list = models.ForeignKey(WordList,
                                   on_delete=models.SET_NULL, null=True)
+
+    def delete(self, *args, **kwargs):
+        # Delete related word_list, if it's temporary.
+        if self.word_list and self.word_list.is_temporary:
+            logger.debug('Deleting temporary word list: %s', self.word_list)
+            self.word_list.delete()
+        super(WordwallsGameModel, self).delete(*args, **kwargs)
 
 
 class DailyChallengeMissedBingos(models.Model):

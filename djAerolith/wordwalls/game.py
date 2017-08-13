@@ -103,11 +103,12 @@ class WordwallsGame(object):
                 host=host, currentGameState=json.dumps(state),
                 gameType=GenericTableGameModel.WORDWALLS_GAMETYPE,
                 playerType=player_type, lexicon=lex, word_list=word_list)
-
+        old_word_list = None
         if use_table is None:
             wgm = new_wgm()
         else:
             wgm = self.get_wgm(tablenum=use_table, lock=True)
+            old_word_list = wgm.word_list
             if multiplayer and wgm.host != host:
                 # It's a multiplayer game, but we are not the host and thus
                 # cannot load a new list into this table.
@@ -129,6 +130,15 @@ class WordwallsGame(object):
                             'Cannot do a daily challenge in multiplayer mode.')
                 wgm.playerType = player_type
         wgm.save()
+        if old_word_list and old_word_list.is_temporary:
+            # This word list is old. Check to make sure it's in no tables.
+            if WordwallsGameModel.objects.filter(
+                    word_list=old_word_list).count() == 0:
+                logger.debug('Deleting old, temporary word list: %s',
+                             old_word_list)
+                old_word_list.delete()
+            else:
+                logger.debug('Old word list is still in use, not deleting...')
         from wordwalls.signal_handlers import game_important_save
         game_important_save.send(sender=self.__class__, instance=wgm)
         return wgm

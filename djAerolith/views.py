@@ -38,6 +38,11 @@ def health(request):
     return response('OK')
 
 
+def trigger500(request):
+    logger.info('Triggering 500 for request user: %s', request.user)
+    raise Exception('OH NO')
+
+
 @login_required
 def socket_token(request):
     conn_token = get_connection_token(request.user)

@@ -27,7 +27,7 @@ from base.models import Lexicon, WordList
 logger = logging.getLogger(__name__)
 
 
-class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
+class WordwallsBasicLogicTestBase(TestCase, WordListAssertMixin):
     fixtures = ['test/lexica.json',
                 'test/users.json',
                 'test/profiles.json',
@@ -46,8 +46,12 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
         user = User.objects.get(username='cesar')
         lex = Lexicon.objects.get(lexiconName='America')
         search = SearchDescription.probability_range(p_min, p_max, length, lex)
+        logger.debug('In setup_quiz, word lists: %s', WordList.objects.all())
         table_id = wwg.initialize_by_search_params(user, search, 240)
         return table_id, user
+
+
+class WordwallsBasicLogicTest(WordwallsBasicLogicTestBase):
 
     def test_quiz_params_correct(self):
         table_id, user = self.setup_quiz()
@@ -63,7 +67,8 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
         self.assertEqual(guess_state['alphagram'], '')
 
     @mock.patch.object(WordwallsGame, 'did_timer_run_out')
-    def test_quiz_ends_after_time(self, timer_ran_out):
+    @mock.patch('wordwalls.socket_consumers.send_game_ended')
+    def test_quiz_ends_after_time(self, mock_send_game_ended, timer_ran_out):
         # Mock timer running out by the time the guess comes in.
         timer_ran_out.return_value = True
         table_id, user = self.setup_quiz()
@@ -75,8 +80,10 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
         wgm = wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertFalse(state['quizGoing'])
+        mock_send_game_ended.assert_called_with(table_id)
 
     def test_word_list_created(self):
+        logger.debug('In test_word_list_created')
         table_id, user = self.setup_quiz()
         wwg = WordwallsGame()
         wgm = wwg.get_wgm(table_id)
@@ -96,23 +103,21 @@ class WordwallsBasicLogicTest(TestCase, WordListAssertMixin):
         self.assertTrue({'q': 'AEEINRSU', 'a': ['UNEASIER']} in qs)
 
 
-class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
+class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
     """
     Testing full games, make sure word lists save, missed plays, etc.
 
     """
-    def start_quiz(self):
-        table_id, user = self.setup_quiz()
-        wwg = WordwallsGame()
-        return wwg.start_quiz(table_id, user), table_id, user, wwg
-
-    def test_solve_all_words(self):
+    @mock.patch('wordwalls.socket_consumers.send_game_ended')
+    def test_solve_all_words(self, mock_send_game_ended):
         """
         Test on a word list with more than 50 words. Go to completion,
         ensure quiz on missed, etc.
 
         """
-        params, table_id, user, wwg = self.start_quiz()
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, user)
 
         def fully_solve_and_assert():
             """Fully solve quiz, asserting various things."""
@@ -132,7 +137,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
                     self.assertFalse(guess_state['going'])      # Quiz ends
                 self.assertTrue(guess_state['alphagram'] != '')
 
-        fully_solve_and_assert()
+        fully_solve_and_assert()   # This solves the first set of 50
         wgm = wwg.get_wgm(table_id)
         word_list = wgm.word_list
 
@@ -171,6 +176,8 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': True
         })
+        mock_send_game_ended.assert_called_with(table_id)
+        self.assertEquals(mock_send_game_ended.call_count, 2)
 
     def round_1(self):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
@@ -231,7 +238,8 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             wwg.guess(w, table_id, user)
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    def test_missed_behavior(self):
+    @mock.patch('wordwalls.socket_consumers.send_game_ended')
+    def test_missed_behavior(self, mock_send_game_ended):
         wwg = WordwallsGame()
         table_id, user = self.round_1()
         wgm = wwg.get_wgm(table_id)
@@ -289,9 +297,12 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
         })
+        mock_send_game_ended.assert_called_with(table_id)
+        self.assertEquals(mock_send_game_ended.call_count, 6)
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    def test_save_before_finish(self):
+    @mock.patch('wordwalls.socket_consumers.send_game_ended')
+    def test_save_before_finish(self, mock_send_game_ended):
         wwg = WordwallsGame()
         table_id, user = self.round_1()
         # Try saving the word list.
@@ -342,6 +353,8 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
             'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
         })
+        mock_send_game_ended.assert_called_with(table_id)
+        self.assertEquals(mock_send_game_ended.call_count, 6)
 
     def test_cant_overwrite_list(self):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
@@ -352,7 +365,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTest):
         self.assertFalse(resp['success'])
 
 
-class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
+class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
     """
     Test modes of saved list such as missed, first missed, continue,
     restart.
@@ -398,7 +411,8 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
         self.assertEqual(len(params['questions']), 11)
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    def test_continue_unfinished_list(self):
+    @mock.patch('wordwalls.socket_consumers.send_game_ended')
+    def test_continue_unfinished_list(self, mock_send_game_ended):
         LIST_NAME = "i live in a giant bucket"
         word_list = WordList.objects.get(name=LIST_NAME)
         # Continue the list.
@@ -427,6 +441,8 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
         })
         self.assertEqual(set([0, 2, 3, 10]),
                          set(json.loads(word_list.firstMissed)))
+        mock_send_game_ended.assert_called_with(table_id)
+        self.assertEqual(mock_send_game_ended.call_count, 1)
 
     def test_firstmissed_allowed(self):
         LIST_NAME = u'list the sécond'
@@ -444,7 +460,8 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
                 'ADEILORT']))
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    def test_continue_gonethru_list(self):
+    @mock.patch('wordwalls.socket_consumers.send_game_ended')
+    def test_continue_gonethru_list(self, mock_send_game_ended):
         LIST_NAME = u'list the sécond'
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
@@ -464,6 +481,8 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTest):
             'numFirstMissed': 6, 'numMissed': 1, 'goneThruOnce': True,
             'questionIndex': 10, 'is_temporary': False, 'name': LIST_NAME
         })
+        mock_send_game_ended.assert_called_with(table_id)
+        self.assertEqual(mock_send_game_ended.call_count, 1)
 
     def test_continue_finished_list(self):
         """ Continue a list that is tested through all the way."""
@@ -570,7 +589,7 @@ def blank_bingo_generator(length, lexicon_name, num_2_blanks, num_questions,
              u'LESBIGAY']}]
 
 
-class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
+class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
     """
     Test challenge behavior. Create challenges, quiz on them, leaderboards,
     etc.
@@ -725,7 +744,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTest):
         self.assertEqual(len(params['questions']), 50)
 
 
-class WordwallsMissedBingosTest(WordwallsBasicLogicTest):
+class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
     """
     Missed bingos.
 
