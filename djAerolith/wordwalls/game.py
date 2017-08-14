@@ -500,10 +500,12 @@ class WordwallsGame(object):
             wgm.save()
 
             return True
+        now = time.time()
         logger.info('Got game ended but did not actually end: '
-                    'start_time=%f timer=%f now=%f quizGoing=%s',
+                    'start_time=%f timer=%f now=%f quizGoing=%s elapsed=%s',
                     state['quizStartTime'], state['timerSecs'],
-                    time.time(), state['quizGoing'])
+                    now, state['quizGoing'],
+                    now - state['quizStartTime'])
         return False
 
     def allow_give_up(self, wgm, user):
@@ -853,6 +855,7 @@ class WordwallsGame(object):
                 self.do_quiz_end_actions(state, tablenum, wgm)
             last_correct = alpha[0]
         elif guess_str in state.get('originalAnswerHash', {}):
+            # XXX: Consider removing this.
             # It's possible that the guess is in the answer hash that
             # existed at the beginning of the quiz, but the front end
             # never got the message that it was solved, due to Internet
@@ -864,6 +867,7 @@ class WordwallsGame(object):
             return {'going': state['quizGoing'],
                     'word': guess_str,
                     'alphagram': last_correct,
+                    'solver': user.username,        # This is not quite right
                     'already_solved': True}
         if state_modified:
             wgm.currentGameState = json.dumps(state)

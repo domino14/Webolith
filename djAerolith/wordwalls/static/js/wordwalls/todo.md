@@ -111,29 +111,28 @@ For multiplayer
 - [x] Chat submit box
 - [ ] Hijack tab key to change between guess/chat
     - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
-- [ ] All the relevant multiplayer logic
+- [x] All the relevant multiplayer logic
     - [x] Join a table
     - [x] Presence inside a table (This will take some time to do properly)
         - [x] When a user changes room, should immediately send this to the backend so that their presence can be removed.
         - [x] Propagate presences to list of tables (this must have broken)
-        - [ ] prune_rooms should remove empty rooms from front end too (Note - this doesn't broadcast a signal. Instead we should have logic where we don't display empty tables, or let them expire, etc.)
+        - ~~[x] prune_rooms should remove empty rooms from front end too (Note - this doesn't broadcast a signal. Instead we should have logic where we don't display empty tables, or let them expire, etc. Let's not worry for now)~~
         - [x] creating a new table broadcasts the table to everyone, even if it's not a multiplayer table.
     - [x] **Turn multiplayer back into single player table**
         - This is implemented as creating a new table altogether.
     - [x] **Switch hosts seamlessly**
         - [x] If joining an empty table, should be made new host.
-    - [ ] **Should tables be deleted at some point?**
+    - [x] **Should tables be deleted at some point?**
+        - [x] Fix scripts to delete tables after a ~week. periodic prune_rooms will remove empty tables from the list. they'll come back if a user comes back to the same table. no big deal.
     - [x] **Only hosts should load new lists**
         - [x] Bug: Non-host loaded new list, but inTable still shows him as in old table (and new table). Seems like all presences for the same channel_name get updated even if we're not pinging that channel name. Refreshing causes a new channel name, and prune_presences eventually gets rid of the old presence.
     - [x] **UI confirm for two cases: load singleplayer game into multiplayer game as host, and as guest**
     - [x] Hide join button if user is already in this table
     - [x] Show current host of table
     - [x] Countdown to start game
-    - [ ] Test multiple clients solving all words at the same time
-    - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
+    - [x] Test multiple clients solving all words at the same time
     - [x] What if a user is in multiple rooms in multiple tabs? 
         Everything works as expected! (?)
-    - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.
     - [ ] Differentiate between single and multiplayer tables a bit more. Disable some elements, remove chat bar, remove guess chats, remove start delay, etc.
     - [x] **Fix bug with temporary word lists not getting deleted when replaced**
     - [x] ~~two players were in lobby. one was in a table. the one in table went to google.com. the other player in the lobby never saw him leave.~~
@@ -159,3 +158,5 @@ Deployment:
 Nice to haves:
 - [ ] "Social" aspect - number of alphagrams solved per user per day/week/etc
 - [ ] Kick players out? Make private? etc?
+- [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
+- [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.

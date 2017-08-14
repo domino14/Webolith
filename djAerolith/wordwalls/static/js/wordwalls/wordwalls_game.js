@@ -72,6 +72,10 @@ class Game {
     return widx != null;
   }
 
+  getRemainingAnswers() {
+    return Object.keys(this.wrongWordsHash);
+  }
+
   addToAnswered(wObj, solver) {
     // Update the "answeredByMap" at key solver with a new list caused by
     // appending wObj to the existing list at that key. If that key doesn't
@@ -85,15 +89,16 @@ class Game {
    * @param {string} word
    * @param {string} alphagram
    * @param {string} solver The screenname of the solver
+   * @return {boolean} Solving successfully updated variables.
    */
   solve(word, alphagram, solver) {
     const widx = this.wrongWordsHash[word];
     if (widx == null) {
-      return;
+      return false;
     }
     // Don't solve if the alphagram doesn't match.
     if (!this.origQuestions.get(alphagram)) {
-      return;
+      return false;
     }
     delete this.wrongWordsHash[word];
 
@@ -141,6 +146,7 @@ class Game {
       }
       return newObj;
     });
+    return true;
   }
 
   setMaxOnScreenQuestions(n) {

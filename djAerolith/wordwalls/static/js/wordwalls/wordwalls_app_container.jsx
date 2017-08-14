@@ -284,9 +284,30 @@ class WordwallsAppContainer extends React.Component {
       case 'startCountdownCancel':
         this.handleStartCountdownCancelFromServer();
         break;
+      case 'allSolve':
+        this.handleAllSolve();
+        break;
       default:
         window.console.log('Received unrecognized message type:', message.type);
     }
+  }
+
+  /**
+   * NOTE: used for debugging/testing.
+   */
+  handleAllSolve() {
+    const answers = game.getRemainingAnswers();
+    answers.forEach((answer, idx) => {
+      window.setTimeout(() => {
+        this.websocketBridge.send({
+          room: String(this.state.tablenum),
+          type: 'guess',
+          contents: {
+            guess: answer,
+          },
+        });
+      }, (idx * 30));
+    });
   }
 
   handleUsersIn(contents) {
@@ -523,13 +544,17 @@ class WordwallsAppContainer extends React.Component {
     if (_.has(data, 'C')) {
       if (data.C !== '') {
         // data.C contains the alphagram.
-        game.solve(data.w, data.C, data.s);
+        const solved = game.solve(data.w, data.C, data.s);
+        if (!solved) {
+          return;
+        }
         this.addMessage(`${data.s} solved ${data.w}`, 'info');
         this.setState({
           curQuestions: game.getQuestionState(),
           origQuestions: game.getOriginalQuestionState(),
           answeredBy: game.getAnsweredBy(),
-          lastGuessCorrectness: true,
+          lastGuessCorrectness: (data.s === this.props.username ? true :
+                                 this.state.lastGuessCorrectness),
         });
       }
     }

@@ -1,26 +1,35 @@
 """
-Migrate wordwalls games.
+Send Socket command
 
 """
 
 import logging
 import json
-import uuid
 
+from channels import Group
 from django.core.management.base import BaseCommand, CommandError
 
-from base.models import WordList
-from wordwalls.models import WordwallsGameModel
+from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME
 logger = logging.getLogger(__name__)
-
-FETCH_MANY_SIZE = 1000
 
 
 class Command(BaseCommand):
-    args = 'wtf'
+    help = """ Send a command. if contents are provided, must be in JSON """
+
+    def add_arguments(self, parser):
+        parser.add_argument('command', type=str)
+        parser.add_argument('--contents', type=str)
 
     def handle(self, *args, **options):
-        print len(args)
-        if len(args) != 1:
+        if 'command' not in options:
             raise CommandError('The argument is the command to send.')
-        print 'args', args
+        try:
+            contents_obj = json.loads(options['contents'])
+        except (TypeError, ValueError):
+            contents_obj = {}
+        Group(LOBBY_CHANNEL_NAME).send({
+            'text': json.dumps({
+                'type': options['command'],
+                'contents': contents_obj
+            })
+        })
