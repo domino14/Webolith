@@ -1,10 +1,10 @@
 import React from 'react';
 
 import ModalSkeleton from '../modal_skeleton';
-import PrefsModalBody from './prefs_modal_body';
+import SettingsModalBody from './settings_modal_body';
 import Styling from '../style';
 
-class PrefsModal extends React.Component {
+class SettingsModal extends React.Component {
   constructor(props) {
     super(props);
     // Create a copy of this.props.displayStyle, used only for
@@ -61,11 +61,11 @@ class PrefsModal extends React.Component {
 
     return (
       <ModalSkeleton
-        title="Preferences"
-        modalClass="prefs-modal"
+        title="Settings"
+        modalClass="settings-modal"
         size="modal-xl"
       >
-        <PrefsModalBody
+        <SettingsModalBody
           onOptionsModify={this.onOptionsModify}
           displayStyle={this.state.style}
           allowSave={this.allowSave}
@@ -88,9 +88,9 @@ class PrefsModal extends React.Component {
   }
 }
 
-PrefsModal.propTypes = {
+SettingsModal.propTypes = {
   displayStyle: React.PropTypes.instanceOf(Styling),
   onSave: React.PropTypes.func,
 };
 
-export default PrefsModal;
+export default SettingsModal;

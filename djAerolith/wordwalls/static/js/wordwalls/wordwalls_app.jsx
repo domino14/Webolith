@@ -2,7 +2,7 @@ import React from 'react';
 import Immutable from 'immutable';
 
 import ListSaveBar from './topbar/save_list';
-import Preferences from './topbar/preferences';
+import SettingsCog from './topbar/settings_cog';
 import StartButton from './topbar/start_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
@@ -68,7 +68,7 @@ class WordwallsApp extends React.Component {
             marginTop: '-4px',
           }}
         >
-          <Preferences
+          <SettingsCog
             displayStyle={this.props.displayStyle}
             onSave={this.props.setDisplayStyle}
           />

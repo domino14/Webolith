@@ -8,7 +8,7 @@ import TextInput from '../forms/text_input';
 import Select from '../forms/select';
 import Styling from '../style';
 
-class PrefsModalBody extends React.Component {
+class SettingsModalBody extends React.Component {
   /**
    * Calculate the letters that are remaining given a tile order.
    * XXX: We need to fix this for Spanish, I guess.
@@ -67,7 +67,7 @@ class PrefsModalBody extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tileOrderLettersRemaining: PrefsModalBody.calculateLettersRemaining(
+      tileOrderLettersRemaining: SettingsModalBody.calculateLettersRemaining(
         props.displayStyle.customTileOrder),
       questions: Immutable.fromJS([
         {
@@ -91,7 +91,7 @@ class PrefsModalBody extends React.Component {
     const letters = _.uniq(
       event.target.value.toLocaleUpperCase().split('')).join('');
     this.props.onOptionsModify('customTileOrder', letters);
-    const remaining = PrefsModalBody.calculateLettersRemaining(letters);
+    const remaining = SettingsModalBody.calculateLettersRemaining(letters);
     this.setState({
       tileOrderLettersRemaining: remaining,
     });
@@ -118,7 +118,7 @@ class PrefsModalBody extends React.Component {
             onChange={(event) => {
               this.props.onOptionsModify('tileStyle', event.target.value);
             }}
-            options={PrefsModalBody.getTileStyleOptions()}
+            options={SettingsModalBody.getTileStyleOptions()}
           />
           <TextInput
             colSize={2}
@@ -252,7 +252,7 @@ class PrefsModalBody extends React.Component {
                 onChange={(event) => {
                   this.props.onOptionsModify('background', event.target.value);
                 }}
-                options={PrefsModalBody.getBackgroundOptions()}
+                options={SettingsModalBody.getBackgroundOptions()}
               />
               <Select
                 colSize={5}
@@ -261,7 +261,7 @@ class PrefsModalBody extends React.Component {
                 onChange={(event) => {
                   this.props.onOptionsModify('bodyBackground', event.target.value);
                 }}
-                options={PrefsModalBody.getBackgroundOptions()}
+                options={SettingsModalBody.getBackgroundOptions()}
               />
               <hr />
               <Checkbox
@@ -295,10 +295,10 @@ class PrefsModalBody extends React.Component {
   }
 }
 
-PrefsModalBody.propTypes = {
+SettingsModalBody.propTypes = {
   onOptionsModify: React.PropTypes.func,
   displayStyle: React.PropTypes.instanceOf(Styling),
   allowSave: React.PropTypes.func,
 };
 
-export default PrefsModalBody;
+export default SettingsModalBody;
