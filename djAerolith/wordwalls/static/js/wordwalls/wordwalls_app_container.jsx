@@ -64,6 +64,7 @@ class WordwallsAppContainer extends React.Component {
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
     };
+    console.log('Initial state', this.state.currentHost, this.props.username);
     // Bindings:
     this.timerRanOut = this.timerRanOut.bind(this);
     this.handleStart = this.handleStart.bind(this);
@@ -316,11 +317,15 @@ class WordwallsAppContainer extends React.Component {
     // lists inside tables, in the lobby, and on the table displayer thing.
     // This might not be scalable as we get more users.
     presence.addUsers(contents.users, contents.room);
-    this.setState({
+    const newState = {
       users: presence.getUsers(),
       tables: presence.getTables(),
-      currentHost: presence.getHost(String(this.state.tablenum)),
-    });
+    };
+    const currentHost = presence.getHost(String(this.state.tablenum));
+    if (currentHost) {
+      newState.currentHost = currentHost;
+    }
+    this.setState(newState);
   }
 
   handleNewHost(contents) {
@@ -548,7 +553,9 @@ class WordwallsAppContainer extends React.Component {
         if (!solved) {
           return;
         }
-        this.addMessage(`${data.s} solved ${data.w}`, 'info');
+        if (this.state.tableIsMultiplayer) {
+          this.addMessage(`${data.s} solved ${data.w}`, 'info');
+        }
         this.setState({
           curQuestions: game.getQuestionState(),
           origQuestions: game.getOriginalQuestionState(),
@@ -566,6 +573,7 @@ class WordwallsAppContainer extends React.Component {
 
   handleTables(data) {
     presence.addTables(data.tables);
+    console.log('in handleTables');
     this.setState({
       tables: presence.getTables(),
       currentHost: presence.getHost(String(this.state.tablenum)),
@@ -573,6 +581,7 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleTable(data) {
+    console.log('in handleTable');
     presence.updateTable(data.table);
     this.setState({
       tables: presence.getTables(),
@@ -728,13 +737,14 @@ class WordwallsAppContainer extends React.Component {
     }
     this.setState({
       listName: data.list_name,
-      autoSave: data.autosave,
+      autoSave: data.autosave && !data.multiplayer,
       tablenum: data.tablenum,
       numberOfRounds: 0,
       curQuestions: Immutable.List(),
+      tableIsMultiplayer: data.multiplayer,
     });
     this.addMessage(`Loaded new list: ${data.list_name}`, 'info');
-    this.showAutosaveMessage(data.autosave);
+    this.showAutosaveMessage(data.autosave && !data.multiplayer);
     if (changeUrl) {
       // The .bind(history) is important because otherwise `this` changes
       // and we get an "illegal invocation". 😒
@@ -876,6 +886,8 @@ class WordwallsAppContainer extends React.Component {
           startCountingDown={this.state.startCountingDown}
           handleStartCountdown={this.handleStartCountdown}
           handleStartCountdownCancel={this.handleStartCountdownCancel}
+
+          tableIsMultiplayer={this.state.tableIsMultiplayer}
           ref={wwApp => (this.wwApp = wwApp)}
         />
       </div>

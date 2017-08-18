@@ -83,11 +83,10 @@ class WordwallsGame(object):
     def create_or_update_game_instance(self, host, lex, word_list, use_table,
                                        multiplayer, **state_kwargs):
         state = self._initial_state()
-        if 'temp_list_name' in state_kwargs:
+        if state_kwargs.get('temp_list_name'):
             state_kwargs['temp_list_name'] = self.maybe_modify_list_name(
                 state_kwargs['temp_list_name'], host
             )
-
         for param in state_kwargs:
             state[param] = state_kwargs[param]
         if state['questionsToPull'] is None:
@@ -308,12 +307,21 @@ class WordwallsGame(object):
                            'gone thru list once.')
             raise GameInitException('Cannot quiz on first missed unless you '
                                     'have gone through list once.')
+        temp_list_name = None
+        save_name = saved_list.name
+        if multiplayer:
+            # If this is a multiplayer game, we don't want to save it
+            # under the original list at all. Let's make a copy.
+            temp_list_name = saved_list.name
+            saved_list = saved_list.make_temporary_copy()
+            save_name = None
 
         self.maybe_modify_word_list(saved_list, list_option)
         wgm = self.create_or_update_game_instance(
             user, lex, saved_list, use_table, multiplayer,
-            saveName=saved_list.name,
             timerSecs=secs,
+            saveName=save_name,
+            temp_list_name=temp_list_name,
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 
@@ -407,6 +415,8 @@ class WordwallsGame(object):
         state['numAnswersThisRound'] = len(answer_hash)
         wgm.currentGameState = json.dumps(state)
         wgm.save()
+        # XXX: Autosave doesn't really do anything for saved lists. It
+        # always saves, regardless! Oh well...
         word_list.save()
         game_type = state['gameType']
         if word_list.category == WordList.CATEGORY_BUILD:
@@ -554,6 +564,8 @@ class WordwallsGame(object):
             params['saveName'] = state['saveName']
         if 'temp_list_name' in state:
             params['tempListName'] = state['temp_list_name']
+        params['multiplayer'] = (
+            wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME)
         return params
 
     def give_up_and_save(self, user, tablenum, listname):

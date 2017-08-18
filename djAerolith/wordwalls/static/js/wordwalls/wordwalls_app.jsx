@@ -24,6 +24,11 @@ class WordwallsApp extends React.Component {
     this.onChatBarBlur = this.onChatBarBlur.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('WordwallsApp will receive props currentHost',
+      nextProps.currentHost);
+  }
+
   onGuessBoxBlur() {
     console.log('Blur guessBox, set focus on chatbar');
 
@@ -54,6 +59,7 @@ class WordwallsApp extends React.Component {
             autoSave={this.props.autoSave}
             onListNameChange={this.props.onListNameChange}
             onAutoSaveToggle={this.props.onAutoSaveToggle}
+            disableEditing={this.props.tableIsMultiplayer}
           />
         </div>
         <div
@@ -91,6 +97,20 @@ class WordwallsApp extends React.Component {
   }
 
   renderLeftSide() {
+    let chatBar;
+    if (this.props.tableIsMultiplayer) {
+      chatBar = (
+        <div className="row">
+          <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <ChatBar
+              onChatSubmit={this.props.onChatSubmit}
+              // onBlur={this.onChatBarBlur}
+              ref={cb => (this.chatBar = cb)}
+            />
+          </div>
+        </div>);
+    }
+
     return (
       <div>
         {this.renderTopNav()}
@@ -154,16 +174,6 @@ class WordwallsApp extends React.Component {
         </div>
 
         <div className="row" style={{ marginTop: '4px' }}>
-          <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <ChatBar
-              onChatSubmit={this.props.onChatSubmit}
-              // onBlur={this.onChatBarBlur}
-              ref={cb => (this.chatBar = cb)}
-            />
-          </div>
-        </div>
-
-        <div className="row" style={{ marginTop: '4px' }}>
           <div className="col-xs-8 col-sm-9 col-md-9 col-lg-9">
             <ChatBox messages={this.props.tableMessages} />
           </div>
@@ -176,11 +186,27 @@ class WordwallsApp extends React.Component {
           </div>
         </div>
 
+        {chatBar}
+
       </div>
     );
   }
 
   renderRightSide() {
+    let leaderboard;
+    if (this.props.tableIsMultiplayer) {
+      leaderboard = (
+        <div className="row">
+          <div className="col-sm-12 col-md-12 col-lg-12">
+            <Leaderboard
+              showLexiconSymbols={
+                !this.props.displayStyle.hideLexiconSymbols}
+              answerers={this.props.answeredBy}
+            />
+          </div>
+        </div>
+      );
+    }
     return (
       <div>
         <div className="row">
@@ -197,15 +223,7 @@ class WordwallsApp extends React.Component {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-sm-12 col-md-12 col-lg-12">
-            <Leaderboard
-              showLexiconSymbols={
-                !this.props.displayStyle.hideLexiconSymbols}
-              answerers={this.props.answeredBy}
-            />
-          </div>
-        </div>
+        {leaderboard}
 
       </div>);
   }
@@ -285,6 +303,7 @@ WordwallsApp.propTypes = {
   lastGuess: React.PropTypes.string,
   lastGuessCorrectness: React.PropTypes.bool,
   onHotKey: React.PropTypes.func,
+  tableIsMultiplayer: React.PropTypes.bool,
 
   handleShuffleAll: React.PropTypes.func,
   handleAlphagram: React.PropTypes.func,

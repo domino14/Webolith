@@ -6,6 +6,10 @@ const Select = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
   const options = [];
   const additionalSelectProps = {};
+  let badge;
+  if (props.badge) {
+    badge = (<span className="label label-success">{props.badge}</span>);
+  }
   props.options.forEach((element, idx) =>
     options.push(<option
       value={element.value}
@@ -14,11 +18,14 @@ const Select = (props) => {
   if (props.numItems > 1) {
     additionalSelectProps.size = props.numItems;
   }
+  if (props.disabled) {
+    additionalSelectProps.disabled = true;
+  }
   return (
     <div className="form-group">
       <div className="row">
         <div className={inputColSizeClass}>
-          <label>{props.label}</label>
+          <label>{props.label} {badge}</label>
           <select
             value={props.selectedValue}
             onChange={props.onChange}
@@ -42,6 +49,8 @@ Select.propTypes = {
   selectedValue: React.PropTypes.string,
   onChange: React.PropTypes.func,
   numItems: React.PropTypes.number,
+  badge: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
 };
 
 

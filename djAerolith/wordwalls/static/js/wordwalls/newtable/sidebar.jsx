@@ -3,7 +3,6 @@ import React from 'react';
 import Pills from './pills';
 import Select from '../forms/select';
 import NumberInput from '../forms/number_input';
-import CheckBox from '../forms/checkbox';
 
 /**
  * Get lexicon options from the given object in a Select-friendly format.
@@ -53,12 +52,15 @@ const Sidebar = props => (
               parseInt(e.target.value, 10))}
             disabled={props.disabledInputs}
           />
-          <CheckBox
-            on={props.multiplayerOn}
-            onChange={(event) => {
-              props.onMultiplayerModify(event.target.checked);
-            }}
-            label="Multiplayer"
+          <Select
+            colSize={10}
+            label="Mode"
+            badge="New!"
+            selectedValue={props.multiplayerOn ? 'multi' : 'single'}
+            options={[{ value: 'single', displayValue: 'Single Player' },
+                      { value: 'multi', displayValue: 'Multiplayer' }]}
+            onChange={e => props.onMultiplayerModify(
+              e.target.value === 'multi')}
             disabled={props.disabledInputs}
           />
         </form>

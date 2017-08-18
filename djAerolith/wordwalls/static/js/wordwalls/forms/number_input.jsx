@@ -7,11 +7,9 @@ import React from 'react';
 
 const NumberInput = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
-  let addlInputProps = {};
+  const addlInputProps = {};
   if (props.disabled === true) {
-    addlInputProps = {
-      disabled: true,
-    };
+    addlInputProps.disabled = true;
   }
   return (
     <div className="form-group">

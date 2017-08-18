@@ -22,13 +22,6 @@ const Lobby = props => (
       </div>
     </div>
     <div className="row">
-      <div className="col-sm-12">
-        <ChatBar
-          onChatSubmit={props.onChatSubmit}
-        />
-      </div>
-    </div>
-    <div className="row">
       <div className="col-sm-9">
         <ChatBox
           messages={props.messages}
@@ -39,6 +32,13 @@ const Lobby = props => (
         <Players
           players={props.users}
           height={120}
+        />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-sm-12">
+        <ChatBar
+          onChatSubmit={props.onChatSubmit}
         />
       </div>
     </div>

@@ -10,6 +10,7 @@ const Players = (props) => {
   return (
     <div
       className="panel panel-default"
+      style={{ marginBottom: '0px' }}
     >
       <div
         className="panel-body"

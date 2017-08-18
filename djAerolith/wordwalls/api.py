@@ -150,7 +150,7 @@ def table_response(tablenum):
 
     # Sometimes, 'tempListName' will not be in addl_params, when this
     # is loading an already existing saved list. Instead, get from saveName.
-    if 'saveName' in addl_params:
+    if addl_params.get('saveName'):
         autosave = True
         list_name = addl_params['saveName']
     else:
@@ -159,7 +159,8 @@ def table_response(tablenum):
     return response({
         'tablenum': tablenum,
         'list_name': list_name,
-        'autosave': autosave
+        'autosave': autosave,
+        'multiplayer': addl_params.get('multiplayer', False),
     })
 
 

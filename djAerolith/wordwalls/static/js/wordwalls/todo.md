@@ -109,8 +109,7 @@ For multiplayer
 - [x] Current player leaderboard
     - [x] Make it nicer
 - [x] Chat submit box
-- [ ] Hijack tab key to change between guess/chat
-    - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
+- [x] Clean up multiplayer selection view
 - [x] All the relevant multiplayer logic
     - [x] Join a table
     - [x] Presence inside a table (This will take some time to do properly)
@@ -133,12 +132,16 @@ For multiplayer
     - [x] Test multiple clients solving all words at the same time
     - [x] What if a user is in multiple rooms in multiple tabs? 
         Everything works as expected! (?)
-    - [ ] Differentiate between single and multiplayer tables a bit more. Disable some elements, remove chat bar, remove guess chats, remove start delay, etc.
+    - [x] Differentiate between single and multiplayer tables a bit more. Disable some elements, remove chat bar, remove guess chats, remove start delay, etc.
+        - [x] Actually turn autosave off if loading a saved list into a multiplayer table
+            - [x] It still saves it!! :o :(
+        - [x] Remove `x solved y` chat
+        - [x] Remove multiplayer leaderboard
+        - [x] Countdown disappeared? bug? If we refresh, it goes away.
     - [x] **Fix bug with temporary word lists not getting deleted when replaced**
     - [x] ~~two players were in lobby. one was in a table. the one in table went to google.com. the other player in the lobby never saw him leave.~~
         ~~Issue was that we need to call prune_presences occasionally~~
-- [ ] Disable save in multiplayer game on front-end too
-
+- [x] Disable save in multiplayer game on front-end too
 - [x] Reloading second window while first is going on, then guessing something in ifrst window, breaks wrongwordhash in second window
 Testing:
 - [x] Solve all words among all players and game should end properly
@@ -146,9 +149,11 @@ Testing:
 - [x] There might be a race condition when joining a new table. There is a presence change signal, but what if it comes before the server gets the request for the table list? Also when refreshing the app when in a table!
     - [x] Yes, all sorts of race conditions. Rethink the lifecycle, don't do so many requests, etc etc.
 - [x] Fix Django tests 
-- [ ] look into Channels tests
-- [ ] front end tests, etc
-
+- [ ] Kick players out? Make private? etc.
+- [x] ~~Hijack tab key to change between guess/chat, or~~ clean up chat view
+    - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
+    - I think best way is a single bar for both guess/chat with a mode switcher.
+    - Moved the chat bar to the bottom
 Deployment:
     - [ ] Create Celery container for pruning presences/rooms periodically
         - [ ] May be ok creating a cronjob container, but need to enable this on kubernetes.
@@ -156,7 +161,8 @@ Deployment:
     - [ ] Create Redis container for channels/asgi (and the Celery queue)
 
 Nice to haves:
+- [ ] look into Channels tests
+- [ ] front end tests, etc
 - [ ] "Social" aspect - number of alphagrams solved per user per day/week/etc
-- [ ] Kick players out? Make private? etc?
 - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
 - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.

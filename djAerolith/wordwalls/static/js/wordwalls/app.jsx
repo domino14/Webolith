@@ -29,7 +29,7 @@ class App {
       <WordwallsAppContainer
         username={options.username}
         listName={listName}
-        autoSave={autoSave}
+        autoSave={autoSave && !options.multiplayer}
         lexicon={options.lexicon}
         displayStyle={style}
         tablenum={options.tablenum}

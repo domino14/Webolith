@@ -42,10 +42,13 @@ class ListSaveBar extends React.Component {
 
   render() {
     let listNameStyle;
+    let listNameTitle;
     let inputStyle;
     let pencilStyle;
     let saveStyle;
     let saveClass = 'hovertip hidden-md hidden-lg';
+    let listNameContainerClass;
+    let saveContainerClass;
     if (this.state.inputEditable) {
       listNameStyle = {
         display: 'none',
@@ -63,6 +66,7 @@ class ListSaveBar extends React.Component {
         textOverflow: 'ellipsis',
         maxWidth: 'calc(100% - 5px)',
         display: 'inline-block',
+        fontWeight: '500',
       };
       pencilStyle = {
         marginLeft: '5px',
@@ -75,22 +79,37 @@ class ListSaveBar extends React.Component {
       inputStyle = {
         display: 'none',
       };
+      listNameContainerClass = 'col-xs-10 col-md-8';
+      saveContainerClass = 'col-xs-2 col-md-4';
     }
     if (this.props.autoSave) {
       saveClass = 'text-success hovertip hidden-md hidden-lg';
+    }
+    if (this.props.disableEditing) {
+      pencilStyle = {
+        display: 'none',
+      };
+      saveStyle = {
+        display: 'none',
+      };
+      listNameTitle = 'You cannot change or save a list in a multiplayer table.';
+      listNameContainerClass = 'col-xs-12 col-md-12';
+      saveContainerClass = 'hidden';
+    } else {
+      listNameTitle = `This is the name of the word list. You can click the
+              pencil to change the name, or the disk icon to toggle autosave.`;
     }
     return (
       <div
         style={{ whiteSpace: 'nowrap' }}
         className="row"
       >
-        <div className="col-xs-10 col-md-8">
+        <div className={listNameContainerClass}>
           <div
             style={listNameStyle}
             className="hovertip"
             data-toggle="tooltip"
-            title={`This is the name of the word list. You can click the
-              pencil to change the name, or the disk icon to toggle autosave.`}
+            title={listNameTitle}
           >{this.props.listName}</div>
           <div
             className="glyphicon glyphicon-pencil hovertip"
@@ -102,7 +121,7 @@ class ListSaveBar extends React.Component {
           />
         </div>
 
-        <div className="col-xs-2 col-md-4">
+        <div className={saveContainerClass}>
           <div
             className={saveClass}
             style={saveStyle}
@@ -160,6 +179,7 @@ ListSaveBar.propTypes = {
   autoSave: React.PropTypes.bool,
   onListNameChange: React.PropTypes.func.isRequired,
   onAutoSaveToggle: React.PropTypes.func.isRequired,
+  disableEditing: React.PropTypes.bool,
 };
 
 export default ListSaveBar;
