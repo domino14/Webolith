@@ -149,7 +149,7 @@ Testing:
 - [x] There might be a race condition when joining a new table. There is a presence change signal, but what if it comes before the server gets the request for the table list? Also when refreshing the app when in a table!
     - [x] Yes, all sorts of race conditions. Rethink the lifecycle, don't do so many requests, etc etc.
 - [x] Fix Django tests 
-- [ ] Kick players out? Make private? etc.
+- ~~[ ] Kick players out? Make private? etc.~~ later...
 - [x] ~~Hijack tab key to change between guess/chat, or~~ clean up chat view
     - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
     - I think best way is a single bar for both guess/chat with a mode switcher.

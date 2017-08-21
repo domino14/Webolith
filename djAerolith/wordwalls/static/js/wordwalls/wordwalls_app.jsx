@@ -71,6 +71,7 @@ class WordwallsApp extends React.Component {
           <SettingsCog
             displayStyle={this.props.displayStyle}
             onSave={this.props.setDisplayStyle}
+            isMultiplayer={this.props.tableIsMultiplayer}
           />
         </div>
         <div
