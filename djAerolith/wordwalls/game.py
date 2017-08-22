@@ -44,10 +44,6 @@ class GameInitException(Exception):
     pass
 
 
-class GiveUpException(Exception):
-    pass
-
-
 class WordwallsGame(object):
     def _initial_state(self):
         """ Return an initial state object, for a brand new game. """
@@ -572,11 +568,8 @@ class WordwallsGame(object):
         logger.debug(
             u'table %s - User %s called give_up_and_save with params: %s',
             tablenum, user, listname)
-        try:
-            if self.give_up(user, tablenum):
-                return self.save(user, tablenum, listname)
-        except GiveUpException:
-            return {'success': False}
+        if self.give_up(user, tablenum) is True:
+            return self.save(user, tablenum, listname)
 
     def validate_can_save(self, tablenum, listname, wgm, state):
         """

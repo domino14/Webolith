@@ -154,6 +154,8 @@ Testing:
     - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
     - I think best way is a single bar for both guess/chat with a mode switcher.
     - Moved the chat bar to the bottom
+- [ ] Test giveUpAndSave behavior
+- [ ] Test upgrade app behavior on start
 Deployment:
     - [ ] Create Celery container for pruning presences/rooms periodically
         - [ ] May be ok creating a cronjob container, but need to enable this on kubernetes.

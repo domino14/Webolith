@@ -1,9 +1,10 @@
 apiVersion: batch/v2alpha1
 kind: CronJob
 metadata:
-  name: webolith-daily-cleanup
+  name: webolith-channels-cleanup
 spec:
-  schedule: "15 8 * * *"
+  # Every 3 minutes, run clean up tasks.
+  schedule: "* * * * /3"
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   jobTemplate:
@@ -11,9 +12,9 @@ spec:
       template:
         spec:
           containers:
-          - name: webolith-daily-cron
+          - name: webolith-channels-cron
             image: domino14/webolith:{{ BUILD_NUM }}
-            command: ["/bin/sh", "-c", "/opt/webolith/scripts/dailyCleanup.sh"]
+            command: ["/bin/sh", "-c", "/opt/webolith/scripts/channels_cleanup.sh"]
             env:
               - name: DEBUG
                 value: 'off'

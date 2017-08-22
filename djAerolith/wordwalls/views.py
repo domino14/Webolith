@@ -35,7 +35,7 @@ from gargoyle import gargoyle
 
 from base.forms import LexiconForm
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
-from wordwalls.game import WordwallsGame, GiveUpException
+from wordwalls.game import WordwallsGame
 from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
@@ -155,33 +155,15 @@ def handle_table_post(request, tableid):
     if action == "start":
         # XXX: Deprecated, this is handled by socket, remove after deploy.
         logger.debug('old-way start')
-        return start_game(request, tableid)
-    elif action == "guess":
-        # XXX: Deprecated, this is handled by socket in socket_consumers.py now
-        # Remove after deploy.
-        logger.debug(u'old-way guess=%s', request.POST['guess'])
-        wwg = WordwallsGame()
-        state = wwg.guess(request.POST['guess'].strip(), tableid,
-                          request.user)
-        if state is None:
-            return response(_('Quiz is already over.'),
-                            status=StatusCode.BAD_REQUEST)
-        logger.debug(u'table=%s Returning %s', tableid, state)
-        return response({'g': state['going'], 'C': state['alphagram'],
-                         'w': state['word'],
-                         'a': state['already_solved']})
+        return response({
+            'success': False,
+            'error': _('App has been updated; please refresh your page.')},
+            status=StatusCode.BAD_REQUEST)
     elif action == "gameEnded":
         wwg = WordwallsGame()
         ret = wwg.check_game_ended(tableid)
         # 'going' is the opposite of 'game ended'
         return response({'g': not ret})
-    elif action == "giveUp":
-        wwg = WordwallsGame()
-        try:
-            ret = wwg.give_up(request.user, tableid)
-            return response({'g': not ret})
-        except GiveUpException as e:
-            return response({'error': str(e)})
 
     elif action == "save":
         wwg = WordwallsGame()

@@ -24,7 +24,7 @@ def create_k8s_configs(role):
 
 
 def _create_k8s_configs(role):
-        build(role)
+    build(role)
 
 
 def deploy(role):
@@ -46,6 +46,7 @@ def _deploy(role):
         '{0}-webolith-ingress'.format(role),
         '{0}-nginx-static-deployment'.format(role),
         'nginx-static-service',
+        'webolith-redis'
     ]:
         local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml'.format(f))
 

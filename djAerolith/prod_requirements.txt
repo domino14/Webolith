@@ -5,7 +5,6 @@ six >= 1.7
 Markdown
 django-registration-redux
 gargoyle-yplan
-gunicorn
 requests
 recaptcha-client
 wsgiref

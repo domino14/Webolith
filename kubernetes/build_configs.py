@@ -94,8 +94,7 @@ def build_webolith_maintenance(role):
         template = f.read()
 
     context = {}
-    for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER', 'AWS_ACCESS_KEY_ID',
-                     'BACKUP_BUCKET_SUFFIX']:
+    for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER']:
         context[var_name] = get_env_var(role, var_name)
     context['BUILD_NUM'] = os.getenv('CIRCLE_BUILD_NUM', '')
     rendered = curlies_render(template, context)
