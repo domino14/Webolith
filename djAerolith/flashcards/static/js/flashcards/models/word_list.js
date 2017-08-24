@@ -102,7 +102,12 @@ define([
        * origQuestions.length.
        * @type {Array.<number>}
        */
-      firstMissed: []
+      firstMissed: [],
+      /**
+       * Alphagram star tags. The key should be the index, also 0 through
+       * origQuestions.length. The value is the tag.
+       */
+      starTags: {}
     },
 
     /**
@@ -135,10 +140,11 @@ define([
      * @private
      */
     getQuestions_: function() {
-      var qs, orig, missed, missedDict;
+      var qs, orig, missed, missedDict, starTags;
       qs = [];
       orig = this.get('origQuestions');
       missed = this.get('missed');
+      starTags = this.get('starTags');
       missedDict = {};
       // Store in a hash for faster lookups.
       _.each(missed, function(qIndex) {
@@ -153,6 +159,9 @@ define([
         }
         if (_.has(missedDict, qIndex)) {
           card.missed = true;
+        }
+        if (_.has(starTags, qIndex)) {
+          card.stars = starTags[qIndex];
         }
         qs.push(card);
       }, this);
@@ -207,6 +216,22 @@ define([
         return;
       }
       currentCard.set('missed', missed);
+    },
+    /**
+     * Tag the current card with a number of stars.
+     * @param  {number} numStars
+     */
+    tagCurrent: function(numStars) {
+      var currentCard, curQIndex, starTags;
+      curQIndex = this.get('curQuestions')[this.get('questionIndex')];
+      currentCard = this.currentCard();
+      if (!currentCard) {
+        return;
+      }
+      currentCard.set('stars', numStars);
+      starTags = this.get('starTags');
+      starTags[curQIndex] = numStars;
+      this.set('starTags', starTags);
     },
     advanceCard: function() {
       // Increase question index.

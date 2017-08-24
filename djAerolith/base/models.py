@@ -254,3 +254,20 @@ class WordList(SavedList):
     # in all of our code. These names should be interchangeable.
     class Meta:
         proxy = True
+
+
+class AlphagramTag(models.Model):
+    WORD_TAGS = (
+        ('D5', 'Very Easy'),
+        ('D4', 'Easy'),
+        ('D3', 'Average'),
+        ('D2', 'Hard'),
+        ('D1', 'Very Hard'),
+    )
+    user = models.ForeignKey(User)
+    lexicon = models.ForeignKey(Lexicon)
+    alphagram = models.CharField(max_length=15)
+    tag = models.CharField(choices=WORD_TAGS, max_length=2)
+
+    class Meta:
+        unique_together = ('user', 'lexicon', 'alphagram')

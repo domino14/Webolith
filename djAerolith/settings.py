@@ -287,6 +287,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django.template': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'social': {
             'handlers': ['console'],
             'level': 'ERROR',
