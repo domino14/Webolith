@@ -172,7 +172,6 @@ INSTALLED_APPS = (
     'wordwalls.apps.WordwallsAppConfig',
     'accounts',
     'django.contrib.staticfiles',
-    'gunicorn',
     'whitleyCards',
     'gargoyle',
     'registration',
