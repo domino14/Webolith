@@ -32,7 +32,12 @@ define([
        * A string representation of the question, most likely an alphagram.
        * @type {string}
        */
-      question: ''
+      question: '',
+      /**
+       * A number of stars for this card. Used for tagging difficulty.
+       * @type {number}
+       */
+      stars: null
     }
   });
 

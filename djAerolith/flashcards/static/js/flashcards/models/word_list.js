@@ -102,7 +102,15 @@ define([
        * origQuestions.length.
        * @type {Array.<number>}
        */
-      firstMissed: []
+      firstMissed: [],
+      /**
+       * Alphagram star tags. The key should be the index, also 0 through
+       * origQuestions.length. The value is a dictionary {t: tag, s: synced}
+       * If s == 0, this tag hasn't been synced with the backend yet,
+       * otherwise it's 1. Syncing tags is a fairly expensive operation
+       * so we don't want to have to do it often.
+       */
+      starTags: {}
     },
 
     /**
@@ -119,7 +127,8 @@ define([
       shuffled = _.shuffle(this.get('curQuestions'));
       this.set({
         curQuestions: shuffled,
-        name: quizName
+        name: quizName,
+        starTags: {}
       });
       this.questionMap_ = questionMap;
       // Save question map in local storage.
@@ -135,10 +144,11 @@ define([
      * @private
      */
     getQuestions_: function() {
-      var qs, orig, missed, missedDict;
+      var qs, orig, missed, missedDict, starTags;
       qs = [];
       orig = this.get('origQuestions');
       missed = this.get('missed');
+      starTags = this.get('starTags');
       missedDict = {};
       // Store in a hash for faster lookups.
       _.each(missed, function(qIndex) {
@@ -153,6 +163,9 @@ define([
         }
         if (_.has(missedDict, qIndex)) {
           card.missed = true;
+        }
+        if (_.has(starTags, qIndex)) {
+          card.stars = starTags[qIndex].t;
         }
         qs.push(card);
       }, this);
@@ -207,6 +220,25 @@ define([
         return;
       }
       currentCard.set('missed', missed);
+    },
+    /**
+     * Tag the current card with a number of stars.
+     * @param  {number} numStars
+     */
+    tagCurrent: function(numStars) {
+      var currentCard, curQIndex, starTags;
+      curQIndex = this.get('curQuestions')[this.get('questionIndex')];
+      currentCard = this.currentCard();
+      if (!currentCard) {
+        return;
+      }
+      currentCard.set('stars', numStars);
+      starTags = this.get('starTags');
+      starTags[curQIndex] = {
+        't': numStars,
+        's': 0
+      };
+      this.set('starTags', starTags);
     },
     advanceCard: function() {
       // Increase question index.
@@ -283,8 +315,23 @@ define([
       }).complete(_.bind(function() {
         // Also save locally on completion of remote sync.
         this.saveStateLocal_();
+        this.setStarsSynced_();
       }, this));
 
+    },
+    /**
+     * After synchronizing list with server, we should mark all star tags
+     * as having been synced.
+     */
+    setStarsSynced_: function() {
+      var newStars = {};
+      _.each(this.get('starTags'), function(val, k) {
+        newStars[k] = {
+          't': val.t,
+          's': 1
+        };
+      });
+      this.set('starTags', newStars);
     },
     /**
      * Loads quiz from remote storage. Does no confirmation.

@@ -5,9 +5,42 @@
 {{/answers}}
 </dl>
 <div class="row">
-    <div class="col-xs-6">
-        <button class="btn btn-success btn-lg button-space correct">Correct</button>
-    </div><div class="col-xs-6">
-        <button class="btn btn-lg btn-danger missed">Missed</button>
+    <div class="initial-filter">
+        <div class="row">
+            <div class="col-xs-12">
+                <small><center>How well do you know it?</center></small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <center>
+                    <div class="star-tags">
+                        <div>
+                            <span class="glyphicon glyphicon-star-empty startag star1" data-stars="1">{{{&#8199;}}}</span>
+                            <span class="glyphicon glyphicon-star-empty startag star2" data-stars="2">{{{&#8199;}}}</span>
+                            <span class="glyphicon glyphicon-star-empty startag star3" data-stars="3">{{{&#8199;}}}</span>
+                            <span class="glyphicon glyphicon-star-empty startag star4" data-stars="4">{{{&#8199;}}}</span>
+                            <span class="glyphicon glyphicon-star-empty startag star5" data-stars="5">{{{&#8199;}}}</span>
+                        </div>
+                    </div>
+                </center>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <center>
+                    <small><div class="star-caption"></div></small>
+                </center>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-buttons">
+        <div class="col-xs-6">
+            <button class="btn btn-success btn-lg button-space correct">Correct</button>
+        </div>
+        <div class="col-xs-6">
+            <button class="btn btn-danger btn-lg button-space missed">Missed</button>
+        </div>
     </div>
 </div>

@@ -5,6 +5,7 @@
  */
 define([
   'backbone',
+  'jquery',
   'underscore',
   'models/word_list',
   'views/prev_cards',
@@ -16,8 +17,8 @@ define([
   'text!templates/quiz_header.html',
   'text!templates/save_success.html',
   'text!templates/alert.html'
-], function(Backbone, _, WordList, PrevCards, Mustache, CardTemplate, CardFront,
-  CardBack, CardInfo, QuizHeader, SaveSuccess, Alert) {
+], function(Backbone, $, _, WordList, PrevCards, Mustache, CardTemplate,
+  CardFront, CardBack, CardInfo, QuizHeader, SaveSuccess, Alert) {
   "use strict";
   return Backbone.View.extend({
     initialize: function() {
@@ -41,11 +42,13 @@ define([
     },
     events: {
       'click .solve': 'showCardBack',
-      'click .correct': 'markCorrect',
-      'click .missed': 'markMissed',
       'click #previous-card': 'previousCard',
       'click #flip-card': 'flipCard',
-      'click #sync': 'sync'
+      'click #sync': 'sync',
+      'mouseover .startag': 'hoverStar',
+      'click .startag': 'clickStar',
+      'click .correct': 'markCorrectButton',
+      'click .missed': 'markMissedButton'
     },
     /**
      * Resets the quiz to a brand new array of questions.
@@ -140,6 +143,42 @@ define([
       this.renderCardInfo();
     },
     /**
+     * Hover on a star. Show a caption/color the star.
+     */
+    hoverStar: function(event) {
+      var numStars = parseInt($(event.target).data('stars'), 10);
+
+      var captions = {
+        1: 'I missed this word, even if I "knew" it',
+        2: 'Solved, but don\'t know this word well at all',
+        3: 'I know this word ok',
+        4: 'I know this word pretty well',
+        5: 'I know this word very well, should not quiz on it again'
+      };
+      this.$('.star-caption').html(captions[numStars]);
+      this.renderStars(numStars);
+    },
+    /**
+     * Render the number of stars with colors, etc.
+     * @param  {number} numStars
+     */
+    renderStars: function(numStars) {
+      var colorClass = 'text-danger';
+      if (numStars > 1) {
+        colorClass = 'text-success';
+      }
+      for (var i = 0; i < numStars; i++) {
+        this.$('.star' + String(i+1)).addClass('glyphicon-star').removeClass(
+          'glyphicon-star-empty');
+      }
+      for (i = numStars; i < 5; i++) {
+        this.$('.star' + String(i+1)).addClass(
+          'glyphicon-star-empty').removeClass('glyphicon-star');
+      }
+      this.$('.star-tags').removeClass('text-danger text-success').addClass(
+        colorClass);
+    },
+    /**
      * Shows the back of the card.
      */
     showCardBack: function() {
@@ -150,6 +189,13 @@ define([
       }
       this.viewingFront = false;
       this.renderCard(CardBack, currentCard);
+      if (this.wordList.get('goneThruOnce')) {
+        this.$('.card-buttons').show();
+        this.$('.initial-filter').hide();
+      } else {
+        this.$('.initial-filter').show();
+        this.$('.card-buttons').hide();
+      }
     },
     /**
      * Actually renders a card side with Mustache.
@@ -162,6 +208,10 @@ define([
       attributes = this.getCardDisplayAttributes_(card);
       partials = {'cardBody': template};
       this.card.html(Mustache.render(CardTemplate, attributes, partials));
+      // Render stars if applicable
+      if (template === CardBack && attributes.stars) {
+        this.renderStars(attributes.stars);
+      }
     },
     /**
      * Gets the display attributes for a card. Used as a context for
@@ -173,26 +223,48 @@ define([
     getCardDisplayAttributes_: function(card) {
       var attributes;
       attributes = card.toJSON();
+      console.log('attrs', attributes);
       attributes.numAnswers = _.size(attributes.answers);
       attributes.pluralAnswers = attributes.numAnswers > 1;
       attributes.cardNum = this.wordList.currentIndex() + 1;
       attributes.cardCount = this.wordList.numCards();
       return attributes;
     },
-
+    clickStar: function(event) {
+      var numStars = parseInt($(event.target).data('stars'), 10);
+      if (numStars > 1) {
+        this.markCorrect(numStars);
+      } else {
+        this.markMissed(1);
+      }
+    },
     /**
      * Mark the current card correct.
      */
-    markCorrect: function() {
+    markCorrect: function(numStars) {
       this.wordList.markCurrentMissed(false);
+      if (numStars) {
+        this.wordList.tagCurrent(numStars);
+      }
       this.advanceCard();
+    },
+
+    markCorrectButton: function() {
+      this.markCorrect();
     },
     /**
      * Mark missed.
      */
-    markMissed: function() {
+    markMissed: function(numStars) {
       this.wordList.markCurrentMissed(true);
+      // 1 star for missed.
+      if (numStars) {
+        this.wordList.tagCurrent(numStars);
+      }
       this.advanceCard();
+    },
+    markMissedButton: function() {
+      this.markMissed();
     },
     /**
      * Advance to the next card.
