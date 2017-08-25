@@ -4,6 +4,7 @@ metadata:
   name: nginx-static-deployment
 spec:
   replicas: 1
+  revisionHistoryLimit: 5
   strategy:
     rollingUpdate:
       maxUnavailable: 0
