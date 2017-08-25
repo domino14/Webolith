@@ -105,7 +105,10 @@ define([
       firstMissed: [],
       /**
        * Alphagram star tags. The key should be the index, also 0 through
-       * origQuestions.length. The value is the tag.
+       * origQuestions.length. The value is a dictionary {t: tag, s: synced}
+       * If s == 0, this tag hasn't been synced with the backend yet,
+       * otherwise it's 1. Syncing tags is a fairly expensive operation
+       * so we don't want to have to do it often.
        */
       starTags: {}
     },
@@ -124,7 +127,8 @@ define([
       shuffled = _.shuffle(this.get('curQuestions'));
       this.set({
         curQuestions: shuffled,
-        name: quizName
+        name: quizName,
+        starTags: {}
       });
       this.questionMap_ = questionMap;
       // Save question map in local storage.
@@ -161,7 +165,7 @@ define([
           card.missed = true;
         }
         if (_.has(starTags, qIndex)) {
-          card.stars = starTags[qIndex];
+          card.stars = starTags[qIndex].t;
         }
         qs.push(card);
       }, this);
@@ -230,7 +234,10 @@ define([
       }
       currentCard.set('stars', numStars);
       starTags = this.get('starTags');
-      starTags[curQIndex] = numStars;
+      starTags[curQIndex] = {
+        't': numStars,
+        's': 0
+      };
       this.set('starTags', starTags);
     },
     advanceCard: function() {
@@ -308,8 +315,23 @@ define([
       }).complete(_.bind(function() {
         // Also save locally on completion of remote sync.
         this.saveStateLocal_();
+        this.setStarsSynced_();
       }, this));
 
+    },
+    /**
+     * After synchronizing list with server, we should mark all star tags
+     * as having been synced.
+     */
+    setStarsSynced_: function() {
+      var newStars = {};
+      _.each(this.get('starTags'), function(val, k) {
+        newStars[k] = {
+          't': val.t,
+          's': 1
+        };
+      });
+      this.set('starTags', newStars);
     },
     /**
      * Loads quiz from remote storage. Does no confirmation.

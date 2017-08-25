@@ -91,6 +91,11 @@ def saved_list_sync(request):
     sl.save()
     profile.wordwallsSaveListSize += len(orig_qs)
     profile.save()
+    # Get stars.
+    stars = body.get('starTags', {})
+    if stars:
+        save_stars(request, stars, sl)
+
     return response(sl.to_python())
 
 
@@ -204,6 +209,18 @@ def saved_list(request, id):
         return edit_saved_list(request, sl)
 
 
+def save_stars(request, stars, sl):
+    origQuestions = json.loads(sl.origQuestions)
+    for qidx, star_obj in stars.iteritems():
+        alph = origQuestions[int(qidx)]['q']
+        if star_obj['s'] == 0:
+            logger.debug(u'Creating user tag for %s: %s - %s (%s) ',
+                         request.user, alph, sl.lexicon, star_obj['t'])
+            AlphagramTag.objects.update_or_create(
+                user=request.user, lexicon=sl.lexicon, alphagram=alph,
+                defaults={'tag': map_stars_to_tag(star_obj['t'])})
+
+
 def edit_saved_list(request, sl):
     """
     A helper function (not a view) that saves an already existing list
@@ -233,14 +250,7 @@ def edit_saved_list(request, sl):
     # Get stars.
     stars = body.get('starTags', {})
     if stars:
-        origQuestions = json.loads(sl.origQuestions)
-        for qidx, star_ct in stars.iteritems():
-            alph = origQuestions[int(qidx)]['q']
-            logger.debug(u'Creating user tag for %s: %s - %s (%s) ',
-                         request.user, alph, sl.lexicon, star_ct)
-            AlphagramTag.objects.update_or_create(
-                user=request.user, lexicon=sl.lexicon, alphagram=alph,
-                defaults={'tag': map_stars_to_tag(star_ct)})
+        save_stars(request, stars, sl)
 
     return response(sl.to_python())
 

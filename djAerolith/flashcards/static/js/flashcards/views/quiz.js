@@ -46,7 +46,9 @@ define([
       'click #flip-card': 'flipCard',
       'click #sync': 'sync',
       'mouseover .startag': 'hoverStar',
-      'click .startag': 'clickStar'
+      'click .startag': 'clickStar',
+      'click .correct': 'markCorrectButton',
+      'click .missed': 'markMissedButton'
     },
     /**
      * Resets the quiz to a brand new array of questions.
@@ -187,6 +189,13 @@ define([
       }
       this.viewingFront = false;
       this.renderCard(CardBack, currentCard);
+      if (this.wordList.get('goneThruOnce')) {
+        this.$('.card-buttons').show();
+        this.$('.initial-filter').hide();
+      } else {
+        this.$('.initial-filter').show();
+        this.$('.card-buttons').hide();
+      }
     },
     /**
      * Actually renders a card side with Mustache.
@@ -226,7 +235,7 @@ define([
       if (numStars > 1) {
         this.markCorrect(numStars);
       } else {
-        this.markMissed();
+        this.markMissed(1);
       }
     },
     /**
@@ -234,17 +243,28 @@ define([
      */
     markCorrect: function(numStars) {
       this.wordList.markCurrentMissed(false);
-      this.wordList.tagCurrent(numStars);
+      if (numStars) {
+        this.wordList.tagCurrent(numStars);
+      }
       this.advanceCard();
+    },
+
+    markCorrectButton: function() {
+      this.markCorrect();
     },
     /**
      * Mark missed.
      */
-    markMissed: function() {
+    markMissed: function(numStars) {
       this.wordList.markCurrentMissed(true);
       // 1 star for missed.
-      this.wordList.tagCurrent(1);
+      if (numStars) {
+        this.wordList.tagCurrent(numStars);
+      }
       this.advanceCard();
+    },
+    markMissedButton: function() {
+      this.markMissed();
     },
     /**
      * Advance to the next card.
