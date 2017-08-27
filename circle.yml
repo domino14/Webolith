@@ -6,6 +6,7 @@ machine:
     version: stable
   services:
     - docker
+    - redis
   python:
     version: 2.7.12
   environment:
@@ -32,8 +33,6 @@ dependencies:
     - ~/.yarn-cache
   override:
     - yarn install
-test:
-  pre:
     # XXX: We should build the image first and test it.
     - pip install -r djAerolith/test_requirements.txt
     - pip install -r djAerolith/prod_requirements.txt
@@ -43,6 +42,7 @@ test:
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - sudo mv ./kubectl /usr/local/bin/kubectl
+test:
   override:
     # Build the js bundles.
     - yarn full-prod-build
@@ -51,31 +51,21 @@ test:
     # Gather all JS files and compile messages for building into image.
     - cd djAerolith && ./manage.py collectstatic --noinput
     - cd djAerolith && ./manage.py compilemessages
-  post:
-    - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM -t domino14/webolith:latest .
-    - >
-      cd $REPO/kubernetes &&
-      docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-      -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
-    - docker login --email $DOCKER_EMAIL --password $DOCKER_PASSWORD --username domino14
-    - docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-    # Delete the static files.
-    - rm -rf $STATIC_ROOT
-    - docker push domino14/webolith:$CIRCLE_BUILD_NUM
-    - docker push domino14/webolith:latest
-    # Should make sure base docker container is always up to date.
+
 deployment:
   production:
     branch: master
     commands:
       # We need to create the kubernetes service yaml files, and apply new
       # ones from config vars.
+      - ./build-dockers.sh
       - cp /home/ubuntu/webolith-private/admin.conf /home/ubuntu/admin.conf
       - fab create_k8s_configs:prod
       - fab deploy:prod
   staging:
     branch: staging
     commands:
+      - ./build-dockers.sh
       - cp /home/ubuntu/webolith-private/dev-admin.conf /home/ubuntu/admin.conf
       - fab create_k8s_configs:dev
       - fab deploy:dev
