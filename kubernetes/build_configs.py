@@ -80,7 +80,7 @@ def build_webolith_deployment(role):
     context = {}
     for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER', 'MACONDO_ADDRESS',
                      'SOCIAL_AUTH_FACEBOOK_KEY', 'INTERCOM_APP_ID',
-                     'SOCKET_SERVER', 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']:
+                     'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']:
         context[var_name] = get_env_var(role, var_name)
     context['BUILD_NUM'] = os.getenv('CIRCLE_BUILD_NUM', '')
     context['WORD_DB_DIR'] = os.getenv('WORD_DB_DIR', '')

@@ -88,7 +88,6 @@ def table(request, tableid=None):
                  else False)
          ),
          'user': json.dumps(usermeta),
-         'socket_server': settings.SOCKET_SERVER,
          'addParams': json.dumps(params),
          'avatarUrl': profile.avatarUrl,
          'CURRENT_VERSION': CURRENT_VERSION,
