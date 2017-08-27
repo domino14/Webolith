@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     app: webolith
-    component: django
+    component: daphne
   ports:
     - port: 8000
-      name: django-port
+      name: daphne-port
