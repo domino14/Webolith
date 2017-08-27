@@ -64,7 +64,6 @@ class WordwallsAppContainer extends React.Component {
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
     };
-    console.log('Initial state', this.state.currentHost, this.props.username);
     // Bindings:
     this.timerRanOut = this.timerRanOut.bind(this);
     this.handleStart = this.handleStart.bind(this);
@@ -457,8 +456,6 @@ class WordwallsAppContainer extends React.Component {
   }
 
   countdownTimeout() {
-    console.log('I am in this timer, ', this.state.startCountdown,
-      this.state.startCountingDown);
     const newCountdown = this.state.startCountdown - 1;
     this.setState({
       startCountdown: newCountdown,
@@ -573,7 +570,6 @@ class WordwallsAppContainer extends React.Component {
 
   handleTables(data) {
     presence.addTables(data.tables);
-    console.log('in handleTables');
     this.setState({
       tables: presence.getTables(),
       currentHost: presence.getHost(String(this.state.tablenum)),
@@ -581,7 +577,6 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleTable(data) {
-    console.log('in handleTable');
     presence.updateTable(data.table);
     this.setState({
       tables: presence.getTables(),

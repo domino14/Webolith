@@ -5,7 +5,7 @@ MAINTAINER Cesar Del Solar <delsolar@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --update gettext postgresql-dev postgresql gcc musl-dev libffi-dev
+RUN apk add --update gettext postgresql-dev postgresql gcc musl-dev libffi-dev make
 
 COPY djAerolith/prod_requirements.txt /opt/prod_requirements.txt
 RUN pip install --upgrade pip

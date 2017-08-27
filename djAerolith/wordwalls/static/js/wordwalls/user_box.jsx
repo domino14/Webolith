@@ -28,7 +28,6 @@ const UserBox = (props) => {
         />
       </div>);
   });
-  // console.log('The answers are ', answers);
   const percentScore = props.totalWords > 0 ?
     (100 * (props.answers.size / props.totalWords)).toFixed(1) : 0;
 

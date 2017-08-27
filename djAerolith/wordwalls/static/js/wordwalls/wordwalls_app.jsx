@@ -24,19 +24,11 @@ class WordwallsApp extends React.Component {
     this.onChatBarBlur = this.onChatBarBlur.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('WordwallsApp will receive props currentHost',
-      nextProps.currentHost);
-  }
-
   onGuessBoxBlur() {
-    console.log('Blur guessBox, set focus on chatbar');
-
     this.chatBar.setFocus();
   }
 
   onChatBarBlur() {
-    console.log('Blur chatbar, set focus on guessbox');
     this.guessBox.setFocus();
   }
 

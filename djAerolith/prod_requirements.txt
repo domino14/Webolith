@@ -1,6 +1,6 @@
 # These are the requirements for the prod Docker file.
 
-django>=1.11
+django>=1.11,<2.0
 six >= 1.7
 Markdown
 django-registration-redux
@@ -19,7 +19,7 @@ PyYAML
 channels
 asgi_redis
 django-channels-presence
-
+gunicorn
 # Not strictly a prod requirement. However, the main issue here
 # is that we can't run tests in the docker container otherwise.
 mock

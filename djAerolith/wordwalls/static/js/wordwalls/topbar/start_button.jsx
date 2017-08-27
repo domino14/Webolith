@@ -20,7 +20,6 @@ class StartButton extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('About to receive props', nextProps);
     if (!this.props.gameGoing && nextProps.gameGoing) {
       // Give the button the correct IDLE state once the game starts.
       this.setState({
@@ -55,7 +54,6 @@ class StartButton extends React.Component {
           buttonState: BUTTON_STATE_COUNTING_DOWN,
         });
         this.countdownTimeout = window.setTimeout(() => {
-          console.log('Handling start in setTimeout');
           this.props.handleStart();
         }, COUNTDOWN_SECS * 1000);
         this.props.handleStartCountdown(COUNTDOWN_SECS);
@@ -63,7 +61,6 @@ class StartButton extends React.Component {
         // Try to start the game right away. This will send a message to the
         // server telling everyone that this user wants to start the game,
         // but won't actually start it.
-        console.log('Trying to start the game right away.');
         this.props.handleStart();
       }
     } else if (this.state.buttonState === BUTTON_STATE_COUNTING_DOWN) {
