@@ -42,7 +42,6 @@ def _deploy(role):
     for f in [
         '{0}-webolith-secrets'.format(role),
         '{0}-webolith-worker-deployment'.format(role),
-        'webolith-worker-service',
         '{0}-webolith-ingress'.format(role),
         '{0}-nginx-static-deployment'.format(role),
         'nginx-static-service',
