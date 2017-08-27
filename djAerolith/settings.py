@@ -250,7 +250,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'asgi_redis.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('redis', 6379)],
+            'hosts': [(os.environ.get('REDIS_HOST', 'redis'),
+                       os.environ.get('REDIS_PORT', 6379))],
         },
         'ROUTING': 'routing.routing',
     }
