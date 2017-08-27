@@ -3,8 +3,8 @@ kind: CronJob
 metadata:
   name: webolith-channels-cleanup
 spec:
-  # Every 3 minutes, run clean up tasks.
-  schedule: "* * * * /3"
+  # Every 5 minutes, run clean up tasks.
+  schedule: "* * * * */5"
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   concurrencyPolicy: Forbid
