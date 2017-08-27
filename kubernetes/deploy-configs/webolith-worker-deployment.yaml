@@ -45,6 +45,8 @@ spec:
           - name: PGSQL_USER
             value: {{ PGSQL_USER }}
 
+          - name: SOCKET_SERVER
+            value: {{ SOCKET_SERVER }}
           - name: MACONDO_ADDRESS
             value: {{ MACONDO_ADDRESS }}
           - name: RECAPTCHA_SSL
