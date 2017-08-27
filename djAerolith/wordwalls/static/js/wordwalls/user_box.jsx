@@ -6,7 +6,8 @@ import WordPartDisplay from './word_part_display';
 
 const UserBox = (props) => {
   const answers = [];
-  props.answeredByMe.forEach((word, idx) => {
+  const showLexiconSymbols = props.showLexiconSymbols;
+  props.answers.forEach((word, idx) => {
     answers.push(
       <div
         key={idx}
@@ -19,8 +20,7 @@ const UserBox = (props) => {
           classes="text-info small"
         />
         <WordPartDisplay
-          text={word.get('w') + (props.showLexiconSymbols ?
-            word.get('s') : '')}
+          text={`${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
         />
         <WordPartDisplay
           text={` ${word.get('bh')}`}
@@ -28,11 +28,10 @@ const UserBox = (props) => {
         />
       </div>);
   });
-  // console.log('The answers are ', answers);
   const percentScore = props.totalWords > 0 ?
-    (100 * (props.answeredByMe.length / props.totalWords)).toFixed(1) : 0;
+    (100 * (props.answers.size / props.totalWords)).toFixed(1) : 0;
 
-  const fractionScore = `${props.answeredByMe.length}/${props.totalWords}`;
+  const fractionScore = `${props.answers.size}/${props.totalWords}`;
 
   return (
     <div className="panel panel-default">
@@ -78,10 +77,10 @@ const UserBox = (props) => {
 };
 
 UserBox.propTypes = {
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  answers: React.PropTypes.instanceOf(Immutable.List),
   totalWords: React.PropTypes.number,
   username: React.PropTypes.string,
+  showLexiconSymbols: React.PropTypes.bool,
 };
 
 export default UserBox;

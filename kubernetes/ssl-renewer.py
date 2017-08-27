@@ -21,11 +21,11 @@ type: Opaque
 
 
 @task
-def regen(regid):
-    key_file = '/etc/letsencrypt/archive/aerolith.org/privkey{0}.pem'.format(
-        regid)
-    crt_file = '/etc/letsencrypt/archive/aerolith.org/fullchain{0}.pem'.format(
-        regid)
+def regen(domain, regid):
+    key_file = '/etc/letsencrypt/live/{0}/privkey{1}.pem'.format(
+        domain, regid)
+    crt_file = '/etc/letsencrypt/live/{0}/fullchain{1}.pem'.format(
+        domain, regid)
     create_ssl_secret(key_file, crt_file)
 
 
@@ -54,9 +54,9 @@ if __name__ == '__main__':
         print 'fab -f ssl-renewer.py <mode>'
         print '  modes:'
         print 'renew - Run script to renew cert'
-        print 'regen - Run script to regenerate secret template'
+        print 'regen <domain> <suffix> - Run script to regenerate secret template'
         sys.exit(1)
     if sys.argv[1] == 'renew':
         renew()
     elif sys.argv[1] == 'regen':
-        regen(sys.argv[2])
+        regen(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else '')

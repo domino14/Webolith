@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Styling from './style';
-import WordwallsApp from './wordwalls_app';
+import WordwallsAppContainer from './wordwalls_app_container';
 
 class App {
   /**
@@ -26,16 +26,19 @@ class App {
 
     // Render.
     ReactDOM.render(
-      <WordwallsApp
+      <WordwallsAppContainer
         username={options.username}
         listName={listName}
-        autoSave={autoSave}
+        autoSave={autoSave && !options.multiplayer}
         lexicon={options.lexicon}
         displayStyle={style}
         tablenum={options.tablenum}
+        tableIsMultiplayer={options.multiplayer}
+        currentHost={options.currentHost}
         defaultLexicon={options.defaultLexicon}
         challengeInfo={options.challengeInfo}
         availableLexica={options.availableLexica}
+        socketServer={options.socketServer}
       />,
       document.getElementById('main-app-content'));
   }

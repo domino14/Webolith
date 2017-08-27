@@ -9,11 +9,14 @@ Utils.setupCsrfAjax();
 App.initialize({
   lexicon: window.TableGlobals.lexicon,
   tablenum: window.TableGlobals.tablenum,
+  multiplayer: window.TableGlobals.multiplayer,
+  currentHost: window.TableGlobals.currentHost,
   addlParams: JSON.parse(window.TableGlobals.addlParams),
   username: user.username,
   availableLexica: JSON.parse(window.TableGlobals.availableLexica),
   defaultLexicon: window.TableGlobals.defaultLexicon,
   challengeInfo: JSON.parse(window.TableGlobals.challengeInfo),
+  socketServer: window.TableGlobals.socketServer,
 });
 
 // Finally, initialize Intercom.

@@ -67,7 +67,15 @@ class GameInactiveArea extends React.Component {
         />
       );
     }
-    if (this.props.numberOfRounds > 0) {
+    if (this.props.startCountingDown) {
+      const s = this.props.startCountdown > 1 ? 's' : '';
+      const str = `Game starting in ${this.props.startCountdown} second${s}...`;
+      jumbotronHeader = (
+        <div>
+          <h1>{str}</h1>
+        </div>
+      );
+    } else if (this.props.numberOfRounds > 0) {
       jumbotronHeader = (
         <div>
           <h1>Game over!</h1>
@@ -115,7 +123,7 @@ class GameInactiveArea extends React.Component {
         />
         <SolutionsModal
           questions={this.props.questions}
-          answeredByMe={this.props.answeredByMe}
+          numCorrect={this.props.numCorrect}
           totalWords={this.props.totalWords}
           height={this.props.height}
           markMissed={this.props.markMissed}
@@ -138,8 +146,7 @@ class GameInactiveArea extends React.Component {
 
 GameInactiveArea.propTypes = {
   questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   totalWords: React.PropTypes.number,
   height: React.PropTypes.number,
   markMissed: React.PropTypes.func,
@@ -153,6 +160,8 @@ GameInactiveArea.propTypes = {
   resetTableCreator: React.PropTypes.func,
   tableCreatorModalSelector: React.PropTypes.string,
   listName: React.PropTypes.string,
+  startCountdown: React.PropTypes.number,
+  startCountingDown: React.PropTypes.bool,
 };
 
 export default GameInactiveArea;

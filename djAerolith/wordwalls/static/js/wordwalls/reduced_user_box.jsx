@@ -1,12 +1,11 @@
 import React from 'react';
-import Immutable from 'immutable';
 
 
 const UserBox = (props) => {
   const percentScore = props.totalWords > 0 ?
-    (100 * (props.answeredByMe.length / props.totalWords)).toFixed(1) : 0;
+    (100 * (props.numCorrect / props.totalWords)).toFixed(1) : 0;
 
-  const fractionScore = `${props.answeredByMe.length} / ${props.totalWords}`;
+  const fractionScore = `${props.numCorrect} / ${props.totalWords}`;
 
   return (
     <div>
@@ -16,8 +15,7 @@ const UserBox = (props) => {
 };
 
 UserBox.propTypes = {
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   totalWords: React.PropTypes.number,
   username: React.PropTypes.string,
   // isBuild: React.PropTypes.bool,

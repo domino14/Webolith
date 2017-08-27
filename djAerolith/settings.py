@@ -169,14 +169,15 @@ INSTALLED_APPS = (
     'base',
     'flashcards',
     'tablegame',
-    'wordwalls',
+    'wordwalls.apps.WordwallsAppConfig',
     'accounts',
     'django.contrib.staticfiles',
-    'gunicorn',
     'whitleyCards',
     'gargoyle',
     'registration',
     'social_django',
+    'channels',
+    'channels_presence',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -242,8 +243,19 @@ DEFAULT_FROM_EMAIL = 'postmaster@mg.aerolith.org'
 LOGIN_URL = "/accounts/login"
 
 IGNORABLE_404_ENDS = ('.php', '.cgi')
-IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt')
+IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico',
+                        '/robots.txt')
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(os.environ.get('REDIS_HOST', 'redis'),
+                       os.environ.get('REDIS_PORT', 6379))],
+        },
+        'ROUTING': 'routing.routing',
+    }
+}
 SEND_BROKEN_LINK_EMAILS = False
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -327,7 +339,7 @@ REDIS_SOCKET_TOKEN_DB = 2
 
 
 ALLOWED_HOSTS = ['.aerolith.org', '*']
-SOCKJS_SERVER = os.environ.get('SOCKJS_SERVER')   # not used.
+SOCKET_SERVER = os.environ.get('SOCKET_SERVER')
 
 RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
 

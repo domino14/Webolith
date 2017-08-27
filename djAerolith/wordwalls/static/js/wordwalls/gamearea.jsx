@@ -12,7 +12,7 @@ const GameArea = (props) => {
       return (
         <BuildBoard
           onShuffle={props.onShuffle}
-          answered={props.answeredByMe}
+          answerers={props.answerers}
           displayStyle={props.displayStyle}
           width={props.width}
           questions={props.curQuestions}
@@ -36,7 +36,7 @@ const GameArea = (props) => {
   return (
     <GameInactiveArea
       questions={props.origQuestions}
-      answeredByMe={props.answeredByMe}
+      numCorrect={props.numCorrect}
       totalWords={props.totalWords}
       height={props.height}
       markMissed={props.markMissed}
@@ -47,6 +47,8 @@ const GameArea = (props) => {
       resetTableCreator={props.resetTableCreator}
       tableCreatorModalSelector={props.tableCreatorModalSelector}
       listName={props.listName}
+      startCountdown={props.startCountdown}
+      startCountingDown={props.startCountingDown}
     />
   );
 };
@@ -57,11 +59,11 @@ GameArea.propTypes = {
   origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
   displayStyle: React.PropTypes.instanceOf(Styling),
   totalWords: React.PropTypes.number,
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   onShuffle: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,
+  answerers: React.PropTypes.instanceOf(Immutable.Map),
 
   challengeData: React.PropTypes.shape({
     entries: React.PropTypes.array,
@@ -76,6 +78,9 @@ GameArea.propTypes = {
   resetTableCreator: React.PropTypes.func,
   tableCreatorModalSelector: React.PropTypes.string,
   listName: React.PropTypes.string,
+
+  startCountdown: React.PropTypes.number,
+  startCountingDown: React.PropTypes.bool,
 };
 
 export default GameArea;

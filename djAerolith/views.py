@@ -20,7 +20,6 @@ import logging
 import json
 
 from django.shortcuts import render
-from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
@@ -37,6 +36,11 @@ def health(request):
     if request.method != 'OPTIONS':
         return response('Bad method.', StatusCode.BAD_REQUEST)
     return response('OK')
+
+
+def trigger500(request):
+    logger.info('Triggering 500 for request user: %s', request.user)
+    raise Exception('OH NO')
 
 
 @login_required

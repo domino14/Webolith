@@ -13,7 +13,7 @@ const SolutionsModal = props => (
     <div className="modal-body" style={{ height: '80vh', overflowY: 'auto' }} >
       <Solutions
         questions={props.questions}
-        answeredByMe={props.answeredByMe}
+        numCorrect={props.numCorrect}
         totalWords={props.totalWords}
         height={props.height}
         markMissed={props.markMissed}
@@ -25,8 +25,7 @@ const SolutionsModal = props => (
 
 SolutionsModal.propTypes = {
   questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   totalWords: React.PropTypes.number,
   height: React.PropTypes.number,
   markMissed: React.PropTypes.func,

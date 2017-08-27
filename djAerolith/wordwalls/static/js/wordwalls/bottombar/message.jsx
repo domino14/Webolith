@@ -7,14 +7,24 @@ const classMap = {
   chat: '',
 };
 
-const Message = props =>
-  <div>
-    <span className={classMap[props.type]}>{props.children}</span>
-  </div>;
+const Message = (props) => {
+  let contents;
+  if (props.type === 'chat') {
+    contents = `${props.author}: ${props.children}`;
+  } else {
+    contents = props.children;
+  }
+  return (
+    <div>
+      <span className={classMap[props.type]}>{contents}</span>
+    </div>
+  );
+};
 
 Message.propTypes = {
   type: React.PropTypes.string,
   children: React.PropTypes.string,
+  author: React.PropTypes.string,
 };
 
 export default Message;

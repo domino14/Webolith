@@ -7,6 +7,7 @@ from django.db import connection
 from django.utils import timezone
 
 from wordwalls.api import date_from_request_dict
+from wordwalls.models import WordwallsGameModel
 from wordwalls.game import WordwallsGame
 logger = logging.getLogger(__name__)
 
@@ -113,6 +114,13 @@ class WordwallsNewChallengeTest(TestCase):
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
                          'America Today\'s 15s - 2013-11-29')
+
+        game = WordwallsGame()
+        old_word_list = game.get_wgm(tablenum, lock=False).word_list
+        self.assertTrue(old_word_list.is_temporary)
+        self.assertTrue(old_word_list.pk > 0)
+        old_pk = old_word_list.pk
+
         result = self.client.post('/wordwalls/api/new_challenge/',
                                   data=json.dumps({'tablenum': tablenum,
                                                    'lexicon': 1,
@@ -129,6 +137,9 @@ class WordwallsNewChallengeTest(TestCase):
         orig_questions = json.loads(wl.origQuestions)
         self.assertEqual(len(orig_questions), 50)
         self.assertEqual(len(orig_questions[28]['q']), 8)
+        # Check that old word list got deleted.
+        with self.assertRaises(WordwallsGameModel.DoesNotExist):
+            WordwallsGameModel.objects.get(pk=old_pk)
 
 
 class WordwallsNewSearchTest(TestCase):
@@ -170,6 +181,11 @@ class WordwallsNewSearchTest(TestCase):
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
                          'America Today\'s 15s - 2013-11-29')
+        game = WordwallsGame()
+        old_word_list = game.get_wgm(tablenum, lock=False).word_list
+        self.assertTrue(old_word_list.is_temporary)
+        self.assertTrue(old_word_list.pk > 0)
+        old_pk = old_word_list.pk
         # Now load a new search
         result = self.client.post('/wordwalls/api/new_search/',
                                   data=json.dumps({'tablenum': tablenum,
@@ -190,3 +206,6 @@ class WordwallsNewSearchTest(TestCase):
         orig_questions = json.loads(wl.origQuestions)
         self.assertEqual(len(orig_questions), 140)
         self.assertEqual(len(orig_questions[18]['q']), 9)
+        # Check that old word list got deleted.
+        with self.assertRaises(WordwallsGameModel.DoesNotExist):
+            WordwallsGameModel.objects.get(pk=old_pk)

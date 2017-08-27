@@ -39,13 +39,12 @@ from wordwalls.game import WordwallsGame
 from lib.word_db_helper import WordDB
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeName, Medal)
+                              DailyChallengeName, Medal, WordwallsGameModel)
 import wordwalls.settings
 from lib.response import response, StatusCode
 from base.utils import get_alphas_from_words, UserListParseException
 from current_version import CURRENT_VERSION
 from wordwalls.challenges import toughies_challenge_date
-
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +58,7 @@ def table(request, tableid=None):
     wwg = WordwallsGame()
     if tableid:
         # Check if the user is allowed to enter this table.
-        permitted = wwg.permit(request.user, tableid)
+        permitted = wwg.allow_access(request.user, tableid)
         if gargoyle.is_active('disable_games', request):
             permitted = False
         if not permitted:
@@ -75,17 +74,25 @@ def table(request, tableid=None):
 
     meta_info = get_create_meta_info()
     usermeta = get_user_meta_info(request.user)
+    wgm = None
+    if tableid:
+        wgm = wwg.get_wgm(tableid, False)
 
     return render(
         request, 'wordwalls/table.html',
         {'tablenum': tableid if tableid else 0,
+         'current_host': wgm.host.username if wgm else '',
+         'multiplayer': (
+             json.dumps(
+                 wgm.playerType == WordwallsGameModel.MULTIPLAYER_GAME if wgm
+                 else False)
+         ),
          'user': json.dumps(usermeta),
+         'socket_server': settings.SOCKET_SERVER,
          'addParams': json.dumps(params),
          'avatarUrl': profile.avatarUrl,
          'CURRENT_VERSION': CURRENT_VERSION,
-         'lexicon': (
-             wwg.get_wgm(tableid, False).lexicon.lexiconName
-             if tableid else None),
+         'lexicon': wgm.lexicon.lexiconName if wgm else None,
          'default_lexicon': profile.defaultLexicon.pk,
          'challenge_info': json.dumps(meta_info['challenge_info']),
          'available_lexica': json.dumps(meta_info['lexica']),
@@ -146,27 +153,18 @@ def handle_table_post(request, tableid):
             'error': _('Table does not exist, please load a new word list.')},
             status=StatusCode.BAD_REQUEST)
     if action == "start":
-        return start_game(request, tableid)
-    elif action == "guess":
-        logger.debug(u'guess=%s', request.POST['guess'])
-        wwg = WordwallsGame()
-        state = wwg.guess(request.POST['guess'].strip(), tableid, request.user)
-        if state is None:
-            return response(_('Quiz is already over.'),
-                            status=StatusCode.BAD_REQUEST)
-        logger.debug(u'table=%s Returning %s', tableid, state)
-        return response({'g': state['going'], 'C': state['alphagram'],
-                         'w': state['word'],
-                         'a': state['already_solved']})
+        # XXX: Deprecated, this is handled by socket, remove after deploy.
+        logger.debug('old-way start')
+        return response({
+            'success': False,
+            'error': _('App has been updated; please refresh your page.')},
+            status=StatusCode.BAD_REQUEST)
     elif action == "gameEnded":
         wwg = WordwallsGame()
         ret = wwg.check_game_ended(tableid)
         # 'going' is the opposite of 'game ended'
         return response({'g': not ret})
-    elif action == "giveUp":
-        wwg = WordwallsGame()
-        ret = wwg.give_up(request.user, tableid)
-        return response({'g': not ret})
+
     elif action == "save":
         wwg = WordwallsGame()
         ret = wwg.save(request.user, tableid, request.POST['listname'])

@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: webolith
+  labels:
+    app: webolith
+spec:
+  selector:
+    app: webolith
+    component: worker
