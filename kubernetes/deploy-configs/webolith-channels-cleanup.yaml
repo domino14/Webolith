@@ -4,7 +4,7 @@ metadata:
   name: webolith-channels-cleanup
 spec:
   # Every 5 minutes, run clean up tasks.
-  schedule: "* * * * */5"
+  schedule: "*/5 * * * *"
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
   concurrencyPolicy: Forbid
