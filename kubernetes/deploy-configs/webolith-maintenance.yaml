@@ -28,10 +28,10 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: webolith-secrets
-                    key: pgsql_password
+                    key: PGSQL_PASSWORD
               - name: PGSQL_HOST
                 valueFrom:
                   secretKeyRef:
                     name: webolith-secrets
-                    key: pgsql_host
+                    key: PGSQL_HOST
           restartPolicy: OnFailure
