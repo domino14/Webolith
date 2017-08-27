@@ -53,7 +53,6 @@ test:
     - cd djAerolith && ./manage.py compilemessages
   post:
     - docker build -t domino14/webolith:$CIRCLE_BUILD_NUM -t domino14/webolith:latest .
-    - docker build -t domino14/webolith-worker:$CIRCLE_BUILD_NUM -t domino14/webolith-worker:latest .
     - >
       cd $REPO/kubernetes &&
       docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM

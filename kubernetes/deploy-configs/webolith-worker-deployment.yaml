@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: webolith-container
-        image: domino14/webolith-worker:{{ BUILD_NUM }}
-
+        image: domino14/webolith:{{ BUILD_NUM }}
+        command: ["python", "manage.py", "runworker"]
         readinessProbe:
           exec:
             command:
