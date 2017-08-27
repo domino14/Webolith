@@ -29,7 +29,7 @@ from registration_app.forms import get_registration_form
 from registration.backends.simple.views import RegistrationView
 
 from views import (health, login_error, new_social_user, js_error, test_500,
-                   healthz, socket_token, trigger500)
+                   healthz, trigger500)
 from accounts.views import social, username_change
 from base.views import listmanager
 gargoyle.autodiscover()
@@ -94,7 +94,6 @@ urlpatterns = [
     url(r'^wordwalls/', include('wordwalls.urls')),
     url(r'^flashcards/', include('whitleyCards.urls')),
     url(r'^cards/', include('flashcards.urls')),
-    url(r'^socket_token/', socket_token),
     url(r'^base/', include('base.urls')),
     url(r'^js_errors/', js_error),
     url(r'^500tester/', test_500),

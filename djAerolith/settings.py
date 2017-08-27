@@ -270,7 +270,11 @@ LOGGING = {
             '()': 'django.utils.log.CallbackFilter',
             'callback': skip_suspicious_operations,
         },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
     },
+
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s '
@@ -290,7 +294,7 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
-            'filters': ['skip_suspicious_operations']
+            'filters': ['skip_suspicious_operations', 'require_debug_false']
         }
     },
     'loggers': {
@@ -330,13 +334,6 @@ INTERCOM_APP_SECRET_KEY = os.environ.get('INTERCOM_APP_SECRET_KEY')
 NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
-
-REDIS_HOST = os.environ.get('REDIS_HOST')   # not used.
-REDIS_PORT = 6379
-REDIS_ALPHAGRAMS_DB = 0   # alphas to pks
-REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
-REDIS_SOCKET_TOKEN_DB = 2
-
 
 ALLOWED_HOSTS = ['.aerolith.org', '*']
 SOCKET_SERVER = os.environ.get('SOCKET_SERVER')

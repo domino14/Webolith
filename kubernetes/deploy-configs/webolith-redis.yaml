@@ -12,7 +12,7 @@ spec:
     - port: 6379
       name: redis-port
 
---
+---
 
 kind: Deployment
 apiVersion: extensions/v1beta1
