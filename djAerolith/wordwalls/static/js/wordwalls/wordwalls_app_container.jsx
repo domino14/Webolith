@@ -581,10 +581,28 @@ class WordwallsAppContainer extends React.Component {
     this.setState({
       tables: presence.getTables(),
     });
-    if (data.table.tablenum === this.state.tablenum) {
+    if (data.table.tablenum !== this.state.tablenum) {
+      return;
+    }
+    // If here, this is the table we are currently in; let's make some
+    // visual updates.
+    const oldList = this.state.listName;
+    const host = presence.getHost(String(this.state.tablenum));
+    const oldHost = this.state.currentHost;
+    if (oldHost !== host) {
+      // Host change?
       this.setState({
-        currentHost: presence.getHost(String(this.state.tablenum)),
+        currentHost: host,
       });
+    }
+    if (oldList !== data.table.wordList) {
+      this.setState({
+        listName: data.table.wordList,
+      });
+      if (host !== this.props.username) {
+        this.addMessage(`${host} changed the word list to ${data.table.lexicon}
+         - ${data.table.wordList}`, 'info');
+      }
     }
   }
 
