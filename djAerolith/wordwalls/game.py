@@ -822,9 +822,7 @@ class WordwallsGame(object):
     def add_to_solvers(self, state, guess, username):
         if 'solvers' not in state:
             state['solvers'] = {}
-        if username not in state['solvers']:
-            state['solvers'][username] = []
-        state['solvers'][username].append(guess)
+        state['solvers'][guess] = username
 
     def guess(self, guess_str, tablenum, user):
         """ Handle a guess submission from the front end. """
@@ -860,7 +858,7 @@ class WordwallsGame(object):
                 self.do_quiz_end_actions(state, tablenum, wgm)
             last_correct = alpha[0]
         elif guess_str in state.get('originalAnswerHash', {}):
-            # XXX: Consider removing this.
+            # Consider removing this.
             # It's possible that the guess is in the answer hash that
             # existed at the beginning of the quiz, but the front end
             # never got the message that it was solved, due to Internet
@@ -872,7 +870,7 @@ class WordwallsGame(object):
             return {'going': state['quizGoing'],
                     'word': guess_str,
                     'alphagram': last_correct,
-                    'solver': user.username,        # This is not quite right
+                    'solver': state['solvers'].get(guess_str, 'Anonymous'),
                     'already_solved': True}
         if state_modified:
             wgm.currentGameState = json.dumps(state)
