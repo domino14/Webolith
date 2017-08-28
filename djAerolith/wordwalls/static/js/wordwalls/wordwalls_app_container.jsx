@@ -287,6 +287,9 @@ class WordwallsAppContainer extends React.Component {
       case 'allSolve':
         this.handleAllSolve();
         break;
+      case 'solveWord':
+        this.handleSolveWord(message.contents);
+        break;
       default:
         window.console.log('Received unrecognized message type:', message.type);
     }
@@ -307,6 +310,19 @@ class WordwallsAppContainer extends React.Component {
           },
         });
       }, (idx * 30));
+    });
+  }
+  /**
+   * NOTE: used for debugging/testing
+   * @param  {Object} contents
+   */
+  handleSolveWord(contents) {
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'guess',
+      contents: {
+        guess: contents.word,
+      },
     });
   }
 

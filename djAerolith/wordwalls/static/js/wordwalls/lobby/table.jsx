@@ -20,28 +20,44 @@ const Table = (props) => {
       button = joinButton;
     }
   }
+
+  const users = props.users.map((user, idx) => {
+    let cn;
+    if (user === props.host) {
+      cn = 'label label-primary';
+    } else {
+      cn = 'label label-default';
+    }
+    return (
+      <span className={cn} key={idx} style={{ marginRight: '5px' }}>
+        {user}
+      </span>);
+  });
+
   return (
     <li className="list-group-item">
       <div className="row">
-        <div className="col-sm-2">
-          Table {props.tablenum} {lock}
+        <div className="col-xs-2">
+          <p>
+            <big className="text-muted">{props.lexicon}</big>
+          </p>
+          <p>
+            <big>{props.tablenum}</big>
+          </p>
         </div>
-        <div className="col-sm-3">
-          <b>{props.lexicon}</b>
+        <div className="col-xs-10 col-sm-8">
+          <div className="row">
+            <center><big className="text-info">{props.wordList} {lock}</big></center>
+          </div>
+          <p />
+          <div className="row" style={{ overflow: 'hidden' }}>
+            <center>{users}</center>
+          </div>
+
         </div>
-        <div className="col-sm-4">
-          <span className="text-muted">Host: {props.host}</span>
-        </div>
-        <div className="col-sm-3">
+        <div className="col-xs-12 col-sm-2">
+          <p />
           {button}
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-4">
-          List: <span className="text-info">{props.wordList}</span>
-        </div>
-        <div className="col-sm-4">
-          <span className="text-muted">In table: {props.users.join(' ')}</span>
         </div>
       </div>
     </li>
@@ -54,7 +70,7 @@ Table.propTypes = {
   wordList: React.PropTypes.string,
   host: React.PropTypes.string,
   users: React.PropTypes.arrayOf(React.PropTypes.string),
-  onJoinClicked: React.PropTypes.func,
+  onJoinClicked: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
   multiplayer: React.PropTypes.bool,
   username: React.PropTypes.string,
 };
