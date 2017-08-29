@@ -14,9 +14,9 @@ import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 import Lobby from '../lobby/main';
 
-const GAME_TYPE_NEW = 'New';
-const GAME_TYPE_JOIN = 'Join';
-const SEARCH_TYPE_CHALLENGE = 'Challenges';
+const GAME_TYPE_NEW = 'New Table';
+const GAME_TYPE_JOIN = 'Join Table';
+const SEARCH_TYPE_CHALLENGE = 'Single-Player Challenges';
 const SEARCH_TYPE_WORDSEARCH = 'Word Search';
 const SEARCH_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const SEARCH_TYPE_SAVED_LIST = 'My saved lists';
@@ -511,6 +511,8 @@ class TableCreator extends React.Component {
             wordLength={this.state.wordLength}
             probMin={this.state.probMin}
             probMax={this.state.probMax}
+            multiplayerOn={this.state.multiplayerOn}
+            onMultiplayerModify={this.onMultiplayerModify}
           />);
 
         break;
@@ -523,6 +525,8 @@ class TableCreator extends React.Component {
             onListUpload={this.listUpload}
             onListFlashcard={(listID, action) => this.preSubmitHook(
               () => this.flashcardSavedListSubmit(listID, action))}
+            multiplayerOn={this.state.multiplayerOn}
+            onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
       case SEARCH_TYPE_AEROLITH_LISTS:
@@ -534,6 +538,8 @@ class TableCreator extends React.Component {
             onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
             onFlashcardSubmit={() => this.preSubmitHook(
               this.flashcardAerolithListSubmit)}
+            multiplayerOn={this.state.multiplayerOn}
+            onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
       default:
@@ -618,8 +624,6 @@ class TableCreator extends React.Component {
                 })}
                 disabledInputs={
                   this.state.activeSearchType === SEARCH_TYPE_CHALLENGE}
-                multiplayerOn={this.state.multiplayerOn}
-                onMultiplayerModify={this.onMultiplayerModify}
               />
             </div>
             <div className="col-sm-10">

@@ -52,17 +52,6 @@ const Sidebar = props => (
               parseInt(e.target.value, 10))}
             disabled={props.disabledInputs}
           />
-          <Select
-            colSize={10}
-            label="Mode"
-            badge="New!"
-            selectedValue={props.multiplayerOn ? 'multi' : 'single'}
-            options={[{ value: 'single', displayValue: 'Single Player' },
-                      { value: 'multi', displayValue: 'Multiplayer' }]}
-            onChange={e => props.onMultiplayerModify(
-              e.target.value === 'multi')}
-            disabled={props.disabledInputs}
-          />
         </form>
       </div>
     </div>
@@ -89,8 +78,6 @@ Sidebar.propTypes = {
     description: React.PropTypes.string,
     counts: React.PropTypes.object,
   })),
-  multiplayerOn: React.PropTypes.bool,
-  onMultiplayerModify: React.PropTypes.func,
 };
 
 export default Sidebar;

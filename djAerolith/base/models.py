@@ -176,6 +176,7 @@ class SavedList(models.Model):
             firstMissed=self.firstMissed,
             version=self.version,
             category=self.category)
+        wl.save()
         return wl
 
     def restart_list(self, shuffle=False):

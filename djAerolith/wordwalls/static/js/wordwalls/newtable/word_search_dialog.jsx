@@ -70,6 +70,16 @@ class WordSearchDialog extends React.Component {
             value={this.props.probMax}
             onChange={this.handleMaxProbChange}
           />
+          <Select
+            colSize={4}
+            label="Mode"
+            badge="New!"
+            selectedValue={this.props.multiplayerOn ? 'multi' : 'single'}
+            options={[{ value: 'single', displayValue: 'Single Player' },
+                      { value: 'multi', displayValue: 'Multiplayer' }]}
+            onChange={e => this.props.onMultiplayerModify(
+              e.target.value === 'multi')}
+          />
           <button
             className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
@@ -102,6 +112,8 @@ WordSearchDialog.propTypes = {
     counts: React.PropTypes.object,
   })),
   lexicon: React.PropTypes.number,
+  multiplayerOn: React.PropTypes.bool,
+  onMultiplayerModify: React.PropTypes.func,
 };
 
 export default WordSearchDialog;

@@ -70,7 +70,7 @@ class WordwallsGame(object):
             user=user, is_temporary=False).filter(name=list_name)
         repeat = 1
         while user_lists.count() > 0:
-            list_name = '{0} ({1})'.format(orig_list_name, repeat)
+            list_name = u'{0} ({1})'.format(orig_list_name, repeat)
             user_lists = WordList.objects.filter(
                 user=user, is_temporary=False).filter(name=list_name)
             repeat += 1
@@ -824,7 +824,7 @@ class WordwallsGame(object):
             state['solvers'] = {}
         state['solvers'][guess] = username
 
-    def guess(self, guess_str, tablenum, user):
+    def guess(self, guess_str, tablenum, user, sleep=None):
         """ Handle a guess submission from the front end. """
         guess_str = guess_str.upper()
         wgm = self.get_wgm(tablenum)
@@ -872,6 +872,8 @@ class WordwallsGame(object):
                     'alphagram': last_correct,
                     'solver': state['solvers'].get(guess_str, 'Anonymous'),
                     'already_solved': True}
+        if sleep:  # Only used for tests!
+            time.sleep(sleep)
         if state_modified:
             wgm.currentGameState = json.dumps(state)
             wgm.save()
@@ -900,8 +902,8 @@ class WordwallsGame(object):
         for socket broadcasting to all users in a multiplayer table.
 
         """
-        wgm = self.get_wgm(tablenum, lock=False)
-        state = json.loads(wgm.currentGameState)
+
+        state = self.state(tablenum)
 
         return {
             'going': state['quizGoing'],
@@ -909,3 +911,9 @@ class WordwallsGame(object):
                 time.time() - state['quizStartTime']),
             'gameType': state['gameType']
         }
+
+    def state(self, tablenum):
+        """ Get the state. """
+        wgm = self.get_wgm(tablenum, lock=False)
+        state = json.loads(wgm.currentGameState)
+        return state

@@ -42,7 +42,7 @@ const Table = (props) => {
             <big className="text-muted">{props.lexicon}</big>
           </p>
           <p>
-            <big>{props.tablenum}</big>
+            <big>{`#${props.tablenum}`}</big>
           </p>
         </div>
         <div className="col-xs-10 col-sm-8">

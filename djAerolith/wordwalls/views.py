@@ -191,19 +191,6 @@ def handle_table_post(request, tableid):
                     status=StatusCode.BAD_REQUEST)
 
 
-def start_game(request, tableid):
-    if gargoyle.is_active('disable_games', request):
-        return response(
-            {'serverMsg': _(
-                'The Aerolith server is currently undergoing '
-                'maintenance. Please try again in a few minutes.')})
-    wwg = WordwallsGame()
-    quiz_params = wwg.start_quiz(tableid, request.user)
-    if 'error' in quiz_params:
-        return response(quiz_params, StatusCode.BAD_REQUEST)
-    return response(quiz_params)
-
-
 @login_required
 def ajax_upload(request):
     if request.method != "POST":
