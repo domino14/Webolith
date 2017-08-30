@@ -65,7 +65,7 @@
             <li><a href="/wordwalls" class="navbarLink">{% trans "Wordwalls" %}</a></li>
             <li><a href="/wordwalls/stats" class="navbarLink">{% trans "Stats" %}</a></li>
             <li><a href="/wordwalls/leaderboard" class="navbarLink">{% trans "Hall of Fame" %}</a></li>
-            {% if user.username == "" %}
+            {% if user and user.username == "" %}
             <li><a href="/accounts/login" class="navbarLink">{% trans "Log in" %}</a></li>
             {% else %}
             <li><a href="/accounts/profile/{{user}}" class="navbarLink">
@@ -85,7 +85,7 @@
     </div>
     <script>
 
-    if (location.hostname === 'dev.aerolith.org') {
+    if (location.hostname === 'staging.aerolith.org') {
       document.getElementById('devsite-alert').style.display = '';
     }
 
@@ -107,7 +107,7 @@
       {% endif %}
       {% block content %}
         <div class="row">
-        {% if user.username == "" %}
+        {% if user and user.username == "" %}
           <p>{% trans "Welcome to Aerolith 2.0!" %}</p>
           <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
           <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>

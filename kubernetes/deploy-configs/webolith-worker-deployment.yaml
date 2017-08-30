@@ -1,23 +1,23 @@
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: webolith-deployment
+  name: webolith-worker-deployment
 spec:
-  replicas: 1
+  replicas: 4
   revisionHistoryLimit: 5
   strategy:
     rollingUpdate:
-      maxUnavailable: 0
+      maxUnavailable: 2
   template:
     metadata:
       labels:
         app: webolith
-        component: django
+        component: worker
     spec:
       containers:
       - name: webolith-container
         image: domino14/webolith:{{ BUILD_NUM }}
-
+        command: ["python", "manage.py", "runworker"]
         readinessProbe:
           exec:
             command:

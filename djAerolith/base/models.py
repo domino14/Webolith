@@ -153,6 +153,32 @@ class SavedList(models.Model):
             self.user = user
             self.save()
 
+    def make_temporary_copy(self):
+        """
+        Make a temporary copy of this word list. This is useful for
+        multiplayer mode.
+
+        """
+        wl = WordList(
+            lexicon=self.lexicon,
+            name=uuid.uuid4().hex,
+            user=self.user,
+            is_temporary=True,
+            numAlphagrams=self.numAlphagrams,
+            numCurAlphagrams=self.numCurAlphagrams,
+            numFirstMissed=self.numFirstMissed,
+            numMissed=self.numMissed,
+            goneThruOnce=self.goneThruOnce,
+            questionIndex=self.questionIndex,
+            origQuestions=self.origQuestions,
+            curQuestions=self.curQuestions,
+            missed=self.missed,
+            firstMissed=self.firstMissed,
+            version=self.version,
+            category=self.category)
+        wl.save()
+        return wl
+
     def restart_list(self, shuffle=False):
         """ Restart this list; save it back to the database. """
         self.initialize_list(json.loads(self.origQuestions),

@@ -1,55 +1,68 @@
 import React from 'react';
 import Immutable from 'immutable';
+import $ from 'jquery';
 
 import GameInactiveArea from './game_inactive_area';
 import Styling from './style';
 import SVGBoard from './svg_board';
 import BuildBoard from './build_board';
 
-const GameArea = (props) => {
-  if (props.gameGoing) {
-    if (props.isBuild) {
+
+class GameArea extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.gameGoing && !this.props.gameGoing) {
+      // A game just started. Hide any modals.
+      $('.modal').modal('hide');
+    }
+  }
+
+  render() {
+    if (this.props.gameGoing) {
+      if (this.props.isBuild) {
+        return (
+          <BuildBoard
+            onShuffle={this.props.onShuffle}
+            answerers={this.props.answerers}
+            displayStyle={this.props.displayStyle}
+            width={this.props.width}
+            questions={this.props.curQuestions}
+            origQuestions={this.props.origQuestions}
+          />
+        );
+      }
       return (
-        <BuildBoard
-          onShuffle={props.onShuffle}
-          answered={props.answeredByMe}
-          displayStyle={props.displayStyle}
-          width={props.width}
-          questions={props.curQuestions}
-          origQuestions={props.origQuestions}
+        <SVGBoard
+          onShuffle={this.props.onShuffle}
+          displayStyle={this.props.displayStyle}
+          width={this.props.width}
+          height={this.props.height}
+          gridWidth={this.props.gridWidth}
+          gridHeight={this.props.gridHeight}
+          questions={this.props.curQuestions}
         />
       );
     }
+
     return (
-      <SVGBoard
-        onShuffle={props.onShuffle}
-        displayStyle={props.displayStyle}
-        width={props.width}
-        height={props.height}
-        gridWidth={props.gridWidth}
-        gridHeight={props.gridHeight}
-        questions={props.curQuestions}
+      <GameInactiveArea
+        questions={this.props.origQuestions}
+        numCorrect={this.props.numCorrect}
+        totalWords={this.props.totalWords}
+        height={this.props.height}
+        markMissed={this.props.markMissed}
+        showLexiconSymbols={!this.props.displayStyle.hideLexiconSymbols}
+        isChallenge={this.props.isChallenge}
+        challengeData={this.props.challengeData}
+        numberOfRounds={this.props.numberOfRounds}
+        resetTableCreator={this.props.resetTableCreator}
+        tableCreatorModalSelector={this.props.tableCreatorModalSelector}
+        listName={this.props.listName}
+        startCountdown={this.props.startCountdown}
+        startCountingDown={this.props.startCountingDown}
       />
     );
   }
-
-  return (
-    <GameInactiveArea
-      questions={props.origQuestions}
-      answeredByMe={props.answeredByMe}
-      totalWords={props.totalWords}
-      height={props.height}
-      markMissed={props.markMissed}
-      showLexiconSymbols={!props.displayStyle.hideLexiconSymbols}
-      isChallenge={props.isChallenge}
-      challengeData={props.challengeData}
-      numberOfRounds={props.numberOfRounds}
-      resetTableCreator={props.resetTableCreator}
-      tableCreatorModalSelector={props.tableCreatorModalSelector}
-      listName={props.listName}
-    />
-  );
-};
+}
 
 GameArea.propTypes = {
   numberOfRounds: React.PropTypes.number,
@@ -57,11 +70,11 @@ GameArea.propTypes = {
   origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
   displayStyle: React.PropTypes.instanceOf(Styling),
   totalWords: React.PropTypes.number,
-  answeredByMe: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  numCorrect: React.PropTypes.number,
   onShuffle: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   markMissed: React.PropTypes.func,
+  answerers: React.PropTypes.instanceOf(Immutable.Map),
 
   challengeData: React.PropTypes.shape({
     entries: React.PropTypes.array,
@@ -76,6 +89,9 @@ GameArea.propTypes = {
   resetTableCreator: React.PropTypes.func,
   tableCreatorModalSelector: React.PropTypes.string,
   listName: React.PropTypes.string,
+
+  startCountdown: React.PropTypes.number,
+  startCountingDown: React.PropTypes.bool,
 };
 
 export default GameArea;

@@ -2,6 +2,8 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: webolith-ingress
+  annotations:
+    nginx.org/websocket-services: "webolith"
 spec:
   backend:
     # The default backend.
@@ -27,5 +29,10 @@ spec:
         backend:
           serviceName: nginx-static-svc
           servicePort: 80
-
+      # May have to make this websocket-only -- i.e. keep using gunicorn,
+      # but daphne just for this.
+      # - path: /wordwalls-socket
+      #   backend:
+      #     serviceName: webolith
+      #     servicePort: 8000
 

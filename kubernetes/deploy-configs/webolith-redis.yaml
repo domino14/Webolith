@@ -1,0 +1,36 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  labels:
+    app: webolith
+spec:
+  selector:
+    app: webolith
+    component: redis
+  ports:
+    - port: 6379
+      name: redis-port
+
+---
+
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: webolith
+        component: redis
+    spec:
+      containers:
+      - name: redis-container
+        image: redis:alpine
+
+      restartPolicy: Always

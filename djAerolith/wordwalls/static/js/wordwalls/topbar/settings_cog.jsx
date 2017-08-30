@@ -1,16 +1,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
-import PrefsModal from './prefs_modal';
+import SettingsModal from './settings_modal';
 import Styling from '../style';
 
-class Preferences extends React.Component {
+class SettingsCog extends React.Component {
   constructor() {
     super();
     this.resetSettings = this.resetSettings.bind(this);
   }
 
   resetSettings() {
-    // Make sure that the preferences modal matches the display style
+    // Make sure that the settings modal matches the display style
     // currently in the props.
     this.myPrefsModal.reset(this.props.displayStyle);
   }
@@ -20,31 +20,33 @@ class Preferences extends React.Component {
       <div>
         <div
           data-toggle="modal"
-          title="Preferences"
+          title="Settings"
           onClick={this.resetSettings}
-          data-target=".prefs-modal"
+          data-target=".settings-modal"
         >
           <i
             className="glyphicon glyphicon-cog hovertip"
             style={{ fontSize: '175%' }}
             aria-hidden="true"
-            title="Preferences"
+            title="Settings"
             data-toggle="tooltip"
           />
         </div>
-        <PrefsModal
+        <SettingsModal
           ref={ref => (this.myPrefsModal = ref)}
           displayStyle={this.props.displayStyle}
           onSave={this.props.onSave}
+          isMultiplayer={this.props.isMultiplayer}
         />
       </div>
     );
   }
 }
 
-Preferences.propTypes = {
+SettingsCog.propTypes = {
   displayStyle: React.PropTypes.instanceOf(Styling),
   onSave: React.PropTypes.func,
+  isMultiplayer: React.PropTypes.bool,
 };
 
-export default Preferences;
+export default SettingsCog;

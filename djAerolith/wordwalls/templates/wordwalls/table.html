@@ -68,9 +68,19 @@ To contact the author, please email delsolar at gmail dot com
 {% block content %}
 <script>
   // Our entry point will use window.TableGlobals to pass these in to the app.
+  // Figure out the socket server protocol.
+  {% value_from_settings DEBUG as DEBUG %}
+  {% if DEBUG %}
+    var protocol = 'ws://';
+  {% else %}
+    var protocol = 'wss://';
+  {% endif %}
   var TableGlobals = {
     addlParams: '{{addParams | escapejs }}',
+    socketServer: protocol + window.location.host,
     tablenum: {{tablenum}},
+    multiplayer: {{multiplayer}},
+    currentHost: '{{current_host}}',
     lexicon: '{{lexicon}}',   // Lexicon used to modify guesses
                                           // in case of FISE e.g.
     availableLexica: '{{available_lexica|escapejs}}',

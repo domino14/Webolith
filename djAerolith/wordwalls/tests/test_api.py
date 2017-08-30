@@ -6,12 +6,14 @@ from django.test import TestCase, Client, RequestFactory
 from django.db import connection
 from django.utils import timezone
 
+from base.models import WordList
 from wordwalls.api import date_from_request_dict
+from wordwalls.models import WordwallsGameModel
 from wordwalls.game import WordwallsGame
 logger = logging.getLogger(__name__)
 
 
-class WordwallsSaveListTest(TestCase):
+class WordwallsChallengeAPITest(TestCase):
     fixtures = ['test/lexica.json',
                 'test/users.json',
                 'test/profiles.json',
@@ -113,6 +115,13 @@ class WordwallsNewChallengeTest(TestCase):
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
                          'America Today\'s 15s - 2013-11-29')
+
+        game = WordwallsGame()
+        old_word_list = game.get_wgm(tablenum, lock=False).word_list
+        self.assertTrue(old_word_list.is_temporary)
+        self.assertTrue(old_word_list.pk > 0)
+        old_pk = old_word_list.pk
+
         result = self.client.post('/wordwalls/api/new_challenge/',
                                   data=json.dumps({'tablenum': tablenum,
                                                    'lexicon': 1,
@@ -129,6 +138,9 @@ class WordwallsNewChallengeTest(TestCase):
         orig_questions = json.loads(wl.origQuestions)
         self.assertEqual(len(orig_questions), 50)
         self.assertEqual(len(orig_questions[28]['q']), 8)
+        # Check that old word list got deleted.
+        with self.assertRaises(WordwallsGameModel.DoesNotExist):
+            WordwallsGameModel.objects.get(pk=old_pk)
 
 
 class WordwallsNewSearchTest(TestCase):
@@ -170,6 +182,11 @@ class WordwallsNewSearchTest(TestCase):
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
                          'America Today\'s 15s - 2013-11-29')
+        game = WordwallsGame()
+        old_word_list = game.get_wgm(tablenum, lock=False).word_list
+        self.assertTrue(old_word_list.is_temporary)
+        self.assertTrue(old_word_list.pk > 0)
+        old_pk = old_word_list.pk
         # Now load a new search
         result = self.client.post('/wordwalls/api/new_search/',
                                   data=json.dumps({'tablenum': tablenum,
@@ -190,3 +207,65 @@ class WordwallsNewSearchTest(TestCase):
         orig_questions = json.loads(wl.origQuestions)
         self.assertEqual(len(orig_questions), 140)
         self.assertEqual(len(orig_questions[18]['q']), 9)
+        # Check that old word list got deleted.
+        with self.assertRaises(WordwallsGameModel.DoesNotExist):
+            WordwallsGameModel.objects.get(pk=old_pk)
+
+
+class WordwallsSavedListMultiplayerTest(TestCase):
+    """ Test the new search behavior. """
+    fixtures = ['test/lexica.json',
+                'test/users.json',
+                'test/profiles.json',
+                'test/word_lists.json',
+                'dcNames.json',
+                'test/daily_challenge.json']
+
+    USER = 'cesar'
+    PASSWORD = 'foobar'
+
+    def setUp(self):
+        # XXX: Figure out a better way of doing this.
+        cursor = connection.cursor()
+        cursor.execute("select setval('%s_id_seq', %d, True)" % (
+            'wordwalls_savedlist', 123456))
+        self.client = Client()
+        result = self.client.login(username=self.USER, password=self.PASSWORD)
+        self.assertTrue(result)
+
+    def test_continue_list_multiplayer(self):
+        # Fist load a new challenge, to create a table.
+        result = self.client.post(
+            '/wordwalls/api/new_challenge/',
+            data=json.dumps({
+                'lexicon': 7,
+                'challenge': 14,
+                'tablenum': 0,
+                'date': '2013-11-29'
+            }), content_type='application/json')
+        self.assertEqual(result.status_code, 200)
+        content = json.loads(result.content)
+        tablenum = content['tablenum']
+        # Now try to continue a saved list in multiplayer mode.
+        result = self.client.post(
+            '/wordwalls/api/load_saved_list/',
+            data=json.dumps({
+                'lexicon': 7,
+                'desiredTime': 5,
+                'questionsPerRound': 50,
+                'selectedList': 2,
+                'tablenum': tablenum,
+                'listOption': 'continue',
+                'multiplayer': True
+            }), content_type='application/json')
+        logger.debug(result.content)
+        self.assertEqual(result.status_code, 200)
+        # We should make a new copy of the word list, instead of use
+        # the existing one.
+        game = WordwallsGame()
+        new_word_list = game.get_wgm(tablenum, lock=False).word_list
+        old_word_list = WordList.objects.get(pk=2)
+        self.assertEqual(new_word_list.origQuestions,
+                         old_word_list.origQuestions)
+        self.assertTrue(new_word_list.is_temporary)
+        self.assertFalse(old_word_list.is_temporary)

@@ -20,13 +20,11 @@ import logging
 import json
 
 from django.shortcuts import render
-from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from lib.socket_helper import get_connection_token
 from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
@@ -39,10 +37,9 @@ def health(request):
     return response('OK')
 
 
-@login_required
-def socket_token(request):
-    conn_token = get_connection_token(request.user)
-    return response(conn_token)
+def trigger500(request):
+    logger.info('Triggering 500 for request user: %s', request.user)
+    raise Exception('OH NO')
 
 
 def login_error(request):

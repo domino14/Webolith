@@ -169,14 +169,15 @@ INSTALLED_APPS = (
     'base',
     'flashcards',
     'tablegame',
-    'wordwalls',
+    'wordwalls.apps.WordwallsAppConfig',
     'accounts',
     'django.contrib.staticfiles',
-    'gunicorn',
     'whitleyCards',
     'gargoyle',
     'registration',
     'social_django',
+    'channels',
+    'channels_presence',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -242,8 +243,18 @@ DEFAULT_FROM_EMAIL = 'postmaster@mg.aerolith.org'
 LOGIN_URL = "/accounts/login"
 
 IGNORABLE_404_ENDS = ('.php', '.cgi')
-IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico', '/robots.txt')
+IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico',
+                        '/robots.txt')
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgi_redis.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(os.environ.get('REDIS_HOST', 'redis'), 6379)],
+        },
+        'ROUTING': 'routing.routing',
+    }
+}
 SEND_BROKEN_LINK_EMAILS = False
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -258,7 +269,11 @@ LOGGING = {
             '()': 'django.utils.log.CallbackFilter',
             'callback': skip_suspicious_operations,
         },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
     },
+
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s '
@@ -278,7 +293,7 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
-            'filters': ['skip_suspicious_operations']
+            'filters': ['skip_suspicious_operations', 'require_debug_false']
         }
     },
     'loggers': {
@@ -319,15 +334,7 @@ NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
 RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
-REDIS_HOST = os.environ.get('REDIS_HOST')   # not used.
-REDIS_PORT = 6379
-REDIS_ALPHAGRAMS_DB = 0   # alphas to pks
-REDIS_ALPHAGRAM_SOLUTIONS_DB = 1   # alpha_pks to solutions
-REDIS_SOCKET_TOKEN_DB = 2
-
-
 ALLOWED_HOSTS = ['.aerolith.org', '*']
-SOCKJS_SERVER = os.environ.get('SOCKJS_SERVER')   # not used.
 
 RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
 

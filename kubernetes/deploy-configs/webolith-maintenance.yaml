@@ -6,40 +6,32 @@ spec:
   schedule: "15 8 * * *"
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: webolith-cron
+          - name: webolith-daily-cron
             image: domino14/webolith:{{ BUILD_NUM }}
             command: ["/bin/sh", "-c", "/opt/webolith/scripts/dailyCleanup.sh"]
             env:
               - name: DEBUG
                 value: 'off'
-              - name: AWS_ACCESS_KEY_ID
-                value: {{ AWS_ACCESS_KEY_ID }}
               - name: SECRET_KEY
                 value: ABCDEFGHIJKLMNOPQRSTUVWXYZ
               - name: PGSQL_DB_NAME
                 value: {{ PGSQL_DB_NAME }}
               - name: PGSQL_USER
                 value: {{ PGSQL_USER }}
-              - name: BACKUP_BUCKET_SUFFIX
-                value: {{ BACKUP_BUCKET_SUFFIX }}
-              - name: AWS_SECRET_ACCESS_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: webolith-secrets
-                    key: aws_secret_access_key
               - name: PGSQL_PASSWORD
                 valueFrom:
                   secretKeyRef:
                     name: webolith-secrets
-                    key: pgsql_password
+                    key: PGSQL_PASSWORD
               - name: PGSQL_HOST
                 valueFrom:
                   secretKeyRef:
                     name: webolith-secrets
-                    key: pgsql_host
+                    key: PGSQL_HOST
           restartPolicy: OnFailure

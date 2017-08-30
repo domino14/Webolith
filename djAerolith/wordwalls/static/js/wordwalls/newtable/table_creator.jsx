@@ -12,10 +12,11 @@ import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
+import Lobby from '../lobby/main';
 
-const GAME_TYPE_NEW = 'New';
-const GAME_TYPE_JOIN = 'Join';
-const SEARCH_TYPE_CHALLENGE = 'Challenges';
+const GAME_TYPE_NEW = 'Load New List';
+const GAME_TYPE_JOIN = 'Join Table';
+const SEARCH_TYPE_CHALLENGE = 'Single-Player Challenges';
 const SEARCH_TYPE_WORDSEARCH = 'Word Search';
 const SEARCH_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const SEARCH_TYPE_SAVED_LIST = 'My saved lists';
@@ -24,15 +25,14 @@ const FLASHCARD_URL = '/flashcards/';
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
 
 const NO_LOAD_WHILE_PLAYING = (
-  'Cannot load a game while you are in the middle of another one...');
-
-const NO_DELETE_WHILE_PLAYING = (
-  'Please wait until the end of the game to delete a list.');
+  'Please wait until the end of the game to perform that action.');
 
 const COLLINS_LEX_ID = 1;
 const COLLINS_LICENSE_TEXT = `
 The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
+
+const DEFAULT_TIME_PER_QUIZ = '5';  // minutes
 
 /**
  * TableCreator should mostly manage its own state, do its own AJAX queries,
@@ -49,6 +49,11 @@ class TableCreator extends React.Component {
   static redirectUrl(url) {
     window.location.href = url;
   }
+
+  static joinClicked(tablenum) {
+    TableCreator.redirectUrl(`/wordwalls/table/${tablenum}`);
+  }
+
   // We must pass the props to the constructor if we want to use
   // them in the state initializer.
   constructor(props) {
@@ -59,7 +64,7 @@ class TableCreator extends React.Component {
 
       currentLexicon: this.props.defaultLexicon,
 
-      desiredTime: '5',   // minutes
+      desiredTime: DEFAULT_TIME_PER_QUIZ,
       questionsPerRound: 50,
       // Challenge-related
       currentDate: moment(),
@@ -84,6 +89,7 @@ class TableCreator extends React.Component {
           current: 0,
         },
       },
+      multiplayerOn: false,
 
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
@@ -97,6 +103,7 @@ class TableCreator extends React.Component {
     this.savedListSubmit = this.savedListSubmit.bind(this);
     this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
+    this.onMultiplayerModify = this.onMultiplayerModify.bind(this);
   }
 
   /**
@@ -128,6 +135,13 @@ class TableCreator extends React.Component {
       currentChallenge: challID,
       desiredTime: String(challenge.seconds / 60),
       questionsPerRound: challenge.numQuestions,
+      multiplayerOn: false,
+    });
+  }
+
+  onMultiplayerModify(val) {
+    this.setState({
+      multiplayerOn: val,
     });
   }
 
@@ -193,10 +207,6 @@ class TableCreator extends React.Component {
    * Submit a challenge to the backend.
    */
   challengeSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_challenge/',
@@ -216,10 +226,6 @@ class TableCreator extends React.Component {
   }
 
   searchSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
@@ -231,6 +237,7 @@ class TableCreator extends React.Component {
         desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
+        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -247,10 +254,6 @@ class TableCreator extends React.Component {
    * to be moved over to my new Cards program in the future.
    */
   flashcardSearchSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
@@ -270,10 +273,6 @@ class TableCreator extends React.Component {
   }
 
   aerolithListSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/load_aerolith_list/',
@@ -283,6 +282,7 @@ class TableCreator extends React.Component {
         questionsPerRound: this.state.questionsPerRound,
         selectedList: this.state.selectedList,
         tablenum: this.props.tablenum,
+        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -294,10 +294,6 @@ class TableCreator extends React.Component {
   }
 
   flashcardAerolithListSubmit() {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
@@ -315,12 +311,6 @@ class TableCreator extends React.Component {
   }
 
   savedListSubmit(listID, action) {
-    if (this.props.gameGoing) {
-      Notifications.alert('Error',
-        action !== PlayOptions.PLAY_DELETE ? NO_LOAD_WHILE_PLAYING :
-          NO_DELETE_WHILE_PLAYING);
-      return;
-    }
     this.showSpinner();
     if (action === PlayOptions.PLAY_DELETE) {
       $.ajax({
@@ -346,6 +336,7 @@ class TableCreator extends React.Component {
         selectedList: listID,
         tablenum: this.props.tablenum,
         listOption: action,
+        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -458,8 +449,36 @@ class TableCreator extends React.Component {
       selectedList: listId,
     });
   }
+  /**
+   * This hook gets called prior to every submit function, in order to
+   * check common things such as the host of the table and whether a game
+   * is running.
+   * @param {Function} callback
+   * @param {string} name
+   */
+  preSubmitHook(callback) {
+    if (this.props.gameGoing &&
+        this.props.currentHost === this.props.username) {
+      Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
+    } else if (this.props.tablenum !== 0 &&
+        this.props.currentHost !== this.props.username) {
+      Notifications.confirm('Are you sure?',
+        'You are trying to load a new word list, but you are not the host ' +
+        'of this table. This will create a new table. ' +
+        'Are you sure you wish to continue?', callback);
+    } else if (this.props.tablenum !== 0 && !this.state.multiplayerOn &&
+      this.props.tableIsMultiplayer) {
+      // We are in a multiplayer table, but trying to load single player game.
+      Notifications.confirm('Are you sure?',
+        'You are trying to create a new single player game. ' +
+        'This will remove you from your current multiplayer table and ' +
+        'create a new table. Are you sure you wish to continue?', callback);
+    } else {
+      callback();
+    }
+  }
 
-  render() {
+  renderQuizSearch() {
     let selectedQuizSearchDialog;
     switch (this.state.activeSearchType) {
       case SEARCH_TYPE_CHALLENGE:
@@ -474,7 +493,7 @@ class TableCreator extends React.Component {
                 currentDate: moment(date),
               });
             }}
-            onChallengeSubmit={this.challengeSubmit}
+            onChallengeSubmit={() => this.preSubmitHook(this.challengeSubmit)}
             onChallengeSelected={/* currying */
               challID => () => this.onChallengeSelected(challID)}
             currentChallenge={this.state.currentChallenge}
@@ -485,12 +504,15 @@ class TableCreator extends React.Component {
           <WordSearchDialog
             lexicon={this.state.currentLexicon}
             availableLexica={this.props.availableLexica}
-            onSearchSubmit={this.searchSubmit}
-            onFlashcardSubmit={this.flashcardSearchSubmit}
+            onSearchSubmit={() => this.preSubmitHook(this.searchSubmit)}
+            onFlashcardSubmit={() => this.preSubmitHook(
+              this.flashcardSearchSubmit)}
             onSearchParamChange={this.searchParamChange}
             wordLength={this.state.wordLength}
             probMin={this.state.probMin}
             probMax={this.state.probMax}
+            multiplayerOn={this.state.multiplayerOn}
+            onMultiplayerModify={this.onMultiplayerModify}
           />);
 
         break;
@@ -498,9 +520,13 @@ class TableCreator extends React.Component {
         selectedQuizSearchDialog = (
           <SavedListDialog
             listOptions={this.state.savedLists}
-            onListSubmit={this.savedListSubmit}
+            onListSubmit={(listID, action) => this.preSubmitHook(
+              () => this.savedListSubmit(listID, action))}
             onListUpload={this.listUpload}
-            onListFlashcard={this.flashcardSavedListSubmit}
+            onListFlashcard={(listID, action) => this.preSubmitHook(
+              () => this.flashcardSavedListSubmit(listID, action))}
+            multiplayerOn={this.state.multiplayerOn}
+            onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
       case SEARCH_TYPE_AEROLITH_LISTS:
@@ -509,16 +535,67 @@ class TableCreator extends React.Component {
             listOptions={this.state.aerolithLists}
             selectedList={this.state.selectedList}
             onSelectedListChange={this.selectedListChange}
-            onListSubmit={this.aerolithListSubmit}
-            onFlashcardSubmit={this.flashcardAerolithListSubmit}
+            onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
+            onFlashcardSubmit={() => this.preSubmitHook(
+              this.flashcardAerolithListSubmit)}
+            multiplayerOn={this.state.multiplayerOn}
+            onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
       default:
         selectedQuizSearchDialog = null;
     }
     return (
+      <div>
+        <Pills
+          options={[
+            SEARCH_TYPE_CHALLENGE,
+            SEARCH_TYPE_WORDSEARCH,
+            SEARCH_TYPE_AEROLITH_LISTS,
+            SEARCH_TYPE_SAVED_LIST,
+          ]}
+          activePill={this.state.activeSearchType}
+          onPillClick={option => () => {
+            this.setState({
+              activeSearchType: option,
+            });
+            if (option !== SEARCH_TYPE_CHALLENGE) {
+              // Reset the time back to the defaults.
+              this.setState({
+                desiredTime: DEFAULT_TIME_PER_QUIZ,
+                questionsPerRound: 50,
+              });
+            }
+            this.loadInfoForSearchType(option);
+          }}
+        />
+        {selectedQuizSearchDialog}
+      </div>);
+  }
+
+  renderLobbyAndJoin() {
+    return (
+      <Lobby
+        username={this.props.username}
+        onChatSubmit={this.props.onChatSubmit}
+        messages={this.props.messages}
+        users={this.props.users}
+        activeTables={this.props.tables}
+        onJoinClicked={TableCreator.joinClicked}
+      />
+    );
+  }
+
+  render() {
+    let mainDialog = null;
+    if (this.state.activeGameType === GAME_TYPE_NEW) {
+      mainDialog = this.renderQuizSearch();
+    } else if (this.state.activeGameType === GAME_TYPE_JOIN) {
+      mainDialog = this.renderLobbyAndJoin();
+    }
+    return (
       <ModalSkeleton
-        title="New Word List"
+        title="Lobby"
         modalClass="table-modal"
         ref={el => (this.modal = el)}
         size="modal-xl"
@@ -550,29 +627,7 @@ class TableCreator extends React.Component {
               />
             </div>
             <div className="col-sm-10">
-              <Pills
-                options={[
-                  SEARCH_TYPE_CHALLENGE,
-                  SEARCH_TYPE_WORDSEARCH,
-                  SEARCH_TYPE_AEROLITH_LISTS,
-                  SEARCH_TYPE_SAVED_LIST,
-                ]}
-                activePill={this.state.activeSearchType}
-                onPillClick={option => () => {
-                  this.setState({
-                    activeSearchType: option,
-                  });
-                  if (option !== SEARCH_TYPE_CHALLENGE) {
-                    // Reset the time back to the defaults.
-                    this.setState({
-                      desiredTime: '5',
-                      questionsPerRound: 50,
-                    });
-                  }
-                  this.loadInfoForSearchType(option);
-                }}
-              />
-              {selectedQuizSearchDialog}
+              {mainDialog}
             </div>
 
           </div>
@@ -604,9 +659,30 @@ TableCreator.propTypes = {
     orderPriority: React.PropTypes.number,
   })),
   tablenum: React.PropTypes.number,
+  currentHost: React.PropTypes.string,
+  tableIsMultiplayer: React.PropTypes.bool,
   onLoadNewList: React.PropTypes.func,
   gameGoing: React.PropTypes.bool,
   setLoadingData: React.PropTypes.func,
+  username: React.PropTypes.string,
+  onChatSubmit: React.PropTypes.func,
+  messages: React.PropTypes.arrayOf(React.PropTypes.shape({
+    author: React.PropTypes.string,
+    id: React.PropTypes.string,
+    content: React.PropTypes.string,
+    type: React.PropTypes.string,
+  })),
+  users: React.PropTypes.arrayOf(React.PropTypes.string),
+  // tables: React.PropTypes.shape({React.PropTypes.shape({
+  //   tablenum: React.PropTypes.number.isRequired,
+  //   admin: React.PropTypes.string,
+  //   users: React.PropTypes.arrayOf(React.PropTypes.string),
+  //   wordList: React.PropTypes.string,
+  //   lexicon: React.PropTypes.string,
+  //   secondsPerRound: React.PropTypes.number,
+  //   questionsPerRound: React.PropTypes.number,
+  // })),
+  tables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
 };
 
 

@@ -16,7 +16,7 @@ const ChatBox = (props) => {
       <div
         className="panel-body"
         style={{
-          height: 100,
+          height: props.height || 100,
           overflow: 'auto',
         }}
         ref={(domNode) => {
@@ -37,6 +37,7 @@ ChatBox.propTypes = {
     content: React.PropTypes.string,
     type: React.PropTypes.string,
   })),
+  height: React.PropTypes.number,
 };
 
 export default ChatBox;

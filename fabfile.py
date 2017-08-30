@@ -24,7 +24,7 @@ def create_k8s_configs(role):
 
 
 def _create_k8s_configs(role):
-        build(role)
+    build(role)
 
 
 def deploy(role):
@@ -41,11 +41,15 @@ def _deploy(role):
     # etc.
     for f in [
         '{0}-webolith-secrets'.format(role),
-        '{0}-webolith-deployment'.format(role),
-        'webolith-service',
+        '{0}-webolith-worker-deployment'.format(role),
         '{0}-webolith-ingress'.format(role),
         '{0}-nginx-static-deployment'.format(role),
         'nginx-static-service',
+        'webolith-redis',
+        '{0}-webolith-channels-cleanup'.format(role),  # -- can do manually
+        '{0}-webolith-maintenance'.format(role),
+        # webolith-daphne-deployment and service will not be updated everytime
+        # these should seldom if ever be restarted. We can do this manually.
     ]:
         local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml'.format(f))
 

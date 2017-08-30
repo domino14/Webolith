@@ -8,7 +8,7 @@ import TextInput from '../forms/text_input';
 import Select from '../forms/select';
 import Styling from '../style';
 
-class PrefsModalBody extends React.Component {
+class WordwallsSettings extends React.Component {
   /**
    * Calculate the letters that are remaining given a tile order.
    * XXX: We need to fix this for Spanish, I guess.
@@ -67,7 +67,7 @@ class PrefsModalBody extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tileOrderLettersRemaining: PrefsModalBody.calculateLettersRemaining(
+      tileOrderLettersRemaining: WordwallsSettings.calculateLettersRemaining(
         props.displayStyle.customTileOrder),
       questions: Immutable.fromJS([
         {
@@ -91,7 +91,7 @@ class PrefsModalBody extends React.Component {
     const letters = _.uniq(
       event.target.value.toLocaleUpperCase().split('')).join('');
     this.props.onOptionsModify('customTileOrder', letters);
-    const remaining = PrefsModalBody.calculateLettersRemaining(letters);
+    const remaining = WordwallsSettings.calculateLettersRemaining(letters);
     this.setState({
       tileOrderLettersRemaining: remaining,
     });
@@ -111,25 +111,31 @@ class PrefsModalBody extends React.Component {
     if (this.props.displayStyle.tilesOn) {
       formElements = (
         <div>
-          <Select
-            colSize={2}
-            label="Tile Style"
-            selectedValue={this.props.displayStyle.tileStyle}
-            onChange={(event) => {
-              this.props.onOptionsModify('tileStyle', event.target.value);
-            }}
-            options={PrefsModalBody.getTileStyleOptions()}
-          />
-          <TextInput
-            colSize={2}
-            label="Blank Character"
-            maxLength={1}
-            value={this.props.displayStyle.blankCharacter}
-            onChange={(event) => {
-              this.props.onOptionsModify('blankCharacter', event.target.value);
-            }}
-            onKeyPress={() => { }}
-          />
+          <div className="row">
+            <div className="col-lg-6">
+              <Select
+                colSize={8}
+                label="Tile Style"
+                selectedValue={this.props.displayStyle.tileStyle}
+                onChange={(event) => {
+                  this.props.onOptionsModify('tileStyle', event.target.value);
+                }}
+                options={WordwallsSettings.getTileStyleOptions()}
+              />
+            </div>
+            <div className="col-lg-6">
+              <TextInput
+                colSize={8}
+                label="Blank Character"
+                maxLength={1}
+                value={this.props.displayStyle.blankCharacter}
+                onChange={(event) => {
+                  this.props.onOptionsModify('blankCharacter', event.target.value);
+                }}
+                onKeyPress={() => { }}
+              />
+            </div>
+          </div>
         </div>
       );
     } else {
@@ -175,7 +181,7 @@ class PrefsModalBody extends React.Component {
     }
 
     return (
-      <div className="modal-body">
+      <div>
         <div className="row">
           <div className="col-lg-12">
             <SVGBoard
@@ -190,9 +196,8 @@ class PrefsModalBody extends React.Component {
           </div>
         </div>
 
-        <div className="row" style={{ height: '65vh', overflowY: 'auto' }}>
+        <div className="row" style={{ height: '60vh', overflowY: 'auto' }}>
           <div className="col-lg-12">
-
             <form>
               <Checkbox
                 on={this.props.displayStyle.tilesOn}
@@ -245,49 +250,63 @@ class PrefsModalBody extends React.Component {
                 </div>
               </div>
               <hr />
-              <Select
-                colSize={5}
-                label="Game board background"
-                selectedValue={this.props.displayStyle.background}
-                onChange={(event) => {
-                  this.props.onOptionsModify('background', event.target.value);
-                }}
-                options={PrefsModalBody.getBackgroundOptions()}
-              />
-              <Select
-                colSize={5}
-                label="Body background"
-                selectedValue={this.props.displayStyle.bodyBackground}
-                onChange={(event) => {
-                  this.props.onOptionsModify('bodyBackground', event.target.value);
-                }}
-                options={PrefsModalBody.getBackgroundOptions()}
-              />
+              <div className="row">
+                <div className="col-lg-6">
+                  <Select
+                    colSize={10}
+                    label="Game board background"
+                    selectedValue={this.props.displayStyle.background}
+                    onChange={(event) => {
+                      this.props.onOptionsModify('background', event.target.value);
+                    }}
+                    options={WordwallsSettings.getBackgroundOptions()}
+                  />
+                </div>
+                <div className="col-lg-6">
+                  <Select
+                    colSize={10}
+                    label="Body background"
+                    selectedValue={this.props.displayStyle.bodyBackground}
+                    onChange={(event) => {
+                      this.props.onOptionsModify('bodyBackground', event.target.value);
+                    }}
+                    options={WordwallsSettings.getBackgroundOptions()}
+                  />
+                </div>
+              </div>
               <hr />
-              <Checkbox
-                on={this.props.displayStyle.showBorders}
-                onChange={(event) => {
-                  this.props.onOptionsModify('showBorders',
-                    event.target.checked);
-                }}
-                label="Show borders around questions"
-              />
-              <Checkbox
-                on={this.props.displayStyle.showChips}
-                onChange={(event) => {
-                  this.props.onOptionsModify('showChips',
-                    event.target.checked);
-                }}
-                label="Show number of anagrams"
-              />
-              <Checkbox
-                on={this.props.displayStyle.hideLexiconSymbols}
-                onChange={(event) => {
-                  this.props.onOptionsModify('hideLexiconSymbols',
-                    event.target.checked);
-                }}
-                label="Hide lexicon symbols (such as # or +)"
-              />
+              <div className="row">
+                <div className="col-lg-4">
+                  <Checkbox
+                    on={this.props.displayStyle.showBorders}
+                    onChange={(event) => {
+                      this.props.onOptionsModify('showBorders',
+                        event.target.checked);
+                    }}
+                    label="Show borders around questions"
+                  />
+                </div>
+                <div className="col-lg-4">
+                  <Checkbox
+                    on={this.props.displayStyle.showChips}
+                    onChange={(event) => {
+                      this.props.onOptionsModify('showChips',
+                        event.target.checked);
+                    }}
+                    label="Show number of anagrams"
+                  />
+                </div>
+                <div className="col-lg-4">
+                  <Checkbox
+                    on={this.props.displayStyle.hideLexiconSymbols}
+                    onChange={(event) => {
+                      this.props.onOptionsModify('hideLexiconSymbols',
+                        event.target.checked);
+                    }}
+                    label="Hide lexicon symbols (such as # or +)"
+                  />
+                </div>
+              </div>
             </form>
           </div>
         </div>
@@ -295,10 +314,10 @@ class PrefsModalBody extends React.Component {
   }
 }
 
-PrefsModalBody.propTypes = {
+WordwallsSettings.propTypes = {
   onOptionsModify: React.PropTypes.func,
   displayStyle: React.PropTypes.instanceOf(Styling),
   allowSave: React.PropTypes.func,
 };
 
-export default PrefsModalBody;
+export default WordwallsSettings;

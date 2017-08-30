@@ -61,19 +61,34 @@ class BuildBoard extends React.Component {
     words.forEach((word) => {
       solscounts[word.get('w').length - 1] += 1;
     });
-    this.props.answered.forEach((word) => {
-      solsarr[word.get('w').length - 1].push(<span>{word.get('w')} </span>);
+    this.props.answerers.forEach((answered) => {
+      // Answerers is a map of player to answers
+      answered.forEach((word) => {
+        solsarr[word.get('w').length - 1].push(<span>{word.get('w')} </span>);
+      });
     });
+
     const answers = [];
     solscounts.forEach((ct, idx) => {
       if (ct !== 0) {
+        const solvedWordsForLength = [];
+        this.props.answerers.forEach((answered) => {
+          answered.forEach((word) => {
+            // XXX TODO XXX
+            // This is hugely inefficient - a triple nested loop in a render
+            // call! This needs to be reworked
+            // (Luckily, we are still dealing with relatively small numbers here...)
+            if (word.get('w').length === idx + 1) {
+              solvedWordsForLength.push(word.get('w'));
+            }
+          });
+        });
         answers.push(
           <SolutionPanel
             key={idx}
             wordLength={idx + 1}
             totalCount={ct}
-            solvedWords={this.props.answered.map(word => word.get('w')).filter(
-              word => word.length === idx + 1)}
+            solvedWords={solvedWordsForLength}
           />);
       }
     });
@@ -145,8 +160,7 @@ BuildBoard.propTypes = {
   width: React.PropTypes.number,
   questions: React.PropTypes.instanceOf(Immutable.List),
   onShuffle: React.PropTypes.func.isRequired,
-  answered: React.PropTypes.arrayOf(
-    React.PropTypes.instanceOf(Immutable.Map)),
+  answerers: React.PropTypes.instanceOf(Immutable.Map),
   origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
 };
 
