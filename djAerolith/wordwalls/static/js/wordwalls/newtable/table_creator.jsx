@@ -14,7 +14,7 @@ import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 import Lobby from '../lobby/main';
 
-const GAME_TYPE_NEW = 'New Table';
+const GAME_TYPE_NEW = 'Load New List';
 const GAME_TYPE_JOIN = 'Join Table';
 const SEARCH_TYPE_CHALLENGE = 'Single-Player Challenges';
 const SEARCH_TYPE_WORDSEARCH = 'Word Search';
@@ -595,7 +595,7 @@ class TableCreator extends React.Component {
     }
     return (
       <ModalSkeleton
-        title="New Word List"
+        title="Lobby"
         modalClass="table-modal"
         ref={el => (this.modal = el)}
         size="modal-xl"
