@@ -27,6 +27,6 @@ class Command(BaseCommand):
         numObjs = len(wgms)
         print "Found", numObjs, "objects to delete"
         if numObjs > 0:
-            for wgm in wgms:
+            for wgm in wgms.iterator():
                 print "Delete", wgm
                 wgm.delete()
