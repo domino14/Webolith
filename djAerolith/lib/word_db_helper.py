@@ -46,6 +46,9 @@ class Word(object):
     def __unicode__(self):
         return u'{%s}' % self.word
 
+    def __eq__(self, other):
+        return self.word == other.word
+
 
 class Alphagram(object):
     def __init__(self, alphagram, probability=None, combinations=None):
@@ -64,7 +67,7 @@ class Alphagram(object):
         return stdout_encode(self.__unicode__())
 
     def __unicode__(self):
-        return u'{%s}' % self.alphagram
+        return u'{%s} (%s)' % (self.alphagram, self.probability)
 
 
 class Questions(object):
@@ -112,6 +115,15 @@ class Questions(object):
             question = Question()
             question.set_from_obj(q)
             self.append(question)
+
+    def sort_by_probability(self):
+        self.questions.sort(key=lambda q: q.alphagram.probability)
+
+    def alphagram_string_set(self):
+        return set(self.alphagram_string_list())
+
+    def alphagram_string_list(self):
+        return [a.alphagram.alphagram for a in self.questions]
 
     def __repr__(self):
         return stdout_encode(self.__unicode__())
@@ -307,6 +319,8 @@ class WordDB(object):
             if type(p) is not int:
                 raise BadInput("Every probability must be an integer. %s" %
                                p_list)
+        if len(p_list) > MAX_CHUNK_SIZE:
+            raise BadInput('Too many alphagrams to interpolate')
         # Generate IN string.
         in_string = str(tuple(p_list))
         c = self.conn.cursor()
@@ -421,11 +435,9 @@ class WordDB(object):
             WHERE alphagrams.alphagram IN (%s) """ % ','.join('?' * num_alphas)
 
             idx += MAX_CHUNK_SIZE
-
             c.execute(query, [a.alphagram for a in these_alphagrams])
 
             rows = c.fetchall()
-
             qs = self.process_question_query(rows)
             ret.extend(qs)
         return ret

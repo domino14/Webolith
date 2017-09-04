@@ -250,7 +250,11 @@ class WordwallsGame(object):
     def initialize_by_search_params(self, user, search_description, time_secs,
                                     questions_per_round=None, use_table=None,
                                     multiplayer=None):
-        lexicon = search_description['lexicon']
+        if type(search_description) is list:
+            lexicon = search_description[0]['lexicon']
+        else:
+            lexicon = search_description['lexicon']
+            search_description = [search_description]
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
         temporary_list_name = '{0} {1}s ({2} - {3})'.format(
