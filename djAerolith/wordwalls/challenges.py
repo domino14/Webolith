@@ -52,13 +52,14 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         r = range(min_p, max_p + 1)
         random.shuffle(r)
         # Just the first 50 elements for the daily challenge.
-        alphagrams = db.alphagrams_by_probability_list(r[:50], word_length)
-        return db.get_questions(alphagrams), challenge_name.timeSecs
+        return (db.get_questions_for_probability_list(r[:50], word_length),
+                challenge_name.timeSecs)
     # There was no match, check other possible challenge names.
     if challenge_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         alphagrams = generate_toughies_challenge(lex, challenge_date)
         random.shuffle(alphagrams)
-        return db.get_questions(alphagrams), challenge_name.timeSecs
+        return (db.get_questions_from_alphagrams(alphagrams),
+                challenge_name.timeSecs)
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
         questions = generate_blank_bingos_challenge(lex)
         questions.shuffle()
@@ -70,8 +71,8 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             max_p = json.loads(lex.lengthCounts)[str(lgt)]
             r = range(min_p, max_p + 1)
             random.shuffle(r)
-            questions.extend(db.get_questions(
-                db.alphagrams_by_probability_list(r[:50], lgt)))
+            questions.extend(
+                db.get_questions_for_probability_list((r[:50], lgt)))
         return questions, challenge_name.timeSecs
     # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
     #                              DailyChallengeName.COMMON_LONG):

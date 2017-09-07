@@ -28,8 +28,7 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 
 from base.forms import SavedListForm
-from lib.word_db_helper import WordDB, Questions
-from lib.word_searches import word_search
+from lib.word_db_helper import WordDB, Questions, word_search
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
@@ -276,7 +275,7 @@ class WordwallsGame(object):
         db = WordDB(lex.lexiconName)
         if named_list.isRange:
             questions = db.get_questions_for_probability_range(
-                qs[0], qs[1], named_list.wordLength, order=False)
+                qs[0], qs[1], named_list.wordLength)
             wl = self.initialize_word_list(questions, lex, user)
         else:
             # Initialize word list directly.

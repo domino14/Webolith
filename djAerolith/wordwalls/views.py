@@ -257,7 +257,7 @@ def create_user_list(contents, filename, lex, user):
             'remove this limit by upgrading your membership!')
     db = WordDB(lex.lexiconName)
 
-    questions = db.get_questions(alphas)
+    questions = db.get_questions_from_alphagrams(alphas)
     num_alphagrams = questions.size()
 
     logger.info('number of uploaded alphagrams: %d', num_alphagrams)

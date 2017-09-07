@@ -1,10 +1,9 @@
 import logging
-import time
 from django.test import TestCase
 
 from base.models import Lexicon, User, AlphagramTag
-from lib.word_searches import word_search, SearchDescription
-from lib.word_db_helper import Alphagram, Word, Question
+from lib.word_searches import SearchDescription
+from lib.word_db_helper import word_search, BadInput
 logger = logging.getLogger(__name__)
 
 
@@ -17,66 +16,107 @@ class SimpleSearchCase(TestCase):
         self.america = Lexicon.objects.get(lexiconName='America')
 
     def test_probability_word_search(self):
-        sd = SearchDescription.probability_range(200, 203, 8, self.america)
-        qs = word_search([sd])
+        qs = word_search([SearchDescription.lexicon(self.america),
+                          SearchDescription.length(8, 8),
+                          SearchDescription.probability_range(200, 203)])
 
         self.assertEqual(qs.size(), 4)
 
         self.assertEqual(
-            set(['ADEEGNOR', 'EEGILNOR', 'ADEEGORT', 'AEEGLNOT']),
-            qs.alphagram_string_set())
+            ['ADEEGNOR', 'EEGILNOR', 'ADEEGORT', 'AEEGLNOT'],
+            qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
 
     def test_probability_and_points(self):
-        sd = SearchDescription.probability_range(3000, 3010, 8, self.america)
-        sdp = SearchDescription.points(8, self.america, 14, 30)
-        qs = word_search([sd, sdp])
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(8, 8),
+            SearchDescription.probability_range(3000, 3010),
+            SearchDescription.points(14, 30)
+        ])
 
         self.assertEqual(qs.size(), 4)
         self.assertEqual(
-            set(['EHILORTY', 'DEHIOPRT', 'DEINORVW', 'CDEINORV']),
-            qs.alphagram_string_set())
-        self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
-
-    def test_probability_points_problimit(self):
-        sd = SearchDescription.probability_range(3000, 3010, 8, self.america)
-        sdp = SearchDescription.points(8, self.america, 14, 30)
-        sdl = SearchDescription.limit_probability(8, self.america, 1, 3)
-        qs = word_search([sd, sdp, sdl])
-
-        self.assertEqual(qs.size(), 3)
-        self.assertEqual(
-            ['EHILORTY', 'DEHIOPRT', 'DEINORVW'],
+            ['EHILORTY', 'DEHIOPRT', 'DEINORVW', 'CDEINORV'],
             qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
 
     def test_points(self):
-        sdp = SearchDescription.points(7, self.america, 40, 100)
-        qs = word_search([sdp])
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.points(40, 100)
+        ])
         self.assertEqual(qs.size(), 2)
         self.assertEqual(
-            set(['AIPZZZZ', 'AVYYZZZ']),
-            qs.alphagram_string_set())
+            ['AVYYZZZ', 'AIPZZZZ'],
+            qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
 
     def test_num_anagrams(self):
-        sdp = SearchDescription.number_anagrams(7, self.america, 8, 100)
-        qs = word_search([sdp])
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.number_anagrams(8, 100)
+        ])
+
         self.assertEqual(qs.size(), 5)
         self.assertEqual(
-            set(['AEINRST', 'EIPRSST', 'EORSSTU', 'AEGINST', 'AEGINRS']),
-            qs.alphagram_string_set())
+            ['AEINRST', 'AEGINST', 'AEGINRS', 'EORSSTU', 'EIPRSST'],
+            qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
 
     def test_pts_num_anagrams(self):
-        sdp = SearchDescription.number_anagrams(7, self.america, 8, 100)
-        sdp2 = SearchDescription.points(7, self.america, 8, 100)
-        qs = word_search([sdp, sdp2])
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.number_anagrams(8, 100),
+            SearchDescription.points(8, 100),
+        ])
         self.assertEqual(qs.size(), 3)
         self.assertEqual(
-            set(['EIPRSST', 'AEGINST', 'AEGINRS']),
-            qs.alphagram_string_set())
+            ['AEGINST', 'AEGINRS', 'EIPRSST'],
+            qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
+
+    def test_alphagram_list(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.alphagram_list(['DEGORU', 'AAAIMNORT', 'DGOS'])
+        ])
+
+        self.assertEqual(qs.size(), 3)
+        self.assertEqual(
+            ['DGOS', 'DEGORU', 'AAAIMNORT'],
+            qs.alphagram_string_list())
+
+        self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
+
+    def test_probability_list(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.probability_list([92, 73, 85, 61])
+        ])
+        self.assertEqual(qs.size(), 4)
+        self.assertEqual(
+            ['AINORST', 'EILNOST', 'EILORST', 'ADENOST'],
+            qs.alphagram_string_list())
+        self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
+
+    def test_not_enough_params(self):
+        with self.assertRaises(BadInput) as e:
+            word_search([SearchDescription.length(7, 7)])
+        self.assertEqual(str(e.exception),
+                         'search_descriptions must have at least 2 elements')
+
+    def test_no_lexicon(self):
+        with self.assertRaises(BadInput) as e:
+            word_search([SearchDescription.length(7, 7),
+                         SearchDescription.number_anagrams(1, 2)])
+        self.assertEqual(
+            str(e.exception),
+            'The first search description must contain a lexicon.')
 
 
 class TagSearchCase(TestCase):
@@ -114,20 +154,25 @@ class TagSearchCase(TestCase):
 
     def test_tag_no_match(self):
         self.create_some_tags()
-
-        sdp = SearchDescription.tags(8, self.america, ['D4'], self.cesar)
-        qs = word_search([sdp])
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(8, 8),
+            SearchDescription.tags(['D4'], self.cesar)
+        ])
 
         self.assertEqual(qs.size(), 0)
 
     def test_tag_single(self):
         self.create_some_tags()
 
-        sdp = SearchDescription.tags(8, self.csw15, ['D4'], self.cesar)
-        qs = word_search([sdp])
+        qs = word_search([
+            SearchDescription.lexicon(self.csw15),
+            SearchDescription.length(8, 8),
+            SearchDescription.tags(['D4'], self.cesar)
+        ])
 
         self.assertEqual(qs.size(), 1)
-        self.assertEqual(set(['AELMOSTU']), qs.alphagram_string_set())
+        self.assertEqual(['AELMOSTU'], qs.alphagram_string_list())
         # Check that it fully populated the question
         logger.debug(qs.questions_array()[0].to_python_full())
         self.assertEqual(qs.questions_array()[0].to_python_full(), {
@@ -146,20 +191,27 @@ class TagSearchCase(TestCase):
 
     def test_tag_list(self):
         self.create_some_tags()
-        sdp = SearchDescription.tags(8, self.america, ['D2', 'D3', 'D4', 'D5'],
-                                     self.cesar)
-        qs = word_search([sdp])
+
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(8, 8),
+            SearchDescription.tags(['D2', 'D3', 'D4', 'D5'], self.cesar)
+        ])
+
         logger.debug('Found qs: %s', qs)
         self.assertEqual(qs.size(), 2)
-        self.assertEqual(set(['AEEGLNOT', 'CEILNOPR']),
-                         qs.alphagram_string_set())
+        self.assertEqual(['AEEGLNOT', 'CEILNOPR'], qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
 
-    def test_prob_limit_tags(self):
+    def test_more_tags(self):
         self.create_some_tags()
-        sdp = SearchDescription.tags(5, self.america, ['D2', 'D5'], self.cesar)
-        sdp2 = SearchDescription.limit_probability(5, self.america, 1, 1)
-        qs = word_search([sdp, sdp2])
-        self.assertEqual(qs.size(), 1)
-        self.assertEqual(qs.questions_array()[0].alphagram.alphagram, 'AEILT')
+
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(5, 5),
+            SearchDescription.tags(['D2', 'D5'], self.cesar)
+        ])
+
+        self.assertEqual(qs.size(), 2)
+        self.assertEqual(['AEILT', 'CINOZ'], qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)

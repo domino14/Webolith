@@ -81,7 +81,7 @@ order by pct desc
 
     def toughiez(self, db, bingo_dict, diff, prob, csv_writer):
 
-        america_qs = db.get_questions(
+        america_qs = db.get_questions_from_alphagrams(
             [Alphagram(b) for b in bingo_dict])
 
         for q in america_qs.questions_array():
