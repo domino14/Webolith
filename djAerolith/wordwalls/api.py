@@ -1,5 +1,5 @@
 import json
-from datetime import date, datetime
+from datetime import datetime
 import logging
 
 from django.contrib.auth.decorators import login_required
@@ -197,10 +197,13 @@ def new_search(request, parsed_req_body):
     Load a new search into this table.
 
     """
-
-    search = SearchDescription.probability_range(
-        parsed_req_body['prob_min'], parsed_req_body['prob_max'],
-        parsed_req_body['word_length'], parsed_req_body['lexicon'])
+    search = [
+        SearchDescription.lexicon(parsed_req_body['lexicon']),
+        SearchDescription.length(parsed_req_body['word_length'],
+                                 parsed_req_body['word_length']),
+        SearchDescription.probability_range(parsed_req_body['prob_min'],
+                                            parsed_req_body['prob_max'])
+    ]
 
     tablenum = WordwallsGame().initialize_by_search_params(
         request.user, search, parsed_req_body['quiz_time_secs'],

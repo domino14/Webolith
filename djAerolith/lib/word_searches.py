@@ -109,3 +109,27 @@ class SearchDescription(object):
             "lexicon": lex,
             "letters": letters
         }
+
+
+def temporary_list_name(search_descriptions):
+    """ Build up a temporary list name given a search description. """
+    tokens = []
+    for sd in search_descriptions:
+        if sd['condition'] == SearchDescription.LEXICON:
+            tokens.append(sd['lexicon'].lexiconName)
+        elif sd['condition'] == SearchDescription.LENGTH:
+            if sd['min'] == sd['max']:
+                tokens.append('{}s'.format(sd['min']))
+            elif sd['min'] < sd['max']:
+                tk = []
+                for i in range(sd['min'], sd['max'] + 1):
+                    tk.append('{}s'.format(i))
+                tokens.append(', '.join(tk))
+            else:
+                tokens.append('INVALID')
+        elif sd['condition'] == SearchDescription.PROB_RANGE:
+            tokens.append('({} - {})'.format(sd['min'], sd['max']))
+        else:
+            tokens.append('custom')
+    return ' '.join(tokens)
+    

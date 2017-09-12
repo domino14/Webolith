@@ -29,6 +29,7 @@ from django.utils import timezone
 
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions, word_search
+from lib.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
@@ -249,22 +250,17 @@ class WordwallsGame(object):
     def initialize_by_search_params(self, user, search_description, time_secs,
                                     questions_per_round=None, use_table=None,
                                     multiplayer=None):
-        if type(search_description) is list:
+
+        try:
             lexicon = search_description[0]['lexicon']
-        else:
-            lexicon = search_description['lexicon']
-            search_description = [search_description]
+        except (KeyError, IndexError):
+            raise GameInitException(
+                'Search description not properly formatted')
         wl = self.initialize_word_list(word_search(search_description),
                                        lexicon, user)
-        temporary_list_name = '{0} {1}s ({2} - {3})'.format(
-            search_description['lexicon'].lexiconName,
-            search_description['length'],
-            search_description['min'],
-            search_description['max']
-        )
         wgm = self.create_or_update_game_instance(
             user, lexicon, wl, use_table, multiplayer, timerSecs=time_secs,
-            temp_list_name=temporary_list_name,
+            temp_list_name=temporary_list_name(search_description),
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 

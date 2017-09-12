@@ -72,7 +72,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             r = range(min_p, max_p + 1)
             random.shuffle(r)
             questions.extend(
-                db.get_questions_for_probability_list((r[:50], lgt)))
+                db.get_questions_for_probability_list(r[:50], lgt))
         return questions, challenge_name.timeSecs
     # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
     #                              DailyChallengeName.COMMON_LONG):

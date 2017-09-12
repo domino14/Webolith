@@ -45,7 +45,11 @@ class WordwallsBasicLogicTestBase(TestCase, WordListAssertMixin):
         wwg = WordwallsGame()
         user = User.objects.get(username='cesar')
         lex = Lexicon.objects.get(lexiconName='America')
-        search = SearchDescription.probability_range(p_min, p_max, length, lex)
+        search = [
+            SearchDescription.lexicon(lex),
+            SearchDescription.length(length, length),
+            SearchDescription.probability_range(p_min, p_max)
+        ]
         logger.debug('In setup_quiz, word lists: %s', WordList.objects.all())
         table_id = wwg.initialize_by_search_params(user, search, 240)
         return table_id, user
