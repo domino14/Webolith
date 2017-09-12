@@ -154,13 +154,13 @@ class TagSearchCase(TestCase):
 
     def test_tag_no_match(self):
         self.create_some_tags()
-        qs = word_search([
-            SearchDescription.lexicon(self.america),
-            SearchDescription.length(8, 8),
-            SearchDescription.tags(['D4'], self.cesar)
-        ])
-
-        self.assertEqual(qs.size(), 0)
+        with self.assertRaises(BadInput) as e:
+            word_search([
+                SearchDescription.lexicon(self.america),
+                SearchDescription.length(8, 8),
+                SearchDescription.tags(['D4'], self.cesar)
+            ])
+        self.assertEqual(str(e.exception), 'Query returns no results.')
 
     def test_tag_single(self):
         self.create_some_tags()
