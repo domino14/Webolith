@@ -226,7 +226,7 @@ class WordDB(object):
 
     def get_words_data(self, words):
         """ Gets data for the words passed in. """
-        logger.debug('Getting word data for %s words.', len(words))
+        logger.info('Getting word data for %s words.', len(words))
         c = self.conn.cursor()
         idx = 0
         word_data = []
@@ -280,8 +280,8 @@ class WordDB(object):
             ret_alphagrams.extend(_alphagrams(c))
             idx += MAX_CHUNK_SIZE
 
-        logger.debug('get_alphagrams_data returned %s alphagrams',
-                     len(ret_alphagrams))
+        logger.info('get_alphagrams_data returned %s alphagrams',
+                    len(ret_alphagrams))
         return ret_alphagrams
 
     def get_questions_from_configs(self, configs):
@@ -296,8 +296,8 @@ class WordDB(object):
             rows = c.fetchall()
             questions = self.process_question_query(rows)
             qs.extend(questions)
-        logger.debug('Time taken: %s s. (params: %s)', time.time() - t,
-                     configs)
+        logger.info('Time taken: %s s. (params: %s)', time.time() - t,
+                    configs)
         return qs
 
     def get_questions_for_probability_list(self, p_list, length):

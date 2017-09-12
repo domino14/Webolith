@@ -50,7 +50,7 @@ def saved_list_sync(request):
     profile = request.user.aerolithprofile
     num_saved_alphas = profile.wordwallsSaveListSize
     limit = settings.SAVE_LIST_LIMIT_NONMEMBER
-    logger.debug('Syncing %s' % body)
+    logger.info('Syncing %s' % body)
     orig_qs = body.get('origQuestions')
 
     # Try getting a saved list with the same name, lexicon, and user.
@@ -202,7 +202,7 @@ def saved_list(request, id):
             l_obj['missed'] = []
             l_obj['numMissed'] = 0
             l_obj['goneThruOnce'] = False
-        logger.debug('Returning response %s' % l_obj)
+        logger.info('Returning response %s' % l_obj)
         return response(l_obj)
     elif request.method == 'PUT':
         # Edit a saved list.
@@ -279,7 +279,7 @@ def question_map(request):
     t1 = time.time()
     q_map = generate_question_map_from_alphagrams(sl.lexicon,
                                                   json.loads(sl.origQuestions))
-    logger.debug('Map generated, returning. Time: %s s.' % (time.time() - t1))
+    logger.info('Map generated, returning. Time: %s s.' % (time.time() - t1))
     return response(q_map)
 
 

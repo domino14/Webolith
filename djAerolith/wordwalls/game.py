@@ -129,11 +129,11 @@ class WordwallsGame(object):
             # This word list is old. Check to make sure it's in no tables.
             if WordwallsGameModel.objects.filter(
                     word_list=old_word_list).count() == 0:
-                logger.debug('Deleting old, temporary word list: %s',
-                             old_word_list)
+                logger.info('Deleting old, temporary word list: %s',
+                            old_word_list)
                 old_word_list.delete()
             else:
-                logger.debug('Old word list is still in use, not deleting...')
+                logger.info('Old word list is still in use, not deleting...')
         from wordwalls.signal_handlers import game_important_save
         game_important_save.send(sender=self.__class__, instance=wgm)
         return wgm
@@ -229,7 +229,7 @@ class WordwallsGame(object):
 
             qs, secs = ret
             if qs.size() == 0:
-                logger.error('Empty questions.')
+                logger.info('Empty questions.')
                 return None
             ch_category = DailyChallenge.CATEGORY_ANAGRAM
             if qs.build_mode:
@@ -353,7 +353,7 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
-            logger.debug('The quiz is going, state %s', state)
+            logger.info('The quiz is going, state %s', state)
             # The quiz is running right now; do not attempt to start again
             return self.create_error_message(
                 _("The quiz is currently running."))
@@ -594,8 +594,8 @@ class WordwallsGame(object):
                      'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
-        logger.debug(u'user=%s, tablenum=%s, listname=%s, event=save',
-                     user, tablenum, listname)
+        logger.info(u'user=%s, tablenum=%s, listname=%s, event=save',
+                    user, tablenum, listname)
         wgm = self.get_wgm(tablenum)
         if not wgm:
             return {'success': False, 'info': _('That table does not exist!')}
@@ -621,8 +621,8 @@ class WordwallsGame(object):
         # Maybe we want a way to "save as" another list; think about
         # a list copy.
         word_list.name = listname
-        logger.debug(u'Saving word_list, name is %s (%s)', word_list.name,
-                     type(word_list.name))
+        logger.info(u'Saving word_list, name is %s (%s)', word_list.name,
+                    type(word_list.name))
         if make_permanent_list:
             word_list.is_temporary = False
             profile = user.aerolithprofile

@@ -56,7 +56,6 @@ def table_info(table):
 
 def active_tables():
     """ Get all active tables with at least one user in them. """
-    logger.debug('In active_tables function, getting active tables')
     rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
     tables = []
     for room in rooms:
@@ -96,7 +95,7 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
     game-related logic... right?
 
     """
-    logger.debug('Update in room called, room=%s', room)
+    logger.info('Update in room called, room=%s', room)
     if room.channel_name == LOBBY_CHANNEL_NAME:
         return   # broadcast presence above is enough
     # Otherwise, get the relevant table.
@@ -107,12 +106,12 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
         return
     table_was_empty = table.inTable.all().count() == 0
     if added:
-        logger.debug('Adding user to inTable: %s', added)
+        logger.info('Adding user to inTable: %s', added)
         table.inTable.add(added.user)
         if table_was_empty and table.host != added.user:
             change_host(table, room)
     if removed:
-        logger.debug('Removing user from inTable: %s', removed)
+        logger.info('Removing user from inTable: %s', removed)
         table.inTable.remove(removed.user)
         if removed.user == table.host:
             # Change host.
@@ -128,8 +127,8 @@ def update_in_room(sender, room, added, removed, bulk_change, **kwargs):
         presences = set([user for user in room.get_users()])
         to_add = presences - intable
         to_remove = intable - presences
-        logger.debug('Bulk change - to_add: %s, to_remove: %s', to_add,
-                     to_remove)
+        logger.info('Bulk change - to_add: %s, to_remove: %s', to_add,
+                    to_remove)
         for user in to_add:
             table.inTable.add(user)
         if table_was_empty and table.host not in to_add:
@@ -146,24 +145,24 @@ def change_host(table, room):
     table.
 
     """
-    logger.debug('Changing the host of room %s', room)
+    logger.info('Changing the host of room %s', room)
     still_there = table.inTable.all()
     if still_there.count():
         new_host = still_there[0]
         table.host = new_host
         table.save()
-        logger.debug('The new host is %s', new_host)
+        logger.info('The new host is %s', new_host)
         Group(LOBBY_CHANNEL_NAME).send({
             'text': json.dumps(host_switched_msg(new_host, room))
         })
     else:
-        logger.debug('Was not able to change host, since there is no one in '
-                     'this room! room=%s', room)
+        logger.info('Was not able to change host, since there is no one in '
+                    'this room! room=%s', room)
 
 
 @channel_session_user_from_http
 def ws_connect(message):
-    logger.debug('Connected to lobby! User: %s', message.user.username)
+    logger.info('Connected to lobby! User: %s', message.user.username)
     # Accept connection
     message.reply_channel.send({'accept': True})
     # We always allow connections to the 'lobby'
@@ -180,15 +179,15 @@ def ws_disconnect(message):
     if 'room' in message.channel_session:
         room = message.channel_session['room']
         Room.objects.remove(room, message.reply_channel.name)
-        logger.debug('User %s left table %s', message.user.username, room)
-    logger.debug('User %s left lobby', message.user.username)
+        logger.info('User %s left table %s', message.user.username, room)
+    logger.info('User %s left lobby', message.user.username)
     Room.objects.remove(LOBBY_CHANNEL_NAME, message.reply_channel.name)
 
 
 @channel_session_user
 def ws_message(message):
-    logger.debug('Got a message from %s: %s', message.user.username,
-                 message['text'])
+    logger.info('Got a message from %s: %s', message.user.username,
+                message['text'])
     msg_contents = json.loads(message['text'])
     # Schema of msg_contents
     #   'room' - lobby or tablenum
@@ -239,7 +238,7 @@ def table_join(message, contents):
         }
         message.reply_channel.send({'text': json.dumps(msg)})
         return
-    logger.debug('User %s joined room %s', message.user.username, tableid)
+    logger.info('User %s joined room %s', message.user.username, tableid)
     Room.objects.add(tableid, message.reply_channel.name, message.user)
     message.channel_session['room'] = tableid
 
@@ -261,8 +260,8 @@ def table_join(message, contents):
 
 def table_replace(message, contents):
     tableid = contents['contents']['oldTable']
-    logger.debug('ReplaceTable: User %s left room %s',
-                 message.user.username, tableid)
+    logger.info('ReplaceTable: User %s left room %s',
+                message.user.username, tableid)
     Room.objects.remove(tableid, message.reply_channel.name)
     # This will trigger the presence changed signal above, too.
     table_join(message, contents)

@@ -131,7 +131,7 @@ def prob_range(request, lexid, length, minP, maxP):
                 return response({'data': []})
 
             maxP = int(request.POST['maxP'])
-            logger.debug("getting set %s, %s", minP, maxP)
+            logger.info("getting set %s, %s", minP, maxP)
             data = getQuizChunkByProb(lexicon, length, minP, maxP)
             return response({'data': data[0],
                              'nextMinP': data[1],
@@ -173,7 +173,7 @@ def namedListPk(request, nlpk):
                 return response({'data': []})
             maxP = int(request.POST['maxP'])
             # these are now indices
-            logger.debug("getting set %s, %s", minP, maxP)
+            logger.info("getting set %s, %s", minP, maxP)
             data = getQuizChunkFromNamedList(nlpk, minP)
             return response({'data': data[0],
                              'nextMinP': data[1],
@@ -214,7 +214,7 @@ def savedListPk(request, slpk, option):
                 return response({'data': []})
 
             maxP = int(request.POST['maxP'])
-            logger.debug("getting set %s, %s", minP, maxP)
+            logger.info("getting set %s, %s", minP, maxP)
             data = getQuizChunkFromSavedList(slpk, minP, int(option))
             return response({'data': data[0],
                              'nextMinP': data[1],
