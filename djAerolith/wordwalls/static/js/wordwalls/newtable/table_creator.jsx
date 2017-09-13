@@ -229,6 +229,8 @@ class TableCreator extends React.Component {
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
+      // elements 1-3 here will be an array of search descriptions
+      // search: [{foo: bar}]
       data: JSON.stringify({
         lexicon: this.state.currentLexicon,
         probMin: parseInt(this.state.probMin, 10),

@@ -1,56 +1,51 @@
 import React from 'react';
 import Select from '../forms/select';
-import NumberInput from '../forms/number_input';
-
+import SearchRow, { SearchTypes } from './search_row';
 // Questions per round && time per round
-function genWordLengthOptions() {
-  return [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(el => ({
-    value: String(el),
-    displayValue: String(el),
-  }));
-}
+// function genWordLengthOptions() {
+//   return [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(el => ({
+//     value: String(el),
+//     displayValue: String(el),
+//   }));
+// }
 
 class WordSearchDialog extends React.Component {
-  constructor() {
-    super();
-    this.handleMinProbChange = this.handleMinProbChange.bind(this);
-    this.handleMaxProbChange = this.handleMaxProbChange.bind(this);
-  }
+  // constructor() {
+  //   super();
+  //   this.handleMinProbChange = this.handleMinProbChange.bind(this);
+  //   this.handleMaxProbChange = this.handleMaxProbChange.bind(this);
+  // }
 
-  getMaxProbForLength(wordLength) {
-    const foundLex = this.props.availableLexica.find(
-      lex => lex.id === this.props.lexicon);
-    return foundLex.lengthCounts[wordLength];
-  }
+  // getMaxProbForLength(wordLength) {
+  //   const foundLex = this.props.availableLexica.find(
+  //     lex => lex.id === this.props.lexicon);
+  //   return foundLex.lengthCounts[wordLength];
+  // }
 
-  handleMinProbChange(event) {
-    let min = parseInt(event.target.value, 10);
-    if (Number.isNaN(min)) {
-      min = '';
-    }
-    this.props.onSearchParamChange('probMin', String(min));
-  }
+  // handleMinProbChange(event) {
+  //   let min = parseInt(event.target.value, 10);
+  //   if (Number.isNaN(min)) {
+  //     min = '';
+  //   }
+  //   this.props.onSearchParamChange('probMin', String(min));
+  // }
 
-  handleMaxProbChange(event) {
-    let max = parseInt(event.target.value, 10);
-    if (Number.isNaN(max)) {
-      max = '';
-    }
-    // From the length counts, limit max probability.
-    const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
-    if (max > maxProbForLength) {
-      max = maxProbForLength;
-    }
-    this.props.onSearchParamChange('probMax', String(max));
-  }
+  // handleMaxProbChange(event) {
+  //   let max = parseInt(event.target.value, 10);
+  //   if (Number.isNaN(max)) {
+  //     max = '';
+  //   }
+  //   // From the length counts, limit max probability.
+  //   const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
+  //   if (max > maxProbForLength) {
+  //     max = maxProbForLength;
+  //   }
+  //   this.props.onSearchParamChange('probMax', String(max));
+  // }
 
 
-  render() {
-    const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
-    return (
-      <div className="row">
-        <div className="col-sm-8">
-          <Select
+/**
+ *           <Select
             colSize={4}
             label="Word Length"
             selectedValue={String(this.props.wordLength)}
@@ -70,6 +65,37 @@ class WordSearchDialog extends React.Component {
             value={this.props.probMax}
             onChange={this.handleMaxProbChange}
           />
+ */
+
+  searchRows() {
+    // So that eslint shuts up, remove me.
+    this.blah = 2;
+    return [
+      <SearchRow
+        searchType={SearchTypes.length}
+        minValue={7}
+        maxValue={8}
+        key={1}
+      />,
+      <SearchRow
+        searchType={SearchTypes.probability}
+        minValue={11}
+        maxValue={235}
+        key={2}
+      />,
+      <SearchRow
+        searchType={SearchTypes.tags}
+        strvalueList={['D1', 'D4']}
+      />,
+    ];
+  }
+
+  render() {
+    // const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
+    return (
+      <div className="row">
+        <div className="col-sm-8">
+          {this.searchRows()}
           <Select
             colSize={4}
             label="Mode"
@@ -99,19 +125,19 @@ class WordSearchDialog extends React.Component {
 }
 
 WordSearchDialog.propTypes = {
-  onSearchParamChange: React.PropTypes.func,
-  wordLength: React.PropTypes.number,
-  probMin: React.PropTypes.string,
-  probMax: React.PropTypes.string,
+  // onSearchParamChange: React.PropTypes.func,
+  // wordLength: React.PropTypes.number,
+  // probMin: React.PropTypes.string,
+  // probMax: React.PropTypes.string,
   onSearchSubmit: React.PropTypes.func,
   onFlashcardSubmit: React.PropTypes.func,
-  availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    lexicon: React.PropTypes.string,
-    description: React.PropTypes.string,
-    counts: React.PropTypes.object,
-  })),
-  lexicon: React.PropTypes.number,
+  // availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
+  //   id: React.PropTypes.number,
+  //   lexicon: React.PropTypes.string,
+  //   description: React.PropTypes.string,
+  //   counts: React.PropTypes.object,
+  // })),
+  // lexicon: React.PropTypes.number,
   multiplayerOn: React.PropTypes.bool,
   onMultiplayerModify: React.PropTypes.func,
 };
