@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from '../forms/select';
-import SearchRow, { SearchTypes } from './search_row';
+import SearchRow from './search_row';
 // Questions per round && time per round
 // function genWordLengthOptions() {
 //   return [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(el => ({
@@ -68,26 +68,22 @@ class WordSearchDialog extends React.Component {
  */
 
   searchRows() {
-    // So that eslint shuts up, remove me.
-    this.blah = 2;
-    return [
+    console.log('Searches: ', this.props.searches);
+    return this.props.searches.map((search, idx) => (
       <SearchRow
-        searchType={SearchTypes.length}
-        minValue={7}
-        maxValue={8}
-        key={1}
-      />,
-      <SearchRow
-        searchType={SearchTypes.probability}
-        minValue={11}
-        maxValue={235}
-        key={2}
-      />,
-      <SearchRow
-        searchType={SearchTypes.tags}
-        strvalueList={['D1', 'D4']}
-      />,
-    ];
+        key={idx}
+        index={idx}
+        searchType={search.searchType}
+        minValue={search.minValue}
+        maxValue={search.maxValue}
+        minAllowedValue={search.minAllowedValue}
+        maxAllowedValue={search.maxAllowedValue}
+        valueList={search.valueList}
+        addRow={this.props.addSearchRow}
+        removeRow={this.props.removeSearchRow}
+        removeDisabled={idx === 0}
+      />
+    ));
   }
 
   render() {
@@ -129,6 +125,16 @@ WordSearchDialog.propTypes = {
   // wordLength: React.PropTypes.number,
   // probMin: React.PropTypes.string,
   // probMax: React.PropTypes.string,
+  searches: React.PropTypes.arrayOf(React.PropTypes.shape({
+    searchType: React.PropTypes.number,
+    minValue: React.PropTypes.number,
+    maxValue: React.PropTypes.number,
+    minAllowedValue: React.PropTypes.number,
+    maxAllowedValue: React.PropTypes.number,
+    valueList: React.PropTypes.arrayOf(React.PropTypes.string),
+  })),
+  addSearchRow: React.PropTypes.func,
+  removeSearchRow: React.PropTypes.func,
   onSearchSubmit: React.PropTypes.func,
   onFlashcardSubmit: React.PropTypes.func,
   // availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
