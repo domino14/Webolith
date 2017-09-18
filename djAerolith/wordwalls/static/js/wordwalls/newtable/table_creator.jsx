@@ -13,7 +13,7 @@ import WordSearchDialog from './word_search_dialog';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 import Lobby from '../lobby/main';
-import { SearchTypesEnum, searchCriteriaToAdd } from './search_row';
+import { SearchTypesEnum, searchCriterionToAdd } from './search_row';
 
 const GAME_TYPE_NEW = 'Load New List';
 const GAME_TYPE_JOIN = 'Join Table';
@@ -103,6 +103,7 @@ class TableCreator extends React.Component {
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
     this.searchParamChange = this.searchParamChange.bind(this);
+    this.searchTypeChange = this.searchTypeChange.bind(this);
     this.selectedListChange = this.selectedListChange.bind(this);
     this.searchSubmit = this.searchSubmit.bind(this);
     this.flashcardSearchSubmit = this.flashcardSearchSubmit.bind(this);
@@ -215,7 +216,7 @@ class TableCreator extends React.Component {
   }
 
   addSearchRow() {
-    const toadd = searchCriteriaToAdd(this.state.wordSearchCriteria);
+    const toadd = searchCriterionToAdd(this.state.wordSearchCriteria);
     if (!toadd) {
       return;   // Don't add any more.
     }
@@ -257,6 +258,13 @@ class TableCreator extends React.Component {
   }
 
   searchSubmit() {
+    // Turn the wordSearchCriteria into something the back-end would
+    // understand
+    const searchCriteria = this.state.wordSearchCriteria.map(
+      criterion => Object.assign({}, criterion, {
+        searchType: SearchTypesEnum.properties[criterion.searchType].name,
+      }));
+
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
@@ -264,9 +272,7 @@ class TableCreator extends React.Component {
       // search: [{foo: bar}]
       data: JSON.stringify({
         lexicon: this.state.currentLexicon,
-        probMin: parseInt(this.state.probMin, 10),
-        probMax: parseInt(this.state.probMax, 10),
-        wordLength: this.state.wordLength,
+        searchCriteria,
         desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
@@ -471,10 +477,35 @@ class TableCreator extends React.Component {
     .always(() => this.hideSpinner());
   }
 
-  searchParamChange(paramName, paramValue) {
-    const curState = {};
-    curState[paramName] = paramValue;
-    this.setState(curState);
+  searchParamChange(index, paramName, paramValue) {
+    const criteria = this.state.wordSearchCriteria;
+    const valueModifier = (val) => {
+      if (paramName === 'minValue' || paramName === 'maxValue') {
+        return parseInt(val, 10) || 0;
+      } else if (paramName === 'valueList') {
+        return val.trim();
+      }
+      return val;
+    };
+
+    criteria[index][paramName] = valueModifier(paramValue);
+    this.setState({
+      wordSearchCriteria: criteria,
+    });
+  }
+
+  searchTypeChange(index, value) {
+    const criteria = this.state.wordSearchCriteria;
+    const searchType = parseInt(value, 10);
+    criteria[index].searchType = searchType;
+    // Reset the values.
+    if (searchType !== SearchTypesEnum.TAGS) {
+      criteria[index].minValue = SearchTypesEnum.properties[searchType].minValue;
+      criteria[index].maxValue = SearchTypesEnum.properties[searchType].maxValue;
+    }
+    this.setState({
+      wordSearchCriteria: criteria,
+    });
   }
 
   selectedListChange(listId) {
@@ -540,6 +571,7 @@ class TableCreator extends React.Component {
             onSearchSubmit={() => this.preSubmitHook(this.searchSubmit)}
             onFlashcardSubmit={() => this.preSubmitHook(
               this.flashcardSearchSubmit)}
+            onSearchTypeChange={this.searchTypeChange}
             onSearchParamChange={this.searchParamChange}
             removeSearchRow={this.removeSearchRow}
             addSearchRow={this.addSearchRow}

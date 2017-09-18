@@ -12,12 +12,37 @@ const SearchTypesEnum = {
   NUM_ANAGRAMS: 5,
   NUM_VOWELS: 6,
   properties: {
-    1: { name: 'probability_range', displayName: 'Probability Range' },
-    2: { name: 'length', displayName: 'Word Length' },
+    1: {
+      name: 'probability_range',
+      displayName: 'Probability Range',
+      defaultMin: 1,
+      defaultMax: 100,
+    },
+    2: {
+      name: 'length',
+      displayName: 'Word Length',
+      defaultMin: 2,
+      defaultMax: 15,
+    },
     3: { name: 'has_tags', displayName: 'Has Tags' },
-    4: { name: 'point_value', displayName: 'Point Value' },
-    5: { name: 'number_anagrams', displayName: 'Number of Anagrams' },
-    6: { name: 'number_vowels', displayName: 'Number of Vowels' },
+    4: {
+      name: 'point_value',
+      displayName: 'Point Value',
+      defaultMin: 2,
+      defaultMax: 99,
+    },
+    5: {
+      name: 'number_anagrams',
+      displayName: 'Number of Anagrams',
+      defaultMin: 1,
+      defaultMax: 99,
+    },
+    6: {
+      name: 'number_vowels',
+      displayName: 'Number of Vowels',
+      defaultMin: 0,
+      defaultMax: 15,
+    },
   },
 };
 
@@ -32,7 +57,7 @@ const SearchTypesOrder = [
 
 function searchCriteriaOptions() {
   return SearchTypesOrder.map(el => ({
-    value: SearchTypesEnum.properties[el].name,
+    value: String(el),
     displayValue: SearchTypesEnum.properties[el].displayName,
   }));
 }
@@ -43,7 +68,7 @@ function searchCriteriaOptions() {
  * @param {Array.<Object>} wordSearchCriteria
  * @return {Object?} A new search type criterion, or null.
  */
-function searchCriteriaToAdd(wordSearchCriteria) {
+function searchCriterionToAdd(wordSearchCriteria) {
   const stmap = {};
   wordSearchCriteria.forEach((criteria) => {
     // These are enum integers.
@@ -57,13 +82,13 @@ function searchCriteriaToAdd(wordSearchCriteria) {
   if (newtypeId === SearchTypesEnum.TAGS) {
     return {
       searchType: newtypeId,
-      valueList: [],
+      valueList: '',
     };
   }
   return {
     searchType: newtypeId,
-    minValue: 1,
-    maxValue: 100,
+    minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
+    maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
   };
 }
 
@@ -74,14 +99,16 @@ class SearchRow extends React.Component {
         <NumberInput
           colSize={4}
           label="Min"
-          value={this.props.minValue}
-          onChange={() => {}}
+          value={String(this.props.minValue)}
+          onChange={event => this.props.modifySearchParam(this.props.index,
+            'minValue', event.target.value)}
         />
         <NumberInput
           colSize={4}
           label="Max"
-          value={this.props.maxValue}
-          onChange={() => {}}
+          value={String(this.props.maxValue)}
+          onChange={event => this.props.modifySearchParam(this.props.index,
+            'maxValue', event.target.value)}
         />
       </div>
     );
@@ -93,8 +120,9 @@ class SearchRow extends React.Component {
         <TextInput
           colSize={4}
           label="Comma-separated values"
-          value={this.props.valueList.join(', ')}
-          onChange={() => {}}
+          value={this.props.valueList}
+          onChange={event => this.props.modifySearchParam(this.props.index,
+            'valueList', event.target.value)}
         />
       </div>
     );
@@ -116,7 +144,7 @@ class SearchRow extends React.Component {
       default:
         break;
     }
-    console.log('For this search row, search type is', this.props.searchType);
+
     return (
       <div className="row">
         <div className="col-lg-12">
@@ -132,8 +160,11 @@ class SearchRow extends React.Component {
           <Select
             colSize={4}
             label="Search Criterion"
-            selectedValue={SearchTypesEnum.properties[this.props.searchType].name}
+            selectedValue={String(this.props.searchType)}
             options={searchCriteriaOptions()}
+            onChange={(event) => {
+              this.props.modifySearchType(this.props.index, event.target.value);
+            }}
           />
           {specificForm}
         </div>
@@ -148,12 +179,14 @@ SearchRow.propTypes = {
   index: React.PropTypes.number,
   minValue: React.PropTypes.number,
   maxValue: React.PropTypes.number,
-  valueList: React.PropTypes.arrayOf(React.PropTypes.string),
+  valueList: React.PropTypes.string,
   addRow: React.PropTypes.func,
   removeRow: React.PropTypes.func,
   removeDisabled: React.PropTypes.bool,
+  modifySearchType: React.PropTypes.func,
+  modifySearchParam: React.PropTypes.func,
 };
 
 export default SearchRow;
-export { SearchTypesEnum, searchCriteriaToAdd };
+export { SearchTypesEnum, searchCriterionToAdd };
 

@@ -133,9 +133,7 @@ def load_new_words(f):
                 parsed_req['questions_per_round'] < 15):
             return bad_request(
                 'Questions per round must be between 15 and 200.')
-        parsed_req['prob_min'] = body.get('probMin')
-        parsed_req['prob_max'] = body.get('probMax')
-        parsed_req['word_length'] = body.get('wordLength')
+        parsed_req['search_criteria'] = body.get('searchCriteria', [])
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
         parsed_req['multiplayer'] = body.get('multiplayer')
@@ -200,11 +198,25 @@ def new_search(request, parsed_req_body):
     """
     search = [
         SearchDescription.lexicon(parsed_req_body['lexicon']),
-        SearchDescription.length(parsed_req_body['word_length'],
-                                 parsed_req_body['word_length']),
-        SearchDescription.probability_range(parsed_req_body['prob_min'],
-                                            parsed_req_body['prob_max'])
     ]
+    for criterion in parsed_req_body['search_criteria']:
+        if criterion['searchType'] in (SearchDescription.LENGTH,
+                                       SearchDescription.PROB_RANGE,
+                                       SearchDescription.NUM_ANAGRAMS,
+                                       SearchDescription.NUM_VOWELS,
+                                       SearchDescription.POINT_VALUE):
+            search.append({
+                'condition': criterion['searchType'],
+                'min': criterion['minValue'],
+                'max': criterion['maxValue'],
+            })
+
+        elif criterion['searchType'] == SearchDescription.HAS_TAGS:
+            search.append({
+                'condition': criterion['searchType'],
+                'user': request.user,
+                'tags': [t.strip() for t in criterion['valueList'].split(',')]
+            })
 
     tablenum = WordwallsGame().initialize_by_search_params(
         request.user, search, parsed_req_body['quiz_time_secs'],

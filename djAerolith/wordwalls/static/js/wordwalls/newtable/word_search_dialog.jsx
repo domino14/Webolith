@@ -82,6 +82,8 @@ class WordSearchDialog extends React.Component {
         addRow={this.props.addSearchRow}
         removeRow={this.props.removeSearchRow}
         removeDisabled={idx === 0}
+        modifySearchType={this.props.onSearchTypeChange}
+        modifySearchParam={this.props.onSearchParamChange}
       />
     ));
   }
@@ -121,7 +123,6 @@ class WordSearchDialog extends React.Component {
 }
 
 WordSearchDialog.propTypes = {
-  // onSearchParamChange: React.PropTypes.func,
   // wordLength: React.PropTypes.number,
   // probMin: React.PropTypes.string,
   // probMax: React.PropTypes.string,
@@ -131,8 +132,10 @@ WordSearchDialog.propTypes = {
     maxValue: React.PropTypes.number,
     minAllowedValue: React.PropTypes.number,
     maxAllowedValue: React.PropTypes.number,
-    valueList: React.PropTypes.arrayOf(React.PropTypes.string),
+    valueList: React.PropTypes.string,
   })),
+  onSearchTypeChange: React.PropTypes.func,
+  onSearchParamChange: React.PropTypes.func,
   addSearchRow: React.PropTypes.func,
   removeSearchRow: React.PropTypes.func,
   onSearchSubmit: React.PropTypes.func,
