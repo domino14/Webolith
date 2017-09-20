@@ -175,9 +175,10 @@ Word search query generator
 - [x] Should get some indication of the number of words loaded and throw an error if it's 0 (i.e. tags)
 - [x] Maybe smarter naming of word lists
 - [x] Should allow removing all search conditions unless there's just one left
-- [ ] Make sure tags come last in the list of search descriptions
+- [x] Make sure tags come last in the list of search descriptions
 - [x] Fix flashcard view for this as well
-- [ ] Display search conditions on one line
+- [x] Display search conditions on one line
+- [ ] 10-99 anagram 5s has a ridiculous name
 - [ ] Deploy new .db files to prod
 - [ ] Run tests
 - [ ] Show probability values for length queries?

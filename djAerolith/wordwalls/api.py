@@ -192,6 +192,7 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
     search = [
         SearchDescription.lexicon(lexicon),
     ]
+    hold_until_end = None
     for criterion in fe_search_criteria:
         if criterion['searchType'] in (SearchDescription.LENGTH,
                                        SearchDescription.PROB_RANGE,
@@ -211,11 +212,15 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
                 stripped = t.strip()
                 if stripped != '':
                     new_tags.append(stripped)
-            search.append({
+            if hold_until_end:
+                raise GameInitException('You can only specify one set of tags')
+            hold_until_end = {
                 'condition': criterion['searchType'],
                 'user': user,
                 'tags': new_tags,
-            })
+            }
+    if hold_until_end:
+        search.append(hold_until_end)
     return search
 
 
@@ -227,9 +232,11 @@ def new_search(request, parsed_req_body):
     Load a new search into this table.
 
     """
-    search = build_search_criteria(request.user, parsed_req_body['lexicon'],
-                                   parsed_req_body['search_criteria'])
     try:
+        search = build_search_criteria(
+            request.user, parsed_req_body['lexicon'],
+            parsed_req_body['search_criteria'])
+
         tablenum = WordwallsGame().initialize_by_search_params(
             request.user, search, parsed_req_body['quiz_time_secs'],
             parsed_req_body['questions_per_round'],

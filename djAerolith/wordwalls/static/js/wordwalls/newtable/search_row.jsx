@@ -96,29 +96,33 @@ class SearchRow extends React.Component {
   renderMinMax() {
     return (
       <div>
-        <NumberInput
-          colSize={4}
-          label="Min"
-          value={String(this.props.minValue)}
-          onChange={event => this.props.modifySearchParam(this.props.index,
-            'minValue', event.target.value)}
-        />
-        <NumberInput
-          colSize={4}
-          label="Max"
-          value={String(this.props.maxValue)}
-          onChange={event => this.props.modifySearchParam(this.props.index,
-            'maxValue', event.target.value)}
-        />
+        <div className="col-sm-3">
+          <NumberInput
+            colSize={12}
+            label="Min"
+            value={String(this.props.minValue)}
+            onChange={event => this.props.modifySearchParam(this.props.index,
+              'minValue', event.target.value)}
+          />
+        </div>
+        <div className="col-sm-3">
+          <NumberInput
+            colSize={12}
+            label="Max"
+            value={String(this.props.maxValue)}
+            onChange={event => this.props.modifySearchParam(this.props.index,
+              'maxValue', event.target.value)}
+          />
+        </div>
       </div>
     );
   }
 
   renderListValue() {
     return (
-      <div>
+      <div className="col-sm-3">
         <TextInput
-          colSize={4}
+          colSize={12}
           label="Comma-separated values"
           value={this.props.valueList}
           onChange={event => this.props.modifySearchParam(this.props.index,
@@ -147,18 +151,22 @@ class SearchRow extends React.Component {
 
     return (
       <div className="row">
-        <div className="col-lg-12">
+        <div className="col-xs-1" style={{ marginTop: '27px' }}>
           <button
-            className="btn btn-info"
+            className="btn btn-info btn-sm"
             onClick={this.props.addRow}
-          >+</button>
+          >＋</button>
+        </div>
+        <div className="col-xs-1" style={{ marginTop: '27px' }}>
           <button
-            className="btn btn-info"
+            className="btn btn-info btn-sm"
             onClick={() => this.props.removeRow(this.props.index)}
             disabled={this.props.removeDisabled}
-          >-</button>
+          >－</button>
+        </div>
+        <div className="col-sm-4">
           <Select
-            colSize={4}
+            colSize={12}
             label="Search Criterion"
             selectedValue={String(this.props.searchType)}
             options={searchCriteriaOptions()}
@@ -166,9 +174,8 @@ class SearchRow extends React.Component {
               this.props.modifySearchType(this.props.index, event.target.value);
             }}
           />
-          {specificForm}
         </div>
-
+        {specificForm}
       </div>
     );
   }
