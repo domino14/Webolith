@@ -257,22 +257,24 @@ class TableCreator extends React.Component {
     .always(() => this.hideSpinner());
   }
 
-  searchSubmit() {
-    // Turn the wordSearchCriteria into something the back-end would
-    // understand
-    const searchCriteria = this.state.wordSearchCriteria.map(
+  /**
+   * Turn the search criteria into something the back end would understand.
+   * @return {Array.<Object>}
+   */
+  searchCriteriaMapper() {
+    return this.state.wordSearchCriteria.map(
       criterion => Object.assign({}, criterion, {
         searchType: SearchTypesEnum.properties[criterion.searchType].name,
       }));
+  }
 
+  searchSubmit() {
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
-      // elements 1-3 here will be an array of search descriptions
-      // search: [{foo: bar}]
       data: JSON.stringify({
         lexicon: this.state.currentLexicon,
-        searchCriteria,
+        searchCriteria: this.searchCriteriaMapper(),
         desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
@@ -300,9 +302,7 @@ class TableCreator extends React.Component {
       data: {
         action: 'searchParamsFlashcard',
         lexicon: this.state.currentLexicon,
-        wordLength: this.state.wordLength,
-        probabilityMin: parseInt(this.state.probMin, 10),
-        probabilityMax: parseInt(this.state.probMax, 10),
+        searchCriteria: this.searchCriteriaMapper(),
       },
     })
     .done(data => TableCreator.redirectUrl(data.url))
@@ -500,9 +500,10 @@ class TableCreator extends React.Component {
     criteria[index].searchType = searchType;
     // Reset the values.
     if (searchType !== SearchTypesEnum.TAGS) {
-      criteria[index].minValue = SearchTypesEnum.properties[searchType].minValue;
-      criteria[index].maxValue = SearchTypesEnum.properties[searchType].maxValue;
+      criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
+      criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
     }
+    console.log('Resetting to', criteria);
     this.setState({
       wordSearchCriteria: criteria,
     });

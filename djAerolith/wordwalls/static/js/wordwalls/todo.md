@@ -171,8 +171,14 @@ Nice to haves:
 
 ====================
 Word search query generator
-- [ ] Switching on front end between different search types did not populate with min and max
-- [ ] Should get some indication of the number of words loaded and throw an error if it's 0 (i.e. tags)
-- [ ] Maybe smarter naming of word lists
-- [ ] Should allow removing all search conditions unless there's just one left
-- [ ] Fix flashcard view for this as well
+- [x] Switching on front end between different search types did not populate with min and max
+- [x] Should get some indication of the number of words loaded and throw an error if it's 0 (i.e. tags)
+- [x] Maybe smarter naming of word lists
+- [x] Should allow removing all search conditions unless there's just one left
+- [ ] Make sure tags come last in the list of search descriptions
+- [x] Fix flashcard view for this as well
+- [ ] Display search conditions on one line
+- [ ] Deploy new .db files to prod
+- [ ] Run tests
+- [ ] Show probability values for length queries?
+

@@ -1,11 +1,11 @@
 from django.conf.urls import url
 
-from whitleyCards.views import createQuiz, prob_range, namedListPk, savedListPk
+from whitleyCards.views import createQuiz, search, namedListPk, savedListPk
 
 urlpatterns = [
     url(r'^$', createQuiz, name='flashcards_create_quiz'),
-    url(r'^probs/(?P<lexid>\d+)/(?P<length>\d+)/(?P<minP>\d+)_(?P<maxP>\d+)/$',
-        prob_range, name='flashcards_by_prob_range'),
+    url(r'^search/(?P<lex_id>\d+)/(?P<paramsb64>[0-9A-Za-z_\-=]+)/$',
+        search, name='flashcards_by_search'),
     url(r'^nlpk/(?P<nlpk>\d+)/$', namedListPk,
         name='flashcards_by_namedList_pk'),
     url(r'^slpk/(?P<slpk>\d+)_(?P<option>\d+)/$',

@@ -96,6 +96,13 @@ class Questions(object):
     def size(self):
         return len(self.questions)
 
+    def __len__(self):
+        return self.size()
+
+    def __getitem__(self, key):
+        logger.debug('Calling __getitem__ with key %s', key)
+        return self.questions[key]
+
     def shuffle(self):
         random.shuffle(self.questions)
 

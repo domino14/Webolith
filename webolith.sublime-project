@@ -26,7 +26,8 @@
 			},
 			"eslint": {
 				"excludes": [
-					"*/djAerolith/flashcards/*"
+					"*/djAerolith/flashcards/*",
+					"*/djAerolith/whitleyCards/*"
 				]
 			}
 		}

@@ -149,6 +149,8 @@ class WordwallsGame(object):
         user - The user.
 
         """
+        if questions.size() == 0:
+            raise GameInitException('No questions were found.')
         wl = WordList()
         wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True,
                            category=category)

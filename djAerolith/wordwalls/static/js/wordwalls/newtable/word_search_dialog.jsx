@@ -68,7 +68,6 @@ class WordSearchDialog extends React.Component {
  */
 
   searchRows() {
-    console.log('Searches: ', this.props.searches);
     return this.props.searches.map((search, idx) => (
       <SearchRow
         key={idx}
@@ -81,7 +80,7 @@ class WordSearchDialog extends React.Component {
         valueList={search.valueList}
         addRow={this.props.addSearchRow}
         removeRow={this.props.removeSearchRow}
-        removeDisabled={idx === 0}
+        removeDisabled={idx === 0 && this.props.searches.length === 1}
         modifySearchType={this.props.onSearchTypeChange}
         modifySearchParam={this.props.onSearchParamChange}
       />
@@ -123,9 +122,6 @@ class WordSearchDialog extends React.Component {
 }
 
 WordSearchDialog.propTypes = {
-  // wordLength: React.PropTypes.number,
-  // probMin: React.PropTypes.string,
-  // probMax: React.PropTypes.string,
   searches: React.PropTypes.arrayOf(React.PropTypes.shape({
     searchType: React.PropTypes.number,
     minValue: React.PropTypes.number,

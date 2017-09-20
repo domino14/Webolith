@@ -129,7 +129,24 @@ def temporary_list_name(search_descriptions):
                 tokens.append('INVALID')
         elif sd['condition'] == SearchDescription.PROB_RANGE:
             tokens.append('({} - {})'.format(sd['min'], sd['max']))
-        else:
-            tokens.append('custom')
+        elif sd['condition'] == SearchDescription.NUM_ANAGRAMS:
+            if sd['min'] == 1 and sd['max'] == 1:
+                tokens.append('Single-anagram')
+            else:
+                tk = []
+                for i in range(sd['min'], sd['max'] + 1):
+                    tk.append('{}-anagram'.format(i))
+                tokens.append(', '.join(tk))
+        elif sd['condition'] == SearchDescription.POINT_VALUE:
+            if sd['min'] == sd['max']:
+                tokens.append('{}-pt'.format(sd['min']))
+            else:
+                tokens.append('pts: {} - {}'.format(sd['min'], sd['max']))
+        elif sd['condition'] == SearchDescription.NUM_VOWELS:
+            if sd['min'] == sd['max']:
+                tokens.append('{}-vowel'.format(sd['min']))
+            else:
+                tokens.append('vowels: {} - {}'.format(sd['min'], sd['max']))
+        elif sd['condition'] == SearchDescription.HAS_TAGS:
+            tokens.append('tags: {}'.format(', '.join(sd['tags'])))
     return ' '.join(tokens)
-    

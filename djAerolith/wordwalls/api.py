@@ -188,6 +188,37 @@ def new_challenge(request, parsed_req_body):
     return table_response(tablenum)
 
 
+def build_search_criteria(user, lexicon, fe_search_criteria):
+    search = [
+        SearchDescription.lexicon(lexicon),
+    ]
+    for criterion in fe_search_criteria:
+        if criterion['searchType'] in (SearchDescription.LENGTH,
+                                       SearchDescription.PROB_RANGE,
+                                       SearchDescription.NUM_ANAGRAMS,
+                                       SearchDescription.NUM_VOWELS,
+                                       SearchDescription.POINT_VALUE):
+            search.append({
+                'condition': criterion['searchType'],
+                'min': int(criterion['minValue']),
+                'max': int(criterion['maxValue']),
+            })
+
+        elif criterion['searchType'] == SearchDescription.HAS_TAGS:
+            tags = criterion['valueList'].split(',')
+            new_tags = []
+            for t in tags:
+                stripped = t.strip()
+                if stripped != '':
+                    new_tags.append(stripped)
+            search.append({
+                'condition': criterion['searchType'],
+                'user': user,
+                'tags': new_tags,
+            })
+    return search
+
+
 @login_required
 @require_POST
 @load_new_words
@@ -196,34 +227,16 @@ def new_search(request, parsed_req_body):
     Load a new search into this table.
 
     """
-    search = [
-        SearchDescription.lexicon(parsed_req_body['lexicon']),
-    ]
-    for criterion in parsed_req_body['search_criteria']:
-        if criterion['searchType'] in (SearchDescription.LENGTH,
-                                       SearchDescription.PROB_RANGE,
-                                       SearchDescription.NUM_ANAGRAMS,
-                                       SearchDescription.NUM_VOWELS,
-                                       SearchDescription.POINT_VALUE):
-            search.append({
-                'condition': criterion['searchType'],
-                'min': criterion['minValue'],
-                'max': criterion['maxValue'],
-            })
-
-        elif criterion['searchType'] == SearchDescription.HAS_TAGS:
-            search.append({
-                'condition': criterion['searchType'],
-                'user': request.user,
-                'tags': [t.strip() for t in criterion['valueList'].split(',')]
-            })
-
-    tablenum = WordwallsGame().initialize_by_search_params(
-        request.user, search, parsed_req_body['quiz_time_secs'],
-        parsed_req_body['questions_per_round'],
-        use_table=parsed_req_body['tablenum'],
-        multiplayer=parsed_req_body['multiplayer'])
-
+    search = build_search_criteria(request.user, parsed_req_body['lexicon'],
+                                   parsed_req_body['search_criteria'])
+    try:
+        tablenum = WordwallsGame().initialize_by_search_params(
+            request.user, search, parsed_req_body['quiz_time_secs'],
+            parsed_req_body['questions_per_round'],
+            use_table=parsed_req_body['tablenum'],
+            multiplayer=parsed_req_body['multiplayer'])
+    except GameInitException as e:
+        return bad_request(str(e))
     return table_response(tablenum)
 
 
