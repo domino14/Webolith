@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from '../forms/select';
-import SearchRow from './search_row';
+import SearchRow, { SearchTypesEnum } from './search_row';
 // Questions per round && time per round
 // function genWordLengthOptions() {
 //   return [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(el => ({
@@ -68,23 +68,23 @@ class WordSearchDialog extends React.Component {
  */
 
   searchRows() {
-    return this.props.searches.map((search, idx) => (
+    const rows = this.props.searches.map((search, idx) => (
       <SearchRow
         key={idx}
         index={idx}
         searchType={search.searchType}
         minValue={search.minValue}
         maxValue={search.maxValue}
-        minAllowedValue={search.minAllowedValue}
-        maxAllowedValue={search.maxAllowedValue}
+        minAllowedValue={SearchTypesEnum.properties[search.searchType].minAllowed}
+        maxAllowedValue={SearchTypesEnum.properties[search.searchType].maxAllowed}
         valueList={search.valueList}
         addRow={this.props.addSearchRow}
         removeRow={this.props.removeSearchRow}
         removeDisabled={idx === 0 && this.props.searches.length === 1}
         modifySearchType={this.props.onSearchTypeChange}
         modifySearchParam={this.props.onSearchParamChange}
-      />
-    ));
+      />));
+    return rows;
   }
 
   render() {

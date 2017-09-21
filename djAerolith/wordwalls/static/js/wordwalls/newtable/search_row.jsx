@@ -17,12 +17,16 @@ const SearchTypesEnum = {
       displayName: 'Probability Range',
       defaultMin: 1,
       defaultMax: 100,
+      minAllowed: 1,
+      maxAllowed: 70000,  // Subject to change by lexicon
     },
     2: {
       name: 'length',
       displayName: 'Word Length',
       defaultMin: 2,
       defaultMax: 15,
+      minAllowed: 2,
+      maxAllowed: 15,
     },
     3: { name: 'has_tags', displayName: 'Has Tags' },
     4: {
@@ -30,18 +34,24 @@ const SearchTypesEnum = {
       displayName: 'Point Value',
       defaultMin: 2,
       defaultMax: 99,
+      minAllowed: 2,
+      maxAllowed: 15,
     },
     5: {
       name: 'number_anagrams',
       displayName: 'Number of Anagrams',
       defaultMin: 1,
       defaultMax: 99,
+      minAllowed: 1,
+      maxAllowed: 99,
     },
     6: {
       name: 'number_vowels',
       displayName: 'Number of Vowels',
       defaultMin: 0,
       defaultMax: 15,
+      minAllowed: 0,
+      maxAllowed: 15,
     },
   },
 };
@@ -101,6 +111,8 @@ class SearchRow extends React.Component {
             colSize={12}
             label="Min"
             value={String(this.props.minValue)}
+            minAllowed={String(this.props.minAllowedValue)}
+            maxAllowed={String(this.props.maxAllowedValue)}
             onChange={event => this.props.modifySearchParam(this.props.index,
               'minValue', event.target.value)}
           />
@@ -110,6 +122,8 @@ class SearchRow extends React.Component {
             colSize={12}
             label="Max"
             value={String(this.props.maxValue)}
+            minAllowed={String(this.props.minAllowedValue)}
+            maxAllowed={String(this.props.maxAllowedValue)}
             onChange={event => this.props.modifySearchParam(this.props.index,
               'maxValue', event.target.value)}
           />
@@ -185,7 +199,9 @@ SearchRow.propTypes = {
   searchType: React.PropTypes.number,
   index: React.PropTypes.number,
   minValue: React.PropTypes.number,
+  minAllowedValue: React.PropTypes.number,
   maxValue: React.PropTypes.number,
+  maxAllowedValue: React.PropTypes.number,
   valueList: React.PropTypes.string,
   addRow: React.PropTypes.func,
   removeRow: React.PropTypes.func,
