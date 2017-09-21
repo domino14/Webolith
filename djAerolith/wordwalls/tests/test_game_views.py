@@ -36,9 +36,15 @@ class WordwallsGameStartTest(TestCase):
                 'desiredTime': 5,
                 'lexicon': 1,
                 'questionsPerRound': 60,
-                'wordLength': '8',
-                'probMin': 523,
-                'probMax': 784,
+                'searchCriteria': [{
+                    'searchType': 'length',
+                    'minValue': 8,
+                    'maxValue': 8,
+                }, {
+                    'searchType': 'probability_range',
+                    'minValue': 523,
+                    'maxValue': 784,
+                }],
                 'tablenum': 0,
             }),
             content_type='application/json')
@@ -58,12 +64,19 @@ class WordwallsGameStartTest(TestCase):
                 'desiredTime': 5,
                 'lexicon': 7,
                 'questionsPerRound': 50,
-                'wordLength': '8',
-                'probMin': 151,
-                'probMax': 200,
+                'searchCriteria': [{
+                    'searchType': 'length',
+                    'minValue': 8,
+                    'maxValue': 8,
+                }, {
+                    'searchType': 'probability_range',
+                    'minValue': 151,
+                    'maxValue': 200,
+                }],
                 'tablenum': 0,
             }),
             content_type='application/json')
+        self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
         response = self.client.get('/wordwalls/table/{0}/'.format(
             content['tablenum']))

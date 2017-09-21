@@ -180,8 +180,9 @@ Word search query generator
 - [x] Display search conditions on one line
 - [x] 10-99 anagram 5s has a ridiculous name
 - [ ] Deploy new .db files to prod
-- [ ] Run tests
-~~- [ ] Show probability values for length queries?~~
-- [ ] Update tag
+- [x] Fix tests
+- [x] Update tag
 - [ ] Check what happens when we deploy the new backend for people still on old frontend
+~~- [ ] Show probability values for length queries?~~
+
 
