@@ -90,7 +90,7 @@ class WordSearchDialog extends React.Component {
   render() {
     // const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
     return (
-      <div className="row">
+      <div className="row" style={{ marginTop: '8px' }}>
         <div className="col-sm-8">
           {this.searchRows()}
           <Select

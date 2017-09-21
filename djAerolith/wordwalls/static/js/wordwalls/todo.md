@@ -178,8 +178,10 @@ Word search query generator
 - [x] Make sure tags come last in the list of search descriptions
 - [x] Fix flashcard view for this as well
 - [x] Display search conditions on one line
-- [ ] 10-99 anagram 5s has a ridiculous name
+- [x] 10-99 anagram 5s has a ridiculous name
 - [ ] Deploy new .db files to prod
 - [ ] Run tests
-- [ ] Show probability values for length queries?
+~~- [ ] Show probability values for length queries?~~
+- [ ] Update tag
+- [ ] Check what happens when we deploy the new backend for people still on old frontend
 

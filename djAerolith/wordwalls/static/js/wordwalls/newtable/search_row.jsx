@@ -95,7 +95,7 @@ function searchCriterionToAdd(wordSearchCriteria) {
 class SearchRow extends React.Component {
   renderMinMax() {
     return (
-      <div>
+      <div style={{ marginTop: '2px' }}>
         <div className="col-sm-3">
           <NumberInput
             colSize={12}
@@ -120,7 +120,7 @@ class SearchRow extends React.Component {
 
   renderListValue() {
     return (
-      <div className="col-sm-3">
+      <div className="col-sm-6" style={{ marginTop: '2px' }}>
         <TextInput
           colSize={12}
           label="Comma-separated values"
@@ -151,13 +151,13 @@ class SearchRow extends React.Component {
 
     return (
       <div className="row">
-        <div className="col-xs-1" style={{ marginTop: '27px' }}>
+        <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
           <button
             className="btn btn-info btn-sm"
             onClick={this.props.addRow}
           >＋</button>
         </div>
-        <div className="col-xs-1" style={{ marginTop: '27px' }}>
+        <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
           <button
             className="btn btn-info btn-sm"
             onClick={() => this.props.removeRow(this.props.index)}

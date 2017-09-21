@@ -133,10 +133,8 @@ def temporary_list_name(search_descriptions):
             if sd['min'] == 1 and sd['max'] == 1:
                 tokens.append('Single-anagram')
             else:
-                tk = []
-                for i in range(sd['min'], sd['max'] + 1):
-                    tk.append('{}-anagram'.format(i))
-                tokens.append(', '.join(tk))
+                tokens.append('#-anagrams: {} - {}'.format(sd['min'],
+                                                           sd['max']))
         elif sd['condition'] == SearchDescription.POINT_VALUE:
             if sd['min'] == sd['max']:
                 tokens.append('{}-pt'.format(sd['min']))
