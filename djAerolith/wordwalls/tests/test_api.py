@@ -188,15 +188,24 @@ class WordwallsNewSearchTest(TestCase):
         self.assertTrue(old_word_list.pk > 0)
         old_pk = old_word_list.pk
         # Now load a new search
-        result = self.client.post('/wordwalls/api/new_search/',
-                                  data=json.dumps({'tablenum': tablenum,
-                                                   'lexicon': 1,
-                                                   'desiredTime': 4.5,
-                                                   'questionsPerRound': 75,
-                                                   'probMin': 84,
-                                                   'probMax': 223,
-                                                   'wordLength': 9}),
-                                  content_type='application/json')
+        result = self.client.post(
+            '/wordwalls/api/new_search/',
+            data=json.dumps({'tablenum': tablenum,
+                             'lexicon': 1,
+                             'desiredTime': 4.5,
+                             'questionsPerRound': 75,
+                             'searchCriteria': [{
+                                 'searchType': 'length',
+                                 'minValue': 9,
+                                 'maxValue': 9,
+                             }, {
+                                 'searchType': 'probability_range',
+                                 'minValue': 84,
+                                 'maxValue': 223,
+                             }]
+                             }),
+            content_type='application/json')
+        self.assertEqual(result.status_code, 200)
         result_obj = json.loads(result.content)
         self.assertEqual(result_obj['tablenum'], tablenum)
         expected_list_name = 'CSW15 9s (84 - 223)'

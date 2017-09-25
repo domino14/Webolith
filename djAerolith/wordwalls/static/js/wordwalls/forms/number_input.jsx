@@ -15,7 +15,9 @@ const NumberInput = (props) => {
     <div className="form-group">
       <div className="row">
         <div className={inputColSizeClass}>
-          <label>{props.label}</label>
+          <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+            {props.label}
+          </label>
           <input
             type="number"
             {...addlInputProps}
@@ -23,6 +25,8 @@ const NumberInput = (props) => {
             value={props.value}
             className="form-control input-sm"
             onChange={props.onChange}
+            min={props.minAllowed}
+            max={props.maxAllowed}
           />
         </div>
       </div>
@@ -39,6 +43,8 @@ NumberInput.propTypes = {
   value: React.PropTypes.string,
   onChange: React.PropTypes.func,
   disabled: React.PropTypes.bool,
+  minAllowed: React.PropTypes.number,
+  maxAllowed: React.PropTypes.number,
 };
 
 export default NumberInput;

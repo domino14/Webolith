@@ -1,16 +1,14 @@
-from django.http import HttpResponse
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.db.models import Case, When, Count, IntegerField
+from django.shortcuts import render
+from django.views.decorators.cache import cache_page
+
+from base.models import Lexicon
+from lib.response import response
 from wordwalls.models import (DailyChallengeName,
                               DailyChallenge,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry, Medal, User)
-from accounts.models import AerolithProfile
-from base.models import Lexicon
-from django.db.models import Case, When, Count, IntegerField
-import json
-from lib.response import response
-from django.views.decorators.cache import cache_page
 
 
 # If not logged in, will ask user to log in and forward back to the main url
@@ -50,9 +48,11 @@ def get_stats(request, lexicon, type_of_challenge_id):
     else:
         challenges = challenges.filter(date__range=(start_date, end_date))
 
-    leaderboards = DailyChallengeLeaderboard.objects.filter(challenge__in=challenges)
-    entries = DailyChallengeLeaderboardEntry.objects.filter(user=request.user,
-                                                            board__in=leaderboards)
+    leaderboards = DailyChallengeLeaderboard.objects.filter(
+        challenge__in=challenges)
+    entries = DailyChallengeLeaderboardEntry.objects.filter(
+        user=request.user,
+        board__in=leaderboards)
 
     info_we_want = []
 

@@ -116,7 +116,7 @@ class WordwallsGameModel(GenericTableGameModel):
     def delete(self, *args, **kwargs):
         # Delete related word_list, if it's temporary.
         if self.word_list and self.word_list.is_temporary:
-            logger.debug('Deleting temporary word list: %s', self.word_list)
+            logger.info('Deleting temporary word list: %s', self.word_list)
             self.word_list.delete()
         super(WordwallsGameModel, self).delete(*args, **kwargs)
 

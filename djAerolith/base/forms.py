@@ -20,55 +20,6 @@ class NumQuestionsForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
 
-class FindWordsForm(forms.Form):
-    wlList = tuple([(repr(l), repr(l)) for l in range(2, 16)])
-
-    wordLength = forms.ChoiceField(
-        choices=wlList, label='Word Length',
-        widget=forms.Select(attrs={'class': 'form-control'}))
-    probabilityMin = forms.IntegerField(max_value=250000, min_value=1,
-                                        label='Min probability (at least 1)')
-    probabilityMax = forms.IntegerField(max_value=250000, min_value=1,
-                                        label='Max probability')
-    # PLAYERMODE_SINGLE = 1
-    # PLAYERMODE_MULTI = 2
-
-    # playerChoices = (
-    #     (GenericTableGameModel.SINGLEPLAYER_GAME, "Single player"),
-    #     #(GenericTableGame.MULTIPLAYER_GAME, "Multi player"),
-    # )
-
-    # playerMode = forms.ChoiceField(choices=playerChoices,
-    #                                label="Number of players")
-
-    def clean(self):
-        try:
-            pmin = self.cleaned_data['probabilityMin']
-        except KeyError:
-            raise forms.ValidationError(
-                "No value submitted for minimum probability!")
-        try:
-            pmax = self.cleaned_data['probabilityMax']
-        except KeyError:
-            raise forms.ValidationError(
-                "No value submitted for maximum probability!")
-        try:
-            wordLength = self.cleaned_data['wordLength']
-        except KeyError:
-            raise forms.ValidationError(
-                "You must submit a word length between 2 and 15")
-        if pmin < 1:
-            raise forms.ValidationError(
-                "Minimum probability must be 1 or greater")
-        if pmin > pmax:
-            raise forms.ValidationError(
-                "Minimum probability must be less than maximum probability")
-        if int(wordLength) < 2 or int(wordLength) > 15:
-            raise forms.ValidationError(
-                "Word length must be an integer between 2 and 15")
-        return self.cleaned_data
-
-
 class UserListForm(forms.Form):
     file = forms.FileField(label='File')
 

@@ -314,12 +314,12 @@ LOGGING = {
         },
         'django': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': False,
         },
         '': {    # catch-all
             'handlers': ['console', 'mail_admins'],
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG else 'INFO',
         }
     }
 }

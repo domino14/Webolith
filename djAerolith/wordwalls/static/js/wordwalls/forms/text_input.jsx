@@ -11,7 +11,9 @@ const TextInput = (props) => {
     <div className="form-group">
       <div className="row">
         <div className={inputColSizeClass}>
-          <label>{props.label}</label>
+          <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+            {props.label}
+          </label>
           <input
             type="text"
             name={props.inputName}

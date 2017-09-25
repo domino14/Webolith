@@ -261,7 +261,7 @@ class SavedList(models.Model):
         }
 
     def __unicode__(self):
-        return "(%s) %s%s (Saved %s)" % (
+        return u"(%s) %s%s (Saved %s)" % (
             self.lexicon.lexiconName,
             self.name,
             '*' if self.goneThruOnce else '',
@@ -294,6 +294,9 @@ class AlphagramTag(models.Model):
     lexicon = models.ForeignKey(Lexicon)
     alphagram = models.CharField(max_length=15)
     tag = models.CharField(choices=WORD_TAGS, max_length=2)
+
+    def __unicode__(self):
+        return u'%s\'s tag (%s - %s)' % (self.user, self.alphagram, self.tag)
 
     class Meta:
         unique_together = ('user', 'lexicon', 'alphagram')

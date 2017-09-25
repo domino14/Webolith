@@ -1,0 +1,35 @@
+{
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				"node/node_modules",
+				"node_modules",
+				"words",
+				"wordsdir",
+				"dbCreator-build-desktop",
+				"djAerolith/logs",
+				"static/build",
+				"static/dist",
+			],
+			"path": "."
+		}
+	],
+	"SublimeLinter": {
+		"linters": {
+			"jshint": {
+				"excludes": [
+					"*/djAerolith/wordwalls/*",
+					"*.babel.*",
+				]
+			},
+			"eslint": {
+				"excludes": [
+					"*/djAerolith/flashcards/*",
+					"*/djAerolith/whitleyCards/*"
+				]
+			}
+		}
+	}
+}

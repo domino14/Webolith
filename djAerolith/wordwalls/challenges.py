@@ -35,7 +35,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         questions is of type Questions
 
     """
-    logger.debug('Trying to create challenge {} for {} ({})'.format(
+    logger.info('Trying to create challenge {} for {} ({})'.format(
         challenge_name, lex, challenge_date))
     db = WordDB(lex.lexiconName)
     # capture number. first try to match to today's lists
@@ -52,13 +52,14 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         r = range(min_p, max_p + 1)
         random.shuffle(r)
         # Just the first 50 elements for the daily challenge.
-        alphagrams = db.alphagrams_by_probability_list(r[:50], word_length)
-        return db.get_questions(alphagrams), challenge_name.timeSecs
+        return (db.get_questions_for_probability_list(r[:50], word_length),
+                challenge_name.timeSecs)
     # There was no match, check other possible challenge names.
     if challenge_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         alphagrams = generate_toughies_challenge(lex, challenge_date)
         random.shuffle(alphagrams)
-        return db.get_questions(alphagrams), challenge_name.timeSecs
+        return (db.get_questions_from_alphagrams(alphagrams),
+                challenge_name.timeSecs)
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
         questions = generate_blank_bingos_challenge(lex)
         questions.shuffle()
@@ -70,8 +71,8 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             max_p = json.loads(lex.lengthCounts)[str(lgt)]
             r = range(min_p, max_p + 1)
             random.shuffle(r)
-            questions.extend(db.get_questions(
-                db.alphagrams_by_probability_list(r[:50], lgt)))
+            questions.extend(
+                db.get_questions_for_probability_list(r[:50], lgt))
         return questions, challenge_name.timeSecs
     # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
     #                              DailyChallengeName.COMMON_LONG):
@@ -109,7 +110,7 @@ def generate_blank_bingos_challenge(lex):
 
     """
     bingos = Questions()
-    logger.debug('in generate_blank_bingos_challenge')
+    logger.info('in generate_blank_bingos_challenge')
     for length in (7, 8):
         try:
             challs = gen_blank_challenges(length, lex.lexiconName, 2, 25, 5)
@@ -147,8 +148,8 @@ def generate_word_builder_challenge(lex, lmin, lmax):
     min_sols = max(int(random.gauss(min_sols_mu, min_sols_sigma)), 1)
     max_sols = min(int(random.gauss(max_sols_mu, max_sols_sigma)), 100)
     min_sols, max_sols = min(min_sols, max_sols), max(min_sols, max_sols)
-    logger.debug('min_sols: %s, max_sols: %s, require_word: %s',
-                 min_sols, max_sols, require_word)
+    logger.info('min_sols: %s, max_sols: %s, require_word: %s',
+                min_sols, max_sols, require_word)
     q_struct = Questions()
 
     try:
@@ -218,8 +219,8 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
 
 def generate_toughies_challenge(lexicon, requested_date):
     challenge_date = toughies_challenge_date(requested_date)
-    logger.debug('Creating toughies challenge for date: %s, chdate: %s',
-                 requested_date, challenge_date)
+    logger.info('Creating toughies challenge for date: %s, chdate: %s',
+                requested_date, challenge_date)
     min_date = challenge_date - timedelta(days=7)
     max_date = challenge_date - timedelta(days=1)
     logger.debug('Generating toughies challenge for date range: %s to %s',

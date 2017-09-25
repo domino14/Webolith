@@ -13,13 +13,14 @@ import WordSearchDialog from './word_search_dialog';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 import Lobby from '../lobby/main';
+import { SearchTypesEnum, searchCriterionToAdd } from './search_row';
 
 const GAME_TYPE_NEW = 'Load New List';
 const GAME_TYPE_JOIN = 'Join Table';
-const SEARCH_TYPE_CHALLENGE = 'Single-Player Challenges';
-const SEARCH_TYPE_WORDSEARCH = 'Word Search';
-const SEARCH_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
-const SEARCH_TYPE_SAVED_LIST = 'My saved lists';
+const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
+const LIST_TYPE_WORDSEARCH = 'Word Search';
+const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
+const LIST_TYPE_SAVED_LIST = 'My saved lists';
 const FLASHCARD_URL = '/flashcards/';
 
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
@@ -60,7 +61,7 @@ class TableCreator extends React.Component {
     super(props);
     this.state = {
       activeGameType: GAME_TYPE_NEW,
-      activeSearchType: SEARCH_TYPE_CHALLENGE,
+      activeListType: LIST_TYPE_CHALLENGE,
 
       currentLexicon: this.props.defaultLexicon,
 
@@ -73,9 +74,16 @@ class TableCreator extends React.Component {
       challengeData: {},
       currentChallenge: null,
       // Word-search related
-      probMin: '1',
-      probMax: '50',
-      wordLength: 2,
+      wordSearchCriteria: [{
+        searchType: SearchTypesEnum.LENGTH,
+        minValue: 5,
+        maxValue: 5,
+      }, {
+        searchType: SearchTypesEnum.PROBABILITY,
+        minValue: 1,
+        maxValue: 100,
+      }],
+
       // Aerolith lists
       aerolithLists: [],
       selectedList: '',
@@ -95,6 +103,7 @@ class TableCreator extends React.Component {
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
     this.searchParamChange = this.searchParamChange.bind(this);
+    this.searchTypeChange = this.searchTypeChange.bind(this);
     this.selectedListChange = this.selectedListChange.bind(this);
     this.searchSubmit = this.searchSubmit.bind(this);
     this.flashcardSearchSubmit = this.flashcardSearchSubmit.bind(this);
@@ -104,6 +113,8 @@ class TableCreator extends React.Component {
     this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
     this.onMultiplayerModify = this.onMultiplayerModify.bind(this);
+    this.addSearchRow = this.addSearchRow.bind(this);
+    this.removeSearchRow = this.removeSearchRow.bind(this);
   }
 
   /**
@@ -119,7 +130,7 @@ class TableCreator extends React.Component {
         (prevState.currentDate.format(DATE_FORMAT_STRING) !==
          this.state.currentDate.format(DATE_FORMAT_STRING))) {
       // We may need to load new lists or challenges.
-      this.loadInfoForSearchType(this.state.activeSearchType);
+      this.loadInfoForListType(this.state.activeListType);
       challengeParamsChanged = true;
     }
     if (prevState.currentChallenge !== this.state.currentChallenge ||
@@ -163,17 +174,17 @@ class TableCreator extends React.Component {
     .always(() => this.hideSpinner());
   }
 
-  loadInfoForSearchType(option) {
+  loadInfoForListType(option) {
     switch (option) {
-      case SEARCH_TYPE_CHALLENGE:
+      case LIST_TYPE_CHALLENGE:
         this.loadChallengePlayedInfo();
         break;
 
-      case SEARCH_TYPE_SAVED_LIST:
+      case LIST_TYPE_SAVED_LIST:
         this.loadSavedListInfo();
         break;
 
-      case SEARCH_TYPE_AEROLITH_LISTS:
+      case LIST_TYPE_AEROLITH_LISTS:
         this.loadAerolithListInfo();
         break;
       default:
@@ -186,8 +197,8 @@ class TableCreator extends React.Component {
   // pattern. We just make sure we reload any lists/etc when a user
   // reopens the dialog.
   resetDialog() {
-    this.loadInfoForSearchType(this.state.activeSearchType);
-    if (this.state.activeSearchType === SEARCH_TYPE_CHALLENGE) {
+    this.loadInfoForListType(this.state.activeListType);
+    if (this.state.activeListType === LIST_TYPE_CHALLENGE) {
       this.loadChallengeLeaderboardData();
     }
   }
@@ -203,6 +214,27 @@ class TableCreator extends React.Component {
   hideSpinner() {
     this.props.setLoadingData(false);
   }
+
+  addSearchRow() {
+    const toadd = searchCriterionToAdd(this.state.wordSearchCriteria);
+    if (!toadd) {
+      return;   // Don't add any more.
+    }
+
+    const newCriteria = this.state.wordSearchCriteria.concat(toadd);
+    this.setState({
+      wordSearchCriteria: newCriteria,
+    });
+  }
+
+  removeSearchRow(criteriaIndex) {
+    const currentCriteria = this.state.wordSearchCriteria;
+    currentCriteria.splice(criteriaIndex, 1);
+    this.setState({
+      wordSearchCriteria: currentCriteria,
+    });
+  }
+
   /**
    * Submit a challenge to the backend.
    */
@@ -225,15 +257,24 @@ class TableCreator extends React.Component {
     .always(() => this.hideSpinner());
   }
 
+  /**
+   * Turn the search criteria into something the back end would understand.
+   * @return {Array.<Object>}
+   */
+  searchCriteriaMapper() {
+    return this.state.wordSearchCriteria.map(
+      criterion => Object.assign({}, criterion, {
+        searchType: SearchTypesEnum.properties[criterion.searchType].name,
+      }));
+  }
+
   searchSubmit() {
     this.showSpinner();
     $.ajax({
       url: '/wordwalls/api/new_search/',
       data: JSON.stringify({
         lexicon: this.state.currentLexicon,
-        probMin: parseInt(this.state.probMin, 10),
-        probMax: parseInt(this.state.probMax, 10),
-        wordLength: this.state.wordLength,
+        searchCriteria: this.searchCriteriaMapper(),
         desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
@@ -261,9 +302,7 @@ class TableCreator extends React.Component {
       data: {
         action: 'searchParamsFlashcard',
         lexicon: this.state.currentLexicon,
-        wordLength: this.state.wordLength,
-        probabilityMin: parseInt(this.state.probMin, 10),
-        probabilityMax: parseInt(this.state.probMax, 10),
+        searchCriteria: this.searchCriteriaMapper(),
       },
     })
     .done(data => TableCreator.redirectUrl(data.url))
@@ -438,10 +477,36 @@ class TableCreator extends React.Component {
     .always(() => this.hideSpinner());
   }
 
-  searchParamChange(paramName, paramValue) {
-    const curState = {};
-    curState[paramName] = paramValue;
-    this.setState(curState);
+  searchParamChange(index, paramName, paramValue) {
+    const criteria = this.state.wordSearchCriteria;
+    const valueModifier = (val) => {
+      if (paramName === 'minValue' || paramName === 'maxValue') {
+        return parseInt(val, 10) || 0;
+      } else if (paramName === 'valueList') {
+        return val.trim();
+      }
+      return val;
+    };
+
+    criteria[index][paramName] = valueModifier(paramValue);
+    this.setState({
+      wordSearchCriteria: criteria,
+    });
+  }
+
+  searchTypeChange(index, value) {
+    const criteria = this.state.wordSearchCriteria;
+    const searchType = parseInt(value, 10);
+    criteria[index].searchType = searchType;
+    // Reset the values.
+    if (searchType !== SearchTypesEnum.TAGS) {
+      criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
+      criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
+    }
+    console.log('Resetting to', criteria);
+    this.setState({
+      wordSearchCriteria: criteria,
+    });
   }
 
   selectedListChange(listId) {
@@ -480,8 +545,8 @@ class TableCreator extends React.Component {
 
   renderQuizSearch() {
     let selectedQuizSearchDialog;
-    switch (this.state.activeSearchType) {
-      case SEARCH_TYPE_CHALLENGE:
+    switch (this.state.activeListType) {
+      case LIST_TYPE_CHALLENGE:
         selectedQuizSearchDialog = (
           <ChallengeDialog
             challengeInfo={this.props.challengeInfo}
@@ -499,7 +564,7 @@ class TableCreator extends React.Component {
             currentChallenge={this.state.currentChallenge}
           />);
         break;
-      case SEARCH_TYPE_WORDSEARCH:
+      case LIST_TYPE_WORDSEARCH:
         selectedQuizSearchDialog = (
           <WordSearchDialog
             lexicon={this.state.currentLexicon}
@@ -507,16 +572,17 @@ class TableCreator extends React.Component {
             onSearchSubmit={() => this.preSubmitHook(this.searchSubmit)}
             onFlashcardSubmit={() => this.preSubmitHook(
               this.flashcardSearchSubmit)}
+            onSearchTypeChange={this.searchTypeChange}
             onSearchParamChange={this.searchParamChange}
-            wordLength={this.state.wordLength}
-            probMin={this.state.probMin}
-            probMax={this.state.probMax}
+            removeSearchRow={this.removeSearchRow}
+            addSearchRow={this.addSearchRow}
+            searches={this.state.wordSearchCriteria}
             multiplayerOn={this.state.multiplayerOn}
             onMultiplayerModify={this.onMultiplayerModify}
           />);
 
         break;
-      case SEARCH_TYPE_SAVED_LIST:
+      case LIST_TYPE_SAVED_LIST:
         selectedQuizSearchDialog = (
           <SavedListDialog
             listOptions={this.state.savedLists}
@@ -529,7 +595,7 @@ class TableCreator extends React.Component {
             onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
-      case SEARCH_TYPE_AEROLITH_LISTS:
+      case LIST_TYPE_AEROLITH_LISTS:
         selectedQuizSearchDialog = (
           <AerolithListDialog
             listOptions={this.state.aerolithLists}
@@ -549,24 +615,24 @@ class TableCreator extends React.Component {
       <div>
         <Pills
           options={[
-            SEARCH_TYPE_CHALLENGE,
-            SEARCH_TYPE_WORDSEARCH,
-            SEARCH_TYPE_AEROLITH_LISTS,
-            SEARCH_TYPE_SAVED_LIST,
+            LIST_TYPE_CHALLENGE,
+            LIST_TYPE_WORDSEARCH,
+            LIST_TYPE_AEROLITH_LISTS,
+            LIST_TYPE_SAVED_LIST,
           ]}
-          activePill={this.state.activeSearchType}
+          activePill={this.state.activeListType}
           onPillClick={option => () => {
             this.setState({
-              activeSearchType: option,
+              activeListType: option,
             });
-            if (option !== SEARCH_TYPE_CHALLENGE) {
+            if (option !== LIST_TYPE_CHALLENGE) {
               // Reset the time back to the defaults.
               this.setState({
                 desiredTime: DEFAULT_TIME_PER_QUIZ,
                 questionsPerRound: 50,
               });
             }
-            this.loadInfoForSearchType(option);
+            this.loadInfoForListType(option);
           }}
         />
         {selectedQuizSearchDialog}
@@ -623,7 +689,7 @@ class TableCreator extends React.Component {
                   questionsPerRound: q,
                 })}
                 disabledInputs={
-                  this.state.activeSearchType === SEARCH_TYPE_CHALLENGE}
+                  this.state.activeListType === LIST_TYPE_CHALLENGE}
               />
             </div>
             <div className="col-sm-10">

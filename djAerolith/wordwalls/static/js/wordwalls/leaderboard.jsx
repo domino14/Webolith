@@ -15,31 +15,7 @@ const Leaderboard = (props) => {
       lastAnswer: answered.get(-1),
     });
   });
-  // leaderboard.push({
-  //   player: 'frankie',
-  //   correct: 3,
-  //   lastAnswer: Immutable.fromJS({ w: 'WECHED', s: '!' }),
-  // });
-  // leaderboard.push({
-  //   player: 'joey jo jo jr shabadoo',
-  //   correct: 6,
-  //   lastAnswer: Immutable.fromJS({ w: 'JOEY', s: '' }),
-  // });
-  // leaderboard.push({
-  //   player: 'matthewoconnorisaphonier',
-  //   correct: 5,
-  //   lastAnswer: Immutable.fromJS({ w: 'WECH', s: '😂' }),
-  // });
-  // leaderboard.push({
-  //   player: 'mina',
-  //   correct: 7,
-  //   lastAnswer: Immutable.fromJS({ w: '😍', s: '' }),
-  // });
-  // leaderboard.push({
-  //   player: 'dogs',
-  //   correct: 2,
-  //   lastAnswer: Immutable.fromJS({ w: 'hmmmm', s: '' }),
-  // });
+
   leaderboard.sort((a, b) => {
     if (a.correct < b.correct) {
       return 1;
@@ -48,7 +24,9 @@ const Leaderboard = (props) => {
     }
     return 0;
   });
+
   const showLexiconSymbols = props.showLexiconSymbols;
+
   leaderboard.forEach((item, idx) => {
     const word = item.lastAnswer;
     displayLeaderboard.push(

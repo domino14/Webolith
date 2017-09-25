@@ -143,22 +143,15 @@ def handle_table_post(request, tableid):
     """ XXX: This function should be separated into several RPC style
     API functions. """
     action = request.POST['action']
-    logger.debug(u'user=%s, action=%s, table=%s', request.user, action,
-                 tableid)
+    logger.info(u'user=%s, action=%s, table=%s', request.user, action,
+                tableid)
 
     if not tableid or int(tableid) == 0:   # Kind of hacky.
         return response({
             'success': False,
             'error': _('Table does not exist, please load a new word list.')},
             status=StatusCode.BAD_REQUEST)
-    if action == "start":
-        # XXX: Deprecated, this is handled by socket, remove after deploy.
-        logger.debug('old-way start')
-        return response({
-            'success': False,
-            'error': _('App has been updated; please refresh your page.')},
-            status=StatusCode.BAD_REQUEST)
-    elif action == "gameEnded":
+    if action == "gameEnded":
         wwg = WordwallsGame()
         ret = wwg.check_game_ended(tableid)
         # 'going' is the opposite of 'game ended'
@@ -172,7 +165,7 @@ def handle_table_post(request, tableid):
         wwg = WordwallsGame()
         ret = wwg.give_up_and_save(request.user, tableid,
                                    request.POST['listname'])
-        logger.debug("Give up and saving returned: %s" % ret)
+        logger.info("Give up and saving returned: %s" % ret)
         return response(ret)
     elif action == "savePrefs":
         profile = request.user.aerolithprofile
@@ -203,7 +196,7 @@ def ajax_upload(request):
         lex = Lexicon.objects.get(
             lexiconName=lex_form.cleaned_data['lexicon'])
     else:
-        logger.debug(lex_form.errors)
+        logger.warning(lex_form.errors)
         return response(_('Bad lexicon.'), StatusCode.BAD_REQUEST)
 
     uploaded_file = request.FILES['file']
@@ -257,7 +250,7 @@ def create_user_list(contents, filename, lex, user):
             'remove this limit by upgrading your membership!')
     db = WordDB(lex.lexiconName)
 
-    questions = db.get_questions(alphas)
+    questions = db.get_questions_from_alphagrams(alphas)
     num_alphagrams = questions.size()
 
     logger.info('number of uploaded alphagrams: %d', num_alphagrams)

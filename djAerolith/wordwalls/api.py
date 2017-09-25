@@ -1,5 +1,5 @@
 import json
-from datetime import date, datetime
+from datetime import datetime
 import logging
 
 from django.contrib.auth.decorators import login_required
@@ -19,6 +19,7 @@ from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame, GameInitException
 
 logger = logging.getLogger(__name__)
+strptime = datetime.strptime
 
 
 def configure(request):
@@ -132,9 +133,7 @@ def load_new_words(f):
                 parsed_req['questions_per_round'] < 15):
             return bad_request(
                 'Questions per round must be between 15 and 200.')
-        parsed_req['prob_min'] = body.get('probMin')
-        parsed_req['prob_max'] = body.get('probMax')
-        parsed_req['word_length'] = body.get('wordLength')
+        parsed_req['search_criteria'] = body.get('searchCriteria', [])
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
         parsed_req['multiplayer'] = body.get('multiplayer')
@@ -189,6 +188,42 @@ def new_challenge(request, parsed_req_body):
     return table_response(tablenum)
 
 
+def build_search_criteria(user, lexicon, fe_search_criteria):
+    search = [
+        SearchDescription.lexicon(lexicon),
+    ]
+    hold_until_end = None
+    for criterion in fe_search_criteria:
+        if criterion['searchType'] in (SearchDescription.LENGTH,
+                                       SearchDescription.PROB_RANGE,
+                                       SearchDescription.NUM_ANAGRAMS,
+                                       SearchDescription.NUM_VOWELS,
+                                       SearchDescription.POINT_VALUE):
+            search.append({
+                'condition': criterion['searchType'],
+                'min': int(criterion['minValue']),
+                'max': int(criterion['maxValue']),
+            })
+
+        elif criterion['searchType'] == SearchDescription.HAS_TAGS:
+            tags = criterion['valueList'].split(',')
+            new_tags = []
+            for t in tags:
+                stripped = t.strip()
+                if stripped != '':
+                    new_tags.append(stripped)
+            if hold_until_end:
+                raise GameInitException('You can only specify one set of tags')
+            hold_until_end = {
+                'condition': criterion['searchType'],
+                'user': user,
+                'tags': new_tags,
+            }
+    if hold_until_end:
+        search.append(hold_until_end)
+    return search
+
+
 @login_required
 @require_POST
 @load_new_words
@@ -197,17 +232,18 @@ def new_search(request, parsed_req_body):
     Load a new search into this table.
 
     """
+    try:
+        search = build_search_criteria(
+            request.user, parsed_req_body['lexicon'],
+            parsed_req_body['search_criteria'])
 
-    search = SearchDescription.probability_range(
-        parsed_req_body['prob_min'], parsed_req_body['prob_max'],
-        parsed_req_body['word_length'], parsed_req_body['lexicon'])
-
-    tablenum = WordwallsGame().initialize_by_search_params(
-        request.user, search, parsed_req_body['quiz_time_secs'],
-        parsed_req_body['questions_per_round'],
-        use_table=parsed_req_body['tablenum'],
-        multiplayer=parsed_req_body['multiplayer'])
-
+        tablenum = WordwallsGame().initialize_by_search_params(
+            request.user, search, parsed_req_body['quiz_time_secs'],
+            parsed_req_body['questions_per_round'],
+            use_table=parsed_req_body['tablenum'],
+            multiplayer=parsed_req_body['multiplayer'])
+    except GameInitException as e:
+        return bad_request(str(e))
     return table_response(tablenum)
 
 
@@ -323,7 +359,9 @@ def date_from_str(dt):
 
     today = timezone.localtime(timezone.now()).date()
     try:
-        ch_date = datetime.strptime(dt, '%Y-%m-%d').date()
+        # strptime has multithreading issues on Python 2 and this is
+        # an occasional error. XXX: Move to Python 3 already.
+        ch_date = strptime(dt, '%Y-%m-%d').date()
     except (ValueError, TypeError):
         ch_date = today
 

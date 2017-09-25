@@ -25,7 +25,9 @@ const Select = (props) => {
     <div className="form-group">
       <div className="row">
         <div className={inputColSizeClass}>
-          <label>{props.label} {badge}</label>
+          <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+            {props.label} {badge}
+          </label>
           <select
             value={props.selectedValue}
             onChange={props.onChange}

@@ -28,8 +28,8 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 
 from base.forms import SavedListForm
-from lib.word_db_helper import WordDB, Questions
-from lib.word_searches import word_search
+from lib.word_db_helper import WordDB, Questions, word_search, BadInput
+from lib.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
@@ -129,11 +129,11 @@ class WordwallsGame(object):
             # This word list is old. Check to make sure it's in no tables.
             if WordwallsGameModel.objects.filter(
                     word_list=old_word_list).count() == 0:
-                logger.debug('Deleting old, temporary word list: %s',
-                             old_word_list)
+                logger.info('Deleting old, temporary word list: %s',
+                            old_word_list)
                 old_word_list.delete()
             else:
-                logger.debug('Old word list is still in use, not deleting...')
+                logger.info('Old word list is still in use, not deleting...')
         from wordwalls.signal_handlers import game_important_save
         game_important_save.send(sender=self.__class__, instance=wgm)
         return wgm
@@ -149,6 +149,8 @@ class WordwallsGame(object):
         user - The user.
 
         """
+        if questions.size() == 0:
+            raise GameInitException('No questions were found.')
         wl = WordList()
         wl.initialize_list(questions.to_python(), lexicon, user, shuffle=True,
                            category=category)
@@ -229,7 +231,7 @@ class WordwallsGame(object):
 
             qs, secs = ret
             if qs.size() == 0:
-                logger.error('Empty questions.')
+                logger.info('Empty questions.')
                 return None
             ch_category = DailyChallenge.CATEGORY_ANAGRAM
             if qs.build_mode:
@@ -250,18 +252,20 @@ class WordwallsGame(object):
     def initialize_by_search_params(self, user, search_description, time_secs,
                                     questions_per_round=None, use_table=None,
                                     multiplayer=None):
-        lexicon = search_description['lexicon']
-        wl = self.initialize_word_list(word_search(search_description),
-                                       lexicon, user)
-        temporary_list_name = '{0} {1}s ({2} - {3})'.format(
-            search_description['lexicon'].lexiconName,
-            search_description['length'],
-            search_description['min'],
-            search_description['max']
-        )
+
+        try:
+            lexicon = search_description[0]['lexicon']
+        except (KeyError, IndexError):
+            raise GameInitException(
+                'Search description not properly formatted')
+        try:
+            wl = self.initialize_word_list(word_search(search_description),
+                                           lexicon, user)
+        except BadInput as e:
+            raise GameInitException(e)
         wgm = self.create_or_update_game_instance(
             user, lexicon, wl, use_table, multiplayer, timerSecs=time_secs,
-            temp_list_name=temporary_list_name,
+            temp_list_name=temporary_list_name(search_description),
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 
@@ -272,7 +276,7 @@ class WordwallsGame(object):
         db = WordDB(lex.lexiconName)
         if named_list.isRange:
             questions = db.get_questions_for_probability_range(
-                qs[0], qs[1], named_list.wordLength, order=False)
+                qs[0], qs[1], named_list.wordLength)
             wl = self.initialize_word_list(questions, lex, user)
         else:
             # Initialize word list directly.
@@ -354,7 +358,7 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
 
         if state['quizGoing']:
-            logger.debug('The quiz is going, state %s', state)
+            logger.info('The quiz is going, state %s', state)
             # The quiz is running right now; do not attempt to start again
             return self.create_error_message(
                 _("The quiz is currently running."))
@@ -595,8 +599,8 @@ class WordwallsGame(object):
                      'been deleted. Please load or create a new list.')
 
     def save(self, user, tablenum, listname):
-        logger.debug(u'user=%s, tablenum=%s, listname=%s, event=save',
-                     user, tablenum, listname)
+        logger.info(u'user=%s, tablenum=%s, listname=%s, event=save',
+                    user, tablenum, listname)
         wgm = self.get_wgm(tablenum)
         if not wgm:
             return {'success': False, 'info': _('That table does not exist!')}
@@ -622,8 +626,8 @@ class WordwallsGame(object):
         # Maybe we want a way to "save as" another list; think about
         # a list copy.
         word_list.name = listname
-        logger.debug(u'Saving word_list, name is %s (%s)', word_list.name,
-                     type(word_list.name))
+        logger.info(u'Saving word_list, name is %s (%s)', word_list.name,
+                    type(word_list.name))
         if make_permanent_list:
             word_list.is_temporary = False
             profile = user.aerolithprofile

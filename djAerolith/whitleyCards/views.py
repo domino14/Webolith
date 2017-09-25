@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 
@@ -5,23 +6,15 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
-from lib.word_db_helper import WordDB
+from lib.word_db_helper import WordDB, word_search
 from lib.response import response
-from lib.word_searches import SearchDescription
-from base.forms import LexiconForm, FindWordsForm, NamedListForm, SavedListForm
+from wordwalls.api import build_search_criteria
+from base.forms import LexiconForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList
 from base.models import Lexicon, WordList
 logger = logging.getLogger(__name__)
 
 QUIZ_CHUNK_SIZE = 5000
-
-
-def searchForAlphagrams(data, lex):
-    """ Searches for alphagrams using form data """
-    length = int(data['wordLength'])
-    return SearchDescription.probability_range(data['probabilityMin'],
-                                               data['probabilityMax'],
-                                               length, lex)
 
 
 @login_required
@@ -30,56 +23,90 @@ def createQuiz(request):
         return render(request, 'whitleyCards/index.html',
                       {'accessedWithGet': True})
     elif request.method == 'POST':
-        action = request.POST.get('action')
-        if action == 'searchParamsFlashcard':
-            lexForm = LexiconForm(request.POST)
-            # form bound to the POST data
-            fwForm = FindWordsForm(request.POST)
-            if lexForm.is_valid() and fwForm.is_valid():
-                lex = Lexicon.objects.get(
-                    lexiconName=lexForm.cleaned_data['lexicon'])
-                asd = searchForAlphagrams(fwForm.cleaned_data, lex)
-                return response({
-                    'url': reverse('flashcards_by_prob_range',
-                                   args=(asd['lexicon'].pk, asd['length'],
-                                         asd['min'], asd['max'])),
-                    'success': True})
+        return handle_create_post(request)
 
-        elif action == 'namedListsFlashcard':
-            lexForm = LexiconForm(request.POST)
-            nlForm = NamedListForm(request.POST)
-            if lexForm.is_valid() and nlForm.is_valid():
-                lex = Lexicon.objects.get(
-                    lexiconName=lexForm.cleaned_data['lexicon'])
-                # lex doesn't matter
-                return response({
-                    'url': reverse(
-                        'flashcards_by_namedList_pk',
-                        args=(nlForm.cleaned_data['namedList'].pk,)),
-                    'success': True})
-        elif (action == 'savedListsFlashcardEntire' or
-                action == 'savedListsFlashcardFM'):
-            lexForm = LexiconForm(request.POST)
-            slForm = SavedListForm(request.POST)
-            if lexForm.is_valid() and slForm.is_valid():
-                lex = Lexicon.objects.get(
-                    lexiconName=lexForm.cleaned_data['lexicon'])
-                # lex doesn't matter
 
-                if request.POST['action'] == 'savedListsFlashcardEntire':
-                    option = SavedListForm.RESTART_LIST_CHOICE
-                elif request.POST['action'] == 'savedListsFlashcardFM':
-                    option = SavedListForm.FIRST_MISSED_CHOICE
+def search_criteria_to_b64(request_post):
+    search = []
+    idx = 0
 
-                return response({
-                    'url': reverse('flashcards_by_savedList_pk',
-                                   args=(slForm.cleaned_data['wordList'].pk,
-                                         option)),
-                    'success': True})
-                # don't do any checking right now for user access to
-                # other user lists. why? maybe people can share lists
-                # this way as long as we're not letting the users delete
-                # lists, i think it should be fine.
+    while True:
+        new_search = {}
+        key = 'searchCriteria[{}]'.format(idx)
+        search_type = request_post.get('{}[searchType]'.format(key))
+        logger.debug('Getting key %s, value %s', '{}[searchType]'.format(key),
+                     search_type)
+        if not search_type:
+            break
+        new_search['searchType'] = search_type
+
+        for k in ('minValue', 'maxValue', 'valueList'):
+            v = request_post.get('{}[{}]'.format(key, k))
+            if v:
+                new_search[k] = v
+        search.append(new_search)
+        idx += 1
+
+    dumped = json.dumps(search, separators=(',', ':'))
+    logger.debug('Encoding %s', dumped)
+    return base64.urlsafe_b64encode(dumped.encode('zlib'))
+
+
+def search_criteria_from_b64(encoded):
+    d = base64.urlsafe_b64decode(str(encoded))
+    return json.loads(d.decode('zlib'))
+
+
+def handle_create_post(request):
+    action = request.POST.get('action')
+    if action == 'searchParamsFlashcard':
+        # form bound to the POST data
+        lexForm = LexiconForm(request.POST)
+        if lexForm.is_valid():
+            lex = Lexicon.objects.get(
+                lexiconName=lexForm.cleaned_data['lexicon'])
+            logger.debug('POST data %s', request.POST)
+            encoded_search = search_criteria_to_b64(request.POST)
+            return response({
+                'url': reverse('flashcards_by_search', args=(lex.pk,
+                                                             encoded_search)),
+                'success': True})
+
+    elif action == 'namedListsFlashcard':
+        lexForm = LexiconForm(request.POST)
+        nlForm = NamedListForm(request.POST)
+        if lexForm.is_valid() and nlForm.is_valid():
+            lex = Lexicon.objects.get(
+                lexiconName=lexForm.cleaned_data['lexicon'])
+            # lex doesn't matter
+            return response({
+                'url': reverse(
+                    'flashcards_by_namedList_pk',
+                    args=(nlForm.cleaned_data['namedList'].pk,)),
+                'success': True})
+    elif (action == 'savedListsFlashcardEntire' or
+            action == 'savedListsFlashcardFM'):
+        lexForm = LexiconForm(request.POST)
+        slForm = SavedListForm(request.POST)
+        if lexForm.is_valid() and slForm.is_valid():
+            lex = Lexicon.objects.get(
+                lexiconName=lexForm.cleaned_data['lexicon'])
+            # lex doesn't matter
+
+            if request.POST['action'] == 'savedListsFlashcardEntire':
+                option = SavedListForm.RESTART_LIST_CHOICE
+            elif request.POST['action'] == 'savedListsFlashcardFM':
+                option = SavedListForm.FIRST_MISSED_CHOICE
+
+            return response({
+                'url': reverse('flashcards_by_savedList_pk',
+                               args=(slForm.cleaned_data['wordList'].pk,
+                                     option)),
+                'success': True})
+            # don't do any checking right now for user access to
+            # other user lists. why? maybe people can share lists
+            # this way as long as we're not letting the users delete
+            # lists, i think it should be fine.
     return response({'success': False,
                      'error': 'Did you select a list to flashcard?'},
                     status=400)
@@ -96,43 +123,53 @@ def getQuizChunkByProb(lexicon, length, minP, maxP):
     return (wordData, newMinP, maxP)
 
 
-def getQuizChunkByQuestions(lexicon, questions, minIndex):
+def getQuizChunkByQuestions(lexicon, questions, minIndex, is_q_obj=False):
     maxIndexGet = len(questions) - 1
     newMinIndex = -1
     if len(questions) > QUIZ_CHUNK_SIZE:
         maxIndexGet = minIndex + QUIZ_CHUNK_SIZE - 1
         newMinIndex = minIndex + QUIZ_CHUNK_SIZE
 
-    wordData = getWordDataFromQuestions(lexicon,
-                                        questions[minIndex:maxIndexGet+1])
+    if is_q_obj:
+        # The `questions` obj already contains the words, etc.
+        wordData = get_word_data(questions[minIndex:maxIndexGet+1])
+    else:
+        wordData = getWordDataFromQuestions(lexicon,
+                                            questions[minIndex:maxIndexGet+1])
     # will get minIndex to maxIndexGet inclusive
     return (wordData, newMinIndex, len(questions) - 1)
 
 
 @login_required
-def prob_range(request, lexid, length, minP, maxP):
-    lexicon = Lexicon.objects.get(pk=lexid)
+def search(request, lex_id, paramsb64):
     if request.method == 'GET':
         return render(request, 'whitleyCards/quiz.html')
     elif request.method == 'POST':
         action = request.POST['action']
+        lex = Lexicon.objects.get(pk=lex_id)
+        search_params = build_search_criteria(
+            request.user, lex, search_criteria_from_b64(paramsb64))
+        questions = word_search(search_params)
+
         if action == 'getInitialSet':
-            minP = int(minP)
-            maxP = int(maxP)
-            data = getQuizChunkByProb(lexicon, length, minP, maxP)
-            return response({'data': data[0],
-                             'nextMinP': data[1],
-                             'nextMaxP': data[2],
-                             'numAlphas': maxP-minP+1})
+            data = getQuizChunkByQuestions(lex, questions, 0, is_q_obj=True)
+            return response({
+                'data': data[0],
+                'nextMinP': data[1],
+                'nextMaxP': data[2],
+                'numAlphas': questions.size(),
+            })
+
         elif action == 'getNextSet':
+            # minP and maxP are more like indices now.
             minP = int(request.POST['minP'])
 
             if minP == -1:  # quiz is over
                 return response({'data': []})
 
             maxP = int(request.POST['maxP'])
-            logger.debug("getting set %s, %s", minP, maxP)
-            data = getQuizChunkByProb(lexicon, length, minP, maxP)
+            logger.info("getting set %s, %s", minP, maxP)
+            data = getQuizChunkByQuestions(lex, questions, minP, is_q_obj=True)
             return response({'data': data[0],
                              'nextMinP': data[1],
                              'nextMaxP': data[2]})
@@ -173,7 +210,7 @@ def namedListPk(request, nlpk):
                 return response({'data': []})
             maxP = int(request.POST['maxP'])
             # these are now indices
-            logger.debug("getting set %s, %s", minP, maxP)
+            logger.info("getting set %s, %s", minP, maxP)
             data = getQuizChunkFromNamedList(nlpk, minP)
             return response({'data': data[0],
                              'nextMinP': data[1],
@@ -214,7 +251,7 @@ def savedListPk(request, slpk, option):
                 return response({'data': []})
 
             maxP = int(request.POST['maxP'])
-            logger.debug("getting set %s, %s", minP, maxP)
+            logger.info("getting set %s, %s", minP, maxP)
             data = getQuizChunkFromSavedList(slpk, minP, int(option))
             return response({'data': data[0],
                              'nextMinP': data[1],

@@ -10,7 +10,6 @@ djAerolith/static/img/avatars/*
 wordsdir/
 djAerolith/logs
 *.sublime-workspace
-*.sublime-project
 namedLists.json
 djAerolith/static/build/*
 djAerolith/static/built/*

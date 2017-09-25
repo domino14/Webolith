@@ -1,56 +1,51 @@
 import React from 'react';
 import Select from '../forms/select';
-import NumberInput from '../forms/number_input';
-
+import SearchRow, { SearchTypesEnum } from './search_row';
 // Questions per round && time per round
-function genWordLengthOptions() {
-  return [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(el => ({
-    value: String(el),
-    displayValue: String(el),
-  }));
-}
+// function genWordLengthOptions() {
+//   return [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(el => ({
+//     value: String(el),
+//     displayValue: String(el),
+//   }));
+// }
 
 class WordSearchDialog extends React.Component {
-  constructor() {
-    super();
-    this.handleMinProbChange = this.handleMinProbChange.bind(this);
-    this.handleMaxProbChange = this.handleMaxProbChange.bind(this);
-  }
+  // constructor() {
+  //   super();
+  //   this.handleMinProbChange = this.handleMinProbChange.bind(this);
+  //   this.handleMaxProbChange = this.handleMaxProbChange.bind(this);
+  // }
 
-  getMaxProbForLength(wordLength) {
-    const foundLex = this.props.availableLexica.find(
-      lex => lex.id === this.props.lexicon);
-    return foundLex.lengthCounts[wordLength];
-  }
+  // getMaxProbForLength(wordLength) {
+  //   const foundLex = this.props.availableLexica.find(
+  //     lex => lex.id === this.props.lexicon);
+  //   return foundLex.lengthCounts[wordLength];
+  // }
 
-  handleMinProbChange(event) {
-    let min = parseInt(event.target.value, 10);
-    if (Number.isNaN(min)) {
-      min = '';
-    }
-    this.props.onSearchParamChange('probMin', String(min));
-  }
+  // handleMinProbChange(event) {
+  //   let min = parseInt(event.target.value, 10);
+  //   if (Number.isNaN(min)) {
+  //     min = '';
+  //   }
+  //   this.props.onSearchParamChange('probMin', String(min));
+  // }
 
-  handleMaxProbChange(event) {
-    let max = parseInt(event.target.value, 10);
-    if (Number.isNaN(max)) {
-      max = '';
-    }
-    // From the length counts, limit max probability.
-    const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
-    if (max > maxProbForLength) {
-      max = maxProbForLength;
-    }
-    this.props.onSearchParamChange('probMax', String(max));
-  }
+  // handleMaxProbChange(event) {
+  //   let max = parseInt(event.target.value, 10);
+  //   if (Number.isNaN(max)) {
+  //     max = '';
+  //   }
+  //   // From the length counts, limit max probability.
+  //   const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
+  //   if (max > maxProbForLength) {
+  //     max = maxProbForLength;
+  //   }
+  //   this.props.onSearchParamChange('probMax', String(max));
+  // }
 
 
-  render() {
-    const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
-    return (
-      <div className="row">
-        <div className="col-sm-8">
-          <Select
+/**
+ *           <Select
             colSize={4}
             label="Word Length"
             selectedValue={String(this.props.wordLength)}
@@ -70,6 +65,34 @@ class WordSearchDialog extends React.Component {
             value={this.props.probMax}
             onChange={this.handleMaxProbChange}
           />
+ */
+
+  searchRows() {
+    const rows = this.props.searches.map((search, idx) => (
+      <SearchRow
+        key={idx}
+        index={idx}
+        searchType={search.searchType}
+        minValue={search.minValue}
+        maxValue={search.maxValue}
+        minAllowedValue={SearchTypesEnum.properties[search.searchType].minAllowed}
+        maxAllowedValue={SearchTypesEnum.properties[search.searchType].maxAllowed}
+        valueList={search.valueList}
+        addRow={this.props.addSearchRow}
+        removeRow={this.props.removeSearchRow}
+        removeDisabled={idx === 0 && this.props.searches.length === 1}
+        modifySearchType={this.props.onSearchTypeChange}
+        modifySearchParam={this.props.onSearchParamChange}
+      />));
+    return rows;
+  }
+
+  render() {
+    // const maxProbForLength = this.getMaxProbForLength(this.props.wordLength);
+    return (
+      <div className="row" style={{ marginTop: '8px' }}>
+        <div className="col-sm-8">
+          {this.searchRows()}
           <Select
             colSize={4}
             label="Mode"
@@ -99,19 +122,27 @@ class WordSearchDialog extends React.Component {
 }
 
 WordSearchDialog.propTypes = {
+  searches: React.PropTypes.arrayOf(React.PropTypes.shape({
+    searchType: React.PropTypes.number,
+    minValue: React.PropTypes.number,
+    maxValue: React.PropTypes.number,
+    minAllowedValue: React.PropTypes.number,
+    maxAllowedValue: React.PropTypes.number,
+    valueList: React.PropTypes.string,
+  })),
+  onSearchTypeChange: React.PropTypes.func,
   onSearchParamChange: React.PropTypes.func,
-  wordLength: React.PropTypes.number,
-  probMin: React.PropTypes.string,
-  probMax: React.PropTypes.string,
+  addSearchRow: React.PropTypes.func,
+  removeSearchRow: React.PropTypes.func,
   onSearchSubmit: React.PropTypes.func,
   onFlashcardSubmit: React.PropTypes.func,
-  availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    lexicon: React.PropTypes.string,
-    description: React.PropTypes.string,
-    counts: React.PropTypes.object,
-  })),
-  lexicon: React.PropTypes.number,
+  // availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
+  //   id: React.PropTypes.number,
+  //   lexicon: React.PropTypes.string,
+  //   description: React.PropTypes.string,
+  //   counts: React.PropTypes.object,
+  // })),
+  // lexicon: React.PropTypes.number,
   multiplayerOn: React.PropTypes.bool,
   onMultiplayerModify: React.PropTypes.func,
 };

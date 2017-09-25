@@ -8,9 +8,15 @@ import os
 import logging
 import json
 import random
+import time
 import sys
+import copy
 
 from django.conf import settings
+
+from base.models import AlphagramTag
+from lib.word_searches import SearchDescription
+
 
 logger = logging.getLogger(__name__)
 MAX_CHUNK_SIZE = 999
@@ -46,6 +52,9 @@ class Word(object):
     def __unicode__(self):
         return u'{%s}' % self.word
 
+    def __eq__(self, other):
+        return self.word == other.word
+
 
 class Alphagram(object):
     def __init__(self, alphagram, probability=None, combinations=None):
@@ -64,7 +73,7 @@ class Alphagram(object):
         return stdout_encode(self.__unicode__())
 
     def __unicode__(self):
-        return u'{%s}' % self.alphagram
+        return u'{%s} (%s)' % (self.alphagram, self.probability)
 
 
 class Questions(object):
@@ -86,6 +95,13 @@ class Questions(object):
 
     def size(self):
         return len(self.questions)
+
+    def __len__(self):
+        return self.size()
+
+    def __getitem__(self, key):
+        logger.debug('Calling __getitem__ with key %s', key)
+        return self.questions[key]
 
     def shuffle(self):
         random.shuffle(self.questions)
@@ -112,6 +128,15 @@ class Questions(object):
             question = Question()
             question.set_from_obj(q)
             self.append(question)
+
+    def sort_by_probability(self):
+        self.questions.sort(key=lambda q: q.alphagram.probability)
+
+    def alphagram_string_set(self):
+        return set(self.alphagram_string_list())
+
+    def alphagram_string_list(self):
+        return [a.alphagram.alphagram for a in self.questions]
 
     def __repr__(self):
         return stdout_encode(self.__unicode__())
@@ -187,6 +212,7 @@ class WordDB(object):
             raise BadInput('Database does not exist for lexicon {0}'.format(
                            lexicon_name))
         self.conn = sqlite3.connect(file_path)
+        self.lexicon_name = lexicon_name
 
     def get_word_data(self, word):
         """
@@ -207,7 +233,7 @@ class WordDB(object):
 
     def get_words_data(self, words):
         """ Gets data for the words passed in. """
-        logger.debug('Getting word data for %s words.', len(words))
+        logger.info('Getting word data for %s words.', len(words))
         c = self.conn.cursor()
         idx = 0
         word_data = []
@@ -231,23 +257,23 @@ class WordDB(object):
                          lexicon_symbols=row[0], alphagram=row[6]))
         return word_data
 
-    # XXX: Only used by tests.
-    def get_alphagram_data(self, alphagram):
-        c = self.conn.cursor()
-        c.execute('SELECT probability, combinations FROM alphagrams '
-                  'WHERE alphagram = ?', (alphagram,))
-        row = c.fetchone()
-        if row:
-            return Alphagram(alphagram=alphagram, probability=row[0],
-                             combinations=row[1])
-        return None
-
     def get_alphagrams_data(self, alphagrams):
         """
         Get data for a list of passed-in strings. Some alphagrams may
         not have available data, such as those with blanks.
 
         """
+
+        def _alphagrams(c):
+            """ Returns a list of alphagrams fetched by cursor `c`."""
+            alphagrams = []
+            rows = c.fetchall()
+            for row in rows:
+                alphagrams.append(Alphagram(alphagram=row[0],
+                                            probability=row[1],
+                                            combinations=row[2]))
+            return alphagrams
+
         c = self.conn.cursor()
         ret_alphagrams = []
         idx = 0
@@ -258,94 +284,59 @@ class WordDB(object):
                 'SELECT alphagram, probability, combinations FROM alphagrams'
                 ' WHERE alphagram IN (%s)' % ','.join('?' * num_alphas),
                 these_alphagrams)
-            ret_alphagrams.extend(self._alphagrams(c))
+            ret_alphagrams.extend(_alphagrams(c))
             idx += MAX_CHUNK_SIZE
 
-        logger.debug('get_alphagrams_data returned %s alphagrams',
-                     len(ret_alphagrams))
+        logger.info('get_alphagrams_data returned %s alphagrams',
+                    len(ret_alphagrams))
         return ret_alphagrams
 
-    # XXX: Only used by tests.
-    def probability(self, alphagram):
-        """
-        Gets the probability for the alphagram. Returns None if the
-        alphagram is not found (this can be the case for words with
-        blanks).
-
-        """
+    def get_questions_from_configs(self, configs):
+        t = time.time()
+        qgen = QueryGenerator(configs, self.lexicon_name)
+        queries = qgen.generate()
         c = self.conn.cursor()
-        c.execute('SELECT probability FROM alphagrams WHERE alphagram=?',
-                  (alphagram,))
-        row = c.fetchone()
-        return row[0]
+        qs = Questions()
+        for query in queries:
+            # Unpack the args appropriately.
+            c.execute(*query.execution_context())
+            rows = c.fetchall()
+            questions = self.process_question_query(rows)
+            qs.extend(questions)
+        logger.info('Time taken: %s s. (params: %s)', time.time() - t,
+                    configs)
+        return qs
 
-    def _alphagrams(self, c):
-        """ Returns a list of alphagrams fetched by cursor `c`."""
-        alphagrams = []
-        rows = c.fetchall()
-        for row in rows:
-            alphagrams.append(Alphagram(alphagram=row[0],
-                                        probability=row[1],
-                                        combinations=row[2]))
-        return alphagrams
-
-    def alphagrams_by_probability_range(self, probability_min, probability_max,
-                                        length):
-        """ Get a list of Alphagrams by probability range. """
-        c = self.conn.cursor()
-        c.execute('SELECT alphagram, probability, combinations '
-                  'FROM alphagrams WHERE length = ? AND '
-                  'probability BETWEEN ? AND ?',
-                  (length, probability_min, probability_max))
-        return self._alphagrams(c)
-
-    def alphagrams_by_probability_list(self, p_list, length):
-        """ Gets a list of alphagrams for a list of probabilities."""
-        # We're doing straight %-interpolation here so let's verify
-        # p_list is a list of integers. Don't want to do SQL-injection.
+    def get_questions_for_probability_list(self, p_list, length):
         for p in p_list:
             if type(p) is not int:
                 raise BadInput("Every probability must be an integer. %s" %
                                p_list)
-        # Generate IN string.
-        in_string = str(tuple(p_list))
-        c = self.conn.cursor()
-        c.execute('SELECT alphagram, probability, combinations '
-                  'FROM alphagrams WHERE length = ? AND '
-                  'probability IN %s' % in_string, (length,))
+        if len(p_list) > MAX_CHUNK_SIZE:
+            raise BadInput('Too many alphagrams to interpolate')
 
-        return self._alphagrams(c)
+        configs = {
+            'search_descriptions': [
+                SearchDescription.length(length, length),
+                SearchDescription.probability_list(p_list)
+            ]
+        }
+        return self.get_questions_from_configs(configs)
 
-    def get_questions_for_probability_range(self, probability_min,
-                                            probability_max, length,
-                                            order=True):
+    def get_questions_for_probability_range(self, p_min, p_max, length):
         """
         Use a single query to return alphagrams and words for a
-        probability range, fully populated. This makes this more
-        efficient than calling `get_words_for_alphagram` above
-        repeatedly.
+        probability range, fully populated.
 
         """
-        import time
-        t = time.time()
-        c = self.conn.cursor()
-        query = """
-            SELECT lexicon_symbols, definition, front_hooks, back_hooks,
-            inner_front_hook, inner_back_hook, word, words.alphagram,
-            alphagrams.probability, alphagrams.combinations FROM words
-            INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
-            WHERE alphagrams.length = ? AND
-            alphagrams.probability BETWEEN ? and ?
 
-        """
-        if order:
-            query = query + "ORDER BY alphagrams.probability"
-        c.execute(query, (length, probability_min, probability_max))
-        rows = c.fetchall()
-        questions = self.process_question_query(rows)
-        logger.debug('Time taken: %s s. (params: %s, %s-%s)', time.time() - t,
-                     length, probability_min, probability_max)
-        return questions
+        configs = {
+            'search_descriptions': [
+                SearchDescription.length(length, length),
+                SearchDescription.probability_range(p_min, p_max)
+            ]
+        }
+        return self.get_questions_from_configs(configs)
 
     def get_questions_from_alph_dicts(self, alph_objects):
         """
@@ -396,7 +387,7 @@ class WordDB(object):
             question.answers.append(word)
         return questions
 
-    def get_questions(self, alphagrams):
+    def get_questions_from_alphagrams(self, alphagrams):
         """
         A helper function to return an entire structure, a list of
         alphagrams and words, given a list of alphagrams.
@@ -405,30 +396,14 @@ class WordDB(object):
             - alphagrams - A list of Alphagram objects.
 
         """
-        ret = Questions()
-        c = self.conn.cursor()
-        # Handle in 1000-alphagram chunks.
 
-        idx = 0
-        while idx < len(alphagrams):
-            these_alphagrams = alphagrams[idx:idx+MAX_CHUNK_SIZE]
-            num_alphas = len(these_alphagrams)
-            query = """
-            SELECT lexicon_symbols, definition, front_hooks, back_hooks,
-            inner_front_hook, inner_back_hook, word, words.alphagram,
-            alphagrams.probability, alphagrams.combinations FROM words
-            INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
-            WHERE alphagrams.alphagram IN (%s) """ % ','.join('?' * num_alphas)
-
-            idx += MAX_CHUNK_SIZE
-
-            c.execute(query, [a.alphagram for a in these_alphagrams])
-
-            rows = c.fetchall()
-
-            qs = self.process_question_query(rows)
-            ret.extend(qs)
-        return ret
+        configs = {
+            'search_descriptions': [
+                SearchDescription.alphagram_list(
+                    [a.alphagram for a in alphagrams])
+            ]
+        }
+        return self.get_questions_from_configs(configs)
 
     def process_question_query(self, rows):
         """ Process a query consisting of rows. Return a Questions object. """
@@ -450,3 +425,287 @@ class WordDB(object):
             last_alphagram = alpha
         qs.append(Question(last_alphagram, cur_words))
         return qs
+
+
+class WhereClause(object):
+    template = '{table}.{column} {condition}'
+    CONDITION_BETWEEN = 'between'
+    CONDITION_IN = 'in'
+
+    def __init__(self, table, column, condition, condition_params):
+        self.table = table
+        self.column = column
+        self.condition = condition
+        self.condition_params = condition_params
+        logger.debug('Initialized where clause: %s %s %s %s',
+                     self.table, self.column, self.condition,
+                     self.condition_params)
+
+    def render(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+        return u'<{}>'.format(self.__unicode__())
+
+    def __unicode__(self):
+        return u'{}.{} {} {}'.format(self.table, self.column,
+                                     self.condition, self.condition_params)
+
+
+class WhereBetweenClause(WhereClause):
+    def __init__(self, table, column, condition_params):
+        super(WhereBetweenClause, self).__init__(table, column,
+                                                 WhereClause.CONDITION_BETWEEN,
+                                                 condition_params)
+        self.in_length = None
+
+    def render(self):
+        condition = ''
+        bind_params = []
+
+        if self.condition_params['min'] != self.condition_params['max']:
+            condition = 'between ? and ?'
+            bind_params.extend([self.condition_params['min'],
+                                self.condition_params['max']])
+        else:
+            condition = '= ?'
+            bind_params.append(self.condition_params['min'])
+        return (self.template.format(table=self.table,
+                                     column=self.column,
+                                     condition=condition), bind_params)
+
+
+class WhereInClause(WhereClause):
+    def __init__(self, table, column, condition_params):
+        super(WhereInClause, self).__init__(table, column,
+                                            WhereClause.CONDITION_IN,
+                                            condition_params)
+        self.in_length = len(self.in_list())
+
+    def in_list(self):
+        return self.condition_params['in_list']
+
+    def render(self):
+        bind_params = []
+        if self.in_length >= 2:
+            condition = 'in ({})'.format(','.join(['?'] * self.in_length))
+            bind_params.extend(self.in_list())
+        elif self.in_length == 1:
+            condition = '= ?'
+            bind_params.append(self.in_list()[0])
+        else:
+            raise BadInput('No results found.')
+        return (self.template.format(table=self.table,
+                                     column=self.column,
+                                     condition=condition), bind_params)
+
+
+class Query(object):
+    """ A query is a single word lookup SQL query, with bind parameters. """
+    query_template = """
+        SELECT lexicon_symbols, definition, front_hooks, back_hooks,
+        inner_front_hook, inner_back_hook, word, words.alphagram,
+        alphagrams.probability, alphagrams.combinations FROM words
+        INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
+        WHERE {where_clause}
+        ORDER BY alphagrams.probability
+    """
+
+    def __init__(self, bind_params):
+        self.bind_params = bind_params
+
+    def render(self, where_clauses):
+        self.query_string = self.query_template.format(
+            where_clause=' AND '.join(where_clauses))
+        return self
+
+    def execution_context(self):
+        if not hasattr(self, 'query_string'):
+            raise Exception('Query has not been rendered')
+        return self.query_string, self.bind_params
+
+    def __repr__(self):
+        return u'<{}>'.format(self.__unicode__())
+
+    def __unicode__(self):
+        return u'query_string="{query}" bind_params={bind_params}'.format(
+            query=self.query_string, bind_params=self.bind_params)
+
+
+class QueryGenerator(object):
+    """ Generate the query based on passed-in parameters. """
+    LISTING_DESCRIPTIONS = [
+        SearchDescription.PROB_LIST, SearchDescription.ALPHAGRAM_LIST,
+        SearchDescription.HAS_TAGS
+    ]
+
+    def __init__(self, configs, lexicon_name):
+        """ configs is an object describing what kind of query to generate. """
+        self.configs = configs
+        self.lexicon_name = lexicon_name
+
+    def generate_where_clause(self, condition, description):
+        if condition == SearchDescription.LENGTH:
+            return WhereBetweenClause(
+                table='alphagrams',
+                column='length',
+                condition_params=description,
+            )
+        elif condition == SearchDescription.NUM_ANAGRAMS:
+            return WhereBetweenClause(
+                table='alphagrams',
+                column='num_anagrams',
+                condition_params=description)
+
+        elif condition == SearchDescription.PROB_RANGE:
+            return WhereBetweenClause(
+                table='alphagrams',
+                column='probability',
+                condition_params=description
+            )
+        elif condition == SearchDescription.NUM_VOWELS:
+            return WhereBetweenClause(
+                table='alphagrams',
+                column='num_vowels',
+                condition_params=description
+            )
+        elif condition == SearchDescription.POINT_VALUE:
+            return WhereBetweenClause(
+                table='alphagrams',
+                column='point_value',
+                condition_params=description
+            )
+        # At most one of the following three clauses should be present.
+        # It must also be the last clause!
+        elif condition in self.LISTING_DESCRIPTIONS:
+            if condition == SearchDescription.PROB_LIST:
+                return WhereInClause(
+                    table='alphagrams',
+                    column='probability',
+                    condition_params={
+                        'in_list': description['p_list'],
+                    }
+                )
+
+            elif condition == SearchDescription.ALPHAGRAM_LIST:
+                return WhereInClause(
+                    table='alphagrams',
+                    column='alphagram',
+                    condition_params={
+                        'in_list': description['a_list'],
+                    }
+                )
+
+            elif condition == SearchDescription.HAS_TAGS:
+                return WhereInClause(
+                    table='alphagrams',
+                    column='alphagram',
+                    condition_params={
+                        'in_list': get_tagged_alphagrams(description['tags'],
+                                                         description['user'],
+                                                         self.lexicon_name)
+                    }
+                )
+
+    def validate(self):
+        num_mutex_descriptions = 0
+        search_descriptions = self.configs['search_descriptions']
+        for idx, description in enumerate(search_descriptions):
+            if description in self.LISTING_DESCRIPTIONS:
+                if idx != len(search_descriptions) - 1:
+                    return 'A list search condition must be last.'
+                num_mutex_descriptions += 1
+        if num_mutex_descriptions > 1:
+            return 'Mutually exclusive search conditions not allowed.'
+
+    def generate(self):
+        """ Most things in search_descriptions should basically be a
+        WHERE clause. """
+        where_clauses = []
+        queries = []
+        bind_params = []
+
+        val_error = self.validate()
+        if val_error:
+            raise BadInput(val_error)
+
+        for description in self.configs['search_descriptions']:
+            where_clauses.append(self.generate_where_clause(
+                description['condition'], description))
+        rendered_where_clauses = []
+        queries_already_generated = False
+        logger.debug('Where clauses: %s', where_clauses)
+        for wc in where_clauses:
+            if wc.in_length is not None:
+                idx = 0
+                if wc.in_length == 0:
+                    # This will automatically return nothing. Raise an error.
+                    raise BadInput('Query returns no results.')
+                while idx < wc.in_length:
+                    new_where_clause = WhereInClause(
+                        table=wc.table,
+                        column=wc.column,
+                        condition_params={
+                            'in_list': wc.in_list()[idx:idx+MAX_CHUNK_SIZE]
+                        })
+
+                    r, bp = new_where_clause.render()
+                    rendered_where_clauses.append(r)
+
+                    queries.append(
+                        Query(copy.deepcopy(bind_params) + bp).render(
+                            where_clauses=rendered_where_clauses)
+                    )
+                    # And then pop the specific where clause.
+                    rendered_where_clauses.pop()
+                    queries_already_generated = True
+                    idx += MAX_CHUNK_SIZE
+
+            else:
+                r, bp = wc.render()
+                rendered_where_clauses.append(r)
+                bind_params.extend(bp)
+
+        if not queries_already_generated:
+            queries.append(
+                Query(bind_params).render(where_clauses=rendered_where_clauses)
+            )
+        logger.debug('Generated queries: %s', queries)
+        return queries
+
+
+def get_tagged_alphagrams(tags, user, lexicon_name):
+    """
+    Get a list of all tagged alphagrams matching the above. Use the
+    Django ORM; this is not a SQLite-backed database.
+
+    """
+    tagged = AlphagramTag.objects.filter(user=user, tag__in=tags,
+                                         lexicon__lexiconName=lexicon_name)
+    return [t.alphagram for t in tagged]
+
+
+def word_search(search_descriptions):
+    """
+    search_descriptions is an array of search descriptions to be applied
+    in order from left to right. Order usually shouldn't matter except
+    for the final limit_probability clause, or as a small optimization.
+
+    Gets an array of alphagrams in format:
+
+    [{
+        "q": "ACDEF", "a": ["DECAF", "FACED"]
+    }, ...]
+
+    """
+    if len(search_descriptions) < 2:
+        raise BadInput('search_descriptions must have at least 2 elements')
+    if search_descriptions[0]['condition'] != SearchDescription.LEXICON:
+        raise BadInput('The first search description must contain a lexicon.')
+
+    db = WordDB(search_descriptions[0]['lexicon'].lexiconName)
+
+    configs = {
+        'search_descriptions': search_descriptions[1:]
+    }
+    return db.get_questions_from_configs(configs)

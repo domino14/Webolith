@@ -3,39 +3,12 @@ import threading
 from contextlib import closing
 
 from django.test import TransactionTestCase
-from django.db import connection, transaction, connections
+from django.db import connection, transaction
 
 from lib.word_searches import SearchDescription
 from base.models import Lexicon, WordList, User
 from wordwalls.game import WordwallsGame
 logger = logging.getLogger(__name__)
-
-
-# def test_concurrently(times):
-#     def test_concurrently_decorator(test_func):
-#         def wrapper(*args, **kwargs):
-#             exceptions = []
-
-#             def call_test_func():
-#                 try:
-#                     test_func(*args, **kwargs)
-#                 except Exception as e:
-#                     exceptions.append(e)
-#                     raise
-
-#             threads = []
-#             for i in range(times):
-#                 threads.append(threading.Thread(target=call_test_func))
-#             for t in threads:
-#                 t.start()
-#             for t in threads:
-#                 t.join()
-#             if exceptions:
-#                 raise Exception(
-#                     'test_concurrently intercepted %s exceptions: %s' %
-#                     len(exceptions), exceptions)
-#         return wrapper
-#     return test_concurrently_decorator
 
 
 class WordwallsConcurrentSolveTest(TransactionTestCase):
@@ -56,7 +29,11 @@ class WordwallsConcurrentSolveTest(TransactionTestCase):
         wwg = WordwallsGame()
         user = User.objects.get(username='cesar')
         lex = Lexicon.objects.get(lexiconName='America')
-        search = SearchDescription.probability_range(p_min, p_max, length, lex)
+        search = [
+            SearchDescription.lexicon(lex),
+            SearchDescription.length(length, length),
+            SearchDescription.probability_range(p_min, p_max)
+        ]
         logger.debug('In setup_quiz, word lists: %s', WordList.objects.all())
         table_id = wwg.initialize_by_search_params(user, search, 240)
         return table_id, user

@@ -154,13 +154,13 @@ Testing:
     - XXX: Need to implement this carefully otherwise we get maximum stack size depth errors when opening the table creator.
     - I think best way is a single bar for both guess/chat with a mode switcher.
     - Moved the chat bar to the bottom
-- [ ] Test giveUpAndSave behavior
+- [x] Test giveUpAndSave behavior
 - [x] Test upgrade app behavior on start
 Deployment:
-    - [ ] Create Celery container for pruning presences/rooms periodically
-        - [ ] May be ok creating a cronjob container, but need to enable this on kubernetes.
-    - [ ] Create Daphne containers for workers and the socket channel handlers
-    - [ ] Create Redis container for channels/asgi (and the Celery queue)
+    - [x] Create Celery container for pruning presences/rooms periodically
+        - [x] May be ok creating a cronjob container, but need to enable this on kubernetes.
+    - [x] Create Daphne containers for workers and the socket channel handlers
+    - [x] Create Redis container for channels/asgi (and the Celery queue)
 
 Nice to haves:
 - [ ] look into Channels tests
@@ -168,3 +168,21 @@ Nice to haves:
 - [ ] "Social" aspect - number of alphagrams solved per user per day/week/etc
 - [ ] Non-cooperative mode? (Solving doesn't solve for everyone)
 - [ ] What breaks if sockets don't deliver messages? Channels is at-most-once delivery. Maybe it won't matter so much here but should think about robustness.
+
+====================
+Word search query generator
+- [x] Switching on front end between different search types did not populate with min and max
+- [x] Should get some indication of the number of words loaded and throw an error if it's 0 (i.e. tags)
+- [x] Maybe smarter naming of word lists
+- [x] Should allow removing all search conditions unless there's just one left
+- [x] Make sure tags come last in the list of search descriptions
+- [x] Fix flashcard view for this as well
+- [x] Display search conditions on one line
+- [x] 10-99 anagram 5s has a ridiculous name
+- [ ] Deploy new .db files to prod
+- [x] Fix tests
+- [x] Update tag
+- [ ] Check what happens when we deploy the new backend for people still on old frontend
+~~- [ ] Show probability values for length queries?~~
+
+

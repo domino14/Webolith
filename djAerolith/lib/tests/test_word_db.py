@@ -58,23 +58,9 @@ class WordDBTest(TestCase):
         self.assertTrue('PARTY' in words[1].definition)
         self.assertEqual(words[1].alphagram, 'AEIPRSTT')
 
-    def test_alphagram_data(self):
-        alpha = self.db.get_alphagram_data('AEINRST')
-        self.assertEqual(alpha.alphagram, 'AEINRST')
-        self.assertEqual(alpha.length, 7)
-        self.assertEqual(alpha.probability, 9)
-        self.assertEqual(alpha.combinations, 3006072)
-
     def test_word_not_found(self):
         word = self.db.get_word_data('FOOBARBAZ')
         self.assertTrue(word is None)
-
-    def test_alphagram_not_found(self):
-        alpha = self.db.get_alphagram_data('ABCDEFGH')
-        self.assertTrue(alpha is None)
-
-    def test_probability(self):
-        self.assertEqual(self.db.probability('AEINRST'), 9)
 
 
 class WordDBSpanishTest(TestCase):
