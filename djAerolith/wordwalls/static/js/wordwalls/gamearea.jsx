@@ -59,6 +59,11 @@ class GameArea extends React.Component {
         listName={this.props.listName}
         startCountdown={this.props.startCountdown}
         startCountingDown={this.props.startCountingDown}
+
+        canStart={this.props.canStart}
+        handleStart={this.props.handleStart}
+        handleStartCountdown={this.props.handleStartCountdown}
+        handleStartCountdownCancel={this.props.handleStartCountdownCancel}
       />
     );
   }
@@ -92,6 +97,11 @@ GameArea.propTypes = {
 
   startCountdown: React.PropTypes.number,
   startCountingDown: React.PropTypes.bool,
+
+  canStart: React.PropTypes.bool,
+  handleStart: React.PropTypes.func,
+  handleStartCountdown: React.PropTypes.func,
+  handleStartCountdownCancel: React.PropTypes.func,
 };
 
 export default GameArea;

@@ -26,6 +26,9 @@ class TableList extends React.Component {
           onJoinClicked={this.props.onJoinClicked}
           username={this.props.username}
         />);
+      if (!table.users.length) {
+        return;  // Don't show an empty table.
+      }
       if (table.multiplayer) {
         publicTableList.push(tNode);
       } else {

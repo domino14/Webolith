@@ -3,7 +3,7 @@ import Immutable from 'immutable';
 
 import ListSaveBar from './topbar/save_list';
 import SettingsCog from './topbar/settings_cog';
-import StartButton from './topbar/start_button';
+import GiveUpButton from './topbar/give_up_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
 import UserBox from './user_box';
@@ -71,13 +71,9 @@ class WordwallsApp extends React.Component {
             col-md-offset-3 col-lg-2`}
           style={{ whiteSpace: 'nowrap' }}
         >
-          <StartButton
-            handleStart={this.props.handleStart}
+          <GiveUpButton
             handleGiveup={this.props.handleGiveup}
-            handleStartCountdown={this.props.handleStartCountdown}
-            handleStartCountdownCancel={this.props.handleStartCountdownCancel}
             gameGoing={this.props.gameGoing}
-            canStartAndGiveUp={this.props.currentHost === this.props.username}
           />
           <GameTimer
             initialGameTime={this.props.initialGameTime}
@@ -132,6 +128,11 @@ class WordwallsApp extends React.Component {
               answerers={this.props.answeredBy}
               startCountdown={this.props.startCountdown}
               startCountingDown={this.props.startCountingDown}
+
+              canStart={this.props.currentHost === this.props.username}
+              handleStart={this.props.handleStart}
+              handleStartCountdown={this.props.handleStartCountdown}
+              handleStartCountdownCancel={this.props.handleStartCountdownCancel}
             />
           </div>
         </div>
