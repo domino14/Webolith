@@ -223,7 +223,6 @@ define([
     getCardDisplayAttributes_: function(card) {
       var attributes;
       attributes = card.toJSON();
-      console.log('attrs', attributes);
       attributes.numAnswers = _.size(attributes.answers);
       attributes.pluralAnswers = attributes.numAnswers > 1;
       attributes.cardNum = this.wordList.currentIndex() + 1;
