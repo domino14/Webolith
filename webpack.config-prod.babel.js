@@ -6,27 +6,30 @@ import webpackDev from './webpack.config.babel';
 const webpack = require('webpack');
 const _ = require('underscore');
 
-const prodConfig = _.defaults(
-  {
-    plugins: [
-      new webpack.ProvidePlugin({
-        $: 'jQuery',
-        jQuery: 'jquery',
-      }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        filename: 'vendor.js',
-      }),
-      new webpack.DefinePlugin({
-        'process.env': {
-          // For minifying React correctly.
-          NODE_ENV: JSON.stringify('production'),
-        },
-      }),
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
-      new webpack.optimize.AggressiveMergingPlugin(),
-    ],
-  }, webpackDev);
+const prodConfig = _.defaults({
+  output: {
+    filename: 'table-client-bundle.js',
+    publicPath: '/static/dist/',
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jQuery',
+      jQuery: 'jquery',
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.js',
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        // For minifying React correctly.
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.AggressiveMergingPlugin(),
+  ],
+}, webpackDev);
 
 export default prodConfig;

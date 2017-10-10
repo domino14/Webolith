@@ -5,7 +5,7 @@ const webpack = require('webpack');
 export default {
   output: {
     filename: 'table-client-bundle.js',
-    publicPath: '/static/dist/',
+    publicPath: 'http://localhost:7000/static/dist/',
   },
   devtool: 'source-map',
   module: {
@@ -34,7 +34,7 @@ export default {
     ],
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   },
   entry: {
     vendor: [
@@ -57,5 +57,11 @@ export default {
       filename: 'vendor.js',
     }),
   ],
+  devServer: {
+    port: 7000,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  },
 };
 
