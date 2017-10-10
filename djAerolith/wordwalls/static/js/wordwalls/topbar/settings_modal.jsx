@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ModalSkeleton from '../modal_skeleton';
 import SettingsModalBody from './settings_modal_body';
@@ -63,9 +64,9 @@ class SettingsModal extends React.Component {
 }
 
 SettingsModal.propTypes = {
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  onSave: React.PropTypes.func,
-  isMultiplayer: React.PropTypes.bool,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  onSave: PropTypes.func.isRequired,
+  isMultiplayer: PropTypes.bool.isRequired,
 };
 
 export default SettingsModal;

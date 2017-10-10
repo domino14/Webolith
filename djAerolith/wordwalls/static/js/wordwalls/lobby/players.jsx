@@ -1,12 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Players = (props) => {
-  const playerNodes = props.players.map((player, idx) =>
-    <div
-      key={idx}
-      style={{ whiteSpace: 'nowrap' }}
-    >{player === props.currentHost ? `${player} (Host)` : player}
-    </div>);
+  const playerNodes = props.players.map((player) => {
+    const pNode = (
+      <div
+        key={player}
+        style={{ whiteSpace: 'nowrap' }}
+      >{player === props.currentHost ? `${player} (Host)` : player}
+      </div>);
+    return pNode;
+  });
+
   return (
     <div
       className="panel panel-default"
@@ -15,18 +20,23 @@ const Players = (props) => {
       <div
         className="panel-body"
         style={{
-          height: props.height || 200,
+          height: props.height,
           overflow: 'auto',
         }}
-      >{playerNodes}</div>
+      >{playerNodes}
+      </div>
     </div>
   );
 };
 
 Players.propTypes = {
-  players: React.PropTypes.arrayOf(React.PropTypes.string),
-  currentHost: React.PropTypes.string,
-  height: React.PropTypes.number,
+  players: PropTypes.arrayOf(PropTypes.string).isRequired,
+  currentHost: PropTypes.string.isRequired,
+  height: PropTypes.number,
+};
+
+Players.defaultProps = {
+  height: 200,
 };
 
 export default Players;

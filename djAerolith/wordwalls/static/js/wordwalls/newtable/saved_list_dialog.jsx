@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import $ from 'jquery';
 import Dropzone from 'react-dropzone';
 
@@ -48,14 +50,16 @@ class SavedListDialog extends React.Component {
       'Are you sure?',
       `Are you sure you wish to continue this list? You will lose any
       unsaved progress on your current lists.`,
-      () => this.props.onListSubmit(listID, PlayOptions.PLAY_CONTINUE));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_CONTINUE),
+    );
   }
 
   playFirstMissed(listID) {
     Notifications.confirm(
       'Are you sure?',
       'Are you sure you wish to quiz on first missed? This will reset the list.',
-      () => this.props.onListSubmit(listID, PlayOptions.PLAY_FIRST_MISSED));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_FIRST_MISSED),
+    );
   }
 
   resetStartOver(listID) {
@@ -63,14 +67,16 @@ class SavedListDialog extends React.Component {
       'Are you sure?',
       `Are you sure you wish to start over?
       You will lose all data (including first missed) for this list!`,
-      () => this.props.onListSubmit(listID, PlayOptions.PLAY_START_OVER));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_START_OVER),
+    );
   }
 
   deleteList(listID) {
     Notifications.confirm(
       'Are you sure?',
       'Do you wish to delete this list for good? It can not be recovered!',
-      () => this.props.onListSubmit(listID, PlayOptions.PLAY_DELETE));
+      () => this.props.onListSubmit(listID, PlayOptions.PLAY_DELETE),
+    );
   }
 
   flashcardList(listID) {
@@ -96,7 +102,8 @@ class SavedListDialog extends React.Component {
             <div className="col-sm-12">
               <p>Please select a list from below. Lists that are highlighted
               in <span className="bg-success">green</span> have already
-              been played through once.</p>
+              been played through once.
+              </p>
               <p>{listInfo}{limitInfo}</p>
             </div>
           </div>
@@ -109,8 +116,7 @@ class SavedListDialog extends React.Component {
                 selectedValue={this.props.multiplayerOn ? 'multi' : 'single'}
                 options={[{ value: 'single', displayValue: 'Single Player' },
                           { value: 'multi', displayValue: 'Multiplayer' }]}
-                onChange={e => this.props.onMultiplayerModify(
-                  e.target.value === 'multi')}
+                onChange={e => this.props.onMultiplayerModify(e.target.value === 'multi')}
               />
             </div>
           </div>
@@ -137,12 +143,15 @@ class SavedListDialog extends React.Component {
             <div className="col-sm-12">
               <p>
               You can also upload your own list with the button below. The list
-              must consist of just words, one per line.</p>
+              must consist of just words, one per line.
+              </p>
             </div>
           </div>
           <div>
             <Dropzone
-              ref={dropzone => (this.dropzone = dropzone)}
+              ref={(dropzone) => {
+                this.dropzone = dropzone;
+              }}
               onDrop={this.onDrop}
               multiple={false}
               maxSize={1000000}
@@ -152,7 +161,8 @@ class SavedListDialog extends React.Component {
             <button
               className="btn btn-info"
               onClick={() => this.dropzone.open()}
-            >Upload a file</button>
+            >Upload a file
+            </button>
           </div>
         </div>
       </div>
@@ -161,30 +171,30 @@ class SavedListDialog extends React.Component {
 }
 
 SavedListDialog.propTypes = {
-  // selectedList: React.PropTypes.string,
-  // onSelectedListChange: React.PropTypes.func,
-  listOptions: React.PropTypes.shape({
-    lists: React.PropTypes.arrayOf(React.PropTypes.shape({
-      id: React.PropTypes.number,
-      name: React.PropTypes.string,
-      numCurAlphagrams: React.PropTypes.number,
-      numAlphagrams: React.PropTypes.number,
-      questionIndex: React.PropTypes.number,
-      goneThruOnce: React.PropTypes.bool,
-      lastSaved: React.PropTypes.string,
-      lastSavedDT: React.PropTypes.string,
+  // selectedList: PropTypes.string,
+  // onSelectedListChange: PropTypes.func,
+  listOptions: PropTypes.shape({
+    lists: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+      numCurAlphagrams: PropTypes.number,
+      numAlphagrams: PropTypes.number,
+      questionIndex: PropTypes.number,
+      goneThruOnce: PropTypes.bool,
+      lastSaved: PropTypes.string,
+      lastSavedDT: PropTypes.string,
     })),
-    count: React.PropTypes.number,
-    limits: React.PropTypes.shape({
-      total: React.PropTypes.number,
-      current: React.PropTypes.number,
+    count: PropTypes.number,
+    limits: PropTypes.shape({
+      total: PropTypes.number,
+      current: PropTypes.number,
     }),
-  }),
-  onListSubmit: React.PropTypes.func,
-  onListFlashcard: React.PropTypes.func,
-  onListUpload: React.PropTypes.func,
-  multiplayerOn: React.PropTypes.bool,
-  onMultiplayerModify: React.PropTypes.func,
+  }).isRequired,
+  onListSubmit: PropTypes.func.isRequired,
+  onListFlashcard: PropTypes.func.isRequired,
+  onListUpload: PropTypes.func.isRequired,
+  multiplayerOn: PropTypes.bool.isRequired,
+  onMultiplayerModify: PropTypes.func.isRequired,
 };
 
 export default SavedListDialog;

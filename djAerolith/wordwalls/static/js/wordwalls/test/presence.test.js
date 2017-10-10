@@ -1,7 +1,7 @@
 // Test functions for presence.js
 /* eslint-disable import/no-extraneous-dependencies, no-unused-expressions */
 import { should } from 'chai';
-import { describe, it, beforeEach } from 'mocha';
+import { describe, it, beforeEach } from 'jest';
 import _ from 'underscore';
 
 import Presence from '../presence';
@@ -55,8 +55,7 @@ describe('Presence', () => {
         }, false, 5);
       }
       presenceHelper.getMessages().get('table').size.should.equal(5);
-      presenceHelper.getMessages().get('table').get(0).content.should.equal(
-        'hello0');
+      presenceHelper.getMessages().get('table').get(0).content.should.equal('hello0');
       // Push one more message.
       presenceHelper.addMessage({
         author: 'cesar',
@@ -67,11 +66,9 @@ describe('Presence', () => {
       // Size should still be 5
       presenceHelper.getMessages().get('table').size.should.equal(5);
       // First message should be gone.
-      presenceHelper.getMessages().get('table').get(0).content.should.equal(
-        'hello1');
+      presenceHelper.getMessages().get('table').get(0).content.should.equal('hello1');
       // Last message should be most recent
-      presenceHelper.getMessages().get('table').get(4).content.should.equal(
-        'The penguin of doom!!!');
+      presenceHelper.getMessages().get('table').get(4).content.should.equal('The penguin of doom!!!');
     });
   });
 

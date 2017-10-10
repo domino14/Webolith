@@ -1,5 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import $ from 'jquery';
 import moment from 'moment';
 
@@ -33,7 +35,7 @@ const COLLINS_LICENSE_TEXT = `
 The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
 
-const DEFAULT_TIME_PER_QUIZ = '5';  // minutes
+const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
 
 /**
  * TableCreator should mostly manage its own state, do its own AJAX queries,
@@ -41,7 +43,6 @@ const DEFAULT_TIME_PER_QUIZ = '5';  // minutes
  * WordwallsApp, even though it is a part of it.
  */
 class TableCreator extends React.Component {
-
   /**
    * Redirect to the given URL. This forces the user to leave the table
    * they are currently in.
@@ -170,8 +171,8 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ challengeData: data || {} }))
-    .always(() => this.hideSpinner());
+      .done(data => this.setState({ challengeData: data || {} }))
+      .always(() => this.hideSpinner());
   }
 
   loadInfoForListType(option) {
@@ -218,7 +219,7 @@ class TableCreator extends React.Component {
   addSearchRow() {
     const toadd = searchCriterionToAdd(this.state.wordSearchCriteria);
     if (!toadd) {
-      return;   // Don't add any more.
+      return; // Don't add any more.
     }
 
     const newCriteria = this.state.wordSearchCriteria.concat(toadd);
@@ -251,10 +252,12 @@ class TableCreator extends React.Component {
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
-    .done(data => this.props.onLoadNewList(data))
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load challenge: ${jqXHR.responseJSON}`))
-    .always(() => this.hideSpinner());
+      .done(data => this.props.onLoadNewList(data))
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to load challenge: ${jqXHR.responseJSON}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   /**
@@ -262,10 +265,9 @@ class TableCreator extends React.Component {
    * @return {Array.<Object>}
    */
   searchCriteriaMapper() {
-    return this.state.wordSearchCriteria.map(
-      criterion => Object.assign({}, criterion, {
-        searchType: SearchTypesEnum.properties[criterion.searchType].name,
-      }));
+    return this.state.wordSearchCriteria.map(criterion => Object.assign({}, criterion, {
+      searchType: SearchTypesEnum.properties[criterion.searchType].name,
+    }));
   }
 
   searchSubmit() {
@@ -283,10 +285,12 @@ class TableCreator extends React.Component {
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
-    .done(data => this.props.onLoadNewList(data))
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load search: ${jqXHR.responseJSON}`))
-    .always(() => this.hideSpinner());
+      .done(data => this.props.onLoadNewList(data))
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to load search: ${jqXHR.responseJSON}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   /**
@@ -305,10 +309,12 @@ class TableCreator extends React.Component {
         searchCriteria: this.searchCriteriaMapper(),
       },
     })
-    .done(data => TableCreator.redirectUrl(data.url))
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to process: ${jqXHR.responseJSON.error}`))
-    .always(() => this.hideSpinner());
+      .done(data => TableCreator.redirectUrl(data.url))
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to process: ${jqXHR.responseJSON.error}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   aerolithListSubmit() {
@@ -326,10 +332,12 @@ class TableCreator extends React.Component {
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
-    .done(data => this.props.onLoadNewList(data))
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load list: ${jqXHR.responseJSON}`))
-    .always(() => this.hideSpinner());
+      .done(data => this.props.onLoadNewList(data))
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to load list: ${jqXHR.responseJSON}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   flashcardAerolithListSubmit() {
@@ -343,10 +351,12 @@ class TableCreator extends React.Component {
         namedList: this.state.selectedList,
       },
     })
-    .done(data => TableCreator.redirectUrl(data.url))
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to process: ${jqXHR.responseJSON.error}`))
-    .always(() => this.hideSpinner());
+      .done(data => TableCreator.redirectUrl(data.url))
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to process: ${jqXHR.responseJSON.error}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   savedListSubmit(listID, action) {
@@ -358,12 +368,14 @@ class TableCreator extends React.Component {
       })
       // XXX: Probably should do smart updating instead of reloading
       // from the server.
-      .done(() => this.loadSavedListInfo()) // This will hide when it's over.
-      .fail((jqXHR) => {
-        Notifications.alert('Error',
-          `Failed to delete list: ${jqXHR.responseJSON}`);
-        this.hideSpinner();
-      });
+        .done(() => this.loadSavedListInfo()) // This will hide when it's over.
+        .fail((jqXHR) => {
+          Notifications.alert(
+            'Error',
+            `Failed to delete list: ${jqXHR.responseJSON}`,
+          );
+          this.hideSpinner();
+        });
       return;
     }
     $.ajax({
@@ -380,13 +392,15 @@ class TableCreator extends React.Component {
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
-    .done((data) => {
-      this.props.onLoadNewList(data);
-      this.modal.dismiss();
-    })
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to load list: ${jqXHR.responseJSON}`))
-    .always(() => this.hideSpinner());
+      .done((data) => {
+        this.props.onLoadNewList(data);
+        this.modal.dismiss();
+      })
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to load list: ${jqXHR.responseJSON}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   flashcardSavedListSubmit(listID, action) {
@@ -398,16 +412,18 @@ class TableCreator extends React.Component {
         action,
         lexicon: this.state.currentLexicon,
         wordList: listID,
-        listOption: '1',  // This is a hack to make the form validator pass.
-                          // This variable has no effect.
-                          // XXX: This flashcard app is a legacy app and we
-                          // will hopefully replace it soon.
+        listOption: '1', // This is a hack to make the form validator pass.
+        // This variable has no effect.
+        // XXX: This flashcard app is a legacy app and we
+        // will hopefully replace it soon.
       },
     })
-    .done(data => TableCreator.redirectUrl(data.url))
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to process: ${jqXHR.responseJSON.error}`))
-    .always(() => this.hideSpinner());
+      .done(data => TableCreator.redirectUrl(data.url))
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to process: ${jqXHR.responseJSON.error}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   loadChallengePlayedInfo() {
@@ -421,8 +437,8 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ challengesDoneAtDate: data }))
-    .always(() => this.hideSpinner());
+      .done(data => this.setState({ challengesDoneAtDate: data }))
+      .always(() => this.hideSpinner());
   }
 
   loadAerolithListInfo() {
@@ -434,11 +450,11 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({
-      aerolithLists: data,
-      selectedList: data[0] ? String(data[0].id) : '',
-    }))
-    .always(() => this.hideSpinner());
+      .done(data => this.setState({
+        aerolithLists: data,
+        selectedList: data[0] ? String(data[0].id) : '',
+      }))
+      .always(() => this.hideSpinner());
   }
 
   loadSavedListInfo() {
@@ -455,8 +471,8 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-    .done(data => this.setState({ savedLists: data }))
-    .always(() => this.hideSpinner());
+      .done(data => this.setState({ savedLists: data }))
+      .always(() => this.hideSpinner());
   }
 
   listUpload(files) {
@@ -471,10 +487,12 @@ class TableCreator extends React.Component {
       processData: false,
       contentType: false,
     })
-    .done(() => this.loadSavedListInfo())
-    .fail(jqXHR => Notifications.alert('Error',
-      `Failed to upload list: ${jqXHR.responseJSON}`))
-    .always(() => this.hideSpinner());
+      .done(() => this.loadSavedListInfo())
+      .fail(jqXHR => Notifications.alert(
+        'Error',
+        `Failed to upload list: ${jqXHR.responseJSON}`,
+      ))
+      .always(() => this.hideSpinner());
   }
 
   searchParamChange(index, paramName, paramValue) {
@@ -503,7 +521,6 @@ class TableCreator extends React.Component {
       criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
       criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
     }
-    console.log('Resetting to', criteria);
     this.setState({
       wordSearchCriteria: criteria,
     });
@@ -527,17 +544,21 @@ class TableCreator extends React.Component {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
     } else if (this.props.tablenum !== 0 &&
         this.props.currentHost !== this.props.username) {
-      Notifications.confirm('Are you sure?',
+      Notifications.confirm(
+        'Are you sure?',
         'You are trying to load a new word list, but you are not the host ' +
         'of this table. This will create a new table. ' +
-        'Are you sure you wish to continue?', callback);
+        'Are you sure you wish to continue?', callback,
+      );
     } else if (this.props.tablenum !== 0 && !this.state.multiplayerOn &&
       this.props.tableIsMultiplayer) {
       // We are in a multiplayer table, but trying to load single player game.
-      Notifications.confirm('Are you sure?',
+      Notifications.confirm(
+        'Are you sure?',
         'You are trying to create a new single player game. ' +
         'This will remove you from your current multiplayer table and ' +
-        'create a new table. Are you sure you wish to continue?', callback);
+        'create a new table. Are you sure you wish to continue?', callback,
+      );
     } else {
       callback();
     }
@@ -570,8 +591,7 @@ class TableCreator extends React.Component {
             lexicon={this.state.currentLexicon}
             availableLexica={this.props.availableLexica}
             onSearchSubmit={() => this.preSubmitHook(this.searchSubmit)}
-            onFlashcardSubmit={() => this.preSubmitHook(
-              this.flashcardSearchSubmit)}
+            onFlashcardSubmit={() => this.preSubmitHook(this.flashcardSearchSubmit)}
             onSearchTypeChange={this.searchTypeChange}
             onSearchParamChange={this.searchParamChange}
             removeSearchRow={this.removeSearchRow}
@@ -586,11 +606,11 @@ class TableCreator extends React.Component {
         selectedQuizSearchDialog = (
           <SavedListDialog
             listOptions={this.state.savedLists}
-            onListSubmit={(listID, action) => this.preSubmitHook(
-              () => this.savedListSubmit(listID, action))}
+            onListSubmit={(listID, action) =>
+              this.preSubmitHook(() => this.savedListSubmit(listID, action))}
             onListUpload={this.listUpload}
-            onListFlashcard={(listID, action) => this.preSubmitHook(
-              () => this.flashcardSavedListSubmit(listID, action))}
+            onListFlashcard={(listID, action) =>
+              this.preSubmitHook(() => this.flashcardSavedListSubmit(listID, action))}
             multiplayerOn={this.state.multiplayerOn}
             onMultiplayerModify={this.onMultiplayerModify}
           />);
@@ -602,8 +622,7 @@ class TableCreator extends React.Component {
             selectedList={this.state.selectedList}
             onSelectedListChange={this.selectedListChange}
             onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
-            onFlashcardSubmit={() => this.preSubmitHook(
-              this.flashcardAerolithListSubmit)}
+            onFlashcardSubmit={() => this.preSubmitHook(this.flashcardAerolithListSubmit)}
             multiplayerOn={this.state.multiplayerOn}
             onMultiplayerModify={this.onMultiplayerModify}
           />);
@@ -663,7 +682,9 @@ class TableCreator extends React.Component {
       <ModalSkeleton
         title="Lobby"
         modalClass="table-modal"
-        ref={el => (this.modal = el)}
+        ref={(el) => {
+          this.modal = el;
+        }}
         size="modal-xl"
       >
         <div className="modal-body">
@@ -710,45 +731,45 @@ class TableCreator extends React.Component {
 }
 
 TableCreator.propTypes = {
-  defaultLexicon: React.PropTypes.number,
-  availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    lexicon: React.PropTypes.string,
-    description: React.PropTypes.string,
-    counts: React.PropTypes.object,
-  })),
-  challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    seconds: React.PropTypes.number,
-    numQuestions: React.PropTypes.number,
-    name: React.PropTypes.string,
-    orderPriority: React.PropTypes.number,
-  })),
-  tablenum: React.PropTypes.number,
-  currentHost: React.PropTypes.string,
-  tableIsMultiplayer: React.PropTypes.bool,
-  onLoadNewList: React.PropTypes.func,
-  gameGoing: React.PropTypes.bool,
-  setLoadingData: React.PropTypes.func,
-  username: React.PropTypes.string,
-  onChatSubmit: React.PropTypes.func,
-  messages: React.PropTypes.arrayOf(React.PropTypes.shape({
-    author: React.PropTypes.string,
-    id: React.PropTypes.string,
-    content: React.PropTypes.string,
-    type: React.PropTypes.string,
-  })),
-  users: React.PropTypes.arrayOf(React.PropTypes.string),
-  // tables: React.PropTypes.shape({React.PropTypes.shape({
-  //   tablenum: React.PropTypes.number.isRequired,
-  //   admin: React.PropTypes.string,
-  //   users: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   wordList: React.PropTypes.string,
-  //   lexicon: React.PropTypes.string,
-  //   secondsPerRound: React.PropTypes.number,
-  //   questionsPerRound: React.PropTypes.number,
+  defaultLexicon: PropTypes.number.isRequired,
+  availableLexica: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    lexicon: PropTypes.string,
+    description: PropTypes.string,
+    counts: PropTypes.object,
+  })).isRequired,
+  challengeInfo: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    seconds: PropTypes.number,
+    numQuestions: PropTypes.number,
+    name: PropTypes.string,
+    orderPriority: PropTypes.number,
+  })).isRequired,
+  tablenum: PropTypes.number.isRequired,
+  currentHost: PropTypes.string.isRequired,
+  tableIsMultiplayer: PropTypes.bool.isRequired,
+  onLoadNewList: PropTypes.func.isRequired,
+  gameGoing: PropTypes.bool.isRequired,
+  setLoadingData: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  onChatSubmit: PropTypes.func.isRequired,
+  messages: PropTypes.arrayOf(PropTypes.shape({
+    author: PropTypes.string,
+    id: PropTypes.string,
+    content: PropTypes.string,
+    type: PropTypes.string,
+  })).isRequired,
+  users: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // tables: PropTypes.shape({PropTypes.shape({
+  //   tablenum: PropTypes.number.isRequired,
+  //   admin: PropTypes.string,
+  //   users: PropTypes.arrayOf(PropTypes.string),
+  //   wordList: PropTypes.string,
+  //   lexicon: PropTypes.string,
+  //   secondsPerRound: PropTypes.number,
+  //   questionsPerRound: PropTypes.number,
   // })),
-  tables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
+  tables: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 

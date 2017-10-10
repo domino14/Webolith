@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const BUTTON_STATE_IDLE = 1;
 const BUTTON_STATE_GIVEUP_TIMING_OUT = 3;
 
 const YOU_SURE_TIMEOUT = 3000;
 
-class StartButton extends React.Component {
+class GiveUpButton extends React.Component {
   constructor() {
     super();
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -70,14 +71,15 @@ class StartButton extends React.Component {
         style={{
           marginTop: '-6px',
         }}
-      >{buttonText}</button>
+      >{buttonText}
+      </button>
     );
   }
 }
 
-StartButton.propTypes = {
-  gameGoing: React.PropTypes.bool,
-  handleGiveup: React.PropTypes.func,
+GiveUpButton.propTypes = {
+  gameGoing: PropTypes.bool.isRequired,
+  handleGiveup: PropTypes.func.isRequired,
 };
 
-export default StartButton;
+export default GiveUpButton;

@@ -8,8 +8,7 @@ class Utils {
    * @return {string}
    */
   static displaySpanishDigraphs(str) {
-    return str.replace(/1/g, 'ᴄʜ').replace(/2/g, 'ʟʟ').replace(
-      /3/g, 'ʀʀ');
+    return str.replace(/1/g, 'ᴄʜ').replace(/2/g, 'ʟʟ').replace(/3/g, 'ʀʀ');
   }
 
   /**
@@ -35,8 +34,7 @@ class Utils {
 
       function sameOrigin(url) {
         // url could be relative or scheme relative or absolute
-        const host = document.location.host; // host + port
-        const protocol = document.location.protocol;
+        const { host, protocol } = document.location; // host + port
         const srOrigin = `//${host}`;
         const origin = protocol + srOrigin;
         // Allow absolute or scheme relative URLs to same origin

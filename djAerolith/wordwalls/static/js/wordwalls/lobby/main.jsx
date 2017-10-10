@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ChatBar from './chat_bar';
 import ChatBox from '../bottombar/chatbox';
@@ -47,27 +48,27 @@ const Lobby = props => (
 
 
 Lobby.propTypes = {
-  // username: React.PropTypes.string,
-  onChatSubmit: React.PropTypes.func,
-  messages: React.PropTypes.arrayOf(React.PropTypes.shape({
-    author: React.PropTypes.string,
-    id: React.PropTypes.string,
-    content: React.PropTypes.string,
-    type: React.PropTypes.string,
-  })),
-  username: React.PropTypes.string,
-  users: React.PropTypes.arrayOf(React.PropTypes.string),
-  // tables: React.PropTypes.arrayOf(React.PropTypes.shape({
-  //   tablenum: React.PropTypes.number.isRequired,
-  //   admin: React.PropTypes.string,
-  //   users: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   wordList: React.PropTypes.string,
-  //   lexicon: React.PropTypes.string,
-  //   secondsPerRound: React.PropTypes.number,
-  //   questionsPerRound: React.PropTypes.number,
+  // username: PropTypes.string,
+  onChatSubmit: PropTypes.func.isRequired,
+  messages: PropTypes.arrayOf(PropTypes.shape({
+    author: PropTypes.string,
+    id: PropTypes.string,
+    content: PropTypes.string,
+    type: PropTypes.string,
+  })).isRequired,
+  username: PropTypes.string.isRequired,
+  users: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // tables: PropTypes.arrayOf(PropTypes.shape({
+  //   tablenum: PropTypes.number.isRequired,
+  //   admin: PropTypes.string,
+  //   users: PropTypes.arrayOf(PropTypes.string),
+  //   wordList: PropTypes.string,
+  //   lexicon: PropTypes.string,
+  //   secondsPerRound: PropTypes.number,
+  //   questionsPerRound: PropTypes.number,
   // })),
-  activeTables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
-  onJoinClicked: React.PropTypes.func,
+  activeTables: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  onJoinClicked: PropTypes.func.isRequired,
 };
 
 export default Lobby;

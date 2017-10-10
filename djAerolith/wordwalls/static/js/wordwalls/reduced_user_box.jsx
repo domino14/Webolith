@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 
 const UserBox = (props) => {
@@ -15,10 +16,10 @@ const UserBox = (props) => {
 };
 
 UserBox.propTypes = {
-  numCorrect: React.PropTypes.number,
-  totalWords: React.PropTypes.number,
-  username: React.PropTypes.string,
-  // isBuild: React.PropTypes.bool,
+  numCorrect: PropTypes.number.isRequired,
+  totalWords: PropTypes.number.isRequired,
+  username: PropTypes.string.isRequired,
+  // isBuild: PropTypes.bool,
 };
 
 export default UserBox;

@@ -150,7 +150,6 @@ class Styling {
     n.style = Immutable.fromJS(this.toJSON());
     return n;
   }
-
 }
 
 export default Styling;

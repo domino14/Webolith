@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ChallengeResults from './challenge_results';
 import ModalSkeleton from './modal_skeleton';
@@ -17,10 +18,10 @@ const ResultsModal = props => (
 
 
 ResultsModal.propTypes = {
-  challengeData: React.PropTypes.shape({
-    entries: React.PropTypes.array,
-    maxScore: React.PropTypes.number,
-  }),
+  challengeData: PropTypes.shape({
+    entries: PropTypes.array,
+    maxScore: PropTypes.number,
+  }).isRequired,
 };
 
 export default ResultsModal;

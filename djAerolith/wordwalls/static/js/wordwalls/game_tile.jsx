@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Get a color given a string tile style. The tile style is just a
  * stringified number from 1 - 9.
@@ -55,10 +55,8 @@ function colorFromTileStyle(style) {
 }
 
 const GameTile = (props) => {
-  let letter;
-  let fontSize;
   let fontFamily;
-  fontSize = props.fontSize;
+  let { fontSize, letter } = props;
   const transform = `translate(${props.x},${props.y})`;
   if (props.font === 'mono') {
     fontFamily = '"Courier New",monospace';
@@ -70,7 +68,6 @@ const GameTile = (props) => {
   }
   const fontWeight = props.bold ? 'bold' : 'normal';
   const color = colorFromTileStyle(props.tileStyle);
-  letter = props.letter;
 
   switch (letter) {
     case '1':
@@ -100,7 +97,7 @@ const GameTile = (props) => {
         strokeWidth="0.5px"
         stroke={color.outline}
         fill={color.color}
-        rx={1}  /* radiuses */
+        rx={1} /* radiuses */
         ry={1}
       />
       <text
@@ -113,21 +110,22 @@ const GameTile = (props) => {
         fontSize={`${fontSize}%`}
         stroke={color.textColor}
         fill={color.textColor}
-      >{letter}</text>
+      >{letter}
+      </text>
     </g>
   );
 };
 
 GameTile.propTypes = {
-  width: React.PropTypes.number,
-  height: React.PropTypes.number,
-  letter: React.PropTypes.string,
-  fontSize: React.PropTypes.number,
-  tileStyle: React.PropTypes.string,
-  font: React.PropTypes.string,
-  bold: React.PropTypes.bool,
-  x: React.PropTypes.number,
-  y: React.PropTypes.number,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  letter: PropTypes.string.isRequired,
+  fontSize: PropTypes.number.isRequired,
+  tileStyle: PropTypes.string.isRequired,
+  font: PropTypes.string.isRequired,
+  bold: PropTypes.bool.isRequired,
+  x: PropTypes.number.isRequired,
+  y: PropTypes.number.isRequired,
 };
 
 export default GameTile;

@@ -35,3 +35,4 @@ kubernetes/deploy-configs/prod-*.yaml
 .coverage
 djAerolith/htmlcov
 vars.sh
+coverage

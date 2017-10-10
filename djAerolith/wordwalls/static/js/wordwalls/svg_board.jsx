@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Immutable from 'immutable';
 import Styling from './style';
 
@@ -33,7 +35,7 @@ const SVGBoard = (props) => {
     background: props.displayStyle.background,
     bodyBackground: props.displayStyle.bodyBackground,
   };
-  const onShuffle = props.onShuffle;
+  const { onShuffle } = props;
   // curQuestions is an Immutable List of Maps
   props.questions.forEach((question, idx) => {
     // Calculate top left X, Y based on dimensions.
@@ -42,20 +44,20 @@ const SVGBoard = (props) => {
     if (idx >= props.gridWidth * props.gridHeight) {
       return;
     }
+    const letters = question.get('displayedAs');
     // Only push questions that will fit on the game board.
-    questions.push(
-      <WordwallsQuestion
-        displayStyle={questionDisplayStyle}
-        letters={question.get('displayedAs')}
-        key={idx}
-        qNumber={idx}
-        words={question.get('wMap')}
-        gridX={gridX + leftMargin}
-        gridY={gridY + topMargin}
-        ySize={ySize}
-        xSize={xSize}
-        onShuffle={onShuffle}
-      />);
+    questions.push(<WordwallsQuestion
+      displayStyle={questionDisplayStyle}
+      letters={letters}
+      key={letters}
+      qNumber={idx}
+      words={question.get('wMap')}
+      gridX={gridX + leftMargin}
+      gridY={gridY + topMargin}
+      ySize={ySize}
+      xSize={xSize}
+      onShuffle={onShuffle}
+    />);
   });
 
   return (
@@ -64,18 +66,19 @@ const SVGBoard = (props) => {
       width={props.width + (2 * leftMargin)}
       height={props.height + (2 * topMargin)}
       onMouseDown={(e) => { e.preventDefault(); }}
-    >{questions}</svg>
+    >{questions}
+    </svg>
   );
 };
 
 SVGBoard.propTypes = {
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  width: React.PropTypes.number,
-  height: React.PropTypes.number,
-  gridWidth: React.PropTypes.number,
-  gridHeight: React.PropTypes.number,
-  questions: React.PropTypes.instanceOf(Immutable.List),
-  onShuffle: React.PropTypes.func.isRequired,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  gridWidth: PropTypes.number.isRequired,
+  gridHeight: PropTypes.number.isRequired,
+  questions: PropTypes.instanceOf(Immutable.List).isRequired,
+  onShuffle: PropTypes.func.isRequired,
 };
 
 export default SVGBoard;

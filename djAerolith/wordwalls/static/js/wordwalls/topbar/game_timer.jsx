@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class GameTimer extends React.Component {
   static getFormattedTime(milliseconds) {
@@ -45,7 +46,7 @@ class GameTimer extends React.Component {
         prevTime: null,
         timeRemaining: 0,
       });
-      return;   // The game has stopped.
+      return; // The game has stopped.
     }
 
     if (this.props.gameGoing) {
@@ -73,7 +74,7 @@ class GameTimer extends React.Component {
   tick() {
     const currentTime = Date.now();
     const dt = this.state.prevTime ? (currentTime - this.state.prevTime) : 0;
-    const interval = this.props.interval;
+    const { interval } = this.props;
 
     // correct for small variations in actual timeout time
     const timeRemainingInInterval = (interval - (dt % interval));
@@ -127,11 +128,11 @@ GameTimer.defaultProps = {
 };
 
 GameTimer.propTypes = {
-  gameGoing: React.PropTypes.bool,
-  initialGameTime: React.PropTypes.number.isRequired,
-  interval: React.PropTypes.number,
-  completeCallback: React.PropTypes.func,
-  warningCountdown: React.PropTypes.number,
+  gameGoing: PropTypes.bool,
+  initialGameTime: PropTypes.number.isRequired,
+  interval: PropTypes.number,
+  completeCallback: PropTypes.func,
+  warningCountdown: PropTypes.number,
 };
 
 export default GameTimer;

@@ -2,6 +2,7 @@
  * @fileOverview The actual Start button.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const StartButton = props => (
   <button
@@ -10,14 +11,15 @@ const StartButton = props => (
     style={{
       marginTop: '-6px',
     }}
-  >{props.buttonText}</button>
+  >{props.buttonText}
+  </button>
 );
 
 
 StartButton.propTypes = {
-  handleButtonClick: React.PropTypes.func,
-  buttonText: React.PropTypes.string,
-  buttonClass: React.PropTypes.string,
+  handleButtonClick: PropTypes.func.isRequired,
+  buttonText: PropTypes.string.isRequired,
+  buttonClass: PropTypes.string.isRequired,
 };
 
 export default StartButton;

@@ -40,7 +40,8 @@ class App {
         availableLexica={options.availableLexica}
         socketServer={options.socketServer}
       />,
-      document.getElementById('main-app-content'));
+      document.getElementById('main-app-content'),
+    );
   }
 }
 

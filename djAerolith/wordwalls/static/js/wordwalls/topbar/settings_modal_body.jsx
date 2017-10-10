@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Styling from '../style';
 
 import WordwallsSettings from './wordwalls_settings';
@@ -77,13 +79,15 @@ class SettingsModalBody extends React.Component {
             type="button"
             className="btn btn-default"
             data-dismiss="modal"
-          >Close</button>
+          >Close
+          </button>
           <button
             type="button"
             className={savebtnClass}
             onClick={this.props.saveWordwallsChanges}
             data-dismiss="modal"
-          >Save changes</button>
+          >Save changes
+          </button>
         </div>
 
       </div>
@@ -92,10 +96,10 @@ class SettingsModalBody extends React.Component {
 }
 
 SettingsModalBody.propTypes = {
-  onWordwallsOptionsModify: React.PropTypes.func,
-  // onTableSettingsModify: React.PropTypes.func,
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  saveWordwallsChanges: React.PropTypes.func,
+  onWordwallsOptionsModify: PropTypes.func.isRequired,
+  // onTableSettingsModify: PropTypes.func,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  saveWordwallsChanges: PropTypes.func.isRequired,
 };
 
 export default SettingsModalBody;

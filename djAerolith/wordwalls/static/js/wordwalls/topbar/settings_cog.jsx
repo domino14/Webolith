@@ -1,5 +1,8 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/no-static-element-interactions,
+jsx-a11y/click-events-have-key-events */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import SettingsModal from './settings_modal';
 import Styling from '../style';
 
@@ -33,7 +36,9 @@ class SettingsCog extends React.Component {
           />
         </div>
         <SettingsModal
-          ref={ref => (this.myPrefsModal = ref)}
+          ref={(ref) => {
+            this.myPrefsModal = ref;
+          }}
           displayStyle={this.props.displayStyle}
           onSave={this.props.onSave}
           isMultiplayer={this.props.isMultiplayer}
@@ -44,9 +49,9 @@ class SettingsCog extends React.Component {
 }
 
 SettingsCog.propTypes = {
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  onSave: React.PropTypes.func,
-  isMultiplayer: React.PropTypes.bool,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  onSave: PropTypes.func.isRequired,
+  isMultiplayer: PropTypes.bool.isRequired,
 };
 
 export default SettingsCog;

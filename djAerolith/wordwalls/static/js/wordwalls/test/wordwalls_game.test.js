@@ -1,7 +1,7 @@
 // Test functions for wordwalls_game.js
 /* eslint-disable import/no-extraneous-dependencies, no-unused-expressions */
 import { should } from 'chai';
-import { describe, it, beforeEach } from 'mocha';
+import { describe, it, beforeEach } from 'jest';
 
 import WordwallsGame from '../wordwalls_game';
 

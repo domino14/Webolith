@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ColorConstants = {
   White: '#feffff',
@@ -98,17 +99,18 @@ const GameChip = (props) => {
         stroke={color.textColor}
         fill={color.textColor}
         strokeWidth="1px"
-      >{props.number}</text>
+      >{props.number}
+      </text>
     </g>
   );
 };
 
 GameChip.propTypes = {
-  x: React.PropTypes.number,
-  y: React.PropTypes.number,
-  radius: React.PropTypes.number,
-  fontSize: React.PropTypes.number,
-  number: React.PropTypes.number,
+  x: PropTypes.number.isRequired,
+  y: PropTypes.number.isRequired,
+  radius: PropTypes.number.isRequired,
+  fontSize: PropTypes.number.isRequired,
+  number: PropTypes.number.isRequired,
 };
 
 export default GameChip;

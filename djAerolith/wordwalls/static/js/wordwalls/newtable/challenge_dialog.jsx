@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import moment from 'moment';
 
 import DatePicker from '../forms/date_picker';
@@ -10,56 +12,51 @@ const ChallengeDialog = (props) => {
   const rows = [];
   const challs = props.challengesDoneAtDate.map(el => el.challengeID);
 
-  rows.push(
-    <ChallengeButtonRow
-      title="By Word Length"
-      size="lg"
-      key="ch2"
-      challenges={props.challengeInfo.filter(ch => ch.orderPriority === 1)}
-      onChallengeClick={props.onChallengeSelected}
-      solvedChallenges={challs}
-      selectedChallenge={props.currentChallenge}
-    />);
+  rows.push(<ChallengeButtonRow
+    title="By Word Length"
+    size="lg"
+    key="ch2"
+    challenges={props.challengeInfo.filter(ch => ch.orderPriority === 1)}
+    onChallengeClick={props.onChallengeSelected}
+    solvedChallenges={challs}
+    selectedChallenge={props.currentChallenge}
+  />);
 
-  rows.push(
-    <ChallengeButtonRow
-      title="Word Builder"
-      size="sm"
-      key="ch5"
-      challenges={props.challengeInfo.filter(ch => ch.orderPriority === 4)}
-      onChallengeClick={props.onChallengeSelected}
-      solvedChallenges={challs}
-      selectedChallenge={props.currentChallenge}
-    />);
+  rows.push(<ChallengeButtonRow
+    title="Word Builder"
+    size="sm"
+    key="ch5"
+    challenges={props.challengeInfo.filter(ch => ch.orderPriority === 4)}
+    onChallengeClick={props.onChallengeSelected}
+    solvedChallenges={challs}
+    selectedChallenge={props.currentChallenge}
+  />);
 
   // Hard challenges
-  rows.push(
-    <ChallengeButtonRow
-      title="Tougher Challenges"
-      size="sm"
-      key="ch3"
-      challenges={
-        props.challengeInfo.filter(
-          // Leave out the "Common Words (long)" for now.
-          ch => ch.orderPriority === 2 && ch.id !== 19)
-      }
-      onChallengeClick={props.onChallengeSelected}
-      solvedChallenges={challs}
-      selectedChallenge={props.currentChallenge}
-    />);
+  rows.push(<ChallengeButtonRow
+    title="Tougher Challenges"
+    size="sm"
+    key="ch3"
+    challenges={
+      // Leave out the "Common Words (long)" for now.
+      props.challengeInfo.filter(ch => ch.orderPriority === 2 && ch.id !== 19)
+    }
+    onChallengeClick={props.onChallengeSelected}
+    solvedChallenges={challs}
+    selectedChallenge={props.currentChallenge}
+  />);
 
   // Finally, some uncommon challenges.
 
-  rows.push(
-    <ChallengeButtonRow
-      title="Other Word Lengths"
-      size="sm"
-      key="ch4"
-      onChallengeClick={props.onChallengeSelected}
-      solvedChallenges={challs}
-      selectedChallenge={props.currentChallenge}
-      challenges={props.challengeInfo.filter(ch => ch.orderPriority === 3)}
-    />);
+  rows.push(<ChallengeButtonRow
+    title="Other Word Lengths"
+    size="sm"
+    key="ch4"
+    onChallengeClick={props.onChallengeSelected}
+    solvedChallenges={challs}
+    selectedChallenge={props.currentChallenge}
+    challenges={props.challengeInfo.filter(ch => ch.orderPriority === 3)}
+  />);
 
   return (
     <div className="row">
@@ -79,7 +76,8 @@ const ChallengeDialog = (props) => {
           style={{ marginTop: '0.75em' }}
           onClick={props.onChallengeSubmit}
           data-dismiss="modal"
-        >Play!</button>
+        >Play!
+        </button>
       </div>
       <div className="col-sm-5">
         <ChallengeResults
@@ -92,32 +90,32 @@ const ChallengeDialog = (props) => {
 };
 
 ChallengeDialog.propTypes = {
-  challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    seconds: React.PropTypes.number,
-    numQuestions: React.PropTypes.number,
-    name: React.PropTypes.string,
-    orderPriority: React.PropTypes.number,
-  })),
-  challengesDoneAtDate: React.PropTypes.arrayOf(React.PropTypes.shape({
-    challengeID: React.PropTypes.number,
-  })),
-  currentDate: React.PropTypes.instanceOf(moment),
-  onDateChange: React.PropTypes.func,
-  onChallengeSelected: React.PropTypes.func,
-  onChallengeSubmit: React.PropTypes.func,
-  challengeData: React.PropTypes.shape({
-    entries: React.PropTypes.arrayOf(React.PropTypes.shape({
-      user: React.PropTypes.string,
-      score: React.PropTypes.number,
-      tr: React.PropTypes.number,
-      addl: React.PropTypes.string,
-    })),
-    challengeName: React.PropTypes.string,
-    lexicon: React.PropTypes.string,
-    maxScore: React.PropTypes.number,
-  }),
-  currentChallenge: React.PropTypes.number,
+  challengeInfo: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    seconds: PropTypes.number,
+    numQuestions: PropTypes.number,
+    name: PropTypes.string,
+    orderPriority: PropTypes.number,
+  })).isRequired,
+  challengesDoneAtDate: PropTypes.arrayOf(PropTypes.shape({
+    challengeID: PropTypes.number,
+  })).isRequired,
+  currentDate: PropTypes.instanceOf(moment).isRequired,
+  onDateChange: PropTypes.func.isRequired,
+  onChallengeSelected: PropTypes.func.isRequired,
+  onChallengeSubmit: PropTypes.func.isRequired,
+  challengeData: PropTypes.shape({
+    entries: PropTypes.arrayOf(PropTypes.shape({
+      user: PropTypes.string,
+      score: PropTypes.number,
+      tr: PropTypes.number,
+      addl: PropTypes.string,
+    })).isRequired,
+    challengeName: PropTypes.string,
+    lexicon: PropTypes.string,
+    maxScore: PropTypes.number,
+  }).isRequired,
+  currentChallenge: PropTypes.number.isRequired,
 };
 
 export default ChallengeDialog;

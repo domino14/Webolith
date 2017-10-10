@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 
 import SolutionsModal from './solutions_modal';
@@ -66,7 +67,9 @@ class GameInactiveArea extends React.Component {
         />
         <HeroButton
           addlButtonClass="btn-danger"
-          onClick={() => (window.location.href = '/')}
+          onClick={() => {
+            window.location.href = '/';
+          }}
           buttonText="Back to main page"
         />
       </div>
@@ -112,7 +115,8 @@ class GameInactiveArea extends React.Component {
         <div>
           <h1>Game over!</h1>
           <p>You can continue by clicking {startButton} again, or
-          view solutions / results below.</p>
+          view solutions / results below.
+          </p>
           <div className="row">
             <HeroButton
               addlButtonClass="btn-primary"
@@ -177,28 +181,28 @@ class GameInactiveArea extends React.Component {
 }
 
 GameInactiveArea.propTypes = {
-  questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  numCorrect: React.PropTypes.number,
-  totalWords: React.PropTypes.number,
-  height: React.PropTypes.number,
-  markMissed: React.PropTypes.func,
-  showLexiconSymbols: React.PropTypes.bool,
-  isChallenge: React.PropTypes.bool,
-  challengeData: React.PropTypes.shape({
-    entries: React.PropTypes.array,
-    maxScore: React.PropTypes.number,
-  }),
-  numberOfRounds: React.PropTypes.number,
-  resetTableCreator: React.PropTypes.func,
-  tableCreatorModalSelector: React.PropTypes.string,
-  listName: React.PropTypes.string,
-  startCountdown: React.PropTypes.number,
-  startCountingDown: React.PropTypes.bool,
+  questions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  numCorrect: PropTypes.number.isRequired,
+  totalWords: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  markMissed: PropTypes.func.isRequired,
+  showLexiconSymbols: PropTypes.bool.isRequired,
+  isChallenge: PropTypes.bool.isRequired,
+  challengeData: PropTypes.shape({
+    entries: PropTypes.array,
+    maxScore: PropTypes.number,
+  }).isRequired,
+  numberOfRounds: PropTypes.number.isRequired,
+  resetTableCreator: PropTypes.func.isRequired,
+  tableCreatorModalSelector: PropTypes.string.isRequired,
+  listName: PropTypes.string.isRequired,
+  startCountdown: PropTypes.number.isRequired,
+  startCountingDown: PropTypes.bool.isRequired,
 
-  canStart: React.PropTypes.bool,
-  handleStart: React.PropTypes.func,
-  handleStartCountdown: React.PropTypes.func,
-  handleStartCountdownCancel: React.PropTypes.func,
+  canStart: PropTypes.bool.isRequired,
+  handleStart: PropTypes.func.isRequired,
+  handleStartCountdown: PropTypes.func.isRequired,
+  handleStartCountdownCancel: PropTypes.func.isRequired,
 };
 
 export default GameInactiveArea;

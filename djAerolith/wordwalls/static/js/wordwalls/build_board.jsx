@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import Styling from './style';
 
@@ -6,8 +7,8 @@ import WordwallsQuestion from './wordwalls_question';
 import backgroundURL from './background';
 
 const SolutionPanel = (props) => {
-  let words = props.solvedWords.map((word, idx) => (
-    <span key={idx}>{word} </span>
+  let words = props.solvedWords.map(word => (
+    <span key={word}>{word} </span>
   ));
   if (!words.length) {
     words = (
@@ -32,9 +33,9 @@ const SolutionPanel = (props) => {
 };
 
 SolutionPanel.propTypes = {
-  wordLength: React.PropTypes.number,
-  totalCount: React.PropTypes.number,
-  solvedWords: React.PropTypes.arrayOf(React.PropTypes.string),
+  wordLength: PropTypes.number.isRequired,
+  totalCount: PropTypes.number.isRequired,
+  solvedWords: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 class BuildBoard extends React.Component {
@@ -83,13 +84,12 @@ class BuildBoard extends React.Component {
             }
           });
         });
-        answers.push(
-          <SolutionPanel
-            key={idx}
-            wordLength={idx + 1}
-            totalCount={ct}
-            solvedWords={solvedWordsForLength}
-          />);
+        answers.push(<SolutionPanel
+          key={`length${idx + 1}`}
+          wordLength={idx + 1}
+          totalCount={ct}
+          solvedWords={solvedWordsForLength}
+        />);
       }
     });
     return answers;
@@ -146,7 +146,8 @@ class BuildBoard extends React.Component {
           width={this.props.width + (2 * leftMargin)}
           height={60 + (2 * topMargin)}
           onMouseDown={(e) => { e.preventDefault(); }}
-        >{renderedQuestion}</svg>
+        >{renderedQuestion}
+        </svg>
         <ul className="list-group">
           {this.renderAnswers()}
         </ul>
@@ -156,12 +157,12 @@ class BuildBoard extends React.Component {
 }
 
 BuildBoard.propTypes = {
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  width: React.PropTypes.number,
-  questions: React.PropTypes.instanceOf(Immutable.List),
-  onShuffle: React.PropTypes.func.isRequired,
-  answerers: React.PropTypes.instanceOf(Immutable.Map),
-  origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  width: PropTypes.number.isRequired,
+  questions: PropTypes.instanceOf(Immutable.List).isRequired,
+  onShuffle: PropTypes.func.isRequired,
+  answerers: PropTypes.instanceOf(Immutable.Map).isRequired,
+  origQuestions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
 };
 
 export default BuildBoard;

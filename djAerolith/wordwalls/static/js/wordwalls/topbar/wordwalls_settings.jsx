@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Immutable from 'immutable';
 import _ from 'underscore';
 
@@ -67,8 +69,8 @@ class WordwallsSettings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tileOrderLettersRemaining: WordwallsSettings.calculateLettersRemaining(
-        props.displayStyle.customTileOrder),
+      tileOrderLettersRemaining: (
+        WordwallsSettings.calculateLettersRemaining(props.displayStyle.customTileOrder)),
       questions: Immutable.fromJS([
         {
           a: 'ADEEMMO?',
@@ -88,8 +90,7 @@ class WordwallsSettings extends React.Component {
     // XXX: Check if it has all letters before setting state. If not,
     // set some sort of indicator.
 
-    const letters = _.uniq(
-      event.target.value.toLocaleUpperCase().split('')).join('');
+    const letters = _.uniq(event.target.value.toLocaleUpperCase().split('')).join('');
     this.props.onOptionsModify('customTileOrder', letters);
     const remaining = WordwallsSettings.calculateLettersRemaining(letters);
     this.setState({
@@ -169,7 +170,9 @@ class WordwallsSettings extends React.Component {
         >
           <strong>{
             `${stateLetRem} (${stateLetRem.length})`
-          }</strong></span>);
+          }
+          </strong>
+        </span>);
     } else {
       letRem = (
         <span className="text-success">
@@ -202,8 +205,7 @@ class WordwallsSettings extends React.Component {
               <Checkbox
                 on={this.props.displayStyle.tilesOn}
                 onChange={(event) => {
-                  this.props.onOptionsModify(
-                    'tilesOn', event.target.checked);
+                  this.props.onOptionsModify('tilesOn', event.target.checked);
                 }}
                 label="Show tiles"
               />
@@ -280,8 +282,10 @@ class WordwallsSettings extends React.Component {
                   <Checkbox
                     on={this.props.displayStyle.showBorders}
                     onChange={(event) => {
-                      this.props.onOptionsModify('showBorders',
-                        event.target.checked);
+                      this.props.onOptionsModify(
+'showBorders',
+                        event.target.checked,
+);
                     }}
                     label="Show borders around questions"
                   />
@@ -290,8 +294,10 @@ class WordwallsSettings extends React.Component {
                   <Checkbox
                     on={this.props.displayStyle.showChips}
                     onChange={(event) => {
-                      this.props.onOptionsModify('showChips',
-                        event.target.checked);
+                      this.props.onOptionsModify(
+'showChips',
+                        event.target.checked,
+);
                     }}
                     label="Show number of anagrams"
                   />
@@ -300,8 +306,10 @@ class WordwallsSettings extends React.Component {
                   <Checkbox
                     on={this.props.displayStyle.hideLexiconSymbols}
                     onChange={(event) => {
-                      this.props.onOptionsModify('hideLexiconSymbols',
-                        event.target.checked);
+                      this.props.onOptionsModify(
+'hideLexiconSymbols',
+                        event.target.checked,
+);
                     }}
                     label="Hide lexicon symbols (such as # or +)"
                   />
@@ -315,9 +323,9 @@ class WordwallsSettings extends React.Component {
 }
 
 WordwallsSettings.propTypes = {
-  onOptionsModify: React.PropTypes.func,
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  allowSave: React.PropTypes.func,
+  onOptionsModify: PropTypes.func.isRequired,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  allowSave: PropTypes.func.isRequired,
 };
 
 export default WordwallsSettings;

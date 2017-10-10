@@ -1,5 +1,7 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/no-static-element-interactions,
+jsx-a11y/click-events-have-key-events */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const MAXIMUM_LIST_NAME_SIZE = 50;
 
@@ -110,7 +112,8 @@ class ListSaveBar extends React.Component {
             className="hovertip"
             data-toggle="tooltip"
             title={listNameTitle}
-          >{this.props.listName}</div>
+          >{this.props.listName}
+          </div>
           <div
             className="glyphicon glyphicon-pencil hovertip"
             aria-hidden="true"
@@ -175,11 +178,11 @@ ListSaveBar.defaultProps = {
 };
 
 ListSaveBar.propTypes = {
-  listName: React.PropTypes.string,
-  autoSave: React.PropTypes.bool,
-  onListNameChange: React.PropTypes.func.isRequired,
-  onAutoSaveToggle: React.PropTypes.func.isRequired,
-  disableEditing: React.PropTypes.bool,
+  listName: PropTypes.string,
+  autoSave: PropTypes.bool,
+  onListNameChange: PropTypes.func.isRequired,
+  onAutoSaveToggle: PropTypes.func.isRequired,
+  disableEditing: PropTypes.bool.isRequired,
 };
 
 export default ListSaveBar;

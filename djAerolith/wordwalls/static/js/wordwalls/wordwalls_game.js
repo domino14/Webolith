@@ -31,7 +31,7 @@ class Game {
     // being the answered words.
     this.answeredBy = Immutable.Map();
     this.totalWords = 0;
-    this.maxOnScreenQuestions = 52;  // Default.
+    this.maxOnScreenQuestions = 52; // Default.
     questions.forEach((question, aidx) => {
       const newWMap = {};
       question.ws.forEach((word, idx) => {
@@ -80,8 +80,10 @@ class Game {
     // Update the "answeredByMap" at key solver with a new list caused by
     // appending wObj to the existing list at that key. If that key doesn't
     // exist, it creates one with an empty list.
-    this.answeredBy = this.answeredBy.update(solver, Immutable.List(),
-      existingList => existingList.push(wObj));
+    this.answeredBy = this.answeredBy.update(
+      solver, Immutable.List(),
+      existingList => existingList.push(wObj),
+    );
   }
   /**
    * Solve a word. This will modify the elements in the hashes, which
@@ -103,11 +105,10 @@ class Game {
     delete this.wrongWordsHash[word];
 
     // Update the word object; add a solved property.
-    this.origQuestions = this.origQuestions.updateIn(
-      [alphagram, 'ws', widx], (wObj) => {
-        this.addToAnswered(wObj, solver);
-        return wObj.set('solved', true);
-      });
+    this.origQuestions = this.origQuestions.updateIn([alphagram, 'ws', widx], (wObj) => {
+      this.addToAnswered(wObj, solver);
+      return wObj.set('solved', true);
+    });
 
     // Look up the index of this alphagram in the alphaIndex hash.
     // This index is mutable and represents the current display position.
@@ -117,8 +118,10 @@ class Game {
 
     this.origQuestions = this.origQuestions.update(alphagram, (aObj) => {
       let replacementAlpha;
-      let newObj = aObj.set('answersRemaining',
-        aObj.get('answersRemaining') - 1);
+      let newObj = aObj.set(
+        'answersRemaining',
+        aObj.get('answersRemaining') - 1,
+      );
       if (newObj.get('answersRemaining') !== 0) {
         return newObj;
       }

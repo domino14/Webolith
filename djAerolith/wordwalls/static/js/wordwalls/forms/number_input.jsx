@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const NumberInput = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
@@ -35,16 +36,16 @@ const NumberInput = (props) => {
 };
 
 NumberInput.propTypes = {
-  colSize: React.PropTypes.number,
-  label: React.PropTypes.string,
-  inputName: React.PropTypes.string,
+  colSize: PropTypes.number.isRequired,
+  label: PropTypes.string.isRequired,
+  inputName: PropTypes.string.isRequired,
   // Note that value is a string. This is because number inputs still
   // have string values, especially for empty inputs. ('')
-  value: React.PropTypes.string,
-  onChange: React.PropTypes.func,
-  disabled: React.PropTypes.bool,
-  minAllowed: React.PropTypes.number,
-  maxAllowed: React.PropTypes.number,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  minAllowed: PropTypes.number.isRequired,
+  maxAllowed: PropTypes.number.isRequired,
 };
 
 export default NumberInput;

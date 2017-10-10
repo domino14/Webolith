@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class ChatBar extends React.Component {
   constructor() {
@@ -50,19 +51,24 @@ class ChatBar extends React.Component {
             onChange={this.handleChatChange}
             value={this.state.chatText}
             onKeyPress={this.handleKeyPress}
-            onBlur={this.props.onBlur || (() => {})}
-            ref={ib => (this.inputBox = ib)}
+            onBlur={this.props.onBlur}
+            ref={(ib) => {
+              this.inputBox = ib;
+            }}
           />
         </div>
       </div>
     );
   }
-
 }
 
 ChatBar.propTypes = {
-  onChatSubmit: React.PropTypes.func,
-  onBlur: React.PropTypes.func,
+  onChatSubmit: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
+};
+
+ChatBar.defaultProps = {
+  onBlur: () => {},
 };
 
 export default ChatBar;

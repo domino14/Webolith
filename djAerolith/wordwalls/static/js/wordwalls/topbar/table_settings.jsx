@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Checkbox from '../forms/checkbox';
 
 
@@ -25,7 +25,8 @@ class TableSettings extends React.Component {
                 label="Private"
               />
               <p>Note: To switch between single and multiplayer tables, you
-              must instead create a new table.</p>
+              must instead create a new table.
+              </p>
             </form>
           </div>
         </div>
@@ -35,8 +36,8 @@ class TableSettings extends React.Component {
 }
 
 TableSettings.propTypes = {
-  onSettingsModify: React.PropTypes.func,
-  tablePrivate: React.PropTypes.bool,
+  onSettingsModify: PropTypes.func.isRequired,
+  tablePrivate: PropTypes.bool.isRequired,
 };
 
 export default TableSettings;
