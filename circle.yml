@@ -46,7 +46,7 @@ dependencies:
 test:
   override:
     # Build the js bundles.
-    - yarn full-prod-build
+    - yarn eslint && yarn test && yarn prod:build
     # Test the app.
     - cd djAerolith && ./manage.py test -v2
     # Gather all JS files and compile messages for building into image.

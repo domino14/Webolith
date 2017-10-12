@@ -42,6 +42,7 @@ ADMINS = (
     ('Cesar Del Solar', 'delsolar@gmail.com'),
 )
 
+USE_WEBPACK_DEV_SERVER = True
 MANAGERS = ADMINS
 
 DATABASES = {
