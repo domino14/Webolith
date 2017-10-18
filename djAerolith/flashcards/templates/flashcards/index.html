@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 {% load value_from_settings %}
-{% value_from_settings DEBUG_JS as DEBUG_JS %}
-
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -9,14 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Aerolith Flashcards. Flashcard words using the Leitner spaced repetition method.">
     <meta name="author" content="Cesar Del Solar">
-
-    <link href="/static/lib/bootstrap/css/bootstrap-slate.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
     <link href="/static/css/flashcards/cards.css?v={{CURRENT_VERSION}}" rel="stylesheet">
     <link href="/static/js/aerolith/tablesorter_blue/style.css?v={{CURRENT_VERSION}}" rel="stylesheet">
   </head>
 
   <body>
-
     <div class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
@@ -150,31 +145,13 @@
 
 
     <script>
-    var require = {
-        config: {
-            'main': {
-                'numCards': {{numCards}},
-                'quizzes': "{{savedLists|escapejs}}"
-            }
-        }
-    }
+    var AppConfig = {
+        'numCards': {{numCards}},
+        'quizzes': "{{savedLists|escapejs}}"
+    };
     </script>
-    <script src="/static/lib/require/require-min.js"></script>
-    <script>
-    require.config({
-        {% if DEBUG_JS %}
-            paths: {
-                'main': '/static/js/flashcards/main'
-            }
-        {% else %}
-            urlArgs: 'v={{CURRENT_VERSION}}',
-            paths: {
-                'main': '/static/dist/flashcards-built'
-            }
-        {% endif %}
-    });
-    require(['main']);
-    </script>
+    <script src="{{STATIC_SRV}}/static/dist/vendor.js?v={{CURRENT_VERSION}}"></script>
+    <script src="{{STATIC_SRV}}/static/dist/flashcardsapp.js?v={{CURRENT_VERSION}}"></script>
 
   </body>
 </html>

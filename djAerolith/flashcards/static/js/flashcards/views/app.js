@@ -4,14 +4,14 @@ define([
   'underscore',
   'jquery',
   'mustache',
-  'router',
-  'views/quiz',
-  'views/quiz_selector',
-  'text!templates/new_quiz.html'
+  '../router',
+  './quiz',
+  './quiz_selector',
+  'text-loader!../templates/new_quiz.html'
 ], function(Backbone, _, $, Mustache, Router, Quiz, QuizSelector,
     NewQuizTemplate) {
   "use strict";
-  var App, NEW_QUIZ_URL, SCHEDULED_URL, LOOKUP_WORDS_URL;
+  var App, NEW_QUIZ_URL, SCHEDULED_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
   SCHEDULED_URL = '/cards/api/scheduled';
   App = Backbone.View.extend({
@@ -65,10 +65,10 @@ define([
       'json').fail(_.bind(this.alertCallback, this));
     },
 
-    getScheduledCards: function() {
-      $.get(SCHEDULED_URL, function(data) {
-      }, 'json');
-    },
+    // getScheduledCards: function() {
+    //   $.get(SCHEDULED_URL, function(data) {
+    //   }, 'json');
+    // },
     alertCallback: function(jqXHR) {
       this.displaySpinner_(false);
       this.quiz.renderAlert(jqXHR.responseJSON);

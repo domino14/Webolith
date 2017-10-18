@@ -10,7 +10,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 
 const prodConfig = _.defaults({
   output: {
-    filename: 'table-client-bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'djAerolith/static/dist/'),
     publicPath: '/static/dist/',
   },

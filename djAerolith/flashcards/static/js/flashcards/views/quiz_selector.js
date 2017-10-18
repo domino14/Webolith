@@ -1,10 +1,10 @@
 define([
   'backbone',
   'underscore',
-  'collections/quizzes',
+  '../collections/quizzes',
   'mustache',
-  'text!templates/quiz_selector.html',
-  'models/word_list',
+  'text-loader!../templates/quiz_selector.html',
+  '../models/word_list',
   'tablesorter'
 ], function(Backbone, _, Quizzes, Mustache, QuizSelectorTemplate, WordList) {
   "use strict";

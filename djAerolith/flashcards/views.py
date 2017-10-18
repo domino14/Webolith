@@ -3,6 +3,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.conf import settings
 
 from current_version import CURRENT_VERSION
 from base.models import Lexicon, WordList
@@ -20,6 +21,10 @@ def main(request):
                   'savedLists': json.dumps(quizzes_response(
                                            quizzes)),
                   'CURRENT_VERSION': CURRENT_VERSION,
+                  'STATIC_SRV': (
+                      'http://localhost:7000' if (
+                          settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)
+                      else '')
                   })
 
 

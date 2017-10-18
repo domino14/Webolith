@@ -6,7 +6,7 @@ define([
   'underscore',
   'jquery',
   'mustache',
-  'text!templates/previous_cards.html'
+  'text-loader!../templates/previous_cards.html'
 ], function(Backbone, _, $, Mustache, PreviousCards) {
   "use strict";
   var NUM_PREV_CARDS = 10;
