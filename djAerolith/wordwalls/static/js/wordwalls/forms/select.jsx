@@ -55,7 +55,7 @@ Select.propTypes = {
   label: PropTypes.string.isRequired,
   selectedValue: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  numItems: PropTypes.number.isRequired,
+  numItems: PropTypes.number,
   badge: PropTypes.string,
   disabled: PropTypes.bool,
 };
@@ -63,6 +63,7 @@ Select.propTypes = {
 Select.defaultProps = {
   badge: null,
   disabled: false,
+  numItems: 1,
 };
 
 

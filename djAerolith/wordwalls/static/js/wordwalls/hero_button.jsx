@@ -13,11 +13,16 @@ const HeroButton = props => (
   </div>
 );
 
+HeroButton.defaultProps = {
+  modalSelector: null,
+  onClick: () => {},
+};
+
 HeroButton.propTypes = {
   addlButtonClass: PropTypes.string.isRequired,
-  modalSelector: PropTypes.string.isRequired,
+  modalSelector: PropTypes.string,
   buttonText: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };
 
 export default HeroButton;

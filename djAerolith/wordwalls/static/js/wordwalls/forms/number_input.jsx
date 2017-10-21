@@ -12,6 +12,12 @@ const NumberInput = (props) => {
   if (props.disabled === true) {
     addlInputProps.disabled = true;
   }
+  if (props.minAllowed != null) {
+    addlInputProps.min = props.minAllowed;
+  }
+  if (props.maxAllowed != null) {
+    addlInputProps.max = props.maxAllowed;
+  }
   return (
     <div className="form-group">
       <div className="row">
@@ -22,12 +28,9 @@ const NumberInput = (props) => {
           <input
             type="number"
             {...addlInputProps}
-            name={props.inputName}
             value={props.value}
             className="form-control input-sm"
             onChange={props.onChange}
-            min={props.minAllowed}
-            max={props.maxAllowed}
           />
         </div>
       </div>
@@ -35,17 +38,22 @@ const NumberInput = (props) => {
   );
 };
 
+NumberInput.defaultProps = {
+  minAllowed: null,
+  maxAllowed: null,
+  disabled: false,
+};
+
 NumberInput.propTypes = {
   colSize: PropTypes.number.isRequired,
   label: PropTypes.string.isRequired,
-  inputName: PropTypes.string.isRequired,
   // Note that value is a string. This is because number inputs still
   // have string values, especially for empty inputs. ('')
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
-  minAllowed: PropTypes.number.isRequired,
-  maxAllowed: PropTypes.number.isRequired,
+  disabled: PropTypes.bool,
+  minAllowed: PropTypes.number,
+  maxAllowed: PropTypes.number,
 };
 
 export default NumberInput;

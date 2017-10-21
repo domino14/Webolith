@@ -26,7 +26,6 @@ const SavedListRow = props => (
         flashcardList={props.flashcardList}
         flashcardFirstMissed={props.flashcardFirstMissed}
         deleteList={props.deleteList}
-        onDropdownClicked={props.onDropdownClicked}
       />
     </td>
     <td>{props.list.name}</td>
@@ -53,7 +52,6 @@ SavedListRow.propTypes = {
   flashcardList: PropTypes.func.isRequired,
   flashcardFirstMissed: PropTypes.func.isRequired,
   deleteList: PropTypes.func.isRequired,
-  onDropdownClicked: PropTypes.func.isRequired,
 };
 
 export default SavedListRow;

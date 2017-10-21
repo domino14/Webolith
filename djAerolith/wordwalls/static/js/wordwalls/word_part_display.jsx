@@ -14,8 +14,12 @@ const WordPartDisplay = props => (
   </span>
 );
 
+WordPartDisplay.defaultProps = {
+  classes: null,
+};
+
 WordPartDisplay.propTypes = {
-  classes: PropTypes.string.isRequired,
+  classes: PropTypes.string,
   text: PropTypes.string.isRequired,
 };
 

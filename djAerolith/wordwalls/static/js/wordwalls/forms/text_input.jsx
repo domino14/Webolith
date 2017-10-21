@@ -17,7 +17,6 @@ const TextInput = (props) => {
           </label>
           <input
             type="text"
-            name={props.inputName}
             value={props.value}
             className="form-control input-sm"
             maxLength={props.maxLength}
@@ -33,7 +32,6 @@ const TextInput = (props) => {
 TextInput.propTypes = {
   colSize: PropTypes.number.isRequired,
   label: PropTypes.string.isRequired,
-  inputName: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   maxLength: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,

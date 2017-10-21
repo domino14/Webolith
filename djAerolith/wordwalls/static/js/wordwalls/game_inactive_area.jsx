@@ -34,6 +34,9 @@ class GameInactiveArea extends React.Component {
         });
         this.countdownTimeout = window.setTimeout(() => {
           this.props.handleStart();
+          this.setState({
+            startButtonState: BUTTON_STATE_IDLE,
+          });
         }, COUNTDOWN_SECS * 1000);
         this.props.handleStartCountdown(COUNTDOWN_SECS);
       } else {

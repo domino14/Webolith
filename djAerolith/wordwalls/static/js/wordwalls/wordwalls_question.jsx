@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Immutable from 'immutable';
 
+import Styling from './style';
 import Chip from './game_chip';
 import Tile from './game_tile';
 import QuestionText from './question_text';
@@ -67,10 +68,6 @@ class WordwallsQuestion extends React.Component {
   render() {
     const tiles = [];
 
-    if (!this.props.words) {
-      // No words for this question; return an empty g.
-      return <g>{this.borderRectangle()}</g>;
-    }
     const dims = WordwallsQuestion.getTileDimensions(
       this.props.letters.length,
       this.props.displayStyle.showChips,
@@ -114,7 +111,7 @@ class WordwallsQuestion extends React.Component {
         tiles.push(<Tile
           tileStyle={this.props.displayStyle.tileStyle}
           font={this.props.displayStyle.font}
-          bold={this.props.displayStyle.bold}
+          bold={this.props.displayStyle.showBold}
           key={`q${this.props.qNumber}tile${letterIdx}`}
           x={x}
           y={y}
@@ -128,7 +125,7 @@ class WordwallsQuestion extends React.Component {
       // Tiles are off, just use a <text>
       tiles.push(<QuestionText
         font={this.props.displayStyle.font}
-        bold={this.props.displayStyle.bold}
+        bold={this.props.displayStyle.showBold}
         key={`q${this.props.qNumber}qtext`}
         x={xPadding + (countFrom * (tileWidth + 1))}
         y={this.props.gridY + (this.props.ySize / 2)}
@@ -147,27 +144,21 @@ class WordwallsQuestion extends React.Component {
           cursor: 'default',
         }}
         transform={
-          `scale(${this.props.scaleTransform ? this.props.scaleTransform : 1.0})`}
+          `scale(${this.props.scaleTransform})`}
       >{tiles}{this.borderRectangle()}
       </g>
     );
   }
 }
 
+WordwallsQuestion.defaultProps = {
+  scaleTransform: 1.0,
+  letters: '',
+};
+
 WordwallsQuestion.propTypes = {
-  displayStyle: PropTypes.shape({
-    showChips: PropTypes.bool,
-    tilesOn: PropTypes.bool,
-    tileStyle: PropTypes.string,
-    fontMultiplier: PropTypes.number,
-    font: PropTypes.string,
-    showBorders: PropTypes.bool,
-    bold: PropTypes.bool,
-    blankCharacter: PropTypes.string,
-    background: PropTypes.string,
-    bodyBackground: PropTypes.string,
-  }).isRequired,
-  letters: PropTypes.string.isRequired,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  letters: PropTypes.string,
   qNumber: PropTypes.number.isRequired,
   words: PropTypes.instanceOf(Immutable.Map).isRequired,
   gridX: PropTypes.number.isRequired,
@@ -175,7 +166,7 @@ WordwallsQuestion.propTypes = {
   xSize: PropTypes.number.isRequired,
   ySize: PropTypes.number.isRequired,
   onShuffle: PropTypes.func.isRequired,
-  scaleTransform: PropTypes.number.isRequired,
+  scaleTransform: PropTypes.number,
 };
 
 export default WordwallsQuestion;

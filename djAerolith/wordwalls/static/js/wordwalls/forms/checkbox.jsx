@@ -19,9 +19,7 @@ const CheckBox = (props) => {
           <input
             type="checkbox"
             {...addlInputProps}
-            name={props.inputName}
             checked={props.on}
-            value={props.inputName/* doesn't matter */}
             onChange={props.onChange}
           />
           {props.label}
@@ -31,7 +29,6 @@ const CheckBox = (props) => {
 };
 
 CheckBox.propTypes = {
-  inputName: PropTypes.string.isRequired,
   on: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,

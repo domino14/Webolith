@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import Styling from './style';
 
 import WordwallsQuestion from './wordwalls_question';
+import QuestionPlaceholder from './wordwalls_question_placeholder';
 import backgroundURL from './background';
 
 const SVGBoard = (props) => {
@@ -23,41 +24,40 @@ const SVGBoard = (props) => {
   // up.
   const xSize = props.width / props.gridWidth;
   const ySize = props.height / props.gridHeight;
-  const questionDisplayStyle = {
-    tilesOn: props.displayStyle.tilesOn,
-    tileStyle: props.displayStyle.tileStyle,
-    blankCharacter: props.displayStyle.blankCharacter,
-    font: props.displayStyle.font,
-    showChips: props.displayStyle.showChips,
-    bold: props.displayStyle.showBold,
-    showBorders: props.displayStyle.showBorders,
-    fontMultiplier: props.displayStyle.fontMultiplier,
-    background: props.displayStyle.background,
-    bodyBackground: props.displayStyle.bodyBackground,
-  };
   const { onShuffle } = props;
   // curQuestions is an Immutable List of Maps
   props.questions.forEach((question, idx) => {
     // Calculate top left X, Y based on dimensions.
+    // Only push questions that will fit on the game board.
     const gridX = (idx % props.gridWidth) * xSize;
     const gridY = Math.floor(idx / props.gridWidth) * ySize;
     if (idx >= props.gridWidth * props.gridHeight) {
       return;
     }
     const letters = question.get('displayedAs');
-    // Only push questions that will fit on the game board.
-    questions.push(<WordwallsQuestion
-      displayStyle={questionDisplayStyle}
-      letters={letters}
-      key={letters}
-      qNumber={idx}
-      words={question.get('wMap')}
-      gridX={gridX + leftMargin}
-      gridY={gridY + topMargin}
-      ySize={ySize}
-      xSize={xSize}
-      onShuffle={onShuffle}
-    />);
+    if (letters) {
+      questions.push(<WordwallsQuestion
+        displayStyle={props.displayStyle}
+        letters={letters}
+        key={question.get('a')}
+        qNumber={idx}
+        words={question.get('wMap')}
+        gridX={gridX + leftMargin}
+        gridY={gridY + topMargin}
+        ySize={ySize}
+        xSize={xSize}
+        onShuffle={onShuffle}
+      />);
+    } else {
+      questions.push(<QuestionPlaceholder
+        displayStyle={props.displayStyle}
+        key={`ph${gridX},${gridY}`}
+        gridX={gridX + leftMargin}
+        gridY={gridY + topMargin}
+        xSize={xSize}
+        ySize={ySize}
+      />);
+    }
   });
 
   return (

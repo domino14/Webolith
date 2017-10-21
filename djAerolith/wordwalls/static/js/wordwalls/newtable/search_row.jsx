@@ -112,8 +112,8 @@ class SearchRow extends React.Component {
             colSize={12}
             label="Min"
             value={String(this.props.minValue)}
-            minAllowed={String(this.props.minAllowedValue)}
-            maxAllowed={String(this.props.maxAllowedValue)}
+            minAllowed={this.props.minAllowedValue}
+            maxAllowed={this.props.maxAllowedValue}
             onChange={event => this.props.modifySearchParam(
               this.props.index,
               'minValue', event.target.value,
@@ -125,8 +125,8 @@ class SearchRow extends React.Component {
             colSize={12}
             label="Max"
             value={String(this.props.maxValue)}
-            minAllowed={String(this.props.minAllowedValue)}
-            maxAllowed={String(this.props.maxAllowedValue)}
+            minAllowed={this.props.minAllowedValue}
+            maxAllowed={this.props.maxAllowedValue}
             onChange={event => this.props.modifySearchParam(
               this.props.index,
               'maxValue', event.target.value,

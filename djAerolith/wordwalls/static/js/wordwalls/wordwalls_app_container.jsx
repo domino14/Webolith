@@ -930,9 +930,13 @@ class WordwallsAppContainer extends React.Component {
   }
 }
 
+WordwallsAppContainer.defaultProps = {
+  listName: '',
+};
+
 WordwallsAppContainer.propTypes = {
   username: PropTypes.string.isRequired,
-  listName: PropTypes.string.isRequired,
+  listName: PropTypes.string,
   autoSave: PropTypes.bool.isRequired,
   lexicon: PropTypes.string.isRequired,
   displayStyle: PropTypes.instanceOf(Styling).isRequired,

@@ -110,7 +110,7 @@ ChallengeDialog.propTypes = {
       score: PropTypes.number,
       tr: PropTypes.number,
       addl: PropTypes.string,
-    })).isRequired,
+    })),
     challengeName: PropTypes.string,
     lexicon: PropTypes.string,
     maxScore: PropTypes.number,

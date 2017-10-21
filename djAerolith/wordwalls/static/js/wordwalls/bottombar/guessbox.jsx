@@ -61,7 +61,7 @@ class GuessBox extends React.Component {
             onChange={this.handleGuessChange}
             value={this.state.guessText}
             onKeyPress={this.handleKeyPress}
-            onBlur={this.props.onBlur}
+            // onBlur={this.props.onBlur}
             ref={(ib) => {
               this.inputBox = ib;
             }}
@@ -87,7 +87,7 @@ class GuessBox extends React.Component {
 
 GuessBox.propTypes = {
   onGuessSubmit: PropTypes.func.isRequired,
-  onBlur: PropTypes.func.isRequired,
+  // onBlur: PropTypes.func.isRequired,
   onHotKey: PropTypes.func.isRequired,
   lastGuess: PropTypes.string.isRequired,
   lastGuessCorrectness: PropTypes.bool.isRequired,

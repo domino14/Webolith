@@ -73,7 +73,7 @@ class TableCreator extends React.Component {
       challengesDoneAtDate: [],
       // Challenge data is leaderboard data.
       challengeData: {},
-      currentChallenge: null,
+      currentChallenge: 0,
       // Word-search related
       wordSearchCriteria: [{
         searchType: SearchTypesEnum.LENGTH,

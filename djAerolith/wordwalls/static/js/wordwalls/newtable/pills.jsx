@@ -39,9 +39,13 @@ const Pills = (props) => {
   );
 };
 
+Pills.defaultProps = {
+  stacked: false,
+};
+
 Pills.propTypes = {
   activePill: PropTypes.string.isRequired,
-  stacked: PropTypes.bool.isRequired,
+  stacked: PropTypes.bool,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
   onPillClick: PropTypes.func.isRequired,
 };
