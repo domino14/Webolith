@@ -1,13 +1,20 @@
 {
     "extends": "airbnb",
+    "plugins": [
+        "compat"
+    ],
     "parserOptions": {
-        "ecmaVersion": 6,
+        "ecmaVersion": 8,
         "sourceType": "module",
         "ecmaFeatures": {
             "jsx": true
         }
     },
     "env": {
-        "browser": true
+        "browser": true,
+        "jest": true
+    },
+    "rules": {
+        "compat/compat": 2
     }
 }

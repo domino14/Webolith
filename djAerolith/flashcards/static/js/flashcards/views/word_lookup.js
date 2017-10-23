@@ -1,5 +1,3 @@
-/* global JSON*/
-
 define([
   'backbone',
   'jquery',

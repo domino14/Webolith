@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Pills from '../newtable/pills';
 
@@ -14,9 +15,9 @@ const SettingsSidebar = props => (
 );
 
 SettingsSidebar.propTypes = {
-  settingsTypes: React.PropTypes.arrayOf(React.PropTypes.string),
-  activeSettingsType: React.PropTypes.string,
-  setSettingsType: React.PropTypes.func,
+  settingsTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  activeSettingsType: PropTypes.string.isRequired,
+  setSettingsType: PropTypes.func.isRequired,
 };
 
 export default SettingsSidebar;

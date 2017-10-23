@@ -3,22 +3,22 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import SavedListRow from './list_table_row';
 
 const SavedListTable = (props) => {
-  const continueList = props.continueList;
-  const playFirstMissed = props.playFirstMissed;
-  const resetStartOver = props.resetStartOver;
-  const deleteList = props.deleteList;
-  const flashcardList = props.flashcardList;
-  const flashcardFirstMissed = props.flashcardFirstMissed;
+  const {
+    continueList,
+    playFirstMissed,
+    resetStartOver,
+    deleteList,
+    flashcardList,
+    flashcardFirstMissed,
+  } = props;
 
-  const rows = props.lists.map((option, idx) => (
+  const rows = props.lists.map(option => (
     <SavedListRow
-      key={idx}
-      pos={idx}
-      total={props.lists.length}
+      key={option.id}
       list={option}
       continueList={continueList}
       playFirstMissed={playFirstMissed}
@@ -49,23 +49,23 @@ const SavedListTable = (props) => {
 };
 
 SavedListTable.propTypes = {
-  lists: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    name: React.PropTypes.string,
-    numCurAlphagrams: React.PropTypes.number,
-    numAlphagrams: React.PropTypes.number,
-    questionIndex: React.PropTypes.number,
-    goneThruOnce: React.PropTypes.bool,
-    lastSaved: React.PropTypes.string,
-    lastSavedDT: React.PropTypes.string,
-  })),
+  lists: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    numCurAlphagrams: PropTypes.number,
+    numAlphagrams: PropTypes.number,
+    questionIndex: PropTypes.number,
+    goneThruOnce: PropTypes.bool,
+    lastSaved: PropTypes.string,
+    lastSavedDT: PropTypes.string,
+  })).isRequired,
 
-  continueList: React.PropTypes.func,
-  playFirstMissed: React.PropTypes.func,
-  resetStartOver: React.PropTypes.func,
-  deleteList: React.PropTypes.func,
-  flashcardList: React.PropTypes.func,
-  flashcardFirstMissed: React.PropTypes.func,
+  continueList: PropTypes.func.isRequired,
+  playFirstMissed: PropTypes.func.isRequired,
+  resetStartOver: PropTypes.func.isRequired,
+  deleteList: PropTypes.func.isRequired,
+  flashcardList: PropTypes.func.isRequired,
+  flashcardFirstMissed: PropTypes.func.isRequired,
 };
 
 export default SavedListTable;

@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Select from '../forms/select';
 
 class AerolithListDialog extends React.Component {
@@ -29,21 +31,22 @@ class AerolithListDialog extends React.Component {
             selectedValue={this.props.multiplayerOn ? 'multi' : 'single'}
             options={[{ value: 'single', displayValue: 'Single Player' },
                       { value: 'multi', displayValue: 'Multiplayer' }]}
-            onChange={e => this.props.onMultiplayerModify(
-              e.target.value === 'multi')}
+            onChange={e => this.props.onMultiplayerModify(e.target.value === 'multi')}
           />
           <button
             className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
             onClick={this.props.onListSubmit}
             data-dismiss="modal"
-          >Play!</button>
+          >Play!
+          </button>
           <button
             className="btn btn-info"
             style={{ marginTop: '0.75em', marginLeft: '1em' }}
             onClick={this.props.onFlashcardSubmit}
             data-dismiss="modal"
-          >Flashcard</button>
+          >Flashcard
+          </button>
         </div>
       </div>
     );
@@ -51,19 +54,19 @@ class AerolithListDialog extends React.Component {
 }
 
 AerolithListDialog.propTypes = {
-  selectedList: React.PropTypes.string,
-  onSelectedListChange: React.PropTypes.func,
-  listOptions: React.PropTypes.arrayOf(React.PropTypes.shape({
-    name: React.PropTypes.string,
-    lexicon: React.PropTypes.string,
-    numAlphas: React.PropTypes.number,
-    id: React.PropTypes.number,
-    wordLength: React.PropTypes.number,
-  })),
-  onListSubmit: React.PropTypes.func,
-  onFlashcardSubmit: React.PropTypes.func,
-  multiplayerOn: React.PropTypes.bool,
-  onMultiplayerModify: React.PropTypes.func,
+  selectedList: PropTypes.string.isRequired,
+  onSelectedListChange: PropTypes.func.isRequired,
+  listOptions: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    lexicon: PropTypes.string,
+    numAlphas: PropTypes.number,
+    id: PropTypes.number,
+    wordLength: PropTypes.number,
+  })).isRequired,
+  onListSubmit: PropTypes.func.isRequired,
+  onFlashcardSubmit: PropTypes.func.isRequired,
+  multiplayerOn: PropTypes.bool.isRequired,
+  onMultiplayerModify: PropTypes.func.isRequired,
 };
 
 export default AerolithListDialog;

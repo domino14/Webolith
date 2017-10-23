@@ -25,16 +25,20 @@ class Presence {
    */
   addMessage(message, isLobby, optMaxMessages) {
     const key = isLobby ? 'lobby' : 'table';
-    this.messages = this.messages.update(key, Immutable.List(),
-      existingList => existingList.push(message));
+    this.messages = this.messages.update(
+      key, Immutable.List(),
+      existingList => existingList.push(message),
+    );
     // Trim the message list.
     let maxMessages = MAX_MESSAGES;
     if (optMaxMessages) {
       maxMessages = optMaxMessages;
     }
     if (this.messages.get(key).size > maxMessages) {
-      this.messages = this.messages.update(key,
-        existingList => existingList.shift());
+      this.messages = this.messages.update(
+        key,
+        existingList => existingList.shift(),
+      );
     }
   }
 
@@ -56,8 +60,10 @@ class Presence {
       // happens, for now.
       return;
     }
-    this.tables = this.tables.update(room,
-      existingMap => existingMap.set('users', userList));
+    this.tables = this.tables.update(
+      room,
+      existingMap => existingMap.set('users', userList),
+    );
   }
   /**
    * Set the "host" in the room to the passed-in host.
@@ -68,8 +74,10 @@ class Presence {
     if (!this.tables.has(room)) {
       return;
     }
-    this.tables = this.tables.update(room,
-      existingMap => existingMap.set('host', host));
+    this.tables = this.tables.update(
+      room,
+      existingMap => existingMap.set('host', host),
+    );
   }
 
   /**
@@ -105,8 +113,10 @@ class Presence {
    * @param  {Object} table
    */
   updateTable(table) {
-    this.tables = this.tables.set(String(table.tablenum),
-      Immutable.fromJS(table));
+    this.tables = this.tables.set(
+      String(table.tablenum),
+      Immutable.fromJS(table),
+    );
   }
 
   getMessages() {
@@ -120,7 +130,6 @@ class Presence {
   getTables() {
     return this.tables;
   }
-
 }
 
 export default Presence;

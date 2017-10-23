@@ -7,16 +7,16 @@ define([
   'backbone',
   'jquery',
   'underscore',
-  'models/word_list',
-  'views/prev_cards',
+  '../models/word_list',
+  './prev_cards',
   'mustache',
-  'text!templates/card.html',
-  'text!templates/card_front.html',
-  'text!templates/card_back.html',
-  'text!templates/card_info.html',
-  'text!templates/quiz_header.html',
-  'text!templates/save_success.html',
-  'text!templates/alert.html'
+  'text-loader!../templates/card.html',
+  'text-loader!../templates/card_front.html',
+  'text-loader!../templates/card_back.html',
+  'text-loader!../templates/card_info.html',
+  'text-loader!../templates/quiz_header.html',
+  'text-loader!../templates/save_success.html',
+  'text-loader!../templates/alert.html'
 ], function(Backbone, $, _, WordList, PrevCards, Mustache, CardTemplate,
   CardFront, CardBack, CardInfo, QuizHeader, SaveSuccess, Alert) {
   "use strict";
@@ -223,7 +223,6 @@ define([
     getCardDisplayAttributes_: function(card) {
       var attributes;
       attributes = card.toJSON();
-      console.log('attrs', attributes);
       attributes.numAnswers = _.size(attributes.answers);
       attributes.pluralAnswers = attributes.numAnswers > 1;
       attributes.cardNum = this.wordList.currentIndex() + 1;

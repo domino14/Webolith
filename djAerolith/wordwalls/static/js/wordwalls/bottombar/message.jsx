@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const classMap = {
   server: 'text-muted',
@@ -22,9 +23,13 @@ const Message = (props) => {
 };
 
 Message.propTypes = {
-  type: React.PropTypes.string,
-  children: React.PropTypes.string,
-  author: React.PropTypes.string,
+  type: PropTypes.string.isRequired,
+  children: PropTypes.string.isRequired,
+  author: PropTypes.string,
+};
+
+Message.defaultProps = {
+  author: '',
 };
 
 export default Message;

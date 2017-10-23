@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Immutable from 'immutable';
 
 // import { pointsForWord } from './build_mode';
@@ -6,11 +8,11 @@ import WordPartDisplay from './word_part_display';
 
 const UserBox = (props) => {
   const answers = [];
-  const showLexiconSymbols = props.showLexiconSymbols;
-  props.answers.forEach((word, idx) => {
-    answers.push(
+  const { showLexiconSymbols } = props;
+  props.answers.forEach((word) => {
+    const wordEl = (
       <div
-        key={idx}
+        key={word.get('w')}
         data-toggle="tooltip"
         data-placement="left"
         title={word.get('d')}
@@ -27,6 +29,7 @@ const UserBox = (props) => {
           classes="text-info small"
         />
       </div>);
+    answers.push(wordEl);
   });
   const percentScore = props.totalWords > 0 ?
     (100 * (props.answers.size / props.totalWords)).toFixed(1) : 0;
@@ -58,7 +61,8 @@ const UserBox = (props) => {
             <span
               style={{ fontSize: '1.8em' }}
               className="text text-success"
-            >{`${percentScore}%`}</span>
+            >{`${percentScore}%`}
+            </span>
           </div>
           <div className="col-sm-8 col-md-6 col-md-offset-2">
             <div
@@ -68,7 +72,8 @@ const UserBox = (props) => {
                 textAlign: 'right',
               }}
               className="text text-success"
-            >{fractionScore}</div>
+            >{fractionScore}
+            </div>
           </div>
         </div>
       </div>
@@ -77,10 +82,10 @@ const UserBox = (props) => {
 };
 
 UserBox.propTypes = {
-  answers: React.PropTypes.instanceOf(Immutable.List),
-  totalWords: React.PropTypes.number,
-  username: React.PropTypes.string,
-  showLexiconSymbols: React.PropTypes.bool,
+  answers: PropTypes.instanceOf(Immutable.List).isRequired,
+  totalWords: PropTypes.number.isRequired,
+  username: PropTypes.string.isRequired,
+  showLexiconSymbols: PropTypes.bool.isRequired,
 };
 
 export default UserBox;

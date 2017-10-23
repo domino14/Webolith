@@ -1,9 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Immutable from 'immutable';
 
 import ListSaveBar from './topbar/save_list';
 import SettingsCog from './topbar/settings_cog';
-import StartButton from './topbar/start_button';
+import GiveUpButton from './topbar/give_up_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
 import UserBox from './user_box';
@@ -67,17 +69,13 @@ class WordwallsApp extends React.Component {
           />
         </div>
         <div
-          className={`col-xs-4 col-sm-4 col-sm-offset-2 col-md-3
-            col-md-offset-3 col-lg-2`}
+          className="col-xs-4 col-sm-4 col-sm-offset-2 col-md-3
+            col-md-offset-3 col-lg-2"
           style={{ whiteSpace: 'nowrap' }}
         >
-          <StartButton
-            handleStart={this.props.handleStart}
+          <GiveUpButton
             handleGiveup={this.props.handleGiveup}
-            handleStartCountdown={this.props.handleStartCountdown}
-            handleStartCountdownCancel={this.props.handleStartCountdownCancel}
             gameGoing={this.props.gameGoing}
-            canStartAndGiveUp={this.props.currentHost === this.props.username}
           />
           <GameTimer
             initialGameTime={this.props.initialGameTime}
@@ -98,7 +96,9 @@ class WordwallsApp extends React.Component {
             <ChatBar
               onChatSubmit={this.props.onChatSubmit}
               // onBlur={this.onChatBarBlur}
-              ref={cb => (this.chatBar = cb)}
+              ref={(cb) => {
+                this.chatBar = cb;
+              }}
             />
           </div>
         </div>);
@@ -132,6 +132,11 @@ class WordwallsApp extends React.Component {
               answerers={this.props.answeredBy}
               startCountdown={this.props.startCountdown}
               startCountingDown={this.props.startCountingDown}
+
+              canStart={this.props.currentHost === this.props.username}
+              handleStart={this.props.handleStart}
+              handleStartCountdown={this.props.handleStartCountdown}
+              handleStartCountdownCancel={this.props.handleStartCountdownCancel}
             />
           </div>
         </div>
@@ -149,7 +154,9 @@ class WordwallsApp extends React.Component {
               lastGuessCorrectness={this.props.lastGuessCorrectness}
               onHotKey={this.props.onHotKey}
               // onBlur={this.onGuessBoxBlur}
-              ref={gb => (this.guessBox = gb)}
+              ref={(gb) => {
+                this.guessBox = gb;
+              }}
             />
           </div>
           <div
@@ -207,8 +214,10 @@ class WordwallsApp extends React.Component {
             <UserBox
               showLexiconSymbols={
                 !this.props.displayStyle.hideLexiconSymbols}
-              answers={this.props.answeredBy.get(this.props.username,
-                Immutable.List())}
+              answers={this.props.answeredBy.get(
+this.props.username,
+                Immutable.List(),
+)}
               totalWords={this.props.totalWords}
               username={this.props.username}
               isBuild={this.props.isBuild}
@@ -248,66 +257,71 @@ class WordwallsApp extends React.Component {
   }
 }
 
+WordwallsApp.defaultProps = {
+  listName: '',
+  autoSave: false,
+};
+
 WordwallsApp.propTypes = {
-  listName: React.PropTypes.string,
-  autoSave: React.PropTypes.bool,
-  onListNameChange: React.PropTypes.func,
-  onAutoSaveToggle: React.PropTypes.func,
+  listName: PropTypes.string,
+  autoSave: PropTypes.bool,
+  onListNameChange: PropTypes.func.isRequired,
+  onAutoSaveToggle: PropTypes.func.isRequired,
 
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  setDisplayStyle: React.PropTypes.func,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  setDisplayStyle: PropTypes.func.isRequired,
 
-  handleStart: React.PropTypes.func,
-  handleGiveup: React.PropTypes.func,
-  handleStartCountdown: React.PropTypes.func,
-  handleStartCountdownCancel: React.PropTypes.func,
-  gameGoing: React.PropTypes.bool,
+  handleStart: PropTypes.func.isRequired,
+  handleGiveup: PropTypes.func.isRequired,
+  handleStartCountdown: PropTypes.func.isRequired,
+  handleStartCountdownCancel: PropTypes.func.isRequired,
+  gameGoing: PropTypes.bool.isRequired,
 
-  initialGameTime: React.PropTypes.number,
-  timerRanOut: React.PropTypes.func,
+  initialGameTime: PropTypes.number.isRequired,
+  timerRanOut: PropTypes.func.isRequired,
 
-  startCountdown: React.PropTypes.number,
-  startCountingDown: React.PropTypes.bool,
+  startCountdown: PropTypes.number.isRequired,
+  startCountingDown: PropTypes.bool.isRequired,
 
-  numberOfRounds: React.PropTypes.number,
-  isChallenge: React.PropTypes.bool,
-  isBuild: React.PropTypes.bool,
-  curQuestions: React.PropTypes.instanceOf(Immutable.List),
-  origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  totalWords: React.PropTypes.number,
-  answeredBy: React.PropTypes.instanceOf(Immutable.Map),
-  onShuffleQuestion: React.PropTypes.func,
-  markMissed: React.PropTypes.func,
+  numberOfRounds: PropTypes.number.isRequired,
+  isChallenge: PropTypes.bool.isRequired,
+  isBuild: PropTypes.bool.isRequired,
+  curQuestions: PropTypes.instanceOf(Immutable.List).isRequired,
+  origQuestions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  totalWords: PropTypes.number.isRequired,
+  answeredBy: PropTypes.instanceOf(Immutable.Map).isRequired,
+  onShuffleQuestion: PropTypes.func.isRequired,
+  markMissed: PropTypes.func.isRequired,
 
-  boardWidth: React.PropTypes.number,
-  boardHeight: React.PropTypes.number,
-  boardGridWidth: React.PropTypes.number,
-  boardGridHeight: React.PropTypes.number,
-  challengeData: React.PropTypes.shape({
-    entries: React.PropTypes.array,
-    maxScore: React.PropTypes.number,
-  }),
-  resetTableCreator: React.PropTypes.func,
-  tableCreatorModalSelector: React.PropTypes.string,
-  username: React.PropTypes.string,
-  usersInTable: React.PropTypes.arrayOf(React.PropTypes.string),
-  currentHost: React.PropTypes.string,
-  onGuessSubmit: React.PropTypes.func,
-  lastGuess: React.PropTypes.string,
-  lastGuessCorrectness: React.PropTypes.bool,
-  onHotKey: React.PropTypes.func,
-  tableIsMultiplayer: React.PropTypes.bool,
+  boardWidth: PropTypes.number.isRequired,
+  boardHeight: PropTypes.number.isRequired,
+  boardGridWidth: PropTypes.number.isRequired,
+  boardGridHeight: PropTypes.number.isRequired,
+  challengeData: PropTypes.shape({
+    entries: PropTypes.array,
+    maxScore: PropTypes.number,
+  }).isRequired,
+  resetTableCreator: PropTypes.func.isRequired,
+  tableCreatorModalSelector: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+  usersInTable: PropTypes.arrayOf(PropTypes.string).isRequired,
+  currentHost: PropTypes.string.isRequired,
+  onGuessSubmit: PropTypes.func.isRequired,
+  lastGuess: PropTypes.string.isRequired,
+  lastGuessCorrectness: PropTypes.bool.isRequired,
+  onHotKey: PropTypes.func.isRequired,
+  tableIsMultiplayer: PropTypes.bool.isRequired,
 
-  handleShuffleAll: React.PropTypes.func,
-  handleAlphagram: React.PropTypes.func,
-  handleCustomOrder: React.PropTypes.func,
-  tableMessages: React.PropTypes.arrayOf(React.PropTypes.shape({
-    author: React.PropTypes.string,
-    id: React.PropTypes.string,
-    content: React.PropTypes.string,
-    type: React.PropTypes.string,
-  })),
-  onChatSubmit: React.PropTypes.func,
+  handleShuffleAll: PropTypes.func.isRequired,
+  handleAlphagram: PropTypes.func.isRequired,
+  handleCustomOrder: PropTypes.func.isRequired,
+  tableMessages: PropTypes.arrayOf(PropTypes.shape({
+    author: PropTypes.string,
+    id: PropTypes.string,
+    content: PropTypes.string,
+    type: PropTypes.string,
+  })).isRequired,
+  onChatSubmit: PropTypes.func.isRequired,
 };
 export default WordwallsApp;
 

@@ -6,6 +6,8 @@
 /* global JSON, window, document */
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import $ from 'jquery';
 import _ from 'underscore';
 import Immutable from 'immutable';
@@ -22,7 +24,7 @@ import TableCreator from './newtable/table_creator';
 const game = new WordwallsGame();
 const presence = new Presence();
 
-const PRESENCE_TIMEOUT = 20000;  // 20 seconds.
+const PRESENCE_TIMEOUT = 20000; // 20 seconds.
 const GET_TABLES_INIT_TIMEOUT = 1500;
 const FAKE_SECOND = 950;
 
@@ -61,7 +63,6 @@ class WordwallsAppContainer extends React.Component {
       startCountdown: 0,
       startCountdownTimer: null,
 
-      windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
     };
     // Bindings:
@@ -359,7 +360,7 @@ class WordwallsAppContainer extends React.Component {
   handleAutoSaveToggle() {
     const newAutoSave = !this.state.autoSave;
     if (newAutoSave && !this.state.listName) {
-      return;   // There is no list name, don't toggle the checkbox.
+      return; // There is no list name, don't toggle the checkbox.
     }
     this.setState({
       autoSave: newAutoSave,
@@ -372,9 +373,11 @@ class WordwallsAppContainer extends React.Component {
 
   showAutosaveMessage(autosave) {
     if (autosave) {
-      this.addMessage(`Autosave is now on! Aerolith will save your
+      this.addMessage(
+        `Autosave is now on! Aerolith will save your
         list progress to ${this.state.listName} at the end of every round.`,
-        'info');
+        'info',
+      );
     } else {
       this.addMessage('Autosave is off.', 'error');
     }
@@ -466,7 +469,6 @@ class WordwallsAppContainer extends React.Component {
 
   handleResize() {
     this.setState({
-      windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
     });
   }
@@ -478,8 +480,10 @@ class WordwallsAppContainer extends React.Component {
     });
     if (newCountdown >= 0) {
       this.setState({
-        startCountdownTimer: window.setTimeout(this.countdownTimeout,
-          FAKE_SECOND),
+        startCountdownTimer: window.setTimeout(
+          this.countdownTimeout,
+          FAKE_SECOND,
+        ),
       });
     } else {
       this.setState({
@@ -493,8 +497,10 @@ class WordwallsAppContainer extends React.Component {
       startCountingDown: true,
       startCountdown: contents,
       // Account for ping delay. XXX: This is ugly...
-      startCountdownTimer: window.setTimeout(this.countdownTimeout,
-        FAKE_SECOND),
+      startCountdownTimer: window.setTimeout(
+        this.countdownTimeout,
+        FAKE_SECOND,
+      ),
     });
   }
 
@@ -533,11 +539,9 @@ class WordwallsAppContainer extends React.Component {
    * @return {string}
    */
   tableUrl(optTablenum) {
-    let tablenum;
+    let { tablenum } = this.state;
     if (optTablenum) {
       tablenum = optTablenum;
-    } else {
-      tablenum = this.state.tablenum;
     }
     return `/wordwalls/table/${tablenum}/`;
   }
@@ -553,8 +557,7 @@ class WordwallsAppContainer extends React.Component {
       return guess;
     }
     // Replace.
-    const newGuess = guess.replace(/CH/g, '1').replace(/LL/g, '2').replace(
-      /RR/g, '3');
+    const newGuess = guess.replace(/CH/g, '1').replace(/LL/g, '2').replace(/RR/g, '3');
     return newGuess;
   }
 
@@ -574,7 +577,7 @@ class WordwallsAppContainer extends React.Component {
           origQuestions: game.getOriginalQuestionState(),
           answeredBy: game.getAnsweredBy(),
           lastGuessCorrectness: (data.s === this.props.username ? true :
-                                 this.state.lastGuessCorrectness),
+            this.state.lastGuessCorrectness),
         });
       }
     }
@@ -632,14 +635,14 @@ class WordwallsAppContainer extends React.Component {
         idx: alphaIdx,
       },
     })
-    .done((data) => {
-      if (data.success === true) {
-        game.miss(alphagram);
-        this.setState({
-          origQuestions: game.getOriginalQuestionState(),
-        });
-      }
-    });
+      .done((data) => {
+        if (data.success === true) {
+          game.miss(alphagram);
+          this.setState({
+            origQuestions: game.getOriginalQuestionState(),
+          });
+        }
+      });
   }
 
   addMessage(serverMsg, optType, optSender, optIsLobby) {
@@ -697,16 +700,15 @@ class WordwallsAppContainer extends React.Component {
       },
       dataType: 'json',
     })
-    .done((data) => {
-      if (data.success === true) {
-        this.addMessage(`Saved as ${data.listname}`, 'info');
-      }
-      if (data.info) {
-        this.addMessage(data.info);
-      }
-    })
-    .fail(jqXHR => this.addMessage(
-      `Error saving: ${jqXHR.responseJSON.error}`, 'error'));
+      .done((data) => {
+        if (data.success === true) {
+          this.addMessage(`Saved as ${data.listname}`, 'info');
+        }
+        if (data.info) {
+          this.addMessage(data.info);
+        }
+      })
+      .fail(jqXHR => this.addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error'));
   }
 
   /**
@@ -781,8 +783,10 @@ class WordwallsAppContainer extends React.Component {
       // if (useReplaceState) {
       //   stateChanger = history.replaceState.bind(history);
       // }
-      history.replaceState({}, `Table ${data.tablenum}`,
-        this.tableUrl(data.tablenum));
+      window.history.replaceState(
+        {}, `Table ${data.tablenum}`,
+        this.tableUrl(data.tablenum),
+      );
       document.title = `Wordwalls - table ${data.tablenum}`;
       if (oldTablenum !== 0) {
         this.sendSocketTableReplace(oldTablenum, data.tablenum);
@@ -826,8 +830,7 @@ class WordwallsAppContainer extends React.Component {
     // Magic numbers; if we modify these we'll have to figure something out.
     if (this.state.windowWidth < 768) {
       // We take up 100%.
-      boardGridWidth = Math.max(
-        Math.floor(this.state.windowWidth / questionWidth), 1);
+      boardGridWidth = Math.max(Math.floor(this.state.windowWidth / questionWidth), 1);
     } else if (this.state.windowWidth < 992) {
       // This gets tricky because the UserBox component gets in the way.
       boardGridWidth = 3;
@@ -846,7 +849,9 @@ class WordwallsAppContainer extends React.Component {
         <TableCreator
           // Normally this is invisible. It is shown by the
           // new-button modal or other conditions (route).
-          ref={ref => (this.myTableCreator = ref)}
+          ref={(ref) => {
+            this.myTableCreator = ref;
+          }}
           defaultLexicon={this.props.defaultLexicon}
           availableLexica={this.props.availableLexica}
           challengeInfo={this.props.challengeInfo}
@@ -908,8 +913,7 @@ class WordwallsAppContainer extends React.Component {
           handleCustomOrder={this.handleCustomOrder}
           tableMessages={this.state.messages.get('table', Immutable.List()).toJS()}
           onChatSubmit={chat => this.onChatSubmit(chat, String(this.state.tablenum))}
-          usersInTable={this.state.users.get(
-            String(this.state.tablenum), Immutable.List()).toJS()}
+          usersInTable={this.state.users.get(String(this.state.tablenum), Immutable.List()).toJS()}
 
           startCountdown={this.state.startCountdown}
           startCountingDown={this.state.startCountingDown}
@@ -917,37 +921,42 @@ class WordwallsAppContainer extends React.Component {
           handleStartCountdownCancel={this.handleStartCountdownCancel}
 
           tableIsMultiplayer={this.state.tableIsMultiplayer}
-          ref={wwApp => (this.wwApp = wwApp)}
+          ref={(wwApp) => {
+            this.wwApp = wwApp;
+          }}
         />
       </div>
     );
   }
-
 }
 
+WordwallsAppContainer.defaultProps = {
+  listName: '',
+};
+
 WordwallsAppContainer.propTypes = {
-  username: React.PropTypes.string,
-  listName: React.PropTypes.string,
-  autoSave: React.PropTypes.bool,
-  lexicon: React.PropTypes.string,
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  tablenum: React.PropTypes.number,
-  tableIsMultiplayer: React.PropTypes.bool,
-  currentHost: React.PropTypes.string,
-  defaultLexicon: React.PropTypes.number,
-  challengeInfo: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    name: React.PropTypes.string,
-    questions: React.PropTypes.number,
-    seconds: React.PropTypes.number,
-  })),
-  availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    lexicon: React.PropTypes.string,
-    description: React.PropTypes.string,
-    counts: React.PropTypes.object,
-  })),
-  socketServer: React.PropTypes.string,
+  username: PropTypes.string.isRequired,
+  listName: PropTypes.string,
+  autoSave: PropTypes.bool.isRequired,
+  lexicon: PropTypes.string.isRequired,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  tablenum: PropTypes.number.isRequired,
+  tableIsMultiplayer: PropTypes.bool.isRequired,
+  currentHost: PropTypes.string.isRequired,
+  defaultLexicon: PropTypes.number.isRequired,
+  challengeInfo: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    questions: PropTypes.number,
+    seconds: PropTypes.number,
+  })).isRequired,
+  availableLexica: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    lexicon: PropTypes.string,
+    description: PropTypes.string,
+    counts: PropTypes.object,
+  })).isRequired,
+  socketServer: PropTypes.string.isRequired,
 };
 
 export default WordwallsAppContainer;

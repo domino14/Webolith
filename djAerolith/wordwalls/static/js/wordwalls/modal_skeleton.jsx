@@ -3,6 +3,8 @@
  * code.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import $ from 'jquery';
 
 class ModalSkeleton extends React.Component {
@@ -20,7 +22,9 @@ class ModalSkeleton extends React.Component {
         className={`modal fade ${this.props.modalClass}`}
         role="dialog"
         tabIndex="-1"
-        ref={domNode => (this.modal = domNode)}
+        ref={(domNode) => {
+          this.modal = domNode;
+        }}
       >
         <div
           className={`modal-dialog ${this.props.size}`}
@@ -38,9 +42,10 @@ class ModalSkeleton extends React.Component {
               </button>
               <h4
                 className="modal-title"
-              >{this.props.title}</h4>
+              >{this.props.title}
+              </h4>
             </div>
-            {this.props.children /* the body and footer, if any.*/}
+            {this.props.children /* the body and footer, if any. */}
           </div>
         </div>
       </div>);
@@ -48,10 +53,10 @@ class ModalSkeleton extends React.Component {
 }
 
 ModalSkeleton.propTypes = {
-  title: React.PropTypes.string,
-  size: React.PropTypes.string,
-  modalClass: React.PropTypes.string,
-  children: React.PropTypes.node,
+  title: PropTypes.string.isRequired,
+  size: PropTypes.string.isRequired,
+  modalClass: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default ModalSkeleton;

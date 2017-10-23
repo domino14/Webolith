@@ -21,4 +21,4 @@ function pointsForWord(word) {
   }
 }
 
-export { pointsForWord };  // eslint-disable-line import/prefer-default-export
+export { pointsForWord }; // eslint-disable-line import/prefer-default-export

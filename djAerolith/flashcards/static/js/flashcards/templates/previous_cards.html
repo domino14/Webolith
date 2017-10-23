@@ -4,7 +4,14 @@
 </div>
 <div class="panel-body">
     {{#cards}}
-    <div class="row"><div class="col-lg-6"><span class="{{#missed}}text-danger{{/missed}}{{^missed}}text-success{{/missed}}">{{question}} ({{numAnswers}})</span></div></div>
+    <div class="row">
+        <div class="col-xs-7 bigger">
+            <span class="{{#missed}}text-danger{{/missed}}{{^missed}}text-success{{/missed}}">{{question}} ({{numAnswers}})</span>
+        </div>
+        <div class="col-xs-5 previous-stars bigger">
+            <span class="stars" data-num-stars={{stars}}></span>
+        </div>
+    </div>
     {{/cards}}
 </div>
 </div>

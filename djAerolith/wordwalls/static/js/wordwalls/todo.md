@@ -179,10 +179,13 @@ Word search query generator
 - [x] Fix flashcard view for this as well
 - [x] Display search conditions on one line
 - [x] 10-99 anagram 5s has a ridiculous name
-- [ ] Deploy new .db files to prod
+- [x] Deploy new .db files to prod
 - [x] Fix tests
 - [x] Update tag
-- [ ] Check what happens when we deploy the new backend for people still on old frontend
+- [x] Check what happens when we deploy the new backend for people still on old frontend
 ~~- [ ] Show probability values for length queries?~~
 
+=====
+-[ ] autosave of game broke (can't repro??)
+-[ ] you can continue by clicking cancel again, once the game ends for good.
 

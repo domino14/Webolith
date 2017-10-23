@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Immutable from 'immutable';
 
 import Solution from './solution';
@@ -6,28 +8,26 @@ import Solution from './solution';
 const Solutions = (props) => {
   const tableRows = [];
   let wordIdx = 0;
-  const showLexiconSymbols = props.showLexiconSymbols;
-  const markMissed = props.markMissed;
+  const { showLexiconSymbols, markMissed } = props;
   props.questions.forEach((question) => {
     question.get('ws').forEach((word, wordPos) => {
-      tableRows.push(
-        <Solution
-          key={wordIdx}
-          wordPos={wordPos}
-          idx={question.get('idx')}
-          probability={question.get('p')}
-          alphagram={question.get('a')}
-          frontHooks={word.get('fh')}
-          backHooks={word.get('bh')}
-          word={word.get('w')}
-          innerFrontHook={word.get('ifh')}
-          innerBackHook={word.get('ibh')}
-          lexiconSymbols={showLexiconSymbols ? word.get('s') : ''}
-          definition={word.get('d')}
-          wordSolved={word.get('solved', false)}
-          correct={question.get('solved', false)}
-          markMissed={markMissed}
-        />);
+      tableRows.push(<Solution
+        key={wordIdx}
+        wordPos={wordPos}
+        idx={question.get('idx')}
+        probability={question.get('p')}
+        alphagram={question.get('a')}
+        frontHooks={word.get('fh')}
+        backHooks={word.get('bh')}
+        word={word.get('w')}
+        innerFrontHook={word.get('ifh')}
+        innerBackHook={word.get('ibh')}
+        lexiconSymbols={showLexiconSymbols ? word.get('s') : ''}
+        definition={word.get('d')}
+        wordSolved={word.get('solved', false)}
+        correct={question.get('solved', false)}
+        markMissed={markMissed}
+      />);
       wordIdx += 1;
     });
   });
@@ -76,11 +76,11 @@ const Solutions = (props) => {
 };
 
 Solutions.propTypes = {
-  questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  numCorrect: React.PropTypes.number,
-  totalWords: React.PropTypes.number,
-  markMissed: React.PropTypes.func,
-  showLexiconSymbols: React.PropTypes.bool,
+  questions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  numCorrect: PropTypes.number.isRequired,
+  totalWords: PropTypes.number.isRequired,
+  markMissed: PropTypes.func.isRequired,
+  showLexiconSymbols: PropTypes.bool.isRequired,
 };
 
 export default Solutions;

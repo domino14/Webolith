@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TextInput = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
@@ -16,7 +17,6 @@ const TextInput = (props) => {
           </label>
           <input
             type="text"
-            name={props.inputName}
             value={props.value}
             className="form-control input-sm"
             maxLength={props.maxLength}
@@ -30,13 +30,12 @@ const TextInput = (props) => {
 };
 
 TextInput.propTypes = {
-  colSize: React.PropTypes.number,
-  label: React.PropTypes.string,
-  inputName: React.PropTypes.string,
-  value: React.PropTypes.string,
-  maxLength: React.PropTypes.number,
-  onChange: React.PropTypes.func,
-  onKeyPress: React.PropTypes.func,
+  colSize: PropTypes.number.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  maxLength: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onKeyPress: PropTypes.func.isRequired,
 };
 
 export default TextInput;

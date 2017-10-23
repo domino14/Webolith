@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Select from '../forms/select';
 import NumberInput from '../forms/number_input';
@@ -18,7 +19,7 @@ const SearchTypesEnum = {
       defaultMin: 1,
       defaultMax: 100,
       minAllowed: 1,
-      maxAllowed: 70000,  // Subject to change by lexicon
+      maxAllowed: 70000, // Subject to change by lexicon
     },
     2: {
       name: 'length',
@@ -111,10 +112,12 @@ class SearchRow extends React.Component {
             colSize={12}
             label="Min"
             value={String(this.props.minValue)}
-            minAllowed={String(this.props.minAllowedValue)}
-            maxAllowed={String(this.props.maxAllowedValue)}
-            onChange={event => this.props.modifySearchParam(this.props.index,
-              'minValue', event.target.value)}
+            minAllowed={this.props.minAllowedValue}
+            maxAllowed={this.props.maxAllowedValue}
+            onChange={event => this.props.modifySearchParam(
+              this.props.index,
+              'minValue', event.target.value,
+            )}
           />
         </div>
         <div className="col-sm-3">
@@ -122,10 +125,12 @@ class SearchRow extends React.Component {
             colSize={12}
             label="Max"
             value={String(this.props.maxValue)}
-            minAllowed={String(this.props.minAllowedValue)}
-            maxAllowed={String(this.props.maxAllowedValue)}
-            onChange={event => this.props.modifySearchParam(this.props.index,
-              'maxValue', event.target.value)}
+            minAllowed={this.props.minAllowedValue}
+            maxAllowed={this.props.maxAllowedValue}
+            onChange={event => this.props.modifySearchParam(
+              this.props.index,
+              'maxValue', event.target.value,
+            )}
           />
         </div>
       </div>
@@ -139,8 +144,10 @@ class SearchRow extends React.Component {
           colSize={12}
           label="Comma-separated values"
           value={this.props.valueList}
-          onChange={event => this.props.modifySearchParam(this.props.index,
-            'valueList', event.target.value)}
+          onChange={event => this.props.modifySearchParam(
+            this.props.index,
+            'valueList', event.target.value,
+          )}
         />
       </div>
     );
@@ -169,14 +176,16 @@ class SearchRow extends React.Component {
           <button
             className="btn btn-info btn-sm"
             onClick={this.props.addRow}
-          >＋</button>
+          >＋
+          </button>
         </div>
         <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
           <button
             className="btn btn-info btn-sm"
             onClick={() => this.props.removeRow(this.props.index)}
             disabled={this.props.removeDisabled}
-          >－</button>
+          >－
+          </button>
         </div>
         <div className="col-sm-4">
           <Select
@@ -196,18 +205,26 @@ class SearchRow extends React.Component {
 }
 
 SearchRow.propTypes = {
-  searchType: React.PropTypes.number,
-  index: React.PropTypes.number,
-  minValue: React.PropTypes.number,
-  minAllowedValue: React.PropTypes.number,
-  maxValue: React.PropTypes.number,
-  maxAllowedValue: React.PropTypes.number,
-  valueList: React.PropTypes.string,
-  addRow: React.PropTypes.func,
-  removeRow: React.PropTypes.func,
-  removeDisabled: React.PropTypes.bool,
-  modifySearchType: React.PropTypes.func,
-  modifySearchParam: React.PropTypes.func,
+  searchType: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+  minValue: PropTypes.number,
+  minAllowedValue: PropTypes.number,
+  maxValue: PropTypes.number,
+  maxAllowedValue: PropTypes.number,
+  valueList: PropTypes.string,
+  addRow: PropTypes.func.isRequired,
+  removeRow: PropTypes.func.isRequired,
+  removeDisabled: PropTypes.bool.isRequired,
+  modifySearchType: PropTypes.func.isRequired,
+  modifySearchParam: PropTypes.func.isRequired,
+};
+
+SearchRow.defaultProps = {
+  minValue: 1,
+  minAllowedValue: 1,
+  maxValue: 100,
+  maxAllowedValue: 100,
+  valueList: '',
 };
 
 export default SearchRow;

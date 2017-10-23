@@ -1,6 +1,6 @@
 define([
   'backbone',
-  'models/card'
+  '../models/card'
 ], function(Backbone, Card) {
   "use strict";
   var Cards;

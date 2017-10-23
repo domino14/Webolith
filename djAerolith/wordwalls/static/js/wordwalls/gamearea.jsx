@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import $ from 'jquery';
 
@@ -59,39 +60,49 @@ class GameArea extends React.Component {
         listName={this.props.listName}
         startCountdown={this.props.startCountdown}
         startCountingDown={this.props.startCountingDown}
+
+        canStart={this.props.canStart}
+        handleStart={this.props.handleStart}
+        handleStartCountdown={this.props.handleStartCountdown}
+        handleStartCountdownCancel={this.props.handleStartCountdownCancel}
       />
     );
   }
 }
 
 GameArea.propTypes = {
-  numberOfRounds: React.PropTypes.number,
-  curQuestions: React.PropTypes.instanceOf(Immutable.List),
-  origQuestions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  displayStyle: React.PropTypes.instanceOf(Styling),
-  totalWords: React.PropTypes.number,
-  numCorrect: React.PropTypes.number,
-  onShuffle: React.PropTypes.func,
-  gameGoing: React.PropTypes.bool,
-  markMissed: React.PropTypes.func,
-  answerers: React.PropTypes.instanceOf(Immutable.Map),
+  numberOfRounds: PropTypes.number.isRequired,
+  curQuestions: PropTypes.instanceOf(Immutable.List).isRequired,
+  origQuestions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  displayStyle: PropTypes.instanceOf(Styling).isRequired,
+  totalWords: PropTypes.number.isRequired,
+  numCorrect: PropTypes.number.isRequired,
+  onShuffle: PropTypes.func.isRequired,
+  gameGoing: PropTypes.bool.isRequired,
+  markMissed: PropTypes.func.isRequired,
+  answerers: PropTypes.instanceOf(Immutable.Map).isRequired,
 
-  challengeData: React.PropTypes.shape({
-    entries: React.PropTypes.array,
-    maxScore: React.PropTypes.number,
-  }),
-  isChallenge: React.PropTypes.bool,
-  isBuild: React.PropTypes.bool,
-  width: React.PropTypes.number,
-  height: React.PropTypes.number,
-  gridWidth: React.PropTypes.number,
-  gridHeight: React.PropTypes.number,
-  resetTableCreator: React.PropTypes.func,
-  tableCreatorModalSelector: React.PropTypes.string,
-  listName: React.PropTypes.string,
+  challengeData: PropTypes.shape({
+    entries: PropTypes.array,
+    maxScore: PropTypes.number,
+  }).isRequired,
+  isChallenge: PropTypes.bool.isRequired,
+  isBuild: PropTypes.bool.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  gridWidth: PropTypes.number.isRequired,
+  gridHeight: PropTypes.number.isRequired,
+  resetTableCreator: PropTypes.func.isRequired,
+  tableCreatorModalSelector: PropTypes.string.isRequired,
+  listName: PropTypes.string.isRequired,
 
-  startCountdown: React.PropTypes.number,
-  startCountingDown: React.PropTypes.bool,
+  startCountdown: PropTypes.number.isRequired,
+  startCountingDown: PropTypes.bool.isRequired,
+
+  canStart: PropTypes.bool.isRequired,
+  handleStart: PropTypes.func.isRequired,
+  handleStartCountdown: PropTypes.func.isRequired,
+  handleStartCountdownCancel: PropTypes.func.isRequired,
 };
 
 export default GameArea;

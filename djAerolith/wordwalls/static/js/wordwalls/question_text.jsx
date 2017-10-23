@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Utils from './utils';
 
 import { darkBackgrounds } from './background';
@@ -32,19 +34,20 @@ const QuestionText = (props) => {
       fill={fontColor}
       fontWeight={fontWeight}
       strokeWidth="0.5px"
-    >{Utils.displaySpanishDigraphs(props.letters)}</text>
+    >{Utils.displaySpanishDigraphs(props.letters)}
+    </text>
   );
 };
 
 QuestionText.propTypes = {
-  font: React.PropTypes.string,
-  bold: React.PropTypes.bool,
-  x: React.PropTypes.number,
-  y: React.PropTypes.number,
-  fontSize: React.PropTypes.number,
-  letters: React.PropTypes.string,
-  background: React.PropTypes.string,
-  bodyBackground: React.PropTypes.string,
+  font: PropTypes.string.isRequired,
+  bold: PropTypes.bool.isRequired,
+  x: PropTypes.number.isRequired,
+  y: PropTypes.number.isRequired,
+  fontSize: PropTypes.number.isRequired,
+  letters: PropTypes.string.isRequired,
+  background: PropTypes.string.isRequired,
+  bodyBackground: PropTypes.string.isRequired,
 };
 
 export default QuestionText;

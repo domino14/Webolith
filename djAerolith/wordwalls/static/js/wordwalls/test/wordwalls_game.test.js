@@ -1,11 +1,7 @@
 // Test functions for wordwalls_game.js
 /* eslint-disable import/no-extraneous-dependencies, no-unused-expressions */
-import { should } from 'chai';
-import { describe, it, beforeEach } from 'mocha';
 
 import WordwallsGame from '../wordwalls_game';
-
-const hadBetter = should();
 
 const testQuestions = `[
   {
@@ -177,51 +173,51 @@ describe('Game State', () => {
 
   describe('Initialization', () => {
     it('should initialize state properly', () => {
-      game.getOriginalQuestionState().size.should.equal(7);
-      game.getQuestionState().size.should.equal(7);
-      game.getAnsweredBy().size.should.equal(0);
-      game.getTotalNumWords().should.equal(12);
+      expect(game.getOriginalQuestionState().size).toBe(7);
+      expect(game.getQuestionState().size).toBe(7);
+      expect(game.getAnsweredBy().size).toBe(0);
+      expect(game.getTotalNumWords()).toBe(12);
     });
   });
 
   describe('Basic Functionality', () => {
     it('should give correct values for answerExists method', () => {
-      game.answerExists('REATA').should.be.true;
-      game.answerExists('LERON').should.be.false;
+      expect(game.answerExists('REATA')).toBe(true);
+      expect(game.answerExists('LERON')).toBe(false);
     });
     it('should solve a word', () => {
-      game.answerExists('ENROL').should.be.true;
-      game.getQuestionState().getIn([2, 'wMap', 'ENROL']).should.be.ok;
+      expect(game.answerExists('ENROL')).toBe(true);
+      expect(game.getQuestionState().getIn([2, 'wMap', 'ENROL'])).toBeTruthy();
       game.solve('ENROL', 'ELNOR', 'cesar');
-      game.answerExists('ENROL').should.be.false;
-      game.getAnsweredBy().size.should.equal(1);
-      game.getAnsweredBy().get('cesar').size.should.equal(1);
-      game.getOriginalQuestionState().getIn(['ELNOR',
-        'answersRemaining']).should.equal(2);
+      expect(game.answerExists('ENROL')).toBe(false);
+      expect(game.getAnsweredBy().size).toBe(1);
+      expect(game.getAnsweredBy().get('cesar').size).toBe(1);
+      expect(game.getOriginalQuestionState().getIn(['ELNOR',
+        'answersRemaining'])).toBe(2);
       // lol:
-      hadBetter.not.exist(game.getQuestionState().getIn([2, 'wMap', 'ENROL']));
+      expect(game.getQuestionState().getIn([2, 'wMap', 'ENROL'])).toBeFalsy();
     });
     it('should not solve a word that is not in the answers', () => {
       game.solve('DERON', 'DENOR', 'cesar');
-      game.getAnsweredBy().size.should.equal(0);
-      game.getOriginalQuestionState().getIn(['DENOR',
-        'answersRemaining']).should.equal(3);
-      game.alphagramsLeft.should.equal(7);
+      expect(game.getAnsweredBy().size).toBe(0);
+      expect(game.getOriginalQuestionState().getIn(['DENOR',
+        'answersRemaining'])).toBe(3);
+      expect(game.alphagramsLeft).toBe(7);
     });
     it('should not solve an alphagram that is not in the answers', () => {
       game.solve('ANEAR', 'AAAAA', 'cesar');
-      game.getAnsweredBy().size.should.equal(0);
-      game.getOriginalQuestionState().getIn(['AAENR',
-        'answersRemaining']).should.equal(2); // ANEAR ARENA
+      expect(game.getAnsweredBy().size).toBe(0);
+      expect(game.getOriginalQuestionState().getIn(['AAENR',
+        'answersRemaining'])).toBe(2); // ANEAR ARENA
     });
     it('should correctly calculate alphagrams left', () => {
       game.solve('ANEAR', 'AAENR', 'cesar');
       game.solve('ARENA', 'AAENR', 'cesar');
-      game.getAnsweredBy().size.should.equal(1);
-      game.getAnsweredBy().get('cesar').size.should.equal(2);
-      game.getOriginalQuestionState().getIn(['AAENR',
-        'answersRemaining']).should.equal(0);
-      game.alphagramsLeft.should.equal(6);
+      expect(game.getAnsweredBy().size).toBe(1);
+      expect(game.getAnsweredBy().get('cesar').size).toBe(2);
+      expect(game.getOriginalQuestionState().getIn(['AAENR',
+        'answersRemaining'])).toBe(0);
+      expect(game.alphagramsLeft).toBe(6);
     });
   });
 });

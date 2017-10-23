@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Pills from './pills';
 import Select from '../forms/select';
@@ -34,8 +35,7 @@ const Sidebar = props => (
             label="Lexicon"
             selectedValue={String(props.currentLexicon)}
             options={getLexiconOptions(props.availableLexica)}
-            onChange={e => props.setLexicon(
-              parseInt(e.target.value, 10))}
+            onChange={e => props.setLexicon(parseInt(e.target.value, 10))}
           />
           <NumberInput
             colSize={10}
@@ -48,8 +48,7 @@ const Sidebar = props => (
             colSize={10}
             label="Questions Per Round"
             value={String(props.questionsPerRound)}
-            onChange={e => props.setQuestionsPerRound(
-              parseInt(e.target.value, 10))}
+            onChange={e => props.setQuestionsPerRound(parseInt(e.target.value, 10))}
             disabled={props.disabledInputs}
           />
         </form>
@@ -59,25 +58,23 @@ const Sidebar = props => (
 );
 
 Sidebar.propTypes = {
-  gameTypes: React.PropTypes.arrayOf(React.PropTypes.string),
-  activeGameType: React.PropTypes.string,
-  setGameType: React.PropTypes.func,
-  currentLexicon: React.PropTypes.number,
-  // XXX: Something is terribly wrong with eslint; these props are
-  // clearly used.
-  setLexicon: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-  desiredTime: React.PropTypes.string,
-  setTime: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-  questionsPerRound: React.PropTypes.number,
-  setQuestionsPerRound: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-  disabledInputs: React.PropTypes.bool,
+  gameTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  activeGameType: PropTypes.string.isRequired,
+  setGameType: PropTypes.func.isRequired,
+  currentLexicon: PropTypes.number.isRequired,
+  setLexicon: PropTypes.func.isRequired,
+  desiredTime: PropTypes.string.isRequired,
+  setTime: PropTypes.func.isRequired,
+  questionsPerRound: PropTypes.number.isRequired,
+  setQuestionsPerRound: PropTypes.func.isRequired,
+  disabledInputs: PropTypes.bool.isRequired,
 
-  availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    lexicon: React.PropTypes.string,
-    description: React.PropTypes.string,
-    counts: React.PropTypes.object,
-  })),
+  availableLexica: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    lexicon: PropTypes.string,
+    description: PropTypes.string,
+    counts: PropTypes.object,
+  })).isRequired,
 };
 
 export default Sidebar;

@@ -96,6 +96,12 @@ def table(request, tableid=None):
          'challenge_info': json.dumps(meta_info['challenge_info']),
          'available_lexica': json.dumps(meta_info['lexica']),
          'intercom_app_id': settings.INTERCOM_APP_ID,
+         # Use the webpack server if DEBUG is on. XXX This might not actually
+         # be a good test; consider using an IS_PRODUCTION flag.
+         'STATIC_SRV': (
+             'http://localhost:7000' if (
+                 settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)
+             else '')
          })
 
 

@@ -4,12 +4,19 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const NumberInput = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
   const addlInputProps = {};
   if (props.disabled === true) {
     addlInputProps.disabled = true;
+  }
+  if (props.minAllowed != null) {
+    addlInputProps.min = props.minAllowed;
+  }
+  if (props.maxAllowed != null) {
+    addlInputProps.max = props.maxAllowed;
   }
   return (
     <div className="form-group">
@@ -21,12 +28,9 @@ const NumberInput = (props) => {
           <input
             type="number"
             {...addlInputProps}
-            name={props.inputName}
             value={props.value}
             className="form-control input-sm"
             onChange={props.onChange}
-            min={props.minAllowed}
-            max={props.maxAllowed}
           />
         </div>
       </div>
@@ -34,17 +38,22 @@ const NumberInput = (props) => {
   );
 };
 
+NumberInput.defaultProps = {
+  minAllowed: null,
+  maxAllowed: null,
+  disabled: false,
+};
+
 NumberInput.propTypes = {
-  colSize: React.PropTypes.number,
-  label: React.PropTypes.string,
-  inputName: React.PropTypes.string,
+  colSize: PropTypes.number.isRequired,
+  label: PropTypes.string.isRequired,
   // Note that value is a string. This is because number inputs still
   // have string values, especially for empty inputs. ('')
-  value: React.PropTypes.string,
-  onChange: React.PropTypes.func,
-  disabled: React.PropTypes.bool,
-  minAllowed: React.PropTypes.number,
-  maxAllowed: React.PropTypes.number,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  minAllowed: PropTypes.number,
+  maxAllowed: PropTypes.number,
 };
 
 export default NumberInput;

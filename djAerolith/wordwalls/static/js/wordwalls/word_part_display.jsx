@@ -3,16 +3,24 @@
  * a set of front/back hooks.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Utils from './utils';
 
-const WordPartDisplay = props =>
+const WordPartDisplay = props => (
   <span
     className={props.classes}
-  >{Utils.displaySpanishDigraphs(props.text)}</span>;
+  >{Utils.displaySpanishDigraphs(props.text)}
+  </span>
+);
+
+WordPartDisplay.defaultProps = {
+  classes: null,
+};
 
 WordPartDisplay.propTypes = {
-  classes: React.PropTypes.string,
-  text: React.PropTypes.string,
+  classes: PropTypes.string,
+  text: PropTypes.string.isRequired,
 };
 
 export default WordPartDisplay;

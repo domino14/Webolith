@@ -3,6 +3,8 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import moment from 'moment';
 import $ from 'jquery';
 import 'bootstrap-datepicker';
@@ -22,23 +24,25 @@ class DatePicker extends React.Component {
         toValue: date => new Date(date),
       },
     })
-    .on('changeDate', (e) => {
+      .on('changeDate', (e) => {
       // We must manually trigger the `onChange` event of the input,
       // because it won't be triggered automatically.
       // XXX: We should not be doing this; instead we should find a
       // React datepicker and use bootstrap-react, etc. But this will do
       // for now.
-      this.props.onDateChange(new Date(e.date));
-    });
+        this.props.onDateChange(new Date(e.date));
+      });
   }
 
   render() {
+    // need nesting to get rid of jsx-a11y rule below
     return (
       <div>
-        <label
+        <label // eslint-disable-line jsx-a11y/label-has-for
           htmlFor={this.props.id}
           style={{ marginTop: '0.75em' }}
-        >{this.props.label}</label>
+        >{this.props.label}
+        </label>
         <div className="input-group date col-sm-6">
           <input
             type="text"
@@ -46,7 +50,9 @@ class DatePicker extends React.Component {
             id={this.props.id}
             value={this.props.value.toDate().toDateString()}
             onChange={this.props.onDateChange}
-            ref={node => (this.inputNode = node)}
+            ref={(node) => {
+              this.inputNode = node;
+            }}
           />
           <div className="input-group-addon">
             <span className="glyphicon glyphicon-th" />
@@ -57,11 +63,11 @@ class DatePicker extends React.Component {
 }
 
 DatePicker.propTypes = {
-  id: React.PropTypes.string,
-  value: React.PropTypes.instanceOf(moment),
-  label: React.PropTypes.string,
-  onDateChange: React.PropTypes.func,
-  startDate: React.PropTypes.instanceOf(Date),
+  id: PropTypes.string.isRequired,
+  value: PropTypes.instanceOf(moment).isRequired,
+  label: PropTypes.string.isRequired,
+  onDateChange: PropTypes.func.isRequired,
+  startDate: PropTypes.instanceOf(Date).isRequired,
 };
 
 export default DatePicker;

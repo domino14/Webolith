@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const TODAY_REGEX = /Today's (\d+)s/;
 
@@ -8,9 +9,10 @@ const ChallengeButton = (props) => {
   const challengeName = props.challenge.name;
   let displayName = challengeName;
   const matches = TODAY_REGEX.exec(challengeName);
+  const lengthIndex = 1;
   // Try to match to the Today's {number}s format.
   if (matches) {
-    displayName = matches[1];
+    displayName = matches[lengthIndex];
   }
 
   if (props.selectedChallenge === props.challenge.id) {
@@ -32,16 +34,16 @@ const ChallengeButton = (props) => {
 };
 
 ChallengeButton.propTypes = {
-  challenge: React.PropTypes.shape({
-    id: React.PropTypes.number,
-    seconds: React.PropTypes.number,
-    numQuestions: React.PropTypes.number,
-    name: React.PropTypes.string,
-    orderPriority: React.PropTypes.number,
-  }),
-  onClick: React.PropTypes.func,
-  solvedChallenges: React.PropTypes.arrayOf(React.PropTypes.number),
-  selectedChallenge: React.PropTypes.number,
+  challenge: PropTypes.shape({
+    id: PropTypes.number,
+    seconds: PropTypes.number,
+    numQuestions: PropTypes.number,
+    name: PropTypes.string,
+    orderPriority: PropTypes.number,
+  }).isRequired,
+  onClick: PropTypes.func.isRequired,
+  solvedChallenges: PropTypes.arrayOf(PropTypes.number).isRequired,
+  selectedChallenge: PropTypes.number.isRequired,
 };
 
 const ChallengeButtonRow = (props) => {
@@ -51,18 +53,16 @@ const ChallengeButtonRow = (props) => {
   }
   // Create button row.
   const buttons = [];
-  const onChallengeClick = props.onChallengeClick;
-  const solvedChallenges = props.solvedChallenges;
+  const { onChallengeClick, solvedChallenges } = props;
 
   props.challenges.forEach((challenge) => {
-    buttons.push(
-      <ChallengeButton
-        key={challenge.id}
-        challenge={challenge}
-        onClick={onChallengeClick}
-        solvedChallenges={solvedChallenges}
-        selectedChallenge={props.selectedChallenge}
-      />);
+    buttons.push(<ChallengeButton
+      key={challenge.id}
+      challenge={challenge}
+      onClick={onChallengeClick}
+      solvedChallenges={solvedChallenges}
+      selectedChallenge={props.selectedChallenge}
+    />);
   });
 
   return (
@@ -86,18 +86,18 @@ const ChallengeButtonRow = (props) => {
 };
 
 ChallengeButtonRow.propTypes = {
-  size: React.PropTypes.oneOf(['xs', 'sm', 'lg', 'md']),
-  title: React.PropTypes.string,
-  challenges: React.PropTypes.arrayOf(React.PropTypes.shape({
-    id: React.PropTypes.number,
-    seconds: React.PropTypes.number,
-    numQuestions: React.PropTypes.number,
-    name: React.PropTypes.string,
-    orderPriority: React.PropTypes.number,
-  })),
-  onChallengeClick: React.PropTypes.func,
-  solvedChallenges: React.PropTypes.arrayOf(React.PropTypes.number),
-  selectedChallenge: React.PropTypes.number,
+  size: PropTypes.oneOf(['xs', 'sm', 'lg', 'md']).isRequired,
+  title: PropTypes.string.isRequired,
+  challenges: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    seconds: PropTypes.number,
+    numQuestions: PropTypes.number,
+    name: PropTypes.string,
+    orderPriority: PropTypes.number,
+  })).isRequired,
+  onChallengeClick: PropTypes.func.isRequired,
+  solvedChallenges: PropTypes.arrayOf(PropTypes.number).isRequired,
+  selectedChallenge: PropTypes.number.isRequired,
 };
 
 export default ChallengeButtonRow;

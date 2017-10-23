@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const ShuffleButton = props =>
+const ShuffleButton = props => (
   <div style={{ display: 'inline-block' }}>
     <div className="hidden-xs hidden-sm col-md-3 col-lg-3">
       <button
@@ -13,7 +14,8 @@ const ShuffleButton = props =>
       >
         <span
           className="badge"
-        >{props.hotKey}</span> {props.buttonText}
+        >{props.hotKey}
+        </span> {props.buttonText}
       </button>
     </div>
     <div className="visible-xs-inline-block visible-sm-inline-block">
@@ -27,22 +29,23 @@ const ShuffleButton = props =>
       >
         <span
           className="badge"
-        >{props.hotKey} </span><i
+        >{props.hotKey}
+        </span><i
           className={`glyphicon ${props.glyphIcon}`}
           style={{ marginLeft: '0.5em' }}
         />
       </button>
     </div>
-  </div>;
+  </div>);
 
 ShuffleButton.propTypes = {
-  trigger: React.PropTypes.func,
-  hotKey: React.PropTypes.string,
-  buttonText: React.PropTypes.string,
-  glyphIcon: React.PropTypes.string,
+  trigger: PropTypes.func.isRequired,
+  hotKey: PropTypes.string.isRequired,
+  buttonText: PropTypes.string.isRequired,
+  glyphIcon: PropTypes.string.isRequired,
 };
 
-const ShuffleButtons = props =>
+const ShuffleButtons = props => (
   <div
     className="row"
     style={{ whiteSpace: 'nowrap' }}
@@ -65,12 +68,12 @@ const ShuffleButtons = props =>
       buttonText="Custom"
       glyphIcon="glyphicon-sort"
     />
-  </div>;
+  </div>);
 
 ShuffleButtons.propTypes = {
-  shuffle: React.PropTypes.func,
-  alphagram: React.PropTypes.func,
-  customOrder: React.PropTypes.func,
+  shuffle: PropTypes.func.isRequired,
+  alphagram: PropTypes.func.isRequired,
+  customOrder: PropTypes.func.isRequired,
 };
 
 export default ShuffleButtons;

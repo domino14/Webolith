@@ -1,6 +1,10 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/no-static-element-interactions,
+jsx-a11y/click-events-have-key-events,jsx-a11y/anchor-is-valid,
+jsx-a11y/interactive-supports-focus */ // goddamn a11y
 
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import $ from 'jquery';
 
 class PlayButton extends React.Component {
@@ -41,36 +45,61 @@ class PlayButton extends React.Component {
     return (
       <div
         className="btn-group dropdown"
-        ref={domNode => (this.btnGroupNode = domNode)}
+        ref={(domNode) => {
+          this.btnGroupNode = domNode;
+        }}
       >
         <button
           type="button"
           className="btn btn-primary btn-xs"
           onClick={this.props.continueList(this.props.listID)}
-        >Continue</button>
+        >Continue
+        </button>
         <button
           type="button"
           className="btn btn-primary dropdown-toggle btn-xs"
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-        ><span className="caret" /></button>
+        ><span className="caret" />
+        </button>
 
         <ul className="dropdown-menu">
-          {this.props.goneThruOnce ?
-            (<li><a role="button" onClick={this.props.playFirstMissed(this.props.listID)}>
-              Play first missed</a></li>) : null}
+
+          {this.props.goneThruOnce ? (
+            <li>
+              <a role="button" onClick={this.props.playFirstMissed(this.props.listID)}>
+                Play first missed
+              </a>
+            </li>) : null}
+
           <li><a role="button" onClick={this.props.resetStartOver(this.props.listID)}>
-            Reset and start over</a></li>
+            Reset and start over
+              </a>
+          </li>
+
           <li role="separator" className="divider" />
+
           <li><a role="button" onClick={this.props.flashcardList(this.props.listID)}>
-            Flashcard entire list</a></li>
-          {this.props.goneThruOnce ?
-            (<li><a role="button" onClick={this.props.flashcardFirstMissed(this.props.listID)}>
-            Flashcard first missed</a></li>) : null}
+            Flashcard entire list
+              </a>
+          </li>
+
+          {this.props.goneThruOnce ? (
+            <li>
+              <a role="button" onClick={this.props.flashcardFirstMissed(this.props.listID)}>
+                Flashcard first missed
+              </a>
+            </li>) : null}
+
           <li role="separator" className="divider" />
-          <li><a role="button" onClick={this.props.deleteList(this.props.listID)}>
-            <span className="text-danger">Delete</span></a></li>
+
+          <li>
+            <a role="button" onClick={this.props.deleteList(this.props.listID)}>
+              <span className="text-danger">Delete</span>
+            </a>
+          </li>
+
         </ul>
       </div>
     );
@@ -78,15 +107,15 @@ class PlayButton extends React.Component {
 }
 
 PlayButton.propTypes = {
-  continueList: React.PropTypes.func,
-  playFirstMissed: React.PropTypes.func,
-  resetStartOver: React.PropTypes.func,
-  deleteList: React.PropTypes.func,
-  flashcardList: React.PropTypes.func,
-  flashcardFirstMissed: React.PropTypes.func,
+  continueList: PropTypes.func.isRequired,
+  playFirstMissed: PropTypes.func.isRequired,
+  resetStartOver: PropTypes.func.isRequired,
+  deleteList: PropTypes.func.isRequired,
+  flashcardList: PropTypes.func.isRequired,
+  flashcardFirstMissed: PropTypes.func.isRequired,
 
-  listID: React.PropTypes.number,
-  goneThruOnce: React.PropTypes.bool,
+  listID: PropTypes.number.isRequired,
+  goneThruOnce: PropTypes.bool.isRequired,
 };
 
 export default PlayButton;

@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import WordPartDisplay from './word_part_display';
 
 class Solution extends React.Component {
@@ -31,7 +33,8 @@ class Solution extends React.Component {
         <button
           className="btn btn-sm btn-danger"
           onClick={this.markMissed}
-        >Mark missed</button>
+        >Mark missed
+        </button>
       );
     }
     const alphagram = (
@@ -47,11 +50,13 @@ class Solution extends React.Component {
     return (
       <tr>
         <td style={rowStyle}>{
-          this.props.wordPos === 0 ? this.props.probability : ''}</td>
+          this.props.wordPos === 0 ? this.props.probability : ''}
+        </td>
         <td
           style={rowStyle}
           className={qTdClass}
-        >{alphagram}</td>
+        >{alphagram}
+        </td>
         <td
           style={rowStyle}
           className="text-right"
@@ -59,11 +64,13 @@ class Solution extends React.Component {
           <WordPartDisplay
             classes="text-info small"
             text={this.props.frontHooks}
-          /></td>
+          />
+        </td>
         <td className={wTdClass} style={rowStyle}>
           <WordPartDisplay
             text={wordDisplay}
-          /></td>
+          />
+        </td>
         <td
           className="text-left"
           style={rowStyle}
@@ -71,7 +78,8 @@ class Solution extends React.Component {
           <WordPartDisplay
             classes="text-info small"
             text={this.props.backHooks}
-          /></td>
+          />
+        </td>
         <td style={rowStyle}>{this.props.definition}</td>
         <td style={rowStyle}>{markMissedBtn}</td>
       </tr>
@@ -80,20 +88,20 @@ class Solution extends React.Component {
 }
 
 Solution.propTypes = {
-  markMissed: React.PropTypes.func,
-  idx: React.PropTypes.number,
-  alphagram: React.PropTypes.string,
-  correct: React.PropTypes.bool,
-  wordSolved: React.PropTypes.bool,
-  innerFrontHook: React.PropTypes.bool,
-  innerBackHook: React.PropTypes.bool,
-  word: React.PropTypes.string,
-  lexiconSymbols: React.PropTypes.string,
-  wordPos: React.PropTypes.number,
-  probability: React.PropTypes.number,
-  frontHooks: React.PropTypes.string,
-  backHooks: React.PropTypes.string,
-  definition: React.PropTypes.string,
+  markMissed: PropTypes.func.isRequired,
+  idx: PropTypes.number.isRequired,
+  alphagram: PropTypes.string.isRequired,
+  correct: PropTypes.bool.isRequired,
+  wordSolved: PropTypes.bool.isRequired,
+  innerFrontHook: PropTypes.bool.isRequired,
+  innerBackHook: PropTypes.bool.isRequired,
+  word: PropTypes.string.isRequired,
+  lexiconSymbols: PropTypes.string.isRequired,
+  wordPos: PropTypes.number.isRequired,
+  probability: PropTypes.number.isRequired,
+  frontHooks: PropTypes.string.isRequired,
+  backHooks: PropTypes.string.isRequired,
+  definition: PropTypes.string.isRequired,
 };
 
 export default Solution;

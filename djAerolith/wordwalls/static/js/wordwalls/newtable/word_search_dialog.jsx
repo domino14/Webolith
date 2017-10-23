@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Select from '../forms/select';
 import SearchRow, { SearchTypesEnum } from './search_row';
 // Questions per round && time per round
@@ -70,7 +72,8 @@ class WordSearchDialog extends React.Component {
   searchRows() {
     const rows = this.props.searches.map((search, idx) => (
       <SearchRow
-        key={idx}
+        // To suppress idx warning we use idx + 0, ew. XXX
+        key={`row${idx + 0}`}
         index={idx}
         searchType={search.searchType}
         minValue={search.minValue}
@@ -100,21 +103,22 @@ class WordSearchDialog extends React.Component {
             selectedValue={this.props.multiplayerOn ? 'multi' : 'single'}
             options={[{ value: 'single', displayValue: 'Single Player' },
                       { value: 'multi', displayValue: 'Multiplayer' }]}
-            onChange={e => this.props.onMultiplayerModify(
-              e.target.value === 'multi')}
+            onChange={e => this.props.onMultiplayerModify(e.target.value === 'multi')}
           />
           <button
             className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
             onClick={this.props.onSearchSubmit}
             data-dismiss="modal"
-          >Play!</button>
+          >Play!
+          </button>
           <button
             className="btn btn-info"
             style={{ marginTop: '0.75em', marginLeft: '1em' }}
             onClick={this.props.onFlashcardSubmit}
             data-dismiss="modal"
-          >Flashcard</button>
+          >Flashcard
+          </button>
         </div>
       </div>
     );
@@ -122,29 +126,29 @@ class WordSearchDialog extends React.Component {
 }
 
 WordSearchDialog.propTypes = {
-  searches: React.PropTypes.arrayOf(React.PropTypes.shape({
-    searchType: React.PropTypes.number,
-    minValue: React.PropTypes.number,
-    maxValue: React.PropTypes.number,
-    minAllowedValue: React.PropTypes.number,
-    maxAllowedValue: React.PropTypes.number,
-    valueList: React.PropTypes.string,
-  })),
-  onSearchTypeChange: React.PropTypes.func,
-  onSearchParamChange: React.PropTypes.func,
-  addSearchRow: React.PropTypes.func,
-  removeSearchRow: React.PropTypes.func,
-  onSearchSubmit: React.PropTypes.func,
-  onFlashcardSubmit: React.PropTypes.func,
-  // availableLexica: React.PropTypes.arrayOf(React.PropTypes.shape({
-  //   id: React.PropTypes.number,
-  //   lexicon: React.PropTypes.string,
-  //   description: React.PropTypes.string,
-  //   counts: React.PropTypes.object,
+  searches: PropTypes.arrayOf(PropTypes.shape({
+    searchType: PropTypes.number,
+    minValue: PropTypes.number,
+    maxValue: PropTypes.number,
+    minAllowedValue: PropTypes.number,
+    maxAllowedValue: PropTypes.number,
+    valueList: PropTypes.string,
+  })).isRequired,
+  onSearchTypeChange: PropTypes.func.isRequired,
+  onSearchParamChange: PropTypes.func.isRequired,
+  addSearchRow: PropTypes.func.isRequired,
+  removeSearchRow: PropTypes.func.isRequired,
+  onSearchSubmit: PropTypes.func.isRequired,
+  onFlashcardSubmit: PropTypes.func.isRequired,
+  // availableLexica: PropTypes.arrayOf(PropTypes.shape({
+  //   id: PropTypes.number,
+  //   lexicon: PropTypes.string,
+  //   description: PropTypes.string,
+  //   counts: PropTypes.object,
   // })),
-  // lexicon: React.PropTypes.number,
-  multiplayerOn: React.PropTypes.bool,
-  onMultiplayerModify: React.PropTypes.func,
+  // lexicon: PropTypes.number,
+  multiplayerOn: PropTypes.bool.isRequired,
+  onMultiplayerModify: PropTypes.func.isRequired,
 };
 
 export default WordSearchDialog;

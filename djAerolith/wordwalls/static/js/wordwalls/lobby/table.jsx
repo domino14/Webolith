@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 // omg eslint
 const Table = (props) => {
   let button;
@@ -8,7 +10,8 @@ const Table = (props) => {
     <button
       className="btn btn-info"
       onClick={() => props.onJoinClicked(props.tablenum)}
-    >Join</button>);
+    >Join
+    </button>);
   if (props.multiplayer) {
     if (!userInTable) {
       button = joinButton;
@@ -21,7 +24,7 @@ const Table = (props) => {
     }
   }
 
-  const users = props.users.map((user, idx) => {
+  const users = props.users.map((user) => {
     let cn;
     if (user === props.host) {
       cn = 'label label-primary';
@@ -29,7 +32,7 @@ const Table = (props) => {
       cn = 'label label-default';
     }
     return (
-      <span className={cn} key={idx} style={{ marginRight: '5px' }}>
+      <span className={cn} key={user} style={{ marginRight: '5px' }}>
         {user}
       </span>);
   });
@@ -65,14 +68,14 @@ const Table = (props) => {
 };
 
 Table.propTypes = {
-  tablenum: React.PropTypes.number,
-  lexicon: React.PropTypes.string,
-  wordList: React.PropTypes.string,
-  host: React.PropTypes.string,
-  users: React.PropTypes.arrayOf(React.PropTypes.string),
-  onJoinClicked: React.PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-  multiplayer: React.PropTypes.bool,
-  username: React.PropTypes.string,
+  tablenum: PropTypes.number.isRequired,
+  lexicon: PropTypes.string.isRequired,
+  wordList: PropTypes.string.isRequired,
+  host: PropTypes.string.isRequired,
+  users: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onJoinClicked: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+  multiplayer: PropTypes.bool.isRequired,
+  username: PropTypes.string.isRequired,
 };
 
 export default Table;

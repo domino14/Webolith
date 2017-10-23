@@ -1,3 +1,4 @@
+/* global JSON */
 /**
  * @fileOverview The word list model. This model should almost mirror the model
  * for WordList in base/models.py.
@@ -6,7 +7,7 @@ define([
   'underscore',
   'backbone',
   'jquery',
-  'collections/cards'
+  '../collections/cards'
 ], function(_, Backbone, $, Cards) {
   "use strict";
   var QUIZ_API_URL, QUESTION_MAP_URL, Actions;
@@ -312,7 +313,7 @@ define([
         success: success,
         error: fail,
         wait: true
-      }).complete(_.bind(function() {
+      }).done(_.bind(function() {
         // Also save locally on completion of remote sync.
         this.saveStateLocal_();
         this.setStarsSynced_();

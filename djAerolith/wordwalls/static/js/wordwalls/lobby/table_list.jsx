@@ -2,7 +2,7 @@
  * @fileOverview A list of tables that have at least one player in them.
  */
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import Table from './table';
 
 class TableList extends React.Component {
@@ -26,6 +26,9 @@ class TableList extends React.Component {
           onJoinClicked={this.props.onJoinClicked}
           username={this.props.username}
         />);
+      if (!table.users.length) {
+        return; // Don't show an empty table.
+      }
       if (table.multiplayer) {
         publicTableList.push(tNode);
       } else {
@@ -49,18 +52,18 @@ class TableList extends React.Component {
 }
 
 TableList.propTypes = {
-  // activeTables: React.PropTypes.arrayOf(React.PropTypes.shape({
-  //   tablenum: React.PropTypes.number.isRequired,
-  //   admin: React.PropTypes.string,
-  //   users: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   wordList: React.PropTypes.string,
-  //   lexicon: React.PropTypes.string,
-  //   secondsPerRound: React.PropTypes.number,
-  //   questionsPerRound: React.PropTypes.number,
+  // activeTables: PropTypes.arrayOf(PropTypes.shape({
+  //   tablenum: PropTypes.number.isRequired,
+  //   admin: PropTypes.string,
+  //   users: PropTypes.arrayOf(PropTypes.string),
+  //   wordList: PropTypes.string,
+  //   lexicon: PropTypes.string,
+  //   secondsPerRound: PropTypes.number,
+  //   questionsPerRound: PropTypes.number,
   // })),
-  activeTables: React.PropTypes.object,  // eslint-disable-line react/forbid-prop-types
-  onJoinClicked: React.PropTypes.func,
-  username: React.PropTypes.string,
+  activeTables: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  onJoinClicked: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
 };
 
 export default TableList;

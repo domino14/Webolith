@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import PlayButton from './play_button';
 
 
@@ -24,7 +26,6 @@ const SavedListRow = props => (
         flashcardList={props.flashcardList}
         flashcardFirstMissed={props.flashcardFirstMissed}
         deleteList={props.deleteList}
-        onDropdownClicked={props.onDropdownClicked}
       />
     </td>
     <td>{props.list.name}</td>
@@ -35,23 +36,22 @@ const SavedListRow = props => (
 );
 
 SavedListRow.propTypes = {
-  list: React.PropTypes.shape({
-    id: React.PropTypes.number,
-    name: React.PropTypes.string,
-    numCurAlphagrams: React.PropTypes.number,
-    numAlphagrams: React.PropTypes.number,
-    questionIndex: React.PropTypes.number,
-    goneThruOnce: React.PropTypes.bool,
-    lastSaved: React.PropTypes.string,
-    lastSavedDT: React.PropTypes.string,
-  }),
-  continueList: React.PropTypes.func,
-  playFirstMissed: React.PropTypes.func,
-  resetStartOver: React.PropTypes.func,
-  flashcardList: React.PropTypes.func,
-  flashcardFirstMissed: React.PropTypes.func,
-  deleteList: React.PropTypes.func,
-  onDropdownClicked: React.PropTypes.func,
+  list: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    numCurAlphagrams: PropTypes.number,
+    numAlphagrams: PropTypes.number,
+    questionIndex: PropTypes.number,
+    goneThruOnce: PropTypes.bool,
+    lastSaved: PropTypes.string,
+    lastSavedDT: PropTypes.string,
+  }).isRequired,
+  continueList: PropTypes.func.isRequired,
+  playFirstMissed: PropTypes.func.isRequired,
+  resetStartOver: PropTypes.func.isRequired,
+  flashcardList: PropTypes.func.isRequired,
+  flashcardFirstMissed: PropTypes.func.isRequired,
+  deleteList: PropTypes.func.isRequired,
 };
 
 export default SavedListRow;

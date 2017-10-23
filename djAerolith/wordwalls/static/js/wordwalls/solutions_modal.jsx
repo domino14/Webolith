@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Immutable from 'immutable';
 
 import Solutions from './solutions';
@@ -24,12 +26,12 @@ const SolutionsModal = props => (
 
 
 SolutionsModal.propTypes = {
-  questions: React.PropTypes.instanceOf(Immutable.OrderedMap),
-  numCorrect: React.PropTypes.number,
-  totalWords: React.PropTypes.number,
-  height: React.PropTypes.number,
-  markMissed: React.PropTypes.func,
-  showLexiconSymbols: React.PropTypes.bool,
+  questions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  numCorrect: PropTypes.number.isRequired,
+  totalWords: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  markMissed: PropTypes.func.isRequired,
+  showLexiconSymbols: PropTypes.bool.isRequired,
 };
 
 export default SolutionsModal;

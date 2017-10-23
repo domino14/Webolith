@@ -4,8 +4,8 @@ const webpack = require('webpack');
 
 export default {
   output: {
-    filename: 'table-client-bundle.js',
-    publicPath: '/static/dist/',
+    filename: '[name].js',
+    publicPath: 'http://localhost:7000/static/dist/',
   },
   devtool: 'source-map',
   module: {
@@ -34,18 +34,19 @@ export default {
     ],
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   },
   entry: {
     vendor: [
       'bootstrap-webpack',
       'jquery',
-      'react',
-      'react-dom',
-      'immutable',
       'underscore',
     ],
-    app: './djAerolith/wordwalls/static/js/wordwalls/index',
+    wordwallsapp: [
+      'babel-polyfill',
+      './djAerolith/wordwalls/static/js/wordwalls/index',
+    ],
+    flashcardsapp: './djAerolith/flashcards/static/js/flashcards/main',
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -57,5 +58,11 @@ export default {
       filename: 'vendor.js',
     }),
   ],
+  devServer: {
+    port: 7000,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  },
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class GuessBox extends React.Component {
   constructor() {
@@ -60,8 +61,10 @@ class GuessBox extends React.Component {
             onChange={this.handleGuessChange}
             value={this.state.guessText}
             onKeyPress={this.handleKeyPress}
-            onBlur={this.props.onBlur}
-            ref={ib => (this.inputBox = ib)}
+            // onBlur={this.props.onBlur}
+            ref={(ib) => {
+              this.inputBox = ib;
+            }}
             style={{
               marginTop: '-5px',
             }}
@@ -69,7 +72,8 @@ class GuessBox extends React.Component {
         </div>
         <div className="hidden-xs col-sm-6">
           <span className="text-muted">
-            Last:</span> <span className={guessClass}>{this.props.lastGuess}</span>
+            Last:
+          </span> <span className={guessClass}>{this.props.lastGuess}</span>
         </div>
         <div className="col-xs-5 visible-xs-inline-block">
           <span className={guessClass}>
@@ -82,11 +86,11 @@ class GuessBox extends React.Component {
 }
 
 GuessBox.propTypes = {
-  onGuessSubmit: React.PropTypes.func,
-  onBlur: React.PropTypes.func,
-  onHotKey: React.PropTypes.func,
-  lastGuess: React.PropTypes.string,
-  lastGuessCorrectness: React.PropTypes.bool,
+  onGuessSubmit: PropTypes.func.isRequired,
+  // onBlur: PropTypes.func.isRequired,
+  onHotKey: PropTypes.func.isRequired,
+  lastGuess: PropTypes.string.isRequired,
+  lastGuessCorrectness: PropTypes.bool.isRequired,
 };
 
 export default GuessBox;

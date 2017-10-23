@@ -3,7 +3,7 @@
  */
 define([
   'backbone',
-  'models/word_list'
+  '../models/word_list'
 ], function(Backbone, WordList) {
   "use strict";
   return Backbone.Collection.extend({
