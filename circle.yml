@@ -40,7 +40,7 @@ dependencies:
     - git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /home/ubuntu/webolith-private
     - mkdir $WORD_DB_LOCATION
     - mv /home/ubuntu/webolith-private/*.db $WORD_DB_LOCATION
-    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.4/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - sudo mv ./kubectl /usr/local/bin/kubectl
 test:
