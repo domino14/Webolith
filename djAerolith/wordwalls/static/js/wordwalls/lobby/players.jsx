@@ -31,12 +31,13 @@ const Players = (props) => {
 
 Players.propTypes = {
   players: PropTypes.arrayOf(PropTypes.string).isRequired,
-  currentHost: PropTypes.string.isRequired,
+  currentHost: PropTypes.string,
   height: PropTypes.number,
 };
 
 Players.defaultProps = {
   height: 200,
+  currentHost: null,
 };
 
 export default Players;
