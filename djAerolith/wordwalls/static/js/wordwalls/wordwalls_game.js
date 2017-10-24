@@ -14,6 +14,7 @@ class Game {
     this.origQuestions = Immutable.OrderedMap();
     this.answeredBy = Immutable.Map();
     this.wrongWordsHash = {};
+    this.originalWordsHash = {};
   }
   /**
    * Initializes the main data structures when a new array comes in.
@@ -24,6 +25,7 @@ class Game {
     const qMap = {};
     const reducedQuestions = [];
     this.wrongWordsHash = {};
+    this.originalWordsHash = {};
     // Hash of "alphagram strings" to indices in curQuestions.
     this.alphaIndexHash = {};
     this.alphagramsLeft = 0;
@@ -36,6 +38,7 @@ class Game {
       const newWMap = {};
       question.ws.forEach((word, idx) => {
         this.wrongWordsHash[word.w] = idx;
+        this.originalWordsHash[word.w] = idx;
         this.totalWords += 1;
         newWMap[word.w] = word;
       });
@@ -70,6 +73,16 @@ class Game {
   answerExists(guess) {
     const widx = this.wrongWordsHash[guess];
     return widx != null;
+  }
+
+  /**
+   * Check if the guess ever existed. This is so we differentiate between
+   * an already-guessed word and a wrong word.
+   * @param  {string} guess
+   * @return {boolean}
+   */
+  originalAnswerExists(guess) {
+    return this.originalWordsHash[guess] != null;
   }
 
   getRemainingAnswers() {

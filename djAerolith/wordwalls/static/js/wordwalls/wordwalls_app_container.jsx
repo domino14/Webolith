@@ -20,6 +20,7 @@ import Presence from './presence';
 import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
+import GuessEnum from './guess';
 
 const game = new WordwallsGame();
 const presence = new Presence();
@@ -48,7 +49,7 @@ class WordwallsAppContainer extends React.Component {
       totalWords: 0,
       answeredBy: game.getAnsweredBy(),
       lastGuess: '',
-      lastGuessCorrectness: false,
+      lastGuessCorrectness: GuessEnum.NONE,
       challengeData: {},
       displayStyle: this.props.displayStyle,
       numberOfRounds: 0,
@@ -140,13 +141,20 @@ class WordwallsAppContainer extends React.Component {
     }
     this.setState({
       lastGuess: guess,
+      lastGuessCorrectness: GuessEnum.PENDING,
     });
     if (!game.answerExists(modifiedGuess)) {
       // If the guess wasn't valid, don't bother submitting it to
       // the server.
-      this.setState({
-        lastGuessCorrectness: false,
-      });
+      if (game.originalAnswerExists(modifiedGuess)) {
+        this.setState({
+          lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
+        });
+      } else {
+        this.setState({
+          lastGuessCorrectness: GuessEnum.INCORRECT,
+        });
+      }
       return;
     }
 
@@ -562,26 +570,36 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleGuessResponse(data) {
-    if (_.has(data, 'C')) {
-      if (data.C !== '') {
-        // data.C contains the alphagram.
-        const solved = game.solve(data.w, data.C, data.s);
-        if (!solved) {
-          return;
-        }
-        if (this.state.tableIsMultiplayer) {
-          this.addMessage(`${data.s} solved ${data.w}`, 'info');
-        }
+    if (!_.has(data, 'C') || data.C === '') {
+      return;
+    }
+    // data.C contains the alphagram.
+    const solved = game.solve(data.w, data.C, data.s);
+    if (!solved) {
+      return;
+    }
+    if (this.state.tableIsMultiplayer) {
+      this.addMessage(`${data.s} solved ${data.w}`, 'info');
+    }
+    this.setState({
+      curQuestions: game.getQuestionState(),
+      origQuestions: game.getOriginalQuestionState(),
+      answeredBy: game.getAnsweredBy(),
+    });
+    if (this.state.lastGuessCorrectness === GuessEnum.PENDING) {
+      if (data.s === this.props.username) {
         this.setState({
-          curQuestions: game.getQuestionState(),
-          origQuestions: game.getOriginalQuestionState(),
-          answeredBy: game.getAnsweredBy(),
-          lastGuessCorrectness: (data.s === this.props.username ? true :
-            this.state.lastGuessCorrectness),
+          lastGuessCorrectness: GuessEnum.CORRECT,
+        });
+      } else if (this.state.lastGuess === data.w) {
+        this.setState({
+          lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
         });
       }
+      // XXX: Otherwise keep it pending?
     }
   }
+
 
   handleChat(data) {
     this.addMessage(data.chat, 'chat', data.sender, data.room === 'lobby');
