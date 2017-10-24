@@ -308,7 +308,7 @@ WordwallsApp.propTypes = {
   currentHost: PropTypes.string.isRequired,
   onGuessSubmit: PropTypes.func.isRequired,
   lastGuess: PropTypes.string.isRequired,
-  lastGuessCorrectness: PropTypes.bool.isRequired,
+  lastGuessCorrectness: PropTypes.number.isRequired,
   onHotKey: PropTypes.func.isRequired,
   tableIsMultiplayer: PropTypes.bool.isRequired,
 

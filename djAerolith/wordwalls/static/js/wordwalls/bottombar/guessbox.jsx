@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import GuessEnum from '../guess';
+
 class GuessBox extends React.Component {
   constructor() {
     super();
@@ -47,9 +49,14 @@ class GuessBox extends React.Component {
   }
 
   render() {
+    // Pending.
     let guessClass = 'text-muted';
-    if (this.props.lastGuessCorrectness === false) {
+    if (this.props.lastGuessCorrectness === GuessEnum.INCORRECT) {
       guessClass = 'text-danger';
+    } else if (this.props.lastGuessCorrectness === GuessEnum.CORRECT) {
+      guessClass = 'text-success';
+    } else if (this.props.lastGuessCorrectness === GuessEnum.ALREADYGUESSED) {
+      guessClass = 'text-warning';
     }
     return (
       <div className="row">
@@ -90,7 +97,7 @@ GuessBox.propTypes = {
   // onBlur: PropTypes.func.isRequired,
   onHotKey: PropTypes.func.isRequired,
   lastGuess: PropTypes.string.isRequired,
-  lastGuessCorrectness: PropTypes.bool.isRequired,
+  lastGuessCorrectness: PropTypes.number.isRequired,
 };
 
 export default GuessBox;
