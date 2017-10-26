@@ -275,7 +275,7 @@ def table_guess(message, contents):
                        contents['room'], room)
         return
     guess = contents['contents']['guess']
-    req_id = contents['contents']['reqId']
+    req_id = contents['contents'].get('reqId', '')
     wwg = WordwallsGame()
     with transaction.atomic():
         # Replicate atomic request behavior. We need this for select_for_update

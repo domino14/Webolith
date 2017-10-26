@@ -233,7 +233,6 @@ class WordwallsAppContainer extends React.Component {
   wsSubmitGuess(guess) {
     const reqId = _.uniqueId(`${this.props.username}_g_`);
     const submitter = (g, r) => {
-      console.log('Submitting:', g, r);
       this.websocketBridge.send({
         room: String(this.state.tablenum),
         type: 'guess',
