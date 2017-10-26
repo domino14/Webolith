@@ -275,6 +275,7 @@ def table_guess(message, contents):
                        contents['room'], room)
         return
     guess = contents['contents']['guess']
+    req_id = contents['contents']['reqId']
     wwg = WordwallsGame()
     with transaction.atomic():
         # Replicate atomic request behavior. We need this for select_for_update
@@ -284,6 +285,7 @@ def table_guess(message, contents):
             'type': 'server',
             'contents': {
                 'error': 'Quiz is already over',
+                'reqId': req_id,
             }
         }
         message.reply_channel.send({'text': json.dumps(msg)})
@@ -296,6 +298,7 @@ def table_guess(message, contents):
             'w': state['word'],
             'a': state['already_solved'],
             's': state['solver'],
+            'reqId': req_id,
         }
     }
     Group(room).send({'text': json.dumps(msg)})

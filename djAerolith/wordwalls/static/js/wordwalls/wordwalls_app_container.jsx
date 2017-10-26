@@ -21,9 +21,11 @@ import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
 import GuessEnum from './guess';
+import GuessTimer from './guess_timer';
 
 const game = new WordwallsGame();
 const presence = new Presence();
+const guessTimer = new GuessTimer();
 
 const PRESENCE_TIMEOUT = 20000; // 20 seconds.
 const GET_TABLES_INIT_TIMEOUT = 1500;
@@ -157,14 +159,7 @@ class WordwallsAppContainer extends React.Component {
       }
       return;
     }
-
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'guess',
-      contents: {
-        guess,
-      },
-    });
+    this.wsSubmitGuess(guess);
   }
 
   onChatSubmit(chat, channel) {
@@ -235,6 +230,25 @@ class WordwallsAppContainer extends React.Component {
     });
   }
 
+  wsSubmitGuess(guess) {
+    const reqId = _.uniqueId(`${this.props.username}_g_`);
+    const submitter = (g, r) => {
+      console.log('Submitting:', g, r);
+      this.websocketBridge.send({
+        room: String(this.state.tablenum),
+        type: 'guess',
+        contents: {
+          guess: g,
+          reqId: r,
+        },
+      });
+    };
+    submitter(guess, reqId);
+    // Have an exponentially backing off timer that resubmits guesses
+    // if we don't get back a response.
+    guessTimer.addTimer(reqId, () => submitter(guess, reqId));
+  }
+
   connectToSocket() {
     const url = `${this.props.socketServer}/wordwalls-socket`;
     this.websocketBridge.connect(url);
@@ -259,6 +273,9 @@ class WordwallsAppContainer extends React.Component {
     switch (message.type) {
       case 'server':
         this.addMessage(message.contents.error);
+        if (message.contents.reqId) {
+          guessTimer.removeTimer(message.contents.reqId);
+        }
         break;
       case 'guessResponse':
         this.handleGuessResponse(message.contents);
@@ -311,13 +328,7 @@ class WordwallsAppContainer extends React.Component {
     const answers = game.getRemainingAnswers();
     answers.forEach((answer, idx) => {
       window.setTimeout(() => {
-        this.websocketBridge.send({
-          room: String(this.state.tablenum),
-          type: 'guess',
-          contents: {
-            guess: answer,
-          },
-        });
+        this.wsSubmitGuess(answer);
       }, (idx * 30));
     });
   }
@@ -326,13 +337,7 @@ class WordwallsAppContainer extends React.Component {
    * @param  {Object} contents
    */
   handleSolveWord(contents) {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'guess',
-      contents: {
-        guess: contents.word,
-      },
-    });
+    this.wsSubmitGuess(contents.word);
   }
 
   handleUsersIn(contents) {
@@ -573,6 +578,7 @@ class WordwallsAppContainer extends React.Component {
     if (!_.has(data, 'C') || data.C === '') {
       return;
     }
+    guessTimer.removeTimer(data.reqId);
     // data.C contains the alphagram.
     const solved = game.solve(data.w, data.C, data.s);
     if (!solved) {
