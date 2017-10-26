@@ -7,7 +7,7 @@ import WordwallsQuestion from './wordwalls_question';
 import backgroundURL from './background';
 
 const SolutionPanel = (props) => {
-  let words = props.solvedWords.map(word => (
+  let words = props.solvedWords.sort().map(word => (
     <span key={word}>{word} </span>
   ));
   if (!words.length) {
