@@ -704,6 +704,16 @@ class WordwallsAppContainer extends React.Component {
         });
       });
     }
+    // Send the backend server the remaining words and score.
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'endpacket',
+      contents: {
+        wrongWords: game.getRemainingAnswers(),
+        totalWords: game.getTotalNumWords(),
+        appVersion: this.props.appVersion,
+      },
+    });
   }
 
   /**
@@ -980,6 +990,7 @@ WordwallsAppContainer.propTypes = {
     counts: PropTypes.object,
   })).isRequired,
   socketServer: PropTypes.string.isRequired,
+  appVersion: PropTypes.string.isRequired,
 };
 
 export default WordwallsAppContainer;

@@ -39,6 +39,7 @@ class App {
         challengeInfo={options.challengeInfo}
         availableLexica={options.availableLexica}
         socketServer={options.socketServer}
+        appVersion={options.appVersion}
       />,
       document.getElementById('main-app-content'),
     );

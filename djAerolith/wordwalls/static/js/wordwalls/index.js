@@ -17,6 +17,7 @@ App.initialize({
   defaultLexicon: window.TableGlobals.defaultLexicon,
   challengeInfo: JSON.parse(window.TableGlobals.challengeInfo),
   socketServer: window.TableGlobals.socketServer,
+  appVersion: window.TableGlobals.appVersion,
 });
 
 // Finally, initialize Intercom.
