@@ -462,6 +462,10 @@ class WordwallsAppContainer extends React.Component {
         totalWords: game.getTotalNumWords(),
       });
       this.wwApp.setGuessBoxFocus();
+      window.Intercom('trackEvent', 'started-game', {
+        isChallenge: data.gameType && data.gameType.includes('challenge'),
+        listname: this.state.listName,
+      });
     }
 
     if (_.has(data, 'time')) {
@@ -827,6 +831,10 @@ class WordwallsAppContainer extends React.Component {
         this.sendSocketJoin(data.tablenum);
       }
     }
+    window.Intercom('trackEvent', 'loaded-new-list', {
+      listName: data.list_name,
+      multiplayer: data.multiplayer,
+    });
   }
 
   sendSocketJoin(tablenum) {
