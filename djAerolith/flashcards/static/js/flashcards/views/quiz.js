@@ -31,7 +31,7 @@ define([
       this.card = this.$('#card');
       this.quizInfo = this.$('#header-info');
       this.cardInfo = this.$('#footer-info');
-      this.alertHolder = this.$('.alert-holder');
+      this.alertHolder = $('.alert-holder');
       this.quizOver = false;
       this.quizName = '';
       this.viewingFront = null;

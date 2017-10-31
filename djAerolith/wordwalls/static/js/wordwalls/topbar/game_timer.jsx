@@ -95,7 +95,7 @@ class GameTimer extends React.Component {
       timeRemaining: newTimeRemaining,
     });
 
-    if (countdownComplete && this.props.initialGameTime) {
+    if (countdownComplete && this.props.initialGameTime && this.props.gameGoing) {
       if (this.props.completeCallback) {
         this.props.completeCallback();
       }

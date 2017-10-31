@@ -462,6 +462,10 @@ class WordwallsAppContainer extends React.Component {
         totalWords: game.getTotalNumWords(),
       });
       this.wwApp.setGuessBoxFocus();
+      window.Intercom('trackEvent', 'started-game', {
+        isChallenge: data.gameType && data.gameType.includes('challenge'),
+        listname: this.state.listName,
+      });
     }
 
     if (_.has(data, 'time')) {
@@ -704,6 +708,16 @@ class WordwallsAppContainer extends React.Component {
         });
       });
     }
+    // Send the backend server the remaining words and score.
+    this.websocketBridge.send({
+      room: String(this.state.tablenum),
+      type: 'endpacket',
+      contents: {
+        wrongWords: game.getRemainingAnswers(),
+        totalWords: game.getTotalNumWords(),
+        appVersion: this.props.appVersion,
+      },
+    });
   }
 
   /**
@@ -817,6 +831,10 @@ class WordwallsAppContainer extends React.Component {
         this.sendSocketJoin(data.tablenum);
       }
     }
+    window.Intercom('trackEvent', 'loaded-new-list', {
+      listName: data.list_name,
+      multiplayer: data.multiplayer,
+    });
   }
 
   sendSocketJoin(tablenum) {
@@ -980,6 +998,7 @@ WordwallsAppContainer.propTypes = {
     counts: PropTypes.object,
   })).isRequired,
   socketServer: PropTypes.string.isRequired,
+  appVersion: PropTypes.string.isRequired,
 };
 
 export default WordwallsAppContainer;

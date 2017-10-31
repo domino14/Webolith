@@ -193,36 +193,25 @@ def ws_message(message):
     #   'room' - lobby or tablenum
     #   'type' - chat, it goes down in the DM, guess, other game action?
     #   'contents' - The chat, the message, the guess, etc.
-    if msg_contents['type'] == 'join':
-        table_join(message, msg_contents)
-    elif msg_contents['type'] == 'replaceTable':
-        table_replace(message, msg_contents)
-    elif msg_contents['type'] == 'guess':
-        table_guess(message, msg_contents)
 
-    elif msg_contents['type'] == 'chat':
-        chat(message, msg_contents)
+    look_up = {
+        'join': table_join,
+        'replaceTable': table_replace,
+        'guess': table_guess,
+        'chat': chat,
+        'presence': set_presence,
+        'getTables': send_tables,
+        'start': table_start,
+        'timerEnded': table_timer_ended,
+        'giveup': table_giveup,
+        'startCountdown': start_countdown,
+        'startCountdownCancel': start_countdown_cancel,
+        'endpacket': end_packet,
+    }
 
-    elif msg_contents['type'] == 'presence':
-        set_presence(message, msg_contents)
-
-    elif msg_contents['type'] == 'getTables':
-        send_tables(message, msg_contents)
-
-    elif msg_contents['type'] == 'start':
-        table_start(message, msg_contents)
-
-    elif msg_contents['type'] == 'timerEnded':
-        table_timer_ended(message, msg_contents)
-
-    elif msg_contents['type'] == 'giveup':
-        table_giveup(message, msg_contents)
-
-    elif msg_contents['type'] == 'startCountdown':
-        start_countdown(message, msg_contents)
-
-    elif msg_contents['type'] == 'startCountdownCancel':
-        start_countdown_cancel(message, msg_contents)
+    fn = look_up.get(msg_contents['type'])
+    if fn:
+        fn(message, msg_contents)
 
 
 def table_join(message, contents):
@@ -302,6 +291,25 @@ def table_guess(message, contents):
         }
     }
     Group(room).send({'text': json.dumps(msg)})
+
+
+def end_packet(message, contents):
+    room = message.channel_session['room']
+    if room != contents['room']:
+        logger.warning('User sent message to room %s, but in room %s',
+                       contents['room'], room)
+        return
+    return  # FIXME
+    wrong_words = contents['contents']['wrongWords']
+    wwg = WordwallsGame()
+    wgm = wwg.get_wgm(room, lock=False)
+    state = json.loads(wgm.currentGameState)
+    answers = state['answerHash']
+    if set(wrong_words) != set(answers.keys()):
+        logger.warning('[event=non-matching-fe] answers=%s wrong_words=%s '
+                       'app_version=%s',
+                       answers, wrong_words,
+                       contents['contents']['appVersion'])
 
 
 def table_start(message, contents):

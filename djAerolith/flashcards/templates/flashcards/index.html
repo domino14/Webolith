@@ -9,7 +9,9 @@
     <meta name="description" content="Aerolith Flashcards. Flashcard words using the Leitner spaced repetition method.">
     <meta name="author" content="Cesar Del Solar">
     <link href="/static/css/flashcards/cards.css?v={{CURRENT_VERSION}}" rel="stylesheet">
-    <link href="/static/js/aerolith/tablesorter_blue/style.css?v={{CURRENT_VERSION}}" rel="stylesheet">
+
+    <link href="/static/lib/bootstrap/css/bootstrap-slate.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
+    <link href="/static/lib/tablesorter-theme.blackice.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
   </head>
 
   <body>
@@ -35,6 +37,9 @@
     </div>
     <div class="container" id="app-view">
       <div class="row">
+        <div class="col-lg-5 col-md-6 col-sm-8 col-xs-12 alert-holder"></div>
+      </div>
+      <div class="row">
         <!-- Contains the list of quizzes to continue from local and server -->
         <div id="quiz-selector"></div>
       </div>
@@ -47,9 +52,6 @@
       </div>
       <div class="row" id="card-area">
         <div class="col-lg-12">
-          <div class="row">
-            <div class="col-lg-5 col-md-6 col-sm-8 col-xs-12 alert-holder"></div>
-          </div>
           <div class="row">
             <!-- The actual card  -->
             <div class="col-lg-5 col-md-6 col-sm-8 col-xs-12">

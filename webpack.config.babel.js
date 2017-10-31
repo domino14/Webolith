@@ -15,22 +15,6 @@ export default {
         loader: 'babel-loader',
         exclude: [/node_modules/],
       },
-      {
-        test: /\.(woff|woff2)$/,
-        loader: 'url-loader?limit=10000&mimetype=application/font-woff',
-      },
-      {
-        test: /\.ttf$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.eot$/,
-        loader: 'file-loader',
-      },
-      {
-        test: /\.svg$/,
-        loader: 'file-loader',
-      },
     ],
   },
   resolve: {
@@ -38,7 +22,7 @@ export default {
   },
   entry: {
     vendor: [
-      'bootstrap-webpack',
+      'bootstrap',
       'jquery',
       'underscore',
     ],

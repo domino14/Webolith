@@ -9,6 +9,7 @@ define([
 ], function ($, _, Backbone, App, WordLookup) {
   "use strict";
   var app, wordLookup;
+  require('bootstrap');
   app = new App({
     el: $('#app-view'),
     numCards: window.AppConfig.numCards,
