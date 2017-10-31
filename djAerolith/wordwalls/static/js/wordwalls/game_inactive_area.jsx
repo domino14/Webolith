@@ -73,7 +73,7 @@ class GameInactiveArea extends React.Component {
           onClick={() => {
             window.location.href = '/';
           }}
-          buttonText="Back to main page"
+          buttonText="Back to Main Page"
         />
       </div>
     );
@@ -124,7 +124,7 @@ class GameInactiveArea extends React.Component {
             <HeroButton
               addlButtonClass="btn-primary"
               modalSelector=".solutions-modal"
-              buttonText="Show solutions"
+              buttonText="Show Solutions"
             />
             {challengeButton}
           </div>

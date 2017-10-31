@@ -22,7 +22,7 @@ const GAME_TYPE_JOIN = 'Join Table';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
 const LIST_TYPE_WORDSEARCH = 'Word Search';
 const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
-const LIST_TYPE_SAVED_LIST = 'My saved lists';
+const LIST_TYPE_SAVED_LIST = 'My Saved Lists';
 const FLASHCARD_URL = '/flashcards/';
 
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
