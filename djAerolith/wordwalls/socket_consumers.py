@@ -299,7 +299,6 @@ def end_packet(message, contents):
         logger.warning('User sent message to room %s, but in room %s',
                        contents['room'], room)
         return
-    return  # FIXME
     wrong_words = contents['contents']['wrongWords']
     wwg = WordwallsGame()
     wgm = wwg.get_wgm(room, lock=False)
