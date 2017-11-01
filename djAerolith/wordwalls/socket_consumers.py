@@ -305,10 +305,10 @@ def end_packet(message, contents):
     state = json.loads(wgm.currentGameState)
     answers = state['answerHash']
     if set(wrong_words) != set(answers.keys()):
-        logger.warning('[event=non-matching-fe] answers=%s wrong_words=%s '
-                       'app_version=%s',
+        logger.warning(u'[event=non-matching-fe] answers=%s wrong_words=%s '
+                       'app_version=%s user=%s room=%s',
                        answers, wrong_words,
-                       contents['contents']['appVersion'])
+                       contents['contents']['appVersion'], message.user, room)
 
 
 def table_start(message, contents):
