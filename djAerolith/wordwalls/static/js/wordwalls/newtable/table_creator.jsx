@@ -16,6 +16,7 @@ import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 import Lobby from '../lobby/main';
 import { SearchTypesEnum, searchCriterionToAdd } from './search_row';
+import log from '../logger';
 
 const GAME_TYPE_NEW = 'Load New List';
 const GAME_TYPE_JOIN = 'Join Table';
@@ -550,6 +551,13 @@ class TableCreator extends React.Component {
         'of this table. This will create a new table. ' +
         'Are you sure you wish to continue?', callback,
       );
+      log({
+        type: 'nothost',
+        tablenum: this.props.tablenum,
+        currentHost: this.props.currentHost,
+        username: this.props.username,
+        tableIsMultiplayer: this.props.tableIsMultiplayer,
+      });
     } else if (this.props.tablenum !== 0 && !this.state.multiplayerOn &&
       this.props.tableIsMultiplayer) {
       // We are in a multiplayer table, but trying to load single player game.

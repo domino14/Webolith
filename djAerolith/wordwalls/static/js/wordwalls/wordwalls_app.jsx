@@ -214,10 +214,7 @@ class WordwallsApp extends React.Component {
             <UserBox
               showLexiconSymbols={
                 !this.props.displayStyle.hideLexiconSymbols}
-              answers={this.props.answeredBy.get(
-this.props.username,
-                Immutable.List(),
-)}
+              answers={this.props.answeredBy.get(this.props.username, Immutable.List())}
               totalWords={this.props.totalWords}
               username={this.props.username}
               isBuild={this.props.isBuild}

@@ -19,7 +19,7 @@
 from django.conf.urls import url, include
 from django.views.i18n import javascript_catalog
 
-from wordwalls.views import table, mark_missed, ajax_upload
+from wordwalls.views import table, mark_missed, ajax_upload, log
 from wordwalls.stats import leaderboard, get_medals, main, get_stats
 
 js_info_dict = {
@@ -40,4 +40,5 @@ urlpatterns = [
     url(r'^stats/$', main),
     url(r'^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$',
         get_stats),
+    url(r'^log/$', log),
 ]

@@ -708,16 +708,22 @@ class WordwallsAppContainer extends React.Component {
         });
       });
     }
-    // Send the backend server the remaining words and score.
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'endpacket',
-      contents: {
-        wrongWords: game.getRemainingAnswers(),
-        totalWords: game.getTotalNumWords(),
-        appVersion: this.props.appVersion,
-      },
-    });
+    // Send the backend server the remaining words and score. Do this after
+    // a couple of seconds in order to wait for the last word's response.
+    // This is a bit of a hack, but the purpose of this is logging for now...
+    window.setTimeout(() => {
+      if (!this.state.gameGoing) {
+        this.websocketBridge.send({
+          room: String(this.state.tablenum),
+          type: 'endpacket',
+          contents: {
+            wrongWords: game.getRemainingAnswers(),
+            totalWords: game.getTotalNumWords(),
+            appVersion: this.props.appVersion,
+          },
+        });
+      }
+    }, 2000);
   }
 
   /**
