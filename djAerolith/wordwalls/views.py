@@ -335,3 +335,26 @@ def mark_missed(request, tableid):
     wwg = WordwallsGame()
     marked = wwg.mark_missed(request.POST['idx'], tableid, request.user)
     return response({'success': marked})
+
+
+@login_required
+def log(request):
+    body = json.loads(request.body)
+    if body['type'] == 'nothost':
+        tablenum = body['tablenum']
+        current_host = body['currentHost']
+        username = body['username']
+        multiplayer = body['tableIsMultiplayer']
+        wgm = None
+        if tablenum:
+            wwg = WordwallsGame()
+            wgm = wwg.get_wgm(tablenum, False)
+            actual_host = wgm.host.username if wgm.host else None
+            players_in = u', '.join([u.username for u in wgm.inTable.all()])
+            logger.info(
+                u'[event=nothost] tablenum=%s current_host=%s username=%s '
+                'multiplayer=%s actual_host=%s players_in="%s"',
+                tablenum, current_host, username, multiplayer,
+                actual_host, players_in)
+
+    return response('OK')

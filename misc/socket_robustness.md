@@ -36,6 +36,8 @@ app_1    | INFO 2017-10-30 16:25:54,645 [soc
 
 Not sure if the above is actually an issue that is user visible, but investigate
 
+*Solution*: fixed, need to only send gameEnded if gameGoing is true
+
 
 ### Not the host of this table and other related messages
 
