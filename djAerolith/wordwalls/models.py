@@ -23,6 +23,7 @@ from django.contrib.auth.models import User
 from base.models import Lexicon, WordList
 from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
+from channels_presence.models import Room
 logger = logging.getLogger(__name__)
 
 
@@ -176,3 +177,10 @@ class Medal(models.Model):
 
     class Meta:
         unique_together = ('user', 'leaderboard')
+
+
+# class Message(models.Model):
+#     created = models.DateTimeField(auto_now_add=True, db_index=True)
+#     contents = models.CharField(max_length=512)
+#     room = models.ForeignKey(Room)
+#     last_id = models.IntegerField(unique=True)

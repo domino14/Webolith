@@ -174,11 +174,13 @@ def handle_table_post(request, tableid):
         logger.info("Give up and saving returned: %s" % ret)
         return response(ret)
     elif action == "savePrefs":
+        # XXX: Obsolete me, replace with a direct post to a prefs endpoint
         profile = request.user.aerolithprofile
         profile.customWordwallsStyle = request.POST['prefs']
         profile.save()
         return response({'success': True})
     elif action == "getDcData":
+        # XXX: Obsolete me, replace with a GET.
         wwg = WordwallsGame()
         dcId = wwg.get_dc_id(tableid)
         if dcId > 0:
