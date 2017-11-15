@@ -45,6 +45,8 @@ Not sure if the above is actually an issue that is user visible, but investigate
 
 This might be socket issues
 
+Could the presence have stopped triggering? If presence isn't triggered, the user might get pruned from the room.
+
 
 ### Not getting wordwall and getting a 0%, also there are X seconds left, please wait
 
@@ -71,5 +73,74 @@ This might be socket issues
 
 ```
 once we guess, we immediately get a game over, which triggers the front end to send the endpacket. we then get the guessResponse too late. The endpacket should ideally be send after the guessResponse.
+
+===========
+
+Proposal:
+
+Use websocket for non-critical things, such as chat.
+
+Other functionality:
+- 'join': http
+- 'replaceTable': http
+- 'guess': http
+- 'chat': socket
+- 'presence': socket
+- 'getTables': socket or http
+- 'start': http
+- 'timerEnded': http
+- 'giveup': http
+- 'startCountdown/cancel': probably socket?
+
+Example:
+
+### guess
+
+- User X submits a guess via http
+- Backend sends User X the correct response:
+    + Someone already solved it
+    + User X solved it
+- Everyone polls every 3 seconds:
+    + Poll should be as quick as possible - consider a microservice
+    + Guesses have a timestamp and an ID. These can be stored in a ZSET or a database
+    + Poll for list of guesses not yet guessed based on timestamp
+
+One main issue: feedback isn't fast enough. User frustration can occur if guesses disappear in 3-second chunks, especially if user is trying to solve the same words. (lol, make it 2 seconds)
+
+
+========
+
+Other proposal:
+
+Use message saving on the backend (Actually the above also uses message saving on backend) but continue with websockets?
+
+Messages to save:
+
+- guess
+- timerEnded
+- game start packet
+- etc?
+
+How to do:
+
+- Save messages for every table with incrementing ID. Every message should also save the previous ID for that table.
+- If front end detects IDs out of order, re-request messages from last in-order sequence.
+- Some messages, like the start packet, may need to be delivered in a better way.
+- There is a race condition with `last_id`. Two messages could have the same value for `last_id`, if they were generated at the same time.
+    + If the front end misses one of them we won't know.
+
+=====
+
+Final proposal:
+
+Messages that are sent to a single user should almost always move to http. These include:
+
+- ws_connect (this is the sole exception we should keep in socket, as it is a socket connect acknowledgement)
+- users_in (called in socket connect too. This should instead be a get)
+- table_join should be a get for sure
+- `table_guess` quiz over. `table_guess` should be an http request. It should return the packet, _and_ broadcast the solution if there's anyone else.
+- start could also be an http request. It should return the packet, _and_ broadcast the solution if there's anyone else in the table. 
+
+The con is that multiplayer mode will be a little less stable. But this app is very heavily single player. For future multiplayer games I can use another technology (Elixir Channels?) with message saving/replay.
 
 

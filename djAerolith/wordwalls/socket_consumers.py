@@ -214,6 +214,7 @@ def ws_message(message):
         fn(message, msg_contents)
 
 
+# This should be HTTP.
 def table_join(message, contents):
     wwg = WordwallsGame()
     tableid = contents['room']
@@ -247,6 +248,7 @@ def table_join(message, contents):
     })
 
 
+# This should be HTTP
 def table_replace(message, contents):
     tableid = contents['contents']['oldTable']
     logger.info('ReplaceTable: User %s left room %s',
@@ -256,6 +258,7 @@ def table_replace(message, contents):
     table_join(message, contents)
 
 
+# This should be HTTP.
 # XXX: Could move to another worker
 def table_guess(message, contents):
     room = message.channel_session['room']

@@ -22,6 +22,7 @@ import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
 import GuessEnum from './guess';
 import GuessTimer from './guess_timer';
+import WordwallsRPC from './wordwalls_rpc';
 
 const game = new WordwallsGame();
 const presence = new Presence();
@@ -95,6 +96,7 @@ class WordwallsAppContainer extends React.Component {
     this.countdownTimeout = this.countdownTimeout.bind(this);
 
     this.websocketBridge = new WebSocketBridge();
+    this.rpc = new WordwallsRPC(this.props.tablenum);
   }
 
   componentDidMount() {
@@ -159,7 +161,7 @@ class WordwallsAppContainer extends React.Component {
       }
       return;
     }
-    this.wsSubmitGuess(guess);
+    this.submitGuess(guess);
   }
 
   onChatSubmit(chat, channel) {
@@ -230,22 +232,23 @@ class WordwallsAppContainer extends React.Component {
     });
   }
 
-  wsSubmitGuess(guess) {
-    const reqId = _.uniqueId(`${this.props.username}_g_`);
-    const submitter = (g, r) => {
-      this.websocketBridge.send({
-        room: String(this.state.tablenum),
-        type: 'guess',
-        contents: {
-          guess: g,
-          reqId: r,
-        },
-      });
-    };
-    submitter(guess, reqId);
-    // Have an exponentially backing off timer that resubmits guesses
-    // if we don't get back a response.
-    guessTimer.addTimer(reqId, () => submitter(guess, reqId));
+  submitGuess(guess) {
+    // const reqId = _.uniqueId(`${this.props.username}_g_`);
+    // const submitter = (g, r) => {
+    //   this.websocketBridge.send({
+    //     room: String(this.state.tablenum),
+    //     type: 'guess',
+    //     contents: {
+    //       guess: g,
+    //       reqId: r,
+    //     },
+    //   });
+    // };
+    // submitter(guess, reqId);
+    // // Have an exponentially backing off timer that resubmits guesses
+    // // if we don't get back a response.
+    // guessTimer.addTimer(reqId, () => submitter(guess, reqId));
+    this.rpc.guess(guess);
   }
 
   connectToSocket() {
@@ -327,7 +330,7 @@ class WordwallsAppContainer extends React.Component {
     const answers = game.getRemainingAnswers();
     answers.forEach((answer, idx) => {
       window.setTimeout(() => {
-        this.wsSubmitGuess(answer);
+        this.submitGuess(answer);
       }, (idx * 30));
     });
   }
@@ -336,7 +339,7 @@ class WordwallsAppContainer extends React.Component {
    * @param  {Object} contents
    */
   handleSolveWord(contents) {
-    this.wsSubmitGuess(contents.word);
+    this.submitGuess(contents.word);
   }
 
   handleUsersIn(contents) {
@@ -830,6 +833,7 @@ class WordwallsAppContainer extends React.Component {
         {}, `Table ${data.tablenum}`,
         this.tableUrl(data.tablenum),
       );
+      this.rpc.setTablenum(data.tablenum);
       document.title = `Wordwalls - table ${data.tablenum}`;
       if (oldTablenum !== 0) {
         this.sendSocketTableReplace(oldTablenum, data.tablenum);
