@@ -8,6 +8,10 @@ from wordwalls.game import WordwallsGame
 from lib.response import bad_request, response
 
 
+class RPCError(Exception):
+    pass
+
+
 def rpc_response(req_id, result):
     """
     Return a JSON string in JSONRPC 2.0 format.
@@ -35,7 +39,7 @@ def bad_rpc_response(req_id, error_message, error_code=400, error_data=None):
         'id': req_id}
     if error_data:
         err_obj['error']['data'] = error_data
-    return bad_request(bad_rpc_response)
+    return bad_request(err_obj)
 
 
 def method_lookup(method_str):
@@ -71,29 +75,44 @@ def table_rpc(request, tableid):
     if not handler:
         return bad_rpc_response(req_id, 'RPC method {} does not exist.'.format(
             method))
-    ret = handler(tableid, params)
+    try:
+        ret = handler(request.user, tableid, params)
+    except RPCError as e:
+        return bad_rpc_response(req_id, str(e))
+
     return rpc_response(req_id, ret)
 
 
-def guess(tableid, params):
+def guess(user, tableid, params):
+    g = params['guess']
+    wwg = WordwallsGame()
+    state = wwg.guess(g.strip(), tableid, user)
+    if state is None:
+        raise RPCError('Quiz is already over.')
+    return {
+        'g': state['going'],
+        'C': state['alphagram'],
+        'w': state['word'],
+        'a': state['already_solved'],
+        's': state['solver']
+    }
+
+
+def start(user, tableid, params):
     pass
 
 
-def start(tableid, params):
+def giveup(user, tableid, params):
     pass
 
 
-def giveup(tableid, params):
+def game_ended(user, tableid, params):
     pass
 
 
-def game_ended(tableid, params):
+def save_game(user, tableid, params):
     pass
 
 
-def save_game(tableid, params):
-    pass
-
-
-def give_up_and_save(tableid, params):
+def give_up_and_save(user, tableid, params):
     pass

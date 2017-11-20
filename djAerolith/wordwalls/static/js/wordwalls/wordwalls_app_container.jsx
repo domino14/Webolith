@@ -233,22 +233,12 @@ class WordwallsAppContainer extends React.Component {
   }
 
   submitGuess(guess) {
-    // const reqId = _.uniqueId(`${this.props.username}_g_`);
-    // const submitter = (g, r) => {
-    //   this.websocketBridge.send({
-    //     room: String(this.state.tablenum),
-    //     type: 'guess',
-    //     contents: {
-    //       guess: g,
-    //       reqId: r,
-    //     },
-    //   });
-    // };
-    // submitter(guess, reqId);
-    // // Have an exponentially backing off timer that resubmits guesses
-    // // if we don't get back a response.
-    // guessTimer.addTimer(reqId, () => submitter(guess, reqId));
-    this.rpc.guess(guess);
+    this.rpc.guess(guess)
+      .then(result => this.handleGuessResponse(result))
+      .catch((error) => {
+        window.console.log('Catching error', error);
+        this.addMessage(error.message);
+      });
   }
 
   connectToSocket() {
@@ -584,7 +574,7 @@ class WordwallsAppContainer extends React.Component {
     if (!_.has(data, 'C') || data.C === '') {
       return;
     }
-    guessTimer.removeTimer(data.reqId);
+    // guessTimer.removeTimer(data.reqId);
     // data.C contains the alphagram.
     const solved = game.solve(data.w, data.C, data.s);
     if (!solved) {
