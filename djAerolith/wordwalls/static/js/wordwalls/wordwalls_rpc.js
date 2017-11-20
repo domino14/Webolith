@@ -48,15 +48,22 @@ class WordwallsRPC {
     });
   }
 
-  rpcwrap(method, params) {
-    if (this.tableurl) {
-      return fetch(this.tableurl, this.fetchdata(method, params));
+  async rpcwrap(method, params) {
+    if (!this.tableurl) {
+      await Promise.reject(new Error('You are not in a table.'));
     }
-    return null;
+    const response = await fetch(this.tableurl, this.fetchdata(method, params));
+    const data = await response.json();
+    if (response.ok) {
+      // Use the `result` key - since this is JSONRPC
+      return data.result;
+    }
+    // Otherwise, there's an error.
+    throw new Error(data.error.message);
   }
 
   guess(gstr) {
-    this.rpcwrap('guess', {
+    return this.rpcwrap('guess', {
       guess: gstr,
     });
   }
