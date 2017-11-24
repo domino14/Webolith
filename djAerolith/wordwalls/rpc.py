@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 
 from wordwalls.game import WordwallsGame
 from lib.response import bad_request, response
+from wordwalls.socket_consumers import broadcast_to_table, BroadcastTypes
 
 
 class RPCError(Exception):
@@ -89,13 +90,18 @@ def guess(user, tableid, params):
     state = wwg.guess(g.strip(), tableid, user)
     if state is None:
         raise RPCError('Quiz is already over.')
-    return {
+
+    game_packet = {
         'g': state['going'],
         'C': state['alphagram'],
         'w': state['word'],
         'a': state['already_solved'],
         's': state['solver']
     }
+    # If this is a multiplayer game, should broadcast to group.
+    if wwg.is_multiplayer(tableid):
+        broadcast_to_table(tableid, BroadcastTypes.GUESS_RESPONSE, game_packet)
+    return game_packet
 
 
 def start(user, tableid, params):

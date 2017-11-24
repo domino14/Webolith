@@ -17,6 +17,39 @@ LOBBY_CHANNEL_NAME = 'lobby'
 ACTIVE_SECONDS = 60
 
 
+class BroadcastTypes(object):
+    GUESS_RESPONSE = 'guessResponse'
+
+
+def broadcast_to_table(tableid, broadcast_type, data):
+    """
+    Broadcast data to a group.
+
+    """
+    broadcast_dict = {
+        'text': json.dumps({
+            'type': broadcast_type,
+            'contents': data,
+        })
+    }
+
+    Group('{}'.format(tableid)).send(broadcast_dict)
+
+
+def server_error(msg):
+    """
+    Convert error message to a JSON string that can be sent directly to a
+    reply channel.
+
+    """
+    return json.dumps({
+        'type': 'server',
+        'contents': {
+            'error': msg,
+        }
+    })
+
+
 def host_switched_msg(user, room):
     return {
         'type': 'newHost',
@@ -220,13 +253,9 @@ def table_join(message, contents):
     tableid = contents['room']
     permitted = wwg.allow_access(message.user, tableid)
     if not permitted:
-        msg = {
-            'type': 'server',
-            'contents': {
-                'error': 'You are not permitted to join this table.'
-            }
-        }
-        message.reply_channel.send({'text': json.dumps(msg)})
+        message.reply_channel.send(server_error(
+            'You are not permitted to join this table.')
+        )
         return
     logger.info('User %s joined room %s', message.user.username, tableid)
     Room.objects.add(tableid, message.reply_channel.name, message.user)
@@ -259,41 +288,10 @@ def table_replace(message, contents):
 
 
 # This should be HTTP.
-# XXX: Could move to another worker
+# XXX: Remove me after update.
 def table_guess(message, contents):
-    room = message.channel_session['room']
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    guess = contents['contents']['guess']
-    req_id = contents['contents'].get('reqId', '')
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        # Replicate atomic request behavior. We need this for select_for_update
-        state = wwg.guess(guess.strip(), room, message.user)
-    if state is None:
-        msg = {
-            'type': 'server',
-            'contents': {
-                'error': 'Quiz is already over',
-                'reqId': req_id,
-            }
-        }
-        message.reply_channel.send({'text': json.dumps(msg)})
-        return
-    msg = {
-        'type': 'guessResponse',
-        'contents': {
-            'g': state['going'],
-            'C': state['alphagram'],
-            'w': state['word'],
-            'a': state['already_solved'],
-            's': state['solver'],
-            'reqId': req_id,
-        }
-    }
-    Group(room).send({'text': json.dumps(msg)})
+    message.reply_channel.send(
+        server_error('Please refresh; the app has changed.'))
 
 
 def end_packet(message, contents):

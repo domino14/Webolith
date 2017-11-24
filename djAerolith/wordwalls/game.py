@@ -899,6 +899,12 @@ class WordwallsGame(object):
             return False
         return True
 
+    def is_multiplayer(self, tablenum):
+        wgm = self.get_wgm(tablenum, lock=False)
+        if not wgm:
+            return False
+        return wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME
+
     def midgame_state(self, tablenum):
         """
         Get the game state while in the middle of the game. This
