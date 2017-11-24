@@ -42,6 +42,7 @@
     "jshint": "^2.9.5",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
+    "react-test-renderer": "^16.1.1",
     "rimraf": "^2.6.2",
     "style-loader": "^0.13.1",
     "text-loader": "^0.0.1",
