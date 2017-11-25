@@ -217,7 +217,6 @@ def ws_message(message):
         'replaceTable': table_replace,
         'chat': chat,
         'presence': set_presence,
-        'timerEnded': table_timer_ended,
         'startCountdown': start_countdown,
         'startCountdownCancel': start_countdown_cancel,
         'endpacket': end_packet,
@@ -317,21 +316,6 @@ def start_countdown_cancel(message, contents):
             'contents': {}
         })
     })
-
-
-def table_timer_ended(message, contents):
-    try:
-        room = message.channel_session['room']
-    except KeyError:
-        return
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        wwg.check_game_ended(room)
-    # If the game ended this will get broadcast to everyone.
 
 
 def send_game_ended(tablenum):

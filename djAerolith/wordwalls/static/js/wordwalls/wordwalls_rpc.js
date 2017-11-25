@@ -75,6 +75,10 @@ class WordwallsRPC {
   giveUp() {
     return this.rpcwrap('giveup', {});
   }
+
+  timerRanOut() {
+    return this.rpcwrap('timerEnded', {});
+  }
 }
 
 export default WordwallsRPC;
