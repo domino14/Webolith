@@ -5,7 +5,6 @@ from channels import Group
 from channels.auth import channel_session_user, channel_session_user_from_http
 from channels_presence.models import Room, Presence
 from channels_presence.signals import presence_changed
-from django.db import transaction
 from django.dispatch import receiver
 
 from wordwalls.game import WordwallsGame
@@ -230,7 +229,6 @@ def ws_message(message):
             server_error('Please refresh; the app has changed.'))
 
 
-# This should be HTTP.
 def table_join(message, contents):
     wwg = WordwallsGame()
     tableid = contents['room']
@@ -250,7 +248,7 @@ def table_join(message, contents):
     # Also, send the user the current time left / game state if the game
     # is already going.
     state = wwg.midgame_state(tableid)
-    if not state['going']:
+    if not state['going'] or not wwg.is_multiplayer():
         return
     message.reply_channel.send({
         'text': json.dumps({
