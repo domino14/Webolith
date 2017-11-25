@@ -502,10 +502,12 @@ class WordwallsGame(object):
         # but we should figure out how to test this.
         wgm = self.get_wgm(tablenum)
         if not wgm:
-            return False
+            return _('Table does not exist.')
 
         state = json.loads(wgm.currentGameState)
-        if self.did_timer_run_out(state) and state['quizGoing']:
+        timer_ran_out = self.did_timer_run_out(state)
+        quiz_going = state['quizGoing']
+        if timer_ran_out and quiz_going:
             # the game is over! mark it so.
             state['timeRemaining'] = 0
             self.do_quiz_end_actions(state, tablenum, wgm)
@@ -519,6 +521,12 @@ class WordwallsGame(object):
                     state['quizStartTime'], state['timerSecs'],
                     now, state['quizGoing'],
                     now - state['quizStartTime'])
+        if not timer_ran_out:
+            logger.info('event=ran-out-too-early')
+            return _('Got timer signal too early. Please report error.')
+        if not quiz_going:
+            return _('The round is over.')
+
         return False
 
     def allow_give_up(self, wgm, user):

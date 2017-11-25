@@ -147,7 +147,7 @@ def get_create_meta_info():
 
 def handle_table_post(request, tableid):
     """ XXX: This function should be separated into several RPC style
-    API functions. """
+    API functions. See rpc.py. """
     action = request.POST['action']
     logger.info(u'user=%s, action=%s, table=%s', request.user, action,
                 tableid)
@@ -157,13 +157,7 @@ def handle_table_post(request, tableid):
             'success': False,
             'error': _('Table does not exist, please load a new word list.')},
             status=StatusCode.BAD_REQUEST)
-    if action == "gameEnded":
-        wwg = WordwallsGame()
-        ret = wwg.check_game_ended(tableid)
-        # 'going' is the opposite of 'game ended'
-        return response({'g': not ret})
-
-    elif action == "save":
+    if action == "save":
         wwg = WordwallsGame()
         ret = wwg.save(request.user, tableid, request.POST['listname'])
         return response(ret)

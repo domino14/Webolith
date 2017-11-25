@@ -516,11 +516,11 @@ class WordwallsAppContainer extends React.Component {
    * back-end to possibly end the game.
    */
   timerRanOut() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'timerEnded',
-      contents: {},
-    });
+    this.rpc.timerRanOut()
+      .then(() => this.processGameEnded())
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
   }
 
   /**

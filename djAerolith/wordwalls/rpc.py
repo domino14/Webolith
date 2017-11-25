@@ -48,7 +48,7 @@ def method_lookup(method_str):
         'guess': guess,
         'start': start,
         'giveup': giveup,
-        'gameEnded': game_ended,
+        'timerEnded': game_timer_ended,
     }
     return method_dict.get(method_str)
 
@@ -123,8 +123,12 @@ def giveup(user, tableid, params):
     return True
 
 
-def game_ended(user, tableid, params):
-    pass
+def game_timer_ended(user, tableid, params):
+    wwg = WordwallsGame()
+    success = wwg.check_game_ended(tableid)
+    if success is not True:
+        raise RPCError(success)
+    return True
 
 
 def save_game(user, tableid, params):
