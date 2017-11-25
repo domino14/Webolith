@@ -19,6 +19,7 @@ ACTIVE_SECONDS = 60
 
 class BroadcastTypes(object):
     GUESS_RESPONSE = 'guessResponse'
+    GAME_PAYLOAD = 'gamePayload'
 
 
 def broadcast_to_table(tableid, broadcast_type, data):
@@ -38,16 +39,18 @@ def broadcast_to_table(tableid, broadcast_type, data):
 
 def server_error(msg):
     """
-    Convert error message to a JSON string that can be sent directly to a
+    Convert error message to an object that can be sent directly to a
     reply channel.
 
     """
-    return json.dumps({
-        'type': 'server',
-        'contents': {
-            'error': msg,
-        }
-    })
+    return {
+        'text': json.dumps({
+            'type': 'server',
+            'contents': {
+                'error': msg,
+            }
+        })
+    }
 
 
 def host_switched_msg(user, room):
@@ -312,31 +315,10 @@ def end_packet(message, contents):
                        contents['contents']['appVersion'], message.user, room)
 
 
+# XXX: Remove me after update.
 def table_start(message, contents):
-    room = message.channel_session['room']
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        quiz_params = wwg.start_quiz(room, message.user)
-    if 'error' in quiz_params:
-        msg = {
-            'type': 'server',
-            'contents': {
-                'error': quiz_params['error'],
-            }
-        }
-        Group(room).send({'text': json.dumps(msg)})
-        return
-    # Send the payload to everyone in the room.
-    Group(room).send({
-        'text': json.dumps({
-            'type': 'gamePayload',
-            'contents': quiz_params
-        })
-    })
+    message.reply_channel.send(
+        server_error('Please refresh; the app has changed.'))
 
 
 def start_countdown(message, contents):
@@ -369,28 +351,10 @@ def start_countdown_cancel(message, contents):
     })
 
 
+# XXX: Remove me after update.
 def table_giveup(message, contents):
-    room = message.channel_session['room']
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        success = wwg.give_up(message.user, room)
-
-    if success is not True:
-        Group(room).send({
-            'text': json.dumps({
-                'type': 'server',
-                'contents': {
-                    'error': success
-                }
-            })
-        })
-        return
-    # No need to send the game over message, the send_game_ended function
-    # should be triggered below.
+    message.reply_channel.send(
+        server_error('Please refresh; the app has changed.'))
 
 
 def table_timer_ended(message, contents):

@@ -79,7 +79,7 @@ def table_rpc(request, tableid):
     try:
         ret = handler(request.user, tableid, params)
     except RPCError as e:
-        return bad_rpc_response(req_id, str(e))
+        return bad_rpc_response(req_id, unicode(e))
 
     return rpc_response(req_id, ret)
 
@@ -105,11 +105,22 @@ def guess(user, tableid, params):
 
 
 def start(user, tableid, params):
-    pass
+    wwg = WordwallsGame()
+    quiz_params = wwg.start_quiz(tableid, user)
+    if 'error' in quiz_params:
+        raise RPCError(quiz_params['error'])
+    # If this is a multiplayer game, should broadcast to group.
+    if wwg.is_multiplayer(tableid):
+        broadcast_to_table(tableid, BroadcastTypes.GAME_PAYLOAD, quiz_params)
+    return quiz_params
 
 
 def giveup(user, tableid, params):
-    pass
+    wwg = WordwallsGame()
+    success = wwg.give_up(user, tableid)
+    if success is not True:
+        raise RPCError(success)
+    return True
 
 
 def game_ended(user, tableid, params):

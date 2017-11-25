@@ -67,6 +67,14 @@ class WordwallsRPC {
       guess: gstr,
     });
   }
+
+  startGame() {
+    return this.rpcwrap('start', {});
+  }
+
+  giveUp() {
+    return this.rpcwrap('giveup', {});
+  }
 }
 
 export default WordwallsRPC;

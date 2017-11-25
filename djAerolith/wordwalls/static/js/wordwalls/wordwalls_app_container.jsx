@@ -26,7 +26,6 @@ import WordwallsRPC from './wordwalls_rpc';
 
 const game = new WordwallsGame();
 const presence = new Presence();
-const guessTimer = new GuessTimer();
 
 const PRESENCE_TIMEOUT = 20000; // 20 seconds.
 const GET_TABLES_INIT_TIMEOUT = 1500;
@@ -236,7 +235,6 @@ class WordwallsAppContainer extends React.Component {
     this.rpc.guess(guess)
       .then(result => this.handleGuessResponse(result))
       .catch((error) => {
-        window.console.log('Catching error', error);
         this.addMessage(error.message);
       });
   }
@@ -262,55 +260,28 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleSocketMessages(message) {
-    switch (message.type) {
-      case 'server':
-        this.addMessage(message.contents.error);
-        if (message.contents.reqId) {
-          guessTimer.removeTimer(message.contents.reqId);
-        }
-        break;
-      case 'guessResponse':
-        this.handleGuessResponse(message.contents);
-        break;
-      case 'chat':
-        this.handleChat(message.contents);
-        break;
-      case 'presence':
-        this.handleUsersIn(message.contents);
-        break;
-      case 'tableList':
-        this.handleTables(message.contents);
-        break;
-      case 'tableUpdate':
-        this.handleTable(message.contents);
-        break;
-      case 'gamePayload':
-        this.handleStartReceived(message.contents);
-        break;
-      case 'gameGoingPayload':
-        this.handleGameGoingPayload(message.contents);
-        break;
-      case 'gameOver':
-        this.processGameEnded();
-        break;
-      case 'newHost':
-        this.handleNewHost(message.contents);
-        break;
-      case 'startCountdown':
-        this.handleStartCountdownFromServer(message.contents);
-        break;
-      case 'startCountdownCancel':
-        this.handleStartCountdownCancelFromServer();
-        break;
-      case 'allSolve':
-        this.handleAllSolve();
-        break;
-      case 'solveWord':
-        this.handleSolveWord(message.contents);
-        break;
-      default:
-        window.console.log('Received unrecognized message type:', message.type);
+    const messageFnDict = {
+      server: this.addErrorMessage,
+      guessResponse: this.handleGuessResponse,
+      chat: this.handleChat,
+      presence: this.handleUsersIn,
+      tableList: this.handleTables,
+      tableUpdate: this.handleTable,
+      gamePayload: this.handleStartReceived,
+      gameGoingPayload: this.handleGameGoingPayload,
+      gameOver: this.processGameEnded,
+      newHost: this.handleNewHost,
+      startCountdown: this.handleStartCountdownFromServer,
+      startCountdownCancel: this.handleStartCountdownCancelFromServer,
+      allSolve: this.handleAllSolve,
+      solveWord: this.handleSolveWord,
+    };
+    const handleFn = messageFnDict[message.type];
+    if (!handleFn) {
+      window.console.log('Received unrecognized message type:', message.type);
+      return;
     }
+    handleFn.bind(this)(message.contents);
   }
 
   /**
@@ -405,11 +376,19 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleStart() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'start',
-      contents: {},
-    });
+    this.rpc.startGame()
+      .then(result => this.handleStartReceived(result))
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
+  }
+
+  handleGiveup() {
+    this.rpc.giveUp()
+      .then(() => this.processGameEnded())
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
   }
 
   handleStartCountdown(countdownSec) {
@@ -458,6 +437,7 @@ class WordwallsAppContainer extends React.Component {
       window.Intercom('trackEvent', 'started-game', {
         isChallenge: data.gameType && data.gameType.includes('challenge'),
         listname: this.state.listName,
+        multiplayer: this.state.tableIsMultiplayer,
       });
     }
 
@@ -665,6 +645,10 @@ class WordwallsAppContainer extends React.Component {
       });
   }
 
+  addErrorMessage(errMsg) {
+    this.addMessage(errMsg.error);
+  }
+
   addMessage(serverMsg, optType, optSender, optIsLobby) {
     const message = {
       author: optSender || '',
@@ -680,6 +664,9 @@ class WordwallsAppContainer extends React.Component {
   }
 
   processGameEnded() {
+    if (!this.state.gameGoing) {
+      return;
+    }
     this.setState({
       gameGoing: false,
     });
@@ -773,14 +760,6 @@ class WordwallsAppContainer extends React.Component {
       curQuestions: game.getQuestionState(),
     });
     this.wwApp.setGuessBoxFocus();
-  }
-
-  handleGiveup() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'giveup',
-      contents: {},
-    });
   }
 
   /**
