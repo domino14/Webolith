@@ -525,6 +525,7 @@ class WordwallsGame(object):
             logger.info('event=ran-out-too-early')
             return _('Got timer signal too early. Please report error.')
         if not quiz_going:
+            logger.info('event=round-is-over')
             return _('The round is over.')
 
         return False
