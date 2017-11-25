@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 import logging
 
+from channels_presence.models import Room
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_GET, require_POST
@@ -9,7 +10,7 @@ from django.utils import timezone
 
 from wordwalls.models import (
     DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry,
-    NamedList)
+    NamedList, WordwallsGameModel)
 from base.models import Lexicon, WordList
 from base.forms import SavedListForm
 from lib.response import response, bad_request
@@ -17,6 +18,7 @@ from lib.word_searches import SearchDescription
 from wordwalls.views import getLeaderboardData
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame, GameInitException
+from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
 
 logger = logging.getLogger(__name__)
 strptime = datetime.strptime
@@ -311,6 +313,22 @@ def default_lists(request):
             'id': nl.pk,
         })
     return response(ret_data)
+
+
+@login_required
+@require_GET
+def tables(request):
+    rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
+    tables = []
+    for room in rooms:
+        try:
+            tables.append(WordwallsGameModel.objects.get(pk=room.channel_name))
+        except WordwallsGameModel.DoesNotExist:
+            pass
+
+    return response({
+        'tables': [table_info(table) for table in tables]
+    })
 
 
 # api views helpers

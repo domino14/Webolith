@@ -21,7 +21,6 @@ import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
 import GuessEnum from './guess';
-import GuessTimer from './guess_timer';
 import WordwallsRPC from './wordwalls_rpc';
 
 const game = new WordwallsGame();
@@ -224,11 +223,13 @@ class WordwallsAppContainer extends React.Component {
   }
 
   getTables() {
-    this.websocketBridge.send({
-      type: 'getTables',
-      room: 'lobby',
-      contents: {},
-    });
+    $.ajax({
+      url: '/wordwalls/api/tables/',
+      method: 'GET',
+    })
+      .done((data) => {
+        this.handleTables(data);
+      });
   }
 
   submitGuess(guess) {
@@ -249,6 +250,8 @@ class WordwallsAppContainer extends React.Component {
       }
       this.sendPresence();
       // Avoid a race condition; get tables at beginning after a short break.
+      // Otherwise, if we send at the same time, the list of tables can get
+      // overwritten by our own presence.
       window.setTimeout(() => this.getTables(), GET_TABLES_INIT_TIMEOUT);
     });
   }
@@ -265,7 +268,6 @@ class WordwallsAppContainer extends React.Component {
       guessResponse: this.handleGuessResponse,
       chat: this.handleChat,
       presence: this.handleUsersIn,
-      tableList: this.handleTables,
       tableUpdate: this.handleTable,
       gamePayload: this.handleStartReceived,
       gameGoingPayload: this.handleGameGoingPayload,

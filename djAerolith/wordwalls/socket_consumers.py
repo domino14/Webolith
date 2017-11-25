@@ -90,24 +90,6 @@ def table_info(table):
     return table_obj
 
 
-def active_tables():
-    """ Get all active tables with at least one user in them. """
-    rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
-    tables = []
-    for room in rooms:
-        try:
-            tables.append(WordwallsGameModel.objects.get(pk=room.channel_name))
-        except WordwallsGameModel.DoesNotExist:
-            pass
-
-    return {
-        'type': 'tableList',
-        'contents': {
-            'tables': [table_info(table) for table in tables]
-        }
-    }
-
-
 @receiver(presence_changed)
 def broadcast_presence(sender, room, **kwargs):
     # Broadcast the new list of present users to the room.
@@ -233,13 +215,9 @@ def ws_message(message):
     look_up = {
         'join': table_join,
         'replaceTable': table_replace,
-        'guess': table_guess,
         'chat': chat,
         'presence': set_presence,
-        'getTables': send_tables,
-        'start': table_start,
         'timerEnded': table_timer_ended,
-        'giveup': table_giveup,
         'startCountdown': start_countdown,
         'startCountdownCancel': start_countdown_cancel,
         'endpacket': end_packet,
@@ -248,6 +226,9 @@ def ws_message(message):
     fn = look_up.get(msg_contents['type'])
     if fn:
         fn(message, msg_contents)
+    else:
+        message.reply_channel.send(
+            server_error('Please refresh; the app has changed.'))
 
 
 # This should be HTTP.
@@ -290,13 +271,6 @@ def table_replace(message, contents):
     table_join(message, contents)
 
 
-# This should be HTTP.
-# XXX: Remove me after update.
-def table_guess(message, contents):
-    message.reply_channel.send(
-        server_error('Please refresh; the app has changed.'))
-
-
 def end_packet(message, contents):
     room = message.channel_session['room']
     if room != contents['room']:
@@ -313,12 +287,6 @@ def end_packet(message, contents):
                        'app_version=%s user=%s room=%s',
                        answers, wrong_words,
                        contents['contents']['appVersion'], message.user, room)
-
-
-# XXX: Remove me after update.
-def table_start(message, contents):
-    message.reply_channel.send(
-        server_error('Please refresh; the app has changed.'))
 
 
 def start_countdown(message, contents):
@@ -351,12 +319,6 @@ def start_countdown_cancel(message, contents):
     })
 
 
-# XXX: Remove me after update.
-def table_giveup(message, contents):
-    message.reply_channel.send(
-        server_error('Please refresh; the app has changed.'))
-
-
 def table_timer_ended(message, contents):
     try:
         room = message.channel_session['room']
@@ -370,15 +332,6 @@ def table_timer_ended(message, contents):
     with transaction.atomic():
         wwg.check_game_ended(room)
     # If the game ended this will get broadcast to everyone.
-
-
-def send_tables(message, msg_contents):
-    """ Send info about current multiplayer tables. """
-    tables = active_tables()
-    logger.debug('Sending active tables: %s', tables)
-    message.reply_channel.send({
-        'text': json.dumps(tables)
-    })
 
 
 def send_game_ended(tablenum):
