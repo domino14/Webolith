@@ -9,7 +9,7 @@ class SessionIdleTimeout:
     """
     def process_request(self, request):
         # Timeout is done only for authenticated logged in users.
-        if request.user.is_authenticated:
+        if request.user.is_authenticated():
             current_datetime = datetime.datetime.now()
             # Timeout if idle time period is exceeded.
             if ('last_activity' in request.session and
