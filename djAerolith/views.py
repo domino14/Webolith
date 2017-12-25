@@ -18,6 +18,8 @@
 
 import logging
 import json
+import jwt
+import time
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -28,6 +30,7 @@ from django.views.decorators.csrf import csrf_exempt
 from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
+JWT_EXPIRATION = 60 * 60 * 6  # 6 hours
 
 
 def health(request):
@@ -88,3 +91,19 @@ def healthz(request):
     elif request.method == 'POST':
         return response('OKPOST')
     return response('Bad method.', StatusCode.BAD_REQUEST)
+
+
+def jwt_req(request):
+    if not request.user.is_authenticated():
+        return response({
+            'error': 'Must log in',
+        }, status=StatusCode.FORBIDDEN)
+    token = jwt.encode({
+        'iss': 'aerolith.org',
+        'sub': request.user.pk,
+        'usn': request.user.username,
+        'exp': time.time() + JWT_EXPIRATION
+    }, settings.SECRET_KEY, algorithm='HS256')
+    return response({
+        'token': token
+    })

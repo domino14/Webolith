@@ -16,6 +16,7 @@ python-openid
 psycopg2
 Fabric
 PyYAML
+PyJWT
 channels
 asgi_redis
 django-channels-presence
