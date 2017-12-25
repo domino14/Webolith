@@ -78,8 +78,8 @@ class TableCreator extends React.Component {
       // Word-search related
       wordSearchCriteria: [{
         searchType: SearchTypesEnum.LENGTH,
-        minValue: 5,
-        maxValue: 5,
+        minValue: 7,
+        maxValue: 7,
       }, {
         searchType: SearchTypesEnum.PROBABILITY,
         minValue: 1,
