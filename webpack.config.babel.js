@@ -28,6 +28,8 @@ export default {
     ],
     wordwallsapp: [
       'babel-polyfill',
+      'promise-polyfill',
+      'whatwg-fetch',
       './djAerolith/wordwalls/static/js/wordwalls/index',
     ],
     flashcardsapp: './djAerolith/flashcards/static/js/flashcards/main',
