@@ -52,6 +52,7 @@ class WordwallsRPC {
     if (!this.tableurl) {
       await Promise.reject(new Error('You are not in a table.'));
     }
+    // eslint-disable-next-line compat/compat
     const response = await fetch(this.tableurl, this.fetchdata(method, params));
     const data = await response.json();
     if (response.ok) {
