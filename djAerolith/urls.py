@@ -53,6 +53,9 @@ urlpatterns = [
     url(r'^jwt/', jwt_req),
     url(r'^bigfatphony/', trigger500),
     url(r'^about/', TemplateView.as_view(template_name='about.html')),
+    url(r'^privacy/', TemplateView.as_view(template_name='privacy.html')),
+    url(r'^tos/', TemplateView.as_view(template_name='tos.html')),
+
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/social/$', social),
     url(r'^accounts/profile/', include('accounts.urls')),
