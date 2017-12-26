@@ -553,13 +553,21 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleGuessResponse(data) {
+    let endQuiz = false;
     if (!_.has(data, 'C') || data.C === '') {
       return;
+    }
+    if (data.g === false) {
+      // The quiz has ended
+      endQuiz = true;
     }
     // guessTimer.removeTimer(data.reqId);
     // data.C contains the alphagram.
     const solved = game.solve(data.w, data.C, data.s);
     if (!solved) {
+      if (endQuiz) {
+        this.processGameEnded();
+      }
       return;
     }
     if (this.state.tableIsMultiplayer) {
@@ -581,6 +589,9 @@ class WordwallsAppContainer extends React.Component {
         });
       }
       // XXX: Otherwise keep it pending?
+    }
+    if (endQuiz) {
+      this.processGameEnded();
     }
   }
 
