@@ -5,7 +5,6 @@ from channels import Group
 from channels.auth import channel_session_user, channel_session_user_from_http
 from channels_presence.models import Room, Presence
 from channels_presence.signals import presence_changed
-from django.db import transaction
 from django.dispatch import receiver
 
 from wordwalls.game import WordwallsGame
@@ -15,6 +14,42 @@ logger = logging.getLogger(__name__)
 
 LOBBY_CHANNEL_NAME = 'lobby'
 ACTIVE_SECONDS = 60
+
+
+class BroadcastTypes(object):
+    GUESS_RESPONSE = 'guessResponse'
+    GAME_PAYLOAD = 'gamePayload'
+
+
+def broadcast_to_table(tableid, broadcast_type, data):
+    """
+    Broadcast data to a group.
+
+    """
+    broadcast_dict = {
+        'text': json.dumps({
+            'type': broadcast_type,
+            'contents': data,
+        })
+    }
+
+    Group('{}'.format(tableid)).send(broadcast_dict)
+
+
+def server_error(msg):
+    """
+    Convert error message to an object that can be sent directly to a
+    reply channel.
+
+    """
+    return {
+        'text': json.dumps({
+            'type': 'server',
+            'contents': {
+                'error': msg,
+            }
+        })
+    }
 
 
 def host_switched_msg(user, room):
@@ -52,24 +87,6 @@ def table_info(table):
         'multiplayer': table.playerType == WordwallsGameModel.MULTIPLAYER_GAME
     }
     return table_obj
-
-
-def active_tables():
-    """ Get all active tables with at least one user in them. """
-    rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
-    tables = []
-    for room in rooms:
-        try:
-            tables.append(WordwallsGameModel.objects.get(pk=room.channel_name))
-        except WordwallsGameModel.DoesNotExist:
-            pass
-
-    return {
-        'type': 'tableList',
-        'contents': {
-            'tables': [table_info(table) for table in tables]
-        }
-    }
 
 
 @receiver(presence_changed)
@@ -197,13 +214,8 @@ def ws_message(message):
     look_up = {
         'join': table_join,
         'replaceTable': table_replace,
-        'guess': table_guess,
         'chat': chat,
         'presence': set_presence,
-        'getTables': send_tables,
-        'start': table_start,
-        'timerEnded': table_timer_ended,
-        'giveup': table_giveup,
         'startCountdown': start_countdown,
         'startCountdownCancel': start_countdown_cancel,
         'endpacket': end_packet,
@@ -212,6 +224,9 @@ def ws_message(message):
     fn = look_up.get(msg_contents['type'])
     if fn:
         fn(message, msg_contents)
+    else:
+        message.reply_channel.send(
+            server_error('Please refresh; the app has changed.'))
 
 
 def table_join(message, contents):
@@ -219,13 +234,9 @@ def table_join(message, contents):
     tableid = contents['room']
     permitted = wwg.allow_access(message.user, tableid)
     if not permitted:
-        msg = {
-            'type': 'server',
-            'contents': {
-                'error': 'You are not permitted to join this table.'
-            }
-        }
-        message.reply_channel.send({'text': json.dumps(msg)})
+        message.reply_channel.send(server_error(
+            'You are not permitted to join this table.')
+        )
         return
     logger.info('User %s joined room %s', message.user.username, tableid)
     Room.objects.add(tableid, message.reply_channel.name, message.user)
@@ -237,7 +248,7 @@ def table_join(message, contents):
     # Also, send the user the current time left / game state if the game
     # is already going.
     state = wwg.midgame_state(tableid)
-    if not state['going']:
+    if not state['going'] or not wwg.is_multiplayer():
         return
     message.reply_channel.send({
         'text': json.dumps({
@@ -247,6 +258,7 @@ def table_join(message, contents):
     })
 
 
+# This should be HTTP
 def table_replace(message, contents):
     tableid = contents['contents']['oldTable']
     logger.info('ReplaceTable: User %s left room %s',
@@ -254,43 +266,6 @@ def table_replace(message, contents):
     Room.objects.remove(tableid, message.reply_channel.name)
     # This will trigger the presence changed signal above, too.
     table_join(message, contents)
-
-
-# XXX: Could move to another worker
-def table_guess(message, contents):
-    room = message.channel_session['room']
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    guess = contents['contents']['guess']
-    req_id = contents['contents'].get('reqId', '')
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        # Replicate atomic request behavior. We need this for select_for_update
-        state = wwg.guess(guess.strip(), room, message.user)
-    if state is None:
-        msg = {
-            'type': 'server',
-            'contents': {
-                'error': 'Quiz is already over',
-                'reqId': req_id,
-            }
-        }
-        message.reply_channel.send({'text': json.dumps(msg)})
-        return
-    msg = {
-        'type': 'guessResponse',
-        'contents': {
-            'g': state['going'],
-            'C': state['alphagram'],
-            'w': state['word'],
-            'a': state['already_solved'],
-            's': state['solver'],
-            'reqId': req_id,
-        }
-    }
-    Group(room).send({'text': json.dumps(msg)})
 
 
 def end_packet(message, contents):
@@ -309,33 +284,6 @@ def end_packet(message, contents):
                        'app_version=%s user=%s room=%s',
                        answers, wrong_words,
                        contents['contents']['appVersion'], message.user, room)
-
-
-def table_start(message, contents):
-    room = message.channel_session['room']
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        quiz_params = wwg.start_quiz(room, message.user)
-    if 'error' in quiz_params:
-        msg = {
-            'type': 'server',
-            'contents': {
-                'error': quiz_params['error'],
-            }
-        }
-        Group(room).send({'text': json.dumps(msg)})
-        return
-    # Send the payload to everyone in the room.
-    Group(room).send({
-        'text': json.dumps({
-            'type': 'gamePayload',
-            'contents': quiz_params
-        })
-    })
 
 
 def start_countdown(message, contents):
@@ -365,54 +313,6 @@ def start_countdown_cancel(message, contents):
             'type': 'startCountdownCancel',
             'contents': {}
         })
-    })
-
-
-def table_giveup(message, contents):
-    room = message.channel_session['room']
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        success = wwg.give_up(message.user, room)
-
-    if success is not True:
-        Group(room).send({
-            'text': json.dumps({
-                'type': 'server',
-                'contents': {
-                    'error': success
-                }
-            })
-        })
-        return
-    # No need to send the game over message, the send_game_ended function
-    # should be triggered below.
-
-
-def table_timer_ended(message, contents):
-    try:
-        room = message.channel_session['room']
-    except KeyError:
-        return
-    if room != contents['room']:
-        logger.warning('User sent message to room %s, but in room %s',
-                       contents['room'], room)
-        return
-    wwg = WordwallsGame()
-    with transaction.atomic():
-        wwg.check_game_ended(room)
-    # If the game ended this will get broadcast to everyone.
-
-
-def send_tables(message, msg_contents):
-    """ Send info about current multiplayer tables. """
-    tables = active_tables()
-    logger.debug('Sending active tables: %s', tables)
-    message.reply_channel.send({
-        'text': json.dumps(tables)
     })
 
 

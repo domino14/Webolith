@@ -71,8 +71,7 @@ class WordwallsBasicLogicTest(WordwallsBasicLogicTestBase):
         self.assertEqual(guess_state['alphagram'], '')
 
     @mock.patch.object(WordwallsGame, 'did_timer_run_out')
-    @mock.patch('wordwalls.socket_consumers.send_game_ended')
-    def test_quiz_ends_after_time(self, mock_send_game_ended, timer_ran_out):
+    def test_quiz_ends_after_time(self, timer_ran_out):
         # Mock timer running out by the time the guess comes in.
         timer_ran_out.return_value = True
         table_id, user = self.setup_quiz()
@@ -84,7 +83,6 @@ class WordwallsBasicLogicTest(WordwallsBasicLogicTestBase):
         wgm = wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertFalse(state['quizGoing'])
-        mock_send_game_ended.assert_called_with(table_id)
 
     def test_word_list_created(self):
         logger.debug('In test_word_list_created')
@@ -112,8 +110,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
     Testing full games, make sure word lists save, missed plays, etc.
 
     """
-    @mock.patch('wordwalls.socket_consumers.send_game_ended')
-    def test_solve_all_words(self, mock_send_game_ended):
+    def test_solve_all_words(self):
         """
         Test on a word list with more than 50 words. Go to completion,
         ensure quiz on missed, etc.
@@ -180,8 +177,6 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
             'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': True
         })
-        mock_send_game_ended.assert_called_with(table_id)
-        self.assertEquals(mock_send_game_ended.call_count, 2)
 
     def round_1(self):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
@@ -242,8 +237,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
             wwg.guess(w, table_id, user)
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    @mock.patch('wordwalls.socket_consumers.send_game_ended')
-    def test_missed_behavior(self, mock_send_game_ended):
+    def test_missed_behavior(self):
         wwg = WordwallsGame()
         table_id, user = self.round_1()
         wgm = wwg.get_wgm(table_id)
@@ -301,12 +295,9 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
             'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
         })
-        mock_send_game_ended.assert_called_with(table_id)
-        self.assertEquals(mock_send_game_ended.call_count, 6)
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    @mock.patch('wordwalls.socket_consumers.send_game_ended')
-    def test_save_before_finish(self, mock_send_game_ended):
+    def test_save_before_finish(self):
         wwg = WordwallsGame()
         table_id, user = self.round_1()
         # Try saving the word list.
@@ -357,8 +348,6 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
             'numFirstMissed': 6, 'numMissed': 0, 'goneThruOnce': True,
             'questionIndex': 0, 'is_temporary': False, 'name': LIST_NAME
         })
-        mock_send_game_ended.assert_called_with(table_id)
-        self.assertEquals(mock_send_game_ended.call_count, 6)
 
     def test_cant_overwrite_list(self):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
@@ -415,8 +404,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
         self.assertEqual(len(params['questions']), 11)
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    @mock.patch('wordwalls.socket_consumers.send_game_ended')
-    def test_continue_unfinished_list(self, mock_send_game_ended):
+    def test_continue_unfinished_list(self):
         LIST_NAME = "i live in a giant bucket"
         word_list = WordList.objects.get(name=LIST_NAME)
         # Continue the list.
@@ -445,8 +433,6 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
         })
         self.assertEqual(set([0, 2, 3, 10]),
                          set(json.loads(word_list.firstMissed)))
-        mock_send_game_ended.assert_called_with(table_id)
-        self.assertEqual(mock_send_game_ended.call_count, 1)
 
     def test_firstmissed_allowed(self):
         LIST_NAME = u'list the sécond'
@@ -464,8 +450,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
                 'ADEILORT']))
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
-    @mock.patch('wordwalls.socket_consumers.send_game_ended')
-    def test_continue_gonethru_list(self, mock_send_game_ended):
+    def test_continue_gonethru_list(self):
         LIST_NAME = u'list the sécond'
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
@@ -485,8 +470,6 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
             'numFirstMissed': 6, 'numMissed': 1, 'goneThruOnce': True,
             'questionIndex': 10, 'is_temporary': False, 'name': LIST_NAME
         })
-        mock_send_game_ended.assert_called_with(table_id)
-        self.assertEqual(mock_send_game_ended.call_count, 1)
 
     def test_continue_finished_list(self):
         """ Continue a list that is tested through all the way."""

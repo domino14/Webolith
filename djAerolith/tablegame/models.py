@@ -51,5 +51,8 @@ class GenericTableGameModel(models.Model):
         return "Table game #%d - last activity: %s" % (self.pk,
                                                        self.lastActivity)
 
+    def is_multiplayer(self):
+        return self.playerType == GenericTableGameModel.MULTIPLAYER_GAME
+
     class Meta:
         abstract = True

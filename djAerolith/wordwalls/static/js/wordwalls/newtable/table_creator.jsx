@@ -78,8 +78,8 @@ class TableCreator extends React.Component {
       // Word-search related
       wordSearchCriteria: [{
         searchType: SearchTypesEnum.LENGTH,
-        minValue: 5,
-        maxValue: 5,
+        minValue: 7,
+        maxValue: 7,
       }, {
         searchType: SearchTypesEnum.PROBABILITY,
         minValue: 1,
@@ -544,7 +544,13 @@ class TableCreator extends React.Component {
         this.props.currentHost === this.props.username) {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
     } else if (this.props.tablenum !== 0 &&
-        this.props.currentHost !== this.props.username) {
+        this.props.currentHost !== this.props.username &&
+        // XXX: This check shouldn't be necessary. However, `nothost`
+        // below is getting triggered for single player tables because
+        // currentHost is getting cleared for some reason that I can't
+        // track down :/
+        this.props.tableIsMultiplayer
+    ) {
       Notifications.confirm(
         'Are you sure?',
         'You are trying to load a new word list, but you are not the host ' +

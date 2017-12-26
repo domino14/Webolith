@@ -21,11 +21,10 @@ import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
 import GuessEnum from './guess';
-import GuessTimer from './guess_timer';
+import WordwallsRPC from './wordwalls_rpc';
 
 const game = new WordwallsGame();
 const presence = new Presence();
-const guessTimer = new GuessTimer();
 
 const PRESENCE_TIMEOUT = 20000; // 20 seconds.
 const GET_TABLES_INIT_TIMEOUT = 1500;
@@ -95,6 +94,7 @@ class WordwallsAppContainer extends React.Component {
     this.countdownTimeout = this.countdownTimeout.bind(this);
 
     this.websocketBridge = new WebSocketBridge();
+    this.rpc = new WordwallsRPC(this.props.tablenum);
   }
 
   componentDidMount() {
@@ -159,7 +159,7 @@ class WordwallsAppContainer extends React.Component {
       }
       return;
     }
-    this.wsSubmitGuess(guess);
+    this.submitGuess(guess);
   }
 
   onChatSubmit(chat, channel) {
@@ -223,29 +223,21 @@ class WordwallsAppContainer extends React.Component {
   }
 
   getTables() {
-    this.websocketBridge.send({
-      type: 'getTables',
-      room: 'lobby',
-      contents: {},
-    });
+    $.ajax({
+      url: '/wordwalls/api/tables/',
+      method: 'GET',
+    })
+      .done((data) => {
+        this.handleTables(data);
+      });
   }
 
-  wsSubmitGuess(guess) {
-    const reqId = _.uniqueId(`${this.props.username}_g_`);
-    const submitter = (g, r) => {
-      this.websocketBridge.send({
-        room: String(this.state.tablenum),
-        type: 'guess',
-        contents: {
-          guess: g,
-          reqId: r,
-        },
+  submitGuess(guess) {
+    this.rpc.guess(guess)
+      .then(result => this.handleGuessResponse(result))
+      .catch((error) => {
+        this.addMessage(error.message);
       });
-    };
-    submitter(guess, reqId);
-    // Have an exponentially backing off timer that resubmits guesses
-    // if we don't get back a response.
-    guessTimer.addTimer(reqId, () => submitter(guess, reqId));
   }
 
   connectToSocket() {
@@ -258,6 +250,8 @@ class WordwallsAppContainer extends React.Component {
       }
       this.sendPresence();
       // Avoid a race condition; get tables at beginning after a short break.
+      // Otherwise, if we send at the same time, the list of tables can get
+      // overwritten by our own presence.
       window.setTimeout(() => this.getTables(), GET_TABLES_INIT_TIMEOUT);
     });
   }
@@ -269,55 +263,27 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleSocketMessages(message) {
-    switch (message.type) {
-      case 'server':
-        this.addMessage(message.contents.error);
-        if (message.contents.reqId) {
-          guessTimer.removeTimer(message.contents.reqId);
-        }
-        break;
-      case 'guessResponse':
-        this.handleGuessResponse(message.contents);
-        break;
-      case 'chat':
-        this.handleChat(message.contents);
-        break;
-      case 'presence':
-        this.handleUsersIn(message.contents);
-        break;
-      case 'tableList':
-        this.handleTables(message.contents);
-        break;
-      case 'tableUpdate':
-        this.handleTable(message.contents);
-        break;
-      case 'gamePayload':
-        this.handleStartReceived(message.contents);
-        break;
-      case 'gameGoingPayload':
-        this.handleGameGoingPayload(message.contents);
-        break;
-      case 'gameOver':
-        this.processGameEnded();
-        break;
-      case 'newHost':
-        this.handleNewHost(message.contents);
-        break;
-      case 'startCountdown':
-        this.handleStartCountdownFromServer(message.contents);
-        break;
-      case 'startCountdownCancel':
-        this.handleStartCountdownCancelFromServer();
-        break;
-      case 'allSolve':
-        this.handleAllSolve();
-        break;
-      case 'solveWord':
-        this.handleSolveWord(message.contents);
-        break;
-      default:
-        window.console.log('Received unrecognized message type:', message.type);
+    const messageFnDict = {
+      server: this.addErrorMessage,
+      guessResponse: this.handleGuessResponse,
+      chat: this.handleChat,
+      presence: this.handleUsersIn,
+      tableUpdate: this.handleTable,
+      gamePayload: this.handleStartReceived,
+      gameGoingPayload: this.handleGameGoingPayload,
+      gameOver: this.processGameEnded,
+      newHost: this.handleNewHost,
+      startCountdown: this.handleStartCountdownFromServer,
+      startCountdownCancel: this.handleStartCountdownCancelFromServer,
+      allSolve: this.handleAllSolve,
+      solveWord: this.handleSolveWord,
+    };
+    const handleFn = messageFnDict[message.type];
+    if (!handleFn) {
+      window.console.log('Received unrecognized message type:', message.type);
+      return;
     }
+    handleFn.bind(this)(message.contents);
   }
 
   /**
@@ -327,7 +293,7 @@ class WordwallsAppContainer extends React.Component {
     const answers = game.getRemainingAnswers();
     answers.forEach((answer, idx) => {
       window.setTimeout(() => {
-        this.wsSubmitGuess(answer);
+        this.submitGuess(answer);
       }, (idx * 30));
     });
   }
@@ -336,7 +302,7 @@ class WordwallsAppContainer extends React.Component {
    * @param  {Object} contents
    */
   handleSolveWord(contents) {
-    this.wsSubmitGuess(contents.word);
+    this.submitGuess(contents.word);
   }
 
   handleUsersIn(contents) {
@@ -412,11 +378,19 @@ class WordwallsAppContainer extends React.Component {
   }
 
   handleStart() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'start',
-      contents: {},
-    });
+    this.rpc.startGame()
+      .then(result => this.handleStartReceived(result))
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
+  }
+
+  handleGiveup() {
+    this.rpc.giveUp()
+      .then(() => this.processGameEnded())
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
   }
 
   handleStartCountdown(countdownSec) {
@@ -465,6 +439,7 @@ class WordwallsAppContainer extends React.Component {
       window.Intercom('trackEvent', 'started-game', {
         isChallenge: data.gameType && data.gameType.includes('challenge'),
         listname: this.state.listName,
+        multiplayer: this.state.tableIsMultiplayer,
       });
     }
 
@@ -541,11 +516,11 @@ class WordwallsAppContainer extends React.Component {
    * back-end to possibly end the game.
    */
   timerRanOut() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'timerEnded',
-      contents: {},
-    });
+    this.rpc.timerRanOut()
+      .then(() => this.processGameEnded())
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
   }
 
   /**
@@ -581,7 +556,7 @@ class WordwallsAppContainer extends React.Component {
     if (!_.has(data, 'C') || data.C === '') {
       return;
     }
-    guessTimer.removeTimer(data.reqId);
+    // guessTimer.removeTimer(data.reqId);
     // data.C contains the alphagram.
     const solved = game.solve(data.w, data.C, data.s);
     if (!solved) {
@@ -672,6 +647,10 @@ class WordwallsAppContainer extends React.Component {
       });
   }
 
+  addErrorMessage(errMsg) {
+    this.addMessage(errMsg.error);
+  }
+
   addMessage(serverMsg, optType, optSender, optIsLobby) {
     const message = {
       author: optSender || '',
@@ -687,6 +666,9 @@ class WordwallsAppContainer extends React.Component {
   }
 
   processGameEnded() {
+    if (!this.state.gameGoing) {
+      return;
+    }
     this.setState({
       gameGoing: false,
     });
@@ -782,14 +764,6 @@ class WordwallsAppContainer extends React.Component {
     this.wwApp.setGuessBoxFocus();
   }
 
-  handleGiveup() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'giveup',
-      contents: {},
-    });
-  }
-
   /**
    * Handle the loading of a new list into a table. This only gets triggered
    * when the user loads a new list, and not when the user clicks join on a
@@ -830,6 +804,7 @@ class WordwallsAppContainer extends React.Component {
         {}, `Table ${data.tablenum}`,
         this.tableUrl(data.tablenum),
       );
+      this.rpc.setTablenum(data.tablenum);
       document.title = `Wordwalls - table ${data.tablenum}`;
       if (oldTablenum !== 0) {
         this.sendSocketTableReplace(oldTablenum, data.tablenum);

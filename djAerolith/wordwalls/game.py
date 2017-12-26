@@ -109,8 +109,7 @@ class WordwallsGame(object):
                 # It's a multiplayer game, but we are not the host and thus
                 # cannot load a new list into this table.
                 wgm = new_wgm()
-            elif (not multiplayer and
-                    wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME):
+            elif not multiplayer and wgm.is_multiplayer():
                 # Game used to be a multiplayer game, and now we want to
                 # make it a single player game. Instead of kicking everyone
                 # out, create a new table.
@@ -357,7 +356,6 @@ class WordwallsGame(object):
         if not wgm:
             return self.create_error_message(_("That table does not exist."))
         state = json.loads(wgm.currentGameState)
-
         if state['quizGoing']:
             logger.info('The quiz is going, state %s', state)
             # The quiz is running right now; do not attempt to start again
@@ -369,7 +367,7 @@ class WordwallsGame(object):
                 _('Please wait a few minutes. Aerolith is currently '
                   'undergoing maintenance.'))
 
-        if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
+        if wgm.is_multiplayer():
             if user != wgm.host:
                 return self.create_error_message(
                     _('{user} wants to start the game, but only the host '
@@ -406,21 +404,23 @@ class WordwallsGame(object):
                               'qtotal': word_list.numCurAlphagrams}
 
         word_list.questionIndex += num_qs_per_round
-
+        # Between time 4 and time 5 is a slowdown.
         qs_set = set(qs)
         if len(qs_set) != len(qs):
             logger.error("Question set is not unique!!")
         orig_questions = json.loads(word_list.origQuestions)
-
         questions, answer_hash = self.load_questions(
             qs, orig_questions, word_list.lexicon)
+
         state['quizGoing'] = True   # start quiz
         state['quizStartTime'] = time.time()
         state['answerHash'] = answer_hash
         state['originalAnswerHash'] = copy.deepcopy(answer_hash)
         state['numAnswersThisRound'] = len(answer_hash)
         wgm.currentGameState = json.dumps(state)
+
         wgm.save()
+
         # XXX: Autosave doesn't really do anything for saved lists. It
         # always saves, regardless! Oh well...
         word_list.save()
@@ -450,6 +450,9 @@ class WordwallsGame(object):
                 answer_hash: {'word': (alphagram, idx), ...}
 
         """
+        # XXX this function is slow. When Aerolith becomes a publicly traded
+        # company, rewrite all word-db related stuff in Go and use gRPC to
+        # get question data.
         db = WordDB(lexicon.lexiconName)
         alphagrams_to_fetch = []
         index_map = {}
@@ -505,10 +508,12 @@ class WordwallsGame(object):
         # but we should figure out how to test this.
         wgm = self.get_wgm(tablenum)
         if not wgm:
-            return False
+            return _('Table does not exist.')
 
         state = json.loads(wgm.currentGameState)
-        if self.did_timer_run_out(state) and state['quizGoing']:
+        timer_ran_out = self.did_timer_run_out(state)
+        quiz_going = state['quizGoing']
+        if timer_ran_out and quiz_going:
             # the game is over! mark it so.
             state['timeRemaining'] = 0
             self.do_quiz_end_actions(state, tablenum, wgm)
@@ -522,6 +527,13 @@ class WordwallsGame(object):
                     state['quizStartTime'], state['timerSecs'],
                     now, state['quizGoing'],
                     now - state['quizStartTime'])
+        if not timer_ran_out:
+            logger.info('event=ran-out-too-early')
+            return _('Got timer signal too early. Please report error.')
+        if not quiz_going:
+            logger.info('event=round-is-over')
+            return _('The round is over.')
+
         return False
 
     def allow_give_up(self, wgm, user):
@@ -536,13 +548,12 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
         if state['quizGoing'] is False:
             return _('The quiz is''nt going, can''t give up.')
-        if wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
+        if not wgm.is_multiplayer():
             return True
-        elif wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
-            if user == wgm.host:
-                return True
-            return _('{user} wants to give up, but only the host {host} '
-                     'can do that.').format(user=user, host=wgm.host)
+        if user == wgm.host:
+            return True
+        return _('{user} wants to give up, but only the host {host} '
+                 'can do that.').format(user=user, host=wgm.host)
 
     def give_up(self, user, tablenum):
         wgm = self.get_wgm(tablenum)
@@ -570,8 +581,7 @@ class WordwallsGame(object):
             params['saveName'] = state['saveName']
         if 'temp_list_name' in state:
             params['tempListName'] = state['temp_list_name']
-        params['multiplayer'] = (
-            wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME)
+        params['multiplayer'] = wgm.is_multiplayer()
         return params
 
     def give_up_and_save(self, user, tablenum, listname):
@@ -592,7 +602,7 @@ class WordwallsGame(object):
         s = re.search(r"\S", listname)
         if s is None:
             return _('Please enter a valid list name!')
-        if not wgm.playerType == GenericTableGameModel.SINGLEPLAYER_GAME:
+        if wgm.is_multiplayer():
             return _('Cannot save - your game must be a single player game!')
         if state['quizGoing']:
             # TODO actually should check if time ran out
@@ -711,8 +721,9 @@ class WordwallsGame(object):
             word_list.save()
         except Exception:
             logger.exception('Error saving.')
-        from wordwalls.socket_consumers import send_game_ended
-        send_game_ended(tablenum)
+        if wgm.is_multiplayer():
+            from wordwalls.socket_consumers import send_game_ended
+            send_game_ended(tablenum)
 
     def create_challenge_leaderboard_entry(self, state, tablenum):
         """
@@ -897,13 +908,19 @@ class WordwallsGame(object):
         wgm = self.get_wgm(tablenum, lock=False)
         if not wgm:
             return False
-        if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
+        if wgm.is_multiplayer():
             # TODO unless there is an invite list, etc in the future
             return True
         # else
         if user != wgm.host:    # single player, return false!
             return False
         return True
+
+    def is_multiplayer(self, tablenum):
+        wgm = self.get_wgm(tablenum, lock=False)
+        if not wgm:
+            return False
+        return wgm.is_multiplayer()
 
     def midgame_state(self, tablenum):
         """
