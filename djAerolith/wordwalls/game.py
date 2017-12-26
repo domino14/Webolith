@@ -26,6 +26,7 @@ from django.conf import settings
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from gargoyle import gargoyle
 
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions, word_search, BadInput
@@ -362,6 +363,11 @@ class WordwallsGame(object):
             # The quiz is running right now; do not attempt to start again
             return self.create_error_message(
                 _("The quiz is currently running."))
+
+        if gargoyle.is_active('disable_games'):
+            return self.create_error_message(
+                _('Please wait a few minutes. Aerolith is currently '
+                  'undergoing maintenance.'))
 
         if wgm.playerType == GenericTableGameModel.MULTIPLAYER_GAME:
             if user != wgm.host:
