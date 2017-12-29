@@ -102,7 +102,7 @@ def jwt_req(request):
         'iss': 'aerolith.org',
         'sub': request.user.pk,
         'usn': request.user.username,
-        'exp': time.time() + JWT_EXPIRATION
+        'exp': int(time.time()) + JWT_EXPIRATION
     }, settings.SECRET_KEY, algorithm='HS256')
     return response({
         'token': token

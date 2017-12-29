@@ -105,28 +105,13 @@ class BuildBoard extends React.Component {
       // Stretch this one.
       style.backgroundSize = '100% 100%';
     }
-
-    // xSize and ySize are the size that each question object takes
-    // up.
-    const questionDisplayStyle = {
-      tilesOn: this.props.displayStyle.tilesOn,
-      tileStyle: this.props.displayStyle.tileStyle,
-      blankCharacter: this.props.displayStyle.blankCharacter,
-      font: this.props.displayStyle.font,
-      showChips: this.props.displayStyle.showChips,
-      bold: this.props.displayStyle.showBold,
-      showBorders: this.props.displayStyle.showBorders,
-      fontMultiplier: this.props.displayStyle.fontMultiplier,
-      background: this.props.displayStyle.background,
-      bodyBackground: this.props.displayStyle.bodyBackground,
-    };
     const question = this.props.questions.get(0);
     this.alphagram = question.get('a');
     let renderedQuestion = null;
-    if (question) {
+    if (question.size) {
       renderedQuestion = (
         <WordwallsQuestion
-          displayStyle={questionDisplayStyle}
+          displayStyle={this.props.displayStyle}
           letters={question.get('displayedAs')}
           qNumber={0}
           words={question.get('wMap')}
