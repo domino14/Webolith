@@ -554,12 +554,15 @@ class WordwallsAppContainer extends React.Component {
 
   handleGuessResponse(data) {
     let endQuiz = false;
-    if (!_.has(data, 'C') || data.C === '') {
-      return;
-    }
     if (data.g === false) {
       // The quiz has ended
       endQuiz = true;
+    }
+    if (!_.has(data, 'C') || data.C === '') {
+      if (endQuiz) {
+        this.processGameEnded();
+      }
+      return;
     }
     // guessTimer.removeTimer(data.reqId);
     // data.C contains the alphagram.

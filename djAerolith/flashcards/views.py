@@ -22,7 +22,7 @@ def main(request):
                                            quizzes)),
                   'CURRENT_VERSION': CURRENT_VERSION,
                   'STATIC_SRV': (
-                      'http://localhost:7000' if (
+                      settings.WEBPACK_DEV_SERVER_URL if (
                           settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)
                       else '')
                   })

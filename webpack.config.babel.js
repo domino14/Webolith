@@ -5,7 +5,7 @@ const webpack = require('webpack');
 export default {
   output: {
     filename: '[name].js',
-    publicPath: 'http://localhost:7000/static/dist/',
+    publicPath: '/static/dist/',
   },
   devtool: 'source-map',
   module: {
@@ -46,9 +46,13 @@ export default {
   ],
   devServer: {
     port: 7000,
+    host: '0.0.0.0',
+    public: 'vm.aerolith.org',
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
   },
 };
+
+// https://medium.com/@andyccs/webpack-and-docker-for-development-and-deployment-ae0e73243db4
 

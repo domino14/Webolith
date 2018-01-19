@@ -43,6 +43,7 @@ ADMINS = (
 )
 
 USE_WEBPACK_DEV_SERVER = True
+WEBPACK_DEV_SERVER_URL = 'http://vm.aerolith.org'
 MANAGERS = ADMINS
 
 DATABASES = {

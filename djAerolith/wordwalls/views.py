@@ -99,7 +99,7 @@ def table(request, tableid=None):
          # Use the webpack server if DEBUG is on. XXX This might not actually
          # be a good test; consider using an IS_PRODUCTION flag.
          'STATIC_SRV': (
-             'http://localhost:7000' if (
+             settings.WEBPACK_DEV_SERVER_URL if (
                  settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)
              else '')
          })
