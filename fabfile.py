@@ -7,10 +7,10 @@ try:
 except ImportError:
     # In case we are in a container and we want to run fab.
     # Note the container doesn't get the k8s stuff copied to it.
-    print 'Warning: Failed to import k8s build_configs'
+    print('Warning: Failed to import k8s build_configs')
 
 curdir = os.path.dirname(__file__)
-print curdir
+print(curdir)
 
 # Don't specify a filename for the key - circle will do the right thing?
 # env.key_filename = os.getenv("HOME") + "/.ssh/aerolith.pem"

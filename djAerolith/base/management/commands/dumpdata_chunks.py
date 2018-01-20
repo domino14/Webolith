@@ -38,8 +38,8 @@ class Command(BaseCommand):
         from django.db.models import get_app, get_apps, get_model
 
         output_folder = options.get('output_folder')
-        print "Output folder:", output_folder
-        print "NOTE: See --output-folder option"
+        print("Output folder:", output_folder)
+        print("NOTE: See --output-folder option")
         max_records_per_chunk = options.get('max_records_per_chunk')
         format = options.get('format')
         indent = options.get('indent')
@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     if model is None:
                         raise CommandError("Unknown model: %s.%s" % (app_label, model_label))
 
-                    if app in app_list.keys():
+                    if app in list(app_list.keys()):
                         if app_list[app] and model not in app_list[app]:
                             app_list[app].append(model)
                     else:
@@ -124,7 +124,7 @@ class Command(BaseCommand):
             # Collate the objects to be serialized.
             model_count = 0
 
-            for model in sort_dependencies(app_list.items()):
+            for model in sort_dependencies(list(app_list.items())):
                 model_count += 1
 
                 if model in excluded_models:
@@ -148,7 +148,7 @@ class Command(BaseCommand):
 
                         chunk_count += 1
                         dump_file_name = output_folder + "/%04d_%04d.json" % (model_count, chunk_count)
-                        print "Dumping file: %s [%d/%d] for %s" % (dump_file_name, chunk_count, chunks_total, model.__name__)
+                        print("Dumping file: %s [%d/%d] for %s" % (dump_file_name, chunk_count, chunks_total, model.__name__))
                         output = serializers.serialize(format, output_objects, indent=indent,
                                     use_natural_keys=use_natural_keys)
                         try:

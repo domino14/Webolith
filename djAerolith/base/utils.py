@@ -12,7 +12,7 @@ class UserListParseException(Exception):
     pass
 
 
-def get_alphas_from_words(contents, max_words):
+def get_alphas_from_words(contents: str, max_words):
     """
     Get all the alphagrams from the given words. Return a list of
     Alphagram objects.

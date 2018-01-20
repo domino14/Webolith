@@ -33,7 +33,7 @@ class WordwallsAPITest(TestCase):
         resp = self.client.delete('/base/api/saved_lists/',
                                   data=json.dumps([2, 7217]),
                                   content_type='application/json')
-        self.assertEqual(resp.content, '"OK"')
+        self.assertEqual(resp.content, b'"OK"')
         resp = self.client.get('/base/api/saved_lists/')
         content = json.loads(resp.content)
         self.assertEqual(len(content['lists']), 4)
@@ -45,7 +45,7 @@ class WordwallsAPITest(TestCase):
         resp = self.client.delete('/base/api/saved_lists/',
                                   data=json.dumps([2, 7218]),
                                   content_type='application/json')
-        self.assertEqual('"List id 7218 was not found."', resp.content)
+        self.assertEqual(b'"List id 7218 was not found."', resp.content)
         resp = self.client.get('/base/api/saved_lists/')
         content = json.loads(resp.content)
         # No changes were made.

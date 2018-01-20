@@ -284,7 +284,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
         })
 
         # Try saving the word list.
-        LIST_NAME = u'my cool lišt'
+        LIST_NAME = 'my cool lišt'
         resp = wwg.save(user, table_id, LIST_NAME)
         self.assertTrue(resp['success'])
         self.assertEqual(resp['listname'], LIST_NAME)
@@ -301,7 +301,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
         wwg = WordwallsGame()
         table_id, user = self.round_1()
         # Try saving the word list.
-        LIST_NAME = u'my cooł lįšt'
+        LIST_NAME = 'my cooł lįšt'
         resp = wwg.save(user, table_id, LIST_NAME)
         self.assertTrue(resp['success'])
         self.assertEqual(resp['listname'], LIST_NAME)
@@ -353,7 +353,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
         wwg = WordwallsGame()
         # Try saving the word list.
-        LIST_NAME = u'This is my list.'
+        LIST_NAME = 'This is my list.'
         resp = wwg.save(user, table_id, LIST_NAME)
         self.assertFalse(resp['success'])
 
@@ -435,7 +435,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
                          set(json.loads(word_list.firstMissed)))
 
     def test_firstmissed_allowed(self):
-        LIST_NAME = u'list the sécond'
+        LIST_NAME = 'list the sécond'
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
             self.lex, self.user, word_list, SavedListForm.FIRST_MISSED_CHOICE,
@@ -451,7 +451,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
 
     @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
     def test_continue_gonethru_list(self):
-        LIST_NAME = u'list the sécond'
+        LIST_NAME = 'list the sécond'
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
             self.lex, self.user, word_list, SavedListForm.CONTINUE_LIST_CHOICE,
@@ -473,7 +473,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
 
     def test_continue_finished_list(self):
         """ Continue a list that is tested through all the way."""
-        LIST_NAME = u'This is my list.'
+        LIST_NAME = 'This is my list.'
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
             self.lex, self.user, word_list, SavedListForm.CONTINUE_LIST_CHOICE,
@@ -485,7 +485,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
 
     def test_can_save_loaded_list(self):
         """ Can we save a list we just loaded? """
-        LIST_NAME = u'list the sécond'
+        LIST_NAME = 'list the sécond'
         num_lists_before = WordList.objects.filter(user=self.user).count()
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
@@ -504,76 +504,76 @@ def blank_bingo_generator(length, lexicon_name, num_2_blanks, num_questions,
                           max_answers):
     if length == 7:
         return [
-            {u'q': u'ABIPST?', u'a': [u'BAPTISM', u'BAPTIST', u'BITMAPS',
-             u'BAPTISE']}, {u'q': u'AIINTX?', u'a': [u'TAXIING']},
-            {u'q': u'CILMSU?', u'a': [u'CULTISM', u'MUSICAL']},
-            {u'q': u'EIOORT?', u'a': [u'FOOTIER', u'HOOTIER', u'SOOTIER',
-             u'ZOOTIER', u'ROOTIER']},
-            {u'q': u'DHIIOR?', u'a': [u'RHIZOID']},
-            {u'q': u'DIRSTW?', u'a': [u'WRISTED']},
-            {u'q': u'EEFGSU?', u'a': [u'REFUGES']},
-            {u'q': u'AEEIRV?', u'a': [u'LEAVIER', u'VEALIER', u'HEAVIER']},
-            {u'q': u'AGIIOR?', u'a': [u'ORIGAMI']},
-            {u'q': u'AEFRRY?', u'a': [u'FORAYER']},
-            {u'q': u'AAEIOR?', u'a': [u'AERADIO', u'AEROBIA']},
-            {u'q': u'AOOPST?', u'a': [u'PATOOTS']},
-            {u'q': u'ILNORT?', u'a': [u'NOSTRIL', u'RETINOL']},
-            {u'q': u'ABDIJR?', u'a': [u'JAYBIRD']},
-            {u'q': u'AEILSU?', u'a': [u'AUDILES', u'INSULAE', u'INULASE',
-             u'DUALISE']},
-            {u'q': u'ABEENR?', u'a': [u'ENABLER', u'REBEGAN',
-             u'VERBENA', u'BEANERY']},
-            {u'q': u'AMNOOS?', u'a': [u'MAROONS',
-             u'ONOMAST', u'ROMANOS']},
-            {u'q': u'EEKLRT?', u'a': [u'KELTERS',
-             u'KESTREL', u'SKELTER']}, {u'q': u'BNOORS?', u'a': [u'BRONCOS']},
-            {u'q': u'AEGIIM?', u'a': [u'IMAGINE']},
-            {u'q': u'EHILPS?',
-             u'a': [u'HIPLESS', u'HIRPLES', u'PLENISH']},
-            {u'q': u'EHKNRU?',
-             u'a': [u'HUNKIER', u'HUNKERS']},
-            {u'q': u'AEIMOO?', u'a': [u'IPOMOEA']},
-            {u'q': u'EFNTT??', u'a': [u'FETTING', u'FATTENS', u'FITMENT',
-             u'FLATTEN']},
-            {u'q': u'CEIUV??', u'a':
-             [u'CURSIVE', u'INCURVE', u'UVEITIC', u'UNVOICE', u'CURVIER']}]
+            {'q': 'ABIPST?', 'a': ['BAPTISM', 'BAPTIST', 'BITMAPS',
+             'BAPTISE']}, {'q': 'AIINTX?', 'a': ['TAXIING']},
+            {'q': 'CILMSU?', 'a': ['CULTISM', 'MUSICAL']},
+            {'q': 'EIOORT?', 'a': ['FOOTIER', 'HOOTIER', 'SOOTIER',
+             'ZOOTIER', 'ROOTIER']},
+            {'q': 'DHIIOR?', 'a': ['RHIZOID']},
+            {'q': 'DIRSTW?', 'a': ['WRISTED']},
+            {'q': 'EEFGSU?', 'a': ['REFUGES']},
+            {'q': 'AEEIRV?', 'a': ['LEAVIER', 'VEALIER', 'HEAVIER']},
+            {'q': 'AGIIOR?', 'a': ['ORIGAMI']},
+            {'q': 'AEFRRY?', 'a': ['FORAYER']},
+            {'q': 'AAEIOR?', 'a': ['AERADIO', 'AEROBIA']},
+            {'q': 'AOOPST?', 'a': ['PATOOTS']},
+            {'q': 'ILNORT?', 'a': ['NOSTRIL', 'RETINOL']},
+            {'q': 'ABDIJR?', 'a': ['JAYBIRD']},
+            {'q': 'AEILSU?', 'a': ['AUDILES', 'INSULAE', 'INULASE',
+             'DUALISE']},
+            {'q': 'ABEENR?', 'a': ['ENABLER', 'REBEGAN',
+             'VERBENA', 'BEANERY']},
+            {'q': 'AMNOOS?', 'a': ['MAROONS',
+             'ONOMAST', 'ROMANOS']},
+            {'q': 'EEKLRT?', 'a': ['KELTERS',
+             'KESTREL', 'SKELTER']}, {'q': 'BNOORS?', 'a': ['BRONCOS']},
+            {'q': 'AEGIIM?', 'a': ['IMAGINE']},
+            {'q': 'EHILPS?',
+             'a': ['HIPLESS', 'HIRPLES', 'PLENISH']},
+            {'q': 'EHKNRU?',
+             'a': ['HUNKIER', 'HUNKERS']},
+            {'q': 'AEIMOO?', 'a': ['IPOMOEA']},
+            {'q': 'EFNTT??', 'a': ['FETTING', 'FATTENS', 'FITMENT',
+             'FLATTEN']},
+            {'q': 'CEIUV??', 'a':
+             ['CURSIVE', 'INCURVE', 'UVEITIC', 'UNVOICE', 'CURVIER']}]
     elif length == 8:
         return [
-            {u'q': u'AEMNOPT?', u'a': [u'PTOMAINE', u'TAMPONED']},
-            {u'q': u'EGOORSU?', u'a': [u'GORGEOUS']},
-            {u'q': u'EIMNOTT?', u'a': [u'MONTEITH', u'OINTMENT', u'IMPOTENT']},
-            {u'q': u'AAMRSTU?', u'a': [u'TIMARAUS', u'AMATEURS', u'TAMARAUS',
-                                       u'TAMBURAS']},
-            {u'q': u'ABINRSV?', u'a': [u'VIBRANTS']},
-            {u'q': u'IMOOPRS?', u'a': [u'IMPOROUS', u'IMPOSTOR', u'ISOMORPH',
-             u'PROMISOR']},
-            {u'q': u'EGINOSY?', u'a': [u'SEIGNORY', u'HOSEYING', u'MOSEYING']},
-            {u'q': u'ABDORTU?', u'a': [u'ABDUCTOR', u'OBDURATE', u'OUTBOARD',
-             u'TABOURED']},
-            {u'q': u'CEIIIOS?', u'a': [u'IDIOCIES']},
-            {u'q': u'EEPRSTX?', u'a': [u'EXCERPTS', u'PREEXIST', u'PRETEXTS',
-             u'SEXPERTS']},
-            {u'q': u'IILNORS?', u'a': [u'LIONISER', u'LIGROINS', u'SIRLOINS']},
-            {u'q': u'EEGIKNS?', u'a': [u'STEEKING', u'KEENINGS', u'KEEPINGS',
-             u'SLEEKING', u'SMEEKING']},
-            {u'q': u'AHKNOSW?', u'a': [u'HAWKNOSE']},
-            {u'q': u'EEIIMRT?',
-             u'a': [u'TIMELIER', u'EREMITIC', u'ITEMISER', u'ITEMIZER']},
-            {u'q': u'ACHKSSW?', u'a': [u'HACKSAWS']},
-            {u'q': u'AEEMORT?',
-             u'a': [u'MODERATE', u'OVERTAME']},
-            {u'q': u'DEOOSTV?',
-             u'a': [u'DOVECOTS']},
-            {u'q': u'AMNOOPR?', u'a': [u'MONOCARP', u'CRAMPOON']},
-            {u'q': u'EEILTUX?', u'a': [u'ULEXITES']},
-            {u'q': u'AEIRSTX?', u'a': [u'SEXTARII', u'MATRIXES']},
-            {u'q': u'AENORWY?', u'a': [u'WEAPONRY']},
-            {u'q': u'AAHIRSV?', u'a': [u'HAVARTIS']},
-            {u'q': u'DDEMNOR?', u'a': [u'ENDODERM']},
-            {u'q': u'DEOOOW??', u'a': [u'WOODLORE', u'WOODNOTE', u'WOODTONE',
-             u'ROSEWOOD']},
-            {u'q': u'ABEGIY??', u'a': [u'BELAYING', u'EMBAYING', u'GIGABYTE',
-             u'LESBIGAY']}]
+            {'q': 'AEMNOPT?', 'a': ['PTOMAINE', 'TAMPONED']},
+            {'q': 'EGOORSU?', 'a': ['GORGEOUS']},
+            {'q': 'EIMNOTT?', 'a': ['MONTEITH', 'OINTMENT', 'IMPOTENT']},
+            {'q': 'AAMRSTU?', 'a': ['TIMARAUS', 'AMATEURS', 'TAMARAUS',
+                                       'TAMBURAS']},
+            {'q': 'ABINRSV?', 'a': ['VIBRANTS']},
+            {'q': 'IMOOPRS?', 'a': ['IMPOROUS', 'IMPOSTOR', 'ISOMORPH',
+             'PROMISOR']},
+            {'q': 'EGINOSY?', 'a': ['SEIGNORY', 'HOSEYING', 'MOSEYING']},
+            {'q': 'ABDORTU?', 'a': ['ABDUCTOR', 'OBDURATE', 'OUTBOARD',
+             'TABOURED']},
+            {'q': 'CEIIIOS?', 'a': ['IDIOCIES']},
+            {'q': 'EEPRSTX?', 'a': ['EXCERPTS', 'PREEXIST', 'PRETEXTS',
+             'SEXPERTS']},
+            {'q': 'IILNORS?', 'a': ['LIONISER', 'LIGROINS', 'SIRLOINS']},
+            {'q': 'EEGIKNS?', 'a': ['STEEKING', 'KEENINGS', 'KEEPINGS',
+             'SLEEKING', 'SMEEKING']},
+            {'q': 'AHKNOSW?', 'a': ['HAWKNOSE']},
+            {'q': 'EEIIMRT?',
+             'a': ['TIMELIER', 'EREMITIC', 'ITEMISER', 'ITEMIZER']},
+            {'q': 'ACHKSSW?', 'a': ['HACKSAWS']},
+            {'q': 'AEEMORT?',
+             'a': ['MODERATE', 'OVERTAME']},
+            {'q': 'DEOOSTV?',
+             'a': ['DOVECOTS']},
+            {'q': 'AMNOOPR?', 'a': ['MONOCARP', 'CRAMPOON']},
+            {'q': 'EEILTUX?', 'a': ['ULEXITES']},
+            {'q': 'AEIRSTX?', 'a': ['SEXTARII', 'MATRIXES']},
+            {'q': 'AENORWY?', 'a': ['WEAPONRY']},
+            {'q': 'AAHIRSV?', 'a': ['HAVARTIS']},
+            {'q': 'DDEMNOR?', 'a': ['ENDODERM']},
+            {'q': 'DEOOOW??', 'a': ['WOODLORE', 'WOODNOTE', 'WOODTONE',
+             'ROSEWOOD']},
+            {'q': 'ABEGIY??', 'a': ['BELAYING', 'EMBAYING', 'GIGABYTE',
+             'LESBIGAY']}]
 
 
 class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):

@@ -25,6 +25,7 @@ import logging
 import calendar
 import hmac
 import hashlib
+from operator import itemgetter
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -109,10 +110,12 @@ def table(request, tableid=None):
 def get_user_meta_info(user):
     """ Get info from user, such as name, email, created date, etc. """
     user_hash = hmac.new(
-        settings.INTERCOM_APP_SECRET_KEY, user.email, digestmod=hashlib.sha256
+        settings.INTERCOM_APP_SECRET_KEY.encode('utf-8'),
+        user.email.encode('utf-8'),
+        digestmod=hashlib.sha256
     ).hexdigest()
     return {
-        'name': u'{0} {1}'.format(user.first_name, user.last_name),
+        'name': '{0} {1}'.format(user.first_name, user.last_name),
         'username': user.username,
         'email': user.email,
         'createdAt': calendar.timegm(user.date_joined.utctimetuple()),
@@ -149,7 +152,7 @@ def handle_table_post(request, tableid):
     """ XXX: This function should be separated into several RPC style
     API functions. See rpc.py. """
     action = request.POST['action']
-    logger.info(u'user=%s, action=%s, table=%s', request.user, action,
+    logger.info('user=%s, action=%s, table=%s', request.user, action,
                 tableid)
 
     if not tableid or int(tableid) == 0:   # Kind of hacky.
@@ -219,7 +222,7 @@ def ajax_upload(request):
     return response(msg)
 
 
-def create_user_list(contents, filename, lex, user):
+def create_user_list(contents: str, filename, lex, user):
     """
     Creates a user list from file contents, a filename, a lexicon,
     and a user. Checks to see if the user can create more lists.
@@ -299,13 +302,7 @@ def getLeaderboardDataDcInstance(dc):
                  'addl': addl_data}
         entries.append(entry)
 
-    def cmpFunction(e1, e2):
-        if e1['score'] != e2['score']:
-            return int(e2['score'] - e1['score'])
-        else:
-            return int(e2['tr'] - e1['tr'])
-
-    entries = sorted(entries, cmpFunction)
+    entries = sorted(entries, key=itemgetter('score', 'tr'), reverse=True)
     retData['entries'] = entries
     retData['challengeName'] = dc.name.name
     retData['lexicon'] = dc.lexicon.lexiconName
@@ -346,9 +343,9 @@ def log(request):
             wwg = WordwallsGame()
             wgm = wwg.get_wgm(tablenum, False)
             actual_host = wgm.host.username if wgm.host else None
-            players_in = u', '.join([u.username for u in wgm.inTable.all()])
+            players_in = ', '.join([u.username for u in wgm.inTable.all()])
             logger.info(
-                u'[event=nothost] tablenum=%s current_host=%s username=%s '
+                '[event=nothost] tablenum=%s current_host=%s username=%s '
                 'multiplayer=%s actual_host=%s players_in="%s"',
                 tablenum, current_host, username, multiplayer,
                 actual_host, players_in)

@@ -23,7 +23,7 @@ from django.contrib.auth.models import User
 from base.models import Lexicon, WordList
 from base.validators import named_list_format_validator
 from tablegame.models import GenericTableGameModel
-from channels_presence.models import Room
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +41,7 @@ class DailyChallengeName(models.Model):
     orderPriority = models.IntegerField(default=1)
     num_questions = models.IntegerField(default=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -71,7 +71,7 @@ class DailyChallenge(models.Model):
     category = models.CharField(choices=CHALLENGE_CATEGORIES, max_length=2,
                                 default=CATEGORY_ANAGRAM)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s %s (%s)" % (self.date, self.name.name,
                                self.lexicon.lexiconName)
 
@@ -86,8 +86,8 @@ class DailyChallengeLeaderboard(models.Model):
     maxScore = models.IntegerField()
     medalsAwarded = models.BooleanField(default=False)
 
-    def __unicode__(self):
-        return "Leaderboard: " + self.challenge.__unicode__()
+    def __str__(self):
+        return "Leaderboard: " + self.challenge.__str__()
 
 
 class DailyChallengeLeaderboardEntry(models.Model):
@@ -98,9 +98,9 @@ class DailyChallengeLeaderboardEntry(models.Model):
     # only qualify for award if entry is in allowable range
     qualifyForAward = models.BooleanField(default=True)
 
-    def __unicode__(self):
-        return "%s --- %s %d (%d s.)" % (
-            self.board.challenge.__unicode__(), self.user.username,
+    def __str__(self):
+        return '{0} --- {1} {2} ({3} s.)'.format(
+            self.board.challenge.__str__(), self.user.username,
             self.score, self.timeRemaining)
 
     class Meta:
@@ -133,9 +133,9 @@ class DailyChallengeMissedBingos(models.Model):
         verbose_name = 'Daily Challenge Missed Bingo'
         verbose_name_plural = 'Daily Challenge Missed Bingos'
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s, %s, %d" % (
-            self.challenge.__unicode__(),
+            self.challenge.__str__(),
             self.alphagram_string,
             self.numTimesMissed)
 
@@ -171,9 +171,9 @@ class Medal(models.Model):
     leaderboard = models.ForeignKey(DailyChallengeLeaderboard)
     medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
 
-    def __unicode__(self):
-        return u'%s: %s (%s)'.format(self.user, self.medal_type,
-                                     self.leaderboard)
+    def __str__(self):
+        return '{0}: {1} ({2})'.format(self.user, self.medal_type,
+                                       self.leaderboard)
 
     class Meta:
         unique_together = ('user', 'leaderboard')

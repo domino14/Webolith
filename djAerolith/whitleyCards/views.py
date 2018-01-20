@@ -228,7 +228,7 @@ def getQuizChunkFromSavedList(slpk, minIndex, option):
         origQuestions = json.loads(sl.origQuestions)
         questions = [origQuestions[i] for i in questionIndices]
         data = getQuizChunkByQuestions(sl.lexicon, questions, minIndex)
-        print questions, data
+        print(questions, data)
         return data[0], data[1], data[2], sl.numFirstMissed
 
 

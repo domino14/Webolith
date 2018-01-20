@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 # Aerolith 2.0: A web-based word game website
 # Copyright (C) 2011 Cesar Del Solar
 #
@@ -18,7 +16,6 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-import string
 import random
 import json
 import uuid
@@ -40,7 +37,7 @@ EXCLUDED_LEXICA = [
 # XXX: This handles both the Spanish and English case, but alphagrammize
 # will need to be reworked with lexicon-specific ordering if we add
 # non-latin letters.
-SORT_STRING_ORDER = u'ABC1DEFGHIJKL2MNÑOPQR3STUVWXYZ?'
+SORT_STRING_ORDER = 'ABC1DEFGHIJKL2MNÑOPQR3STUVWXYZ?'
 SORT_MAP = {}
 
 
@@ -55,7 +52,7 @@ def alphagrammize(word):
         make_sort_map()
     l = list(word.upper())
     l.sort(key=lambda y: SORT_MAP[y])
-    return string.join(l, '')
+    return ''.join(l)
 
 
 class Maintenance(models.Model):
@@ -70,7 +67,7 @@ class Lexicon(models.Model):
     # alphagrams per word length
     lengthCounts = models.CharField(max_length=256)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.lexiconName
 
 
@@ -144,7 +141,7 @@ class SavedList(models.Model):
         self.goneThruOnce = False
         self.questionIndex = 0
         self.origQuestions = json.dumps(questions)
-        self.curQuestions = json.dumps(range(num_questions))
+        self.curQuestions = json.dumps(list(range(num_questions)))
         self.missed = json.dumps([])
         self.firstMissed = json.dumps([])
         self.version = 2
@@ -260,8 +257,8 @@ class SavedList(models.Model):
             'category': self.category,
         }
 
-    def __unicode__(self):
-        return u"(%s) %s%s (Saved %s)" % (
+    def __str__(self):
+        return "(%s) %s%s (Saved %s)" % (
             self.lexicon.lexiconName,
             self.name,
             '*' if self.goneThruOnce else '',
@@ -295,8 +292,8 @@ class AlphagramTag(models.Model):
     alphagram = models.CharField(max_length=15)
     tag = models.CharField(choices=WORD_TAGS, max_length=2)
 
-    def __unicode__(self):
-        return u'%s\'s tag (%s - %s)' % (self.user, self.alphagram, self.tag)
+    def __str__(self):
+        return '%s\'s tag (%s - %s)' % (self.user, self.alphagram, self.tag)
 
     class Meta:
         unique_together = ('user', 'lexicon', 'alphagram')

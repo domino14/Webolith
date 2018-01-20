@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 """
 Test the word database util functions.
 
@@ -68,11 +66,11 @@ class WordDBSpanishTest(TestCase):
         self.db = WordDB(lexicon_name='FISE09')
 
     def test_word_data(self):
-        word = self.db.get_word_data(u'ÑAME')
-        self.assertEqual(word.word, u'ÑAME')
+        word = self.db.get_word_data('ÑAME')
+        self.assertEqual(word.word, 'ÑAME')
         self.assertEqual(word.lexicon_symbols, '')
         self.assertEqual(word.front_hooks, '')
         self.assertEqual(word.back_hooks, 'S')
         self.assertEqual(word.inner_front_hook, True)
         self.assertEqual(word.inner_back_hook, False)
-        self.assertEqual(word.alphagram, u'AEMÑ')
+        self.assertEqual(word.alphagram, 'AEMÑ')

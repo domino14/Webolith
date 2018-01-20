@@ -1,5 +1,6 @@
 # Awards challenge medals.
 import logging
+from operator import itemgetter
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -37,7 +38,7 @@ class Command(BaseCommand):
                 logger.debug('Dry run, not saving leaderboard.')
             return  # Do not award medals; too few players.
 
-        lbes = sorted(lbes, cmp=sort_cmp)
+        lbes = sorted(lbes, key=itemgetter('score', 'tr'), reverse=True)
         if leaderboard.challenge.name == self.toughies:
             # Award extra medal.
             medals = [Medal.TYPE_PLATINUM, Medal.TYPE_GOLD, Medal.TYPE_SILVER,
@@ -76,22 +77,12 @@ class Command(BaseCommand):
         for lb in lbs:
             award = True
             if lb.challenge.name == self.toughies:
-                chDate = toughies_challenge_date(today)
+                ch_date = toughies_challenge_date(today)
                 # Toughies challenge still ongoing
-                if chDate == lb.challenge.date:
+                if ch_date == lb.challenge.date:
                     award = False
                     logger.debug('%s: Toughies still ongoing, do not award.',
                                  lb)
             if not award:
                 continue
             self.award_medals(lb, options['dry-run'])
-
-
-def sort_cmp(e1, e2):
-    if e1.score == e2.score:
-        return int(e2.timeRemaining - e1.timeRemaining)
-    else:
-        return int(e2.score - e1.score)
-    # Otherwise, randomly award to someone if time and score are the same.
-    # It's not necessarily alphabetical, but based on the vagaries of the
-    # hash function :P

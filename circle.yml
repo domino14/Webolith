@@ -8,7 +8,7 @@ machine:
     - docker
     - redis
   python:
-    version: 2.7.12
+    version: 3.6.2
   environment:
     REPO: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     PGSQL_DB_NAME: circle_test

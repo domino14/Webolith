@@ -155,7 +155,6 @@ class SavedListDialog extends React.Component {
               onDrop={this.onDrop}
               multiple={false}
               maxSize={1000000}
-              accept="text/plain"
               style={{ display: 'none' }}
             />
             <button

@@ -1,6 +1,6 @@
 # Base image that we can base the prod image on.
 
-FROM python:2-alpine
+FROM python:3-alpine
 MAINTAINER Cesar Del Solar <delsolar@gmail.com>
 
 ENV PYTHONUNBUFFERED 1

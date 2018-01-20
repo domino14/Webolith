@@ -47,10 +47,10 @@ class Word(object):
         self.inner_back_hook = True if inner_back_hook == 1 else False
 
     def __repr__(self):
-        return stdout_encode(self.__unicode__())
+        return stdout_encode(self.__str__())
 
-    def __unicode__(self):
-        return u'{%s}' % self.word
+    def __str__(self):
+        return '{%s}' % self.word
 
     def __eq__(self, other):
         return self.word == other.word
@@ -70,10 +70,10 @@ class Alphagram(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return stdout_encode(self.__unicode__())
+        return stdout_encode(self.__str__())
 
-    def __unicode__(self):
-        return u'{%s} (%s)' % (self.alphagram, self.probability)
+    def __str__(self):
+        return '{%s} (%s)' % (self.alphagram, self.probability)
 
 
 class Questions(object):
@@ -139,10 +139,10 @@ class Questions(object):
         return [a.alphagram.alphagram for a in self.questions]
 
     def __repr__(self):
-        return stdout_encode(self.__unicode__())
+        return stdout_encode(self.__str__())
 
-    def __unicode__(self):
-        return u'{<Questions %s>}' % self.questions
+    def __str__(self):
+        return '{<Questions %s>}' % self.questions
 
 
 class Question(object):
@@ -188,10 +188,10 @@ class Question(object):
         self.set_answers_from_word_list(obj['a'])
 
     def __repr__(self):
-        return stdout_encode(self.__unicode__())
+        return stdout_encode(self.__str__())
 
-    def __unicode__(self):
-        return u'<Question: %s (%s)>' % (self.alphagram,
+    def __str__(self):
+        return '<Question: %s (%s)>' % (self.alphagram,
                                          self.answers)
 
 
@@ -379,7 +379,7 @@ class WordDB(object):
                 word_to_alphagram_dict[word] = this_q
             questions.append(this_q)
         # Populate all words fully with information from the database.
-        words_pop = self.get_words_data(word_to_alphagram_dict.keys())
+        words_pop = self.get_words_data(list(word_to_alphagram_dict.keys()))
 
         # Then, modify the question for each word.
         for word in words_pop:
@@ -445,10 +445,10 @@ class WhereClause(object):
         raise NotImplementedError
 
     def __repr__(self):
-        return u'<{}>'.format(self.__unicode__())
+        return '<{}>'.format(self.__str__())
 
-    def __unicode__(self):
-        return u'{}.{} {} {}'.format(self.table, self.column,
+    def __str__(self):
+        return '{}.{} {} {}'.format(self.table, self.column,
                                      self.condition, self.condition_params)
 
 
@@ -525,10 +525,10 @@ class Query(object):
         return self.query_string, self.bind_params
 
     def __repr__(self):
-        return u'<{}>'.format(self.__unicode__())
+        return '<{}>'.format(self.__str__())
 
-    def __unicode__(self):
-        return u'query_string="{query}" bind_params={bind_params}'.format(
+    def __str__(self):
+        return 'query_string="{query}" bind_params={bind_params}'.format(
             query=self.query_string, bind_params=self.bind_params)
 
 

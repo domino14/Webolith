@@ -25,8 +25,8 @@ class Command(BaseCommand):
         delDate = timezone.now() - timedelta(days=days)
         wgms = WordwallsGameModel.objects.filter(lastActivity__lt=delDate)
         numObjs = len(wgms)
-        print "Found", numObjs, "objects to delete"
+        print("Found", numObjs, "objects to delete")
         if numObjs > 0:
             for wgm in wgms.iterator():
-                print "Delete", wgm
+                print("Delete", wgm)
                 wgm.delete()

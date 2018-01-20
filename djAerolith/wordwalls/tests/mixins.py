@@ -4,7 +4,7 @@ class WordListAssertMixin(object):
         Assert that the word list params are as stated.
         params - an object that looks like {'numAlphagrams': 11, ...}
         """
-        for param, value in params.iteritems():
+        for param, value in params.items():
             self.assertEqual(
                 getattr(word_list, param), value,
                 msg='Not equal: %s (%s, %s != %s)' % (

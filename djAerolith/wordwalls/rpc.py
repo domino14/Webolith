@@ -79,7 +79,7 @@ def table_rpc(request, tableid):
     try:
         ret = handler(request.user, tableid, params)
     except RPCError as e:
-        return bad_rpc_response(req_id, unicode(e))
+        return bad_rpc_response(req_id, str(e))
 
     return rpc_response(req_id, ret)
 

@@ -319,15 +319,16 @@ def default_lists(request):
 @require_GET
 def tables(request):
     rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
-    tables = []
+    ret_tables = []
     for room in rooms:
         try:
-            tables.append(WordwallsGameModel.objects.get(pk=room.channel_name))
+            ret_tables.append(
+                WordwallsGameModel.objects.get(pk=room.channel_name))
         except WordwallsGameModel.DoesNotExist:
             pass
 
     return response({
-        'tables': [table_info(table) for table in tables]
+        'tables': [table_info(table) for table in ret_tables]
     })
 
 
