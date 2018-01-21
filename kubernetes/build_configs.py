@@ -3,12 +3,13 @@ A script that will help us build the K8s config files for dev and prod
 deployment.
 
 """
-import yaml
 import os
 import base64
 import re
 import uuid
 import sys
+
+import yaml
 
 
 CURLIES_RE = r'{{\s*(\w+)\s*}}'

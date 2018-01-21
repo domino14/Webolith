@@ -1,4 +1,4 @@
-FROM domino14/webolith-base-pkg
+FROM domino14/webolith-base-pkg:py3-latest
 MAINTAINER Cesar Del Solar <delsolar@gmail.com>
 
 COPY . /opt/webolith/

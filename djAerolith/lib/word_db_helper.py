@@ -198,7 +198,7 @@ class Question(object):
 class WordDB(object):
     """
     A database of words/definitions/alphagrams, created by the
-    dbCreator C++ program.
+    word_db_creator Go program.
 
     """
     def __init__(self, lexicon_name):

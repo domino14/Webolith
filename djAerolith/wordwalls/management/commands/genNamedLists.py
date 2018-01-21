@@ -5,7 +5,7 @@ import time
 import re
 import logging
 
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.db import connection
 
 from base.models import Lexicon, alphagrammize
@@ -316,7 +316,7 @@ def create_common_words_list(lname, friendly_name):
     nl.save()
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = """Populates database with named lists"""
 
     def handle_noargs(self, **options):

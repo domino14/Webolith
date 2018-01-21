@@ -1,0 +1,164 @@
+version: 2
+jobs:
+  build_python:
+    working_directory: /opt/webolith
+    environment:
+      PGSQL_DB_NAME: circle
+      PGSQL_USER: postgres
+      PGSQL_HOST: 127.0.0.1
+      PGSQL_PASSWORD:
+      # Debug for tests is False even if I set this to True.
+      DEBUG: false
+      DEBUG_JS: false
+      # Just some random secret key
+      INTERCOM_APP_SECRET_KEY: abcdefghijklmnopqrstuvwxyz
+      SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
+      WORD_DB_LOCATION: /opt/db
+      REDIS_HOST: localhost
+    docker:
+      - image: domino14/webolith-base-pkg:py3-latest
+      - image: redis:alpine
+      - image: postgres
+    steps:
+      - checkout  # Into the webolith-base-pkg
+      - add_ssh_keys:
+          fingerprints:
+            - "ad:9e:01:fa:fa:e7:03:a4:49:74:98:91:52:a8:dc:3c"
+      - run:
+          name: Install git and ssh
+          command: apk update && apk upgrade && apk add git openssh
+      - run:
+          name: Install ssl
+          command: apk add --update ca-certificates openssl && update-ca-certificates
+      - run: if [ ! -n "$(grep "^bitbucket.org " ~/.ssh/known_hosts)" ]; then ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null; fi
+      - run:
+          name: Clone word dbs Webolith repo
+          command: git clone git@bitbucket.org:cesar_del_solar/webolith-word-dbs.git /opt/webolith-word-dbs
+      - run: mkdir $WORD_DB_LOCATION
+      - run: cd /opt/webolith-word-dbs && tar xzvf dbs.tar.gz
+      - run: mv /opt/webolith-word-dbs/*.db $WORD_DB_LOCATION
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.0
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Wait for redis
+          command: dockerize -wait tcp://localhost:6379 -timeout 1m
+      - run:
+          name: Install Pylint
+          command: pip install pylint pylint-django
+      - run:
+          name: Pylint
+          command: pylint --errors-only --load-plugins=pylint_django djAerolith/
+      - run:
+          name: Django tests
+          command: cd djAerolith && ./manage.py test -v2
+
+  build_js:
+    working_directory: /opt/webolith
+    docker:
+      - image: node:alpine
+    steps:
+      - checkout
+      - run: npm install -g yarn
+      - run: yarn install
+      - run: yarn eslint && yarn jshint && yarn test && yarn prod:build
+      - run: apk add --update ca-certificates openssl && update-ca-certificates
+      - persist_to_workspace:
+          root: djAerolith/static
+          paths:
+            - dist
+
+  build_docker:
+    working_directory: /opt/webolith
+    environment:
+      REPO: /opt/webolith
+      SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
+      # For collecting static files to later copy into Nginx. This
+      # dir must be in the context of the build, so inside the kubernetes dir.
+      STATIC_ROOT: /opt/webolith/kubernetes/webolith_static/
+    docker:
+      - image: domino14/webolith-base-pkg:py3-latest
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: djAerolith/static
+      - run:
+          name: Install curl
+          command: apk --no-cache add curl
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.12.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Collect static files
+          command: cd djAerolith && ./manage.py collectstatic --noinput
+      - run:
+          name: Compile messages
+          command: cd djAerolith && ./manage.py compilemessages
+      - run:
+          name: Build and push Docker images to Dockerhub
+          command: |
+            cd $REPO/kubernetes && \
+                docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM \
+                -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
+            # Delete the static files for the webapp container.
+            rm -rf $STATIC_ROOT
+            cd $REPO && \
+              docker build -t domino14/webolith:$CIRCLE_BUILD_NUM \
+                -t domino14/webolith:latest .
+
+            docker login --username domino14 --password $DOCKER_PASSWORD
+            docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
+            docker push domino14/webolith:$CIRCLE_BUILD_NUM
+            docker push domino14/webolith:latest
+
+  deploy:
+    working_directory: /opt/webolith
+    environment:
+      # This will get created by the clone below.
+      KUBECONFIG: /opt/webolith-private/admin.conf
+    docker:
+      - image: domino14/aerolith-deployer
+    steps:
+      - checkout
+      # Clone the repo with the admin.conf file
+      - add_ssh_keys:
+          fingerprints:
+            - "ad:9e:01:fa:fa:e7:03:a4:49:74:98:91:52:a8:dc:3c"
+      - run: if [ ! -n "$(grep "^bitbucket.org " ~/.ssh/known_hosts)" ]; then ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null; fi
+      - run:
+          name: Clone private Webolith repo
+          command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
+      - run: fab create_k8s_configs:prod
+      # Deploy once everything is ok.
+      # - run: fab deploy:prod
+
+workflows:
+  version: 2
+  build_app:
+    jobs:
+      - build_python
+      - build_js
+      - build_docker:
+          requires:
+            - build_python
+            - build_js
+          # filters:
+          #   branches:
+          #     only: master
+      - deploy:
+          requires:
+            - build_docker
+          # filters:
+          #   branches:
+          #     only: master

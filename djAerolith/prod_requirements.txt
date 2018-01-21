@@ -12,7 +12,6 @@ jsonschema
 social-auth-app-django
 requests-oauthlib
 psycopg2
-Fabric
 PyYAML
 PyJWT
 channels

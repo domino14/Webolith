@@ -3,6 +3,7 @@ words/*
 node/*
 .git/*
 **/*.pyc
+**/__pycache__
 config/*.env
 node_modules/*
 kubernetes/*
