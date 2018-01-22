@@ -71,11 +71,11 @@ def migrate_users_to_America():
         defaultLexicon__lexiconName='America2016')
     ct = profiles.count()
     america = Lexicon.objects.get(lexiconName='America')
-    print 'Need to migrate {0} profiles'.format(ct)
+    print('Need to migrate {0} profiles'.format(ct))
     for profile in profiles:
         profile.defaultLexicon = america
         profile.save()
-    print 'Migrated {0} profiles'.format(ct)
+    print('Migrated {0} profiles'.format(ct))
 
 
 def migrate_lists_to_America():
@@ -83,19 +83,19 @@ def migrate_lists_to_America():
     lists = WordList.objects.filter(
         lexicon__lexiconName='America2016'
     )
-    print 'Need to migrate {0} lists'.format(lists.count())
-    print 'Non-temp lists are'
+    print('Need to migrate {0} lists'.format(lists.count()))
+    print('Non-temp lists are')
     for wl in lists:
         if not wl.is_temporary:
-            print wl
+            print(wl)
     america = Lexicon.objects.get(lexiconName='America')
     for wl in lists:
         wl.lexicon = america
         try:
             wl.save()
         except IntegrityError:
-            print "Could not migrate list; name collision: {0}".format(wl)
-    print 'Migrated the lists!'
+            print("Could not migrate list; name collision: {0}".format(wl))
+    print('Migrated the lists!')
 
 
 class Command(BaseCommand):

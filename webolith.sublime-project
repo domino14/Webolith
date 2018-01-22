@@ -17,6 +17,7 @@
 		}
 	],
 	"SublimeLinter": {
+		"@python": 3,
 		"linters": {
 			"jshint": {
 				"excludes": [

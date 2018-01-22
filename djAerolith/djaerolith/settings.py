@@ -106,7 +106,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get('SECRET_KEY')
-PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, 'static')]
 STATICFILES_FINDERS = (
@@ -127,7 +127,7 @@ MIDDLEWARE_CLASSES = (
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'djaerolith.urls'
 
 TEMPLATES = [
     {
@@ -180,6 +180,7 @@ INSTALLED_APPS = (
     'social_django',
     'channels',
     'channels_presence',
+    'captcha',
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
@@ -254,7 +255,7 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             'hosts': [(os.environ.get('REDIS_HOST', 'redis'), 6379)],
         },
-        'ROUTING': 'routing.routing',
+        'ROUTING': 'djaerolith.routing.routes',
     }
 }
 SEND_BROKEN_LINK_EMAILS = False
@@ -333,12 +334,14 @@ INTERCOM_APP_SECRET_KEY = os.environ.get('INTERCOM_APP_SECRET_KEY')
 # LOGGING config
 
 NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
-RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
-RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
+
+if os.environ.get('RECAPTCHA_PRIVATE_KEY'):
+    RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
 ALLOWED_HOSTS = ['.aerolith.org', '*']
 
-RECAPTCHA_SSL = os.environ.get('RECAPTCHA_SSL')
+RECAPTCHA_USE_SSL = os.environ.get('RECAPTCHA_SSL')
 
 # See SessionIdleTimeout middleware
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30

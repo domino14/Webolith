@@ -195,7 +195,7 @@ def saved_list(request, id):
             # Again, reset will not actually save, so this is a GET.
             # Sync or PUT take care of saving.
             l_obj['questionIndex'] = 0
-            l_obj['curQuestions'] = range(l_obj['numAlphagrams'])
+            l_obj['curQuestions'] = list(range(l_obj['numAlphagrams']))
             l_obj['numCurAlphagrams'] = l_obj['numAlphagrams']
             l_obj['firstMissed'] = []
             l_obj['numFirstMissed'] = 0
@@ -211,10 +211,10 @@ def saved_list(request, id):
 
 def save_stars(request, stars, sl):
     origQuestions = json.loads(sl.origQuestions)
-    for qidx, star_obj in stars.iteritems():
+    for qidx, star_obj in stars.items():
         alph = origQuestions[int(qidx)]['q']
         if star_obj['s'] == 0:
-            logger.debug(u'Creating user tag for %s: %s - %s (%s) ',
+            logger.debug('Creating user tag for %s: %s - %s (%s) ',
                          request.user, alph, sl.lexicon, star_obj['t'])
             AlphagramTag.objects.update_or_create(
                 user=request.user, lexicon=sl.lexicon, alphagram=alph,

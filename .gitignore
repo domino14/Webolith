@@ -36,3 +36,4 @@ kubernetes/deploy-configs/prod-*.yaml
 djAerolith/htmlcov
 vars.sh
 coverage
+__pycache__

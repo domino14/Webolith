@@ -25,8 +25,9 @@ from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
-from registration_app.forms import get_registration_form
 from registration.backends.simple.views import RegistrationView
+
+from registration_app.forms import get_registration_form
 
 from views import (health, login_error, new_social_user, js_error, test_500,
                    healthz, trigger500, jwt_req)

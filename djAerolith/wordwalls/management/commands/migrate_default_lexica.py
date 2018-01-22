@@ -25,4 +25,4 @@ class Command(BaseCommand):
                 profile.save()
                 count += 1
 
-        print 'Migrated %s profiles from %s to %s' % (count, lex1, lex2)
+        print('Migrated %s profiles from %s to %s' % (count, lex1, lex2))

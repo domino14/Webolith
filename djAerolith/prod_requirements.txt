@@ -6,15 +6,12 @@ Markdown
 django-registration-redux
 gargoyle-yplan
 requests
-recaptcha-client
-wsgiref
+django-recaptcha
 redis
 jsonschema
 social-auth-app-django
 requests-oauthlib
-python-openid
 psycopg2
-Fabric
 PyYAML
 PyJWT
 channels

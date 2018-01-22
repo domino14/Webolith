@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 """Generate the "named" default Aerolith lists."""
 
 import json
@@ -7,7 +5,7 @@ import time
 import re
 import logging
 
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from django.db import connection
 
 from base.models import Lexicon, alphagrammize
@@ -265,9 +263,9 @@ def create_spanish_lists():
 
             qs = get_questions_by_condition(
                 db, min_prob, max_prob, i,
-                lambda a: re.search(ur'[123Ñ]', a))
+                lambda a: re.search(r'[123Ñ]', a))
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
-                              u'(ᴄʜ)(ʟʟ)(ʀʀ)Ñ ' + mapa_amigable[i])
+                              '(ᴄʜ)(ʟʟ)(ʀʀ)Ñ ' + mapa_amigable[i])
 
         if i == 7:
             # 4+ vowel 7s
@@ -318,7 +316,7 @@ def create_common_words_list(lname, friendly_name):
     nl.save()
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = """Populates database with named lists"""
 
     def handle_noargs(self, **options):

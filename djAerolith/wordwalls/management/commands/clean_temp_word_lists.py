@@ -18,5 +18,5 @@ class Command(BaseCommand):
         wls = WordList.objects.filter(lastSaved__lt=del_date,
                                       is_temporary=True)
         num_objs = len(wls)
-        print "Found", num_objs, "objects to delete"
+        print("Found", num_objs, "objects to delete")
         wls.delete()

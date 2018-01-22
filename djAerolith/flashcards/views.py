@@ -75,7 +75,7 @@ def new_quiz(request):
     body = json.loads(request.body)
     params = validate_params(body['min'], body['max'], body['length'],
                              body['lex'])
-    if isinstance(params, basestring):
+    if isinstance(params, str):
         return response(params, status=400)
     p_min, p_max, length, lexicon = params
 

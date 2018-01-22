@@ -49,7 +49,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         min_p = 1
         # lengthCounts is a dictionary of strings as keys
         max_p = json.loads(lex.lengthCounts)[str(word_length)]
-        r = range(min_p, max_p + 1)
+        r = list(range(min_p, max_p + 1))
         random.shuffle(r)
         # Just the first 50 elements for the daily challenge.
         return (db.get_questions_for_probability_list(r[:50], word_length),
@@ -69,7 +69,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         for lgt in (7, 8):
             min_p = 1
             max_p = json.loads(lex.lengthCounts)[str(lgt)]
-            r = range(min_p, max_p + 1)
+            r = list(range(min_p, max_p + 1))
             random.shuffle(r)
             questions.extend(
                 db.get_questions_for_probability_list(r[:50], lgt))
@@ -115,7 +115,7 @@ def generate_blank_bingos_challenge(lex):
         try:
             challs = gen_blank_challenges(length, lex.lexiconName, 2, 25, 5)
         except MacondoError:
-            logger.exception(u'[event=macondoerror]')
+            logger.exception('[event=macondoerror]')
             return bingos
         for chall in challs:
             question = Question(Alphagram(chall['q']), [])
@@ -156,7 +156,7 @@ def generate_word_builder_challenge(lex, lmin, lmax):
         question, num_answers = gen_build_challenge(
             lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols)
     except MacondoError:
-        logger.exception(u'[event=macondoerror]')
+        logger.exception('[event=macondoerror]')
         return q_struct
     ret_question = Question(Alphagram(question['q']), [])
     ret_question.set_answers_from_word_list(question['a'])
@@ -211,7 +211,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
             mb_dict[alphagram] = alphagram, perc_correct
     logger.debug('Created missed bingo dictionary...')
     # Sort by difficulty in reverse order (most difficult first)
-    alphs = sorted(mb_dict.items(), key=lambda x: x[1][1], reverse=True)[:num]
+    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[:num]
     logger.debug('Sorted by difficulty, returning...')
     # And just return the alphagram portion.
     return [Alphagram(a[0]) for a in alphs]

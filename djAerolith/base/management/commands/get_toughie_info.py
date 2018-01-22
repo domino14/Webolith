@@ -68,14 +68,14 @@ order by pct desc
                     america_bingos[row[0]] = []
                 america_bingos[row[0]].append(bingo)
 
-        print '%s uniq owl2_bingos, %s uniq america_bingos' % (
-            len(owl2_bingos), len(america_bingos))
+        print('%s uniq owl2_bingos, %s uniq america_bingos' % (
+            len(owl2_bingos), len(america_bingos)))
         with open('/tmp/toughies.csv', 'wb') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['Alphagram', 'probability', 'difficulty'])
             self.toughiez(Americadb, america_bingos, difficulty_cutoff,
                           probability_cutoff, writer)
-            print '----'
+            print('----')
             self.toughiez(OWL2db, owl2_bingos, difficulty_cutoff,
                           probability_cutoff, writer)
 

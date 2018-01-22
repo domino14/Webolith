@@ -47,7 +47,7 @@ class GenericTableGameModel(models.Model):
     playerType = models.IntegerField(choices=PLAYER_TYPES)
 
     # table number will be a primary id
-    def __unicode__(self):
+    def __str__(self):
         return "Table game #%d - last activity: %s" % (self.pk,
                                                        self.lastActivity)
 

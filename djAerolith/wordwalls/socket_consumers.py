@@ -74,13 +74,14 @@ def users_in(room):
 
 def table_info(table):
     state = json.loads(table.currentGameState)
+    word_list_name = state['temp_list_name']
+    if table.word_list and not table.word_list.is_temporary:
+        word_list_name = table.word_list.name
     table_obj = {
         'lexicon': table.lexicon.lexiconName,
         'host': table.host.username,
         'users': [user.username for user in table.inTable.all()],
-        'wordList': (
-            table.word_list.name if not table.word_list.is_temporary
-            else state['temp_list_name']),
+        'wordList': word_list_name,
         'tablenum': table.pk,
         'secondsPerRound': state['timerSecs'],
         'questionsPerRound': state['questionsToPull'],
@@ -248,7 +249,7 @@ def table_join(message, contents):
     # Also, send the user the current time left / game state if the game
     # is already going.
     state = wwg.midgame_state(tableid)
-    if not state['going'] or not wwg.is_multiplayer():
+    if not state['going'] or not wwg.is_multiplayer(tableid):
         return
     message.reply_channel.send({
         'text': json.dumps({
@@ -280,7 +281,7 @@ def end_packet(message, contents):
     state = json.loads(wgm.currentGameState)
     answers = state['answerHash']
     if set(wrong_words) != set(answers.keys()):
-        logger.warning(u'[event=non-matching-fe] answers=%s wrong_words=%s '
+        logger.warning('[event=non-matching-fe] answers=%s wrong_words=%s '
                        'app_version=%s user=%s room=%s',
                        answers, wrong_words,
                        contents['contents']['appVersion'], message.user, room)

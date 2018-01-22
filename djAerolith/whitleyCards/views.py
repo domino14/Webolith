@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+import zlib
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -49,12 +50,13 @@ def search_criteria_to_b64(request_post):
 
     dumped = json.dumps(search, separators=(',', ':'))
     logger.debug('Encoding %s', dumped)
-    return base64.urlsafe_b64encode(dumped.encode('zlib'))
+    return base64.urlsafe_b64encode(
+        zlib.compress(bytes(dumped, 'utf-8')))
 
 
 def search_criteria_from_b64(encoded):
-    d = base64.urlsafe_b64decode(str(encoded))
-    return json.loads(d.decode('zlib'))
+    d = base64.urlsafe_b64decode(bytes(encoded, 'utf-8'))
+    return json.loads(zlib.decompress(d))
 
 
 def handle_create_post(request):
@@ -228,7 +230,7 @@ def getQuizChunkFromSavedList(slpk, minIndex, option):
         origQuestions = json.loads(sl.origQuestions)
         questions = [origQuestions[i] for i in questionIndices]
         data = getQuizChunkByQuestions(sl.lexicon, questions, minIndex)
-        print questions, data
+        print(questions, data)
         return data[0], data[1], data[2], sl.numFirstMissed
 
 

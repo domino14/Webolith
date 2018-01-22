@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import unittest
 from datetime import date
 
@@ -26,5 +24,5 @@ class AlphagrammizeTestCase(unittest.TestCase):
         self.assertEqual(alphagrammize('BILLOWY'), 'BILLOWY')
         self.assertEqual(alphagrammize('ACERVULI'), 'ACEILRUV')
         self.assertEqual(alphagrammize('PRENTICE'), 'CEEINPRT')
-        self.assertEqual(alphagrammize(u'1ARMAQUITO'), u'AA1IMOQRTU')
-        self.assertEqual(alphagrammize(u'ÑOÑE3IN1AS'), u'A1EINÑÑO3S')
+        self.assertEqual(alphagrammize('1ARMAQUITO'), 'AA1IMOQRTU')
+        self.assertEqual(alphagrammize('ÑOÑE3IN1AS'), 'A1EINÑÑO3S')
