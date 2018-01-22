@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, Count, IntegerField
 from django.shortcuts import render
-from django.views.decorators.cache import cache_page
 
 from base.models import Lexicon
 from lib.response import response
@@ -69,11 +68,9 @@ def get_stats(request, lexicon, type_of_challenge_id):
 
 @login_required
 def leaderboard(request):
-
     return render(request, 'wordwalls/leaderboard.html')
 
 
-@cache_page(60*60)  # This can be cached for an hour since it's faster now.
 @login_required
 def get_medals(request):
     users_medals_totals = []
