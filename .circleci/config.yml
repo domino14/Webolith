@@ -140,8 +140,7 @@ jobs:
           name: Clone private Webolith repo
           command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
       - run: fab create_k8s_configs:prod
-      # Deploy once everything is ok.
-      # - run: fab deploy:prod
+      - run: fab deploy:prod
 
 workflows:
   version: 2
@@ -153,12 +152,12 @@ workflows:
           requires:
             - build_python
             - build_js
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
       - deploy:
           requires:
             - build_docker
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
