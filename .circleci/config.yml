@@ -109,17 +109,19 @@ jobs:
           name: Build and push Docker images to Dockerhub
           command: |
             cd $REPO/kubernetes && \
-                docker build -t domino14/webolith-nginx:$CIRCLE_BUILD_NUM \
+                docker build -t domino14/webolith-nginx:$CIRCLE_SHA1 \
+                -t domino14/webolith-nginx:latest \
                 -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
             # Delete the static files for the webapp container.
             rm -rf $STATIC_ROOT
             cd $REPO && \
-              docker build -t domino14/webolith:$CIRCLE_BUILD_NUM \
+              docker build -t domino14/webolith:$CIRCLE_SHA1 \
                 -t domino14/webolith:latest .
 
             docker login --username domino14 --password $DOCKER_PASSWORD
-            docker push domino14/webolith-nginx:$CIRCLE_BUILD_NUM
-            docker push domino14/webolith:$CIRCLE_BUILD_NUM
+            docker push domino14/webolith-nginx:$CIRCLE_SHA1
+            docker push domino14/webolith-nginx:latest
+            docker push domino14/webolith:$CIRCLE_SHA1
             docker push domino14/webolith:latest
 
   deploy:

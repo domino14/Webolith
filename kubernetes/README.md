@@ -1,4 +1,4 @@
-Contains the Kubernetes config files to get a whole deployment of 
+Contains the Kubernetes config files to get a whole deployment of
 Aerolith out (and also on Minikube for local development)
 
 Consider moving this to a separate repository.
@@ -38,7 +38,7 @@ webolith-django-service   10.0.0.237   <nodes>       8000:32541/TCP   11h
 
 ### nginx-static
 
-Nginx-static is based on a publicly available Nginx docker package. We use it to serve the Webolith static assets after building with circle-ci. We include the assets directly in the image for simplicity, and create a new Docker image on Dockerhub: `webolith-nginx:$CIRCLE_BUILD_NUM`.
+Nginx-static is based on a publicly available Nginx docker package. We use it to serve the Webolith static assets after building with circle-ci. We include the assets directly in the image for simplicity, and create a new Docker image on Dockerhub: `webolith-nginx:$CIRCLE_SHA1`.
 
 The relevant Kubernetes config files are `nginx-static-deployment.yaml` and `nginx-static-service.yaml`.
 
@@ -52,11 +52,11 @@ The relevant Kubernetes configs are `webolith-deployment.yaml`, `webolith-servic
 
 ### macondo
 
-The macondo service and deployment will very rarely be updated and we can probably do a lot of this manually with the `macondo-deployment` and service files. 
+The macondo service and deployment will very rarely be updated and we can probably do a lot of this manually with the `macondo-deployment` and service files.
 
 ### ingress
 
-We are using the publicly available nginxinc ingress controller. We do SSL termination in `webolith-ingress.yaml`, see `secret-tls.yaml`. The controller configs are in `nginx-ingress-rc.yaml`. 
+We are using the publicly available nginxinc ingress controller. We do SSL termination in `webolith-ingress.yaml`, see `secret-tls.yaml`. The controller configs are in `nginx-ingress-rc.yaml`.
 
 The ingress directs traffic to `webolith` and `nginx-static` services based on the path.
 
