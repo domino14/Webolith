@@ -83,7 +83,7 @@ def build_webolith_deployment(role):
                      'SOCIAL_AUTH_FACEBOOK_KEY', 'INTERCOM_APP_ID',
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']:
         context[var_name] = get_env_var(role, var_name)
-    context['BUILD_NUM'] = os.getenv('CIRCLE_BUILD_NUM', '')
+    context['BUILD_NUM'] = os.getenv('CIRCLE_SHA1', '')
     context['WORD_DB_DIR'] = os.getenv('WORD_DB_DIR', '')
     rendered = curlies_render(template, context)
     with open(
@@ -99,7 +99,7 @@ def build_webolith_maintenance(role):
     context = {}
     for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER']:
         context[var_name] = get_env_var(role, var_name)
-    context['BUILD_NUM'] = os.getenv('CIRCLE_BUILD_NUM', '')
+    context['BUILD_NUM'] = os.getenv('CIRCLE_SHA1', '')
     rendered = curlies_render(template, context)
     with open(
         'kubernetes/deploy-configs/{role}-webolith-maintenance.yaml'.format(
@@ -115,7 +115,7 @@ def build_channels_cleanup(role):
     context = {}
     for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER']:
         context[var_name] = get_env_var(role, var_name)
-    context['BUILD_NUM'] = os.getenv('CIRCLE_BUILD_NUM', '')
+    context['BUILD_NUM'] = os.getenv('CIRCLE_SHA1', '')
     rendered = curlies_render(template, context)
     with open(
         'kubernetes/deploy-configs/{role}-{name}'.format(
@@ -141,7 +141,7 @@ def build_nginx_static_deployment(role):
     with open('kubernetes/deploy-configs/nginx-static-deployment.yaml') as f:
         deployment = yaml.load(f)
     image = 'domino14/webolith-nginx:{buildnum}'.format(
-        buildnum=os.getenv('CIRCLE_BUILD_NUM'))
+        buildnum=os.getenv('CIRCLE_SHA1'))
     deployment['spec']['template']['spec']['containers'][0]['image'] = image
     with open(
         'kubernetes/deploy-configs/{role}-nginx-static-deployment.yaml'.format(
