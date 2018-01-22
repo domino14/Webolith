@@ -159,7 +159,7 @@ class WordwallsAppContainer extends React.Component {
       }
       return;
     }
-    this.submitGuess(guess);
+    this.submitGuess(modifiedGuess);
   }
 
   onChatSubmit(chat, channel) {

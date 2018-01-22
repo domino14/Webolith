@@ -2,7 +2,9 @@
 # but that requires another nginx ingress controller.
 
 # sudo apt-get install fabric python-yaml  # on the machine first.
-
+# NOTE: THIS SCRIPT STILL USES PYTHON 2
+# XXX REPLACE ME WITH AUTOMATIC RENEWER
+# XXX
 import base64
 import yaml
 import sys

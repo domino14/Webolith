@@ -54,7 +54,7 @@ def get_env_var(role, var, secret=False):
     if env_var is None:
         sys.exit('Environment variable ' + key + ' must be provided.')
     if secret:
-        return base64.b64encode(env_var)
+        return base64.b64encode(bytes(env_var, 'utf-8'))
     return env_var
 
 
@@ -68,7 +68,7 @@ def build_webolith_secret(role):
                      'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']:
         secret_template['data'][var_name] = get_env_var(role, var_name, True)
     with open('kubernetes/deploy-configs/{role}-webolith-secrets.yaml'.format(
-            role=role), 'wb') as f:
+            role=role), 'w') as f:
         f.write(yaml.dump(secret_template, default_flow_style=False))
 
 
@@ -88,7 +88,7 @@ def build_webolith_deployment(role):
     rendered = curlies_render(template, context)
     with open(
         'kubernetes/deploy-configs/{role}-{name}'.format(
-            role=role, name=name), 'wb') as f:
+            role=role, name=name), 'w') as f:
         f.write(rendered)
 
 
@@ -103,7 +103,7 @@ def build_webolith_maintenance(role):
     rendered = curlies_render(template, context)
     with open(
         'kubernetes/deploy-configs/{role}-webolith-maintenance.yaml'.format(
-            role=role), 'wb') as f:
+            role=role), 'w') as f:
         f.write(rendered)
 
 
@@ -119,7 +119,7 @@ def build_channels_cleanup(role):
     rendered = curlies_render(template, context)
     with open(
         'kubernetes/deploy-configs/{role}-{name}'.format(
-            role=role, name=name), 'wb') as f:
+            role=role, name=name), 'w') as f:
         f.write(rendered)
 
 
@@ -132,7 +132,7 @@ def build_webolith_ingress(role):
     context['HACK_PATH'] = '/hackpath-{0}'.format(uuid.uuid4().hex)
     rendered = curlies_render(template, context)
     with open('kubernetes/deploy-configs/{role}-webolith-ingress.yaml'.format(
-            role=role), 'wb') as f:
+            role=role), 'w') as f:
         f.write(rendered)
 
 
@@ -145,7 +145,7 @@ def build_nginx_static_deployment(role):
     deployment['spec']['template']['spec']['containers'][0]['image'] = image
     with open(
         'kubernetes/deploy-configs/{role}-nginx-static-deployment.yaml'.format(
-            role=role), 'wb') as f:
+            role=role), 'w') as f:
         f.write(yaml.dump(deployment, default_flow_style=False))
 
 
@@ -161,7 +161,7 @@ def build_macondo_deployment(role):
     rendered = curlies_render(template, context)
     with open(
         'kubernetes/deploy-configs/{role}-macondo-deployment.yaml'.format(
-            role=role), 'wb') as f:
+            role=role), 'w') as f:
         f.write(rendered)
 
 
