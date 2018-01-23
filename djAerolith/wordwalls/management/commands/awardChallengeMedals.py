@@ -1,6 +1,6 @@
 # Awards challenge medals.
 import logging
-from operator import itemgetter
+from operator import attrgetter
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -38,7 +38,8 @@ class Command(BaseCommand):
                 logger.debug('Dry run, not saving leaderboard.')
             return  # Do not award medals; too few players.
 
-        lbes = sorted(lbes, key=itemgetter('score', 'tr'), reverse=True)
+        lbes = sorted(lbes, key=attrgetter('score', 'timeRemaining'),
+                      reverse=True)
         if leaderboard.challenge.name == self.toughies:
             # Award extra medal.
             medals = [Medal.TYPE_PLATINUM, Medal.TYPE_GOLD, Medal.TYPE_SILVER,
