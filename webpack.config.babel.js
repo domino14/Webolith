@@ -11,14 +11,14 @@ export default {
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
+        test: /\.(js|jsx|es6)$/,
         loader: 'babel-loader',
         exclude: [/node_modules/],
       },
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.es6'],
   },
   entry: {
     vendor: [

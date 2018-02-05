@@ -107,7 +107,7 @@ class SearchRow extends React.Component {
   renderMinMax() {
     return (
       <div style={{ marginTop: '2px' }}>
-        <div className="col-sm-3">
+        <div className="col-xs-3">
           <NumberInput
             colSize={12}
             label="Min"
@@ -120,7 +120,7 @@ class SearchRow extends React.Component {
             )}
           />
         </div>
-        <div className="col-sm-3">
+        <div className="col-xs-3">
           <NumberInput
             colSize={12}
             label="Max"
@@ -139,7 +139,7 @@ class SearchRow extends React.Component {
 
   renderListValue() {
     return (
-      <div className="col-sm-6" style={{ marginTop: '2px' }}>
+      <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
         <TextInput
           colSize={12}
           label="Comma-separated values"
@@ -174,20 +174,20 @@ class SearchRow extends React.Component {
       <div className="row">
         <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
           <button
-            className="btn btn-info btn-sm"
+            className="btn btn-info btn-xs"
             onClick={this.props.addRow}
-          >＋
+          ><span className="glyphicon glyphicon-plus" aria-hidden="true" />
           </button>
         </div>
         <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
           <button
-            className="btn btn-info btn-sm"
+            className="btn btn-info btn-xs"
             onClick={() => this.props.removeRow(this.props.index)}
             disabled={this.props.removeDisabled}
-          >－
+          ><span className="glyphicon glyphicon-minus" aria-hidden="true" />
           </button>
         </div>
-        <div className="col-sm-4">
+        <div className="col-xs-4">
           <Select
             colSize={12}
             label="Search Criterion"

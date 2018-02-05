@@ -111,7 +111,11 @@ define([
        * otherwise it's 1. Syncing tags is a fairly expensive operation
        * so we don't want to have to do it often.
        */
-      starTags: {}
+      starTags: {},
+      /**
+       * Show the initial star tags.
+       */
+      showInitialTags: false
     },
 
     /**

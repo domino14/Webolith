@@ -1,0 +1,5 @@
+djAerolith/wordwalls/static/js/wordwalls/**/*.jsx
+djAerolith/wordwalls/static/js/wordwalls/**/*.js
+webpack.config.babel.js
+webpack.config-prod.babel.js
+djAerolith/**/*.jsx

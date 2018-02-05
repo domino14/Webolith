@@ -7,8 +7,12 @@ from django.conf import settings
 
 from current_version import CURRENT_VERSION
 from base.models import Lexicon, WordList
-from base.utils import savedlist_from_probabilities, quizzes_response
+from base.utils import generate_question_map, quizzes_response
 from lib.response import response
+from lib.word_db_helper import word_search
+from lib.word_searches import temporary_list_name
+from wordwalls.api import build_search_criteria
+from wordwalls.game import GameInitException
 
 logger = logging.getLogger(__name__)
 
@@ -28,44 +32,6 @@ def main(request):
                   })
 
 
-def validate_params(min, max, length, lex):
-    """
-        Validates string parameters min, max, length with lexicon.
-        :min - Minimum probability
-        :max-  Maximum probability
-        :length - Length of word
-        :lex - Lexicon short name (string)
-    """
-    try:
-        lexicon = Lexicon.objects.get(lexiconName=lex)
-    except Lexicon.DoesNotExist:
-        return "No such lexicon: %s" % lex
-    try:
-        p_min = int(min)
-        p_max = int(max)
-        length = int(length)
-    except (ValueError, TypeError):
-        return "Probabilities and lengths must be integers."
-    if p_min > p_max:
-        return "Max probability must be bigger than min."
-    if length < 2 or length > 15:
-        return "Length should be between 2 and 15."
-    if p_max - p_min + 1 > 1000:
-        return "You can only fetch 1000 questions at most."
-
-    count = json.loads(lexicon.lengthCounts).get('%s' % length, 0)
-
-    if p_min < 1 or p_min > count:
-        return (
-            'Minimum probability must be between 1 and %s for %s-letter '
-            'words' % (count, length))
-    if p_max < 1 or p_max > count:
-        return (
-            'Maximum probability must be between 1 and %s for %s-letter '
-            'words' % (count, length))
-    return p_min, p_max, length, lexicon
-
-
 @login_required
 def new_quiz(request):
     """
@@ -73,22 +39,30 @@ def new_quiz(request):
     Card models will only be used for cardbox in future.
     """
     body = json.loads(request.body)
-    params = validate_params(body['min'], body['max'], body['length'],
-                             body['lex'])
-    if isinstance(params, str):
-        return response(params, status=400)
-    p_min, p_max, length, lexicon = params
+    logger.debug(body)
+    lexicon = Lexicon.objects.get(lexiconName=body['lexicon'])
+    try:
+        search_description = build_search_criteria(
+            request.user, lexicon, body['searchCriteria']
+        )
+    except GameInitException as e:
+        return response(str(e), status=400)
 
-    li, q_map = savedlist_from_probabilities(lexicon, p_min, p_max, length)
-    if len(q_map) > 0:
-        # Generate a quiz name.
-        quiz_name = '{} {}s ({} to {})'.format(lexicon.lexiconName, length,
-                                               p_min, p_max)
-    else:
-        quiz_name = ''
-    return response({'list': li.to_python(),
-                     'q_map': q_map,
-                     'quiz_name': quiz_name})
+    questions = word_search(search_description)
+    if questions.size() == 0:
+        return response('No questions were found.', status=400)
+    wl = WordList()
+    wl.initialize_list(list(questions.to_python()), lexicon, None,
+                       shuffle=True, save=False)
+    q_map = generate_question_map(questions)
+    quiz_name = temporary_list_name(search_description)
+    # XXX add 1000-question limit?
+    return response({
+        'list': wl.to_python(),
+        'q_map': q_map,
+        'quiz_name': quiz_name,
+        'showStars': body['showStars']
+    })
 
 
 # @login_required
