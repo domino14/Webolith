@@ -105,5 +105,5 @@ def jwt_req(request):
         'exp': int(time.time()) + JWT_EXPIRATION
     }, settings.SECRET_KEY, algorithm='HS256')
     return response({
-        'token': token
+        'token': token.decode('utf-8'),
     })

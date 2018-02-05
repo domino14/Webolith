@@ -83,21 +83,6 @@ def question_list_from_probabilities(lexicon, p_min, p_max, length):
     return generate_question_list(questions)
 
 
-def savedlist_from_probabilities(lexicon, p_min, p_max, length):
-    """
-    Creates a WordList instance from a list of Alphagram pks (indices)
-    but *does not save it*.
-    """
-    db = WordDB(lexicon.lexiconName)
-    questions = db.get_questions_for_probability_range(p_min, p_max, length)
-
-    wl = WordList()
-    wl.initialize_list(questions.to_python(), lexicon, None, shuffle=True,
-                       save=False)
-    q_map = generate_question_map(questions)
-    return wl, q_map
-
-
 def quizzes_response(quizzes):
     """
         Creates a response for quizzes.

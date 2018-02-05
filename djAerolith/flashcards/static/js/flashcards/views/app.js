@@ -3,13 +3,14 @@ define([
   'backbone',
   'underscore',
   'jquery',
-  'mustache',
+  'react',
+  'react-dom',
   '../router',
   './quiz',
   './quiz_selector',
-  'text-loader!../templates/new_quiz.html'
-], function(Backbone, _, $, Mustache, Router, Quiz, QuizSelector,
-    NewQuizTemplate) {
+  './word_search_form.jsx'
+], function(Backbone, _, $, React, ReactDOM, Router, Quiz,
+  QuizSelector, WordSearchForm) {
   "use strict";
   var App, NEW_QUIZ_URL, SCHEDULED_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
@@ -42,9 +43,8 @@ define([
       router.on('route:continueLocalQuiz', _.bind(this.continueQuiz, this));
       router.on('route:showQuizList', _.bind(this.showQuizList, this));
       router.on('route:remoteQuizAction', _.bind(this.loadRemoteQuiz, this));
-    },
-    events: {
-      'click #load-prob': 'loadByProbability'
+
+      this.fixTableDropup();
     },
     /**
      * Loads a new quiz by probability.
@@ -64,6 +64,15 @@ define([
       }), _.bind(this.startQuiz, this),
       'json').fail(_.bind(this.alertCallback, this));
     },
+    /**
+     * Load a new quiz by a set of search criteria.
+     */
+    loadWords: function(criteria) {
+
+      $.post(NEW_QUIZ_URL, JSON.stringify(criteria),
+        _.bind(this.startQuiz, this), 'json').fail(
+        _.bind(this.alertCallback, this));
+    },
 
     // getScheduledCards: function() {
     //   $.get(SCHEDULED_URL, function(data) {
@@ -74,7 +83,13 @@ define([
       this.quiz.renderAlert(jqXHR.responseJSON);
     },
     newQuiz: function() {
-      this.$('#card-setup').html(Mustache.render(NewQuizTemplate, {})).show();
+      // Use default because this is an ES6 `default` export.
+      ReactDOM.render(
+        React.createElement(WordSearchForm['default'], {
+          loadWords: _.bind(this.loadWords, this)
+        }),
+        document.getElementById('card-setup'));
+      this.$('#card-setup').show();
       this.$('#card-area').hide();
       this.$('#quiz-selector').hide();
     },
@@ -110,6 +125,9 @@ define([
      */
     showCardArea: function() {
       this.$('#card-area').show();
+      ReactDOM.unmountComponentAtNode(
+        document.getElementById('card-setup')
+      );
       this.$('#card-setup').empty();
       this.$('#quiz-selector').hide();
     },
@@ -134,6 +152,34 @@ define([
       } else {
         this.spinner.hide();
       }
+    },
+    fixTableDropup: function() {
+      // Note: this function isn't perfect, but it'll do for now.
+      // It was copied mostly from the wordwalls app.
+      var $table = $('.table-responsive', this.$('#quiz-selector'));
+      $('.quiz-mode-dropdown').on('shown.bs.dropdown', function checkDropdown() {
+        // calculate the required sizes, spaces
+        var $ul = $(this).children('.dropdown-menu');
+        var $button = $(this).children('.dropdown-toggle');
+        // Ugh, the position of the <tr>, plus the offset of the UL relative
+        // to the dropdown toggle button.
+        var ulOffsetTop = $ul.parents('.list-table-row').position().top +
+          $ul.position().top;
+        // how much space would be left on the top if the dropdown opened that
+        // direction
+        var spaceUp = ulOffsetTop - $button.height() - $ul.height();
+        // how much space is left at the bottom
+        var spaceDown = $table.height() - (ulOffsetTop + $ul.height());
+        // switch to dropup only if there is no space at the bottom
+        // AND there is space at the top, or there isn't either but it
+        // would be still better fit
+        if (spaceDown < 0 && (spaceUp >= 0 || spaceUp > spaceDown)) {
+          $(this).addClass('dropup');
+        }
+      }).on('hidden.bs.dropdown', '.dropdown', function hhidden() {
+        // always reset after close
+        $(this).removeClass('dropup');
+      });
     }
   });
   return App;

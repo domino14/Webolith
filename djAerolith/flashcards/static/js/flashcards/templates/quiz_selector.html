@@ -10,16 +10,20 @@
         <div class="col-lg-12">
         {{#lexicon}}
 
-        <P>You have a quiz saved locally (on your computer or device). You can either select it or select one of the remote quizzes (saved on the Aerolith server).</P>
-        <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
-            <div class="well">
+        <P>You have a quiz saved locally (on your computer or device). You
+            can either select it or select one of the remote quizzes
+             (saved on the Aerolith server).</P>
+        <div class="row">
+            <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
+                <div class="well">
 
-                <P>Name: {{name}}</P>
-                <P>Lexicon: {{lexicon}}</P>
-                <P>Progress: {{questionIndex}} / {{numCurAlphagrams}}</P>
-                <P>Total Questions: {{numAlphagrams}}</P>
-                <P>Last Saved (locally): {{lastSaved}}</P>
-                <a class="btn btn-primary" href="#continue/local">Continue</a>
+                    <P>Name: {{name}}</P>
+                    <P>Lexicon: {{lexicon}}</P>
+                    <P>Progress: {{questionIndex}} / {{numCurAlphagrams}}</P>
+                    <P>Total Questions: {{numAlphagrams}}</P>
+                    <P>Last Saved (locally): {{lastSaved}}</P>
+                    <a class="btn btn-primary" href="#continue/local">Continue</a>
+                </div>
             </div>
         </div>
         {{/lexicon}}
@@ -54,9 +58,9 @@
                 </thead>
                 <tbody>
                 {{#quizzes}}
-                <tr>
+                <tr class="list-table-row">
                     <td><!-- Single button -->
-                        <div class="btn-group">
+                        <div class="btn-group quiz-mode-dropdown">
                           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                             Play <span class="caret"></span>
                           </button>
