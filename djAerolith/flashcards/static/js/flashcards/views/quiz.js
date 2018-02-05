@@ -189,7 +189,8 @@ define([
       }
       this.viewingFront = false;
       this.renderCard(CardBack, currentCard);
-      if (this.wordList.get('goneThruOnce')) {
+      if (this.wordList.get('goneThruOnce') ||
+          !this.wordList.get('showInitialTags')) {
         this.$('.card-buttons').show();
         this.$('.initial-filter').hide();
       } else {

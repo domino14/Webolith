@@ -133,10 +133,11 @@ define([
     },
     /**
      * Starts quiz with data.
-     * @param  {Object} data Object with a `questions` key.
+     * @param  {Object} data An object representing a word list.
      */
     startQuiz: function(data) {
       this.displaySpinner_(false);
+      data.list.showInitialTags = data.showStars === 'true';
       this.quiz.reset(data.list, data.q_map, data.quiz_name);
       this.trigger('quizStarted');
       this.showCardArea();
