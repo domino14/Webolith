@@ -8,53 +8,26 @@ This repository holds the Python and Javascript required to serve Aerolith on a 
 
 ### Python
 
-The bulk of the back-end code is written in Python 2.7, using Django 1.8.x.
+The bulk of the back-end code is written in Python 3.6, using Django 1.11.x.
 
 ### Javascript
 
 Front-end code for Wordwalls is Javascript (ES6 mostly), using React. The rest of the app is moving to React as well. 
-
-In order to get Webpack, etc working on your system, you need to do the following:
-
-- Install the latest version of Node.js
-- npm install -g yarn
-- In the webolith directory, do `yarn install`
-- Then `yarn start` will start a process that will watch your JS files for modifications and re-compile them, using Gulp, Babel, Webpack, etc. It takes a few seconds to compile on my machine, which kind of sucks.
 
 Javascript code uses the Airbnb eslint config. (See their style guide: https://github.com/airbnb/javascript/)
 If you wish to contribute, please use this same config in your code editor, as code will not deploy without passing this first linting step.
 
 ### word_db_maker
 
-The word databases are SQLITE, and [word_db_maker](https://github.com/domino14/word_db_maker) is a Go 1.5 program that will make them.
+The word databases are SQLITE, and [word_db_maker](https://github.com/domino14/word_db_maker) is a Go 1.x program that will make them.
 
 See more information at that program. They require GADDAGs for the different lexica ([gaddag](https://github.com/domino14/macondo/tree/master/gaddag)). Kind of convoluted but this is better than the previous way which required Qt and C++.
 
 =======
 
-## Getting started with Docker
+## How to run on your machine
 
-On my dev machine I installed docker - make sure it comes with docker-machine,
-VirtualBox, docker-compose ... the main package on the docker site should
-have these.
-
-`config/local_config_skeleton.env` should be filled in with appropriate values
-and renamed to `config/local_config.env`. 
-
-The `./db` directory needs the lexicon .db files made by `word_db_maker` above.
-Make sure to generate these first and place them in the `./db` directory.
-The `docker-compose` file will mount the `./db` directory here for use by the
-app.
-
-Then, running `./setup.sh` in this directory should set everything up, hopefully.
-
-Note: you may need to restart app after the initial `docker-compose up -d`...
-`docker-compose restart app`. This is because it tries to connect to a
-database that doesn't exist yet since everything restarts at once.
-(Gotta figure out how to sync it).
-
-You can access the app in your browser at the ip:8000 (get ip with 
-something like  `docker-machine ip default`, depending on your settings.)
+Please see [aerolith_infra](https://github.com/domino14/aerolith_infra).
 
 =======
 
