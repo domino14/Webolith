@@ -19,7 +19,7 @@ from lib.word_searches import SearchDescription
 
 
 logger = logging.getLogger(__name__)
-MAX_CHUNK_SIZE = 999
+MAX_CHUNK_SIZE = 950
 
 
 class BadInput(Exception):
@@ -32,7 +32,7 @@ def stdout_encode(u, default='UTF8'):
     return u.encode(default)
 
 
-class Word(object):
+class Word:
     def __init__(self, word, alphagram=None, definition=None, front_hooks=None,
                  back_hooks=None, inner_front_hook=None, inner_back_hook=None,
                  lexicon_symbols=None):
@@ -56,7 +56,7 @@ class Word(object):
         return self.word == other.word
 
 
-class Alphagram(object):
+class Alphagram:
     def __init__(self, alphagram, probability=None, combinations=None):
         self.alphagram = alphagram
         self.probability = probability
@@ -76,7 +76,7 @@ class Alphagram(object):
         return '{%s} (%s)' % (self.alphagram, self.probability)
 
 
-class Questions(object):
+class Questions:
     def __init__(self):
         self.questions = []
         self.build_mode = False
@@ -145,7 +145,7 @@ class Questions(object):
         return '{<Questions %s>}' % self.questions
 
 
-class Question(object):
+class Question:
     def __init__(self, alphagram=None, answers=None):
         """
         alphagram - An Alphagram object.
@@ -195,7 +195,7 @@ class Question(object):
                                          self.answers)
 
 
-class WordDB(object):
+class WordDB:
     """
     A database of words/definitions/alphagrams, created by the
     word_db_creator Go program.
@@ -427,7 +427,7 @@ class WordDB(object):
         return qs
 
 
-class WhereClause(object):
+class WhereClause:
     template = '{table}.{column} {condition}'
     CONDITION_BETWEEN = 'between'
     CONDITION_IN = 'in'
@@ -500,7 +500,7 @@ class WhereInClause(WhereClause):
                                      condition=condition), bind_params)
 
 
-class Query(object):
+class Query:
     """ A query is a single word lookup SQL query, with bind parameters. """
     query_template = """
         SELECT lexicon_symbols, definition, front_hooks, back_hooks,
@@ -532,7 +532,7 @@ class Query(object):
             query=self.query_string, bind_params=self.bind_params)
 
 
-class QueryGenerator(object):
+class QueryGenerator:
     """ Generate the query based on passed-in parameters. """
     LISTING_DESCRIPTIONS = [
         SearchDescription.PROB_LIST, SearchDescription.ALPHAGRAM_LIST,

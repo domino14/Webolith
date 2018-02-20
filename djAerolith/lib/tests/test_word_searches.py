@@ -1,4 +1,6 @@
 import logging
+import time
+
 from django.test import TestCase
 
 from base.models import Lexicon, User, AlphagramTag
@@ -215,3 +217,45 @@ class TagSearchCase(TestCase):
         self.assertEqual(qs.size(), 2)
         self.assertEqual(['AEILT', 'CINOZ'], qs.alphagram_string_list())
         self.assertTrue(len(qs.questions_array()[0].answers[0].definition) > 0)
+
+
+class MassiveTagSearchCase(TestCase):
+    fixtures = [
+        'test/lexica.json',
+        'test/users.json',
+        'test/profiles.json'
+    ]
+
+    def create_some_tags(self):
+        self.america = Lexicon.objects.get(lexiconName='America')
+        self.cesar = User.objects.get(username='cesar')
+        t = time.time()
+
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(8, 8),
+            SearchDescription.probability_range(5001, 8500),
+        ])
+        logger.debug('Initial word search completed in %s seconds',
+                     time.time() - t)
+        self.assertEqual(qs.size(), 3500)
+        # Create hella tags.
+        for q in qs.questions_array():
+            AlphagramTag.objects.create(user=self.cesar, lexicon=self.america,
+                                        tag='D4',
+                                        alphagram=q.alphagram.alphagram)
+        logger.debug('And time elapsed after tag creation: %s',
+                     time.time() - t)
+
+    def test_tag_search(self):
+        self.create_some_tags()
+        t = time.time()
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(8, 8),
+            SearchDescription.probability_range(5001, 7500),
+            SearchDescription.tags(['D4'], self.cesar),
+        ])
+        logger.debug('Tag search completed in %s seconds', time.time() - t)
+        self.assertEqual(qs.size(), 2500)
+
