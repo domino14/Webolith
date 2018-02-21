@@ -26,7 +26,6 @@ class WordSearchForm extends React.Component {
         minValue: 1,
         maxValue: 100,
       }],
-      showStars: 'true',
       lexicon: 'America', // we will build a giant word wall
     };
 
@@ -80,9 +79,6 @@ class WordSearchForm extends React.Component {
     if (searchType !== SearchTypesEnum.TAGS) {
       criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
       criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
-      this.setState({
-        showStars: 'false',
-      });
     }
     this.setState({
       wordSearchCriteria: criteria,
@@ -137,23 +133,6 @@ class WordSearchForm extends React.Component {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-xs-6">
-            <Select
-              colSize={6}
-              label="Show star ratings first time"
-              selectedValue={this.state.showStars}
-              options={[{ value: 'true', displayValue: 'Yes' },
-                        { value: 'false', displayValue: 'No' }]}
-              onChange={(event) => {
-                this.setState({
-                  showStars: event.target.value,
-                });
-              }}
-            />
-          </div>
-        </div>
-
         <div className="row" style={{ marginBottom: 10 }}>
           <div className="col-xs-3">
             <button
@@ -162,7 +141,6 @@ class WordSearchForm extends React.Component {
               onClick={() => {
                 this.props.loadWords({
                   searchCriteria: this.searchCriteriaMapper(),
-                  showStars: this.state.showStars,
                   lexicon: this.state.lexicon,
                 });
               }}
