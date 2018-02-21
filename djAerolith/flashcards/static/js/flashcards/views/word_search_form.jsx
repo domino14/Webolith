@@ -158,6 +158,7 @@ class WordSearchForm extends React.Component {
           <div className="col-xs-3">
             <button
               className="btn btn-primary"
+              type="button"
               onClick={() => {
                 this.props.loadWords({
                   searchCriteria: this.searchCriteriaMapper(),
