@@ -137,7 +137,6 @@ define([
      */
     startQuiz: function(data) {
       this.displaySpinner_(false);
-      data.list.showInitialTags = data.showStars === 'true';
       this.quiz.reset(data.list, data.q_map, data.quiz_name);
       this.trigger('quizStarted');
       this.showCardArea();

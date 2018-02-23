@@ -61,7 +61,6 @@ def new_quiz(request):
         'list': wl.to_python(),
         'q_map': q_map,
         'quiz_name': quiz_name,
-        'showStars': body['showStars']
     })
 
 

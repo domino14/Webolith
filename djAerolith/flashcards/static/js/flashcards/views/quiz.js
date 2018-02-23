@@ -48,7 +48,8 @@ define([
       'mouseover .startag': 'hoverStar',
       'click .startag': 'clickStar',
       'click .correct': 'markCorrectButton',
-      'click .missed': 'markMissedButton'
+      'click .missed': 'markMissedButton',
+      'click .show-stars-check': 'showStarsToggle'
     },
     /**
      * Resets the quiz to a brand new array of questions.
@@ -266,6 +267,14 @@ define([
     markMissedButton: function() {
       this.markMissed();
     },
+
+    showStarsToggle: function(event) {
+      this.wordList.set('showInitialTags', event.target.checked);
+      // There's probably a more Backbone way of doing this, but I'm
+      // afraid to touch this old code too much. Need to rewrite card
+      // app in React.
+      this.showCardBack();
+    },
     /**
      * Advance to the next card.
      */
@@ -301,6 +310,10 @@ define([
         missed: _.size(this.wordList.get('missed')),
         total: _.size(this.wordList.get('curQuestions'))
       }));
+      if (this.wordList.get('showInitialTags')) {
+        // XXX: Move me to React omfg it's so much better.
+        this.$('.show-stars-check').prop('checked', true);
+      }
       this.quizInfo.html(Mustache.render(QuizHeader, {
         quizName: this.quizName
       }));
