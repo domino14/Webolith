@@ -23,7 +23,7 @@ class RecaptchaRegistrationForm(RegistrationFormUniqueEmail):
         return self.cleaned_data['username']
 
 
-def get_registration_form(debug):
-    # if debug:
-    #     return RegistrationFormUniqueEmail
+def get_registration_form(use_captcha):
+    if not use_captcha:
+        return RegistrationFormUniqueEmail
     return RecaptchaRegistrationForm

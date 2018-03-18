@@ -61,7 +61,7 @@ urlpatterns = [
     url(r'^accounts/social/$', social),
     url(r'^accounts/profile/', include('accounts.urls')),
     url(r'^accounts/register/$', AerolithRegistrationView.as_view(
-        form_class=get_registration_form(settings.DEBUG))),
+        form_class=get_registration_form(settings.USE_CAPTCHA))),
 
     #override the default registration urls
     url(r'^accounts/password/change/$',
