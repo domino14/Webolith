@@ -60,6 +60,7 @@ class WordwallsAppContainer extends React.Component {
       tablenum: this.props.tablenum,
       currentHost: this.props.currentHost,
       tableIsMultiplayer: this.props.tableIsMultiplayer,
+      lexicon: this.props.lexicon,
 
       startCountingDown: false,
       startCountdown: 0,
@@ -544,7 +545,7 @@ class WordwallsAppContainer extends React.Component {
    * @return {string}
    */
   maybeModifyGuess(guess) {
-    if (this.props.lexicon !== 'FISE09') {
+    if (this.state.lexicon !== 'FISE09') {
       return guess;
     }
     // Replace.
@@ -799,6 +800,7 @@ class WordwallsAppContainer extends React.Component {
     }
     this.setState({
       listName: data.list_name,
+      lexicon: data.lexicon,
       autoSave: data.autosave && !data.multiplayer,
       tablenum: data.tablenum,
       numberOfRounds: 0,

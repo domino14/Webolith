@@ -148,6 +148,7 @@ def load_new_words(f):
 def table_response(tablenum):
     game = WordwallsGame()
     addl_params = game.get_add_params(tablenum)
+    wgm = game.get_wgm(tablenum, lock=False)
 
     # Sometimes, 'tempListName' will not be in addl_params, when this
     # is loading an already existing saved list. Instead, get from saveName.
@@ -160,6 +161,7 @@ def table_response(tablenum):
     return response({
         'tablenum': tablenum,
         'list_name': list_name,
+        'lexicon': wgm.lexicon.lexiconName,
         'autosave': autosave,
         'multiplayer': addl_params.get('multiplayer', False),
     })
