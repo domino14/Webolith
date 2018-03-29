@@ -52,6 +52,10 @@ export default {
       'Access-Control-Allow-Origin': '*',
     },
   },
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: 1000,
+  },
 };
 
 // https://medium.com/@andyccs/webpack-and-docker-for-development-and-deployment-ae0e73243db4
