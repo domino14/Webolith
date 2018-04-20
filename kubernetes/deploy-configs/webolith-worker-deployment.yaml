@@ -12,7 +12,7 @@ spec:
     metadata:
       labels:
         app: webolith
-        component: worker
+        component: django
     spec:
       containers:
       - name: webolith-container
