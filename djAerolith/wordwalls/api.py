@@ -2,7 +2,6 @@ import json
 from datetime import datetime
 import logging
 
-from channels_presence.models import Room
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_GET, require_POST
@@ -18,7 +17,7 @@ from lib.word_searches import SearchDescription
 from wordwalls.views import getLeaderboardData
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame, GameInitException
-from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
+# from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
 
 logger = logging.getLogger(__name__)
 strptime = datetime.strptime
@@ -138,7 +137,7 @@ def load_new_words(f):
         parsed_req['search_criteria'] = body.get('searchCriteria', [])
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
-        parsed_req['multiplayer'] = body.get('multiplayer')
+        parsed_req['multiplayer'] = body.get('multiplayer', False)
 
         return f(request, parsed_req, *args, **kwargs)
 
@@ -317,21 +316,21 @@ def default_lists(request):
     return response(ret_data)
 
 
-@login_required
-@require_GET
-def tables(request):
-    rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
-    ret_tables = []
-    for room in rooms:
-        try:
-            ret_tables.append(
-                WordwallsGameModel.objects.get(pk=room.channel_name))
-        except WordwallsGameModel.DoesNotExist:
-            pass
+# @login_required
+# @require_GET
+# def tables(request):
+#     rooms = Room.objects.exclude(channel_name=LOBBY_CHANNEL_NAME)
+#     ret_tables = []
+#     for room in rooms:
+#         try:
+#             ret_tables.append(
+#                 WordwallsGameModel.objects.get(pk=room.channel_name))
+#         except WordwallsGameModel.DoesNotExist:
+#             pass
 
-    return response({
-        'tables': [table_info(table) for table in ret_tables]
-    })
+#     return response({
+#         'tables': [table_info(table) for table in ret_tables]
+#     })
 
 
 # api views helpers

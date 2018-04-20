@@ -14,12 +14,9 @@ import ChallengeDialog from './challenge_dialog';
 import WordSearchDialog from './word_search_dialog';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
-import Lobby from '../lobby/main';
 import { SearchTypesEnum, searchCriterionToAdd } from './search_row';
-import log from '../logger';
 
 const GAME_TYPE_NEW = 'Load New List';
-const GAME_TYPE_JOIN = 'Join Table';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
 const LIST_TYPE_WORDSEARCH = 'Word Search';
 const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
@@ -99,7 +96,6 @@ class TableCreator extends React.Component {
           current: 0,
         },
       },
-      multiplayerOn: false,
 
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
@@ -114,7 +110,6 @@ class TableCreator extends React.Component {
     this.savedListSubmit = this.savedListSubmit.bind(this);
     this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
-    this.onMultiplayerModify = this.onMultiplayerModify.bind(this);
     this.addSearchRow = this.addSearchRow.bind(this);
     this.removeSearchRow = this.removeSearchRow.bind(this);
   }
@@ -148,13 +143,6 @@ class TableCreator extends React.Component {
       currentChallenge: challID,
       desiredTime: String(challenge.seconds / 60),
       questionsPerRound: challenge.numQuestions,
-      multiplayerOn: false,
-    });
-  }
-
-  onMultiplayerModify(val) {
-    this.setState({
-      multiplayerOn: val,
     });
   }
 
@@ -281,7 +269,6 @@ class TableCreator extends React.Component {
         desiredTime: parseFloat(this.state.desiredTime),
         questionsPerRound: this.state.questionsPerRound,
         tablenum: this.props.tablenum,
-        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -328,7 +315,6 @@ class TableCreator extends React.Component {
         questionsPerRound: this.state.questionsPerRound,
         selectedList: this.state.selectedList,
         tablenum: this.props.tablenum,
-        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -388,7 +374,6 @@ class TableCreator extends React.Component {
         selectedList: listID,
         tablenum: this.props.tablenum,
         listOption: action,
-        multiplayer: this.state.multiplayerOn,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
@@ -540,39 +525,8 @@ class TableCreator extends React.Component {
    * @param {string} name
    */
   preSubmitHook(callback) {
-    if (this.props.gameGoing &&
-        this.props.currentHost === this.props.username) {
+    if (this.props.gameGoing) {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
-    } else if (this.props.tablenum !== 0 &&
-        this.props.currentHost !== this.props.username &&
-        // XXX: This check shouldn't be necessary. However, `nothost`
-        // below is getting triggered for single player tables because
-        // currentHost is getting cleared for some reason that I can't
-        // track down :/
-        this.props.tableIsMultiplayer
-    ) {
-      Notifications.confirm(
-        'Are you sure?',
-        'You are trying to load a new word list, but you are not the host ' +
-        'of this table. This will create a new table. ' +
-        'Are you sure you wish to continue?', callback,
-      );
-      log({
-        type: 'nothost',
-        tablenum: this.props.tablenum,
-        currentHost: this.props.currentHost,
-        username: this.props.username,
-        tableIsMultiplayer: this.props.tableIsMultiplayer,
-      });
-    } else if (this.props.tablenum !== 0 && !this.state.multiplayerOn &&
-      this.props.tableIsMultiplayer) {
-      // We are in a multiplayer table, but trying to load single player game.
-      Notifications.confirm(
-        'Are you sure?',
-        'You are trying to create a new single player game. ' +
-        'This will remove you from your current multiplayer table and ' +
-        'create a new table. Are you sure you wish to continue?', callback,
-      );
     } else {
       callback();
     }
@@ -611,8 +565,6 @@ class TableCreator extends React.Component {
             removeSearchRow={this.removeSearchRow}
             addSearchRow={this.addSearchRow}
             searches={this.state.wordSearchCriteria}
-            multiplayerOn={this.state.multiplayerOn}
-            onMultiplayerModify={this.onMultiplayerModify}
           />);
 
         break;
@@ -625,8 +577,6 @@ class TableCreator extends React.Component {
             onListUpload={this.listUpload}
             onListFlashcard={(listID, action) =>
               this.preSubmitHook(() => this.flashcardSavedListSubmit(listID, action))}
-            multiplayerOn={this.state.multiplayerOn}
-            onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
       case LIST_TYPE_AEROLITH_LISTS:
@@ -637,8 +587,6 @@ class TableCreator extends React.Component {
             onSelectedListChange={this.selectedListChange}
             onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
             onFlashcardSubmit={() => this.preSubmitHook(this.flashcardAerolithListSubmit)}
-            multiplayerOn={this.state.multiplayerOn}
-            onMultiplayerModify={this.onMultiplayerModify}
           />);
         break;
       default:
@@ -672,26 +620,7 @@ class TableCreator extends React.Component {
       </div>);
   }
 
-  renderLobbyAndJoin() {
-    return (
-      <Lobby
-        username={this.props.username}
-        onChatSubmit={this.props.onChatSubmit}
-        messages={this.props.messages}
-        users={this.props.users}
-        activeTables={this.props.tables}
-        onJoinClicked={TableCreator.joinClicked}
-      />
-    );
-  }
-
   render() {
-    let mainDialog = null;
-    if (this.state.activeGameType === GAME_TYPE_NEW) {
-      mainDialog = this.renderQuizSearch();
-    } else if (this.state.activeGameType === GAME_TYPE_JOIN) {
-      mainDialog = this.renderLobbyAndJoin();
-    }
     return (
       <ModalSkeleton
         title="Lobby"
@@ -705,7 +634,7 @@ class TableCreator extends React.Component {
           <div className="row">
             <div className="col-sm-2">
               <Sidebar
-                gameTypes={[GAME_TYPE_NEW, GAME_TYPE_JOIN]}
+                gameTypes={[GAME_TYPE_NEW]}
                 activeGameType={this.state.activeGameType}
                 setGameType={option => () => this.setState({
                   activeGameType: option,
@@ -728,7 +657,7 @@ class TableCreator extends React.Component {
               />
             </div>
             <div className="col-sm-10">
-              {mainDialog}
+              {this.renderQuizSearch()}
             </div>
 
           </div>
@@ -760,30 +689,9 @@ TableCreator.propTypes = {
     orderPriority: PropTypes.number,
   })).isRequired,
   tablenum: PropTypes.number.isRequired,
-  currentHost: PropTypes.string.isRequired,
-  tableIsMultiplayer: PropTypes.bool.isRequired,
   onLoadNewList: PropTypes.func.isRequired,
   gameGoing: PropTypes.bool.isRequired,
   setLoadingData: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  onChatSubmit: PropTypes.func.isRequired,
-  messages: PropTypes.arrayOf(PropTypes.shape({
-    author: PropTypes.string,
-    id: PropTypes.string,
-    content: PropTypes.string,
-    type: PropTypes.string,
-  })).isRequired,
-  users: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // tables: PropTypes.shape({PropTypes.shape({
-  //   tablenum: PropTypes.number.isRequired,
-  //   admin: PropTypes.string,
-  //   users: PropTypes.arrayOf(PropTypes.string),
-  //   wordList: PropTypes.string,
-  //   lexicon: PropTypes.string,
-  //   secondsPerRound: PropTypes.number,
-  //   questionsPerRound: PropTypes.number,
-  // })),
-  tables: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 

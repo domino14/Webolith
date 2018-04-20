@@ -58,13 +58,7 @@ class GameArea extends React.Component {
         resetTableCreator={this.props.resetTableCreator}
         tableCreatorModalSelector={this.props.tableCreatorModalSelector}
         listName={this.props.listName}
-        startCountdown={this.props.startCountdown}
-        startCountingDown={this.props.startCountingDown}
-
-        canStart={this.props.canStart}
         handleStart={this.props.handleStart}
-        handleStartCountdown={this.props.handleStartCountdown}
-        handleStartCountdownCancel={this.props.handleStartCountdownCancel}
       />
     );
   }
@@ -96,13 +90,7 @@ GameArea.propTypes = {
   tableCreatorModalSelector: PropTypes.string.isRequired,
   listName: PropTypes.string.isRequired,
 
-  startCountdown: PropTypes.number.isRequired,
-  startCountingDown: PropTypes.bool.isRequired,
-
-  canStart: PropTypes.bool.isRequired,
   handleStart: PropTypes.func.isRequired,
-  handleStartCountdown: PropTypes.func.isRequired,
-  handleStartCountdownCancel: PropTypes.func.isRequired,
 };
 
 export default GameArea;

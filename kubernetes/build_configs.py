@@ -45,7 +45,6 @@ def build(role):
     build_webolith_maintenance(role)
     build_nginx_static_deployment(role)
     build_webolith_ingress(role)
-    build_channels_cleanup(role)
 
 
 def get_env_var(role, var, secret=False):
@@ -104,22 +103,6 @@ def build_webolith_maintenance(role):
     with open(
         'kubernetes/deploy-configs/{role}-webolith-maintenance.yaml'.format(
             role=role), 'w') as f:
-        f.write(rendered)
-
-
-def build_channels_cleanup(role):
-    name = 'webolith-channels-cleanup.yaml'
-    with open('kubernetes/deploy-configs/{}'.format(name)) as f:
-        template = f.read()
-
-    context = {}
-    for var_name in ['PGSQL_DB_NAME', 'PGSQL_USER']:
-        context[var_name] = get_env_var(role, var_name)
-    context['BUILD_NUM'] = os.getenv('CIRCLE_SHA1', '')
-    rendered = curlies_render(template, context)
-    with open(
-        'kubernetes/deploy-configs/{role}-{name}'.format(
-            role=role, name=name), 'w') as f:
         f.write(rendered)
 
 

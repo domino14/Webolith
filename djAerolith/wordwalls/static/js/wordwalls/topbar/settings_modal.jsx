@@ -12,7 +12,6 @@ class SettingsModal extends React.Component {
     // rendering preferences.
     this.state = {
       style: this.props.displayStyle.copy(),
-      isMultiplayer: this.props.isMultiplayer,
     };
     this.onWordwallsOptionsModify = this.onWordwallsOptionsModify.bind(this);
     this.saveWordwallsChanges = this.saveWordwallsChanges.bind(this);
@@ -56,7 +55,6 @@ class SettingsModal extends React.Component {
           onWordwallsOptionsModify={this.onWordwallsOptionsModify}
           displayStyle={this.state.style}
           saveWordwallsChanges={this.saveWordwallsChanges}
-          isMultiplayer={this.state.isMultiplayer}
         />
       </ModalSkeleton>
     );
@@ -66,7 +64,6 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
   displayStyle: PropTypes.instanceOf(Styling).isRequired,
   onSave: PropTypes.func.isRequired,
-  isMultiplayer: PropTypes.bool.isRequired,
 };
 
 export default SettingsModal;

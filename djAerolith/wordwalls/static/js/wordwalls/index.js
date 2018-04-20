@@ -9,7 +9,6 @@ Utils.setupCsrfAjax();
 App.initialize({
   lexicon: window.TableGlobals.lexicon,
   tablenum: window.TableGlobals.tablenum,
-  multiplayer: window.TableGlobals.multiplayer,
   currentHost: window.TableGlobals.currentHost,
   addlParams: JSON.parse(window.TableGlobals.addlParams),
   username: user.username,

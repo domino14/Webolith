@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 
 from wordwalls.game import WordwallsGame
 from lib.response import bad_request, response
-from wordwalls.socket_consumers import broadcast_to_table, BroadcastTypes
+# from wordwalls.socket_consumers import broadcast_to_table, BroadcastTypes
 
 
 class RPCError(Exception):
@@ -99,8 +99,8 @@ def guess(user, tableid, params):
         's': state['solver']
     }
     # If this is a multiplayer game, should broadcast to group.
-    if wwg.is_multiplayer(tableid):
-        broadcast_to_table(tableid, BroadcastTypes.GUESS_RESPONSE, game_packet)
+    # if wwg.is_multiplayer(tableid):
+    #     broadcast_to_table(tableid, BroadcastTypes.GUESS_RESPONSE, game_packet)
     return game_packet
 
 
@@ -110,8 +110,8 @@ def start(user, tableid, params):
     if 'error' in quiz_params:
         raise RPCError(quiz_params['error'])
     # If this is a multiplayer game, should broadcast to group.
-    if wwg.is_multiplayer(tableid):
-        broadcast_to_table(tableid, BroadcastTypes.GAME_PAYLOAD, quiz_params)
+    # if wwg.is_multiplayer(tableid):
+    #     broadcast_to_table(tableid, BroadcastTypes.GAME_PAYLOAD, quiz_params)
     return quiz_params
 
 

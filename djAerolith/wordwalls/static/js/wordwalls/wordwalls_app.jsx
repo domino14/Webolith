@@ -9,31 +9,14 @@ import GiveUpButton from './topbar/give_up_button';
 import GameTimer from './topbar/game_timer';
 import GameArea from './gamearea';
 import UserBox from './user_box';
-import Leaderboard from './leaderboard';
 import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
-import ChatBar from './lobby/chat_bar';
-import Players from './lobby/players';
 
 import Styling from './style';
 
 class WordwallsApp extends React.Component {
-  constructor() {
-    super();
-    this.onGuessBoxBlur = this.onGuessBoxBlur.bind(this);
-    this.onChatBarBlur = this.onChatBarBlur.bind(this);
-  }
-
-  onGuessBoxBlur() {
-    this.chatBar.setFocus();
-  }
-
-  onChatBarBlur() {
-    this.guessBox.setFocus();
-  }
-
   setGuessBoxFocus() {
     this.guessBox.setFocus();
   }
@@ -53,7 +36,7 @@ class WordwallsApp extends React.Component {
             autoSave={this.props.autoSave}
             onListNameChange={this.props.onListNameChange}
             onAutoSaveToggle={this.props.onAutoSaveToggle}
-            disableEditing={this.props.tableIsMultiplayer}
+            disableEditing={false}
           />
         </div>
         <div
@@ -65,7 +48,6 @@ class WordwallsApp extends React.Component {
           <SettingsCog
             displayStyle={this.props.displayStyle}
             onSave={this.props.setDisplayStyle}
-            isMultiplayer={this.props.tableIsMultiplayer}
           />
         </div>
         <div
@@ -88,22 +70,6 @@ class WordwallsApp extends React.Component {
   }
 
   renderLeftSide() {
-    let chatBar;
-    if (this.props.tableIsMultiplayer) {
-      chatBar = (
-        <div className="row">
-          <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <ChatBar
-              onChatSubmit={this.props.onChatSubmit}
-              // onBlur={this.onChatBarBlur}
-              ref={(cb) => {
-                this.chatBar = cb;
-              }}
-            />
-          </div>
-        </div>);
-    }
-
     return (
       <div>
         {this.renderTopNav()}
@@ -130,13 +96,7 @@ class WordwallsApp extends React.Component {
               tableCreatorModalSelector={this.props.tableCreatorModalSelector}
               listName={this.props.listName}
               answerers={this.props.answeredBy}
-              startCountdown={this.props.startCountdown}
-              startCountingDown={this.props.startCountingDown}
-
-              canStart={this.props.currentHost === this.props.username}
               handleStart={this.props.handleStart}
-              handleStartCountdown={this.props.handleStartCountdown}
-              handleStartCountdownCancel={this.props.handleStartCountdownCancel}
             />
           </div>
         </div>
@@ -174,39 +134,15 @@ class WordwallsApp extends React.Component {
         </div>
 
         <div className="row" style={{ marginTop: '4px' }}>
-          <div className="col-xs-8 col-sm-9 col-md-9 col-lg-9">
+          <div className="col-xs-12">
             <ChatBox messages={this.props.tableMessages} />
           </div>
-          <div className="col-xs-4 col-sm-3 col-md-3 col-lg-3">
-            <Players
-              players={this.props.usersInTable}
-              height={100}
-              currentHost={this.props.currentHost}
-            />
-          </div>
         </div>
-
-        {chatBar}
-
       </div>
     );
   }
 
   renderRightSide() {
-    let leaderboard;
-    if (this.props.tableIsMultiplayer) {
-      leaderboard = (
-        <div className="row">
-          <div className="col-sm-12 col-md-12 col-lg-12">
-            <Leaderboard
-              showLexiconSymbols={
-                !this.props.displayStyle.hideLexiconSymbols}
-              answerers={this.props.answeredBy}
-            />
-          </div>
-        </div>
-      );
-    }
     return (
       <div>
         <div className="row">
@@ -221,9 +157,6 @@ class WordwallsApp extends React.Component {
             />
           </div>
         </div>
-
-        {leaderboard}
-
       </div>);
   }
 
@@ -270,15 +203,10 @@ WordwallsApp.propTypes = {
 
   handleStart: PropTypes.func.isRequired,
   handleGiveup: PropTypes.func.isRequired,
-  handleStartCountdown: PropTypes.func.isRequired,
-  handleStartCountdownCancel: PropTypes.func.isRequired,
   gameGoing: PropTypes.bool.isRequired,
 
   initialGameTime: PropTypes.number.isRequired,
   timerRanOut: PropTypes.func.isRequired,
-
-  startCountdown: PropTypes.number.isRequired,
-  startCountingDown: PropTypes.bool.isRequired,
 
   numberOfRounds: PropTypes.number.isRequired,
   isChallenge: PropTypes.bool.isRequired,
@@ -301,13 +229,10 @@ WordwallsApp.propTypes = {
   resetTableCreator: PropTypes.func.isRequired,
   tableCreatorModalSelector: PropTypes.string.isRequired,
   username: PropTypes.string.isRequired,
-  usersInTable: PropTypes.arrayOf(PropTypes.string).isRequired,
-  currentHost: PropTypes.string.isRequired,
   onGuessSubmit: PropTypes.func.isRequired,
   lastGuess: PropTypes.string.isRequired,
   lastGuessCorrectness: PropTypes.number.isRequired,
   onHotKey: PropTypes.func.isRequired,
-  tableIsMultiplayer: PropTypes.bool.isRequired,
 
   handleShuffleAll: PropTypes.func.isRequired,
   handleAlphagram: PropTypes.func.isRequired,
@@ -318,7 +243,6 @@ WordwallsApp.propTypes = {
     content: PropTypes.string,
     type: PropTypes.string,
   })).isRequired,
-  onChatSubmit: PropTypes.func.isRequired,
 };
 export default WordwallsApp;
 

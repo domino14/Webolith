@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Select from '../forms/select';
 import SearchRows from './search_rows';
 
 const WordSearchDialog = props => (
@@ -13,16 +12,6 @@ const WordSearchDialog = props => (
         removeSearchRow={props.removeSearchRow}
         modifySearchType={props.onSearchTypeChange}
         modifySearchParam={props.onSearchParamChange}
-      />
-
-      <Select
-        colSize={4}
-        label="Mode"
-        badge="New!"
-        selectedValue={props.multiplayerOn ? 'multi' : 'single'}
-        options={[{ value: 'single', displayValue: 'Single Player' },
-                  { value: 'multi', displayValue: 'Multiplayer' }]}
-        onChange={e => props.onMultiplayerModify(e.target.value === 'multi')}
       />
       <button
         className="btn btn-primary"
@@ -58,15 +47,6 @@ WordSearchDialog.propTypes = {
   removeSearchRow: PropTypes.func.isRequired,
   onSearchSubmit: PropTypes.func.isRequired,
   onFlashcardSubmit: PropTypes.func.isRequired,
-  // availableLexica: PropTypes.arrayOf(PropTypes.shape({
-  //   id: PropTypes.number,
-  //   lexicon: PropTypes.string,
-  //   description: PropTypes.string,
-  //   counts: PropTypes.object,
-  // })),
-  // lexicon: PropTypes.number,
-  multiplayerOn: PropTypes.bool.isRequired,
-  onMultiplayerModify: PropTypes.func.isRequired,
 };
 
 export default WordSearchDialog;
