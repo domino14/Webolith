@@ -41,7 +41,6 @@ class SettingsCog extends React.Component {
           }}
           displayStyle={this.props.displayStyle}
           onSave={this.props.onSave}
-          isMultiplayer={this.props.isMultiplayer}
         />
       </div>
     );
@@ -51,7 +50,6 @@ class SettingsCog extends React.Component {
 SettingsCog.propTypes = {
   displayStyle: PropTypes.instanceOf(Styling).isRequired,
   onSave: PropTypes.func.isRequired,
-  isMultiplayer: PropTypes.bool.isRequired,
 };
 
 export default SettingsCog;

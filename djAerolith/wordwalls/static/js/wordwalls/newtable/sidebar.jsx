@@ -27,7 +27,7 @@ const Sidebar = props => (
       onPillClick={props.setGameType}
     />
 
-    <div className="row">
+    <div className="row" style={{ marginTop: 10 }}>
       <div className="col-sm-12">
         <form>
           <Select

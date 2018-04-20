@@ -178,8 +178,6 @@ INSTALLED_APPS = (
     'gargoyle',
     'registration',
     'social_django',
-    'channels',
-    'channels_presence',
     'captcha',
     #'debug_toolbar',
     #'locking'
@@ -249,20 +247,10 @@ IGNORABLE_404_ENDS = ('.php', '.cgi')
 IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico',
                         '/robots.txt')
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [(os.environ.get('REDIS_HOST', 'redis'), 6379)],
-        },
-        'ROUTING': 'djaerolith.routing.routes',
-    }
-}
 SEND_BROKEN_LINK_EMAILS = False
 
 INTERNAL_IPS = ('127.0.0.1',)
 from logging_filters import skip_suspicious_operations
-
 
 LOGGING = {
     'version': 1,

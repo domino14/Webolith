@@ -12,46 +12,14 @@ import ChallengeResultsModal from './challenge_results_modal';
 import StartButton from './start_button';
 import HeroButton from './hero_button';
 
-const BUTTON_STATE_IDLE = 1;
-const BUTTON_STATE_COUNTING_DOWN = 2;
-const COUNTDOWN_SECS = 3;
-
 class GameInactiveArea extends React.Component {
   constructor() {
     super();
-    this.state = {
-      startButtonState: BUTTON_STATE_IDLE,
-    };
-    this.countdownTimeout = null;
     this.handleStartClick = this.handleStartClick.bind(this);
   }
 
   handleStartClick() {
-    if (this.state.startButtonState === BUTTON_STATE_IDLE) {
-      if (this.props.canStart) {
-        this.setState({
-          startButtonState: BUTTON_STATE_COUNTING_DOWN,
-        });
-        this.countdownTimeout = window.setTimeout(() => {
-          this.props.handleStart();
-          this.setState({
-            startButtonState: BUTTON_STATE_IDLE,
-          });
-        }, COUNTDOWN_SECS * 1000);
-        this.props.handleStartCountdown(COUNTDOWN_SECS);
-      } else {
-        // Try to start the game right away. This will send a message to the
-        // server telling everyone that this user wants to start the game,
-        // but won't actually start it.
-        this.props.handleStart();
-      }
-    } else if (this.state.startButtonState === BUTTON_STATE_COUNTING_DOWN) {
-      this.setState({
-        startButtonState: BUTTON_STATE_IDLE,
-      });
-      window.clearTimeout(this.countdownTimeout);
-      this.props.handleStartCountdownCancel();
-    }
+    this.props.handleStart();
   }
 
   /**
@@ -84,14 +52,8 @@ class GameInactiveArea extends React.Component {
     let challengeButton = null;
     const startButton = (
       <StartButton
-        buttonText={
-          this.state.startButtonState === BUTTON_STATE_COUNTING_DOWN ?
-          'Cancel' : 'Start'
-        }
-        buttonClass={
-          this.state.startButtonState === BUTTON_STATE_COUNTING_DOWN ?
-          'btn btn-warning btn-lg' : 'btn btn-primary btn-lg'
-        }
+        buttonText="Start"
+        buttonClass="btn btn-primary btn-lg"
         handleButtonClick={this.handleStartClick}
       />);
 
@@ -104,16 +66,7 @@ class GameInactiveArea extends React.Component {
         />
       );
     }
-    if (this.props.startCountingDown) {
-      const s = this.props.startCountdown > 1 ? 's' : '';
-      const str = `Game starting in ${this.props.startCountdown} second${s}...`;
-      jumbotronHeader = (
-        <div>
-          <h1>{str}</h1>
-          <h1>{startButton}</h1>
-        </div>
-      );
-    } else if (this.props.numberOfRounds > 0) {
+    if (this.props.numberOfRounds > 0) {
       jumbotronHeader = (
         <div>
           <h1>Game over!</h1>
@@ -199,13 +152,8 @@ GameInactiveArea.propTypes = {
   resetTableCreator: PropTypes.func.isRequired,
   tableCreatorModalSelector: PropTypes.string.isRequired,
   listName: PropTypes.string.isRequired,
-  startCountdown: PropTypes.number.isRequired,
-  startCountingDown: PropTypes.bool.isRequired,
 
-  canStart: PropTypes.bool.isRequired,
   handleStart: PropTypes.func.isRequired,
-  handleStartCountdown: PropTypes.func.isRequired,
-  handleStartCountdownCancel: PropTypes.func.isRequired,
 };
 
 export default GameInactiveArea;

@@ -134,8 +134,8 @@ class WordwallsGame(object):
                 old_word_list.delete()
             else:
                 logger.info('Old word list is still in use, not deleting...')
-        from wordwalls.signal_handlers import game_important_save
-        game_important_save.send(sender=self.__class__, instance=wgm)
+        # from wordwalls.signal_handlers import game_important_save
+        # game_important_save.send(sender=self.__class__, instance=wgm)
         return wgm
 
     def initialize_word_list(self, questions, lexicon, user,
@@ -721,9 +721,6 @@ class WordwallsGame(object):
             word_list.save()
         except Exception:
             logger.exception('Error saving.')
-        if wgm.is_multiplayer():
-            from wordwalls.socket_consumers import send_game_ended
-            send_game_ended(tablenum)
 
     def create_challenge_leaderboard_entry(self, state, tablenum):
         """

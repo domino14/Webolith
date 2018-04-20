@@ -168,7 +168,7 @@ def handle_table_post(request, tableid):
         wwg = WordwallsGame()
         ret = wwg.give_up_and_save(request.user, tableid,
                                    request.POST['listname'])
-        logger.info("Give up and saving returned: %s" % ret)
+        logger.info("Give up and saving returned: %s", ret)
         return response(ret)
     elif action == "savePrefs":
         # XXX: Obsolete me, replace with a direct post to a prefs endpoint

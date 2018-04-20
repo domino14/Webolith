@@ -24,15 +24,6 @@ class AerolithListDialog extends React.Component {
             onChange={event => this.props.onSelectedListChange(event.target.value)}
             options={AerolithListDialog.genOptions(this.props.listOptions)}
           />
-          <Select
-            colSize={4}
-            label="Mode"
-            badge="New!"
-            selectedValue={this.props.multiplayerOn ? 'multi' : 'single'}
-            options={[{ value: 'single', displayValue: 'Single Player' },
-                      { value: 'multi', displayValue: 'Multiplayer' }]}
-            onChange={e => this.props.onMultiplayerModify(e.target.value === 'multi')}
-          />
           <button
             className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
@@ -65,8 +56,6 @@ AerolithListDialog.propTypes = {
   })).isRequired,
   onListSubmit: PropTypes.func.isRequired,
   onFlashcardSubmit: PropTypes.func.isRequired,
-  multiplayerOn: PropTypes.bool.isRequired,
-  onMultiplayerModify: PropTypes.func.isRequired,
 };
 
 export default AerolithListDialog;

@@ -3,11 +3,11 @@ apiVersion: extensions/v1beta1
 metadata:
   name: webolith-worker-deployment
 spec:
-  replicas: 4
+  replicas: 2
   revisionHistoryLimit: 5
   strategy:
     rollingUpdate:
-      maxUnavailable: 2
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -17,7 +17,6 @@ spec:
       containers:
       - name: webolith-container
         image: domino14/webolith:{{ BUILD_NUM }}
-        command: ["python", "manage.py", "runworker"]
         readinessProbe:
           exec:
             command:

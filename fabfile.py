@@ -45,10 +45,7 @@ def _deploy(role):
         '{0}-webolith-ingress'.format(role),
         '{0}-nginx-static-deployment'.format(role),
         'nginx-static-service',
-        'webolith-redis',
-        '{0}-webolith-channels-cleanup'.format(role),  # -- can do manually
         '{0}-webolith-maintenance'.format(role),
-        # webolith-daphne-deployment and service will not be updated everytime
         # these should seldom if ever be restarted. We can do this manually.
     ]:
         local('kubectl apply -f kubernetes/deploy-configs/{0}.yaml'.format(f))

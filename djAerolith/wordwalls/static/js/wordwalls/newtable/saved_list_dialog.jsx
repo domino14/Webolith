@@ -5,7 +5,6 @@ import $ from 'jquery';
 import Dropzone from 'react-dropzone';
 
 import Notifications from '../notifications';
-import Select from '../forms/select';
 import ListTable from './list_table';
 
 const PlayOptions = {
@@ -107,19 +106,7 @@ class SavedListDialog extends React.Component {
               <p>{listInfo}{limitInfo}</p>
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              <Select
-                colSize={4}
-                label="Mode"
-                badge="New!"
-                selectedValue={this.props.multiplayerOn ? 'multi' : 'single'}
-                options={[{ value: 'single', displayValue: 'Single Player' },
-                          { value: 'multi', displayValue: 'Multiplayer' }]}
-                onChange={e => this.props.onMultiplayerModify(e.target.value === 'multi')}
-              />
-            </div>
-          </div>
+
           {/* XXX: position: 'relative' is required here in order to get the
           play button to position its dropdown correctly (it uses offsetParent).
           this is an unfortunate hack, open to suggestions.
@@ -192,8 +179,6 @@ SavedListDialog.propTypes = {
   onListSubmit: PropTypes.func.isRequired,
   onListFlashcard: PropTypes.func.isRequired,
   onListUpload: PropTypes.func.isRequired,
-  multiplayerOn: PropTypes.bool.isRequired,
-  onMultiplayerModify: PropTypes.func.isRequired,
 };
 
 export default SavedListDialog;

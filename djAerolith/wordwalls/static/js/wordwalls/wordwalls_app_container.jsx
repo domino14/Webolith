@@ -11,12 +11,11 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 import _ from 'underscore';
 import Immutable from 'immutable';
-import { WebSocketBridge } from 'django-channels';
 
 import backgroundURL from './background';
 import Styling from './style';
-import WordwallsGame from './wordwalls_game';
 import Presence from './presence';
+import WordwallsGame from './wordwalls_game';
 import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
@@ -25,10 +24,6 @@ import WordwallsRPC from './wordwalls_rpc';
 
 const game = new WordwallsGame();
 const presence = new Presence();
-
-const PRESENCE_TIMEOUT = 20000; // 20 seconds.
-const GET_TABLES_INIT_TIMEOUT = 1500;
-const FAKE_SECOND = 950;
 
 class WordwallsAppContainer extends React.Component {
   constructor(props) {
@@ -43,8 +38,6 @@ class WordwallsAppContainer extends React.Component {
       // from it as they are solved, and they can be shuffled around.
       curQuestions: game.getQuestionState(),
       messages: presence.getMessages(),
-      users: presence.getUsers(),
-      tables: presence.getTables(),
       isChallenge: false,
       isBuild: false,
       totalWords: 0,
@@ -59,13 +52,7 @@ class WordwallsAppContainer extends React.Component {
       loadingData: false,
       tablenum: this.props.tablenum,
       currentHost: this.props.currentHost,
-      tableIsMultiplayer: this.props.tableIsMultiplayer,
       lexicon: this.props.lexicon,
-
-      startCountingDown: false,
-      startCountdown: 0,
-      startCountdownTimer: null,
-
       windowWidth: window.innerWidth,
     };
     // Bindings:
@@ -78,7 +65,6 @@ class WordwallsAppContainer extends React.Component {
     this.handleListNameChange = this.handleListNameChange.bind(this);
     this.handleShuffleAll = this.handleShuffleAll.bind(this);
     this.onGuessSubmit = this.onGuessSubmit.bind(this);
-    this.onChatSubmit = this.onChatSubmit.bind(this);
     this.onHotKey = this.onHotKey.bind(this);
     this.beforeUnload = this.beforeUnload.bind(this);
     this.setDisplayStyle = this.setDisplayStyle.bind(this);
@@ -87,14 +73,7 @@ class WordwallsAppContainer extends React.Component {
     this.handleLoadNewList = this.handleLoadNewList.bind(this);
     this.resetTableCreator = this.resetTableCreator.bind(this);
     this.handleGuessResponse = this.handleGuessResponse.bind(this);
-    this.handleSocketMessages = this.handleSocketMessages.bind(this);
-    this.sendPresence = this.sendPresence.bind(this);
-    this.handleTables = this.handleTables.bind(this);
-    this.handleStartCountdown = this.handleStartCountdown.bind(this);
-    this.handleStartCountdownCancel = this.handleStartCountdownCancel.bind(this);
-    this.countdownTimeout = this.countdownTimeout.bind(this);
 
-    this.websocketBridge = new WebSocketBridge();
     this.rpc = new WordwallsRPC(this.props.tablenum);
   }
 
@@ -130,10 +109,6 @@ class WordwallsAppContainer extends React.Component {
       this.myTableCreator.showModal();
       this.myTableCreator.resetDialog();
     }
-
-    this.connectToSocket();
-    // Start presence timer.
-    window.setInterval(this.sendPresence, PRESENCE_TIMEOUT);
   }
 
   onGuessSubmit(guess) {
@@ -161,28 +136,6 @@ class WordwallsAppContainer extends React.Component {
       return;
     }
     this.submitGuess(modifiedGuess);
-  }
-
-  onChatSubmit(chat, channel) {
-    if (chat[0] === '/') {
-      // Command
-      const command = chat.substring(1);
-      switch (command) {
-        case 'getTables':
-          this.getTables();
-          break;
-        default:
-          break;
-      }
-      return;
-    }
-    this.websocketBridge.send({
-      room: channel,
-      type: 'chat',
-      contents: {
-        chat,
-      },
-    });
   }
 
   onHotKey(key) {
@@ -241,50 +194,10 @@ class WordwallsAppContainer extends React.Component {
       });
   }
 
-  connectToSocket() {
-    const url = `${this.props.socketServer}/wordwalls-socket`;
-    this.websocketBridge.connect(url);
-    this.websocketBridge.listen(this.handleSocketMessages);
-    this.websocketBridge.socket.addEventListener('open', () => {
-      if (this.state.tablenum !== 0) {
-        this.sendSocketJoin(this.state.tablenum);
-      }
-      this.sendPresence();
-      // Avoid a race condition; get tables at beginning after a short break.
-      // Otherwise, if we send at the same time, the list of tables can get
-      // overwritten by our own presence.
-      window.setTimeout(() => this.getTables(), GET_TABLES_INIT_TIMEOUT);
-    });
-  }
-
   handleListNameChange(newListName) {
     this.setState({
       listName: newListName,
     });
-  }
-
-  handleSocketMessages(message) {
-    const messageFnDict = {
-      server: this.addErrorMessage,
-      guessResponse: this.handleGuessResponse,
-      chat: this.handleChat,
-      presence: this.handleUsersIn,
-      tableUpdate: this.handleTable,
-      gamePayload: this.handleStartReceived,
-      gameGoingPayload: this.handleGameGoingPayload,
-      gameOver: this.processGameEnded,
-      newHost: this.handleNewHost,
-      startCountdown: this.handleStartCountdownFromServer,
-      startCountdownCancel: this.handleStartCountdownCancelFromServer,
-      allSolve: this.handleAllSolve,
-      solveWord: this.handleSolveWord,
-    };
-    const handleFn = messageFnDict[message.type];
-    if (!handleFn) {
-      window.console.log('Received unrecognized message type:', message.type);
-      return;
-    }
-    handleFn.bind(this)(message.contents);
   }
 
   /**
@@ -304,36 +217,6 @@ class WordwallsAppContainer extends React.Component {
    */
   handleSolveWord(contents) {
     this.submitGuess(contents.word);
-  }
-
-  handleUsersIn(contents) {
-    // The presence payload always gets sent to everyone currently online.
-    // This provides a convenient way for the front end to update presence
-    // lists inside tables, in the lobby, and on the table displayer thing.
-    // This might not be scalable as we get more users.
-    presence.addUsers(contents.users, contents.room);
-    const newState = {
-      users: presence.getUsers(),
-      tables: presence.getTables(),
-    };
-    const currentHost = presence.getHost(String(this.state.tablenum));
-    if (currentHost) {
-      newState.currentHost = currentHost;
-    }
-    this.setState(newState);
-  }
-
-  handleNewHost(contents) {
-    presence.setHost(contents.host, contents.room);
-    this.setState({
-      tables: presence.getTables(),
-    });
-    if (contents.room === String(this.state.tablenum)) {
-      this.addMessage(`The host of this table is now ${contents.host}`, 'info');
-      this.setState({
-        currentHost: contents.host,
-      });
-    }
   }
 
   handleAutoSaveToggle() {
@@ -394,32 +277,6 @@ class WordwallsAppContainer extends React.Component {
       });
   }
 
-  handleStartCountdown(countdownSec) {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'startCountdown',
-      contents: {
-        countdown: countdownSec,
-      },
-    });
-  }
-
-  handleStartCountdownCancel() {
-    this.websocketBridge.send({
-      room: String(this.state.tablenum),
-      type: 'startCountdownCancel',
-      contents: {},
-    });
-  }
-
-  handleGameGoingPayload(data) {
-    this.handleStartReceived(data);
-    if (_.has(data, 'time')) {
-      this.addMessage(`This round will be over in ${Math.round(data.time)} seconds.
-        Please wait to join the next round.`, 'info');
-    }
-  }
-
   handleStartReceived(data) {
     if (this.state.gameGoing) {
       return;
@@ -440,7 +297,7 @@ class WordwallsAppContainer extends React.Component {
       window.Intercom('trackEvent', 'started-game', {
         isChallenge: data.gameType && data.gameType.includes('challenge'),
         listname: this.state.listName,
-        multiplayer: this.state.tableIsMultiplayer,
+        multiplayer: false,
       });
     }
 
@@ -462,53 +319,6 @@ class WordwallsAppContainer extends React.Component {
   handleResize() {
     this.setState({
       windowWidth: window.innerWidth,
-    });
-  }
-
-  countdownTimeout() {
-    const newCountdown = this.state.startCountdown - 1;
-    this.setState({
-      startCountdown: newCountdown,
-    });
-    if (newCountdown >= 0) {
-      this.setState({
-        startCountdownTimer: window.setTimeout(
-          this.countdownTimeout,
-          FAKE_SECOND,
-        ),
-      });
-    } else {
-      this.setState({
-        startCountingDown: false,
-      });
-    }
-  }
-
-  handleStartCountdownFromServer(contents) {
-    this.setState({
-      startCountingDown: true,
-      startCountdown: contents,
-      // Account for ping delay. XXX: This is ugly...
-      startCountdownTimer: window.setTimeout(
-        this.countdownTimeout,
-        FAKE_SECOND,
-      ),
-    });
-  }
-
-  handleStartCountdownCancelFromServer() {
-    window.clearInterval(this.state.startCountdownTimer);
-    this.setState({
-      startCountingDown: false,
-      startCountdown: 0,
-      startCountdownTimer: null,
-    });
-    this.addMessage('The start of the game was canceled!', 'error');
-  }
-
-  sendPresence() {
-    this.websocketBridge.send({
-      type: 'presence',
     });
   }
 
@@ -574,9 +384,6 @@ class WordwallsAppContainer extends React.Component {
       }
       return;
     }
-    if (this.state.tableIsMultiplayer) {
-      this.addMessage(`${data.s} solved ${data.w}`, 'info');
-    }
     this.setState({
       curQuestions: game.getQuestionState(),
       origQuestions: game.getOriginalQuestionState(),
@@ -596,49 +403,6 @@ class WordwallsAppContainer extends React.Component {
     }
     if (endQuiz) {
       this.processGameEnded();
-    }
-  }
-
-
-  handleChat(data) {
-    this.addMessage(data.chat, 'chat', data.sender, data.room === 'lobby');
-  }
-
-  handleTables(data) {
-    presence.addTables(data.tables);
-    this.setState({
-      tables: presence.getTables(),
-      currentHost: presence.getHost(String(this.state.tablenum)),
-    });
-  }
-
-  handleTable(data) {
-    presence.updateTable(data.table);
-    this.setState({
-      tables: presence.getTables(),
-    });
-    if (data.table.tablenum !== this.state.tablenum) {
-      return;
-    }
-    // If here, this is the table we are currently in; let's make some
-    // visual updates.
-    const oldList = this.state.listName;
-    const host = presence.getHost(String(this.state.tablenum));
-    const oldHost = this.state.currentHost;
-    if (oldHost !== host) {
-      // Host change?
-      this.setState({
-        currentHost: host,
-      });
-    }
-    if (oldList !== data.table.wordList) {
-      this.setState({
-        listName: data.table.wordList,
-      });
-      if (host !== this.props.username) {
-        this.addMessage(`${host} changed the word list to ${data.table.lexicon}
-         - ${data.table.wordList}`, 'info');
-      }
     }
   }
 
@@ -666,15 +430,14 @@ class WordwallsAppContainer extends React.Component {
     this.addMessage(errMsg.error);
   }
 
-  addMessage(serverMsg, optType, optSender, optIsLobby) {
+  addMessage(serverMsg, optType, optSender) {
     const message = {
       author: optSender || '',
       id: _.uniqueId('msg_'),
       content: serverMsg,
       type: optType || 'server',
     };
-
-    presence.addMessage(message, optIsLobby);
+    presence.addMessage(message, false);
     this.setState({
       messages: presence.getMessages(),
     });
@@ -705,22 +468,6 @@ class WordwallsAppContainer extends React.Component {
         });
       });
     }
-    // Send the backend server the remaining words and score. Do this after
-    // a couple of seconds in order to wait for the last word's response.
-    // This is a bit of a hack, but the purpose of this is logging for now...
-    window.setTimeout(() => {
-      if (!this.state.gameGoing) {
-        this.websocketBridge.send({
-          room: String(this.state.tablenum),
-          type: 'endpacket',
-          contents: {
-            wrongWords: game.getRemainingAnswers(),
-            totalWords: game.getTotalNumWords(),
-            appVersion: this.props.appVersion,
-          },
-        });
-      }
-    }, 2000);
   }
 
   /**
@@ -805,10 +552,9 @@ class WordwallsAppContainer extends React.Component {
       tablenum: data.tablenum,
       numberOfRounds: 0,
       curQuestions: Immutable.List(),
-      tableIsMultiplayer: data.multiplayer,
     });
     this.addMessage(`Loaded new list: ${data.list_name}`, 'info');
-    this.showAutosaveMessage(data.autosave && !data.multiplayer);
+    this.showAutosaveMessage(data.autosave);
     if (changeUrl) {
       // The .bind(history) is important because otherwise `this` changes
       // and we get an "illegal invocation". 😒
@@ -822,33 +568,10 @@ class WordwallsAppContainer extends React.Component {
       );
       this.rpc.setTablenum(data.tablenum);
       document.title = `Wordwalls - table ${data.tablenum}`;
-      if (oldTablenum !== 0) {
-        this.sendSocketTableReplace(oldTablenum, data.tablenum);
-      } else {
-        this.sendSocketJoin(data.tablenum);
-      }
     }
     window.Intercom('trackEvent', 'loaded-new-list', {
       listName: data.list_name,
-      multiplayer: data.multiplayer,
-    });
-  }
-
-  sendSocketJoin(tablenum) {
-    this.websocketBridge.send({
-      room: String(tablenum),
-      type: 'join',
-      contents: {},
-    });
-  }
-
-  sendSocketTableReplace(oldTablenum, tablenum) {
-    this.websocketBridge.send({
-      room: String(tablenum),
-      type: 'replaceTable',
-      contents: {
-        oldTable: oldTablenum,
-      },
+      multiplayer: false,
     });
   }
 
@@ -899,11 +622,6 @@ class WordwallsAppContainer extends React.Component {
           gameGoing={this.state.gameGoing}
           setLoadingData={loading => this.setState({ loadingData: loading })}
           username={this.props.username}
-          onChatSubmit={chat => this.onChatSubmit(chat, 'lobby')}
-          messages={this.state.messages.get('lobby', Immutable.List()).toJS()}
-          users={this.state.users.get('lobby', Immutable.List()).toJS()}
-          tables={this.state.tables.toJS()}
-          tableIsMultiplayer={this.state.tableIsMultiplayer}
         />
         <WordwallsApp
           boardWidth={boardWidth}
@@ -950,15 +668,6 @@ class WordwallsAppContainer extends React.Component {
           handleAlphagram={this.handleAlphagram}
           handleCustomOrder={this.handleCustomOrder}
           tableMessages={this.state.messages.get('table', Immutable.List()).toJS()}
-          onChatSubmit={chat => this.onChatSubmit(chat, String(this.state.tablenum))}
-          usersInTable={this.state.users.get(String(this.state.tablenum), Immutable.List()).toJS()}
-
-          startCountdown={this.state.startCountdown}
-          startCountingDown={this.state.startCountingDown}
-          handleStartCountdown={this.handleStartCountdown}
-          handleStartCountdownCancel={this.handleStartCountdownCancel}
-
-          tableIsMultiplayer={this.state.tableIsMultiplayer}
           ref={(wwApp) => {
             this.wwApp = wwApp;
           }}
@@ -979,7 +688,6 @@ WordwallsAppContainer.propTypes = {
   lexicon: PropTypes.string.isRequired,
   displayStyle: PropTypes.instanceOf(Styling).isRequired,
   tablenum: PropTypes.number.isRequired,
-  tableIsMultiplayer: PropTypes.bool.isRequired,
   currentHost: PropTypes.string.isRequired,
   defaultLexicon: PropTypes.number.isRequired,
   challengeInfo: PropTypes.arrayOf(PropTypes.shape({
@@ -994,8 +702,6 @@ WordwallsAppContainer.propTypes = {
     description: PropTypes.string,
     counts: PropTypes.object,
   })).isRequired,
-  socketServer: PropTypes.string.isRequired,
-  appVersion: PropTypes.string.isRequired,
 };
 
 export default WordwallsAppContainer;

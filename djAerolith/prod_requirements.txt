@@ -14,9 +14,6 @@ requests-oauthlib
 psycopg2
 PyYAML
 PyJWT
-channels
-asgi_redis
-django-channels-presence
 gunicorn
 # Not strictly a prod requirement. However, the main issue here
 # is that we can't run tests in the docker container otherwise.
