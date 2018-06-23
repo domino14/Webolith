@@ -501,8 +501,7 @@ class WordwallsGame(object):
 
     def check_game_ended(self, tablenum):
         # Called when javascript tells the server that time ran out on
-        # its end. TODO think about what happens (on the front-end)
-        # if javascript tells the server too early.
+        # its end.
         # XXX: This function could be called multiple times from different
         # clients. The lock in get_wgm should do the right thing here,
         # but we should figure out how to test this.
@@ -513,13 +512,16 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
         timer_ran_out = self.did_timer_run_out(state)
         quiz_going = state['quizGoing']
-        if timer_ran_out and quiz_going:
-            # the game is over! mark it so.
+
+        def end_game():
             state['timeRemaining'] = 0
             self.do_quiz_end_actions(state, tablenum, wgm)
             wgm.currentGameState = json.dumps(state)
             wgm.save()
 
+        if timer_ran_out and quiz_going:
+            # the game is over! mark it so.
+            end_game()
             return True
         now = time.time()
         logger.info('Got game ended but did not actually end: '
@@ -528,8 +530,11 @@ class WordwallsGame(object):
                     now, state['quizGoing'],
                     now - state['quizStartTime'])
         if not timer_ran_out:
+            # Log this, but end the game anyway. What else are we going
+            # to do? Otherwise, front end just gets stuck.
             logger.info('event=ran-out-too-early')
-            return _('Got timer signal too early. Please report error.')
+            end_game()
+            return True
         if not quiz_going:
             logger.info('event=round-is-over')
             return _('The round is over.')
