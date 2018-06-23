@@ -49,8 +49,8 @@ class Styling {
           bold: false,
         },
         bc: {
-          background: '',
-          bodyBackground: '',
+          background: 'pool_table',
+          bodyBackground: 'hexellence',
           showBorders: false,
           hideLexiconSymbols: false,
         },

@@ -18,6 +18,10 @@ class GameArea extends React.Component {
   }
 
   render() {
+    let scaleTransform = 1.0;
+    if (this.props.windowWidth > 1200) {
+      scaleTransform = (this.props.windowWidth / 1200);
+    }
     if (this.props.gameGoing) {
       if (this.props.isBuild) {
         return (
@@ -28,6 +32,7 @@ class GameArea extends React.Component {
             width={this.props.width}
             questions={this.props.curQuestions}
             origQuestions={this.props.origQuestions}
+            scaleTransform={scaleTransform}
           />
         );
       }
@@ -39,7 +44,9 @@ class GameArea extends React.Component {
           height={this.props.height}
           gridWidth={this.props.gridWidth}
           gridHeight={this.props.gridHeight}
+          windowWidth={this.props.windowWidth}
           questions={this.props.curQuestions}
+          scaleTransform={scaleTransform}
         />
       );
     }
@@ -86,6 +93,7 @@ GameArea.propTypes = {
   height: PropTypes.number.isRequired,
   gridWidth: PropTypes.number.isRequired,
   gridHeight: PropTypes.number.isRequired,
+  windowWidth: PropTypes.number.isRequired,
   resetTableCreator: PropTypes.func.isRequired,
   tableCreatorModalSelector: PropTypes.string.isRequired,
   listName: PropTypes.string.isRequired,

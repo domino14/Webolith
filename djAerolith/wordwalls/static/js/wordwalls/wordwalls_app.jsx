@@ -91,6 +91,7 @@ class WordwallsApp extends React.Component {
               height={this.props.boardHeight}
               gridWidth={this.props.boardGridWidth}
               gridHeight={this.props.boardGridHeight}
+              windowWidth={this.props.windowWidth}
               challengeData={this.props.challengeData}
               resetTableCreator={this.props.resetTableCreator}
               tableCreatorModalSelector={this.props.tableCreatorModalSelector}
@@ -164,7 +165,7 @@ class WordwallsApp extends React.Component {
     return (
       <div>
         <div className="row">
-          <div className="col-xs-12 col-sm-9 col-md-9 col-lg-7">
+          <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
             {this.renderLeftSide()}
           </div>
           <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
@@ -222,6 +223,8 @@ WordwallsApp.propTypes = {
   boardHeight: PropTypes.number.isRequired,
   boardGridWidth: PropTypes.number.isRequired,
   boardGridHeight: PropTypes.number.isRequired,
+  windowWidth: PropTypes.number.isRequired,
+
   challengeData: PropTypes.shape({
     entries: PropTypes.array,
     maxScore: PropTypes.number,

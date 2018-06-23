@@ -13,6 +13,9 @@ const WordwallsQuestionPlaceholder = props => (
       stroke="#7e7f7a"
       strokeWidth="1px"
       fill="none"
+      transform={
+        `scale(${props.scaleTransform})`
+      }
       strokeOpacity={props.displayStyle.showBorders ? '1' : '0'}
     />
   </g>
@@ -24,6 +27,7 @@ WordwallsQuestionPlaceholder.propTypes = {
   gridY: PropTypes.number.isRequired,
   xSize: PropTypes.number.isRequired,
   ySize: PropTypes.number.isRequired,
+  scaleTransform: PropTypes.number.isRequired,
 };
 
 export default WordwallsQuestionPlaceholder;

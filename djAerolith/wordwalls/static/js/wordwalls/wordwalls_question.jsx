@@ -82,7 +82,7 @@ class WordwallsQuestion extends React.Component {
     // See http://stackoverflow.com/a/22580176/1737333 for perhaps
     // a better approach.
     const letterFontSize = dims[0] * 7;
-    const numberFontSize = dims[0] * 4;
+    const numberFontSize = dims[0] * 5;
     let countFrom = 0;
     if (this.props.displayStyle.showChips) {
       tiles.push(<Chip
@@ -100,8 +100,9 @@ class WordwallsQuestion extends React.Component {
 
     if (this.props.displayStyle.tilesOn) {
       for (let i = countFrom, letterIdx = 0;
-        i < this.props.letters.length + countFrom;
-        i += 1, letterIdx += 1) {
+            i < this.props.letters.length + countFrom;
+            i += 1, letterIdx += 1) {
+
         x = xPadding + (i * tileWidth);
         letter = this.props.letters[letterIdx];
         if (letter === DEFAULT_BLANK_CHARACTER &&

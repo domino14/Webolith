@@ -161,6 +161,7 @@ class WordwallsSettings extends React.Component {
 
   render() {
     const stateLetRem = this.state.tileOrderLettersRemaining;
+    const scaleTransform = 1.5;
     let letRem;
     // If it's not totally empty (or not totally full)
     if (stateLetRem.length !== 0 && stateLetRem.length !== 27) {
@@ -188,13 +189,14 @@ class WordwallsSettings extends React.Component {
         <div className="row">
           <div className="col-lg-12">
             <SVGBoard
-              width={180}
+              width={172}
               height={30}
               gridWidth={1}
               gridHeight={1}
               onShuffle={this.handleShuffle}
               displayStyle={this.props.displayStyle}
               questions={this.state.questions}
+              scaleTransform={1.75}
             />
           </div>
         </div>
