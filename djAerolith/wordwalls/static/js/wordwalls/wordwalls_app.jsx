@@ -72,7 +72,6 @@ class WordwallsApp extends React.Component {
   renderLeftSide() {
     return (
       <div>
-        {this.renderTopNav()}
         <div className="row">
           <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <GameArea
@@ -164,6 +163,11 @@ class WordwallsApp extends React.Component {
   render() {
     return (
       <div>
+        <div className="row">
+          <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+            {this.renderTopNav()}
+          </div>
+        </div>
         <div className="row">
           <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
             {this.renderLeftSide()}

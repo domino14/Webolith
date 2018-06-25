@@ -80,12 +80,12 @@ class GuessBox extends React.Component {
         <div className="hidden-xs col-sm-6">
           <span className="text-muted">
             Last:
-          </span> <span className={guessClass}>{this.props.lastGuess}</span>
+          </span> <strong className={guessClass}>{this.props.lastGuess}</strong>
         </div>
         <div className="col-xs-5 visible-xs-inline-block">
-          <span className={guessClass}>
+          <strong className={guessClass}>
             {this.props.lastGuess}
-          </span>
+          </strong>
         </div>
       </div>
     );
