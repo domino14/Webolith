@@ -25,6 +25,7 @@ const SVGBoard = (props) => {
   const xSize = props.width / props.gridWidth;
   const ySize = props.height / props.gridHeight;
   const { onShuffle } = props;
+
   // curQuestions is an Immutable List of Maps
   props.questions.forEach((question, idx) => {
     // Calculate top left X, Y based on dimensions.
@@ -47,6 +48,7 @@ const SVGBoard = (props) => {
         ySize={ySize}
         xSize={xSize}
         onShuffle={onShuffle}
+        scaleTransform={props.scaleTransform}
       />);
     } else {
       questions.push(<QuestionPlaceholder
@@ -56,6 +58,7 @@ const SVGBoard = (props) => {
         gridY={gridY + topMargin}
         xSize={xSize}
         ySize={ySize}
+        scaleTransform={props.scaleTransform}
       />);
     }
   });
@@ -63,12 +66,16 @@ const SVGBoard = (props) => {
   return (
     <svg
       style={style}
-      width={props.width + (2 * leftMargin)}
-      height={props.height + (2 * topMargin)}
+      width={props.scaleTransform * (props.width + (2 * leftMargin))}
+      height={props.scaleTransform * (props.height + (2 * topMargin))}
       onMouseDown={(e) => { e.preventDefault(); }}
     >{questions}
     </svg>
   );
+};
+
+SVGBoard.defaultProps = {
+  scaleTransform: 1.0,
 };
 
 SVGBoard.propTypes = {
@@ -77,6 +84,7 @@ SVGBoard.propTypes = {
   height: PropTypes.number.isRequired,
   gridWidth: PropTypes.number.isRequired,
   gridHeight: PropTypes.number.isRequired,
+  scaleTransform: PropTypes.number,
   questions: PropTypes.instanceOf(Immutable.List).isRequired,
   onShuffle: PropTypes.func.isRequired,
 };

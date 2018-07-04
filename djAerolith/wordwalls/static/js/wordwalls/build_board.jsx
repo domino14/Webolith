@@ -120,7 +120,7 @@ class BuildBoard extends React.Component {
           ySize={40}
           xSize={200}
           onShuffle={this.props.onShuffle}
-          scaleTransform={1.75}
+          scaleTransform={this.props.scaleTransform * 1.75}
         />);
     }
 
@@ -128,8 +128,9 @@ class BuildBoard extends React.Component {
       <div>
         <svg
           style={style}
-          width={this.props.width + (2 * leftMargin)}
-          height={60 + (2 * topMargin)}
+          width={this.props.scaleTransform *
+            (this.props.width + (2 * leftMargin))}
+          height={this.props.scaleTransform * (60 + (2 * topMargin))}
           onMouseDown={(e) => { e.preventDefault(); }}
         >{renderedQuestion}
         </svg>
@@ -148,6 +149,7 @@ BuildBoard.propTypes = {
   onShuffle: PropTypes.func.isRequired,
   answerers: PropTypes.instanceOf(Immutable.Map).isRequired,
   origQuestions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  scaleTransform: PropTypes.number.isRequired,
 };
 
 export default BuildBoard;

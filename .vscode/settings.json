@@ -1,8 +1,0 @@
-{
-    "python.linting.flake8Enabled": true,
-    "python.pythonPath": "/usr/local/bin/python3",
-    "python.linting.pylintArgs": [
-        "--load-plugins=pylint_django"
-    ],
-    "python.linting.pylintEnabled": false
-}

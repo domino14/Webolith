@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import fonts from './fonts';
+
 const ColorConstants = {
   White: '#feffff',
   Black: '#3e3f3a',
@@ -76,7 +78,6 @@ function getColorFromAnagrams(numAnagrams) {
 
 const GameChip = (props) => {
   const transform = `translate(${props.x + props.radius}, ${props.y + props.radius})`;
-  const fontFamily = 'Menlo,Consolas,"Ubuntu Mono",monospace';
   const color = getColorFromAnagrams(props.number);
   return (
     <g transform={transform}>
@@ -92,9 +93,9 @@ const GameChip = (props) => {
       <text
         x={0}
         y={0}
+        dy={fonts.sansmono.dy}
         textAnchor="middle"
-        dominantBaseline="central"
-        fontFamily={fontFamily}
+        fontFamily={fonts.sansmono.fontFamily}
         fontSize={`${props.fontSize}%`}
         stroke={color.textColor}
         fill={color.textColor}

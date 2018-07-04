@@ -584,10 +584,10 @@ class WordwallsAppContainer extends React.Component {
     // dimensions.
     // This is the size of a question in pixels. We should make these
     // dynamic later to allow users to zoom in, etc.
-    const questionWidth = 180;
+    const questionWidth = 176;
     const questionHeight = 30;
     let boardGridWidth;
-    const boardGridHeight = 13;
+    let boardGridHeight = 13;
     // Magic numbers; if we modify these we'll have to figure something out.
     if (this.state.windowWidth < 768) {
       // We take up 100%.
@@ -595,8 +595,11 @@ class WordwallsAppContainer extends React.Component {
     } else if (this.state.windowWidth < 992) {
       // This gets tricky because the UserBox component gets in the way.
       boardGridWidth = 3;
-    } else {
+    } else if (this.state.windowWidth < 1200) {
       boardGridWidth = 4;
+    } else {
+      boardGridWidth = 5;
+      boardGridHeight = 10;
     }
 
     const boardWidth = questionWidth * boardGridWidth;
@@ -628,6 +631,7 @@ class WordwallsAppContainer extends React.Component {
           boardHeight={boardHeight}
           boardGridWidth={boardGridWidth}
           boardGridHeight={boardGridHeight}
+          windowWidth={this.state.windowWidth}
 
           listName={this.state.listName}
           autoSave={this.state.autoSave}

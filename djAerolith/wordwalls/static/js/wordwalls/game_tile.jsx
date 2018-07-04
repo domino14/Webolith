@@ -1,5 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import fonts from './fonts';
+
 /**
  * Get a color given a string tile style. The tile style is just a
  * stringified number from 1 - 9.
@@ -55,17 +58,9 @@ function colorFromTileStyle(style) {
 }
 
 const GameTile = (props) => {
-  let fontFamily;
   let { fontSize, letter } = props;
   const transform = `translate(${props.x},${props.y})`;
-  if (props.font === 'mono') {
-    fontFamily = '"Courier New",monospace';
-    fontSize *= 1.1;
-  } else if (props.font === 'sans') {
-    fontFamily = 'Arial,Geneva,Helvetica,Helv,sans-serif';
-  } else if (props.font === 'sansmono') {
-    fontFamily = 'Monaco,Consolas,"Ubuntu Mono",monospace';
-  }
+
   const fontWeight = props.bold ? 'bold' : 'normal';
   const color = colorFromTileStyle(props.tileStyle);
 
@@ -97,15 +92,15 @@ const GameTile = (props) => {
         strokeWidth="0.5px"
         stroke={color.outline}
         fill={color.color}
-        rx={1} /* radiuses */
-        ry={1}
+        rx={2} /* radiuses */
+        ry={2}
       />
       <text
         x={props.width / 2}
         y={props.height / 2}
+        dy={fonts[props.font].dy}
         textAnchor="middle"
-        dominantBaseline="central"
-        fontFamily={fontFamily}
+        fontFamily={fonts[props.font].fontFamily}
         fontWeight={fontWeight}
         fontSize={`${fontSize}%`}
         stroke={color.textColor}
