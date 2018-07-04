@@ -161,7 +161,6 @@ class WordwallsSettings extends React.Component {
 
   render() {
     const stateLetRem = this.state.tileOrderLettersRemaining;
-    const scaleTransform = 1.5;
     let letRem;
     // If it's not totally empty (or not totally full)
     if (stateLetRem.length !== 0 && stateLetRem.length !== 27) {

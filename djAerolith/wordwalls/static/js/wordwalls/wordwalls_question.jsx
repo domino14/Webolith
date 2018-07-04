@@ -100,9 +100,8 @@ class WordwallsQuestion extends React.Component {
 
     if (this.props.displayStyle.tilesOn) {
       for (let i = countFrom, letterIdx = 0;
-            i < this.props.letters.length + countFrom;
-            i += 1, letterIdx += 1) {
-
+        i < this.props.letters.length + countFrom;
+        i += 1, letterIdx += 1) {
         x = xPadding + (i * tileWidth);
         letter = this.props.letters[letterIdx];
         if (letter === DEFAULT_BLANK_CHARACTER &&

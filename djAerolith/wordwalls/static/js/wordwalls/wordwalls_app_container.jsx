@@ -54,7 +54,6 @@ class WordwallsAppContainer extends React.Component {
       currentHost: this.props.currentHost,
       lexicon: this.props.lexicon,
       windowWidth: window.innerWidth,
-      windowHeight: window.innerHeight,
     };
     // Bindings:
     this.timerRanOut = this.timerRanOut.bind(this);
@@ -320,7 +319,6 @@ class WordwallsAppContainer extends React.Component {
   handleResize() {
     this.setState({
       windowWidth: window.innerWidth,
-      windowHeight: window.innerHeight,
     });
   }
 

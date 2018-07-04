@@ -31,7 +31,7 @@ from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
 JWT_EXPIRATION = 60 * 60 * 6  # 6 hours
-
+JWT_EXPIRATION = 15
 
 def health(request):
     # HAProxy health request
