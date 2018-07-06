@@ -35,6 +35,9 @@ class Styling {
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
       style.bc.background = style.bc.background || '';
       style.bc.bodyBackground = style.bc.bodyBackground || '';
+      if (!style.bc.upscaleWithWindowSize) {
+        style.bc.upscaleWithWindowSize = 'small';
+      }
     } else {
       // Default style.
       style = {
@@ -53,6 +56,7 @@ class Styling {
           bodyBackground: 'hexellence',
           showBorders: false,
           hideLexiconSymbols: false,
+          upscaleWithWindowSize: 'small',
         },
       };
     }
@@ -117,6 +121,10 @@ class Styling {
     return this.style.getIn(['bc', 'bodyBackground']);
   }
 
+  get upscaleWithWindowSize() {
+    return this.style.getIn(['bc', 'upscaleWithWindowSize']);
+  }
+
   /**
    * Set the style key to the given value. This function takes care of
    * parsing where in the tree the key is stored.
@@ -138,6 +146,7 @@ class Styling {
       showBorders: ['bc', 'showBorders'],
       background: ['bc', 'background'],
       bodyBackground: ['bc', 'bodyBackground'],
+      upscaleWithWindowSize: ['bc', 'upscaleWithWindowSize'],
     };
     if (!treeKeys[key]) {
       throw new Error(`The key ${key} was not found in the tree.`);

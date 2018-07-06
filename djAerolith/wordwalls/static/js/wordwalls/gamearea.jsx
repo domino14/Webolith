@@ -20,7 +20,18 @@ class GameArea extends React.Component {
   render() {
     let scaleTransform = 1.0;
     if (this.props.windowWidth > 1200) {
-      scaleTransform = (this.props.windowWidth / 1200);
+      switch (this.props.displayStyle.upscaleWithWindowSize) {
+        case 'none':
+          break;
+        case 'small':
+          scaleTransform = (this.props.windowWidth + 1200) / 2400;
+          break;
+        case 'large':
+          scaleTransform = (this.props.windowWidth / 1200);
+          break;
+        default:
+          break;
+      }
     }
     if (this.props.gameGoing) {
       if (this.props.isBuild) {
