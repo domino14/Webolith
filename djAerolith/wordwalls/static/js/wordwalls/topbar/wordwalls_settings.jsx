@@ -66,6 +66,21 @@ class WordwallsSettings extends React.Component {
     ];
   }
 
+  static getUpscaleOptions() {
+    return [
+      {
+        value: 'none',
+        displayValue: 'No',
+      }, {
+        value: 'small',
+        displayValue: 'Scale up a little',
+      }, {
+        value: 'large',
+        displayValue: 'Scale up a lot',
+      },
+    ];
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -313,6 +328,20 @@ class WordwallsSettings extends React.Component {
 );
                     }}
                     label="Hide lexicon symbols (such as # or +)"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-lg-6">
+                  <Select
+                    colSize={10}
+                    label="Scale size of word grid as window grows"
+                    selectedValue={this.props.displayStyle.upscaleWithWindowSize}
+                    onChange={(event) => {
+                      this.props.onOptionsModify('upscaleWithWindowSize', event.target.value);
+                    }}
+                    options={WordwallsSettings.getUpscaleOptions()}
                   />
                 </div>
               </div>
