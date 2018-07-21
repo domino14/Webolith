@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SearchRow, { SearchTypesEnum } from './search_row';
+import SearchRow from './row';
+import { SearchTypesEnum } from './types';
 
 const SearchRows = props => (
   props.searches.map((search, idx) => (

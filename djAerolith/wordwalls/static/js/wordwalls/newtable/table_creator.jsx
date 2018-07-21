@@ -11,14 +11,14 @@ import Notifications from '../notifications';
 import Sidebar from './sidebar';
 
 import ChallengeDialog from './challenge_dialog';
-import WordSearchDialog from './word_search_dialog';
+import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
-import { SearchTypesEnum, searchCriterionToAdd } from './search_row';
 
 const GAME_TYPE_NEW = 'Load New List';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
 const LIST_TYPE_WORDSEARCH = 'Word Search';
+const LIST_TYPE_BLANKS = 'Blanks';
 const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const LIST_TYPE_SAVED_LIST = 'My Saved Lists';
 const FLASHCARD_URL = '/flashcards/';
@@ -73,15 +73,11 @@ class TableCreator extends React.Component {
       challengeData: {},
       currentChallenge: 0,
       // Word-search related
-      wordSearchCriteria: [{
-        searchType: SearchTypesEnum.LENGTH,
-        minValue: 7,
-        maxValue: 7,
-      }, {
-        searchType: SearchTypesEnum.PROBABILITY,
-        minValue: 1,
-        maxValue: 100,
-      }],
+
+      // blankSearchCriteria: [{
+      //   searchType: SearchTypesEnum.FIXED_LENGTH,
+      //   value: 7,
+      // },],
 
       // Aerolith lists
       aerolithLists: [],
@@ -100,18 +96,15 @@ class TableCreator extends React.Component {
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
-    this.searchParamChange = this.searchParamChange.bind(this);
-    this.searchTypeChange = this.searchTypeChange.bind(this);
     this.selectedListChange = this.selectedListChange.bind(this);
-    this.searchSubmit = this.searchSubmit.bind(this);
-    this.flashcardSearchSubmit = this.flashcardSearchSubmit.bind(this);
     this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
     this.flashcardAerolithListSubmit = this.flashcardAerolithListSubmit.bind(this);
     this.savedListSubmit = this.savedListSubmit.bind(this);
     this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
-    this.addSearchRow = this.addSearchRow.bind(this);
-    this.removeSearchRow = this.removeSearchRow.bind(this);
+
+    this.showSpinner = this.showSpinner.bind(this);
+    this.hideSpinner = this.hideSpinner.bind(this);
   }
 
   /**
@@ -205,26 +198,6 @@ class TableCreator extends React.Component {
     this.props.setLoadingData(false);
   }
 
-  addSearchRow() {
-    const toadd = searchCriterionToAdd(this.state.wordSearchCriteria);
-    if (!toadd) {
-      return; // Don't add any more.
-    }
-
-    const newCriteria = this.state.wordSearchCriteria.concat(toadd);
-    this.setState({
-      wordSearchCriteria: newCriteria,
-    });
-  }
-
-  removeSearchRow(criteriaIndex) {
-    const currentCriteria = this.state.wordSearchCriteria;
-    currentCriteria.splice(criteriaIndex, 1);
-    this.setState({
-      wordSearchCriteria: currentCriteria,
-    });
-  }
-
   /**
    * Submit a challenge to the backend.
    */
@@ -245,62 +218,6 @@ class TableCreator extends React.Component {
       .fail(jqXHR => Notifications.alert(
         'Error',
         `Failed to load challenge: ${jqXHR.responseJSON}`,
-      ))
-      .always(() => this.hideSpinner());
-  }
-
-  /**
-   * Turn the search criteria into something the back end would understand.
-   * @return {Array.<Object>}
-   */
-  searchCriteriaMapper() {
-    return this.state.wordSearchCriteria.map(criterion => Object.assign({}, criterion, {
-      searchType: SearchTypesEnum.properties[criterion.searchType].name,
-    }));
-  }
-
-  searchSubmit() {
-    this.showSpinner();
-    $.ajax({
-      url: '/wordwalls/api/new_search/',
-      data: JSON.stringify({
-        lexicon: this.state.currentLexicon,
-        searchCriteria: this.searchCriteriaMapper(),
-        desiredTime: parseFloat(this.state.desiredTime),
-        questionsPerRound: this.state.questionsPerRound,
-        tablenum: this.props.tablenum,
-      }),
-      contentType: 'application/json; charset=utf-8',
-      method: 'POST',
-    })
-      .done(data => this.props.onLoadNewList(data))
-      .fail(jqXHR => Notifications.alert(
-        'Error',
-        `Failed to load search: ${jqXHR.responseJSON}`,
-      ))
-      .always(() => this.hideSpinner());
-  }
-
-  /**
-   * Submit search params to flashcard function. We use a legacy
-   * "WhitleyCards" API here, which is not quite JSON. This will have
-   * to be moved over to my new Cards program in the future.
-   */
-  flashcardSearchSubmit() {
-    this.showSpinner();
-    $.ajax({
-      url: FLASHCARD_URL,
-      method: 'POST',
-      data: {
-        action: 'searchParamsFlashcard',
-        lexicon: this.state.currentLexicon,
-        searchCriteria: this.searchCriteriaMapper(),
-      },
-    })
-      .done(data => TableCreator.redirectUrl(data.url))
-      .fail(jqXHR => Notifications.alert(
-        'Error',
-        `Failed to process: ${jqXHR.responseJSON.error}`,
       ))
       .always(() => this.hideSpinner());
   }
@@ -481,37 +398,6 @@ class TableCreator extends React.Component {
       .always(() => this.hideSpinner());
   }
 
-  searchParamChange(index, paramName, paramValue) {
-    const criteria = this.state.wordSearchCriteria;
-    const valueModifier = (val) => {
-      if (paramName === 'minValue' || paramName === 'maxValue') {
-        return parseInt(val, 10) || 0;
-      } else if (paramName === 'valueList') {
-        return val.trim();
-      }
-      return val;
-    };
-
-    criteria[index][paramName] = valueModifier(paramValue);
-    this.setState({
-      wordSearchCriteria: criteria,
-    });
-  }
-
-  searchTypeChange(index, value) {
-    const criteria = this.state.wordSearchCriteria;
-    const searchType = parseInt(value, 10);
-    criteria[index].searchType = searchType;
-    // Reset the values.
-    if (searchType !== SearchTypesEnum.TAGS) {
-      criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
-      criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
-    }
-    this.setState({
-      wordSearchCriteria: criteria,
-    });
-  }
-
   selectedListChange(listId) {
     this.setState({
       selectedList: listId,
@@ -555,19 +441,30 @@ class TableCreator extends React.Component {
         break;
       case LIST_TYPE_WORDSEARCH:
         selectedQuizSearchDialog = (
-          <WordSearchDialog
+          <WordSearchDialogContainer
+            tablenum={this.props.tablenum}
+            onLoadNewList={this.props.onLoadNewList}
+            disabled={this.props.gameGoing}
+            showSpinner={this.showSpinner}
+            hideSpinner={this.hideSpinner}
             lexicon={this.state.currentLexicon}
-            availableLexica={this.props.availableLexica}
-            onSearchSubmit={() => this.preSubmitHook(this.searchSubmit)}
-            onFlashcardSubmit={() => this.preSubmitHook(this.flashcardSearchSubmit)}
-            onSearchTypeChange={this.searchTypeChange}
-            onSearchParamChange={this.searchParamChange}
-            removeSearchRow={this.removeSearchRow}
-            addSearchRow={this.addSearchRow}
-            searches={this.state.wordSearchCriteria}
+            desiredTime={parseFloat(this.state.desiredTime)}
+            questionsPerRound={this.state.questionsPerRound}
+            notifyError={error => Notifications.alert(
+              'Error',
+              `Failed to process: ${error}`,
+            )}
+            redirectUrl={TableCreator.redirectUrl}
           />);
 
         break;
+      case LIST_TYPE_BLANKS:
+        // selectedQuizSearchDialog = (
+        //   <BlankSearchDialog
+
+        //   />);
+        break;
+
       case LIST_TYPE_SAVED_LIST:
         selectedQuizSearchDialog = (
           <SavedListDialog

@@ -4,23 +4,16 @@
 
 import _ from 'underscore';
 
-import Cookies from 'js-cookie';
+import WordwallsAPI from './wordwalls_api';
 
 function uniqueId() {
   return Math.random().toString(36).substring(2)
     + (new Date()).getTime().toString(36);
 }
 
-class WordwallsRPC {
+class WordwallsRPC extends WordwallsAPI {
   constructor(tablenum) {
-    this.fetchInit = {
-      method: 'POST',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken'),
-      }),
-      credentials: 'include',
-    };
+    super();
     this.tablenum = tablenum;
     if (tablenum) {
       this.tableurl = `/wordwalls/table/${tablenum}/rpc/`;
