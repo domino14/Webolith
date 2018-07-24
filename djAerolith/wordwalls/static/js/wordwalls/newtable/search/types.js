@@ -102,25 +102,25 @@ function searchCriterionToAdd(wordSearchCriteria) {
   if (newtypeId === SearchTypesEnum.TAGS) {
     return {
       searchType: newtypeId,
-      //criterion: {
-        valueList: '',
-      //},
+      // criterion: {
+      valueList: '',
+      // },
     };
   }
   if (newtypeId === SearchTypesEnum.FIXED_LENGTH) {
     return {
       searchType: newtypeId,
-      //criterion: {
-        value: SearchTypesEnum.properties[newtypeId].default,
-      //},
+      // criterion: {
+      value: SearchTypesEnum.properties[newtypeId].default,
+      // },
     };
   }
   return {
     searchType: newtypeId,
-    //criterion: {
-      minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
-      maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
-    //},
+    // criterion: {
+    minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
+    maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
+    // },
   };
 }
 

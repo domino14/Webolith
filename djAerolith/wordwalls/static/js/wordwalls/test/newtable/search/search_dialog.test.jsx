@@ -42,18 +42,41 @@ describe('<SearchDialogContainer />', () => {
 
   describe('Data', () => {
     it('submits expected parameters to back-end', () => {
-      const apiSpy = sinon.spy();
+      const apiSpy = sinon.stub().returns({
+        then: sinon.stub().returns({
+          catch: sinon.stub().returns({
+            finally: sinon.stub(),
+          }),
+        }),
+      });
       const propsWithSpy = {
         ...props,
-        api: apiSpy,
+        api: {
+          call: apiSpy,
+        },
       };
       const wrapper = shallow(<SearchDialogContainer {...propsWithSpy} />);
-
+      // Simulate the click.
       wrapper
         .find(SearchDialog)
         .shallow().find('.submit-word-search')
         .simulate('click');
-      expect(apiSpy).toHaveProperty('callCount', 1);
+
+      expect(apiSpy.calledOnceWith('wordwalls/api/new_search/', {
+        lexicon: 3,
+        searchCriteria: [{
+          searchType: 'length',
+          minValue: 7,
+          maxValue: 7,
+        }, {
+          searchType: 'probability_range',
+          minValue: 1,
+          maxValue: 200,
+        }],
+        desiredTime: 100,
+        questionsPerRound: 50,
+        tablenum: 12,
+      })).toBeTruthy();
     });
   });
 });
