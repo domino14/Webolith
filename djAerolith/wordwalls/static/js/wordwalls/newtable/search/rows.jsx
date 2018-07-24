@@ -21,6 +21,7 @@ const SearchRows = props => (
       removeDisabled={idx === 0 && props.searches.length === 1}
       modifySearchType={props.modifySearchType}
       modifySearchParam={props.modifySearchParam}
+      allowedSearchTypes={props.allowedSearchTypes}
     />))
 );
 
@@ -37,6 +38,7 @@ SearchRows.propTypes = {
   modifySearchParam: PropTypes.func.isRequired,
   addSearchRow: PropTypes.func.isRequired,
   removeSearchRow: PropTypes.func.isRequired,
+  allowedSearchTypes: PropTypes.instanceOf(Set).isRequired,
 };
 
 export default SearchRows;

@@ -21,9 +21,13 @@ class WordwallsAPI {
     };
   }
 
-  fetchdata(params) {
+  fetchdata(params, method) {
+    // Note that we default to POST. A lot of these API requests are not
+    // idempotent, for example, making a new search should look like a GET,
+    // but a lot of the time it can result in creating a new table.
     return _.extend(this.fetchInit, {
       body: JSON.stringify(params),
+      method: method || 'POST',
     });
   }
 
@@ -37,9 +41,9 @@ class WordwallsAPI {
     });
   }
 
-  async call(path, params) {
+  async call(path, params, method) {
     // eslint-disable-next-line compat/compat
-    const response = await fetch(path, this.fetchdata(params));
+    const response = await fetch(path, this.fetchdata(params, method));
     const data = await response.json();
     if (response.ok) {
       return data;
@@ -49,6 +53,12 @@ class WordwallsAPI {
     throw new Error(data.error || data);
   }
 
+  /**
+   * Aerolith has a legacy API that I need to slowly get rid of. It uses
+   * a x-www-form-urlencoded content type and POST.
+   * @param {string} path
+   * @param {Object} params
+   */
   async callLegacy(path, params) {
     // eslint-disable-next-line compat/compat
     const response = await fetch(path, this.fetchdataLegacy(params));

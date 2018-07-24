@@ -2,6 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SearchRows from './rows';
+import { SearchTypesEnum } from './types';
+
+const allowedSearchTypes = new Set([
+  SearchTypesEnum.PROBABILITY,
+  SearchTypesEnum.LENGTH,
+  SearchTypesEnum.TAGS,
+  SearchTypesEnum.POINTS,
+  SearchTypesEnum.NUM_ANAGRAMS,
+  SearchTypesEnum.NUM_VOWELS,
+]);
 
 const WordSearchDialog = props => (
   <div className="row" style={{ marginTop: '8px' }}>
@@ -12,9 +22,10 @@ const WordSearchDialog = props => (
         removeSearchRow={props.removeSearchRow}
         modifySearchType={props.onSearchTypeChange}
         modifySearchParam={props.onSearchParamChange}
+        allowedSearchTypes={allowedSearchTypes}
       />
       <button
-        className="btn btn-primary"
+        className="btn btn-primary submit-word-search"
         style={{ marginTop: '0.75em' }}
         onClick={props.onSearchSubmit}
         data-dismiss="modal"

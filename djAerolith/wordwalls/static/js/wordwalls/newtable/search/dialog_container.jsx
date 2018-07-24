@@ -19,7 +19,7 @@ class DialogContainer extends React.Component {
       }, {
         searchType: SearchTypesEnum.PROBABILITY,
         minValue: 1,
-        maxValue: 100,
+        maxValue: 200,
       }],
     };
 
@@ -30,7 +30,6 @@ class DialogContainer extends React.Component {
     this.searchTypeChange = this.searchTypeChange.bind(this);
     this.addSearchRow = this.addSearchRow.bind(this);
     this.removeSearchRow = this.removeSearchRow.bind(this);
-    this.api = new WordwallsAPI();
   }
 
   addSearchRow() {
@@ -97,7 +96,7 @@ class DialogContainer extends React.Component {
 
   searchSubmit() {
     this.props.showSpinner();
-    this.api.call(SEARCH_URL, {
+    this.props.api.call(SEARCH_URL, {
       lexicon: this.props.lexicon,
       searchCriteria: this.searchCriteriaMapper(),
       desiredTime: this.props.desiredTime,
@@ -116,7 +115,7 @@ class DialogContainer extends React.Component {
    */
   flashcardSearchSubmit() {
     this.props.showSpinner();
-    this.api.callLegacy(FLASHCARD_URL, {
+    this.props.api.callLegacy(FLASHCARD_URL, {
       action: 'searchParamsFlashcard',
       lexicon: this.props.lexicon,
       searchCriteria: this.searchCriteriaMapper(),
@@ -153,13 +152,12 @@ DialogContainer.propTypes = {
   //   description: PropTypes.string,
   //   counts: PropTypes.object,
   // })).isRequired,
-  // onSearchSubmit: PropTypes.func.isRequired,
-  // onFlashcardSubmit: PropTypes.func.isRequired,
   tablenum: PropTypes.number.isRequired,
   onLoadNewList: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   showSpinner: PropTypes.func.isRequired,
   hideSpinner: PropTypes.func.isRequired,
+  api: PropTypes.instanceOf(WordwallsAPI).isRequired,
 };
 
 export default DialogContainer;

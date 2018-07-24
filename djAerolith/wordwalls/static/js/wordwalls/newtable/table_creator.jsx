@@ -9,6 +9,7 @@ import ModalSkeleton from '../modal_skeleton';
 import Pills from './pills';
 import Notifications from '../notifications';
 import Sidebar from './sidebar';
+import WordwallsAPI from '../wordwalls_api';
 
 import ChallengeDialog from './challenge_dialog';
 import WordSearchDialogContainer from './search/dialog_container';
@@ -105,6 +106,7 @@ class TableCreator extends React.Component {
 
     this.showSpinner = this.showSpinner.bind(this);
     this.hideSpinner = this.hideSpinner.bind(this);
+    this.api = new WordwallsAPI();
   }
 
   /**
@@ -455,6 +457,7 @@ class TableCreator extends React.Component {
               `Failed to process: ${error}`,
             )}
             redirectUrl={TableCreator.redirectUrl}
+            api={this.api}
           />);
 
         break;

@@ -73,11 +73,13 @@ const SearchTypesOrder = [
   SearchTypesEnum.TAGS,
 ];
 
-function searchCriteriaOptions() {
-  return SearchTypesOrder.map(el => ({
-    value: String(el),
-    displayValue: SearchTypesEnum.properties[el].displayName,
-  }));
+function searchCriteriaOptions(allowedSearchTypes) {
+  return SearchTypesOrder
+    .filter(t => allowedSearchTypes.has(t))
+    .map(el => ({
+      value: String(el),
+      displayValue: SearchTypesEnum.properties[el].displayName,
+    }));
 }
 
 /**

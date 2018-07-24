@@ -127,7 +127,7 @@ const SearchRow = (props) => {
   }
 
   return (
-    <div className="row">
+    <div className="row search-row">
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
           className="btn btn-info btn-xs"
@@ -148,7 +148,7 @@ const SearchRow = (props) => {
           colSize={12}
           label="Search Criterion"
           selectedValue={String(props.searchType)}
-          options={searchCriteriaOptions()}
+          options={searchCriteriaOptions(props.allowedSearchTypes)}
           onChange={(event) => {
             props.modifySearchType(props.index, event.target.value);
           }}
@@ -172,6 +172,7 @@ SearchRow.propTypes = {
   removeDisabled: PropTypes.bool.isRequired,
   modifySearchType: PropTypes.func.isRequired,
   modifySearchParam: PropTypes.func.isRequired,
+  allowedSearchTypes: PropTypes.instanceOf(Set).isRequired,
 };
 
 SearchRow.defaultProps = {
