@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SearchRows from './rows';
-import { SearchTypesEnum } from './types';
+import { SearchTypesEnum, SearchCriterion } from './types';
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -46,14 +46,7 @@ const WordSearchDialog = props => (
 
 
 WordSearchDialog.propTypes = {
-  searches: PropTypes.arrayOf(PropTypes.shape({
-    searchType: PropTypes.number,
-    minValue: PropTypes.number,
-    maxValue: PropTypes.number,
-    minAllowedValue: PropTypes.number,
-    maxAllowedValue: PropTypes.number,
-    valueList: PropTypes.string,
-  })).isRequired,
+  searches: PropTypes.arrayOf(PropTypes.instanceOf(SearchCriterion)).isRequired,
   onSearchTypeChange: PropTypes.func.isRequired,
   onSearchParamChange: PropTypes.func.isRequired,
   addSearchRow: PropTypes.func.isRequired,

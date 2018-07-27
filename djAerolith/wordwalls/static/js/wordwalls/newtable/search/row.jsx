@@ -95,8 +95,8 @@ const SearchRow = (props) => {
     case SearchTypesEnum.NUM_ANAGRAMS:
       specificForm = (
         <MinMaxValues
-          minValue={props.minValue}
-          maxValue={props.maxValue}
+          minValue={props.searchCriteria.minValue}
+          maxValue={props.searchCriteria.maxValue}
           minAllowed={props.minAllowedValue}
           maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
@@ -107,9 +107,9 @@ const SearchRow = (props) => {
       specificForm = (
         <NumberValue
           label="Value"
-          defaultValue=""
-          minAllowed=""
-          maxAllowed=""
+          defaultValue={props.searchCriteria.value}
+          minAllowed={props.minAllowedValue}
+          maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
           index={props.index}
         />);
@@ -117,7 +117,7 @@ const SearchRow = (props) => {
     case SearchTypesEnum.TAGS:
       specificForm = (
         <ListValue
-          valueList={props.valueList}
+          valueList={props.searchCriteria.valueList}
           index={props.index}
           modifySearchParam={props.modifySearchParam}
         />);
@@ -162,11 +162,9 @@ const SearchRow = (props) => {
 SearchRow.propTypes = {
   searchType: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
-  minValue: PropTypes.number,
+  searchCriteria: PropTypes.objectOf(PropTypes.any).isRequired,
   minAllowedValue: PropTypes.number,
-  maxValue: PropTypes.number,
   maxAllowedValue: PropTypes.number,
-  valueList: PropTypes.string,
   addRow: PropTypes.func.isRequired,
   removeRow: PropTypes.func.isRequired,
   removeDisabled: PropTypes.bool.isRequired,
@@ -176,11 +174,8 @@ SearchRow.propTypes = {
 };
 
 SearchRow.defaultProps = {
-  minValue: 1,
   minAllowedValue: 1,
-  maxValue: 100,
   maxAllowedValue: 100,
-  valueList: '',
 };
 
 export default SearchRow;

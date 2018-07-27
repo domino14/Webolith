@@ -7,25 +7,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SearchRows from '../../../../../wordwalls/static/js/wordwalls/newtable/search_rows';
+import SearchRows from '../../../../../wordwalls/static/js/wordwalls/newtable/search/rows';
 import { SearchTypesEnum,
-  searchCriterionToAdd } from '../../../../../wordwalls/static/js/wordwalls/newtable/search_row';
+  searchCriterionToAdd,
+  SearchCriterion } from '../../../../../wordwalls/static/js/wordwalls/newtable/search/types';
 
 import Select from '../../../../../wordwalls/static/js/wordwalls/forms/select';
+
+const allowedSearchTypes = new Set([
+  SearchTypesEnum.PROBABILITY,
+  SearchTypesEnum.LENGTH,
+  SearchTypesEnum.TAGS,
+  SearchTypesEnum.POINTS,
+  SearchTypesEnum.NUM_ANAGRAMS,
+  SearchTypesEnum.NUM_VOWELS,
+]);
 
 class WordSearchForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      wordSearchCriteria: [{
-        searchType: SearchTypesEnum.LENGTH,
-        minValue: 7,
-        maxValue: 7,
-      }, {
-        searchType: SearchTypesEnum.PROBABILITY,
-        minValue: 1,
-        maxValue: 100,
-      }],
+      wordSearchCriteria: [
+        new SearchCriterion(SearchTypesEnum.LENGTH, {
+          minValue: 7,
+          maxValue: 7,
+        }),
+        new SearchCriterion(SearchTypesEnum.PROBABILITY, {
+          minValue: 1,
+          maxValue: 200,
+        }),
+      ],
       lexicon: 'America', // we will build a giant word wall
     };
 
@@ -56,16 +67,7 @@ class WordSearchForm extends React.Component {
 
   modifySearchParam(index, paramName, paramValue) {
     const criteria = this.state.wordSearchCriteria;
-    const valueModifier = (val) => {
-      if (paramName === 'minValue' || paramName === 'maxValue') {
-        return parseInt(val, 10) || 0;
-      } else if (paramName === 'valueList') {
-        return val.trim();
-      }
-      return val;
-    };
-
-    criteria[index][paramName] = valueModifier(paramValue);
+    criteria[index].setOption(paramName, paramValue);
     this.setState({
       wordSearchCriteria: criteria,
     });
@@ -74,11 +76,24 @@ class WordSearchForm extends React.Component {
   modifySearchType(index, value) {
     const criteria = this.state.wordSearchCriteria;
     const searchType = parseInt(value, 10);
+
     criteria[index].searchType = searchType;
     // Reset the values.
-    if (searchType !== SearchTypesEnum.TAGS) {
-      criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
-      criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
+    if ([SearchTypesEnum.LENGTH, SearchTypesEnum.NUM_ANAGRAMS, SearchTypesEnum.NUM_VOWELS,
+      SearchTypesEnum.POINTS, SearchTypesEnum.PROBABILITY].includes(searchType)) {
+      // Defaults to two options for this criteria - min/max
+      criteria[index].setOptions({
+        minValue: SearchTypesEnum.properties[searchType].defaultMin,
+        maxValue: SearchTypesEnum.properties[searchType].defaultMax,
+      });
+    } else if (searchType === SearchTypesEnum.FIXED_LENGTH) {
+      criteria[index].setOptions({
+        value: SearchTypesEnum.properties[searchType].default,
+      });
+    } else if (searchType === SearchTypesEnum.TAGS) {
+      criteria[index].setOptions({
+        valueList: '',
+      });
     }
     this.setState({
       wordSearchCriteria: criteria,
@@ -91,9 +106,7 @@ class WordSearchForm extends React.Component {
    * @return {Array.<Object>}
    */
   searchCriteriaMapper() {
-    return this.state.wordSearchCriteria.map(criterion => Object.assign({}, criterion, {
-      searchType: SearchTypesEnum.properties[criterion.searchType].name,
-    }));
+    return this.state.wordSearchCriteria.map(criterion => criterion.toJSObj());
   }
 
   render() {
@@ -129,6 +142,7 @@ class WordSearchForm extends React.Component {
               removeSearchRow={this.removeSearchRow}
               modifySearchType={this.modifySearchType}
               modifySearchParam={this.modifySearchParam}
+              allowedSearchTypes={allowedSearchTypes}
             />
           </div>
         </div>

@@ -2,25 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import WordSearchDialog from './dialog';
-import { SearchTypesEnum, searchCriterionToAdd } from './types';
+import { SearchTypesEnum, searchCriterionToAdd, SearchCriterion } from './types';
 import WordwallsAPI from '../../wordwalls_api';
 
-const SEARCH_URL = 'wordwalls/api/new_search/';
+const SEARCH_URL = '/wordwalls/api/new_search/';
 const FLASHCARD_URL = '/flashcards/';
 
 class DialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchCriteria: [{
-        searchType: SearchTypesEnum.LENGTH,
-        minValue: 7,
-        maxValue: 7,
-      }, {
-        searchType: SearchTypesEnum.PROBABILITY,
-        minValue: 1,
-        maxValue: 200,
-      }],
+      searchCriteria: [
+        new SearchCriterion(SearchTypesEnum.LENGTH, {
+          minValue: 7,
+          maxValue: 7,
+        }),
+        new SearchCriterion(SearchTypesEnum.PROBABILITY, {
+          minValue: 1,
+          maxValue: 200,
+        }),
+      ],
     };
 
     this.searchSubmit = this.searchSubmit.bind(this);
@@ -54,16 +55,7 @@ class DialogContainer extends React.Component {
 
   searchParamChange(index, paramName, paramValue) {
     const criteria = this.state.searchCriteria;
-    const valueModifier = (val) => {
-      if (paramName === 'minValue' || paramName === 'maxValue') {
-        return parseInt(val, 10) || 0;
-      } else if (paramName === 'valueList') {
-        return val.trim();
-      }
-      return val;
-    };
-
-    criteria[index][paramName] = valueModifier(paramValue);
+    criteria[index].setOption(paramName, paramValue);
     this.setState({
       searchCriteria: criteria,
     });
@@ -74,20 +66,30 @@ class DialogContainer extends React.Component {
    * @return {Array.<Object>}
    */
   searchCriteriaMapper() {
-    // TODO modify me
-    return this.state.searchCriteria.map(criterion => Object.assign({}, criterion, {
-      searchType: SearchTypesEnum.properties[criterion.searchType].name,
-    }));
+    return this.state.searchCriteria.map(criterion => criterion.toJSObj());
   }
 
   searchTypeChange(index, value) {
     const criteria = this.state.searchCriteria;
     const searchType = parseInt(value, 10);
+
     criteria[index].searchType = searchType;
     // Reset the values.
-    if (searchType !== SearchTypesEnum.TAGS) {
-      criteria[index].minValue = SearchTypesEnum.properties[searchType].defaultMin;
-      criteria[index].maxValue = SearchTypesEnum.properties[searchType].defaultMax;
+    if ([SearchTypesEnum.LENGTH, SearchTypesEnum.NUM_ANAGRAMS, SearchTypesEnum.NUM_VOWELS,
+      SearchTypesEnum.POINTS, SearchTypesEnum.PROBABILITY].includes(searchType)) {
+      // Defaults to two options for this criteria - min/max
+      criteria[index].setOptions({
+        minValue: SearchTypesEnum.properties[searchType].defaultMin,
+        maxValue: SearchTypesEnum.properties[searchType].defaultMax,
+      });
+    } else if (searchType === SearchTypesEnum.FIXED_LENGTH) {
+      criteria[index].setOptions({
+        value: SearchTypesEnum.properties[searchType].default,
+      });
+    } else if (searchType === SearchTypesEnum.TAGS) {
+      criteria[index].setOptions({
+        valueList: '',
+      });
     }
     this.setState({
       searchCriteria: criteria,

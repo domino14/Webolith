@@ -82,11 +82,49 @@ function searchCriteriaOptions(allowedSearchTypes) {
     }));
 }
 
+class SearchCriterion {
+  constructor(searchType, options) {
+    this.searchType = searchType;
+    this.options = options;
+  }
+  /**
+   * Convert this to an object that the backend would understand.
+   */
+  toJSObj() {
+    return {
+      searchType: SearchTypesEnum.properties[this.searchType].name,
+      ...this.options,
+    };
+  }
+  /**
+   * Set the option to the passed-in value. This function takes care
+   * of converting the optionValue to the proper type, based on the
+   * optionName
+   * @param {string} optionName The name of the option in the options dict
+   * @param {any} optionValue The value for the option
+   */
+  setOption(optionName, optionValue) {
+    const valueModifier = (val) => {
+      if (['minValue', 'maxValue', 'value'].includes(optionName)) {
+        return parseInt(val, 10) || 0;
+      } else if (optionName === 'valueList') {
+        return val.trim();
+      }
+      throw new Error('Unsupported option name');
+    };
+    this.options[optionName] = valueModifier(optionValue);
+  }
+
+  setOptions(optionName, options) {
+    this.options[optionName] = options;
+  }
+}
+
 /**
  * Given a list of word search criteria, figure out the next one to add,
  * based on the order.
  * @param {Array.<Object>} wordSearchCriteria
- * @return {Object?} A new search type criterion, or null.
+ * @return {SearchCriterion?} A new search type criterion, or null.
  */
 function searchCriterionToAdd(wordSearchCriteria) {
   const stmap = {};
@@ -100,28 +138,24 @@ function searchCriterionToAdd(wordSearchCriteria) {
     return null;
   }
   if (newtypeId === SearchTypesEnum.TAGS) {
-    return {
-      searchType: newtypeId,
-      // criterion: {
+    return new SearchCriterion(newtypeId, {
       valueList: '',
-      // },
-    };
+    });
   }
   if (newtypeId === SearchTypesEnum.FIXED_LENGTH) {
-    return {
-      searchType: newtypeId,
-      // criterion: {
+    return new SearchCriterion(newtypeId, {
       value: SearchTypesEnum.properties[newtypeId].default,
-      // },
-    };
+    });
   }
-  return {
-    searchType: newtypeId,
-    // criterion: {
+  return new SearchCriterion(newtypeId, {
     minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
     maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
-    // },
-  };
+  });
 }
 
-export { SearchTypesEnum, searchCriterionToAdd, searchCriteriaOptions };
+export {
+  SearchTypesEnum,
+  searchCriterionToAdd,
+  searchCriteriaOptions,
+  SearchCriterion,
+};

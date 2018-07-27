@@ -62,7 +62,7 @@ describe('<SearchDialogContainer />', () => {
         .shallow().find('.submit-word-search')
         .simulate('click');
 
-      expect(apiSpy.calledOnceWith('wordwalls/api/new_search/', {
+      sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
         lexicon: 3,
         searchCriteria: [{
           searchType: 'length',
@@ -76,7 +76,7 @@ describe('<SearchDialogContainer />', () => {
         desiredTime: 100,
         questionsPerRound: 50,
         tablenum: 12,
-      })).toBeTruthy();
+      });
     });
   });
 });
