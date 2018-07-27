@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // Used for development build.
 const webpack = require('webpack');
-const path = require('path');
 
 export default {
   output: {
