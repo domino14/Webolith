@@ -5,22 +5,26 @@ import SearchRow from './row';
 import { SearchTypesEnum, SearchCriterion } from './types';
 
 const SearchRows = props => (
-  props.searches.map((search, idx) => (
-    <SearchRow
-      // To suppress idx warning we use idx + 0, ew. XXX
-      key={`row${idx + 0}`}
-      index={idx}
-      searchType={search.searchType}
-      searchCriteria={search.options}
-      minAllowedValue={SearchTypesEnum.properties[search.searchType].minAllowed}
-      maxAllowedValue={SearchTypesEnum.properties[search.searchType].maxAllowed}
-      addRow={props.addSearchRow}
-      removeRow={props.removeSearchRow}
-      removeDisabled={idx === 0 && props.searches.length === 1}
-      modifySearchType={props.modifySearchType}
-      modifySearchParam={props.modifySearchParam}
-      allowedSearchTypes={props.allowedSearchTypes}
-    />))
+  /* XXX Enzyme doesn't seem to like React Fragments yet (i.e. lists
+  of React elements), so we wrap a div around it. :/ */
+  <div>
+    {props.searches.map((search, idx) => (
+      <SearchRow
+        // To suppress idx warning we use idx + 0, ew. XXX
+        key={`row${idx + 0}`}
+        index={idx}
+        searchType={search.searchType}
+        searchCriteria={search.options}
+        minAllowedValue={SearchTypesEnum.properties[search.searchType].minAllowed}
+        maxAllowedValue={SearchTypesEnum.properties[search.searchType].maxAllowed}
+        addRow={props.addSearchRow}
+        removeRow={props.removeSearchRow}
+        removeDisabled={idx === 0 && props.searches.length === 1}
+        modifySearchType={props.modifySearchType}
+        modifySearchParam={props.modifySearchParam}
+        allowedSearchTypes={props.allowedSearchTypes}
+      />))}
+  </div>
 );
 
 SearchRows.propTypes = {

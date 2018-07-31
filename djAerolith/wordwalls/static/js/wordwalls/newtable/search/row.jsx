@@ -130,14 +130,14 @@ const SearchRow = (props) => {
     <div className="row search-row">
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
-          className="btn btn-info btn-xs"
+          className="btn btn-info btn-xs btn-add-search-row"
           onClick={props.addRow}
         ><span className="glyphicon glyphicon-plus" aria-hidden="true" />
         </button>
       </div>
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
-          className="btn btn-info btn-xs"
+          className="btn btn-info btn-xs btn-remove-search-row"
           onClick={() => props.removeRow(props.index)}
           disabled={props.removeDisabled}
         ><span className="glyphicon glyphicon-minus" aria-hidden="true" />
