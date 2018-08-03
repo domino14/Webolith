@@ -321,7 +321,7 @@ INTERCOM_APP_ID = os.environ.get('INTERCOM_APP_ID')
 INTERCOM_APP_SECRET_KEY = os.environ.get('INTERCOM_APP_SECRET_KEY')
 # LOGGING config
 USE_CAPTCHA = tobool(os.environ.get('USE_CAPTCHA', True))
-NOCAPTCHA = tobool(os.environ.get('NOCAPTCHA', False))
+NOCAPTCHA = True
 
 if os.environ.get('RECAPTCHA_PRIVATE_KEY'):
     RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"

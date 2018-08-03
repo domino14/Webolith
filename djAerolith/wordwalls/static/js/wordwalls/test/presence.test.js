@@ -1,3 +1,4 @@
+// XXX: NOTE - we don't even use presence.js anymore; we should remove this.
 // Test functions for presence.js
 /* eslint-disable import/no-extraneous-dependencies, no-unused-expressions */
 // import { should } from 'chai';

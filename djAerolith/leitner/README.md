@@ -1,7 +1,6 @@
 Implement the Leitner cardbox system, with flexibility towards wordwalls.
 
-Each user database should be stored in a separate SQLite instance. All
-databases should be zipped and backed up daily.
+Store all user data in a properly indexed PGSQL database. If done correctly it should be fast enough and should allow us to easily look for analytics.
 
 Fields:
 
