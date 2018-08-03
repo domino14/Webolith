@@ -1,12 +1,7 @@
 from captcha.fields import ReCaptchaField
 
 from django.contrib.auth.models import User
-from django.conf import settings
-from django import forms
-from django.utils.encoding import smart_text
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
-from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 
 from registration.forms import RegistrationFormUniqueEmail
