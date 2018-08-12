@@ -2,16 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SearchRows from './rows';
-import { SearchTypesEnum, SearchCriterion } from './types';
-
-const allowedSearchTypes = new Set([
-  SearchTypesEnum.PROBABILITY,
-  SearchTypesEnum.LENGTH,
-  SearchTypesEnum.TAGS,
-  SearchTypesEnum.POINTS,
-  SearchTypesEnum.NUM_ANAGRAMS,
-  SearchTypesEnum.NUM_VOWELS,
-]);
+import { SearchCriterion } from './types';
 
 const WordSearchDialog = props => (
   <div className="row" style={{ marginTop: '8px' }}>
@@ -22,7 +13,7 @@ const WordSearchDialog = props => (
         removeSearchRow={props.removeSearchRow}
         modifySearchType={props.onSearchTypeChange}
         modifySearchParam={props.onSearchParamChange}
-        allowedSearchTypes={allowedSearchTypes}
+        allowedSearchTypes={props.allowedSearchTypes}
       />
       <button
         className="btn btn-primary submit-word-search"
@@ -54,6 +45,7 @@ WordSearchDialog.propTypes = {
   onSearchSubmit: PropTypes.func.isRequired,
   onFlashcardSubmit: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
+  allowedSearchTypes: PropTypes.instanceOf(Set).isRequired,
 };
 
 export default WordSearchDialog;

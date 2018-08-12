@@ -29,13 +29,18 @@ const TextInput = (props) => {
   );
 };
 
+TextInput.defaultProps = {
+  onKeyPress: () => {},
+  maxLength: 100,
+};
+
 TextInput.propTypes = {
   colSize: PropTypes.number.isRequired,
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  maxLength: PropTypes.number.isRequired,
+  maxLength: PropTypes.number,
   onChange: PropTypes.func.isRequired,
-  onKeyPress: PropTypes.func.isRequired,
+  onKeyPress: PropTypes.func,
 };
 
 export default TextInput;

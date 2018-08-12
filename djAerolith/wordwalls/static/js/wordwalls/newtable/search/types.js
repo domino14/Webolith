@@ -6,6 +6,7 @@ const SearchTypesEnum = {
   NUM_ANAGRAMS: 5,
   NUM_VOWELS: 6,
   FIXED_LENGTH: 7,
+  NUM_TWO_BLANKS: 8,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -18,7 +19,7 @@ const SearchTypesEnum = {
       defaultMin: 1,
       defaultMax: 100,
       minAllowed: 1,
-      maxAllowed: 70000, // Subject to change by lexicon
+      maxAllowed: 70000, // XXX should be subject to change by lexicon
     },
     2: {
       name: 'length',
@@ -60,6 +61,13 @@ const SearchTypesEnum = {
       minAllowed: 5,
       maxAllowed: 10,
     },
+    8: {
+      name: 'number_2_blanks',
+      displayName: 'Number of 2-blank questions',
+      default: 4,
+      minAllowed: 1,
+      maxAllowed: 50,
+    },
   },
 };
 
@@ -71,6 +79,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.NUM_VOWELS,
   SearchTypesEnum.FIXED_LENGTH,
   SearchTypesEnum.TAGS,
+  SearchTypesEnum.NUM_TWO_BLANKS,
 ];
 
 function searchCriteriaOptions(allowedSearchTypes) {
@@ -124,16 +133,20 @@ class SearchCriterion {
  * Given a list of word search criteria, figure out the next one to add,
  * based on the order.
  * @param {Array.<Object>} wordSearchCriteria
+ * @param {Set} allowedSearchTypes
  * @return {SearchCriterion?} A new search type criterion, or null.
  */
-function searchCriterionToAdd(wordSearchCriteria) {
+function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
   const stmap = {};
   wordSearchCriteria.forEach((criteria) => {
     // These are enum integers.
     stmap[criteria.searchType] = true;
   });
   // Find the first search type that's not in the map.
-  const newtypeId = SearchTypesOrder.find(tid => stmap[tid] == null);
+  const newtypeId = SearchTypesOrder
+    .filter(t => allowedSearchTypes.has(t))
+    .find(tid => stmap[tid] == null);
+
   if (!newtypeId) {
     return null;
   }

@@ -1,9 +1,8 @@
 import React from 'react';
-import { render, shallow, mount } from 'enzyme';
+import { render, mount } from 'enzyme';
 import sinon from 'sinon';
 
 import SearchDialogContainer from '../../../newtable/search/dialog_container';
-import SearchDialog from '../../../newtable/search/dialog';
 import SearchRow from '../../../newtable/search/row';
 import { SearchTypesEnum } from '../../../newtable/search/types';
 
@@ -58,12 +57,9 @@ describe('<SearchDialogContainer />', () => {
 
   describe('Data', () => {
     it('submits expected parameters to back-end', () => {
-      const wrapper = shallow(<SearchDialogContainer {...propsWithSpy} />);
+      const wrapper = mount(<SearchDialogContainer {...propsWithSpy} />);
       // Simulate the click.
-      wrapper
-        .find(SearchDialog)
-        .shallow().find('.submit-word-search')
-        .simulate('click');
+      wrapper.find('.submit-word-search').simulate('click');
 
       sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
         lexicon: 3,
@@ -80,6 +76,7 @@ describe('<SearchDialogContainer />', () => {
         questionsPerRound: 50,
         tablenum: 12,
       });
+      wrapper.unmount();
     });
   });
 
@@ -122,6 +119,24 @@ describe('<SearchDialogContainer />', () => {
         questionsPerRound: 50,
         tablenum: 12,
       });
+      wrapper.unmount();
+    });
+
+    it('does not ever add single-value word length selector', () => {
+      const wrapper = mount(<SearchDialogContainer {...props} />);
+      for (let i = 0; i < 15; i += 1) {
+        // Click 'add' a whole bunch of times.
+        wrapper.find('.btn-add-search-row').at(0).simulate('click');
+      }
+      expect(wrapper.find(SearchRow).length).toBe(6);
+      // And search specifically that fixed length wasn't rendered.
+      const selectOptions = wrapper.find('.search-row').at(0).find('select option');
+      const optionSet = new Set();
+      selectOptions.forEach(node => optionSet.add(parseInt(node.props().value, 10)));
+
+      expect(optionSet.has(SearchTypesEnum.FIXED_LENGTH)).toBeFalsy();
+      expect(optionSet.has(SearchTypesEnum.LENGTH)).toBeTruthy();
+
       wrapper.unmount();
     });
   });
