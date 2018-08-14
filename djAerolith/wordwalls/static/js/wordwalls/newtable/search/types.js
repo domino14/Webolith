@@ -29,7 +29,11 @@ const SearchTypesEnum = {
       minAllowed: 2,
       maxAllowed: 15,
     },
-    3: { name: 'has_tags', displayName: 'Has Tags' },
+    3: {
+      name: 'has_tags',
+      displayName: 'Has Tags',
+      valueList: '',
+    },
     4: {
       name: 'point_value',
       displayName: 'Point Value',
@@ -121,11 +125,12 @@ class SearchCriterion {
       }
       throw new Error('Unsupported option name');
     };
+
     this.options[optionName] = valueModifier(optionValue);
   }
 
-  setOptions(optionName, options) {
-    this.options[optionName] = options;
+  setOptions(options) {
+    Object.keys(options).forEach(key => this.setOption(key, options[key]));
   }
 }
 
@@ -155,7 +160,8 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
       valueList: '',
     });
   }
-  if (newtypeId === SearchTypesEnum.FIXED_LENGTH) {
+  if (newtypeId === SearchTypesEnum.FIXED_LENGTH ||
+      newtypeId === SearchTypesEnum.NUM_TWO_BLANKS) {
     return new SearchCriterion(newtypeId, {
       value: SearchTypesEnum.properties[newtypeId].default,
     });

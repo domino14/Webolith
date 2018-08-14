@@ -93,6 +93,9 @@ const SearchRow = (props) => {
     case SearchTypesEnum.LENGTH:
     case SearchTypesEnum.NUM_VOWELS:
     case SearchTypesEnum.NUM_ANAGRAMS:
+      // XXX TODO this case should be in types.js with more generic code;
+      // i.e. it should specify how many inputs and of what type, and this
+      // should just draw that.
       specificForm = (
         <MinMaxValues
           minValue={props.searchCriteria.minValue}
@@ -104,9 +107,11 @@ const SearchRow = (props) => {
         />);
       break;
     case SearchTypesEnum.FIXED_LENGTH:
+    case SearchTypesEnum.NUM_TWO_BLANKS:
       specificForm = (
         <NumberValue
           label="Value"
+          paramName="Value"
           defaultValue={props.searchCriteria.value}
           minAllowed={props.minAllowedValue}
           maxAllowed={props.maxAllowedValue}

@@ -12,6 +12,7 @@ import Sidebar from './sidebar';
 import WordwallsAPI from '../wordwalls_api';
 
 import ChallengeDialog from './challenge_dialog';
+import BlankSearchDialogContainer from './blanks/dialog_container';
 import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
@@ -462,10 +463,23 @@ class TableCreator extends React.Component {
 
         break;
       case LIST_TYPE_BLANKS:
-        // selectedQuizSearchDialog = (
-        //   <BlankSearchDialog
-
-        //   />);
+        selectedQuizSearchDialog = (
+          <BlankSearchDialogContainer
+            tablenum={this.props.tablenum}
+            onLoadNewList={this.props.onLoadNewList}
+            disabled={this.props.gameGoing}
+            showSpinner={this.showSpinner}
+            hideSpinner={this.hideSpinner}
+            lexicon={this.state.currentLexicon}
+            desiredTime={parseFloat(this.state.desiredTime)}
+            questionsPerRound={this.state.questionsPerRound}
+            notifyError={error => Notifications.alert(
+              'Error',
+              `Failed to process: ${error}`,
+            )}
+            redirectUrl={TableCreator.redirectUrl}
+            api={this.api}
+          />);
         break;
 
       case LIST_TYPE_SAVED_LIST:
@@ -498,6 +512,7 @@ class TableCreator extends React.Component {
           options={[
             LIST_TYPE_CHALLENGE,
             LIST_TYPE_WORDSEARCH,
+            LIST_TYPE_BLANKS,
             LIST_TYPE_AEROLITH_LISTS,
             LIST_TYPE_SAVED_LIST,
           ]}
