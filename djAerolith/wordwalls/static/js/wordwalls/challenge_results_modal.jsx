@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ChallengeResults from './challenge_results';
+import ChallengeResults from './newtable/challenges/challenge_results';
 import ModalSkeleton from './modal_skeleton';
 
 const ResultsModal = props => (

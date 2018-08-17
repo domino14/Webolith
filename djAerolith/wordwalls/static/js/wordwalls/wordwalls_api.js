@@ -9,6 +9,13 @@ import _ from 'underscore';
 import qs from 'qs';
 import Cookies from 'js-cookie';
 
+function getQueryString(params) {
+  const esc = encodeURIComponent;
+  return Object.keys(params || {})
+    .map(k => `${esc(k)}=${esc(params[k])}`)
+    .join('&');
+}
+
 class WordwallsAPI {
   constructor() {
     this.fetchInit = {
@@ -26,7 +33,7 @@ class WordwallsAPI {
     // idempotent, for example, making a new search should look like a GET,
     // but a lot of the time it can result in creating a new table.
     return _.extend(this.fetchInit, {
-      body: JSON.stringify(params),
+      body: method !== 'GET' ? JSON.stringify(params) : null,
       method: method || 'POST',
     });
   }
@@ -42,8 +49,12 @@ class WordwallsAPI {
   }
 
   async call(path, params, method) {
+    let p = '';
+    if (method === 'GET') {
+      p = `?${qs.stringify(params)}`;
+    }
     // eslint-disable-next-line compat/compat
-    const response = await fetch(path, this.fetchdata(params, method));
+    const response = await fetch(`${path}${p}`, this.fetchdata(params, method));
     const data = await response.json();
     if (response.ok) {
       return data;

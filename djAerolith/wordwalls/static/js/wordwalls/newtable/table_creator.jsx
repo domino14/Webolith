@@ -3,7 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import $ from 'jquery';
-import moment from 'moment';
 
 import ModalSkeleton from '../modal_skeleton';
 import Pills from './pills';
@@ -11,7 +10,7 @@ import Notifications from '../notifications';
 import Sidebar from './sidebar';
 import WordwallsAPI from '../wordwalls_api';
 
-import ChallengeDialog from './challenge_dialog';
+import ChallengeDialogContainer from './challenges/dialog_container';
 import BlankSearchDialogContainer from './blanks/dialog_container';
 import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
@@ -36,6 +35,10 @@ The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
 
 const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
+
+const notifyError = (error) => {
+  Notifications.alert('Error', `Failed to process: ${error}`);
+};
 
 /**
  * TableCreator should mostly manage its own state, do its own AJAX queries,
@@ -68,18 +71,6 @@ class TableCreator extends React.Component {
 
       desiredTime: DEFAULT_TIME_PER_QUIZ,
       questionsPerRound: 50,
-      // Challenge-related
-      currentDate: moment(),
-      challengesDoneAtDate: [],
-      // Challenge data is leaderboard data.
-      challengeData: {},
-      currentChallenge: 0,
-      // Word-search related
-
-      // blankSearchCriteria: [{
-      //   searchType: SearchTypesEnum.FIXED_LENGTH,
-      //   value: 7,
-      // },],
 
       // Aerolith lists
       aerolithLists: [],
@@ -96,14 +87,15 @@ class TableCreator extends React.Component {
       },
 
     };
-    this.challengeSubmit = this.challengeSubmit.bind(this);
-    this.onChallengeSelected = this.onChallengeSelected.bind(this);
+
     this.selectedListChange = this.selectedListChange.bind(this);
     this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
     this.flashcardAerolithListSubmit = this.flashcardAerolithListSubmit.bind(this);
     this.savedListSubmit = this.savedListSubmit.bind(this);
     this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
     this.listUpload = this.listUpload.bind(this);
+    this.preSubmitHook = this.preSubmitHook.bind(this);
+    this.setTimeAndQuestions = this.setTimeAndQuestions.bind(this);
 
     this.showSpinner = this.showSpinner.bind(this);
     this.hideSpinner = this.hideSpinner.bind(this);
@@ -115,57 +107,23 @@ class TableCreator extends React.Component {
    * some network requests.
    */
   componentDidUpdate(prevProps, prevState) {
-    let challengeParamsChanged = false;
+    // XXX: this should be moved to individual dialog containers.
     // If the lexicon changes, we have to load new word lists no matter what.
-    // If the date changes, we are in the challenges window. We should
-    // mark challenge parameters as having changed.
-    if ((prevState.currentLexicon !== this.state.currentLexicon) ||
-        (prevState.currentDate.format(DATE_FORMAT_STRING) !==
-         this.state.currentDate.format(DATE_FORMAT_STRING))) {
-      // We may need to load new lists or challenges.
+    if (prevState.currentLexicon !== this.state.currentLexicon) {
+      // We may need to load new lists.
       this.loadInfoForListType(this.state.activeListType);
-      challengeParamsChanged = true;
-    }
-    if (prevState.currentChallenge !== this.state.currentChallenge ||
-        challengeParamsChanged) {
-      // The challenge changed. We should load challenge leaderboard data.
-      this.loadChallengeLeaderboardData();
     }
   }
 
-  onChallengeSelected(challID) {
-    const challenge = this.props.challengeInfo.find(c => c.id === challID);
+  setTimeAndQuestions(o) {
     this.setState({
-      currentChallenge: challID,
-      desiredTime: String(challenge.seconds / 60),
-      questionsPerRound: challenge.numQuestions,
+      desiredTime: o.desiredTime,
+      questionsPerRound: o.questionsPerRound,
     });
-  }
-
-  loadChallengeLeaderboardData() {
-    if (!this.state.currentChallenge) {
-      return;
-    }
-    this.showSpinner();
-    $.ajax({
-      url: '/wordwalls/api/challengers/',
-      data: {
-        lexicon: this.state.currentLexicon,
-        date: this.state.currentDate.format(DATE_FORMAT_STRING),
-        challenge: this.state.currentChallenge,
-      },
-      method: 'GET',
-    })
-      .done(data => this.setState({ challengeData: data || {} }))
-      .always(() => this.hideSpinner());
   }
 
   loadInfoForListType(option) {
     switch (option) {
-      case LIST_TYPE_CHALLENGE:
-        this.loadChallengePlayedInfo();
-        break;
-
       case LIST_TYPE_SAVED_LIST:
         this.loadSavedListInfo();
         break;
@@ -182,11 +140,9 @@ class TableCreator extends React.Component {
   // Reset dialog is called from the parent. This is a bit of an anti
   // pattern. We just make sure we reload any lists/etc when a user
   // reopens the dialog.
+  // XXX: TODO fixme
   resetDialog() {
     this.loadInfoForListType(this.state.activeListType);
-    if (this.state.activeListType === LIST_TYPE_CHALLENGE) {
-      this.loadChallengeLeaderboardData();
-    }
   }
 
   showModal() {
@@ -199,30 +155,6 @@ class TableCreator extends React.Component {
 
   hideSpinner() {
     this.props.setLoadingData(false);
-  }
-
-  /**
-   * Submit a challenge to the backend.
-   */
-  challengeSubmit() {
-    this.showSpinner();
-    $.ajax({
-      url: '/wordwalls/api/new_challenge/',
-      data: JSON.stringify({
-        lexicon: this.state.currentLexicon,
-        date: this.state.currentDate.format(DATE_FORMAT_STRING),
-        challenge: this.state.currentChallenge,
-        tablenum: this.props.tablenum,
-      }),
-      contentType: 'application/json; charset=utf-8',
-      method: 'POST',
-    })
-      .done(data => this.props.onLoadNewList(data))
-      .fail(jqXHR => Notifications.alert(
-        'Error',
-        `Failed to load challenge: ${jqXHR.responseJSON}`,
-      ))
-      .always(() => this.hideSpinner());
   }
 
   aerolithListSubmit() {
@@ -332,21 +264,6 @@ class TableCreator extends React.Component {
       .always(() => this.hideSpinner());
   }
 
-  loadChallengePlayedInfo() {
-    // Load the challenge-related stuff.
-    this.showSpinner();
-    $.ajax({
-      url: '/wordwalls/api/challenges_played/',
-      data: {
-        lexicon: this.state.currentLexicon,
-        date: this.state.currentDate.format(DATE_FORMAT_STRING),
-      },
-      method: 'GET',
-    })
-      .done(data => this.setState({ challengesDoneAtDate: data }))
-      .always(() => this.hideSpinner());
-  }
-
   loadAerolithListInfo() {
     this.showSpinner();
     $.ajax({
@@ -406,6 +323,7 @@ class TableCreator extends React.Component {
       selectedList: listId,
     });
   }
+
   /**
    * This hook gets called prior to every submit function, in order to
    * check common things such as the host of the table and whether a game
@@ -426,20 +344,18 @@ class TableCreator extends React.Component {
     switch (this.state.activeListType) {
       case LIST_TYPE_CHALLENGE:
         selectedQuizSearchDialog = (
-          <ChallengeDialog
+          <ChallengeDialogContainer
+            tablenum={this.props.tablenum}
+            onLoadNewList={this.props.onLoadNewList}
             challengeInfo={this.props.challengeInfo}
-            challengesDoneAtDate={this.state.challengesDoneAtDate}
-            challengeData={this.state.challengeData}
-            currentDate={this.state.currentDate}
-            onDateChange={(date) => {
-              this.setState({
-                currentDate: moment(date),
-              });
-            }}
-            onChallengeSubmit={() => this.preSubmitHook(this.challengeSubmit)}
-            onChallengeSelected={/* currying */
-              challID => () => this.onChallengeSelected(challID)}
-            currentChallenge={this.state.currentChallenge}
+            showSpinner={this.showSpinner}
+            hideSpinner={this.hideSpinner}
+            lexicon={this.state.currentLexicon}
+            api={this.api}
+            preSubmitHook={this.preSubmitHook}
+            notifyError={notifyError}
+            setTimeAndQuestions={this.setTimeAndQuestions}
+            disabled={this.props.gameGoing}
           />);
         break;
       case LIST_TYPE_WORDSEARCH:
@@ -447,18 +363,15 @@ class TableCreator extends React.Component {
           <WordSearchDialogContainer
             tablenum={this.props.tablenum}
             onLoadNewList={this.props.onLoadNewList}
-            disabled={this.props.gameGoing}
             showSpinner={this.showSpinner}
             hideSpinner={this.hideSpinner}
             lexicon={this.state.currentLexicon}
             desiredTime={parseFloat(this.state.desiredTime)}
             questionsPerRound={this.state.questionsPerRound}
-            notifyError={error => Notifications.alert(
-              'Error',
-              `Failed to process: ${error}`,
-            )}
+            notifyError={notifyError}
             redirectUrl={TableCreator.redirectUrl}
             api={this.api}
+            disabled={this.props.gameGoing}
           />);
 
         break;
@@ -467,18 +380,15 @@ class TableCreator extends React.Component {
           <BlankSearchDialogContainer
             tablenum={this.props.tablenum}
             onLoadNewList={this.props.onLoadNewList}
-            disabled={this.props.gameGoing}
             showSpinner={this.showSpinner}
             hideSpinner={this.hideSpinner}
             lexicon={this.state.currentLexicon}
             desiredTime={parseFloat(this.state.desiredTime)}
             questionsPerRound={this.state.questionsPerRound}
-            notifyError={error => Notifications.alert(
-              'Error',
-              `Failed to process: ${error}`,
-            )}
+            notifyError={notifyError}
             redirectUrl={TableCreator.redirectUrl}
             api={this.api}
+            disabled={this.props.gameGoing}
           />);
         break;
 

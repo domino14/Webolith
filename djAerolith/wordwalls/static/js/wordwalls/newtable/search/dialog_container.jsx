@@ -83,10 +83,10 @@ SearchDialogContainer.propTypes = {
   // })).isRequired,
   tablenum: PropTypes.number.isRequired,
   onLoadNewList: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
   showSpinner: PropTypes.func.isRequired,
   hideSpinner: PropTypes.func.isRequired,
   api: PropTypes.instanceOf(WordwallsAPI).isRequired,
+  disabled: PropTypes.bool.isRequired,
 };
 
 const DialogContainer = ContainerWithSearchRows(
