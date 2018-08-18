@@ -24,8 +24,6 @@ const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const LIST_TYPE_SAVED_LIST = 'My Saved Lists';
 const FLASHCARD_URL = '/flashcards/';
 
-const DATE_FORMAT_STRING = 'YYYY-MM-DD';
-
 const NO_LOAD_WHILE_PLAYING = (
   'Please wait until the end of the game to perform that action.');
 
@@ -35,6 +33,7 @@ The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
 
 const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
+const DEFAULT_TIME_PER_BLANK_QUIZ = '10';
 
 const notifyError = (error) => {
   Notifications.alert('Error', `Failed to process: ${error}`);
@@ -140,9 +139,13 @@ class TableCreator extends React.Component {
   // Reset dialog is called from the parent. This is a bit of an anti
   // pattern. We just make sure we reload any lists/etc when a user
   // reopens the dialog.
-  // XXX: TODO fixme
   resetDialog() {
     this.loadInfoForListType(this.state.activeListType);
+    if (this.challengeDialogContainer) {
+      // XXX: This is an anti-pattern, but modals and React don't play
+      // 100% well together.
+      this.challengeDialogContainer.loadChallengePlayedInfo();
+    }
   }
 
   showModal() {
@@ -356,6 +359,9 @@ class TableCreator extends React.Component {
             notifyError={notifyError}
             setTimeAndQuestions={this.setTimeAndQuestions}
             disabled={this.props.gameGoing}
+            ref={(ref) => {
+              this.challengeDialogContainer = ref;
+            }}
           />);
         break;
       case LIST_TYPE_WORDSEARCH:
@@ -433,10 +439,17 @@ class TableCreator extends React.Component {
             });
             if (option !== LIST_TYPE_CHALLENGE) {
               // Reset the time back to the defaults.
-              this.setState({
-                desiredTime: DEFAULT_TIME_PER_QUIZ,
-                questionsPerRound: 50,
-              });
+              if (option !== LIST_TYPE_BLANKS) {
+                this.setState({
+                  desiredTime: DEFAULT_TIME_PER_QUIZ,
+                  questionsPerRound: 50,
+                });
+              } else {
+                this.setState({
+                  desiredTime: DEFAULT_TIME_PER_BLANK_QUIZ,
+                  questionsPerRound: 50,
+                });
+              }
             }
             this.loadInfoForListType(option);
           }}

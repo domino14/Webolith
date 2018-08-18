@@ -86,7 +86,7 @@ class ChallengeDialogContainer extends React.Component {
   }
 
   loadChallengePlayedInfo() {
-    // Load the challenge-related stuff.
+    // Load info showing whether user has played this challenge.
     this.props.showSpinner();
     this.props.api.call(CHALLENGES_PLAYED_URL, {
       lexicon: this.props.lexicon,
