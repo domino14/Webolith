@@ -379,8 +379,6 @@ def date_from_str(dt):
 
     today = timezone.localtime(timezone.now()).date()
     try:
-        # strptime has multithreading issues on Python 2 and this is
-        # an occasional error. XXX: Move to Python 3 already.
         ch_date = strptime(dt, '%Y-%m-%d').date()
     except (ValueError, TypeError):
         ch_date = today
