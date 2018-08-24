@@ -10,6 +10,10 @@ import QuestionText from './question_text';
 
 const DEFAULT_BLANK_CHARACTER = '?';
 
+const getRandomInt = (max) => {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 class WordwallsQuestion extends React.Component {
   /**
    * Get the dimensions of a tile given the length of the word.
@@ -97,7 +101,7 @@ class WordwallsQuestion extends React.Component {
     }
     let x;
     let letter;
-
+    const randomOrientation = this.props.displayStyle.randomTileOrientation;
     if (this.props.displayStyle.tilesOn) {
       for (let i = countFrom, letterIdx = 0;
         i < this.props.letters.length + countFrom;
@@ -107,6 +111,10 @@ class WordwallsQuestion extends React.Component {
         if (letter === DEFAULT_BLANK_CHARACTER &&
             this.props.displayStyle.blankCharacter !== '') {
           letter = this.props.displayStyle.blankCharacter;
+        }
+        let angle = 0;
+        if (randomOrientation) {
+          angle = getRandomInt(4) * 90;
         }
         tiles.push(<Tile
           tileStyle={this.props.displayStyle.tileStyle}
@@ -119,6 +127,7 @@ class WordwallsQuestion extends React.Component {
           height={tileHeight}
           fontSize={letterFontSize * this.props.displayStyle.fontMultiplier}
           letter={letter}
+          angle={angle}
         />);
       }
     } else {

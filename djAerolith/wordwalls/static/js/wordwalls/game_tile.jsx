@@ -59,8 +59,10 @@ function colorFromTileStyle(style) {
 
 const GameTile = (props) => {
   let { fontSize, letter } = props;
-  const transform = `translate(${props.x},${props.y})`;
-
+  let transform = `translate(${props.x},${props.y})`;
+  if (props.angle !== 0) {
+    transform = `${transform} rotate(${props.angle}, ${props.width / 2}, ${props.height / 2})`;
+  }
   const fontWeight = props.bold ? 'bold' : 'normal';
   const color = colorFromTileStyle(props.tileStyle);
 
@@ -121,6 +123,7 @@ GameTile.propTypes = {
   bold: PropTypes.bool.isRequired,
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
+  angle: PropTypes.number.isRequired,
 };
 
 export default GameTile;
