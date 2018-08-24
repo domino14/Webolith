@@ -38,7 +38,10 @@ class Game {
       const newWMap = {};
       question.ws.forEach((word, idx) => {
         this.wrongWordsHash[word.w] = idx;
-        this.originalWordsHash[word.w] = idx;
+        this.originalWordsHash[word.w] = {
+          idx,
+          word,
+        };
         this.totalWords += 1;
         newWMap[word.w] = word;
       });
@@ -98,6 +101,18 @@ class Game {
       existingList => existingList.push(wObj),
     );
   }
+  /**
+   * @param {string} word
+   * @return {boolean} Whether the word is in a CSW lexicon and not America.
+   */
+  isCSW(word) {
+    const w = this.originalWordsHash[word];
+    if (!w) {
+      return false;
+    }
+    return w.word.s.includes('#');
+  }
+
   /**
    * Solve a word. This will modify the elements in the hashes, which
    * modifies the state.

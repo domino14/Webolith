@@ -32,12 +32,14 @@ class Styling {
       if (!style.tc.fontMultiplier) {
         style.tc.fontMultiplier = 1;
       }
+      // style.tc.randomTileOrientation = style.tc.randomTileOrientation || false;
       style.bc.hideLexiconSymbols = style.bc.hideLexiconSymbols || false;
       style.bc.background = style.bc.background || '';
       style.bc.bodyBackground = style.bc.bodyBackground || '';
       if (!style.bc.upscaleWithWindowSize) {
         style.bc.upscaleWithWindowSize = 'small';
       }
+      style.bc.requireOctothorp = style.bc.requireOctothorp || false;
     } else {
       // Default style.
       style = {
@@ -50,6 +52,7 @@ class Styling {
           font: 'mono',
           showChips: true,
           bold: false,
+          // randomTileOrientation: false,
         },
         bc: {
           background: 'pool_table',
@@ -57,6 +60,7 @@ class Styling {
           showBorders: false,
           hideLexiconSymbols: false,
           upscaleWithWindowSize: 'small',
+          requireOctothorp: false,
         },
       };
     }
@@ -125,6 +129,14 @@ class Styling {
     return this.style.getIn(['bc', 'upscaleWithWindowSize']);
   }
 
+  get requireOctothorp() {
+    return this.style.getIn(['bc', 'requireOctothorp']);
+  }
+
+  // get randomTileOrientation() {
+  //   return this.style.getIn(['tc', 'randomTileOrientation']);
+  // }
+
   /**
    * Set the style key to the given value. This function takes care of
    * parsing where in the tree the key is stored.
@@ -141,12 +153,14 @@ class Styling {
       font: ['tc', 'font'],
       showChips: ['tc', 'showChips'],
       showBold: ['tc', 'bold'],
+      // randomTileOrientation: ['tc', 'randomTileOrientation'],
 
       hideLexiconSymbols: ['bc', 'hideLexiconSymbols'],
       showBorders: ['bc', 'showBorders'],
       background: ['bc', 'background'],
       bodyBackground: ['bc', 'bodyBackground'],
       upscaleWithWindowSize: ['bc', 'upscaleWithWindowSize'],
+      requireOctothorp: ['bc', 'requireOctothorp'],
     };
     if (!treeKeys[key]) {
       throw new Error(`The key ${key} was not found in the tree.`);

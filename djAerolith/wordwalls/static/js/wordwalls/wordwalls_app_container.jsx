@@ -112,15 +112,20 @@ class WordwallsAppContainer extends React.Component {
   }
 
   onGuessSubmit(guess) {
-    const modifiedGuess = this.maybeModifyGuess(guess);
+    let modifiedGuess = this.maybeModifyGuess(guess);
     if (!this.state.gameGoing) {
       // Don't bother submitting guess if the game is over.
       return;
     }
+    const hadOctothorp = modifiedGuess.endsWith('#');
     this.setState({
       lastGuess: guess,
       lastGuessCorrectness: GuessEnum.PENDING,
     });
+    if (hadOctothorp) {
+      // Remove the octothorp.
+      modifiedGuess = modifiedGuess.substr(0, modifiedGuess.length - 1);
+    }
     if (!game.answerExists(modifiedGuess)) {
       // If the guess wasn't valid, don't bother submitting it to
       // the server.
@@ -134,6 +139,18 @@ class WordwallsAppContainer extends React.Component {
         });
       }
       return;
+    }
+    if (this.state.displayStyle.requireOctothorp && !this.state.isChallenge) {
+      const isCSW = game.isCSW(modifiedGuess);
+      if ((isCSW && !hadOctothorp) || (!isCSW && hadOctothorp)) {
+        // If the word the user guessed is CSW but doesn't include an
+        // octothorp, and the user's settings require an octothorp,
+        // mark it zero, dude. (Or, the other way around).
+        this.setState({
+          lastGuessCorrectness: GuessEnum.INCORRECT_LEXICON_SYMBOL,
+        });
+        return;
+      }
     }
     this.submitGuess(modifiedGuess);
   }
@@ -349,17 +366,25 @@ class WordwallsAppContainer extends React.Component {
   }
 
   /**
-   * Maybe modify the guess to replace spanish digraph tiles with their
-   * proper code. Only if lexicon is Spanish.
+   * Maybe modify the guess to strip of non-acceptable characters, and
+   * to replace spanish digraph tiles with their proper code if
+   * lexicon is Spanish.
    * @param  {string} guess
    * @return {string}
    */
   maybeModifyGuess(guess) {
+    // Strip non alphabetic characters, including the spanish ñ and the
+    // octothorp symbol.
+    let newGuess = guess.replace(/[^A-Za-zÑñ#]/g, '');
+
     if (this.state.lexicon !== 'FISE09') {
-      return guess;
+      return newGuess;
     }
     // Replace.
-    const newGuess = guess.replace(/CH/g, '1').replace(/LL/g, '2').replace(/RR/g, '3');
+    newGuess = newGuess
+      .replace(/CH/g, '1')
+      .replace(/LL/g, '2')
+      .replace(/RR/g, '3');
     return newGuess;
   }
 

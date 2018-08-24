@@ -128,9 +128,9 @@ class WordwallsSettings extends React.Component {
       formElements = (
         <div>
           <div className="row">
-            <div className="col-lg-6">
+            <div className="col-lg-2">
               <Select
-                colSize={8}
+                colSize={12}
                 label="Tile Style"
                 selectedValue={this.props.displayStyle.tileStyle}
                 onChange={(event) => {
@@ -139,9 +139,9 @@ class WordwallsSettings extends React.Component {
                 options={WordwallsSettings.getTileStyleOptions()}
               />
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-2">
               <TextInput
-                colSize={8}
+                colSize={12}
                 label="Blank Character"
                 maxLength={1}
                 value={this.props.displayStyle.blankCharacter}
@@ -150,6 +150,19 @@ class WordwallsSettings extends React.Component {
                 }}
                 onKeyPress={() => { }}
               />
+            </div>
+            <div className="col-lg-4">
+              {/*
+                <Checkbox
+                on={this.props.displayStyle.randomTileOrientation}
+                onChange={(event) => {
+                  this.props.onOptionsModify(
+                    'randomTileOrientation',
+                    event.target.checked,
+                  );
+                }}
+                label="Orient tiles randomly (Matthew O'Connor mode)"
+              /> */}
             </div>
           </div>
         </div>
@@ -323,9 +336,9 @@ class WordwallsSettings extends React.Component {
                     on={this.props.displayStyle.hideLexiconSymbols}
                     onChange={(event) => {
                       this.props.onOptionsModify(
-'hideLexiconSymbols',
+                        'hideLexiconSymbols',
                         event.target.checked,
-);
+                      );
                     }}
                     label="Hide lexicon symbols (such as # or +)"
                   />
@@ -345,6 +358,22 @@ class WordwallsSettings extends React.Component {
                   />
                 </div>
               </div>
+
+              <div className="row">
+                <div className="col-lg-8">
+                  <Checkbox
+                    on={this.props.displayStyle.requireOctothorp}
+                    onChange={(event) => {
+                      this.props.onOptionsModify(
+                        'requireOctothorp',
+                        event.target.checked,
+                      );
+                    }}
+                    label="Require # symbol to be entered for CSW-only words in non-challenges"
+                  />
+                </div>
+              </div>
+
             </form>
           </div>
         </div>

@@ -49,15 +49,24 @@ class GuessBox extends React.Component {
   }
 
   render() {
-    // Pending.
-    let guessClass = 'text-muted';
-    if (this.props.lastGuessCorrectness === GuessEnum.INCORRECT) {
-      guessClass = 'text-danger';
-    } else if (this.props.lastGuessCorrectness === GuessEnum.CORRECT) {
-      guessClass = 'text-success';
-    } else if (this.props.lastGuessCorrectness === GuessEnum.ALREADYGUESSED) {
-      guessClass = 'text-warning';
+    let guessClass;
+    switch (this.props.lastGuessCorrectness) {
+      case GuessEnum.INCORRECT:
+        guessClass = 'text-danger';
+        break;
+      case GuessEnum.CORRECT:
+        guessClass = 'text-success';
+        break;
+      case GuessEnum.ALREADYGUESSED:
+        guessClass = 'text-warning';
+        break;
+      case GuessEnum.INCORRECT_LEXICON_SYMBOL:
+        guessClass = 'text-primary';
+        break;
+      default:
+        guessClass = 'text-muted';
     }
+
     return (
       <div className="row">
         <div className="col-xs-7 col-sm-6">
