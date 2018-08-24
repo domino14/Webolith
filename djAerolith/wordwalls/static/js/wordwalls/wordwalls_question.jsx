@@ -10,9 +10,7 @@ import QuestionText from './question_text';
 
 const DEFAULT_BLANK_CHARACTER = '?';
 
-const getRandomInt = (max) => {
-  return Math.floor(Math.random() * Math.floor(max));
-}
+const getRandomInt = max => Math.floor(Math.random() * Math.floor(max));
 
 class WordwallsQuestion extends React.Component {
   /**
