@@ -74,14 +74,14 @@ jobs:
       SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
       # For collecting static files to later copy into Nginx. This
       # dir must be in the context of the build, so inside the kubernetes dir.
-      STATIC_ROOT: /opt/webolith/kubernetes/webolith_static/
+      STATIC_ROOT: /opt/webolith/static/webolith_static/
     docker:
       - image: domino14/webolith-base-pkg:py3-latest
     steps:
       - checkout
       - setup_remote_docker
-      - attach_workspace:
-          at: djAerolith/static
+      # - attach_workspace:
+      #     at: djAerolith/static
       - run:
           name: Install curl
           command: apk --no-cache add curl
@@ -102,11 +102,12 @@ jobs:
       - run:
           name: Build and push Docker images to Dockerhub
           command: |
-            cd $REPO/kubernetes && \
+            cd $REPO/static && \
                 docker build -t domino14/webolith-nginx:$CIRCLE_SHA1 \
                 -t domino14/webolith-nginx:latest \
                 -f nginx-Dockerfile --build-arg static_root=./webolith_static/ .
-            # Delete the static files for the webapp container.
+            # Delete the static files for the webapp container. They've
+            # already been copied to the docker image.
             rm -rf $STATIC_ROOT
             cd $REPO && \
               docker build -t domino14/webolith:$CIRCLE_SHA1 \
@@ -119,14 +120,14 @@ jobs:
             docker push domino14/webolith:latest
 
   deploy:
-    working_directory: /opt/webolith
+    working_directory: /opt/
     environment:
       # This will get created by the clone below.
       KUBECONFIG: /opt/webolith-private/admin.conf
     docker:
       - image: domino14/aerolith-deployer
     steps:
-      - checkout
+      - git clone git@github.com:domino14/aerolith-infra
       # Clone the repo with the admin.conf file
       - add_ssh_keys:
           fingerprints:
@@ -135,8 +136,8 @@ jobs:
       - run:
           name: Clone private Webolith repo
           command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
-      - run: fab create_k8s_configs:prod
-      - run: fab deploy:prod
+      - run: cd deploy && fab create_k8s_configs:prod
+      - run: cd deploy && fab deploy:prod
 
 workflows:
   version: 2
