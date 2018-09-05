@@ -127,7 +127,7 @@ jobs:
     docker:
       - image: domino14/aerolith-deployer
     steps:
-      - git clone git@github.com:domino14/aerolith-infra
+      - run: git clone git@github.com:domino14/aerolith-infra
       # Clone the repo with the admin.conf file
       - add_ssh_keys:
           fingerprints:
@@ -136,8 +136,8 @@ jobs:
       - run:
           name: Clone private Webolith repo
           command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
-      - run: cd deploy && fab create_k8s_configs:prod
-      - run: cd deploy && fab deploy:prod
+      - run: cd aerolith-infra/deploy && fab create_k8s_configs:prod
+      - run: cd aerolith-infra/deploy && fab deploy:prod
 
 workflows:
   version: 2
