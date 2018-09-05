@@ -127,6 +127,7 @@ jobs:
     docker:
       - image: domino14/aerolith-deployer
     steps:
+      - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run: git clone git@github.com:domino14/aerolith-infra
       # Clone the repo with the admin.conf file
       - add_ssh_keys:
