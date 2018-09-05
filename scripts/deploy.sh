@@ -1,5 +1,6 @@
 #!/bin/bash
 # Scripts that run during deployment.
+# XXX: DELETE ME: THIS IS NOT RUN ANYMORE
 
 echo "Collecting static files..."
 python manage.py collectstatic --noinput

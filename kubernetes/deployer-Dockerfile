@@ -1,7 +1,0 @@
-FROM lachlanevenson/k8s-kubectl:v1.8.7
-
-RUN apk update && apk upgrade && \
-    apk add python3-dev build-base libffi-dev openssl-dev python3 py-pip && \
-    pip3 install fabric3 PyYAML
-
-RUN apk update && apk add git openssh
