@@ -24,6 +24,9 @@ class BlanksDialogContainer extends React.Component {
 
   searchSubmit() {
     this.props.showSpinner();
+    this.props.api.call(
+
+    )
   }
 
   flashcardSearchSubmit() {

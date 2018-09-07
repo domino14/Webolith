@@ -9,12 +9,6 @@ import _ from 'underscore';
 import qs from 'qs';
 import Cookies from 'js-cookie';
 
-function getQueryString(params) {
-  const esc = encodeURIComponent;
-  return Object.keys(params || {})
-    .map(k => `${esc(k)}=${esc(params[k])}`)
-    .join('&');
-}
 
 class WordwallsAPI {
   constructor() {
