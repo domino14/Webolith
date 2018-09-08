@@ -7,6 +7,7 @@ const SearchTypesEnum = {
   NUM_VOWELS: 6,
   FIXED_LENGTH: 7,
   NUM_TWO_BLANKS: 8,
+  MAX_SOLUTIONS: 9,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -72,6 +73,13 @@ const SearchTypesEnum = {
       minAllowed: 1,
       maxAllowed: 50,
     },
+    9: {
+      name: 'max_solutions',
+      displayName: 'Maximum number of anagrams',
+      default: 5,
+      minAllowed: 1,
+      maxAllowed: 200,
+    },
   },
 };
 
@@ -84,6 +92,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.FIXED_LENGTH,
   SearchTypesEnum.TAGS,
   SearchTypesEnum.NUM_TWO_BLANKS,
+  SearchTypesEnum.MAX_SOLUTIONS,
 ];
 
 function searchCriteriaOptions(allowedSearchTypes) {
@@ -161,7 +170,8 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
     });
   }
   if (newtypeId === SearchTypesEnum.FIXED_LENGTH ||
-      newtypeId === SearchTypesEnum.NUM_TWO_BLANKS) {
+      newtypeId === SearchTypesEnum.NUM_TWO_BLANKS ||
+      newtypeId === SearchTypesEnum.MAX_SOLUTIONS) {
     return new SearchCriterion(newtypeId, {
       value: SearchTypesEnum.properties[newtypeId].default,
     });

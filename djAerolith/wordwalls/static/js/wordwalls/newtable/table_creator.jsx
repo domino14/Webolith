@@ -9,6 +9,7 @@ import Pills from './pills';
 import Notifications from '../notifications';
 import Sidebar from './sidebar';
 import WordwallsAPI from '../wordwalls_api';
+import GenericRPC from '../generic_rpc';
 
 import ChallengeDialogContainer from './challenges/dialog_container';
 import BlankSearchDialogContainer from './blanks/dialog_container';
@@ -99,6 +100,7 @@ class TableCreator extends React.Component {
     this.showSpinner = this.showSpinner.bind(this);
     this.hideSpinner = this.hideSpinner.bind(this);
     this.api = new WordwallsAPI();
+    this.macondoRPC = new GenericRPC('/macondo/rpc');
   }
 
   /**
@@ -145,6 +147,7 @@ class TableCreator extends React.Component {
       // XXX: This is an anti-pattern, but modals and React don't play
       // 100% well together.
       this.challengeDialogContainer.loadChallengePlayedInfo();
+      this.challengeDialogContainer.loadChallengeLeaderboardData();
     }
   }
 
@@ -389,11 +392,13 @@ class TableCreator extends React.Component {
             showSpinner={this.showSpinner}
             hideSpinner={this.hideSpinner}
             lexicon={this.state.currentLexicon}
+            availableLexica={this.props.availableLexica}
             desiredTime={parseFloat(this.state.desiredTime)}
             questionsPerRound={this.state.questionsPerRound}
             notifyError={notifyError}
             redirectUrl={TableCreator.redirectUrl}
             api={this.api}
+            macondoRPC={this.macondoRPC}
             disabled={this.props.gameGoing}
           />);
         break;

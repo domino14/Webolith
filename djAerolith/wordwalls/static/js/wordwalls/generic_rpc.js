@@ -9,9 +9,9 @@ class GenericRPC extends WordwallsAPI {
   /**
    * Generate a JSON RPC data packet.
    */
-  constructor() {
+  constructor(rpcURL) {
     super();
-    this.RPCURL = null;
+    this.RPCURL = rpcURL || null;
   }
 
   setRPCURL(url) {

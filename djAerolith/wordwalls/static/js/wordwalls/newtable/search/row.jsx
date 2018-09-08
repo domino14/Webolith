@@ -108,10 +108,11 @@ const SearchRow = (props) => {
       break;
     case SearchTypesEnum.FIXED_LENGTH:
     case SearchTypesEnum.NUM_TWO_BLANKS:
+    case SearchTypesEnum.MAX_SOLUTIONS:
       specificForm = (
         <NumberValue
           label="Value"
-          paramName="Value"
+          paramName="value"
           defaultValue={props.searchCriteria.value}
           minAllowed={props.minAllowedValue}
           maxAllowed={props.maxAllowedValue}
