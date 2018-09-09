@@ -9,6 +9,8 @@ import { SearchTypesEnum, SearchCriterion } from '../search/types';
 import WordwallsAPI from '../../wordwalls_api';
 import GenericRPC from '../../generic_rpc';
 
+const RAW_QUESTIONS_URL = '/wordwalls/api/load_raw_questions/';
+
 const allowedSearchTypes = new Set([
   SearchTypesEnum.FIXED_LENGTH,
   SearchTypesEnum.MAX_SOLUTIONS,
@@ -56,8 +58,17 @@ class BlanksDialogContainer extends React.Component {
       maxSolutions,
       num2Blanks,
     })
-      .then(result => console.log(result))
-      .catch(error => this.props.notifyError(error));
+      .then(result => this.props.api.call(RAW_QUESTIONS_URL, {
+        lexicon: this.props.lexicon,
+        rawQuestions: result.questions,
+        desiredTime: this.props.desiredTime,
+        questionsPerRound: this.props.questionsPerRound,
+        tablenum: this.props.tablenum,
+      }).then(data => this.props.onLoadNewList(data))
+        .catch(error => this.props.notifyError(error)))
+
+      .catch(error => this.props.notifyError(error))
+      .finally(() => this.props.hideSpinner());
   }
 
   flashcardSearchSubmit() {
@@ -88,12 +99,6 @@ BlanksDialogContainer.propTypes = {
   questionsPerRound: PropTypes.number.isRequired,
   notifyError: PropTypes.func.isRequired,
   redirectUrl: PropTypes.func.isRequired,
-  // availableLexica: PropTypes.arrayOf(PropTypes.shape({
-  //   id: PropTypes.number,
-  //   lexicon: PropTypes.string,
-  //   description: PropTypes.string,
-  //   counts: PropTypes.object,
-  // })).isRequired,
   tablenum: PropTypes.number.isRequired,
   onLoadNewList: PropTypes.func.isRequired,
   showSpinner: PropTypes.func.isRequired,

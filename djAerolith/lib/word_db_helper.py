@@ -123,6 +123,14 @@ class Questions:
 
         """
         qs = json.loads(json_string)
+        self.set_from_list(qs)
+
+    def set_from_list(self, qs):
+        """
+        Set Questions from a Python list, that looks like
+        [{'q': 'ABC', 'a': ['CAB']}, ... ]
+
+        """
         self.clear()
         for q in qs:
             question = Question()
@@ -192,7 +200,7 @@ class Question:
 
     def __str__(self):
         return '<Question: %s (%s)>' % (self.alphagram,
-                                         self.answers)
+                                        self.answers)
 
 
 class WordDB:

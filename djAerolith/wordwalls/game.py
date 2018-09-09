@@ -17,6 +17,7 @@
 # To contact the author, please email delsolar at gmail dot com
 
 import json
+import datetime
 import time
 import copy
 import logging
@@ -29,7 +30,8 @@ from django.utils import timezone
 from gargoyle import gargoyle
 
 from base.forms import SavedListForm
-from lib.word_db_helper import WordDB, Questions, word_search, BadInput
+from lib.word_db_helper import (WordDB, Questions, Question, word_search,
+                                BadInput)
 from lib.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
@@ -268,6 +270,20 @@ class WordwallsGame(object):
             temp_list_name=temporary_list_name(search_description),
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
+
+    def initialize_by_raw_questions(self, lex, user, raw_questions, secs,
+                                    questions_per_round, use_table,
+                                    multiplayer):
+        dt = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        qs = Questions()
+        qs.set_from_list(raw_questions)
+
+        wl = self.initialize_word_list(qs, lex, user)
+        wgm = self.create_or_update_game_instance(
+            user, lex, wl, use_table, multiplayer, timerSecs=secs,
+            temp_list_name='quiz on {}'.format(dt),
+            questionsToPull=questions_per_round)
+        return wgm.pk
 
     def initialize_by_named_list(self, lex, user, named_list, secs,
                                  questions_per_round=None, use_table=None,

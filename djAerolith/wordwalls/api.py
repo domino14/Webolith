@@ -138,7 +138,7 @@ def load_new_words(f):
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
         parsed_req['multiplayer'] = body.get('multiplayer', False)
-
+        parsed_req['raw_questions'] = body.get('rawQuestions', False)
         return f(request, parsed_req, *args, **kwargs)
 
     return wrap
@@ -286,6 +286,23 @@ def load_saved_list(request, parsed_req_body):
         tablenum = WordwallsGame().initialize_by_saved_list(
             parsed_req_body['lexicon'], request.user, saved_list,
             convert_to_form_option(parsed_req_body['list_option']),
+            parsed_req_body['quiz_time_secs'],
+            parsed_req_body['questions_per_round'],
+            use_table=parsed_req_body['tablenum'],
+            multiplayer=parsed_req_body['multiplayer'])
+    except GameInitException as e:
+        return bad_request(str(e))
+    return table_response(tablenum)
+
+
+@login_required
+@require_POST
+@load_new_words
+def load_raw_questions(request, parsed_req_body):
+    try:
+        tablenum = WordwallsGame().initialize_by_raw_questions(
+            parsed_req_body['lexicon'], request.user,
+            parsed_req_body['raw_questions'],
             parsed_req_body['quiz_time_secs'],
             parsed_req_body['questions_per_round'],
             use_table=parsed_req_body['tablenum'],
