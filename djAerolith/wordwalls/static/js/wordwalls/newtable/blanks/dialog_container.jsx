@@ -22,7 +22,6 @@ class BlanksDialogContainer extends React.Component {
   constructor(props) {
     super(props);
     this.searchSubmit = this.searchSubmit.bind(this);
-    this.flashcardSearchSubmit = this.flashcardSearchSubmit.bind(this);
   }
 
   // Return the NAME of the lexicon, rather than the number. Macondo requires
@@ -71,15 +70,11 @@ class BlanksDialogContainer extends React.Component {
       .finally(() => this.props.hideSpinner());
   }
 
-  flashcardSearchSubmit() {
-    this.props.showSpinner();
-  }
-
   render() {
     return (
       <BlankSearchDialog
         onSearchSubmit={this.searchSubmit}
-        onFlashcardSubmit={this.flashcardSearchSubmit}
+        flashcardAllowed={false}
         allowedSearchTypes={allowedSearchTypes}
         {...this.props}
       />);

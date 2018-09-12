@@ -131,9 +131,9 @@ def load_new_words(f):
 
         parsed_req['questions_per_round'] = body.get('questionsPerRound', 50)
         if (parsed_req['questions_per_round'] > 200 or
-                parsed_req['questions_per_round'] < 15):
+                parsed_req['questions_per_round'] < 10):
             return bad_request(
-                'Questions per round must be between 15 and 200.')
+                'Questions per round must be between 10 and 200.')
         parsed_req['search_criteria'] = body.get('searchCriteria', [])
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')

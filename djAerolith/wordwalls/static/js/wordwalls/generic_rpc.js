@@ -19,14 +19,15 @@ class GenericRPC extends WordwallsAPI {
   }
 
   fetchdata(method, params) {
-    return Object.assign(this.fetchInit, {
+    return {
+      ...this.fetchInit,
       body: JSON.stringify({
         id: uniqueId(),
         jsonrpc: '2.0',
         method,
         params,
       }),
-    });
+    };
   }
 
   async rpcwrap(method, params) {
@@ -36,7 +37,7 @@ class GenericRPC extends WordwallsAPI {
     // eslint-disable-next-line compat/compat
     const response = await fetch(this.RPCURL, this.fetchdata(method, params));
     const data = await response.json();
-    if (response.ok) {
+    if (response.ok && data.result) {
       // Use the `result` key - since this is JSONRPC
       return data.result;
     }

@@ -15,7 +15,7 @@ const Solutions = (props) => {
         key={wordIdx}
         wordPos={wordPos}
         idx={question.get('idx')}
-        probability={question.get('p')}
+        probability={question.get('p') || ''}
         alphagram={question.get('a')}
         frontHooks={word.get('fh')}
         backHooks={word.get('bh')}

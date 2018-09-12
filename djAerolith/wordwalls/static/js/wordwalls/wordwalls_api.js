@@ -5,10 +5,8 @@
  *
  * Might move this over to RPC eventually.
  */
-import _ from 'underscore';
 import qs from 'qs';
 import Cookies from 'js-cookie';
-
 
 class WordwallsAPI {
   constructor() {
@@ -26,20 +24,22 @@ class WordwallsAPI {
     // Note that we default to POST. A lot of these API requests are not
     // idempotent, for example, making a new search should look like a GET,
     // but a lot of the time it can result in creating a new table.
-    return _.extend(this.fetchInit, {
+    return {
+      ...this.fetchInit,
       body: method !== 'GET' ? JSON.stringify(params) : null,
       method: method || 'POST',
-    });
+    };
   }
 
   fetchdataLegacy(params) {
-    return _.extend(this.fetchInit, {
+    return {
+      ...this.fetchInit,
       body: qs.stringify(params),
       headers: new Headers({
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-CSRFToken': Cookies.get('csrftoken'),
       }),
-    });
+    };
   }
 
   async call(path, params, method) {

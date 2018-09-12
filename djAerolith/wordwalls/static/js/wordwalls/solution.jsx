@@ -98,7 +98,7 @@ Solution.propTypes = {
   word: PropTypes.string.isRequired,
   lexiconSymbols: PropTypes.string.isRequired,
   wordPos: PropTypes.number.isRequired,
-  probability: PropTypes.number.isRequired,
+  probability: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   frontHooks: PropTypes.string.isRequired,
   backHooks: PropTypes.string.isRequired,
   definition: PropTypes.string.isRequired,
