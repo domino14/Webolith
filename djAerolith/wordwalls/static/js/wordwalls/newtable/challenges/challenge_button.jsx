@@ -18,7 +18,7 @@ const ChallengeButton = (props) => {
   if (props.selectedChallenge === props.challenge.id) {
     extraClassName = 'btn-info';
   } else if (props.solvedChallenges.includes(props.challenge.id)) {
-    extraClassName = 'btn-grayed-out';
+    extraClassName = 'btn-link';
   } else {
     extraClassName = 'btn-default';
   }

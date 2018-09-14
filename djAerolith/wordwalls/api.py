@@ -131,14 +131,14 @@ def load_new_words(f):
 
         parsed_req['questions_per_round'] = body.get('questionsPerRound', 50)
         if (parsed_req['questions_per_round'] > 200 or
-                parsed_req['questions_per_round'] < 15):
+                parsed_req['questions_per_round'] < 10):
             return bad_request(
-                'Questions per round must be between 15 and 200.')
+                'Questions per round must be between 10 and 200.')
         parsed_req['search_criteria'] = body.get('searchCriteria', [])
         parsed_req['list_option'] = body.get('listOption')
         parsed_req['selectedList'] = body.get('selectedList')
         parsed_req['multiplayer'] = body.get('multiplayer', False)
-
+        parsed_req['raw_questions'] = body.get('rawQuestions', False)
         return f(request, parsed_req, *args, **kwargs)
 
     return wrap
@@ -296,6 +296,23 @@ def load_saved_list(request, parsed_req_body):
 
 
 @login_required
+@require_POST
+@load_new_words
+def load_raw_questions(request, parsed_req_body):
+    try:
+        tablenum = WordwallsGame().initialize_by_raw_questions(
+            parsed_req_body['lexicon'], request.user,
+            parsed_req_body['raw_questions'],
+            parsed_req_body['quiz_time_secs'],
+            parsed_req_body['questions_per_round'],
+            use_table=parsed_req_body['tablenum'],
+            multiplayer=parsed_req_body['multiplayer'])
+    except GameInitException as e:
+        return bad_request(str(e))
+    return table_response(tablenum)
+
+
+@login_required
 @require_GET
 def default_lists(request):
     lex_id = request.GET.get('lexicon')
@@ -379,8 +396,6 @@ def date_from_str(dt):
 
     today = timezone.localtime(timezone.now()).date()
     try:
-        # strptime has multithreading issues on Python 2 and this is
-        # an occasional error. XXX: Move to Python 3 already.
         ch_date = strptime(dt, '%Y-%m-%d').date()
     except (ValueError, TypeError):
         ch_date = today

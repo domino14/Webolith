@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import moment from 'moment';
 
-import DatePicker from '../forms/date_picker';
-import ChallengeResults from '../challenge_results';
+import DatePicker from '../../forms/date_picker';
+import ChallengeResults from './challenge_results';
 import ChallengeButtonRow from './challenge_button';
 
 const ChallengeDialog = (props) => {
@@ -76,6 +76,7 @@ const ChallengeDialog = (props) => {
           style={{ marginTop: '0.75em' }}
           onClick={props.onChallengeSubmit}
           data-dismiss="modal"
+          disabled={props.disabled ? 'disabled' : ''}
         >Play!
         </button>
       </div>
@@ -116,6 +117,7 @@ ChallengeDialog.propTypes = {
     maxScore: PropTypes.number,
   }).isRequired,
   currentChallenge: PropTypes.number.isRequired,
+  disabled: PropTypes.bool.isRequired,
 };
 
 export default ChallengeDialog;

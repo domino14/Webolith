@@ -22,7 +22,9 @@ const UserBox = (props) => {
           classes="text-info small"
         />
         <WordPartDisplay
-          text={`${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
+          text={
+            `${word.get('ifh') ? '･' : ''}${word.get('w')}` +
+            `${word.get('ibh') ? '･' : ''}${showLexiconSymbols ? word.get('s') : ''}`}
         />
         <WordPartDisplay
           text={` ${word.get('bh')}`}
