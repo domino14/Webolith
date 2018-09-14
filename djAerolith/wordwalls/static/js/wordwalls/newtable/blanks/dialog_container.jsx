@@ -66,7 +66,16 @@ class BlanksDialogContainer extends React.Component {
       }).then(data => this.props.onLoadNewList(data))
         .catch(error => this.props.notifyError(error)))
 
-      .catch(error => this.props.notifyError(error))
+      .catch((error) => {
+        if (error.message.includes('context deadline exceeded')) {
+          this.props.notifyError([
+            'Your query took too long; please try either fewer questions ',
+            'or a shorter word length.',
+          ].join(''));
+        } else {
+          this.props.notifyError(error);
+        }
+      })
       .finally(() => this.props.hideSpinner());
   }
 

@@ -37,7 +37,7 @@ const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
 const DEFAULT_TIME_PER_BLANK_QUIZ = '10';
 
 const notifyError = (error) => {
-  Notifications.alert('Error', `Failed to process: ${error}`);
+  Notifications.alert('Error', `${error}`);
 };
 
 /**

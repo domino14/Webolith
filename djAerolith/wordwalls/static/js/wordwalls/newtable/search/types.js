@@ -109,6 +109,12 @@ class SearchCriterion {
     this.searchType = searchType;
     this.options = options;
   }
+
+  deepCopy() {
+    return new SearchCriterion(this.searchType, {
+      ...this.options,
+    });
+  }
   /**
    * Convert this to an object that the backend would understand.
    */

@@ -16,9 +16,10 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
       this.addSearchRow = this.addSearchRow.bind(this);
       this.removeSearchRow = this.removeSearchRow.bind(this);
 
+      const scCopy = searchCriteria.map(sc => sc.deepCopy());
       this.state = {
         // Do a deep copy.
-        searchCriteria: [...searchCriteria],
+        searchCriteria: scCopy,
       };
       this.allowedSearchTypes = allowedSearchTypes;
     }
