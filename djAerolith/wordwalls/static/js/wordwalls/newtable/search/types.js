@@ -41,7 +41,7 @@ const SearchTypesEnum = {
     3: {
       name: 'has_tags',
       displayName: 'Has Tags',
-      valueList: '',
+      default: '',
       inputType: SearchTypesInputs.ONE_STRING,
     },
     4: {
@@ -125,6 +125,10 @@ class SearchCriterion {
     this.options = options;
   }
 
+  inputType() {
+    return SearchTypesEnum.properties[this.searchType].inputType;
+  }
+
   deepCopy() {
     return new SearchCriterion(this.searchType, {
       ...this.options,
@@ -148,19 +152,46 @@ class SearchCriterion {
    */
   setOption(optionName, optionValue) {
     const valueModifier = (val) => {
-      if (['minValue', 'maxValue', 'value'].includes(optionName)) {
-        return parseInt(val, 10) || 0;
-      } else if (optionName === 'valueList') {
-        return val.trim();
+      switch (this.inputType()) {
+        case SearchTypesInputs.ONE_NUMBER:
+        case SearchTypesInputs.TWO_NUMBERS:
+          return parseInt(val, 10) || 0;
+        case SearchTypesInputs.ONE_STRING:
+          return val.trim();
+        default:
+          throw new Error('Unsupported option name');
       }
-      throw new Error('Unsupported option name');
     };
-
     this.options[optionName] = valueModifier(optionValue);
   }
 
   setOptions(options) {
     Object.keys(options).forEach(key => this.setOption(key, options[key]));
+  }
+
+  resetSearchType(searchType) {
+    this.searchType = searchType;
+    // Reset the values.
+    switch (SearchTypesEnum.properties[searchType].inputType) {
+      case SearchTypesInputs.TWO_NUMBERS:
+        this.setOptions({
+          minValue: SearchTypesEnum.properties[searchType].defaultMin,
+          maxValue: SearchTypesEnum.properties[searchType].defaultMax,
+        });
+        break;
+      case SearchTypesInputs.ONE_NUMBER:
+        this.setOptions({
+          value: SearchTypesEnum.properties[searchType].default,
+        });
+        break;
+      case SearchTypesInputs.ONE_STRING:
+        this.setOptions({
+          value: SearchTypesEnum.properties[searchType].default,
+        });
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -190,7 +221,7 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
   switch (typeProps.inputType) {
     case SearchTypesInputs.ONE_STRING:
       return new SearchCriterion(newtypeId, {
-        valueList: '',
+        value: SearchTypesEnum.properties[newtypeId].default,
       });
     case SearchTypesInputs.TWO_NUMBERS:
       return new SearchCriterion(newtypeId, {

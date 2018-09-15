@@ -67,31 +67,30 @@ MinMaxValues.propTypes = {
   index: PropTypes.number.isRequired,
 };
 
-const ListValue = props => (
+const StringValue = props => (
   <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
     <TextInput
       colSize={12}
       label="Comma-separated values"
-      value={props.valueList}
+      value={props.value}
       onChange={event => props.modifySearchParam(
         props.index,
-        'valueList',
+        'value',
         event.target.value,
       )}
     />
   </div>);
 
-ListValue.propTypes = {
-  valueList: PropTypes.string.isRequired,
+StringValue.propTypes = {
+  value: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   modifySearchParam: PropTypes.func.isRequired,
 };
 
 const SearchRow = (props) => {
   let specificForm;
-  const inputType = SearchTypesEnum.properties[props.searchType].inputType;
 
-  switch (inputType) {
+  switch (SearchTypesEnum.properties[props.searchType].inputType) {
     case SearchTypesInputs.TWO_NUMBERS:
       specificForm = (
         <MinMaxValues
@@ -117,8 +116,8 @@ const SearchRow = (props) => {
       break;
     case SearchTypesInputs.ONE_STRING:
       specificForm = (
-        <ListValue
-          valueList={props.searchCriterion.valueList}
+        <StringValue
+          value={props.searchCriterion.value}
           index={props.index}
           modifySearchParam={props.modifySearchParam}
         />);
