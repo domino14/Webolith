@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { SearchTypesEnum, searchCriterionToAdd } from './search/types';
+import { searchCriterionToAdd } from './search/types';
 
 function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriteria) {
   return class extends React.Component {
@@ -55,25 +55,7 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
     searchTypeChange(index, value) {
       const criteria = this.state.searchCriteria;
       const searchType = parseInt(value, 10);
-
-      criteria[index].searchType = searchType;
-      // Reset the values.
-      if ([SearchTypesEnum.LENGTH, SearchTypesEnum.NUM_ANAGRAMS, SearchTypesEnum.NUM_VOWELS,
-        SearchTypesEnum.POINTS, SearchTypesEnum.PROBABILITY].includes(searchType)) {
-        // Defaults to two options for this criteria - min/max
-        criteria[index].setOptions({
-          minValue: SearchTypesEnum.properties[searchType].defaultMin,
-          maxValue: SearchTypesEnum.properties[searchType].defaultMax,
-        });
-      } else if (searchType === SearchTypesEnum.FIXED_LENGTH) {
-        criteria[index].setOptions({
-          value: SearchTypesEnum.properties[searchType].default,
-        });
-      } else if (searchType === SearchTypesEnum.TAGS) {
-        criteria[index].setOptions({
-          valueList: '',
-        });
-      }
+      criteria[index].resetSearchType(searchType);
       this.setState({
         searchCriteria: criteria,
       });

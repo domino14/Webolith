@@ -209,7 +209,7 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
             })
 
         elif criterion['searchType'] == SearchDescription.HAS_TAGS:
-            tags = criterion['valueList'].split(',')
+            tags = criterion['value'].split(',')
             new_tags = []
             for t in tags:
                 stripped = t.strip()

@@ -41,7 +41,7 @@ def search_criteria_to_b64(request_post):
             break
         new_search['searchType'] = search_type
 
-        for k in ('minValue', 'maxValue', 'valueList'):
+        for k in ('minValue', 'maxValue', 'value'):
             v = request_post.get('{}[{}]'.format(key, k))
             if v:
                 new_search[k] = v

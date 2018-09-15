@@ -5,8 +5,10 @@ import Select from '../../forms/select';
 import NumberInput from '../../forms/number_input';
 import TextInput from '../../forms/text_input';
 
-import { SearchTypesEnum, searchCriteriaOptions } from './types';
-
+import {
+  SearchTypesEnum,
+  searchCriteriaOptions,
+  SearchTypesInputs } from './types';
 
 const NumberValue = props => (
   <div className="col-xs-3">
@@ -65,65 +67,57 @@ MinMaxValues.propTypes = {
   index: PropTypes.number.isRequired,
 };
 
-const ListValue = props => (
+const StringValue = props => (
   <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
     <TextInput
       colSize={12}
       label="Comma-separated values"
-      value={props.valueList}
+      value={props.value}
       onChange={event => props.modifySearchParam(
         props.index,
-        'valueList',
+        'value',
         event.target.value,
       )}
     />
   </div>);
 
-ListValue.propTypes = {
-  valueList: PropTypes.string.isRequired,
+StringValue.propTypes = {
+  value: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   modifySearchParam: PropTypes.func.isRequired,
 };
 
 const SearchRow = (props) => {
   let specificForm;
-  switch (props.searchType) {
-    case SearchTypesEnum.PROBABILITY:
-    case SearchTypesEnum.POINTS:
-    case SearchTypesEnum.LENGTH:
-    case SearchTypesEnum.NUM_VOWELS:
-    case SearchTypesEnum.NUM_ANAGRAMS:
-      // XXX TODO this case should be in types.js with more generic code;
-      // i.e. it should specify how many inputs and of what type, and this
-      // should just draw that.
+
+  switch (SearchTypesEnum.properties[props.searchType].inputType) {
+    case SearchTypesInputs.TWO_NUMBERS:
       specificForm = (
         <MinMaxValues
-          minValue={props.searchCriteria.minValue}
-          maxValue={props.searchCriteria.maxValue}
+          minValue={props.searchCriterion.minValue}
+          maxValue={props.searchCriterion.maxValue}
           minAllowed={props.minAllowedValue}
           maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
           index={props.index}
         />);
       break;
-    case SearchTypesEnum.FIXED_LENGTH:
-    case SearchTypesEnum.NUM_TWO_BLANKS:
-    case SearchTypesEnum.MAX_SOLUTIONS:
+    case SearchTypesInputs.ONE_NUMBER:
       specificForm = (
         <NumberValue
           label="Value"
           paramName="value"
-          defaultValue={props.searchCriteria.value}
+          defaultValue={props.searchCriterion.value}
           minAllowed={props.minAllowedValue}
           maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
           index={props.index}
         />);
       break;
-    case SearchTypesEnum.TAGS:
+    case SearchTypesInputs.ONE_STRING:
       specificForm = (
-        <ListValue
-          valueList={props.searchCriteria.valueList}
+        <StringValue
+          value={props.searchCriterion.value}
           index={props.index}
           modifySearchParam={props.modifySearchParam}
         />);
@@ -168,7 +162,7 @@ const SearchRow = (props) => {
 SearchRow.propTypes = {
   searchType: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
-  searchCriteria: PropTypes.objectOf(PropTypes.any).isRequired,
+  searchCriterion: PropTypes.objectOf(PropTypes.any).isRequired,
   minAllowedValue: PropTypes.number,
   maxAllowedValue: PropTypes.number,
   addRow: PropTypes.func.isRequired,

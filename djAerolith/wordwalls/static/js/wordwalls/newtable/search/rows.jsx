@@ -14,7 +14,7 @@ const SearchRows = props => (
         key={`row${idx + 0}`}
         index={idx}
         searchType={search.searchType}
-        searchCriteria={search.options}
+        searchCriterion={search.options}
         minAllowedValue={SearchTypesEnum.properties[search.searchType].minAllowed}
         maxAllowedValue={SearchTypesEnum.properties[search.searchType].maxAllowed}
         addRow={props.addSearchRow}
