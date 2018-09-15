@@ -1,3 +1,9 @@
+const SearchTypesInputs = {
+  TWO_NUMBERS: 1,
+  ONE_NUMBER: 2,
+  ONE_STRING: 3,
+};
+
 const SearchTypesEnum = {
   PROBABILITY: 1,
   LENGTH: 2,
@@ -17,6 +23,7 @@ const SearchTypesEnum = {
     1: {
       name: 'probability_range',
       displayName: 'Probability Range',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
       defaultMax: 100,
       minAllowed: 1,
@@ -25,6 +32,7 @@ const SearchTypesEnum = {
     2: {
       name: 'length',
       displayName: 'Word Length',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 2,
       defaultMax: 15,
       minAllowed: 2,
@@ -34,10 +42,12 @@ const SearchTypesEnum = {
       name: 'has_tags',
       displayName: 'Has Tags',
       valueList: '',
+      inputType: SearchTypesInputs.ONE_STRING,
     },
     4: {
       name: 'point_value',
       displayName: 'Point Value',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 2,
       defaultMax: 30,
       minAllowed: 2,
@@ -46,6 +56,7 @@ const SearchTypesEnum = {
     5: {
       name: 'number_anagrams',
       displayName: 'Number of Anagrams',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
       defaultMax: 15,
       minAllowed: 1,
@@ -54,6 +65,7 @@ const SearchTypesEnum = {
     6: {
       name: 'number_vowels',
       displayName: 'Number of Vowels',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 0,
       defaultMax: 15,
       minAllowed: 0,
@@ -62,6 +74,7 @@ const SearchTypesEnum = {
     7: {
       name: 'fixed_length',
       displayName: 'Word Length',
+      inputType: SearchTypesInputs.ONE_NUMBER,
       default: 5,
       minAllowed: 5,
       maxAllowed: 10,
@@ -69,6 +82,7 @@ const SearchTypesEnum = {
     8: {
       name: 'number_2_blanks',
       displayName: 'Number of 2-blank questions',
+      inputType: SearchTypesInputs.ONE_NUMBER,
       default: 4,
       minAllowed: 1,
       maxAllowed: 50,
@@ -76,6 +90,7 @@ const SearchTypesEnum = {
     9: {
       name: 'max_solutions',
       displayName: 'Maximum number of anagrams',
+      inputType: SearchTypesInputs.ONE_NUMBER,
       default: 5,
       minAllowed: 1,
       maxAllowed: 200,
@@ -170,22 +185,26 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
   if (!newtypeId) {
     return null;
   }
-  if (newtypeId === SearchTypesEnum.TAGS) {
-    return new SearchCriterion(newtypeId, {
-      valueList: '',
-    });
+
+  const typeProps = SearchTypesEnum.properties[newtypeId];
+  switch (typeProps.inputType) {
+    case SearchTypesInputs.ONE_STRING:
+      return new SearchCriterion(newtypeId, {
+        valueList: '',
+      });
+    case SearchTypesInputs.TWO_NUMBERS:
+      return new SearchCriterion(newtypeId, {
+        minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
+        maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
+      });
+    case SearchTypesInputs.ONE_NUMBER:
+      return new SearchCriterion(newtypeId, {
+        value: SearchTypesEnum.properties[newtypeId].default,
+      });
+    default:
+      break;
   }
-  if (newtypeId === SearchTypesEnum.FIXED_LENGTH ||
-      newtypeId === SearchTypesEnum.NUM_TWO_BLANKS ||
-      newtypeId === SearchTypesEnum.MAX_SOLUTIONS) {
-    return new SearchCriterion(newtypeId, {
-      value: SearchTypesEnum.properties[newtypeId].default,
-    });
-  }
-  return new SearchCriterion(newtypeId, {
-    minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
-    maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
-  });
+  return null;
 }
 
 export {
@@ -193,4 +212,5 @@ export {
   searchCriterionToAdd,
   searchCriteriaOptions,
   SearchCriterion,
+  SearchTypesInputs,
 };
