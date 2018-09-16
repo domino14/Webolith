@@ -2,6 +2,7 @@ const SearchTypesInputs = {
   TWO_NUMBERS: 1,
   ONE_NUMBER: 2,
   ONE_STRING: 3,
+  SELECT: 4,
 };
 
 const SearchTypesEnum = {
@@ -14,6 +15,9 @@ const SearchTypesEnum = {
   FIXED_LENGTH: 7,
   NUM_TWO_BLANKS: 8,
   MAX_SOLUTIONS: 9,
+  NOT_IN_LEXICON: 10,
+  PROBABILITY_LIMIT: 11,
+  ANAGRAM_MATCH: 12,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -95,12 +99,35 @@ const SearchTypesEnum = {
       minAllowed: 1,
       maxAllowed: 200,
     },
+    10: {
+      name: 'not_in_lexicon',
+      displayName: 'Not in lexicon',
+      inputType: SearchTypesInputs.SELECT,
+      default: 'America',
+      options: ['America', 'CSW15'],
+    },
+    11: {
+      name: 'limit_probability',
+      displayName: 'Probability limit',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
+      defaultMin: 1,
+      defaultMax: 100,
+      minAllowed: 1,
+      maxAllowed: 70000,
+    },
+    12: {
+      name: 'anagram_match',
+      displayName: 'Anagram match',
+      inputType: SearchTypesInputs.ONE_STRING,
+      default: 'AEINST??',
+    },
   },
 };
 
 const SearchTypesOrder = [
   SearchTypesEnum.LENGTH,
   SearchTypesEnum.PROBABILITY,
+  SearchTypesEnum.ANAGRAM_MATCH,
   SearchTypesEnum.POINTS,
   SearchTypesEnum.NUM_ANAGRAMS,
   SearchTypesEnum.NUM_VOWELS,
@@ -108,6 +135,8 @@ const SearchTypesOrder = [
   SearchTypesEnum.TAGS,
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,
+  SearchTypesEnum.NOT_IN_LEXICON,
+  SearchTypesEnum.PROBABILITY_LIMIT,
 ];
 
 function searchCriteriaOptions(allowedSearchTypes) {
@@ -158,6 +187,8 @@ class SearchCriterion {
           return parseInt(val, 10) || 0;
         case SearchTypesInputs.ONE_STRING:
           return val.trim();
+        case SearchTypesInputs.SELECT:
+          return val;
         default:
           throw new Error('Unsupported option name');
       }
@@ -180,11 +211,8 @@ class SearchCriterion {
         });
         break;
       case SearchTypesInputs.ONE_NUMBER:
-        this.setOptions({
-          value: SearchTypesEnum.properties[searchType].default,
-        });
-        break;
       case SearchTypesInputs.ONE_STRING:
+      case SearchTypesInputs.SELECT:
         this.setOptions({
           value: SearchTypesEnum.properties[searchType].default,
         });
@@ -220,6 +248,8 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
   const typeProps = SearchTypesEnum.properties[newtypeId];
   switch (typeProps.inputType) {
     case SearchTypesInputs.ONE_STRING:
+    case SearchTypesInputs.ONE_NUMBER:
+    case SearchTypesInputs.SELECT:
       return new SearchCriterion(newtypeId, {
         value: SearchTypesEnum.properties[newtypeId].default,
       });
@@ -227,10 +257,6 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
       return new SearchCriterion(newtypeId, {
         minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
         maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
-      });
-    case SearchTypesInputs.ONE_NUMBER:
-      return new SearchCriterion(newtypeId, {
-        value: SearchTypesEnum.properties[newtypeId].default,
       });
     default:
       break;

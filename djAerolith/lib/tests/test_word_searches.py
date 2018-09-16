@@ -120,6 +120,55 @@ class SimpleSearchCase(TestCase):
             str(e.exception),
             'The first search description must contain a lexicon.')
 
+    def test_probability_limit_unallowed(self):
+        with self.assertRaises(BadInput) as e:
+            word_search([
+                SearchDescription.lexicon(self.america),
+                SearchDescription.length(7, 7),
+                SearchDescription.probability_limit(1, 3),
+                SearchDescription.probability_list([92, 73, 85, 61]),
+            ])
+        self.assertTrue('Incompatible query arguments' in str(e.exception))
+
+    def test_probability_limit_second(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.points(40, 100),
+            SearchDescription.probability_limit(2, 2),
+        ])
+        # Skip AVYYZZZ
+        self.assertEqual(['AIPZZZZ'], qs.alphagram_string_list())
+
+    def test_probability_limit_first(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.points(40, 100),
+            SearchDescription.probability_limit(1, 1),
+        ])
+        self.assertEqual(['AVYYZZZ'], qs.alphagram_string_list())
+
+    def test_probability_limit_many(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.points(40, 100),
+            SearchDescription.probability_limit(1, 50),
+        ])
+        self.assertEqual(['AVYYZZZ', 'AIPZZZZ'], qs.alphagram_string_list())
+
+    def test_probability_limit_another(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.probability_limit(3, 4),
+            SearchDescription.number_anagrams(8, 100),
+        ])
+
+        self.assertEqual(qs.size(), 2)
+        self.assertEqual(['AEGINRS', 'EORSSTU'], qs.alphagram_string_list())
+
 
 class TagSearchCase(TestCase):
     fixtures = [

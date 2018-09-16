@@ -10,6 +10,32 @@ import {
   searchCriteriaOptions,
   SearchTypesInputs } from './types';
 
+const convertOptions = options => options.map(el => ({
+  value: String(el),
+  displayValue: String(el),
+}));
+
+const SelectValue = props => (
+  <div className="col-xs-3">
+    <Select
+      colSize={12}
+      label={props.label}
+      selectedValue={String(props.value)}
+      options={convertOptions(props.options)}
+      onChange={(event) => {
+        props.modifySearchParam(props.index, 'value', event.target.value);
+      }}
+    />
+  </div>);
+
+SelectValue.propTypes = {
+  index: PropTypes.number.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  modifySearchParam: PropTypes.func.isRequired,
+};
+
 const NumberValue = props => (
   <div className="col-xs-3">
     <NumberInput
@@ -71,7 +97,7 @@ const StringValue = props => (
   <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
     <TextInput
       colSize={12}
-      label="Comma-separated values"
+      label="Value"
       value={props.value}
       onChange={event => props.modifySearchParam(
         props.index,
@@ -120,6 +146,16 @@ const SearchRow = (props) => {
           value={props.searchCriterion.value}
           index={props.index}
           modifySearchParam={props.modifySearchParam}
+        />);
+      break;
+    case SearchTypesInputs.SELECT:
+      specificForm = (
+        <SelectValue
+          label="&nbsp;"
+          value={props.searchCriterion.value}
+          index={props.index}
+          modifySearchParam={props.modifySearchParam}
+          options={SearchTypesEnum.properties[props.searchType].options}
         />);
       break;
     default:

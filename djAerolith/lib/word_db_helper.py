@@ -100,7 +100,6 @@ class Questions:
         return self.size()
 
     def __getitem__(self, key):
-        logger.debug('Calling __getitem__ with key %s', key)
         return self.questions[key]
 
     def shuffle(self):
@@ -457,7 +456,7 @@ class WhereClause:
 
     def __str__(self):
         return '{}.{} {} {}'.format(self.table, self.column,
-                                     self.condition, self.condition_params)
+                                    self.condition, self.condition_params)
 
 
 class WhereBetweenClause(WhereClause):
@@ -517,14 +516,23 @@ class Query:
         INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
         WHERE {where_clause}
         ORDER BY alphagrams.probability
+        {limit_clause}
+        {offset_clause}
     """
 
     def __init__(self, bind_params):
         self.bind_params = bind_params
 
-    def render(self, where_clauses):
+    def render(self, where_clauses, limit_offset=None):
+        limit_clause = ''
+        offset_clause = ''
+        if limit_offset:
+            limit_clause = f'LIMIT {limit_offset["limit"]}'
+            offset_clause = f'OFFSET {limit_offset["offset"]}'
         self.query_string = self.query_template.format(
-            where_clause=' AND '.join(where_clauses))
+            where_clause=' AND '.join(where_clauses),
+            limit_clause=limit_clause,
+            offset_clause=offset_clause)
         return self
 
     def execution_context(self):
@@ -544,7 +552,7 @@ class QueryGenerator:
     """ Generate the query based on passed-in parameters. """
     LISTING_DESCRIPTIONS = [
         SearchDescription.PROB_LIST, SearchDescription.ALPHAGRAM_LIST,
-        SearchDescription.HAS_TAGS
+        SearchDescription.HAS_TAGS, SearchDescription.PROB_LIMIT,
     ]
 
     def __init__(self, configs, lexicon_name):
@@ -583,6 +591,7 @@ class QueryGenerator:
                 column='point_value',
                 condition_params=description
             )
+
         # At most one of the following three clauses should be present.
         # It must also be the last clause!
         elif condition in self.LISTING_DESCRIPTIONS:
@@ -615,6 +624,15 @@ class QueryGenerator:
                     }
                 )
 
+    def generate_limit_offset(self, condition, description):
+        if condition == SearchDescription.PROB_LIMIT:
+            # i.e. if user selects min: 3, max: 7
+            # that's limit 5, offset 2 (since probabilities are 1-indexed)
+            return {
+                'limit': description['max'] - description['min'] + 1,
+                'offset': description['min'] - 1,
+            }
+
     def validate(self):
         num_mutex_descriptions = 0
         search_descriptions = self.configs['search_descriptions']
@@ -630,6 +648,7 @@ class QueryGenerator:
         """ Most things in search_descriptions should basically be a
         WHERE clause. """
         where_clauses = []
+        limit_offset = None
         queries = []
         bind_params = []
 
@@ -638,11 +657,20 @@ class QueryGenerator:
             raise BadInput(val_error)
 
         for description in self.configs['search_descriptions']:
-            where_clauses.append(self.generate_where_clause(
-                description['condition'], description))
+            logger.debug('Description: %s', description)
+            wc = self.generate_where_clause(description['condition'],
+                                            description)
+            if wc:
+                where_clauses.append(wc)
+            # limit_offset should basically be the last valid value of it.
+            limit_offset = self.generate_limit_offset(
+                description['condition'], description) or limit_offset
+
         rendered_where_clauses = []
         queries_already_generated = False
         logger.debug('Where clauses: %s', where_clauses)
+        logger.debug('limit_offset: %s', limit_offset)
+
         for wc in where_clauses:
             if wc.in_length is not None:
                 idx = 0
@@ -674,9 +702,16 @@ class QueryGenerator:
                 rendered_where_clauses.append(r)
                 bind_params.extend(bp)
 
-        if not queries_already_generated:
+        if queries_already_generated:
+            if limit_offset is not None:
+                # This is all screwed up.
+                raise BadInput('Incompatible query arguments; please try a '
+                               'simpler query (Hint: remove probability limit '
+                               'or similar)')
+        else:
             queries.append(
-                Query(bind_params).render(where_clauses=rendered_where_clauses)
+                Query(bind_params).render(where_clauses=rendered_where_clauses,
+                                          limit_offset=limit_offset)
             )
         logger.debug('Generated queries: %s', queries)
         return queries

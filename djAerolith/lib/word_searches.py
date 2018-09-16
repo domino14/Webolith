@@ -10,6 +10,7 @@ class SearchDescription(object):
     LENGTH = 'length'
     PROB_RANGE = 'probability_range'
     PROB_LIST = 'probability_list'
+    PROB_LIMIT = 'probability_limit'
     NUM_ANAGRAMS = 'number_anagrams'
     NUM_VOWELS = 'number_vowels'
     HAS_TAGS = 'has_tags'
@@ -37,6 +38,11 @@ class SearchDescription(object):
     @staticmethod
     def probability_range(min_p, max_p):
         return {"condition": SearchDescription.PROB_RANGE,
+                "min": min_p, "max": max_p}
+
+    @staticmethod
+    def probability_limit(min_p, max_p):
+        return {"condition": SearchDescription.PROB_LIMIT,
                 "min": min_p, "max": max_p}
 
     @staticmethod
@@ -147,4 +153,6 @@ def temporary_list_name(search_descriptions):
                 tokens.append('vowels: {} - {}'.format(sd['min'], sd['max']))
         elif sd['condition'] == SearchDescription.HAS_TAGS:
             tokens.append('tags: {}'.format(', '.join(sd['tags'])))
+        elif sd['condition'] == SearchDescription.PROB_LIMIT:
+            tokens.append(f'(limit {sd["min"]} - {sd["max"]})')
     return ' '.join(tokens)
