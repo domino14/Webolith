@@ -511,13 +511,16 @@ class Query:
     """ A query is a single word lookup SQL query, with bind parameters. """
     query_template = """
         SELECT lexicon_symbols, definition, front_hooks, back_hooks,
-        inner_front_hook, inner_back_hook, word, words.alphagram,
-        alphagrams.probability, alphagrams.combinations FROM words
-        INNER JOIN alphagrams ON words.alphagram = alphagrams.alphagram
-        WHERE {where_clause}
-        ORDER BY alphagrams.probability
-        {limit_clause}
-        {offset_clause}
+        inner_front_hook, inner_back_hook, word, alphagram, probability,
+        combinations FROM (
+            SELECT alphagrams.probability, alphagrams.combinations,
+                alphagrams.alphagram
+            FROM alphagrams
+            WHERE {where_clause}
+            ORDER BY alphagrams.probability
+            {limit_clause}
+            {offset_clause}) q
+        INNER JOIN words w using (alphagram)
     """
 
     def __init__(self, bind_params):
