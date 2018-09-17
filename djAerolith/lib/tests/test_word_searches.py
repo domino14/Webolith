@@ -169,6 +169,15 @@ class SimpleSearchCase(TestCase):
         self.assertEqual(qs.size(), 2)
         self.assertEqual(['AEGINRS', 'EORSSTU'], qs.alphagram_string_list())
 
+    def test_probability_limit_outside_of_range(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.probability_limit(10, 20),
+            SearchDescription.number_anagrams(8, 100),
+        ])
+        self.assertEqual(qs.size(), 0)
+
 
 class TagSearchCase(TestCase):
     fixtures = [

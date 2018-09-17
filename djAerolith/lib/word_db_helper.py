@@ -507,6 +507,26 @@ class WhereInClause(WhereClause):
                                      condition=condition), bind_params)
 
 
+class LimitOffsetClause:
+    template = 'LIMIT ? OFFSET ?'
+
+    def __init__(self, condition_params):
+        self.min = condition_params['min']
+        self.max = condition_params['max']
+
+    def render(self):
+        self.limit = self.max - self.min + 1
+        self.offset = self.min - 1
+        bind_params = [self.limit, self.offset]
+        return (self.template, bind_params)
+
+    def __repr__(self):
+        return '<{}>'.format(self.__str__())
+
+    def __str__(self):
+        return '{} {}'.format(self.min, self.max)
+
+
 class Query:
     """ A query is a single word lookup SQL query, with bind parameters. """
     query_template = """
@@ -518,24 +538,17 @@ class Query:
             FROM alphagrams
             WHERE {where_clause}
             ORDER BY alphagrams.probability
-            {limit_clause}
-            {offset_clause}) q
+            {limit_offset_clause}) q
         INNER JOIN words w using (alphagram)
     """
 
     def __init__(self, bind_params):
         self.bind_params = bind_params
 
-    def render(self, where_clauses, limit_offset=None):
-        limit_clause = ''
-        offset_clause = ''
-        if limit_offset:
-            limit_clause = f'LIMIT {limit_offset["limit"]}'
-            offset_clause = f'OFFSET {limit_offset["offset"]}'
+    def render(self, where_clauses, limit_offset_clause=None):
         self.query_string = self.query_template.format(
             where_clause=' AND '.join(where_clauses),
-            limit_clause=limit_clause,
-            offset_clause=offset_clause)
+            limit_offset_clause=limit_offset_clause or '')
         return self
 
     def execution_context(self):
@@ -627,14 +640,9 @@ class QueryGenerator:
                     }
                 )
 
-    def generate_limit_offset(self, condition, description):
+    def generate_limit_offset_clause(self, condition, description):
         if condition == SearchDescription.PROB_LIMIT:
-            # i.e. if user selects min: 3, max: 7
-            # that's limit 5, offset 2 (since probabilities are 1-indexed)
-            return {
-                'limit': description['max'] - description['min'] + 1,
-                'offset': description['min'] - 1,
-            }
+            return LimitOffsetClause(description)
 
     def validate(self):
         num_mutex_descriptions = 0
@@ -651,7 +659,7 @@ class QueryGenerator:
         """ Most things in search_descriptions should basically be a
         WHERE clause. """
         where_clauses = []
-        limit_offset = None
+        limit_offset_clause = None
         queries = []
         bind_params = []
 
@@ -666,13 +674,13 @@ class QueryGenerator:
             if wc:
                 where_clauses.append(wc)
             # limit_offset should basically be the last valid value of it.
-            limit_offset = self.generate_limit_offset(
-                description['condition'], description) or limit_offset
+            limit_offset_clause = self.generate_limit_offset_clause(
+                description['condition'], description) or limit_offset_clause
 
         rendered_where_clauses = []
         queries_already_generated = False
         logger.debug('Where clauses: %s', where_clauses)
-        logger.debug('limit_offset: %s', limit_offset)
+        logger.debug('limit_offset: %s', limit_offset_clause)
 
         for wc in where_clauses:
             if wc.in_length is not None:
@@ -706,15 +714,21 @@ class QueryGenerator:
                 bind_params.extend(bp)
 
         if queries_already_generated:
-            if limit_offset is not None:
+            if limit_offset_clause is not None:
                 # This is all screwed up.
                 raise BadInput('Incompatible query arguments; please try a '
                                'simpler query (Hint: remove probability limit '
                                'or similar)')
         else:
+            if limit_offset_clause:
+                rendered_lo_clause, bp = limit_offset_clause.render()
+                bind_params.extend(bp)
+            else:
+                rendered_lo_clause = None
             queries.append(
-                Query(bind_params).render(where_clauses=rendered_where_clauses,
-                                          limit_offset=limit_offset)
+                Query(bind_params).render(
+                    where_clauses=rendered_where_clauses,
+                    limit_offset_clause=rendered_lo_clause)
             )
         logger.debug('Generated queries: %s', queries)
         return queries
