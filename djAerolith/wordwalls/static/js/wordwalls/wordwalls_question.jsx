@@ -30,14 +30,14 @@ class WordwallsQuestion extends React.Component {
     }
     return {
       9: [18, 18],
-      10: [17, 17],
-      11: [15.5, 15.5],
+      10: [16.75, 16.75],
+      11: [15.25, 15.25],
       12: [14, 14],
       13: [13, 13],
-      14: [12.5, 12.5],
-      15: [11.75, 11.75],
+      14: [12, 12],
+      15: [11.25, 11.25],
       // Only when a chip is added.
-      16: [11, 11],
+      16: [10.5, 10.5],
     }[newLength];
   }
 
@@ -99,12 +99,13 @@ class WordwallsQuestion extends React.Component {
     }
     let x;
     let letter;
+    const strokeWidth = 0.6;
     const randomOrientation = this.props.displayStyle.randomTileOrientation;
     if (this.props.displayStyle.tilesOn) {
       for (let i = countFrom, letterIdx = 0;
         i < this.props.letters.length + countFrom;
         i += 1, letterIdx += 1) {
-        x = xPadding + (i * tileWidth);
+        x = xPadding + (i * (tileWidth + strokeWidth));
         letter = this.props.letters[letterIdx];
         if (letter === DEFAULT_BLANK_CHARACTER &&
             this.props.displayStyle.blankCharacter !== '') {
@@ -121,6 +122,7 @@ class WordwallsQuestion extends React.Component {
           key={`q${this.props.qNumber}tile${letterIdx}`}
           x={x}
           y={y}
+          strokeWidth={strokeWidth}
           width={tileWidth}
           height={tileHeight}
           fontSize={letterFontSize * this.props.displayStyle.fontMultiplier}

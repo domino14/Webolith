@@ -55,7 +55,8 @@ def new_quiz(request):
     wl.initialize_list(list(questions.to_python()), lexicon, None,
                        shuffle=True, save=False)
     q_map = generate_question_map(questions)
-    quiz_name = temporary_list_name(search_description)
+    quiz_name = temporary_list_name(search_description,
+                                    lexicon.lexiconName)
     # XXX add 1000-question limit?
     return response({
         'list': wl.to_python(),

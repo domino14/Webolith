@@ -91,7 +91,7 @@ const GameTile = (props) => {
       <rect
         width={props.width}
         height={props.height}
-        strokeWidth="0.5px"
+        strokeWidth={props.strokeWidth}
         stroke={color.outline}
         fill={color.color}
         rx={2} /* radiuses */
@@ -115,6 +115,7 @@ const GameTile = (props) => {
 
 GameTile.propTypes = {
   width: PropTypes.number.isRequired,
+  strokeWidth: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   letter: PropTypes.string.isRequired,
   fontSize: PropTypes.number.isRequired,

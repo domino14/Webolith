@@ -11,8 +11,8 @@ import {
   SearchTypesInputs } from './types';
 
 const convertOptions = options => options.map(el => ({
-  value: String(el),
-  displayValue: String(el),
+  value: el[0],
+  displayValue: el[1],
 }));
 
 const SelectValue = props => (

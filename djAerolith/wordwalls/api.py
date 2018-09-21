@@ -53,8 +53,7 @@ def api_challengers(request):
     return response(getLeaderboardData(lex, ch_name, ch_date))
 
 
-## Other API views with required auth.
-
+# Other API views with required auth.
 @login_required
 @require_GET
 def challenges_played(request):
@@ -197,16 +196,18 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
     ]
     hold_until_end = None
     for criterion in fe_search_criteria:
+        criterion_fn = getattr(SearchDescription, criterion['searchType'])
         if criterion['searchType'] in (SearchDescription.LENGTH,
                                        SearchDescription.PROB_RANGE,
                                        SearchDescription.NUM_ANAGRAMS,
                                        SearchDescription.NUM_VOWELS,
-                                       SearchDescription.POINT_VALUE):
-            search.append({
-                'condition': criterion['searchType'],
-                'min': int(criterion['minValue']),
-                'max': int(criterion['maxValue']),
-            })
+                                       SearchDescription.POINT_VALUE,
+                                       SearchDescription.PROB_LIMIT):
+            search.append(criterion_fn(int(criterion['minValue']),
+                                       int(criterion['maxValue'])))
+
+        elif criterion['searchType'] in (SearchDescription.NOT_IN_LEXICON,):
+            search.append(criterion_fn(criterion['value']))
 
         elif criterion['searchType'] == SearchDescription.HAS_TAGS:
             tags = criterion['value'].split(',')
@@ -217,11 +218,7 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
                     new_tags.append(stripped)
             if hold_until_end:
                 raise GameInitException('You can only specify one set of tags')
-            hold_until_end = {
-                'condition': criterion['searchType'],
-                'user': user,
-                'tags': new_tags,
-            }
+            hold_until_end = criterion_fn(new_tags, user)
     if hold_until_end:
         search.append(hold_until_end)
     return search

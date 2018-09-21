@@ -30,8 +30,7 @@ from django.utils import timezone
 from gargoyle import gargoyle
 
 from base.forms import SavedListForm
-from lib.word_db_helper import (WordDB, Questions, Question, word_search,
-                                BadInput)
+from lib.word_db_helper import WordDB, Questions, word_search, BadInput
 from lib.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
@@ -203,7 +202,7 @@ class WordwallsGame(object):
         if dc.category == DailyChallenge.CATEGORY_BUILD:
             list_category = WordList.CATEGORY_BUILD
         wl = self.initialize_word_list(qs, ch_lex, user, list_category)
-        temporary_list_name = '{0} {1} - {2}'.format(
+        temp_list_name = '{0} {1} - {2}'.format(
             ch_lex.lexiconName,
             ch_name.name,
             ch_date.strftime('%Y-%m-%d')
@@ -215,7 +214,7 @@ class WordwallsGame(object):
             questionsToPull=qs.size(),
             challengeId=dc.pk,
             timerSecs=secs,
-            temp_list_name=temporary_list_name,
+            temp_list_name=temp_list_name,
             qualifyForAward=qualify_for_award)
         return wgm.pk   # the table number
 
@@ -267,7 +266,8 @@ class WordwallsGame(object):
             raise GameInitException(e)
         wgm = self.create_or_update_game_instance(
             user, lexicon, wl, use_table, multiplayer, timerSecs=time_secs,
-            temp_list_name=temporary_list_name(search_description),
+            temp_list_name=temporary_list_name(search_description,
+                                               lexicon.lexiconName),
             questionsToPull=questions_per_round)
         return wgm.pk   # this is a table number id!
 

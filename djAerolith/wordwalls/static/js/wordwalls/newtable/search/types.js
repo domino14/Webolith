@@ -103,11 +103,14 @@ const SearchTypesEnum = {
       name: 'not_in_lexicon',
       displayName: 'Not in lexicon',
       inputType: SearchTypesInputs.SELECT,
-      default: 'America',
-      options: ['America', 'CSW15'],
+      default: 'other_english',
+      options: [
+        ['other_english', 'Other English-language lexicon'],
+        ['update', 'Last version of this lexicon'],
+      ],
     },
     11: {
-      name: 'limit_probability',
+      name: 'probability_limit',
       displayName: 'Probability limit',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
