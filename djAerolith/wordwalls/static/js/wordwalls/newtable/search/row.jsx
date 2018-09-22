@@ -16,7 +16,7 @@ const convertOptions = options => options.map(el => ({
 }));
 
 const SelectValue = props => (
-  <div className="col-xs-3">
+  <div className="col-xs-6">
     <Select
       colSize={12}
       label={props.label}

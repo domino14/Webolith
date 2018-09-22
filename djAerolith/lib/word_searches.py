@@ -84,7 +84,7 @@ class SearchDescription(object):
         }
 
     @staticmethod
-    def tags(tag_list, user):
+    def has_tags(tag_list, user):
         """
         Only for tagged words.
 
@@ -96,7 +96,7 @@ class SearchDescription(object):
         }
 
     @staticmethod
-    def points(min_n, max_n):
+    def point_value(min_n, max_n):
         """
         Return only words that have certain point values.
 

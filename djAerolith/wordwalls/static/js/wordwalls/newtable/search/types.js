@@ -130,15 +130,15 @@ const SearchTypesEnum = {
 const SearchTypesOrder = [
   SearchTypesEnum.LENGTH,
   SearchTypesEnum.PROBABILITY,
-  SearchTypesEnum.ANAGRAM_MATCH,
   SearchTypesEnum.POINTS,
+  SearchTypesEnum.ANAGRAM_MATCH,
   SearchTypesEnum.NUM_ANAGRAMS,
   SearchTypesEnum.NUM_VOWELS,
+  SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.FIXED_LENGTH,
   SearchTypesEnum.TAGS,
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,
-  SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.PROBABILITY_LIMIT,
 ];
 
