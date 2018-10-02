@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from wordwalls.models import (
     DailyChallengeName, DailyChallenge, DailyChallengeLeaderboardEntry,
-    NamedList, WordwallsGameModel)
+    NamedList)
 from base.models import Lexicon, WordList
 from base.forms import SavedListForm
 from lib.response import response, bad_request
@@ -197,6 +197,7 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
     hold_until_end = None
     for criterion in fe_search_criteria:
         criterion_fn = getattr(SearchDescription, criterion['searchType'])
+
         if criterion['searchType'] in (SearchDescription.LENGTH,
                                        SearchDescription.PROB_RANGE,
                                        SearchDescription.NUM_ANAGRAMS,
@@ -219,6 +220,9 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
             if hold_until_end:
                 raise GameInitException('You can only specify one set of tags')
             hold_until_end = criterion_fn(new_tags, user)
+        elif criterion['searchType'] == SearchDescription.MATCHING_ANAGRAM:
+            search.append(criterion_fn(criterion['value'].strip()))
+
     if hold_until_end:
         search.append(hold_until_end)
     return search
@@ -244,6 +248,8 @@ def new_search(request, parsed_req_body):
             multiplayer=parsed_req_body['multiplayer'])
     except GameInitException as e:
         return bad_request(str(e))
+    except AttributeError as e:
+        return bad_request('Stop hacking me bro')
     return table_response(tablenum)
 
 

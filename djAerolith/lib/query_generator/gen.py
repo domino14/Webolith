@@ -1,7 +1,10 @@
 import copy
 import logging
 
-from base.models import AlphagramTag
+from base.models import AlphagramTag, alphagrammize
+
+from lib.domain import Alphagram
+from lib.macondo_interface import anagram_letters, MacondoError
 from lib.query_generator.clauses import (
     WhereBetweenClause, WhereInClause, WhereEqualsClause, LimitOffsetClause
 )
@@ -10,6 +13,13 @@ from lib.word_searches import SearchDescription
 
 logger = logging.getLogger(__name__)
 MAX_CHUNK_SIZE = 950
+
+
+def get_alphas_from_word_list(word_list: list):
+    alpha_set = set()
+    for word in word_list:
+        alpha_set.add(alphagrammize(word))
+    return [Alphagram(a) for a in alpha_set]
 
 
 class Query:
@@ -51,9 +61,10 @@ class Query:
 
 class QueryGenerator:
     """ Generate the query based on passed-in parameters. """
-    LISTING_DESCRIPTIONS = [
+    LISTING_CONDITIONS = [
         SearchDescription.PROB_LIST, SearchDescription.ALPHAGRAM_LIST,
         SearchDescription.HAS_TAGS, SearchDescription.PROB_LIMIT,
+        SearchDescription.MATCHING_ANAGRAM
     ]
 
     def __init__(self, configs, lexicon_name):
@@ -105,9 +116,23 @@ class QueryGenerator:
                 }
             )
 
-        # At most one of the following three clauses should be present.
+        # At most one of the following four clauses should be present.
         # It must also be the last clause!
-        elif condition in self.LISTING_DESCRIPTIONS:
+        elif condition in self.LISTING_CONDITIONS:
+            if condition == SearchDescription.MATCHING_ANAGRAM:
+                try:
+                    qs = anagram_letters(self.lexicon_name, description['letters'])
+                except MacondoError as e:
+                    raise BadInput(e)
+                alphas = get_alphas_from_word_list(qs)
+                return WhereInClause(
+                    table='alphagrams',
+                    column='alphagram',
+                    condition_params={
+                        'in_list': [a.alphagram for a in alphas]
+                    }
+                )
+
             if condition == SearchDescription.PROB_LIST:
                 return WhereInClause(
                     table='alphagrams',
@@ -144,13 +169,16 @@ class QueryGenerator:
     def validate(self):
         num_mutex_descriptions = 0
         search_descriptions = self.configs['search_descriptions']
+        condition_order_problem = False
         for idx, description in enumerate(search_descriptions):
-            if description in self.LISTING_DESCRIPTIONS:
+            if description['condition'] in self.LISTING_CONDITIONS:
                 if idx != len(search_descriptions) - 1:
-                    return 'A list search condition must be last.'
+                    condition_order_problem = True
                 num_mutex_descriptions += 1
         if num_mutex_descriptions > 1:
             return 'Mutually exclusive search conditions not allowed.'
+        if condition_order_problem:
+            return 'A list search condition must be last.'
 
     def generate(self):
         """ Most things in search_descriptions should basically be a
@@ -165,7 +193,6 @@ class QueryGenerator:
             raise BadInput(val_error)
 
         for description in self.configs['search_descriptions']:
-            logger.debug('Description: %s', description)
             wc = self.generate_where_clause(description['condition'],
                                             description)
             if wc:
@@ -207,6 +234,7 @@ class QueryGenerator:
 
             else:
                 r, bp = wc.render()
+                logger.debug('in_length is None, appended %s', r)
                 rendered_where_clauses.append(r)
                 bind_params.extend(bp)
 

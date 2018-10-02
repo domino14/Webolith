@@ -17,7 +17,7 @@ const SearchTypesEnum = {
   MAX_SOLUTIONS: 9,
   NOT_IN_LEXICON: 10,
   PROBABILITY_LIMIT: 11,
-  ANAGRAM_MATCH: 12,
+  MATCHING_ANAGRAM: 12,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -144,12 +144,13 @@ const SearchTypesEnum = {
       prior to applying any filters.`,
     },
     12: {
-      name: 'anagram_match',
+      name: 'matching_anagram',
       displayName: 'Anagram match',
       inputType: SearchTypesInputs.ONE_STRING,
       default: 'AEINST??',
       description: `Provide an initial list of words to search with an anagram
-      search. You can use up to 8 blank characters.`,
+      search. You can use up to 8 blank characters (use a ? character to
+      represent a blank).`,
     },
   },
 };
@@ -158,7 +159,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.LENGTH,
   SearchTypesEnum.PROBABILITY,
   SearchTypesEnum.POINTS,
-  SearchTypesEnum.ANAGRAM_MATCH,
+  SearchTypesEnum.MATCHING_ANAGRAM,
   SearchTypesEnum.NUM_ANAGRAMS,
   SearchTypesEnum.NUM_VOWELS,
   SearchTypesEnum.NOT_IN_LEXICON,

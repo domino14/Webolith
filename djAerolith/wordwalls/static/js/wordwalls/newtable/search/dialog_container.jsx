@@ -19,7 +19,7 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.NUM_VOWELS,
   SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.PROBABILITY_LIMIT,
-  SearchTypesEnum.ANAGRAM_MATCH,
+  SearchTypesEnum.MATCHING_ANAGRAM,
 ]);
 
 class SearchDialogContainer extends React.Component {

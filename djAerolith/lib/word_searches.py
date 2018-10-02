@@ -107,7 +107,7 @@ class SearchDescription(object):
         }
 
     @staticmethod
-    def matching_anagram(length, lex, letters):
+    def matching_anagram(letters):
         """
         Mostly meant for stem study, etc. Letters can be something like
         AEINST?
@@ -115,8 +115,6 @@ class SearchDescription(object):
         """
         return {
             "condition": SearchDescription.MATCHING_ANAGRAM,
-            "length": length,
-            "lexicon": lex,
             "letters": letters
         }
 
@@ -178,4 +176,6 @@ def temporary_list_name(search_descriptions, lexicon_name):
                 elif lexicon_name == 'CSW15':
                     desc = 'CSW12'
             tokens.append(f'not in {desc}')
+        elif sd['condition'] == SearchDescription.MATCHING_ANAGRAM:
+            tokens.append(f'matching {sd["letters"]}')
     return ' '.join(tokens)

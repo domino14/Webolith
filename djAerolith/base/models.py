@@ -50,9 +50,9 @@ def make_sort_map():
 def alphagrammize(word):
     if len(SORT_MAP) == 0:
         make_sort_map()
-    l = list(word.upper())
-    l.sort(key=lambda y: SORT_MAP[y])
-    return ''.join(l)
+    letters = list(word.upper())
+    letters.sort(key=lambda y: SORT_MAP[y])
+    return ''.join(letters)
 
 
 class Maintenance(models.Model):
