@@ -42,7 +42,11 @@ class HelpText extends React.Component {
   render() {
     return (
       <div>
-        <a onClick={() => this.toggleShow()}>Show help</a>
+        <button
+          className="btn btn-sm btn-default"
+          onClick={() => this.toggleShow()}
+        >{this.state.showingText ? 'Hide help' : 'Show help'}
+        </button>
         {this.renderText()}
       </div>);
   }

@@ -121,7 +121,8 @@ class QueryGenerator:
         elif condition in self.LISTING_CONDITIONS:
             if condition == SearchDescription.MATCHING_ANAGRAM:
                 try:
-                    qs = anagram_letters(self.lexicon_name, description['letters'])
+                    qs = anagram_letters(self.lexicon_name,
+                                         description['letters'])
                 except MacondoError as e:
                     raise BadInput(e)
                 alphas = get_alphas_from_word_list(qs)
@@ -178,7 +179,8 @@ class QueryGenerator:
         if num_mutex_descriptions > 1:
             return 'Mutually exclusive search conditions not allowed.'
         if condition_order_problem:
-            return 'A list search condition must be last.'
+            return ('A "probability limit" or "matching anagrams" condition '
+                    'must be last.')
 
     def generate(self):
         """ Most things in search_descriptions should basically be a

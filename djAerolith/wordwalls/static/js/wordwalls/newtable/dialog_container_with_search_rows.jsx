@@ -12,7 +12,8 @@ const maybeReorderCriteria = (searchCriteria) => {
   const arrCopy = [];
   let toPushBack;
   searchCriteria.forEach((val) => {
-    if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM) {
+    if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM ||
+        val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
       toPushBack = val;
     } else {
       arrCopy.push(val);

@@ -128,7 +128,8 @@ class SimpleSearchCase(TestCase):
                 SearchDescription.probability_limit(1, 3),
                 SearchDescription.probability_list([92, 73, 85, 61]),
             ])
-        self.assertTrue('Incompatible query arguments' in str(e.exception))
+        print(str(e.exception))
+        self.assertTrue('Mutually exclusive' in str(e.exception))
 
     def test_probability_limit_second(self):
         qs = word_search([
@@ -162,8 +163,8 @@ class SimpleSearchCase(TestCase):
         qs = word_search([
             SearchDescription.lexicon(self.america),
             SearchDescription.length(7, 7),
-            SearchDescription.probability_limit(3, 4),
             SearchDescription.number_anagrams(8, 100),
+            SearchDescription.probability_limit(3, 4),
         ])
 
         self.assertEqual(qs.size(), 2)
@@ -173,8 +174,8 @@ class SimpleSearchCase(TestCase):
         qs = word_search([
             SearchDescription.lexicon(self.america),
             SearchDescription.length(7, 7),
-            SearchDescription.probability_limit(10, 20),
             SearchDescription.number_anagrams(8, 100),
+            SearchDescription.probability_limit(10, 20),
         ])
         self.assertEqual(qs.size(), 0)
 
