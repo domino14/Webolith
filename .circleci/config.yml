@@ -58,7 +58,7 @@ jobs:
       - image: node:alpine
     steps:
       - checkout
-      - run: npm install -g yarn
+      - run: apk add yarn
       - run: yarn install
       - run: yarn eslint && yarn jshint && yarn test && yarn prod:build
       - run: apk add --update ca-certificates openssl && update-ca-certificates
