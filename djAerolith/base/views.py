@@ -398,7 +398,7 @@ def get_q_summary(wl, q_idx, alphagram):
                 break
         if not was_missed:
             # The question wasn't missed, but was it asked?
-            if q_idx > question_index:
+            if question_index > q_idx:
                 q_summary.append(f'List has not been completed, but '
                                  f'{alphagram} was correctly answered.')
             else:
