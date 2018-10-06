@@ -4,10 +4,12 @@ A management script to get information about toughie bingos.
 """
 import csv
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import connection
 
-from lib.word_db_helper import WordDB, Alphagram
+from lib.domain import Alphagram
+from lib.word_db_helper import WordDB
+
 
 
 class Bingo(object):

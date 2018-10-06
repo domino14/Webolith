@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SearchRows from './rows';
+import HelpText from './help_text';
 import { SearchCriterion } from './types';
 
 const PlayButton = props => (
@@ -59,6 +60,14 @@ const WordSearchDialog = (props) => {
           disabled={props.disabled}
         />
         {flashcardButton}
+      </div>
+      <div
+        className="col-sm-4"
+        style={{ overflowY: 'scroll', height: 400, marginTop: 32 }}
+      >
+        <HelpText
+          allowedSearchTypes={props.allowedSearchTypes}
+        />
       </div>
     </div>
   );

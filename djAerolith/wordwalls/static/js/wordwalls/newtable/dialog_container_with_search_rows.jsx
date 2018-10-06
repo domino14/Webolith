@@ -5,7 +5,23 @@
  */
 import React from 'react';
 
-import { searchCriterionToAdd } from './search/types';
+import { searchCriterionToAdd, SearchTypesEnum } from './search/types';
+
+const maybeReorderCriteria = (searchCriteria) => {
+  // Matching anagram must always come last.
+  const arrCopy = [];
+  const toPushBack = [];
+  searchCriteria.forEach((val) => {
+    if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM ||
+        val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
+      toPushBack.push(val);
+    } else {
+      arrCopy.push(val);
+    }
+  });
+  toPushBack.forEach(val => arrCopy.push(val));
+  return arrCopy;
+};
 
 function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriteria) {
   return class extends React.Component {
@@ -32,7 +48,7 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
 
       const newCriteria = this.state.searchCriteria.concat(toadd);
       this.setState({
-        searchCriteria: newCriteria,
+        searchCriteria: maybeReorderCriteria(newCriteria),
       });
     }
 
@@ -57,7 +73,7 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
       const searchType = parseInt(value, 10);
       criteria[index].resetSearchType(searchType);
       this.setState({
-        searchCriteria: criteria,
+        searchCriteria: maybeReorderCriteria(criteria),
       });
     }
 

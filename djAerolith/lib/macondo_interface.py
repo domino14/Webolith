@@ -74,11 +74,14 @@ def make_rpc_call(procedure_name, arguments):
 
     """
     headers = {'Content-Type': 'application/json'}
+    # This makes it work locally with more "complex" queries. On prod,
+    # we limit it.
+    # arguments['authToken'] = 'abcdef'
     data = {
         'jsonrpc': "2.0",
         'method': procedure_name,
         'id': str(uuid.uuid4()),
-        'params': arguments
+        'params': arguments,
     }
     rpc_address = settings.MACONDO_ADDRESS + '/rpc'
     try:

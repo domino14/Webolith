@@ -34,7 +34,7 @@ class SimpleSearchCase(TestCase):
             SearchDescription.lexicon(self.america),
             SearchDescription.length(8, 8),
             SearchDescription.probability_range(3000, 3010),
-            SearchDescription.points(14, 30)
+            SearchDescription.point_value(14, 30)
         ])
 
         self.assertEqual(qs.size(), 4)
@@ -47,7 +47,7 @@ class SimpleSearchCase(TestCase):
         qs = word_search([
             SearchDescription.lexicon(self.america),
             SearchDescription.length(7, 7),
-            SearchDescription.points(40, 100)
+            SearchDescription.point_value(40, 100)
         ])
         self.assertEqual(qs.size(), 2)
         self.assertEqual(
@@ -73,7 +73,7 @@ class SimpleSearchCase(TestCase):
             SearchDescription.lexicon(self.america),
             SearchDescription.length(7, 7),
             SearchDescription.number_anagrams(8, 100),
-            SearchDescription.points(8, 100),
+            SearchDescription.point_value(8, 100),
         ])
         self.assertEqual(qs.size(), 3)
         self.assertEqual(
@@ -120,6 +120,65 @@ class SimpleSearchCase(TestCase):
             str(e.exception),
             'The first search description must contain a lexicon.')
 
+    def test_probability_limit_unallowed(self):
+        with self.assertRaises(BadInput) as e:
+            word_search([
+                SearchDescription.lexicon(self.america),
+                SearchDescription.length(7, 7),
+                SearchDescription.probability_limit(1, 3),
+                SearchDescription.probability_list([92, 73, 85, 61]),
+            ])
+        print(str(e.exception))
+        self.assertTrue('Mutually exclusive' in str(e.exception))
+
+    def test_probability_limit_second(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.point_value(40, 100),
+            SearchDescription.probability_limit(2, 2),
+        ])
+        # Skip AVYYZZZ
+        self.assertEqual(['AIPZZZZ'], qs.alphagram_string_list())
+
+    def test_probability_limit_first(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.point_value(40, 100),
+            SearchDescription.probability_limit(1, 1),
+        ])
+        self.assertEqual(['AVYYZZZ'], qs.alphagram_string_list())
+
+    def test_probability_limit_many(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.point_value(40, 100),
+            SearchDescription.probability_limit(1, 50),
+        ])
+        self.assertEqual(['AVYYZZZ', 'AIPZZZZ'], qs.alphagram_string_list())
+
+    def test_probability_limit_another(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.number_anagrams(8, 100),
+            SearchDescription.probability_limit(3, 4),
+        ])
+
+        self.assertEqual(qs.size(), 2)
+        self.assertEqual(['AEGINRS', 'EORSSTU'], qs.alphagram_string_list())
+
+    def test_probability_limit_outside_of_range(self):
+        qs = word_search([
+            SearchDescription.lexicon(self.america),
+            SearchDescription.length(7, 7),
+            SearchDescription.number_anagrams(8, 100),
+            SearchDescription.probability_limit(10, 20),
+        ])
+        self.assertEqual(qs.size(), 0)
+
 
 class TagSearchCase(TestCase):
     fixtures = [
@@ -160,7 +219,7 @@ class TagSearchCase(TestCase):
             word_search([
                 SearchDescription.lexicon(self.america),
                 SearchDescription.length(8, 8),
-                SearchDescription.tags(['D4'], self.cesar)
+                SearchDescription.has_tags(['D4'], self.cesar)
             ])
         self.assertEqual(str(e.exception), 'Query returns no results.')
 
@@ -170,7 +229,7 @@ class TagSearchCase(TestCase):
         qs = word_search([
             SearchDescription.lexicon(self.csw15),
             SearchDescription.length(8, 8),
-            SearchDescription.tags(['D4'], self.cesar)
+            SearchDescription.has_tags(['D4'], self.cesar)
         ])
 
         self.assertEqual(qs.size(), 1)
@@ -197,7 +256,7 @@ class TagSearchCase(TestCase):
         qs = word_search([
             SearchDescription.lexicon(self.america),
             SearchDescription.length(8, 8),
-            SearchDescription.tags(['D2', 'D3', 'D4', 'D5'], self.cesar)
+            SearchDescription.has_tags(['D2', 'D3', 'D4', 'D5'], self.cesar)
         ])
 
         logger.debug('Found qs: %s', qs)
@@ -211,7 +270,7 @@ class TagSearchCase(TestCase):
         qs = word_search([
             SearchDescription.lexicon(self.america),
             SearchDescription.length(5, 5),
-            SearchDescription.tags(['D2', 'D5'], self.cesar)
+            SearchDescription.has_tags(['D2', 'D5'], self.cesar)
         ])
 
         self.assertEqual(qs.size(), 2)
@@ -254,7 +313,7 @@ class MassiveTagSearchCase(TestCase):
             SearchDescription.lexicon(self.america),
             SearchDescription.length(8, 8),
             SearchDescription.probability_range(5001, 7500),
-            SearchDescription.tags(['D4'], self.cesar),
+            SearchDescription.has_tags(['D4'], self.cesar),
         ])
         logger.debug('Tag search completed in %s seconds', time.time() - t)
         self.assertEqual(qs.size(), 2500)

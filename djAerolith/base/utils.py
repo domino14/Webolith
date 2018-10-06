@@ -1,7 +1,8 @@
 import logging
 
-from base.models import WordList, alphagrammize
-from lib.word_db_helper import WordDB, Alphagram
+from base.models import alphagrammize
+from lib.domain import Alphagram
+from lib.word_db_helper import WordDB
 from django.utils.translation import ugettext as _
 
 logger = logging.getLogger(__name__)

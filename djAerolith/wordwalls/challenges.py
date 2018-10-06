@@ -12,7 +12,8 @@ from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeMissedBingos,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from lib.word_db_helper import WordDB, Question, Questions, Alphagram
+from lib.word_db_helper import WordDB
+from lib.domain import Question, Questions, Alphagram
 from lib.macondo_interface import (gen_blank_challenges, gen_build_challenge,
                                    MacondoError)
 

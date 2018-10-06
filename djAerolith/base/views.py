@@ -28,7 +28,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 
-from base.models import WordList, Lexicon, AlphagramTag
+from base.models import WordList, Lexicon, AlphagramTag, alphagrammize
 
 from base.utils import (generate_question_map_from_alphagrams,
                         generate_question_list_from_alphagrams,
@@ -329,8 +329,83 @@ def listmanager(request):
 def word_lookup(request):
     lexicon = request.GET.get('lexicon')
     letters = request.GET.get('letters')
+    if letters.startswith('!'):
+        return alphagram_history_search(request)
     try:
         results = anagram_letters(lexicon, letters)
     except MacondoError as e:
         return response(str(e), StatusCode.BAD_REQUEST)
     return response(results)
+
+
+def alphagram_history_search(request):
+    """
+    Search for the alphagram in the user's quizzes to see when they last saw it.
+
+    """
+    lexicon = request.GET.get('lexicon')
+    letters = request.GET.get('letters').replace('!', '')
+    alphagram = alphagrammize(letters).upper()
+    summary = []
+    try:
+        lex_obj = Lexicon.objects.get(lexiconName=lexicon)
+    except Lexicon.DoesNotExist:
+        return response('Bad lexicon', StatusCode.BAD_REQUEST)
+    # This is an expensive function.
+    lists = WordList.objects.filter(user=request.user, lexicon=lex_obj).filter(
+        category=WordList.CATEGORY_ANAGRAM).filter(is_temporary=False)
+    for wl in lists:
+        questions = json.loads(wl.origQuestions)
+        for idx, q in enumerate(questions):
+            if q['q'] == alphagram:
+                summary.append(get_q_summary(wl, idx, alphagram))
+
+    return response(summary)
+
+
+def get_q_summary(wl, q_idx, alphagram):
+    """
+    Get a user-readable summary of what the user did with the given question
+    index and the word_list.
+
+    """
+    q_summary = []
+    missed = json.loads(wl.missed)
+    first_missed = json.loads(wl.firstMissed)
+    question_index = wl.questionIndex
+    gone_thru_once = wl.goneThruOnce
+    last_saved = wl.lastSaved
+
+    if gone_thru_once:
+        was_first_missed = False
+        for idx in first_missed:
+            if idx == q_idx:
+                was_first_missed = True
+                break
+        if not was_first_missed:
+            # This question was never missed
+            q_summary.append(f'{alphagram} was correctly answered the first '
+                             'time through this list.')
+        else:
+            q_summary.append(f'{alphagram} was missed the first time through '
+                             'this list.')
+    else:
+        # We haven't gone through the whole word list once yet.
+        was_missed = False
+        for idx in missed:
+            if idx == q_idx:
+                was_missed = True
+                break
+        if not was_missed:
+            # The question wasn't missed, but was it asked?
+            if q_idx > question_index:
+                q_summary.append(f'List has not been completed, but '
+                                 f'{alphagram} was correctly answered.')
+            else:
+                q_summary.append(f'List has not been completed, {alphagram} '
+                                 'has not been yet asked.')
+        else:
+            q_summary.append(f'List has not been completed, but {alphagram} '
+                             'was missed already.')
+    q_summary.append(f'List was last saved on {last_saved}')
+    return f'List {wl.name}: {" ".join(q_summary)}'

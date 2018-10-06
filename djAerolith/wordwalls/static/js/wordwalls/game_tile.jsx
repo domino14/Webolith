@@ -3,6 +3,36 @@ import PropTypes from 'prop-types';
 
 import fonts from './fonts';
 
+// const LETTER_VALUES = {
+//   A: 1,
+//   B: 3,
+//   C: 3,
+//   D: 2,
+//   E: 1,
+//   F: 4,
+//   G: 2,
+//   H: 4,
+//   I: 1,
+//   J: 8,
+//   K: 5,
+//   L: 1,
+//   M: 3,
+//   N: 1,
+//   O: 1,
+//   P: 3,
+//   Q: 10,
+//   R: 1,
+//   S: 1,
+//   T: 1,
+//   U: 1,
+//   V: 4,
+//   W: 4,
+//   X: 8,
+//   Y: 4,
+//   Z: 10,
+//   '?': 0,
+// };
+
 /**
  * Get a color given a string tile style. The tile style is just a
  * stringified number from 1 - 9.
@@ -57,6 +87,23 @@ function colorFromTileStyle(style) {
   }[style];
 }
 
+// Get the desired font size and weights as a function of the width.
+function tileProps(width) {
+  // This formula is not the most scientific. The tiles look optimal at 130%
+  // if the tile size is 31.
+  const size = (130 / 31) * width;
+  let weight = '500';
+  if (width < 24) {
+    weight = '300';
+  }
+  const valueSize = (80 / 31) * width;
+  return {
+    size,
+    weight,
+    valueSize,
+  };
+}
+
 const GameTile = (props) => {
   let { fontSize, letter } = props;
   let transform = `translate(${props.x},${props.y})`;
@@ -91,7 +138,7 @@ const GameTile = (props) => {
       <rect
         width={props.width}
         height={props.height}
-        strokeWidth="0.5px"
+        strokeWidth={props.strokeWidth}
         stroke={color.outline}
         fill={color.color}
         rx={2} /* radiuses */
@@ -109,12 +156,22 @@ const GameTile = (props) => {
         fill={color.textColor}
       >{letter}
       </text>
+      {/* <PointValue
+        fontFamily={fonts[props.font].fontFamily}
+        dy={fonts[props.font].dy}
+        stroke={color.textColor}
+        fill={color.textColor}
+        value={LETTER_VALUES[letter]}
+        tileWidth={props.width}
+        tileHeight={props.height}
+      /> */}
     </g>
   );
 };
 
 GameTile.propTypes = {
   width: PropTypes.number.isRequired,
+  strokeWidth: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   letter: PropTypes.string.isRequired,
   fontSize: PropTypes.number.isRequired,
@@ -124,6 +181,37 @@ GameTile.propTypes = {
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
   angle: PropTypes.number.isRequired,
+};
+
+const PointValue = (props) => {
+  if (!props.value) {
+    return null;
+  }
+  const font = tileProps(props.tileWidth);
+  return (
+    <text
+      x={8.5 * (props.tileWidth / 10)}
+      y={8.5 * (props.tileHeight / 10)}
+      dy={props.dy}
+      textAnchor="middle"
+      fontFamily={props.fontFamily}
+      fontSize={`${font.valueSize}%`}
+      stroke={props.stroke}
+      strokeWidth="0.05px"
+      fill={props.fill}
+    >{props.value}
+    </text>
+  );
+};
+
+PointValue.propTypes = {
+  fontFamily: PropTypes.string.isRequired,
+  dy: PropTypes.number.isRequired,
+  stroke: PropTypes.string.isRequired,
+  fill: PropTypes.string.isRequired,
+  value: PropTypes.number.isRequired,
+  tileWidth: PropTypes.number.isRequired,
+  tileHeight: PropTypes.number.isRequired,
 };
 
 export default GameTile;

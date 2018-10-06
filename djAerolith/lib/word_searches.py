@@ -3,6 +3,9 @@ Helper functions for dealing with word searches.
 
 """
 import logging
+
+from base.models import Lexicon
+
 logger = logging.getLogger(__name__)
 
 
@@ -10,6 +13,7 @@ class SearchDescription(object):
     LENGTH = 'length'
     PROB_RANGE = 'probability_range'
     PROB_LIST = 'probability_list'
+    PROB_LIMIT = 'probability_limit'
     NUM_ANAGRAMS = 'number_anagrams'
     NUM_VOWELS = 'number_vowels'
     HAS_TAGS = 'has_tags'
@@ -17,10 +21,11 @@ class SearchDescription(object):
     MATCHING_ANAGRAM = 'matching_anagram'
     ALPHAGRAM_LIST = 'alphagram_list'
     LEXICON = 'lexicon'
+    NOT_IN_LEXICON = 'not_in_lexicon'
 
     # Must always be the first search description.
     @staticmethod
-    def lexicon(lex):
+    def lexicon(lex: Lexicon):
         return {
             "condition": SearchDescription.LEXICON,
             "lexicon": lex,
@@ -37,6 +42,11 @@ class SearchDescription(object):
     @staticmethod
     def probability_range(min_p, max_p):
         return {"condition": SearchDescription.PROB_RANGE,
+                "min": min_p, "max": max_p}
+
+    @staticmethod
+    def probability_limit(min_p, max_p):
+        return {"condition": SearchDescription.PROB_LIMIT,
                 "min": min_p, "max": max_p}
 
     @staticmethod
@@ -74,7 +84,7 @@ class SearchDescription(object):
         }
 
     @staticmethod
-    def tags(tag_list, user):
+    def has_tags(tag_list, user):
         """
         Only for tagged words.
 
@@ -86,7 +96,7 @@ class SearchDescription(object):
         }
 
     @staticmethod
-    def points(min_n, max_n):
+    def point_value(min_n, max_n):
         """
         Return only words that have certain point values.
 
@@ -97,7 +107,7 @@ class SearchDescription(object):
         }
 
     @staticmethod
-    def matching_anagram(length, lex, letters):
+    def matching_anagram(letters):
         """
         Mostly meant for stem study, etc. Letters can be something like
         AEINST?
@@ -105,13 +115,18 @@ class SearchDescription(object):
         """
         return {
             "condition": SearchDescription.MATCHING_ANAGRAM,
-            "length": length,
-            "lexicon": lex,
             "letters": letters
         }
 
+    @staticmethod
+    def not_in_lexicon(lex: str):
+        return {
+            'condition': SearchDescription.NOT_IN_LEXICON,
+            'lexicon': lex,
+        }
 
-def temporary_list_name(search_descriptions):
+
+def temporary_list_name(search_descriptions, lexicon_name):
     """ Build up a temporary list name given a search description. """
     tokens = []
     for sd in search_descriptions:
@@ -119,32 +134,48 @@ def temporary_list_name(search_descriptions):
             tokens.append(sd['lexicon'].lexiconName)
         elif sd['condition'] == SearchDescription.LENGTH:
             if sd['min'] == sd['max']:
-                tokens.append('{}s'.format(sd['min']))
+                tokens.append(f'{sd["min"]}s')
             elif sd['min'] < sd['max']:
                 tk = []
                 for i in range(sd['min'], sd['max'] + 1):
-                    tk.append('{}s'.format(i))
+                    tk.append(f'{i}s')
                 tokens.append(', '.join(tk))
             else:
                 tokens.append('INVALID')
         elif sd['condition'] == SearchDescription.PROB_RANGE:
-            tokens.append('({} - {})'.format(sd['min'], sd['max']))
+            tokens.append(f'({sd["min"]} - {sd["max"]})')
         elif sd['condition'] == SearchDescription.NUM_ANAGRAMS:
             if sd['min'] == 1 and sd['max'] == 1:
                 tokens.append('Single-anagram')
             else:
-                tokens.append('#-anagrams: {} - {}'.format(sd['min'],
-                                                           sd['max']))
+                tokens.append(f'#-anagrams: {sd["min"]} - {sd["max"]}')
         elif sd['condition'] == SearchDescription.POINT_VALUE:
             if sd['min'] == sd['max']:
-                tokens.append('{}-pt'.format(sd['min']))
+                tokens.append(f'{sd["min"]}-pt')
             else:
-                tokens.append('pts: {} - {}'.format(sd['min'], sd['max']))
+                tokens.append(f'pts: {sd["min"]} - {sd["max"]}')
         elif sd['condition'] == SearchDescription.NUM_VOWELS:
             if sd['min'] == sd['max']:
-                tokens.append('{}-vowel'.format(sd['min']))
+                tokens.append(f'{sd["min"]}-vowel')
             else:
-                tokens.append('vowels: {} - {}'.format(sd['min'], sd['max']))
+                tokens.append(f'vowels: {sd["min"]} - {sd["max"]}')
         elif sd['condition'] == SearchDescription.HAS_TAGS:
-            tokens.append('tags: {}'.format(', '.join(sd['tags'])))
+            tokens.append(f'tags: {", ".join(sd["tags"])}')
+        elif sd['condition'] == SearchDescription.PROB_LIMIT:
+            tokens.append(f'(limit {sd["min"]} - {sd["max"]})')
+        elif sd['condition'] == SearchDescription.NOT_IN_LEXICON:
+            desc = ''
+            if sd['lexicon'] == 'other_english':
+                if lexicon_name == 'America':
+                    desc = 'CSW15'
+                elif lexicon_name == 'CSW15':
+                    desc = 'America'
+            elif sd['lexicon'] == 'update':
+                if lexicon_name == 'America':
+                    desc = 'OWL2'
+                elif lexicon_name == 'CSW15':
+                    desc = 'CSW12'
+            tokens.append(f'not in {desc}')
+        elif sd['condition'] == SearchDescription.MATCHING_ANAGRAM:
+            tokens.append(f'matching {sd["letters"]}')
     return ' '.join(tokens)
