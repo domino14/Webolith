@@ -10,18 +10,16 @@ import { searchCriterionToAdd, SearchTypesEnum } from './search/types';
 const maybeReorderCriteria = (searchCriteria) => {
   // Matching anagram must always come last.
   const arrCopy = [];
-  let toPushBack;
+  const toPushBack = [];
   searchCriteria.forEach((val) => {
     if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM ||
         val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
-      toPushBack = val;
+      toPushBack.push(val);
     } else {
       arrCopy.push(val);
     }
   });
-  if (toPushBack) {
-    arrCopy.push(toPushBack);
-  }
+  toPushBack.forEach(val => arrCopy.push(val));
   return arrCopy;
 };
 

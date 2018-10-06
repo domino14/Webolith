@@ -61,7 +61,10 @@ const WordSearchDialog = (props) => {
         />
         {flashcardButton}
       </div>
-      <div className="col-sm-4" style={{ overflowY: 'scroll', height: 400 }}>
+      <div
+        className="col-sm-4"
+        style={{ overflowY: 'scroll', height: 400, marginTop: 32 }}
+      >
         <HelpText
           allowedSearchTypes={props.allowedSearchTypes}
         />
