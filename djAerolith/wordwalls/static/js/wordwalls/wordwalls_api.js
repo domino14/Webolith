@@ -26,7 +26,7 @@ class WordwallsAPI {
     // but a lot of the time it can result in creating a new table.
     return {
       ...this.fetchInit,
-      body: method !== 'GET' ? JSON.stringify(params) : null,
+      body: method !== 'GET' ? JSON.stringify(params) : undefined,
       method: method || 'POST',
     };
   }
