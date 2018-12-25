@@ -1,6 +1,6 @@
 # These are the requirements for the prod Docker file.
 
-django>=1.11,<2.0
+django>=2.0,<2.1
 six >= 1.7
 Markdown
 django-registration-redux
@@ -18,3 +18,4 @@ gunicorn
 # Not strictly a prod requirement. However, the main issue here
 # is that we can't run tests in the docker container otherwise.
 mock
+wagtail

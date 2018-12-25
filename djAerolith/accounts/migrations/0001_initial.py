@@ -29,8 +29,8 @@ class Migration(migrations.Migration):
                 ('wordwallsMedals', models.TextField(null=True, blank=True)),
                 ('avatarUrl', models.CharField(max_length=512, null=True, blank=True)),
                 ('additional_data', models.TextField(default=b'{}', blank=True)),
-                ('defaultLexicon', models.ForeignKey(default=accounts.models.getLexicon, to='base.Lexicon')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('defaultLexicon', models.ForeignKey(default=accounts.models.getLexicon, to='base.Lexicon', on_delete=models.SET_DEFAULT)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
     ]

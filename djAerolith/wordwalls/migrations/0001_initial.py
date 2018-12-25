@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('date', models.DateField()),
                 ('alphagrams', models.TextField()),
                 ('seconds', models.IntegerField()),
-                ('lexicon', models.ForeignKey(to='base.Lexicon')),
+                ('lexicon', models.ForeignKey(to='base.Lexicon', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('maxScore', models.IntegerField()),
                 ('medalsAwarded', models.BooleanField(default=False)),
-                ('challenge', models.OneToOneField(to='wordwalls.DailyChallenge')),
+                ('challenge', models.OneToOneField(to='wordwalls.DailyChallenge', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -40,8 +40,8 @@ class Migration(migrations.Migration):
                 ('timeRemaining', models.IntegerField()),
                 ('qualifyForAward', models.BooleanField(default=True)),
                 ('additionalData', models.TextField(null=True)),
-                ('board', models.ForeignKey(to='wordwalls.DailyChallengeLeaderboard')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('board', models.ForeignKey(to='wordwalls.DailyChallengeLeaderboard', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -49,8 +49,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('numTimesMissed', models.IntegerField(default=0)),
-                ('alphagram', models.ForeignKey(to='base.Alphagram')),
-                ('challenge', models.ForeignKey(to='wordwalls.DailyChallenge')),
+                ('alphagram', models.ForeignKey(to='base.Alphagram', on_delete=models.CASCADE)),
+                ('challenge', models.ForeignKey(to='wordwalls.DailyChallenge', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
                 ('wordLength', models.IntegerField()),
                 ('isRange', models.BooleanField()),
                 ('questions', models.TextField(default=b'')),
-                ('lexicon', models.ForeignKey(to='base.Lexicon')),
+                ('lexicon', models.ForeignKey(to='base.Lexicon', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -93,9 +93,9 @@ class Migration(migrations.Migration):
                 ('missed', models.TextField()),
                 ('numFirstMissed', models.IntegerField()),
                 ('firstMissed', models.TextField()),
-                ('host', models.ForeignKey(related_name='wordwalls_wordwallsgamemodel_host', to=settings.AUTH_USER_MODEL)),
+                ('host', models.ForeignKey(related_name='wordwalls_wordwallsgamemodel_host', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
                 ('inTable', models.ManyToManyField(related_name='wordwalls_wordwallsgamemodel_inTable', to=settings.AUTH_USER_MODEL)),
-                ('lexicon', models.ForeignKey(to='base.Lexicon')),
+                ('lexicon', models.ForeignKey(to='base.Lexicon', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -104,7 +104,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dailychallenge',
             name='name',
-            field=models.ForeignKey(to='wordwalls.DailyChallengeName'),
+            field=models.ForeignKey(to='wordwalls.DailyChallengeName', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='dailychallengemissedbingos',

@@ -35,7 +35,8 @@ def getLexicon(request=None):
 
 
 class AerolithProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User,
+                                on_delete=models.CASCADE)
 
     coins = models.IntegerField(default=0)
     profile = models.CharField(max_length=2000, blank=True)
@@ -63,7 +64,8 @@ class AerolithProfile(models.Model):
     wordwallsSaveListSize = models.IntegerField(default=0)
 
     # project-wide
-    defaultLexicon = models.ForeignKey(Lexicon, default=getLexicon)
+    defaultLexicon = models.ForeignKey(Lexicon, default=getLexicon,
+                                       on_delete=models.SET_DEFAULT)
     avatarUrl = models.CharField(null=True, blank=True, max_length=512)
     additional_data = models.TextField(default='{}', blank=True)
 

@@ -47,8 +47,8 @@ class Migration(migrations.Migration):
                 ('curQuestions', models.TextField()),
                 ('missed', models.TextField()),
                 ('firstMissed', models.TextField()),
-                ('lexicon', models.ForeignKey(to='base.Lexicon')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('lexicon', models.ForeignKey(to='base.Lexicon', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'wordwalls_savedlist',
@@ -65,14 +65,14 @@ class Migration(migrations.Migration):
                 ('back_hooks', models.CharField(max_length=26)),
                 ('inner_front_hook', models.BooleanField(default=False)),
                 ('inner_back_hook', models.BooleanField(default=False)),
-                ('alphagram', models.ForeignKey(to='base.Alphagram')),
-                ('lexicon', models.ForeignKey(to='base.Lexicon')),
+                ('alphagram', models.ForeignKey(to='base.Alphagram', on_delete=models.CASCADE)),
+                ('lexicon', models.ForeignKey(to='base.Lexicon', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='alphagram',
             name='lexicon',
-            field=models.ForeignKey(to='base.Lexicon'),
+            field=models.ForeignKey(to='base.Lexicon', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='alphagram',

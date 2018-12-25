@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dailychallenge',
             name='category',
-            field=models.CharField(choices=[(b'A', b'Anagram'), (b'B', b'Build'), (b'T', b'Through')], default=b'A', max_length=2),
+            field=models.CharField(choices=[('A', 'Anagram'), ('B', 'Build'), ('T', 'Through')], default='A', max_length=2),
         ),
     ]
