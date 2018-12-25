@@ -70,8 +70,9 @@ def handle_create_post(request):
             logger.debug('POST data %s', request.POST)
             encoded_search = search_criteria_to_b64(request.POST)
             return response({
-                'url': reverse('flashcards_by_search', args=(lex.pk,
-                                                             encoded_search)),
+                'url': reverse('flashcards_by_search', args=(
+                    lex.pk,
+                    encoded_search.decode())),
                 'success': True})
 
     elif action == 'namedListsFlashcard':
