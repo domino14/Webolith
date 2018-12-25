@@ -37,8 +37,10 @@ class GenericTableGameModel(models.Model):
         (SINGLEPLAYER_GAME, "SinglePlayer"),
         (MULTIPLAYER_GAME, "MultiPlayer"),
     )
-    lexicon = models.ForeignKey(Lexicon)
-    host = models.ForeignKey(User, related_name="%(app_label)s_%(class)s_host")
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
+    host = models.ForeignKey(User,
+                             related_name="%(app_label)s_%(class)s_host",
+                             on_delete=models.CASCADE)
     inTable = models.ManyToManyField(
         User, related_name="%(app_label)s_%(class)s_inTable")
     lastActivity = models.DateTimeField(auto_now=True)

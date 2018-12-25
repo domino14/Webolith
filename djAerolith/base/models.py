@@ -82,11 +82,11 @@ class SavedList(models.Model):
         (CATEGORY_THROUGH_TILES, 'Through')
     )
 
-    lexicon = models.ForeignKey(Lexicon)
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=50)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     numAlphagrams = models.IntegerField()
     numCurAlphagrams = models.IntegerField()
@@ -287,8 +287,8 @@ class AlphagramTag(models.Model):
         ('D2', 'Hard'),
         ('D1', 'Very Hard'),
     )
-    user = models.ForeignKey(User)
-    lexicon = models.ForeignKey(Lexicon)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     alphagram = models.CharField(max_length=15)
     tag = models.CharField(choices=WORD_TAGS, max_length=2)
 

@@ -59,10 +59,10 @@ class DailyChallenge(models.Model):
         (CATEGORY_THROUGH_TILES, 'Through'),
     )
 
-    lexicon = models.ForeignKey(Lexicon)
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     # set the date to now when an instance is created
     date = models.DateField()
-    name = models.ForeignKey(DailyChallengeName)
+    name = models.ForeignKey(DailyChallengeName, on_delete=models.CASCADE)
     # XXX: alphagrams should be more aptly renamed to 'questions' in order
     # to make challenges more generic (subwords, through-tiles, etc)
     alphagrams = models.TextField()
@@ -82,7 +82,8 @@ class DailyChallenge(models.Model):
 
 
 class DailyChallengeLeaderboard(models.Model):
-    challenge = models.OneToOneField(DailyChallenge)
+    challenge = models.OneToOneField(DailyChallenge,
+                                     on_delete=models.CASCADE)
     maxScore = models.IntegerField()
     medalsAwarded = models.BooleanField(default=False)
 
@@ -91,8 +92,9 @@ class DailyChallengeLeaderboard(models.Model):
 
 
 class DailyChallengeLeaderboardEntry(models.Model):
-    board = models.ForeignKey(DailyChallengeLeaderboard)
-    user = models.ForeignKey(User)
+    board = models.ForeignKey(DailyChallengeLeaderboard,
+                              on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()
     timeRemaining = models.IntegerField()
     # only qualify for award if entry is in allowable range
@@ -124,7 +126,7 @@ class WordwallsGameModel(GenericTableGameModel):
 
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
-    challenge = models.ForeignKey(DailyChallenge)
+    challenge = models.ForeignKey(DailyChallenge, on_delete=models.CASCADE)
     alphagram_string = models.CharField(max_length=15, default='')
     numTimesMissed = models.IntegerField(default=0)
 
@@ -141,7 +143,7 @@ class DailyChallengeMissedBingos(models.Model):
 
 
 class NamedList(models.Model):
-    lexicon = models.ForeignKey(Lexicon)
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, default='')
     numQuestions = models.IntegerField()
     wordLength = models.IntegerField()
@@ -167,8 +169,9 @@ class Medal(models.Model):
         (TYPE_PLATINUM, 'Platinum'),
         (TYPE_GOLD_STAR, 'GoldStar')
     )
-    user = models.ForeignKey(User)
-    leaderboard = models.ForeignKey(DailyChallengeLeaderboard)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    leaderboard = models.ForeignKey(DailyChallengeLeaderboard,
+                                    on_delete=models.CASCADE)
     medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
 
     def __str__(self):

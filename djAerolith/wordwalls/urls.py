@@ -17,15 +17,11 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from django.conf.urls import url, include
-from django.views.i18n import javascript_catalog
 
 from wordwalls.views import table, mark_missed, ajax_upload, log
 from wordwalls.rpc import table_rpc
 from wordwalls.stats import leaderboard, get_medals, main, get_stats
 
-js_info_dict = {
-    'packages': ('wordwalls',),
-}
 
 urlpatterns = [
     url(r'^$', table),
@@ -36,7 +32,6 @@ urlpatterns = [
     url(r'^api/', include('wordwalls.api_urls')),
     # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
-    url(r'^jsi18n/$', javascript_catalog, js_info_dict),
     url(r'^leaderboard/$', leaderboard),
     url(r'^leaderboard/getboard/$', get_medals),
     url(r'^stats/$', main),

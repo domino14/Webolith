@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='wordwallsgamemodel',
             name='word_list',
-            field=models.ForeignKey(to='base.WordList', null=True),
+            field=models.ForeignKey(to='base.WordList', null=True, on_delete=models.SET_NULL),
         ),
     ]

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dailychallengemissedbingos',
             name='alphagram',
-            field=models.ForeignKey(to='base.Alphagram', null=True),
+            field=models.ForeignKey(to='base.Alphagram', null=True, on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='dailychallengemissedbingos',

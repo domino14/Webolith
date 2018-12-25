@@ -94,7 +94,7 @@ def healthz(request):
 
 
 def jwt_req(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return response({
             'error': 'Must log in',
         }, status=StatusCode.FORBIDDEN)

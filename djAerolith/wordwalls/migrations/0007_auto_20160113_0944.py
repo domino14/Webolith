@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='wordwallsgamemodel',
             name='word_list',
-            field=models.ForeignKey(default=1, to='base.WordList'),
+            field=models.ForeignKey(default=1, to='base.WordList', on_delete=models.SET_NULL),
             preserve_default=False,
         ),
         migrations.AlterUniqueTogether(

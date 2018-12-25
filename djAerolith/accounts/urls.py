@@ -16,10 +16,10 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.conf.urls import url
+from django.urls import path, re_path
 from accounts.views import editProfile, viewProfile
 
 urlpatterns = [
-    url(r'^$', editProfile, name='accounts_edit_profile'),
-    url(r'^(?P<username>.+)/$', viewProfile, name='accounts_view_profile'),
+    re_path(r'^$', editProfile, name='accounts_edit_profile'),
+    path(r'<str:username>', viewProfile, name='accounts_view_profile'),
 ]

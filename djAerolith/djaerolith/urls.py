@@ -57,7 +57,7 @@ urlpatterns = [
     url(r'^privacy/', TemplateView.as_view(template_name='privacy.html')),
     url(r'^tos/', TemplateView.as_view(template_name='tos.html')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^accounts/social/$', social),
     url(r'^accounts/profile/', include('accounts.urls')),
     url(r'^accounts/register/$', AerolithRegistrationView.as_view(

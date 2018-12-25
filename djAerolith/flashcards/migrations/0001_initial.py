@@ -26,8 +26,8 @@ class Migration(migrations.Migration):
                 ('difficulty', models.IntegerField(default=0)),
                 ('next_scheduled', models.DateTimeField(null=True)),
                 ('box', models.IntegerField(default=0)),
-                ('alphagram', models.ForeignKey(to='base.Alphagram')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('alphagram', models.ForeignKey(to='base.Alphagram', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(

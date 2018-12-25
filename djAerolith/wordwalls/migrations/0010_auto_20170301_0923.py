@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('medal_type', models.CharField(max_length=2, choices=[(b'B', b'Bronze'), (b'S', b'Silver'), (b'G', b'Gold'), (b'PS', b'Platinum'), (b'GS', b'GoldStar')])),
-                ('leaderboard', models.ForeignKey(to='wordwalls.DailyChallengeLeaderboard')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('leaderboard', models.ForeignKey(to='wordwalls.DailyChallengeLeaderboard', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(
