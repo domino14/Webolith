@@ -94,6 +94,35 @@ def challenges_played(request):
     return response(resp)
 
 
+@login_required
+@require_GET
+def special_challenges(request):
+    lex = request.GET.get('lexicon')
+    ch_date = date_from_request_dict(request.GET)
+    try:
+        lex = Lexicon.objects.get(pk=lex)
+    except Lexicon.DoesNotExist:
+        return bad_request('Bad lexicon.')
+
+    challenges = DailyChallenge.objects.filter(
+        date=ch_date, lexicon=lex,
+        name__orderPriority=DailyChallengeName.SPECIAL_CHALLENGE_ORDER_PRIORITY).order_by(  # noqa
+            'id'
+        )
+
+    resp = []
+    for challenge in challenges:
+        resp.append({
+            'id': challenge.name.id,
+            'seconds': challenge.seconds,
+            'numQuestions': len(json.loads(challenge.alphagrams)),
+            'name': challenge.visible_name,
+            'orderPriority': challenge.name.orderPriority,
+        })
+
+    return response(resp)
+
+
 def load_new_words(f):
     def wrap(request, *args, **kwargs):
         """ A decorator for all the functions that load new words. """

@@ -85,7 +85,7 @@ class SavedList(models.Model):
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     lastSaved = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=128)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     numAlphagrams = models.IntegerField()

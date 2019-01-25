@@ -8,6 +8,7 @@ import WordwallsAPI from '../../wordwalls_api';
 const CHALLENGERS_URL = '/wordwalls/api/challengers/';
 const NEW_CHALLENGE_URL = '/wordwalls/api/new_challenge/';
 const CHALLENGES_PLAYED_URL = '/wordwalls/api/challenges_played/';
+const SPECIAL_CHALLENGES_URL = '/wordwalls/api/special_challenges/';
 const DATE_FORMAT_STRING = 'YYYY-MM-DD';
 
 class ChallengeDialogContainer extends React.Component {
@@ -17,7 +18,8 @@ class ChallengeDialogContainer extends React.Component {
       currentDate: moment(),
       challengesDoneAtDate: [],
       currentChallenge: 0,
-      challengeData: {},
+      challengeLeaderboardData: {},
+      specialChallengeInfo: [],
     };
     this.challengeSubmit = this.challengeSubmit.bind(this);
     this.onChallengeSelected = this.onChallengeSelected.bind(this);
@@ -25,6 +27,7 @@ class ChallengeDialogContainer extends React.Component {
 
   componentDidMount() {
     this.loadChallengePlayedInfo();
+    this.loadSpecialChallenges();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -33,6 +36,7 @@ class ChallengeDialogContainer extends React.Component {
         (prevState.currentDate.format(DATE_FORMAT_STRING) !==
         this.state.currentDate.format(DATE_FORMAT_STRING))) {
       this.loadChallengePlayedInfo();
+      this.loadSpecialChallenges();
       loaded = true;
     }
     if ((prevState.currentChallenge !== this.state.currentChallenge) ||
@@ -42,7 +46,10 @@ class ChallengeDialogContainer extends React.Component {
   }
 
   onChallengeSelected(challID) {
-    const challenge = this.props.challengeInfo.find(c => c.id === challID);
+    let challenge = this.props.challengeInfo.find(c => c.id === challID);
+    if (!challenge) {
+      challenge = this.state.specialChallengeInfo.find(c => c.id === challID);
+    }
     this.setState({
       currentChallenge: challID,
     });
@@ -63,7 +70,7 @@ class ChallengeDialogContainer extends React.Component {
       challenge: this.state.currentChallenge,
     }, 'GET')
       .then(data => this.setState({
-        challengeData: data || {},
+        challengeLeaderboardData: data || {},
       }))
       .catch(error => this.props.notifyError(error))
       .finally(() => this.props.hideSpinner());
@@ -99,6 +106,20 @@ class ChallengeDialogContainer extends React.Component {
       .finally(() => this.props.hideSpinner());
   }
 
+  loadSpecialChallenges() {
+    // Load special, themed, etc. challenges for the particular date.
+    this.props.showSpinner();
+    this.props.api.call(SPECIAL_CHALLENGES_URL, {
+      lexicon: this.props.lexicon,
+      date: this.state.currentDate.format(DATE_FORMAT_STRING),
+    }, 'GET')
+      .then(data => this.setState({
+        specialChallengeInfo: data,
+      }))
+      .catch(error => this.props.notifyError(error))
+      .finally(() => this.props.hideSpinner());
+  }
+
   render() {
     return (
       <ChallengeDialog
@@ -106,7 +127,8 @@ class ChallengeDialogContainer extends React.Component {
         disabled={this.state.currentChallenge === 0}
         currentChallenge={this.state.currentChallenge}
         challengesDoneAtDate={this.state.challengesDoneAtDate}
-        challengeData={this.state.challengeData}
+        challengeLeaderboardData={this.state.challengeLeaderboardData}
+        specialChallengeInfo={this.state.specialChallengeInfo}
         onDateChange={(date) => {
           this.setState({
             currentDate: moment(date),

@@ -585,7 +585,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
     fixtures = ['test/lexica.json',
                 'test/users.json',
                 'test/profiles.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json']
 
     def setUp(self):
@@ -762,7 +762,7 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
                 # migration.
                 'test/users.json',
                 'test/profiles.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json',
                 'test/daily_challenge_leaderboard.json',
                 'test/daily_challenge_leaderboard_entry.json',

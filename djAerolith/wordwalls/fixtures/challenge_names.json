@@ -199,5 +199,50 @@
       "timeSecs": 300,
       "orderPriority": 4
     }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 23,
+    "fields": {
+      "name": "Special Challenge 1",
+      "timeSecs": 300,
+      "orderPriority": 5
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 24,
+    "fields": {
+      "name": "Special Challenge 2",
+      "timeSecs": 300,
+      "orderPriority": 5
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 25,
+    "fields": {
+      "name": "Special Challenge 3",
+      "timeSecs": 300,
+      "orderPriority": 5
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 26,
+    "fields": {
+      "name": "Special Challenge 4",
+      "timeSecs": 300,
+      "orderPriority": 5
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 27,
+    "fields": {
+      "name": "Special Challenge 5",
+      "timeSecs": 300,
+      "orderPriority": 5
+    }
   }
 ]

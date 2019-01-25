@@ -13,7 +13,7 @@ class WordwallsGameStartTest(TestCase):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json'
                 ]
 

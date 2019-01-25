@@ -24,9 +24,10 @@ from wordwalls.models import WordwallsGameModel, DailyChallengeMissedBingos
 
 
 class DailyChallengeAdmin(admin.ModelAdmin):
-    fields = ['lexicon', 'date', 'name', 'seconds', 'alphagrams']
-    search_fields = ['name__name']
-    list_display = ('date', 'name', 'lexicon')
+    fields = ['lexicon', 'date', 'name', 'seconds', 'alphagrams',
+              'visible_name']
+    search_fields = ['name__name', 'visible_name']
+    list_display = ('date', 'name', 'lexicon', 'visible_name')
 
 
 class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
