@@ -4,6 +4,7 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.utils import timezone
 
@@ -215,7 +216,6 @@ def new_challenge(request, parsed_req_body):
             use_table=parsed_req_body['tablenum'])
     except GameInitException as e:
         return bad_request(str(e))
-
     return table_response(tablenum)
 
 

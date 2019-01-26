@@ -28,3 +28,4 @@ window.Intercom('boot', {
   created_at: user.createdAt,
   username: user.username,
 });
+

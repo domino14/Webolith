@@ -203,8 +203,6 @@ class WordwallsGame(object):
             list_category = WordList.CATEGORY_BUILD
         wl = self.initialize_word_list(qs, ch_lex, user, list_category)
 
-        logger.debug('Got dc: %s (%s)', dc, dc.visible_name)
-
         visible_name = dc.visible_name
         if not visible_name:
             visible_name = dc.name.name
