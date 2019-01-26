@@ -138,16 +138,6 @@ def get_create_meta_info():
             'name': i.name,
             'orderPriority': i.orderPriority,
         })
-    # for i in DailyChallenge.objects.filter(
-    #     date=localdate(),
-    #         name__orderPriority=exclude_priority):
-    #     challenge_info.append({
-    #         'id': i.name.pk,
-    #         'seconds': i.name.timeSecs,
-    #         'numQuestions': i.name.numQuestions,
-    #         'name': i.visible_name,
-    #         'orderPriority': i.name.orderPriority,
-    #     })
 
     lexica = []
     for l in Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA):
