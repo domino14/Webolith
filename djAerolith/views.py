@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 JWT_EXPIRATION = 60 * 60 * 6  # 6 hours
 JWT_EXPIRATION = 15
 
+
 def health(request):
     # HAProxy health request
     if request.method != 'OPTIONS':
@@ -107,3 +108,36 @@ def jwt_req(request):
     return response({
         'token': token.decode('utf-8'),
     })
+
+
+def csrf_failure(request, reason=''):
+    session = request.session
+    headers = {
+        k: v for k, v in request.META.items()
+        if k.startswith('HTTP') or k in ('CONTENT_LENGTH', 'CONTENT_TYPE')
+    }
+    logger.warning(
+        'CSRF Failure, user=%s, headers=%s, reason=%s, '
+        'session: key=%s, items=%s',
+        request.user, headers, reason, session.session_key, session.items())
+    # Depending on the request type, send the appropriate response.
+    ERROR_MSG = 'CSRF token failure. Please log out and log in again.'
+    try:
+        body = json.loads(request.body)
+    except (KeyError, ValueError):
+        body = None
+
+    if body and 'jsonrpc' in body:
+        return response({
+            'jsonrpc': '2.0',
+            'error': {
+                'code': 403,
+                'message': ERROR_MSG
+            },
+            'id': body['id'],
+        }, StatusCode.FORBIDDEN)
+
+    # Otherwise
+    return response({
+        'error': ERROR_MSG
+    }, StatusCode.FORBIDDEN)

@@ -44,19 +44,12 @@ class WordwallsAPI {
 
   async call(path, params, method) {
     let p = '';
-    let data;
     if (method === 'GET') {
       p = `?${qs.stringify(params)}`;
     }
     // eslint-disable-next-line compat/compat
     const response = await fetch(`${path}${p}`, this.fetchdata(params, method));
-    try {
-      data = await response.json();
-    } catch (err) {
-      throw new Error([
-        'Your session appears to be corrupted. Please log out and log ',
-        'back in again.'].join(''));
-    }
+    const data = await response.json();
     if (response.ok) {
       return data;
     }
@@ -74,14 +67,7 @@ class WordwallsAPI {
   async callLegacy(path, params) {
     // eslint-disable-next-line compat/compat
     const response = await fetch(path, this.fetchdataLegacy(params));
-    let data;
-    try {
-      data = await response.json();
-    } catch (err) {
-      throw new Error([
-        'Your session appears to be corrupted. Please log out and log ',
-        'back in again.'].join(''));
-    }
+    const data = await response.json();
     if (response.ok) {
       return data;
     }
