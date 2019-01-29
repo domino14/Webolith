@@ -35,7 +35,12 @@ class DailyChallengeName(models.Model):
     COMMON_LONG = "Common Words (long)"
     # Tuesday's coming, did you bring a coat?
     WEEKS_BINGO_TOUGHIES_ISOWEEKDAY = 2
-
+    # There can be multiple "special" challenges a day, or none. They don't
+    # have a set type and are more freeform than something like "daily 7s".
+    # We treat these specially. There's probably a better redesign to be done
+    # here, but that's ok for now..
+    SPECIAL_CHALLENGE_ORDER_PRIORITY = 5
+    # So much technical debt here with underscores and camelCase
     name = models.CharField(max_length=32)
     timeSecs = models.IntegerField(default=0)
     orderPriority = models.IntegerField(default=1)
@@ -61,8 +66,13 @@ class DailyChallenge(models.Model):
 
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     # set the date to now when an instance is created
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     name = models.ForeignKey(DailyChallengeName, on_delete=models.CASCADE)
+    # visible_name is the actual user-visible name for this challenge.
+    # the `name` above is poorly named and should be named something like
+    # challenge type.
+    # Even this should be localizable .. eventually :/
+    visible_name = models.CharField(blank=True, default='', max_length=32)
     # XXX: alphagrams should be more aptly renamed to 'questions' in order
     # to make challenges more generic (subwords, through-tiles, etc)
     alphagrams = models.TextField()

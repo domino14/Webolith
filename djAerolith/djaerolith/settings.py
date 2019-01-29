@@ -248,8 +248,10 @@ IGNORABLE_404_STARTS = ('/phpmyadmin/', '/forum/', '/favicon.ico',
                         '/robots.txt')
 
 SEND_BROKEN_LINK_EMAILS = False
-
 INTERNAL_IPS = ('127.0.0.1',)
+CSRF_FAILURE_VIEW = 'views.csrf_failure'
+
+
 from logging_filters import skip_suspicious_operations
 
 LOGGING = {

@@ -4,6 +4,7 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.utils import timezone
 
@@ -90,6 +91,35 @@ def challenges_played(request):
         except DailyChallengeLeaderboardEntry.DoesNotExist:
             return response(resp)
         resp.append({'challengeID': entry.board.challenge.name.pk})
+
+    return response(resp)
+
+
+@login_required
+@require_GET
+def special_challenges(request):
+    lex = request.GET.get('lexicon')
+    ch_date = date_from_request_dict(request.GET)
+    try:
+        lex = Lexicon.objects.get(pk=lex)
+    except Lexicon.DoesNotExist:
+        return bad_request('Bad lexicon.')
+
+    challenges = DailyChallenge.objects.filter(
+        date=ch_date, lexicon=lex,
+        name__orderPriority=DailyChallengeName.SPECIAL_CHALLENGE_ORDER_PRIORITY).order_by(  # noqa
+            'id'
+        )
+
+    resp = []
+    for challenge in challenges:
+        resp.append({
+            'id': challenge.name.id,
+            'seconds': challenge.seconds,
+            'numQuestions': len(json.loads(challenge.alphagrams)),
+            'name': challenge.visible_name,
+            'orderPriority': challenge.name.orderPriority,
+        })
 
     return response(resp)
 
@@ -186,7 +216,6 @@ def new_challenge(request, parsed_req_body):
             use_table=parsed_req_body['tablenum'])
     except GameInitException as e:
         return bad_request(str(e))
-
     return table_response(tablenum)
 
 

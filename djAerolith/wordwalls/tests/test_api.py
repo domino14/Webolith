@@ -18,7 +18,7 @@ class WordwallsChallengeAPITest(TestCase):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json',
                 'test/daily_challenge_leaderboard.json',
                 'test/daily_challenge_leaderboard_entry.json']
@@ -83,7 +83,7 @@ class WordwallsNewChallengeTest(TestCase):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json']
 
     USER = 'cesar'
@@ -149,7 +149,7 @@ class WordwallsNewSearchTest(TestCase):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json']
 
     USER = 'cesar'
@@ -227,7 +227,7 @@ class WordwallsSavedListMultiplayerTest(TestCase):
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
-                'dcNames.json',
+                'challenge_names.json',
                 'test/daily_challenge.json']
 
     USER = 'cesar'

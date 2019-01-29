@@ -202,9 +202,14 @@ class WordwallsGame(object):
         if dc.category == DailyChallenge.CATEGORY_BUILD:
             list_category = WordList.CATEGORY_BUILD
         wl = self.initialize_word_list(qs, ch_lex, user, list_category)
+
+        visible_name = dc.visible_name
+        if not visible_name:
+            visible_name = dc.name.name
+
         temp_list_name = '{0} {1} - {2}'.format(
             ch_lex.lexiconName,
-            ch_name.name,
+            visible_name,
             ch_date.strftime('%Y-%m-%d')
         )
         wgm = self.create_or_update_game_instance(

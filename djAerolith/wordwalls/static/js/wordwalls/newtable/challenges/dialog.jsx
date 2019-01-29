@@ -14,13 +14,25 @@ const ChallengeDialog = (props) => {
 
   rows.push(<ChallengeButtonRow
     title="By Word Length"
-    size="lg"
+    size="md"
     key="ch2"
     challenges={props.challengeInfo.filter(ch => ch.orderPriority === 1)}
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}
     selectedChallenge={props.currentChallenge}
   />);
+
+  if (props.specialChallengeInfo.length) {
+    rows.push(<ChallengeButtonRow
+      title="Special Challenges"
+      size="sm"
+      key="ch6"
+      challenges={props.specialChallengeInfo.filter(ch => ch.orderPriority === 5)}
+      onChallengeClick={props.onChallengeSelected}
+      solvedChallenges={challs}
+      selectedChallenge={props.currentChallenge}
+    />);
+  }
 
   rows.push(<ChallengeButtonRow
     title="Word Builder"
@@ -82,7 +94,7 @@ const ChallengeDialog = (props) => {
       </div>
       <div className="col-sm-5">
         <ChallengeResults
-          challengeData={props.challengeData}
+          challengeData={props.challengeLeaderboardData}
           height={400}
         />
       </div>
@@ -105,7 +117,7 @@ ChallengeDialog.propTypes = {
   onDateChange: PropTypes.func.isRequired,
   onChallengeSelected: PropTypes.func.isRequired,
   onChallengeSubmit: PropTypes.func.isRequired,
-  challengeData: PropTypes.shape({
+  challengeLeaderboardData: PropTypes.shape({
     entries: PropTypes.arrayOf(PropTypes.shape({
       user: PropTypes.string,
       score: PropTypes.number,
@@ -116,6 +128,13 @@ ChallengeDialog.propTypes = {
     lexicon: PropTypes.string,
     maxScore: PropTypes.number,
   }).isRequired,
+  specialChallengeInfo: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    seconds: PropTypes.number,
+    numQuestions: PropTypes.number,
+    name: PropTypes.string,
+    orderPriority: PropTypes.number,
+  })).isRequired,
   currentChallenge: PropTypes.number.isRequired,
   disabled: PropTypes.bool.isRequired,
 };

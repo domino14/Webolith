@@ -87,7 +87,6 @@ ChallengeResults.propTypes = {
       tr: PropTypes.number,
       addl: PropTypes.string,
     })),
-    challengeName: PropTypes.string,
     lexicon: PropTypes.string,
     maxScore: PropTypes.number,
   }).isRequired,

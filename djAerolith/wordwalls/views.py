@@ -31,6 +31,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.utils.timezone import localdate
 from django.views.decorators.http import require_http_methods
 from gargoyle import gargoyle
 
@@ -126,7 +127,10 @@ def get_user_meta_info(user):
 def get_create_meta_info():
     """ Return meta info for table creation. This would be good to cache. """
     challenge_info = []
-    for i in DailyChallengeName.objects.all():
+    exclude_priority = DailyChallengeName.SPECIAL_CHALLENGE_ORDER_PRIORITY
+
+    for i in DailyChallengeName.objects.exclude(
+            orderPriority=exclude_priority):
         challenge_info.append({
             'id': i.pk,
             'seconds': i.timeSecs,
@@ -134,6 +138,7 @@ def get_create_meta_info():
             'name': i.name,
             'orderPriority': i.orderPriority,
         })
+
     lexica = []
     for l in Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA):
         lexica.append({
