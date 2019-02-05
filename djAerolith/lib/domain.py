@@ -70,6 +70,9 @@ class Questions:
     def extend(self, questions):
         self.questions.extend(questions.questions)
 
+    def truncate(self, n):
+        self.questions = self.questions[:n]
+
     def size(self):
         return len(self.questions)
 
