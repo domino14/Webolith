@@ -25,8 +25,8 @@ const allowedSearchTypes = new Set([
 ]);
 
 const lexOptions = [{
-  value: 'America',
-  displayValue: 'America',
+  value: 'NWL18',
+  displayValue: 'NWL18',
 }, {
   value: 'CSW15',
   displayValue: 'CSW15',
@@ -38,7 +38,7 @@ class WordSearchForm extends React.Component {
     this.searchSubmit = this.searchSubmit.bind(this);
 
     this.state = {
-      lexicon: 'America',
+      lexicon: 'NWL18',
     };
   }
 

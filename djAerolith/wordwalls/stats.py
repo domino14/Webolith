@@ -24,8 +24,8 @@ def get_stats(request, lexicon, type_of_challenge_id):
     end_date = request.GET.get('end_date')
     lexicon = Lexicon.objects.get(id=lexicon)
 
-    if lexicon.lexiconName in ('OWL2', 'America'):
-        lexica = ['OWL2', 'America']
+    if lexicon.lexiconName in ('OWL2', 'America', 'NWL18'):
+        lexica = ['OWL2', 'America', 'NWL18']
     elif lexicon.lexiconName in ('CSW12', 'CSW15'):
         lexica = ['CSW12', 'CSW15']
     else:

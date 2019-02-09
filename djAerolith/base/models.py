@@ -32,6 +32,8 @@ EXCLUDED_LEXICA = [
     'CSW07',
     'CSW12',
     'America2016',
+    'FISE09',
+    # 'America'   # Remove this lexicon sometime in March.
 ]
 
 # XXX: This handles both the Spanish and English case, but alphagrammize

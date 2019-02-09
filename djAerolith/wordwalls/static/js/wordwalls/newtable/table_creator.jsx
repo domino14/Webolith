@@ -29,9 +29,14 @@ const NO_LOAD_WHILE_PLAYING = (
   'Please wait until the end of the game to perform that action.');
 
 const COLLINS_LEX_ID = 1;
+const NWL18_LEX_ID = 9;
 const COLLINS_LICENSE_TEXT = `
 The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
+const NASPA_LICENSE_TEXT = `
+The NASPA Word List, 2018 Edition (NWL18) is copyright of the North
+American Scrabble Players Association (© 2019) and used with permission.`;
+
 
 const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
 const DEFAULT_TIME_PER_BLANK_QUIZ = '10';
@@ -345,6 +350,17 @@ class TableCreator extends React.Component {
     }
   }
 
+  renderLicenseText() {
+    switch (this.state.currentLexicon) {
+      case COLLINS_LEX_ID:
+        return (<div>{COLLINS_LICENSE_TEXT}</div>);
+      case NWL18_LEX_ID:
+        return (<div>{NASPA_LICENSE_TEXT}</div>);
+      default:
+        return null;
+    }
+  }
+
   renderQuizSearch() {
     let selectedQuizSearchDialog;
     switch (this.state.activeListType) {
@@ -508,7 +524,7 @@ class TableCreator extends React.Component {
         <div className="modal-footer">
           <small
             style={{ marginRight: 10 }}
-          >{this.state.currentLexicon === COLLINS_LEX_ID ? COLLINS_LICENSE_TEXT : ''}
+          >{this.renderLicenseText()}
           </small>
         </div>
       </ModalSkeleton>

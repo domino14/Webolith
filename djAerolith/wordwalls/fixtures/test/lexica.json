@@ -52,5 +52,23 @@
   },
   "model": "base.lexicon",
   "pk": 8
+},
+{
+  "fields": {
+    "lexiconDescription": "NASPA Word List 2018 Edition",
+    "lengthCounts": "{\"2\":75,\"3\":411,\"4\":2030,\"5\":7204,\"6\":16339,\"7\":32154,\"8\":50756,\"9\":68345,\"10\":79948,\"11\":76024,\"12\":62015,\"13\":43101,\"14\":25338,\"15\":12788}",
+    "lexiconName": "NWL18"
+  },
+  "model": "base.lexicon",
+  "pk": 9
+},
+{
+  "fields": {
+    "lexiconDescription": "Federación Internacional de Scrabble en Español, 2017 Edition",
+    "lengthCounts": "{\"2\":75,\"3\":411,\"4\":2030,\"5\":7204,\"6\":16339,\"7\":32154,\"8\":50756,\"9\":68345,\"10\":79948,\"11\":76024,\"12\":62015,\"13\":43101,\"14\":25338,\"15\":12788}",
+    "lexiconName": "FISE2"
+  },
+  "model": "base.lexicon",
+  "pk": 10
 }
 ]

@@ -125,8 +125,8 @@ const SearchTypesEnum = {
       ],
       description: `Only looks for words that are NOT in the selected lexicon.
       The "other English-language lexicon" refers to CSW15 if you are currently
-      using the America lexicon, and America if you are currently using the
-      CSW15 lexicon. The "last version" refers to OWL2 and CSW12, respectively.`,
+      using the NWL18 lexicon, and NWL18 if you are currently using the
+      CSW15 lexicon. The "last version" refers to America and CSW12, respectively.`,
     },
     11: {
       name: 'probability_limit',

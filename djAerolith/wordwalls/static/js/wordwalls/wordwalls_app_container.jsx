@@ -377,7 +377,7 @@ class WordwallsAppContainer extends React.Component {
     // octothorp symbol.
     let newGuess = guess.replace(/[^A-Za-zÑñ#]/g, '');
 
-    if (this.state.lexicon !== 'FISE09') {
+    if (this.state.lexicon !== 'FISE2') {
       return newGuess;
     }
     // Replace.
