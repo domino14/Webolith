@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class WordwallsChallengeAPITest(TestCase):
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
@@ -79,7 +79,7 @@ class WordwallsChallengeAPITest(TestCase):
 
 class WordwallsNewChallengeTest(TestCase):
     """ Test the new challenge behavior, list replacement etc """
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
@@ -145,7 +145,7 @@ class WordwallsNewChallengeTest(TestCase):
 
 class WordwallsNewSearchTest(TestCase):
     """ Test the new search behavior. """
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
@@ -223,7 +223,7 @@ class WordwallsNewSearchTest(TestCase):
 
 class WordwallsSavedListMultiplayerTest(TestCase):
     """ Test the new search behavior. """
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',

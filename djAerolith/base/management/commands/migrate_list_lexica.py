@@ -1,14 +1,14 @@
 """
-Migrates default lexica for users from arg1 to arg2.
+Migrates all lists for users from lexicon1 to lexicon2
 
 """
-
 from django.core.management.base import BaseCommand, CommandError
-from base.models import Lexicon
-from accounts.models import AerolithProfile
+
+from base.models import Lexicon, SavedList
 
 
 class Command(BaseCommand):
+
     def add_arguments(self, parser):
         parser.add_argument('lexicon1', type=str)
         parser.add_argument('lexicon2', type=str)
@@ -23,10 +23,9 @@ class Command(BaseCommand):
             raise CommandError(e)
 
         count = 0
-        for profile in AerolithProfile.objects.all():
-            if profile.defaultLexicon == lex1:
-                profile.defaultLexicon = lex2
-                profile.save()
-                count += 1
-
-        print('Migrated %s profiles from %s to %s' % (count, lex1, lex2))
+        for word_list in SavedList.objects.filter(lexicon=lex1,
+                                                  is_temporary=False):
+            count += 1
+            word_list.lexicon = lex2
+            word_list.save()
+        print('Migrated %s lists from %s to %s' % (count, lex1, lex2))

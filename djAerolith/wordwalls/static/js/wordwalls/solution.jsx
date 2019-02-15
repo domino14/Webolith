@@ -80,7 +80,7 @@ class Solution extends React.Component {
             text={this.props.backHooks}
           />
         </td>
-        <td style={rowStyle}>{this.props.definition}</td>
+        <td style={{ ...rowStyle, ...{ whiteSpace: 'pre-wrap' } }}>{this.props.definition}</td>
         <td style={rowStyle}>{markMissedBtn}</td>
       </tr>
     );

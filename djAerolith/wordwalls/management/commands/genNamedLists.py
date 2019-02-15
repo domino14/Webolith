@@ -274,6 +274,14 @@ def create_spanish_lists():
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               'Ochos con 5 o más vocales')
 
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
+            lambda w: ('+' in w.lexicon_symbols),
+            condition_type=Condition.WORD)
+        create_named_list(
+            lex, len(qs), i, False, json.dumps(qs),
+            'FISE2 {} nuevos'.format(mapa_amigable[i]))
+
 
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
@@ -311,9 +319,9 @@ def create_common_words_list(lname, friendly_name):
 class Command(BaseCommand):
     help = """Populates database with named lists"""
 
-    def handle_noargs(self, **options):
-        NamedList.objects.filter(lexicon__lexiconName='CSW15').delete()
+    def handle(self, **options):
+        # NamedList.objects.filter(lexicon__lexiconName='CSW15').delete()
         for lex in Lexicon.objects.filter(
-                lexiconName__in=['NWL18', 'CSW15']):
+                lexiconName__in=['NWL18']):
             createNamedLists(lex)
-        create_spanish_lists()
+        # create_spanish_lists()

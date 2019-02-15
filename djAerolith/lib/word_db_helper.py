@@ -10,8 +10,6 @@ import time
 
 from django.conf import settings
 
-from base.models import alphagrammize
-
 from lib.domain import Word, Alphagram, Question, Questions
 from lib.query_generator.exceptions import BadInput
 from lib.query_generator.gen import QueryGenerator, MAX_CHUNK_SIZE
@@ -102,6 +100,7 @@ class WordDB:
         c = self.conn.cursor()
         ret_alphagrams = []
         idx = 0
+        logger.debug('Len alphagrams: %s', len(alphagrams))
         while idx < len(alphagrams):
             these_alphagrams = alphagrams[idx:idx+MAX_CHUNK_SIZE]
             num_alphas = len(these_alphagrams)

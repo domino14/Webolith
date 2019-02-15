@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class WordwallsBasicLogicTestBase(TestCase, WordListAssertMixin):
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json']
@@ -582,7 +582,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
     etc.
 
     """
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'challenge_names.json',
@@ -755,7 +755,7 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
     challenge 40313, leaderboard 40134, answers: 33   Thurs 8s
 
     """
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 # Eventually get rid of these two, because they are
                 # replaced by sqlite, but for now we test for backwards
                 # compatibility, since we are doing an in-place
@@ -812,7 +812,7 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
 
 class WordwallsNamedListTest(TestCase, WordListAssertMixin):
     """ "Named" lists. """
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',

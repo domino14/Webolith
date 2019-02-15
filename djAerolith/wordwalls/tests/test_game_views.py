@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class WordwallsGameStartTest(TestCase):
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json',
