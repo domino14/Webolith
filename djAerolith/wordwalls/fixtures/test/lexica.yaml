@@ -1,0 +1,48 @@
+- fields:
+    lengthCounts: '{"2":92,"3":878,"4":3491,"5":8654,"6":16999,"7":27437,"8":36327,"9":38795,"10":34881,"11":27862,"12":20437,"13":14061,"14":9251,"15":5846}'
+    lexiconDescription: Collins 2015 International English Word List
+    lexiconName: CSW15
+  model: base.lexicon
+  pk: 1
+- fields:
+    lengthCounts: '{"2":78,"3":765,"4":2844,"5":6797,"6":12932,"7":21063,"8":27962,"9":28773,"10":22739,"11":16769,"12":11958,"13":8210,"14":5380,"15":3371}'
+    lexiconDescription: I am Trumperica, and so can you.
+    lexiconName: America2016
+  model: base.lexicon
+  pk: 2
+- fields:
+    lengthCounts: '{"2":77,"3":732,"4":2737,"5":6495,"6":12353,"7":20134,"8":26563,"9":27270,"10":21597,"11":15886,"12":11293,"13":7701,"14":5034,"15":3147}'
+    lexiconDescription: North American 2006 Official Word List 2006
+    lexiconName: OWL2
+  model: base.lexicon
+  pk: 4
+- fields:
+    lengthCounts: '{"2":92,"3":865,"4":3443,"5":8517,"6":16668,"7":26797,"8":35335,"9":37873,"10":34177,"11":27304,"12":20041,"13":13779,"14":9081,"15":5736}'
+    lexiconDescription: Collins 2012 International English Word List
+    lexiconName: CSW12
+  model: base.lexicon
+  pk: 6
+- fields:
+    lengthCounts: '{"2":78,"3":765,"4":2844,"5":6797,"6":12932,"7":21063,"8":27962,"9":28773,"10":22739,"11":16769,"12":11958,"13":8210,"14":5380,"15":3371}'
+    lexiconDescription: I am America, and so can you.
+    lexiconName: America
+  model: base.lexicon
+  pk: 7
+- fields:
+    lengthCounts: '{"2":75,"3":411,"4":2030,"5":7204,"6":16339,"7":32154,"8":50756,"9":68345,"10":79948,"11":76024,"12":62015,"13":43101,"14":25338,"15":12788}'
+    lexiconDescription: "Federaci\xF3n Internacional de Scrabble en Espa\xF1ol"
+    lexiconName: FISE09
+  model: base.lexicon
+  pk: 8
+- fields:
+    lengthCounts: '{"10":23928,"11":17577,"12":12362,"13":8410,"14":5526,"15":3478,"2":79,"3":766,"4":2846,"5":6814,"6":12968,"7":21108,"8":28029,"9":28936}'
+    lexiconDescription: NASPA Word List 2018 Edition
+    lexiconName: NWL18
+  model: base.lexicon
+  pk: 9
+- fields:
+    lengthCounts: '{"10":79951,"11":76526,"12":63120,"13":44592,"14":26828,"15":13934,"2":76,"3":426,"4":2046,"5":7179,"6":16232,"7":31901,"8":50413,"9":68121}'
+    lexiconDescription: "Federaci\xF3n Internacional de Scrabble en Espa\xF1ol, 2017 Edition"
+    lexiconName: FISE2
+  model: base.lexicon
+  pk: 10

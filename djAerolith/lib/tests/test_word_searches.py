@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class SimpleSearchCase(TestCase):
     fixtures = [
-        'test/lexica.json'
+        'test/lexica.yaml'
     ]
 
     def setUp(self):
@@ -182,7 +182,7 @@ class SimpleSearchCase(TestCase):
 
 class TagSearchCase(TestCase):
     fixtures = [
-        'test/lexica.json',
+        'test/lexica.yaml',
         'test/users.json',
         'test/profiles.json'
     ]
@@ -280,7 +280,7 @@ class TagSearchCase(TestCase):
 
 class MassiveTagSearchCase(TestCase):
     fixtures = [
-        'test/lexica.json',
+        'test/lexica.yaml',
         'test/users.json',
         'test/profiles.json'
     ]

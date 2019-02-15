@@ -142,14 +142,14 @@ def create_wl_lists(i, lex, db):
         create_named_list(lex, len(qs), i, False, json.dumps(qs),
                           'Eights with 5 or more vowels')
 
-    if lex.lexiconName == 'America':
+    if lex.lexiconName == 'NWL18':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'America {} not in OWL2'.format(friendly_number_map[i]))
+            'NWL18 {} not in America'.format(friendly_number_map[i]))
 
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
@@ -157,7 +157,7 @@ def create_wl_lists(i, lex, db):
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'America {} not in CSW15'.format(friendly_number_map[i]))
+            'NWL18 {} not in CSW15'.format(friendly_number_map[i]))
 
         if i == 4:
             qs = get_questions_by_condition(
@@ -168,7 +168,7 @@ def create_wl_lists(i, lex, db):
                 condition_type=Condition.WORD)
             create_named_list(
                 lex, len(qs), i, False, json.dumps(qs),
-                'America JQXZ 4s not in OWL2')
+                'NWL18 JQXZ 4s not in America')
         elif i == 5:
             qs = get_questions_by_condition(
                 db, min_prob, max_prob, i,
@@ -178,7 +178,7 @@ def create_wl_lists(i, lex, db):
                 condition_type=Condition.WORD)
             create_named_list(
                 lex, len(qs), i, False, json.dumps(qs),
-                'America JQXZ 5s not in OWL2')
+                'NWL18 JQXZ 5s not in America')
 
         elif i == 6:
             qs = get_questions_by_condition(
@@ -189,15 +189,7 @@ def create_wl_lists(i, lex, db):
                 condition_type=Condition.WORD)
             create_named_list(
                 lex, len(qs), i, False, json.dumps(qs),
-                'America JQXZ 6s not in OWL2')
-
-        qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
-            lambda w: ('%' in w.lexicon_symbols),
-            condition_type=Condition.WORD)
-        create_named_list(
-            lex, len(qs), i, False, json.dumps(qs),
-            'America {} added in 2016'.format(friendly_number_map[i]))
+                'NWL18 JQXZ 6s not in America')
 
     if lex.lexiconName == 'CSW15':
         qs = get_questions_by_condition(
@@ -214,7 +206,7 @@ def create_wl_lists(i, lex, db):
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'CSW15 {} not in America'.format(friendly_number_map[i]))
+            'CSW15 {} not in NWL18'.format(friendly_number_map[i]))
 
 
 def createNamedLists(lex):
@@ -232,7 +224,7 @@ def createNamedLists(lex):
 
 
 def create_spanish_lists():
-    lex = Lexicon.objects.get(lexiconName='FISE09')
+    lex = Lexicon.objects.get(lexiconName='FISE2')
     db = WordDB(lex.lexiconName)
     for i in range(2, 16):
         logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
@@ -282,6 +274,14 @@ def create_spanish_lists():
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               'Ochos con 5 o más vocales')
 
+        qs = get_questions_by_condition(
+            db, min_prob, max_prob, i,
+            lambda w: ('+' in w.lexicon_symbols),
+            condition_type=Condition.WORD)
+        create_named_list(
+            lex, len(qs), i, False, json.dumps(qs),
+            'FISE2 {} nuevos'.format(mapa_amigable[i]))
+
 
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
@@ -319,13 +319,9 @@ def create_common_words_list(lname, friendly_name):
 class Command(BaseCommand):
     help = """Populates database with named lists"""
 
-    def handle_noargs(self, **options):
-        NamedList.objects.filter(lexicon__lexiconName='America').delete()
-        createNamedLists(Lexicon.objects.get(lexiconName='America'))
-        return
-
-        NamedList.objects.all().delete()
+    def handle(self, **options):
+        # NamedList.objects.filter(lexicon__lexiconName='CSW15').delete()
         for lex in Lexicon.objects.filter(
-                lexiconName__in=['America', 'CSW2015']):
+                lexiconName__in=['NWL18']):
             createNamedLists(lex)
-        create_spanish_lists()
+        # create_spanish_lists()

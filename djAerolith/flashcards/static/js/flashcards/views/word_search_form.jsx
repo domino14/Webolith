@@ -22,14 +22,20 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.POINTS,
   SearchTypesEnum.NUM_ANAGRAMS,
   SearchTypesEnum.NUM_VOWELS,
+  SearchTypesEnum.NOT_IN_LEXICON,
+  SearchTypesEnum.PROBABILITY_LIMIT,
+  SearchTypesEnum.MATCHING_ANAGRAM,
 ]);
 
 const lexOptions = [{
-  value: 'America',
-  displayValue: 'America',
+  value: 'NWL18',
+  displayValue: 'NWL18',
 }, {
   value: 'CSW15',
   displayValue: 'CSW15',
+}, {
+  value: 'America', /* DELETE ME ASAP */
+  displayValue: 'America',
 }];
 
 class WordSearchForm extends React.Component {
@@ -38,7 +44,7 @@ class WordSearchForm extends React.Component {
     this.searchSubmit = this.searchSubmit.bind(this);
 
     this.state = {
-      lexicon: 'America',
+      lexicon: 'NWL18',
     };
   }
 

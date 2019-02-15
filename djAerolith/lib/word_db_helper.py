@@ -10,8 +10,6 @@ import time
 
 from django.conf import settings
 
-from base.models import alphagrammize
-
 from lib.domain import Word, Alphagram, Question, Questions
 from lib.query_generator.exceptions import BadInput
 from lib.query_generator.gen import QueryGenerator, MAX_CHUNK_SIZE

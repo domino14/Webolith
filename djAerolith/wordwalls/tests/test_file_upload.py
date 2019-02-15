@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # XXX We should also test the views themselves, which do some UTF8
 # manipulation. (ajax_upload particularly)
 class FileUploadTestCase(TestCase, WordListAssertMixin):
-    fixtures = ['test/lexica.json',
+    fixtures = ['test/lexica.yaml',
                 'test/users.json',
                 'test/profiles.json',
                 'test/word_lists.json']
