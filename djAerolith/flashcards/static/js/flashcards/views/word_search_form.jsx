@@ -22,6 +22,9 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.POINTS,
   SearchTypesEnum.NUM_ANAGRAMS,
   SearchTypesEnum.NUM_VOWELS,
+  SearchTypesEnum.NOT_IN_LEXICON,
+  SearchTypesEnum.PROBABILITY_LIMIT,
+  SearchTypesEnum.MATCHING_ANAGRAM,
 ]);
 
 const lexOptions = [{
@@ -30,6 +33,9 @@ const lexOptions = [{
 }, {
   value: 'CSW15',
   displayValue: 'CSW15',
+}, {
+  value: 'America', /* DELETE ME ASAP */
+  displayValue: 'America',
 }];
 
 class WordSearchForm extends React.Component {

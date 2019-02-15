@@ -100,7 +100,6 @@ class WordDB:
         c = self.conn.cursor()
         ret_alphagrams = []
         idx = 0
-        logger.debug('Len alphagrams: %s', len(alphagrams))
         while idx < len(alphagrams):
             these_alphagrams = alphagrams[idx:idx+MAX_CHUNK_SIZE]
             num_alphas = len(these_alphagrams)
