@@ -195,6 +195,11 @@ class WordwallsGame(object):
 
         ret = self.get_or_create_dc(ch_date, ch_lex, ch_name)
         if ret is None:
+            if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+                raise GameInitException(
+                    'Unable to create Toughies challenge. If this is a new '
+                    'lexicon, please wait until Tuesday for new words to be '
+                    'available.')
             raise GameInitException('Unable to create daily challenge {0}'.
                                     format(ch_name))
         qs, secs, dc = ret
