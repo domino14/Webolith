@@ -30,12 +30,16 @@ const NO_LOAD_WHILE_PLAYING = (
 
 const COLLINS_LEX_ID = 1;
 const NWL18_LEX_ID = 9;
+const FISE2_LEX_ID = 10;
 const COLLINS_LICENSE_TEXT = `
 The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
 const NASPA_LICENSE_TEXT = `
 NASPA Word List, 2018 Edition (NWL18), © 2019 North American Word Game
 Players Association.  All rights reserved.`;
+const FISE2_LICENSE_TEXT = `
+© 2016 FISE (Federación Internacional de Scrabble en Español).
+Reservados Todos Los Derechos.`;
 
 
 const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
@@ -356,6 +360,8 @@ class TableCreator extends React.Component {
         return (<span>{COLLINS_LICENSE_TEXT}</span>);
       case NWL18_LEX_ID:
         return (<span>{NASPA_LICENSE_TEXT}</span>);
+      case FISE2_LEX_ID:
+        return (<span>{FISE2_LICENSE_TEXT}</span>);
       default:
         return null;
     }

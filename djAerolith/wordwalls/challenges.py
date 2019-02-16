@@ -59,6 +59,8 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     if challenge_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         alphagrams = generate_toughies_challenge(lex, challenge_date)
         random.shuffle(alphagrams)
+        if len(alphagrams) == 0:
+            return Questions(), 0
         return (db.get_questions_from_alphagrams(alphagrams),
                 challenge_name.timeSecs)
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
