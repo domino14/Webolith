@@ -18,8 +18,9 @@
 
 import gargoyle
 from django.conf import settings
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.conf.urls import url
+from django.urls import path, re_path, include
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 #from registration.forms import RegistrationFormUniqueEmail
@@ -33,6 +34,10 @@ from views import (health, login_error, new_social_user, js_error, test_500,
                    healthz, trigger500, jwt_req)
 from accounts.views import social, username_change
 from base.views import listmanager
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.core import urls as wagtail_urls
+
 gargoyle.autodiscover()
 
 
@@ -102,8 +107,12 @@ urlpatterns = [
     url(r'^base/', include('base.urls')),
     url(r'^js_errors/', js_error),
     url(r'^500tester/', test_500),
-    url(r'^healthz/', healthz)
+    url(r'^healthz/', healthz),
+
+    re_path(r'^cms/', include(wagtailadmin_urls)),
+    re_path(r'^documents/', include(wagtaildocs_urls)),
+    re_path(r'', include(wagtail_urls)),
+
 ]
 
-urlpatterns += staticfiles_urlpatterns()    # for static serving, only works
-                                            # if DEBUG is true
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

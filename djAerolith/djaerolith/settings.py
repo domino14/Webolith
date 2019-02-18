@@ -87,14 +87,10 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+
 
 STATIC_ROOT = os.environ.get('STATIC_ROOT')
 STATIC_URL = '/static/'
@@ -107,6 +103,11 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get('SECRET_KEY')
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MEDIA_URL = '/media/'
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/home/media/media.lawrence.com/"
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
 
 STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, 'static')]
 STATICFILES_FINDERS = (
@@ -124,6 +125,9 @@ MIDDLEWARE = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'middleware.session_expiry.SessionIdleTimeout',
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -146,6 +150,7 @@ TEMPLATES = [
                 'processors.maintenance.maintenance',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'django.template.context_processors.request'
             ]
         }
     },
@@ -179,11 +184,33 @@ INSTALLED_APPS = (
     'registration',
     'social_django',
     'captcha',
+
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
+
+    'modelcluster',
+    'taggit',
+
+    # The main wagtail page.
+    'blog',
+
     #'debug_toolbar',
     #'locking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+WAGTAIL_SITE_NAME = 'Aerolith.org'
+
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
