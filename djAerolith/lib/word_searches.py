@@ -170,17 +170,11 @@ def temporary_list_name(search_descriptions, lexicon_name):
                     desc = 'CSW15'
                 elif lexicon_name == 'CSW15':
                     desc = 'NWL18'
-                # XXX: REMOVE IN MARCH
-                elif lexicon_name == 'America':
-                    desc = 'CSW15'
             elif sd['lexicon'] == 'update':
                 if lexicon_name == 'NWL18':
                     desc = 'America'
                 elif lexicon_name == 'CSW15':
                     desc = 'CSW12'
-                # XXX: REMOVE IN MARCH
-                elif lexicon_name == 'America':
-                    desc = 'OWL2'
             tokens.append(f'not in {desc}')
         elif sd['condition'] == SearchDescription.MATCHING_ANAGRAM:
             tokens.append(f'matching {sd["letters"]}')

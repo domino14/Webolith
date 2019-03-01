@@ -33,9 +33,6 @@ const lexOptions = [{
 }, {
   value: 'CSW15',
   displayValue: 'CSW15',
-}, {
-  value: 'America', /* DELETE ME ASAP */
-  displayValue: 'America',
 }];
 
 class WordSearchForm extends React.Component {
