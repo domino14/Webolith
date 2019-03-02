@@ -494,6 +494,11 @@ class WordwallsGame(object):
             words = []
             alphagram_str = q.alphagram.alphagram
             i = index_map[alphagram_str]
+            if len(q.answers) == 0:
+                # There may be no answers because this question was deleted
+                # in the newer lexicon, and the lists were migrated over,
+                # or something of that nature.
+                continue
             for w in q.answers:
                 words.append({'w': w.word, 'd': w.definition,
                               'fh': w.front_hooks, 'bh': w.back_hooks,
