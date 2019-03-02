@@ -71,7 +71,6 @@ class WordDB:
             idx += MAX_CHUNK_SIZE
             c.execute(query, these_words)
             rows = c.fetchall()
-            logger.debug('For words %s got %s', these_words, rows)
             for row in rows:
                 word_data.append(
                     Word(word=row[7], definition=row[1],
