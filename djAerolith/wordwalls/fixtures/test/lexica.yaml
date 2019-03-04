@@ -46,3 +46,9 @@
     lexiconName: FISE2
   model: base.lexicon
   pk: 10
+- fields:
+    lengthCounts: '{"10":287145,"11":327427,"12":336526,"13":318775,"14":281324,"15":229153,"2":100,"3":1107,"4":5194,"5":17853,"6":43367,"7":89363,"8":153158,"9":224471}'
+    lexiconDescription: "Polska Federacja Scrabble - Update 38"
+    lexiconName: OSPS38
+  model: base.lexicon
+  pk: 11

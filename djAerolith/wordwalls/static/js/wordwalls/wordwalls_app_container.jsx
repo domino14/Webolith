@@ -380,9 +380,8 @@ class WordwallsAppContainer extends React.Component {
    * @return {string}
    */
   maybeModifyGuess(guess) {
-    // Strip non alphabetic characters, including the spanish ñ and the
-    // octothorp symbol.
-    let newGuess = guess.replace(/[^A-Za-zÑñ#]/g, '');
+    // Strip whitespace from guess.
+    let newGuess = guess.replace(/\s/g, '');
 
     if (this.state.lexicon !== 'FISE2') {
       return newGuess;
