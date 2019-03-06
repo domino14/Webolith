@@ -38,8 +38,10 @@ class Command(BaseCommand):
                 logger.debug('Dry run, not saving leaderboard.')
             return  # Do not award medals; too few players.
 
-        lbes = sorted(lbes, key=attrgetter('score', 'timeRemaining'),
-                      reverse=True)
+        lbes = sorted(
+            lbes,
+            key=lambda item: (-item.score, item.wrong_answers,
+                              -item.timeRemaining))
         if leaderboard.challenge.name == self.toughies:
             # Award extra medal.
             medals = [Medal.TYPE_PLATINUM, Medal.TYPE_GOLD, Medal.TYPE_SILVER,

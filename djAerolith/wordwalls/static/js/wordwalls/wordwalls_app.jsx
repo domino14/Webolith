@@ -151,6 +151,7 @@ class WordwallsApp extends React.Component {
               showLexiconSymbols={
                 !this.props.displayStyle.hideLexiconSymbols}
               answers={this.props.answeredBy.get(this.props.username, Immutable.List())}
+              wrongAnswers={this.props.wrongAnswers}
               totalWords={this.props.totalWords}
               username={this.props.username}
               isBuild={this.props.isBuild}
@@ -181,6 +182,7 @@ class WordwallsApp extends React.Component {
           <div className="col-xs-12">
             <ReducedUserBox
               numCorrect={this.getNumCorrectAnswers()}
+              wrongAnswers={this.props.wrongAnswers}
               totalWords={this.props.totalWords}
               username={this.props.username}
               isBuild={this.props.isBuild}
@@ -222,6 +224,7 @@ WordwallsApp.propTypes = {
   answeredBy: PropTypes.instanceOf(Immutable.Map).isRequired,
   onShuffleQuestion: PropTypes.func.isRequired,
   markMissed: PropTypes.func.isRequired,
+  wrongAnswers: PropTypes.number.isRequired,
 
   boardWidth: PropTypes.number.isRequired,
   boardHeight: PropTypes.number.isRequired,

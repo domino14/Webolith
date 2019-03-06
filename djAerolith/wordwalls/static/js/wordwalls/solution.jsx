@@ -21,6 +21,8 @@ class Solution extends React.Component {
 
     if (!this.props.correct) {
       qTdClass = 'danger';
+    } else if (this.props.wrongGuess) {
+      qTdClass = 'warning';
     }
     if (!this.props.wordSolved) {
       wTdClass += ' danger';
@@ -92,6 +94,7 @@ Solution.propTypes = {
   idx: PropTypes.number.isRequired,
   alphagram: PropTypes.string.isRequired,
   correct: PropTypes.bool.isRequired,
+  wrongGuess: PropTypes.bool.isRequired,
   wordSolved: PropTypes.bool.isRequired,
   innerFrontHook: PropTypes.bool.isRequired,
   innerBackHook: PropTypes.bool.isRequired,

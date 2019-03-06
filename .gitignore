@@ -30,3 +30,4 @@ __pycache__
 .vscode
 words
 wordsdir
+.env

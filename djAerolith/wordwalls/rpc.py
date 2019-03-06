@@ -86,8 +86,9 @@ def table_rpc(request, tableid):
 
 def guess(user, tableid, params):
     g = params['guess']
+    wrong_answers = params.get('wrongAnswers', 0)
     wwg = WordwallsGame()
-    state = wwg.guess(g.strip(), tableid, user)
+    state = wwg.guess(g.strip(), tableid, user, wrong_answers=wrong_answers)
     if state is None:
         raise RPCError('Quiz is already over.')
 

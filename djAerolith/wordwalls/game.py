@@ -797,9 +797,10 @@ class WordwallsGame(object):
                 # Else, nothing would write it into the state.
                 timeRemaining = 0
             qualify_for_award = state.get('qualifyForAward', False)
-
+            wrong_answers = state.get('wrongAnswers', 0)
             lbe = DailyChallengeLeaderboardEntry(
                 user=wgm.host, score=score, board=lb,
+                wrong_answers=wrong_answers,
                 timeRemaining=timeRemaining, qualifyForAward=qualify_for_award)
             # XXX: 500 here, integrity error, much more common than lb.save
             lbe.save()
@@ -878,8 +879,10 @@ class WordwallsGame(object):
             state['solvers'] = {}
         state['solvers'][guess] = username
 
-    def guess(self, guess_str, tablenum, user, sleep=None):
+    def guess(self, guess_str, tablenum, user, *, sleep=None, wrong_answers=0):
         """ Handle a guess submission from the front end. """
+        logger.debug('User %s guessed %s (wrong=%s)', user, guess_str,
+                     wrong_answers)
         guess_str = guess_str.upper()
         wgm = self.get_wgm(tablenum)
         last_correct = ''
@@ -893,6 +896,7 @@ class WordwallsGame(object):
         # Otherwise, let's process the guess.
         if self.did_timer_run_out(state):
             state['timeRemaining'] = 0
+            state['wrongAnswers'] = wrong_answers
             state_modified = True
             logger.info('Timer ran out, end quiz.')
             self.do_quiz_end_actions(state, tablenum, wgm)
@@ -901,6 +905,7 @@ class WordwallsGame(object):
             alpha = state['answerHash'][guess_str]
             # state['answerHash'] is modified here
             del state['answerHash'][guess_str]
+            state['wrongAnswers'] = wrong_answers
             self.add_to_solvers(state, guess_str, user.username)
             state_modified = True
             if len(state['answerHash']) == 0:

@@ -13,7 +13,7 @@ class Game {
     this.curQuestions = Immutable.List();
     this.origQuestions = Immutable.OrderedMap();
     this.answeredBy = Immutable.Map();
-    this.wrongWordsHash = {};
+    this.missedWordsHash = {};
     this.originalWordsHash = {};
   }
   /**
@@ -24,7 +24,7 @@ class Game {
   init(questions) {
     const qMap = {};
     const reducedQuestions = [];
-    this.wrongWordsHash = {};
+    this.missedWordsHash = {};
     this.originalWordsHash = {};
     // Hash of "alphagram strings" to indices in curQuestions.
     this.alphaIndexHash = {};
@@ -37,7 +37,7 @@ class Game {
     questions.forEach((question, aidx) => {
       const newWMap = {};
       question.ws.forEach((word, idx) => {
-        this.wrongWordsHash[word.w] = idx;
+        this.missedWordsHash[word.w] = idx;
         this.originalWordsHash[word.w] = {
           idx,
           word,
@@ -74,8 +74,29 @@ class Game {
    * @return {boolean}
    */
   answerExists(guess) {
-    const widx = this.wrongWordsHash[guess];
+    const widx = this.missedWordsHash[guess];
     return widx != null;
+  }
+
+  /**
+   * Check if the guess is an anagram of the right word. This is typically
+   * called when the answer doesn't exist in the hash.
+   * @param  {string} guess
+   * @return {boolean}
+   */
+  markPotentialIncorrectGuess(guess) {
+    // alphagrammize the word.
+    // NOTE: SORT ORDER IS NOT WHAT WE THINK WITH NON-ENGLISH LEXICA.
+    // E.G. THIS WON'T WORK FOR SPANISH, POLISH, ETC.
+    const alphagram = guess.split('').sort().join('');
+    if (this.alphaIndexHash[alphagram] != null) {
+      this.origQuestions = this.origQuestions.update(alphagram, (aObj) => {
+        const newObj = aObj.set('wrongGuess', true);
+        return newObj;
+      });
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -89,7 +110,7 @@ class Game {
   }
 
   getRemainingAnswers() {
-    return Object.keys(this.wrongWordsHash);
+    return Object.keys(this.missedWordsHash);
   }
 
   addToAnswered(wObj, solver) {
@@ -122,7 +143,7 @@ class Game {
    * @return {boolean} Solving successfully updated variables.
    */
   solve(word, alphagram, solver) {
-    const widx = this.wrongWordsHash[word];
+    const widx = this.missedWordsHash[word];
     if (widx == null) {
       return false;
     }
@@ -130,7 +151,7 @@ class Game {
     if (!this.origQuestions.get(alphagram)) {
       return false;
     }
-    delete this.wrongWordsHash[word];
+    delete this.missedWordsHash[word];
 
     // Update the word object; add a solved property.
     this.origQuestions = this.origQuestions.updateIn([alphagram, 'ws', widx], (wObj) => {

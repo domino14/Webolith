@@ -61,20 +61,35 @@ const UserBox = (props) => {
         <div className="row">
           <div className="col-sm-4 col-md-4">
             <span
-              style={{ fontSize: '1.8em' }}
+              style={{ fontSize: '1.5em' }}
               className="text text-success"
             >{`${percentScore}%`}
             </span>
           </div>
           <div className="col-sm-8 col-md-6 col-md-offset-2">
-            <div
-              style={{
-                fontSize: '1.8em',
-                whiteSpace: 'nowrap',
-                textAlign: 'right',
-              }}
-              className="text text-success"
-            >{fractionScore}
+            <div className="row">
+              <div className="col-sm-12">
+                <div
+                  style={{
+                    fontSize: '1.5em',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'right',
+                  }}
+                  className="text text-success"
+                >{fractionScore}
+                </div>
+              </div>
+              <div className="col-sm-12">
+                <div
+                  style={{
+                    fontSize: '1em',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'right',
+                  }}
+                  className="text text-danger"
+                >{props.wrongAnswers}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -85,6 +100,7 @@ const UserBox = (props) => {
 
 UserBox.propTypes = {
   answers: PropTypes.instanceOf(Immutable.List).isRequired,
+  wrongAnswers: PropTypes.number.isRequired,
   totalWords: PropTypes.number.isRequired,
   username: PropTypes.string.isRequired,
   showLexiconSymbols: PropTypes.bool.isRequired,

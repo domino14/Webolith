@@ -304,10 +304,14 @@ def getLeaderboardDataDcInstance(dc):
             addl_data = json.dumps({'medal': medal_hash[lbe.user]})
         entry = {'user': lbe.user.username,
                  'score': lbe.score, 'tr': lbe.timeRemaining,
+                 'w': lbe.wrong_answers,
                  'addl': addl_data}
         entries.append(entry)
 
-    entries = sorted(entries, key=itemgetter('score', 'tr'), reverse=True)
+    entries = sorted(
+        entries,
+        key=lambda item: (-item['score'], item['w'], -item['tr']))
+
     retData['entries'] = entries
     retData['challengeName'] = dc.name.name
     retData['lexicon'] = dc.lexicon.lexiconName

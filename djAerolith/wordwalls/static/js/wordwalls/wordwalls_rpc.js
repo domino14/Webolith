@@ -16,9 +16,10 @@ class WordwallsRPC extends GenericRPC {
     this.setRPCURL(`/wordwalls/table/${tablenum}/rpc/`);
   }
 
-  guess(gstr) {
+  guess(gstr, wrongAnswers) {
     return this.rpcwrap('guess', {
       guess: gstr,
+      wrongAnswers,
     });
   }
 

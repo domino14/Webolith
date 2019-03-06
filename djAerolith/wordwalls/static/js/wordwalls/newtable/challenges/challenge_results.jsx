@@ -48,6 +48,7 @@ class ChallengeResults extends React.Component {
           <td>{index + 1}</td>
           <td>{userLink}</td>
           <td>{`${(100 * (entry.score / maxScore)).toFixed(1)}%`}</td>
+          <td>{`${entry.w}`}</td>
           <td>{`${entry.tr} s.`}</td>
         </tr>);
       entries.push(entryTr);
@@ -67,7 +68,8 @@ class ChallengeResults extends React.Component {
               <th>#</th>
               <th>User</th>
               <th>Score</th>
-              <th>Remaining</th>
+              <th>Errors</th>
+              <th>Rem.</th>
             </tr>
           </thead>
           <tbody>
@@ -85,6 +87,7 @@ ChallengeResults.propTypes = {
       user: PropTypes.string,
       score: PropTypes.number,
       tr: PropTypes.number,
+      w: PropTypes.number,
       addl: PropTypes.string,
     })),
     lexicon: PropTypes.string,
