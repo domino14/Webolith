@@ -38,10 +38,10 @@ class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
 
 
 class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
-    fields = ['user', 'score', 'timeRemaining', 'board', 'qualifyForAward']
+    fields = ['user', 'score', 'timeRemaining', 'board', 'qualifyForAward',
+              'wrong_answers']
     search_fields = ['user__username', 'board__challenge__name__name']
-    list_display = ['user', 'score', 'timeRemaining', 'board']
-    readonly_fields = ('board',)
+    list_display = ['user', 'score', 'wrong_answers', 'timeRemaining', 'board']
 
 
 class WordwallsGameAdmin(admin.ModelAdmin):
@@ -52,6 +52,7 @@ class WordwallsGameAdmin(admin.ModelAdmin):
     readonly_fields = ('lastActivity', 'word_list', 'inTable', 'host',
                        'gameType', 'playerType', 'currentGameState')
     list_display = ['host', 'lastActivity', 'word_list']
+
 
 admin.site.register(WordwallsGameModel, WordwallsGameAdmin)
 

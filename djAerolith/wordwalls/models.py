@@ -106,6 +106,7 @@ class DailyChallengeLeaderboardEntry(models.Model):
                               on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()
+    wrong_answers = models.IntegerField(default=0)
     timeRemaining = models.IntegerField()
     # only qualify for award if entry is in allowable range
     qualifyForAward = models.BooleanField(default=True)

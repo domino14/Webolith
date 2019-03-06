@@ -41,6 +41,7 @@ class WordwallsAppContainer extends React.Component {
       isChallenge: false,
       isBuild: false,
       totalWords: 0,
+      wrongAnswers: 0,
       answeredBy: game.getAnsweredBy(),
       lastGuess: '',
       lastGuessCorrectness: GuessEnum.NONE,
@@ -134,6 +135,11 @@ class WordwallsAppContainer extends React.Component {
           lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
         });
       } else {
+        if (game.markPotentialIncorrectGuess(modifiedGuess)) {
+          this.setState(state => ({
+            wrongAnswers: state.wrongAnswers + 1,
+          }));
+        }
         this.setState({
           lastGuessCorrectness: GuessEnum.INCORRECT,
         });
@@ -204,7 +210,7 @@ class WordwallsAppContainer extends React.Component {
   }
 
   submitGuess(guess) {
-    this.rpc.guess(guess)
+    this.rpc.guess(guess, this.state.wrongAnswers)
       .then(result => this.handleGuessResponse(result))
       .catch((error) => {
         this.addMessage(error.message);
@@ -309,6 +315,7 @@ class WordwallsAppContainer extends React.Component {
         curQuestions: game.getQuestionState(),
         answeredBy: game.getAnsweredBy(),
         totalWords: game.getTotalNumWords(),
+        wrongAnswers: 0,
       });
       this.wwApp.setGuessBoxFocus();
       window.Intercom('trackEvent', 'started-game', {
@@ -687,6 +694,7 @@ class WordwallsAppContainer extends React.Component {
           tableCreatorModalSelector=".table-modal"
           username={this.props.username}
           currentHost={this.state.currentHost}
+          wrongAnswers={this.state.wrongAnswers}
 
           onGuessSubmit={this.onGuessSubmit}
           lastGuess={this.state.lastGuess}

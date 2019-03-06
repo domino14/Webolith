@@ -26,6 +26,7 @@ const Solutions = (props) => {
         definition={word.get('d')}
         wordSolved={word.get('solved', false)}
         correct={question.get('solved', false)}
+        wrongGuess={question.get('wrongGuess', false)}
         markMissed={markMissed}
       />);
       wordIdx += 1;

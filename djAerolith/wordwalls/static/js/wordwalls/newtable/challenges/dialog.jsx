@@ -122,6 +122,7 @@ ChallengeDialog.propTypes = {
       user: PropTypes.string,
       score: PropTypes.number,
       tr: PropTypes.number,
+      w: PropTypes.number,
       addl: PropTypes.string,
     })),
     challengeName: PropTypes.string,
