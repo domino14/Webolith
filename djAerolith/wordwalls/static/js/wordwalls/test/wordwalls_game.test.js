@@ -1,7 +1,7 @@
 // Test functions for wordwalls_game.js
 /* eslint-disable import/no-extraneous-dependencies, no-unused-expressions */
 
-import WordwallsGame from '../wordwalls_game';
+import WordwallsGame, { Internal } from '../wordwalls_game';
 
 const testQuestions = `[
   {
@@ -218,6 +218,83 @@ describe('Game State', () => {
       expect(game.getOriginalQuestionState().getIn(['AAENR',
         'answersRemaining'])).toBe(0);
       expect(game.alphagramsLeft).toBe(6);
+    });
+  });
+});
+
+describe('Internal functions', () => {
+  describe('letterCounts', () => {
+    it('should count letters properly', () => {
+      const testArray = [
+        ['AEROLITH', {
+          A: 1, E: 1, R: 1, O: 1, L: 1, I: 1, T: 1, H: 1,
+        }],
+        ['FOO', { F: 1, O: 2 }],
+        ['BAR?', {
+          B: 1, A: 1, R: 1, '?': 1,
+        }],
+        ['BAR??', {
+          B: 1, A: 1, R: 1, '?': 2,
+        }],
+      ];
+      for (let i = 0; i < testArray.length; i += 1) {
+        expect(Internal().letterCounts(testArray[i][0])).toEqual(testArray[i][1]);
+      }
+    });
+  });
+
+  describe('inBlankAnagrams', () => {
+    const alphaHash = {
+      'ACHILORS?': true,
+      'AEHILOR?': true,
+      'AEHINOR?': true,
+      'AEINOR??': true,
+      'ABBINOR?': true,
+      AEFFGINR: true,
+    };
+
+    it('should find alphagram properly, no build mode', () => {
+      const testArray = [
+        ['AEROLITH', 'AEHILOR?'],
+        ['ANTIHERO', 'AEHINOR?'],
+        ['ERASIONS', 'AEINOR??'],
+        ['RABBONIS', 'ABBINOR?'],
+        ['ROBINIAS', undefined],
+        ['AERODYNE', undefined],
+        ['ACROLITH', undefined],
+        ['ACROLITHS', 'ACHILORS?'],
+      ];
+
+      for (let i = 0; i < testArray.length; i += 1) {
+        expect(Internal().isAnagramOfQuestions(
+          testArray[i][0],
+          alphaHash,
+        )).toEqual(testArray[i][1]);
+      }
+    });
+
+    it('should find alphagram properly, build mode', () => {
+      const testArray = [
+        ['AEROLITH', 'AEHILOR?'],
+        ['ANTIHERO', 'AEHINOR?'],
+        ['ERASIONS', 'AEINOR??'],
+        ['RABBONIS', 'ABBINOR?'],
+        ['ROBINIAS', undefined],
+        ['AERODYNE', undefined],
+        ['ACROLITH', 'ACHILORS?'],
+        ['ACROLITHS', 'ACHILORS?'],
+        ['GRIFF', 'AEFFGINR'],
+        ['REFFING', 'AEFFGINR'],
+        ['FIRE', 'AEHILOR?'], // assumes dict is ordered based on insertion
+      ];
+
+      for (let i = 0; i < testArray.length; i += 1) {
+        expect(Internal().isAnagramOfQuestions(
+          testArray[i][0],
+          alphaHash,
+          true,
+        )).toEqual(testArray[i][1]);
+      }
     });
   });
 });
