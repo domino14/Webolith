@@ -308,7 +308,7 @@ class WordwallsAppContainer extends React.Component {
       this.addMessage(data.serverMsg);
     }
     if (_.has(data, 'questions')) {
-      game.init(data.questions);
+      game.init(data.questions, data.gameType);
       this.setState({
         numberOfRounds: this.state.numberOfRounds + 1,
         origQuestions: game.getOriginalQuestionState(),
