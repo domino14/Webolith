@@ -13,7 +13,7 @@ import ReducedUserBox from './reduced_user_box';
 import GuessBox from './bottombar/guessbox';
 import ShuffleButtons from './topbar/shufflebuttons';
 import ChatBox from './bottombar/chatbox';
-
+import WordwallsInfoBox from './wordwalls_info_box';
 import Styling from './style';
 
 class WordwallsApp extends React.Component {
@@ -157,6 +157,11 @@ class WordwallsApp extends React.Component {
               isBuild={this.props.isBuild}
             />
           </div>
+          <div className="col-sm-12 col-md-12 col-lg-12">
+            <WordwallsInfoBox
+              eventFeed={this.props.eventFeed}
+            />
+          </div>
         </div>
       </div>);
   }
@@ -173,7 +178,7 @@ class WordwallsApp extends React.Component {
           <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
             {this.renderLeftSide()}
           </div>
-          <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
+          <div className="hidden-xs col-sm-3 col-md-3 col-lg-3">
             {this.renderRightSide()}
           </div>
         </div>
@@ -253,6 +258,10 @@ WordwallsApp.propTypes = {
     content: PropTypes.string,
     type: PropTypes.string,
   })).isRequired,
+  eventFeed: PropTypes.arrayOf({
+    type: PropTypes.string,
+    event: PropTypes.string,
+  }).isRequired,
 };
 export default WordwallsApp;
 

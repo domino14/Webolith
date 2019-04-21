@@ -55,6 +55,25 @@ class WordwallsAppContainer extends React.Component {
       currentHost: this.props.currentHost,
       lexicon: this.props.lexicon,
       windowWidth: window.innerWidth,
+      eventFeed: [{
+        type: 'solvedXAlphagrams',
+        event: 'mina solved 50 alphagrams today!',
+      }, {
+        type: 'chat',
+        event: 'jesse: wow, this site rocks',
+      }, {
+        type: 'newnumber1',
+        event: 'drbing just claimed the #1 spot at the CSW Daily 7s!',
+      }, {
+        type: 'solvedXAlphagrams',
+        event: 'cesar solved 100 alphagrams today!',
+      }, {
+        type: 'chat',
+        event: 'josh: i am a troll',
+      }, {
+        type: 'newnumber1',
+        event: 'wanderer15 just claimed the #1 spot at the CSW Daily 7s!',
+      }],
     };
     // Bindings:
     this.timerRanOut = this.timerRanOut.bind(this);
@@ -708,6 +727,7 @@ class WordwallsAppContainer extends React.Component {
           ref={(wwApp) => {
             this.wwApp = wwApp;
           }}
+          eventFeed={this.state.eventFeed}
         />
       </div>
     );
