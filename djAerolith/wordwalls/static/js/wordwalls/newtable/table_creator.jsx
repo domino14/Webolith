@@ -31,6 +31,7 @@ const NO_LOAD_WHILE_PLAYING = (
 const COLLINS_LEX_ID = 1;
 const NWL18_LEX_ID = 9;
 const FISE2_LEX_ID = 10;
+const OSPS_LEX_ID = 11;
 const COLLINS_LICENSE_TEXT = `
 The Collins Official Scrabble Words 2015 (CSW15) is copyright of
 HarperCollins Publishers 2015 and used with permission.`;
@@ -40,6 +41,8 @@ Players Association.  All rights reserved.`;
 const FISE2_LICENSE_TEXT = `
 © 2016 FISE (Federación Internacional de Scrabble en Español).
 Reservados Todos Los Derechos.`;
+const OSPS_LICENSE_TEXT = `
+Copyright 2019 Polska Federaska Scrabble. Used with permission.`;
 
 
 const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
@@ -362,6 +365,8 @@ class TableCreator extends React.Component {
         return (<span>{NASPA_LICENSE_TEXT}</span>);
       case FISE2_LEX_ID:
         return (<span>{FISE2_LICENSE_TEXT}</span>);
+      case OSPS_LEX_ID:
+        return (<span>{OSPS_LICENSE_TEXT}</span>);
       default:
         return null;
     }

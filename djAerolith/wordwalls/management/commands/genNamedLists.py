@@ -283,6 +283,37 @@ def create_spanish_lists():
             'FISE2 {} nuevos'.format(mapa_amigable[i]))
 
 
+def create_polish_lists():
+    lex = Lexicon.objects.get(lexiconName='OSPS38')
+    db = WordDB(lex.lexiconName)
+    for i in range(2, 16):
+        logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
+        length_counts = json.loads(lex.lengthCounts)
+        num_for_this_length = length_counts[str(i)]
+        min_prob = 1
+        max_prob = num_for_this_length
+
+        create_named_list(lex, num_for_this_length, i, True,
+                          json.dumps([1, num_for_this_length]),
+                          'The ' + friendly_number_map[i])
+        if i >= 7 and i <= 8:
+            # create 'every x' list
+            for p in range(1, num_for_this_length+1, LIST_GRANULARITY):
+                min_p = p
+                max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
+                create_named_list(
+                    lex, max_p - min_p + 1, i, True,
+                    json.dumps([min_p, max_p]),
+                    '{} ({} to {})'.format(friendly_number_map[i], p, max_p))
+
+        if i >= 4 and i <= 8:
+            qs = get_questions_by_condition(
+                db, min_prob, max_prob, i,
+                lambda a: re.search(r'[ĄĆĘŃÓŚŹŻ]', a))
+            create_named_list(lex, len(qs), i, False, json.dumps(qs),
+                              friendly_number_map[i] + ' with any of ĄĆĘŃÓŚŹŻ')
+
+
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
     return
@@ -321,7 +352,8 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         # NamedList.objects.filter(lexicon__lexiconName='CSW15').delete()
-        for lex in Lexicon.objects.filter(
-                lexiconName__in=['NWL18']):
-            createNamedLists(lex)
+        # for lex in Lexicon.objects.filter(
+        #         lexiconName__in=['NWL18']):
+        #     createNamedLists(lex)
         # create_spanish_lists()
+        create_polish_lists()

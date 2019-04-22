@@ -41,7 +41,7 @@ LIST_SCHEMA = """
             "$ref": "#/definitions/qaSet"
         },
         "minItems": 1,
-        "maxItems": 40000
+        "maxItems": 200000
     }, {
         "items": {
             "$ref": "#/definitions/probabilityRange"
