@@ -36,10 +36,9 @@ EXCLUDED_LEXICA = [
     'America',
 ]
 
-# XXX: This handles both the Spanish and English case, but alphagrammize
-# will need to be reworked with lexicon-specific ordering if we add
-# non-latin letters.
-SORT_STRING_ORDER = 'ABC1DEFGHIJKL2MNÑOPQR3STUVWXYZ?'
+# XXX: This handles Spanish, English and Polish. It is pretty ghetto.
+# Consider reworking with lexicon-specific reordering (see macondo e.g.)
+SORT_STRING_ORDER = 'AĄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓPQR3SŚTUVWXYZŹŻ?'
 SORT_MAP = {}
 
 

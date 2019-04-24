@@ -284,7 +284,7 @@ def create_spanish_lists():
 
 
 def create_polish_lists():
-    lex = Lexicon.objects.get(lexiconName='OSPS38')
+    lex = Lexicon.objects.get(lexiconName='OSPS40')
     db = WordDB(lex.lexiconName)
     for i in range(2, 16):
         logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
@@ -356,4 +356,5 @@ class Command(BaseCommand):
         #         lexiconName__in=['NWL18']):
         #     createNamedLists(lex)
         # create_spanish_lists()
+        NamedList.objects.filter(lexicon__lexiconName='OSPS40').delete()
         create_polish_lists()
