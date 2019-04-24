@@ -75,6 +75,7 @@ from django.utils.translation import ugettext_lazy as _
 LANGUAGES = [
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('pl', _('Polish')),
 ]
 
 SITE_ID = 1
