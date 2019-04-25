@@ -37,6 +37,30 @@ function letterCounts(word) {
   return lc;
 }
 
+function anagramOfQuestion(guessLetters, question, buildMode, minLength, maxLength) {
+  const alphaLC = letterCounts(question);
+  for (let i = 0; i < guessLetters.length; i += 1) {
+    if (_.has(alphaLC, guessLetters[i])) {
+      alphaLC[guessLetters[i]] -= 1;
+      if (alphaLC[guessLetters[i]] === 0) {
+        delete alphaLC[guessLetters[i]];
+      }
+    } else if (_.has(alphaLC, '?')) {
+      alphaLC['?'] -= 1;
+      if (alphaLC['?'] === 0) {
+        delete alphaLC['?'];
+      }
+    } else {
+      return false;
+    }
+  }
+  if ((buildMode && guessLetters.length >= minLength && guessLetters.length <= maxLength)
+    || (!buildMode && _.size(alphaLC) === 0)) {
+    return true;
+  }
+  return false;
+}
+
 /**
  * Return the specific key if the guess is an anagram of any of the
  * keys of the passed in alphaHash. The alphaHash may have blanks in
@@ -45,32 +69,21 @@ function letterCounts(word) {
  * @param {string} guess
  * @param {Object.<string, bool>} alphaHash
  * @param {boolean} buildMode
+ * @param {number=} minLength The minimum length of words to accept, only
+ *  used for build mode.
+ * @param {number=} maxLength The maximum length of words to accept, only
+ *  used for build mode.
  * @returns {string=}
  */
-function anagramOfQuestions(guess, alphaHash, buildMode) {
+function anagramOfQuestions(guess, alphaHash, buildMode, minLength, maxLength) {
   const guessLetters = guess.split('');
-  return Object.keys(alphaHash).find((val) => {
-    const alphaLC = letterCounts(val);
-    for (let i = 0; i < guessLetters.length; i += 1) {
-      if (_.has(alphaLC, guessLetters[i])) {
-        alphaLC[guessLetters[i]] -= 1;
-        if (alphaLC[guessLetters[i]] === 0) {
-          delete alphaLC[guessLetters[i]];
-        }
-      } else if (_.has(alphaLC, '?')) {
-        alphaLC['?'] -= 1;
-        if (alphaLC['?'] === 0) {
-          delete alphaLC['?'];
-        }
-      } else {
-        return false;
-      }
-    }
-    if (buildMode || _.size(alphaLC) === 0) {
-      return true;
-    }
-    return false;
-  });
+  return Object.keys(alphaHash).find(val => anagramOfQuestion(
+    guessLetters,
+    val,
+    buildMode,
+    minLength,
+    maxLength,
+  ));
 }
 
 class Game {
@@ -106,6 +119,8 @@ class Game {
     this.maxOnScreenQuestions = 52; // Default.
     this.gameType = gameType;
     this.hasBlanks = false;
+    this.minLength = 100;
+    this.maxLength = -100;
     questions.forEach((question, aidx) => {
       const newWMap = {};
       question.ws.forEach((word, idx) => {
@@ -117,6 +132,12 @@ class Game {
         this.alphaAnswersHash[alphagrammize(word.w)] = true;
         this.totalWords += 1;
         newWMap[word.w] = word;
+        if (word.w.length < this.minLength) {
+          this.minLength = word.w.length;
+        }
+        if (word.w.length > this.maxLength) {
+          this.maxLength = word.w.length;
+        }
       });
       question.answersRemaining = question.ws.length; // eslint-disable-line no-param-reassign
       this.alphaIndexHash[question.a] = aidx;
@@ -206,7 +227,10 @@ class Game {
         return alph;
       }
     } else {
-      return anagramOfQuestions(guess, this.alphaIndexHash, buildMode);
+      return anagramOfQuestions(
+        guess, this.alphaIndexHash, buildMode,
+        this.minLength, this.maxLength,
+      );
     }
     return null;
   }
@@ -400,5 +424,6 @@ export function Internal() {
   return {
     letterCounts,
     anagramOfQuestions,
+    anagramOfQuestion,
   };
 }

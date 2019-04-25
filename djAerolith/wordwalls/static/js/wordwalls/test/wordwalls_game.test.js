@@ -266,33 +266,58 @@ describe('Internal functions', () => {
       ];
 
       for (let i = 0; i < testArray.length; i += 1) {
-        expect(Internal().isAnagramOfQuestions(
+        expect(Internal().anagramOfQuestions(
           testArray[i][0],
           alphaHash,
         )).toEqual(testArray[i][1]);
       }
     });
 
+    it('should properly calculate anagram of question', () => {
+      const testArrayTrue = [
+        ['ACROLITH'.split(''), 'ACHILORS?', true, 5, 8],
+        ['ACROLITH'.split(''), 'ACHILOR?', true, 5, 8],
+        ['ACROLITH'.split(''), 'ACHILORT'],
+        ['MUUMUUS'.split(''), 'MMSSUUU?', true, 5, 8],
+      ];
+      const testArrayFalse = [
+        ['MUUMUUS'.split(''), 'MMSSUU?', true, 5, 8],
+        ['ACROLITH'.split(''), 'AHHILOR?', true, 5, 8],
+        ['ACROLITH'.split(''), 'AEHILORT'],
+      ];
+      for (let i = 0; i < testArrayTrue.length; i += 1) {
+        expect(Internal().anagramOfQuestion.apply(null, testArrayTrue[i])).toBeTruthy();
+      }
+
+      for (let i = 0; i < testArrayFalse.length; i += 1) {
+        expect(Internal().anagramOfQuestion.apply(null, testArrayFalse[i])).toBeFalsy();
+      }
+    });
+
     it('should find alphagram properly, build mode', () => {
       const testArray = [
-        ['AEROLITH', 'AEHILOR?'],
-        ['ANTIHERO', 'AEHINOR?'],
-        ['ERASIONS', 'AEINOR??'],
-        ['RABBONIS', 'ABBINOR?'],
-        ['ROBINIAS', undefined],
-        ['AERODYNE', undefined],
-        ['ACROLITH', 'ACHILORS?'],
-        ['ACROLITHS', 'ACHILORS?'],
-        ['GRIFF', 'AEFFGINR'],
-        ['REFFING', 'AEFFGINR'],
-        ['FIRE', 'AEHILOR?'], // assumes dict is ordered based on insertion
+        ['AEROLITH', 'AEHILOR?', 5, 8],
+        ['ANTIHERO', 'AEHINOR?', 5, 8],
+        ['ERASIONS', 'AEINOR??', 5, 8],
+        ['RABBONIS', 'ABBINOR?', 5, 8],
+        ['ROBINIAS', undefined, 5, 8],
+        ['AERODYNE', undefined, 5, 8],
+        ['ACROLITH', 'ACHILORS?', 5, 8],
+        ['ACROLITHS', 'ACHILORS?', 5, 9],
+        ['ACROLITHS', undefined, 5, 8],
+        ['GRIFF', 'AEFFGINR', 5, 8],
+        ['REFFING', 'AEFFGINR', 5, 8],
+        ['FIRE', 'AEHILOR?', 4, 7], // assumes dict is ordered based on insertion
+        ['FIRE', undefined, 5, 8], // If minimum length is 5, don't find it.
       ];
 
       for (let i = 0; i < testArray.length; i += 1) {
-        expect(Internal().isAnagramOfQuestions(
+        expect(Internal().anagramOfQuestions(
           testArray[i][0],
           alphaHash,
           true,
+          testArray[i][2],
+          testArray[i][3],
         )).toEqual(testArray[i][1]);
       }
     });
