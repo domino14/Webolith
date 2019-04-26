@@ -23,20 +23,42 @@ from django.utils.translation import LANGUAGE_SESSION_KEY
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
 from accounts.models import AerolithProfile
 from accounts.forms import ProfileEditForm, UsernameEditForm
+from base.models import Lexicon
+from lib.response import response, bad_request
 from wordwalls.models import Medal
 
 logger = logging.getLogger(__name__)
 DEFAULT_LANGUAGE = 'en'
 
 
+@require_POST
+@login_required
+def set_default_lexicon(request):
+    try:
+        profile = AerolithProfile.objects.get(user=request.user)
+    except AerolithProfile.DoesNotExist:
+        raise Http404
+
+    body = json.loads(request.body)
+    lex = body.get('defaultLexicon', -1)
+    try:
+        lexicon = Lexicon.objects.get(pk=lex)
+    except Lexicon.DoesNotExist:
+        return bad_request('Lexicon not found')
+    profile.defaultLexicon = lexicon
+    profile.save()
+    return response('OK')
+
+
 @login_required
 def editProfile(request):
     try:
         profile = AerolithProfile.objects.get(user=request.user)
-    except:
+    except AerolithProfile.DoesNotExist:
         raise Http404
 
     pForm = ProfileEditForm()

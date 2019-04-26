@@ -1,10 +1,13 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import Pills from './pills';
 import Select from '../forms/select';
 import NumberInput from '../forms/number_input';
-
+import Notifications from '../notifications';
 /**
  * Get lexicon options from the given object in a Select-friendly format.
  * @param  {Array.<Object>} lexicaObject
@@ -16,6 +19,57 @@ function getLexiconOptions(lexicaObject) {
     displayValue: obj.lexicon,
   }));
 }
+
+
+class MakeDefaultLexLink extends React.Component {
+  constructor(props) {
+    super(props);
+    this.confirmNewDefault = this.confirmNewDefault.bind(this);
+  }
+
+  confirmNewDefault() {
+    const userFriendlyName = this.props
+      .availableLexica
+      .find(lex => lex.id === this.props.selectedLexicon).lexicon;
+
+    Notifications.confirm(
+      'Are you sure?',
+      `Are you sure you wish to change the default lexicon to ${userFriendlyName}?`,
+      () => this.props.setDefaultLexicon(this.props.selectedLexicon),
+    );
+  }
+
+  render() {
+    if (this.props.defaultLexicon === this.props.selectedLexicon) {
+      return null;
+    }
+    return (
+      <div
+        className="defaultLink"
+        style={{ marginTop: '-10px', marginBottom: '10px' }}
+      >
+        <a
+          onClick={this.confirmNewDefault}
+        >Make default
+        </a>
+      </div>
+    );
+  }
+}
+
+MakeDefaultLexLink.propTypes = {
+  defaultLexicon: PropTypes.number.isRequired,
+  selectedLexicon: PropTypes.number.isRequired,
+  setDefaultLexicon: PropTypes.func.isRequired,
+
+  availableLexica: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    lexicon: PropTypes.string,
+    description: PropTypes.string,
+    counts: PropTypes.object,
+  })).isRequired,
+};
+
 
 const Sidebar = props => (
   <div>
@@ -36,6 +90,12 @@ const Sidebar = props => (
             selectedValue={String(props.currentLexicon)}
             options={getLexiconOptions(props.availableLexica)}
             onChange={e => props.setLexicon(parseInt(e.target.value, 10))}
+          />
+          <MakeDefaultLexLink
+            defaultLexicon={props.defaultLexicon}
+            setDefaultLexicon={props.setDefaultLexicon}
+            selectedLexicon={props.currentLexicon}
+            availableLexica={props.availableLexica}
           />
           <NumberInput
             colSize={10}
@@ -62,7 +122,9 @@ Sidebar.propTypes = {
   activeGameType: PropTypes.string.isRequired,
   setGameType: PropTypes.func.isRequired,
   currentLexicon: PropTypes.number.isRequired,
+  defaultLexicon: PropTypes.number.isRequired,
   setLexicon: PropTypes.func.isRequired,
+  setDefaultLexicon: PropTypes.func.isRequired,
   desiredTime: PropTypes.string.isRequired,
   setTime: PropTypes.func.isRequired,
   questionsPerRound: PropTypes.number.isRequired,

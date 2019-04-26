@@ -8,6 +8,84 @@
 import Immutable from 'immutable';
 import _ from 'underscore';
 
+/**
+ * Alphagrammize the word. Note - this is not necessarily in the correct
+ * sort order for non-english lexica, which means there may be a disconnect
+ * between how the alphagram question comes in, and what this function
+ * spits out. This should not be an issue if this function is used
+ * consistently.
+ * @param {string} word
+ */
+function alphagrammize(word) {
+  return word.split('').sort().join('');
+}
+
+/**
+ * Return an object counting the number of letters of the word.
+ * @param {string} word
+ * @returns Object.<string, number>
+ */
+function letterCounts(word) {
+  const lc = {};
+  for (let i = 0; i < word.length; i += 1) {
+    if (_.has(lc, word[i])) {
+      lc[word[i]] += 1;
+    } else {
+      lc[word[i]] = 1;
+    }
+  }
+  return lc;
+}
+
+function anagramOfQuestion(guessLetters, question, buildMode, minLength, maxLength) {
+  const alphaLC = letterCounts(question);
+  for (let i = 0; i < guessLetters.length; i += 1) {
+    if (_.has(alphaLC, guessLetters[i])) {
+      alphaLC[guessLetters[i]] -= 1;
+      if (alphaLC[guessLetters[i]] === 0) {
+        delete alphaLC[guessLetters[i]];
+      }
+    } else if (_.has(alphaLC, '?')) {
+      alphaLC['?'] -= 1;
+      if (alphaLC['?'] === 0) {
+        delete alphaLC['?'];
+      }
+    } else {
+      return false;
+    }
+  }
+  if ((buildMode && guessLetters.length >= minLength && guessLetters.length <= maxLength)
+    || (!buildMode && _.size(alphaLC) === 0)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Return the specific key if the guess is an anagram of any of the
+ * keys of the passed in alphaHash. The alphaHash may have blanks in
+ * its keys.
+ * Otherwise return undefined.
+ * @param {string} guess
+ * @param {Object.<string, bool>} alphaHash
+ * @param {boolean} buildMode
+ * @param {number=} minLength The minimum length of words to accept, only
+ *  used for build mode.
+ * @param {number=} maxLength The maximum length of words to accept, only
+ *  used for build mode.
+ * @returns {string=}
+ */
+function anagramOfQuestions(guess, alphaHash, buildMode, minLength, maxLength) {
+  const guessLetters = guess.split('');
+  return Object.keys(alphaHash).find(val => anagramOfQuestion(
+    guessLetters,
+    val,
+    buildMode,
+    minLength,
+    maxLength,
+  ));
+}
+
 class Game {
   constructor() {
     this.curQuestions = Immutable.List();
@@ -19,13 +97,18 @@ class Game {
   /**
    * Initializes the main data structures when a new array comes in.
    * @param  {Array.<Object>} questions The array of questions.
+   * @param {string} gameType The type of game
    * @return {Immutable} The original questions as an immutable.
    */
-  init(questions) {
+  init(questions, gameType) {
     const qMap = {};
     const reducedQuestions = [];
     this.missedWordsHash = {};
     this.originalWordsHash = {};
+    // A simple set of alphagrams of answers. We don't reuse the alphaIndexHash
+    // below as that one can contain blanks or be the superset of a subword
+    // challenge, for example.
+    this.alphaAnswersHash = {};
     // Hash of "alphagram strings" to indices in curQuestions.
     this.alphaIndexHash = {};
     this.alphagramsLeft = 0;
@@ -34,6 +117,10 @@ class Game {
     this.answeredBy = Immutable.Map();
     this.totalWords = 0;
     this.maxOnScreenQuestions = 52; // Default.
+    this.gameType = gameType;
+    this.hasBlanks = false;
+    this.minLength = 100;
+    this.maxLength = -100;
     questions.forEach((question, aidx) => {
       const newWMap = {};
       question.ws.forEach((word, idx) => {
@@ -42,12 +129,22 @@ class Game {
           idx,
           word,
         };
+        this.alphaAnswersHash[alphagrammize(word.w)] = true;
         this.totalWords += 1;
         newWMap[word.w] = word;
+        if (word.w.length < this.minLength) {
+          this.minLength = word.w.length;
+        }
+        if (word.w.length > this.maxLength) {
+          this.maxLength = word.w.length;
+        }
       });
       question.answersRemaining = question.ws.length; // eslint-disable-line no-param-reassign
       this.alphaIndexHash[question.a] = aidx;
       qMap[question.a] = question;
+      if (question.a.includes('?')) {
+        this.hasBlanks = true;
+      }
       reducedQuestions.push({
         a: question.a,
         wMap: newWMap,
@@ -85,18 +182,23 @@ class Game {
    * @return {boolean}
    */
   markPotentialIncorrectGuess(guess) {
-    // alphagrammize the word.
-    // NOTE: SORT ORDER IS NOT WHAT WE THINK WITH NON-ENGLISH LEXICA.
-    // E.G. THIS WON'T WORK FOR SPANISH, POLISH, ETC.
-    const alphagram = guess.split('').sort().join('');
-    if (this.alphaIndexHash[alphagram] != null) {
-      this.origQuestions = this.origQuestions.update(alphagram, (aObj) => {
-        const newObj = aObj.set('wrongGuess', true);
-        return newObj;
-      });
-      return true;
+    // If the guess ever existed, it shouldn't be marked as an incorrect
+    // guess.
+    if (this.originalAnswerExists(guess)) {
+      return false;
     }
-    return false;
+    // Check if the guess is an anagram of any of the unanswered questions.
+    // (Or a subanagram in applicable cases)
+    const question = this.guessInUnansweredQuestions(guess);
+    if (!question) {
+      return false;
+    }
+
+    this.origQuestions = this.origQuestions.update(question, (aObj) => {
+      const newObj = aObj.set('wrongGuess', true);
+      return newObj;
+    });
+    return true;
   }
 
   /**
@@ -107,6 +209,30 @@ class Game {
    */
   originalAnswerExists(guess) {
     return this.originalWordsHash[guess] != null;
+  }
+
+  /**
+   * Return the specific question if the guess is an anagram of any of
+   * the unanswered questions, or null.
+   * @param {string} guess
+   * @return {string?}
+   */
+  guessInUnansweredQuestions(guess) {
+    const buildMode = this.gameType.includes('build');
+    if (!this.hasBlanks && !buildMode) {
+      // alphagrammize the word.
+      const alph = alphagrammize(guess);
+      // Check in the alphagram hash directly.
+      if (this.alphaAnswersHash[alph]) {
+        return alph;
+      }
+    } else {
+      return anagramOfQuestions(
+        guess, this.alphaIndexHash, buildMode,
+        this.minLength, this.maxLength,
+      );
+    }
+    return null;
   }
 
   getRemainingAnswers() {
@@ -180,6 +306,9 @@ class Game {
       newObj = newObj.set('solved', true);
       this.alphagramsLeft -= 1;
       delete this.alphaIndexHash[alphagram];
+      if (_.has(this.alphaAnswersHash, alphagram)) {
+        delete this.alphaAnswersHash[alphagram];
+      }
       // Replace the alphagram in curQuestions with a blank space.
       this.curQuestions = this.curQuestions.update(aidx, () =>
         // Create an empty map. This will not be rendered by the front end.
@@ -291,3 +420,10 @@ class Game {
 }
 
 export default Game;
+export function Internal() {
+  return {
+    letterCounts,
+    anagramOfQuestions,
+    anagramOfQuestion,
+  };
+}

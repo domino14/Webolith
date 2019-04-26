@@ -20,6 +20,7 @@ import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
 import GuessEnum from './guess';
+import WordwallsAPI from './wordwalls_api';
 import WordwallsRPC from './wordwalls_rpc';
 
 const game = new WordwallsGame();
@@ -47,6 +48,7 @@ class WordwallsAppContainer extends React.Component {
       lastGuessCorrectness: GuessEnum.NONE,
       challengeData: {},
       displayStyle: this.props.displayStyle,
+      defaultLexicon: this.props.defaultLexicon,
       numberOfRounds: 0,
       listName: this.props.listName,
       autoSave: this.props.autoSave,
@@ -74,7 +76,9 @@ class WordwallsAppContainer extends React.Component {
     this.handleLoadNewList = this.handleLoadNewList.bind(this);
     this.resetTableCreator = this.resetTableCreator.bind(this);
     this.handleGuessResponse = this.handleGuessResponse.bind(this);
+    this.setDefaultLexicon = this.setDefaultLexicon.bind(this);
 
+    this.api = new WordwallsAPI();
     this.rpc = new WordwallsRPC(this.props.tablenum);
   }
 
@@ -199,6 +203,14 @@ class WordwallsAppContainer extends React.Component {
     });
   }
 
+  setDefaultLexicon(lexID) {
+    this.api.call('/accounts/profile/set_default_lexicon/', {
+      defaultLexicon: lexID,
+    }).then(() => this.setState({
+      defaultLexicon: lexID,
+    })).catch(error => this.addMessage(error.message));
+  }
+
   getTables() {
     $.ajax({
       url: '/wordwalls/api/tables/',
@@ -308,7 +320,7 @@ class WordwallsAppContainer extends React.Component {
       this.addMessage(data.serverMsg);
     }
     if (_.has(data, 'questions')) {
-      game.init(data.questions);
+      game.init(data.questions, data.gameType);
       this.setState({
         numberOfRounds: this.state.numberOfRounds + 1,
         origQuestions: game.getOriginalQuestionState(),
@@ -647,7 +659,8 @@ class WordwallsAppContainer extends React.Component {
           ref={(ref) => {
             this.myTableCreator = ref;
           }}
-          defaultLexicon={this.props.defaultLexicon}
+          defaultLexicon={this.state.defaultLexicon}
+          setDefaultLexicon={this.setDefaultLexicon}
           availableLexica={this.props.availableLexica}
           challengeInfo={this.props.challengeInfo}
           tablenum={this.state.tablenum}
