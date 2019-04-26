@@ -20,6 +20,10 @@
 import os
 import sys
 
+from django.utils.translation import ugettext_lazy as _
+
+from logging_filters import skip_suspicious_operations
+
 
 def tobool(val):
     if val is True:
@@ -71,7 +75,7 @@ TIME_ZONE = 'America/Los_Angeles'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-from django.utils.translation import ugettext_lazy as _
+
 LANGUAGES = [
     ('en', _('English')),
     ('es', _('Spanish')),
@@ -167,8 +171,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    #'basic.blog',
-    #'basic.inlines',
+    # 'basic.blog',
+    # 'basic.inlines',
     'base',
     'flashcards',
     'tablegame',
@@ -180,8 +184,8 @@ INSTALLED_APPS = (
     'registration',
     'social_django',
     'captcha',
-    #'debug_toolbar',
-    #'locking'
+    # 'debug_toolbar',
+    # 'locking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -252,8 +256,6 @@ SEND_BROKEN_LINK_EMAILS = False
 INTERNAL_IPS = ('127.0.0.1',)
 CSRF_FAILURE_VIEW = 'views.csrf_failure'
 
-
-from logging_filters import skip_suspicious_operations
 
 LOGGING = {
     'version': 1,

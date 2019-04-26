@@ -510,10 +510,12 @@ class TableCreator extends React.Component {
                   activeGameType: option,
                 })}
                 currentLexicon={this.state.currentLexicon}
+                defaultLexicon={this.props.defaultLexicon}
                 availableLexica={this.props.availableLexica}
                 setLexicon={lex => this.setState({
                   currentLexicon: lex,
                 })}
+                setDefaultLexicon={this.props.setDefaultLexicon}
                 desiredTime={this.state.desiredTime}
                 setTime={t => this.setState({
                   desiredTime: t,
@@ -545,6 +547,7 @@ class TableCreator extends React.Component {
 
 TableCreator.propTypes = {
   defaultLexicon: PropTypes.number.isRequired,
+  setDefaultLexicon: PropTypes.func.isRequired,
   availableLexica: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
     lexicon: PropTypes.string,
