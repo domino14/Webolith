@@ -18,32 +18,28 @@
 
 import json
 import datetime
-import time
 import copy
 import logging
 import re
+import time
 
 from django.conf import settings
 from django.db import IntegrityError
 from django.utils.translation import ugettext as _
-from django.utils import timezone
 from gargoyle import gargoyle
 
 from base.forms import SavedListForm
 from lib.word_db_helper import WordDB, Questions, word_search, BadInput
 from lib.word_searches import temporary_list_name
-from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
+from wordwalls.challenges import fetch_challenge
+from wordwalls.exceptions import GameInitException
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
-                              DailyChallengeMissedBingos, DailyChallengeName,
+                              DailyChallengeMissedBingos,
                               WordwallsGameModel)
 logger = logging.getLogger(__name__)
-
-
-class GameInitException(Exception):
-    pass
 
 
 class WordwallsGame(object):
@@ -157,19 +153,6 @@ class WordwallsGame(object):
                            category=category)
         return wl
 
-    def get_dc(self, ch_date, ch_lex, ch_name):
-        """
-        Gets a challenge with date, lex, name.
-
-        """
-        dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex,
-                                        name=ch_name)
-        qs = Questions()
-        qs.set_from_json(dc.alphagrams)
-        qs.shuffle()
-        secs = dc.seconds
-        return qs, secs, dc
-
     def initialize_daily_challenge(self, user, ch_lex, ch_name, ch_date,
                                    use_table=None):
         """
@@ -177,32 +160,9 @@ class WordwallsGame(object):
 
         """
 
-        # Does a daily challenge exist with this name and date?
-        # If not, create it.
-        today = timezone.localtime(timezone.now()).date()
-        qualify_for_award = False
-        if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-            # Repeat on Tuesday at midnight local time (ie beginning of
-            # the day, 0:00) Tuesday is an isoweekday of 2. Find the
-            # nearest Tuesday back in time. isoweekday goes from 1 to 7.
-            ch_date = toughies_challenge_date(ch_date)
-            if ch_date == toughies_challenge_date(today):
-                qualify_for_award = True
-        # otherwise, it's not a 'bingo toughies', but a regular challenge.
-        else:
-            if ch_date == today:
-                qualify_for_award = True
+        qs, secs, dc, qualify_for_award = fetch_challenge(ch_lex, ch_name,
+                                                          ch_date)
 
-        ret = self.get_or_create_dc(ch_date, ch_lex, ch_name)
-        if ret is None:
-            if ch_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
-                raise GameInitException(
-                    'Unable to create Toughies challenge. If this is a new '
-                    'lexicon, please wait until Tuesday for new words to be '
-                    'available.')
-            raise GameInitException('Unable to create daily challenge {0}'.
-                                    format(ch_name))
-        qs, secs, dc = ret
         list_category = WordList.CATEGORY_ANAGRAM
         if dc.category == DailyChallenge.CATEGORY_BUILD:
             list_category = WordList.CATEGORY_BUILD
@@ -227,38 +187,6 @@ class WordwallsGame(object):
             temp_list_name=temp_list_name,
             qualifyForAward=qualify_for_award)
         return wgm.pk   # the table number
-
-    def get_or_create_dc(self, ch_date, ch_lex, ch_name):
-        """
-        Get, or create, a daily challenge with the given parameters.
-
-        """
-        try:
-            qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
-        except DailyChallenge.DoesNotExist:
-            ret = generate_dc_questions(ch_name, ch_lex, ch_date)
-            if not ret:
-                return None
-
-            qs, secs = ret
-            if qs.size() == 0:
-                logger.info('Empty questions.')
-                return None
-            ch_category = DailyChallenge.CATEGORY_ANAGRAM
-            if qs.build_mode:
-                ch_category = DailyChallenge.CATEGORY_BUILD
-            dc = DailyChallenge(date=ch_date, lexicon=ch_lex, name=ch_name,
-                                seconds=secs, alphagrams=qs.to_json(),
-                                category=ch_category)
-            try:
-                dc.save()
-            except IntegrityError:
-                logger.exception("Caught integrity error")
-                # This happens rarely if the DC gets generated twice
-                # in very close proximity.
-                qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
-
-        return qs, secs, dc
 
     def initialize_by_search_params(self, user, search_description, time_secs,
                                     questions_per_round=None, use_table=None,
@@ -737,7 +665,7 @@ class WordwallsGame(object):
         if len(uniqueMissed) != len(missed):
             logger.error("missed list is not unique!! %s %s", uniqueMissed,
                          missed)
-            #raise Exception('Missed list is not unique')
+            # raise Exception('Missed list is not unique')
 
         logger.info("%d missed this round, %d missed total",
                     len(missed_indices), len(missed))

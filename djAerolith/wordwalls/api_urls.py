@@ -22,6 +22,7 @@ from wordwalls.api import (
     api_challengers,
     configure,
     challenges_played,
+    get_challenge_questions,
     special_challenges,
     default_lists,
     new_challenge,
@@ -43,6 +44,7 @@ urlpatterns = [
     url(r'^load_saved_list/$', load_saved_list),
     url(r'^load_raw_questions/$', load_raw_questions),
 
+    url(r'^get_challenge_questions/$', get_challenge_questions),
     # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
 ]

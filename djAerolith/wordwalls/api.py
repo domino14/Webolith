@@ -4,7 +4,7 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.utils import timezone
 
@@ -16,7 +16,7 @@ from base.forms import SavedListForm
 from lib.response import response, bad_request
 from lib.word_searches import SearchDescription
 from wordwalls.views import getLeaderboardData
-from wordwalls.challenges import toughies_challenge_date
+from wordwalls.challenges import toughies_challenge_date, fetch_challenge
 from wordwalls.game import WordwallsGame, GameInitException
 # from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
 
@@ -277,7 +277,7 @@ def new_search(request, parsed_req_body):
             multiplayer=parsed_req_body['multiplayer'])
     except GameInitException as e:
         return bad_request(str(e))
-    except AttributeError as e:
+    except AttributeError:
         return bad_request('Stop hacking me bro')
     return table_response(tablenum)
 
@@ -436,3 +436,37 @@ def date_from_str(dt):
         ch_date = today
 
     return ch_date
+
+
+@csrf_exempt
+@login_required
+@require_POST
+def get_challenge_questions(request):
+    """
+    Get challenge questions for a specific challenge. This is a POST
+    because if a challenge doesn't exist, it creates it.
+
+    Note: it is possible that the caller will call this function
+    multiple times in a row in rapid succession.
+    """
+    try:
+        body = json.loads(request.body)
+    except (TypeError, ValueError):
+        return bad_request('Badly formatted body.')
+
+    lex_id = body['lexicon']
+    try:
+        lexicon = Lexicon.objects.get(pk=lex_id)
+    except Lexicon.DoesNotExist:
+        return bad_request('Bad lexicon.')
+
+    try:
+        challenge_name = DailyChallengeName.objects.get(pk=body['challenge'])
+    except DailyChallengeName.DoesNotExist:
+        return bad_request('Bad challenge id.')
+
+    dt = date_from_str(body.get('date'))
+
+    qs, _, _, _ = fetch_challenge(lexicon, challenge_name, dt)
+    # see load_questions for how to get more info in wordwalls/game.py
+    return response(qs.to_python())

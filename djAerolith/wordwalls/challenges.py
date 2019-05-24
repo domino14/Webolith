@@ -8,6 +8,10 @@ import random
 import re
 import logging
 
+from django.db import IntegrityError
+from django.utils import timezone
+
+from wordwalls.exceptions import GameInitException
 from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeMissedBingos,
                               DailyChallengeLeaderboard,
@@ -214,7 +218,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
             mb_dict[alphagram] = alphagram, perc_correct
     logger.debug('Created missed bingo dictionary...')
     # Sort by difficulty in reverse order (most difficult first)
-    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[:num]
+    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[:num]  # noqa
     logger.debug('Sorted by difficulty, returning...')
     # And just return the alphagram portion.
     return [Alphagram(a[0]) for a in alphs]
@@ -250,3 +254,86 @@ def toughies_challenge_date(req_date):
         diff = 7 - abs(diff)
     challenge_date = req_date - timedelta(days=diff)
     return challenge_date
+
+
+def fetch_challenge(lexicon, name, ch_date):
+    """
+    Fetch a challenge. Note that this may create a challenge, if the
+    challenge does not exist.
+
+    This is basically a wrapper around get_or_create_dc below.
+    """
+    # Does a daily challenge exist with this name and date?
+    # If not, create it.
+    today = timezone.localtime(timezone.now()).date()
+    qualify_for_award = False
+    if name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+        # Repeat on Tuesday at midnight local time (ie beginning of
+        # the day, 0:00) Tuesday is an isoweekday of 2. Find the
+        # nearest Tuesday back in time. isoweekday goes from 1 to 7.
+        ch_date = toughies_challenge_date(ch_date)
+        if ch_date == toughies_challenge_date(today):
+            qualify_for_award = True
+    # otherwise, it's not a 'bingo toughies', but a regular challenge.
+    else:
+        if ch_date == today:
+            qualify_for_award = True
+
+    ret = get_or_create_dc(ch_date, lexicon, name)
+    if ret is None:
+        if name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
+            raise GameInitException(
+                'Unable to create Toughies challenge. If this is a new '
+                'lexicon, please wait until Tuesday for new words to be '
+                'available.')
+        raise GameInitException('Unable to create daily challenge {0}'.
+                                format(name))
+    qs, secs, dc = ret
+    return qs, secs, dc, qualify_for_award
+
+
+def get_or_create_dc(ch_date, ch_lex, ch_name):
+    """
+    Get, or create, a daily challenge with the given parameters.
+
+    """
+    try:
+        qs, secs, dc = get_dc(ch_date, ch_lex, ch_name)
+    except DailyChallenge.DoesNotExist:
+        ret = generate_dc_questions(ch_name, ch_lex, ch_date)
+        if not ret:
+            return None
+
+        qs, secs = ret
+        if qs.size() == 0:
+            logger.info('Empty questions.')
+            return None
+        ch_category = DailyChallenge.CATEGORY_ANAGRAM
+        if qs.build_mode:
+            ch_category = DailyChallenge.CATEGORY_BUILD
+        dc = DailyChallenge(date=ch_date, lexicon=ch_lex, name=ch_name,
+                            seconds=secs, alphagrams=qs.to_json(),
+                            category=ch_category)
+        try:
+            dc.save()
+        except IntegrityError:
+            logger.exception("Caught integrity error")
+            # This happens rarely if the DC gets generated twice
+            # in very close proximity.
+            qs, secs, dc = get_dc(ch_date, ch_lex, ch_name)
+
+    return qs, secs, dc
+
+
+def get_dc(ch_date, ch_lex, ch_name):
+    """
+    Gets a challenge with date, lex, name.
+
+    """
+    dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex,
+                                    name=ch_name)
+    qs = Questions()
+    qs.set_from_json(dc.alphagrams)
+    qs.shuffle()
+    secs = dc.seconds
+    return qs, secs, dc
