@@ -52,3 +52,9 @@
     lexiconName: OSPS40
   model: base.lexicon
   pk: 11
+- fields:
+    lengthCounts: '{"10":35452,"11":28253,"12":20678,"13":14214,"14":9335,"15":5889,"2":93,"3":882,"4":3496,"5":8683,"6":17058,"7":27555,"8":36549,"9":39354}'
+    lexiconDescription: Collins 2019 International English Word List
+    lexiconName: CSW19
+  model: base.lexicon
+  pk: 12
