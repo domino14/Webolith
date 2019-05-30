@@ -157,7 +157,7 @@ def create_wl_lists(i, lex, db):
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'NWL18 {} not in CSW15'.format(friendly_number_map[i]))
+            'NWL18 {} not in CSW19'.format(friendly_number_map[i]))
 
         if i == 4:
             qs = get_questions_by_condition(
@@ -191,14 +191,14 @@ def create_wl_lists(i, lex, db):
                 lex, len(qs), i, False, json.dumps(qs),
                 'NWL18 JQXZ 6s not in America')
 
-    if lex.lexiconName == 'CSW15':
+    if lex.lexiconName == 'CSW19':
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
             lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'CSW15 {} not in CSW12'.format(friendly_number_map[i]))
+            'CSW19 {} not in CSW15'.format(friendly_number_map[i]))
 
         qs = get_questions_by_condition(
             db, min_prob, max_prob, i,
@@ -206,7 +206,7 @@ def create_wl_lists(i, lex, db):
             condition_type=Condition.WORD)
         create_named_list(
             lex, len(qs), i, False, json.dumps(qs),
-            'CSW15 {} not in NWL18'.format(friendly_number_map[i]))
+            'CSW19 {} not in NWL18'.format(friendly_number_map[i]))
 
 
 def createNamedLists(lex):
@@ -351,10 +351,11 @@ class Command(BaseCommand):
     help = """Populates database with named lists"""
 
     def handle(self, **options):
-        # NamedList.objects.filter(lexicon__lexiconName='CSW15').delete()
-        # for lex in Lexicon.objects.filter(
-        #         lexiconName__in=['NWL18']):
-        #     createNamedLists(lex)
+        NamedList.objects.filter(
+            lexicon__lexiconName__in=['CSW19', 'NWL18']).delete()
+        for lex in Lexicon.objects.filter(
+                lexiconName__in=['NWL18', 'CSW19']):
+            createNamedLists(lex)
         # create_spanish_lists()
-        NamedList.objects.filter(lexicon__lexiconName='OSPS40').delete()
-        create_polish_lists()
+        # NamedList.objects.filter(lexicon__lexiconName='OSPS40').delete()
+        # create_polish_lists()

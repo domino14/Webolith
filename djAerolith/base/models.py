@@ -34,6 +34,7 @@ EXCLUDED_LEXICA = [
     'America2016',
     'FISE09',
     'America',
+    # 'CSW15'  # Uncomment this out in July.
 ]
 
 # XXX: This handles Spanish, English and Polish. It is pretty ghetto.

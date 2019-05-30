@@ -26,8 +26,8 @@ def get_stats(request, lexicon, type_of_challenge_id):
 
     if lexicon.lexiconName in ('OWL2', 'America', 'NWL18'):
         lexica = ['OWL2', 'America', 'NWL18']
-    elif lexicon.lexiconName in ('CSW12', 'CSW15'):
-        lexica = ['CSW12', 'CSW15']
+    elif lexicon.lexiconName in ('CSW12', 'CSW15', 'CSW19'):
+        lexica = ['CSW12', 'CSW15', 'CSW19']
     else:
         lexica = [lexicon.lexiconName]
 
