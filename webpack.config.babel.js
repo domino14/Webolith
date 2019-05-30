@@ -3,13 +3,14 @@
 const webpack = require('webpack');
 
 export default {
+  mode: 'development',
   output: {
     filename: '[name].js',
     publicPath: '/static/dist/',
   },
   devtool: 'source-map',
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(js|jsx|es6)$/,
         loader: 'babel-loader',
@@ -22,8 +23,8 @@ export default {
   },
   entry: {
     vendor: [
-      'bootstrap',
       'jquery',
+      'bootstrap',
       'underscore',
     ],
     wordwallsapp: [
@@ -39,10 +40,6 @@ export default {
       $: 'jquery',
       jQuery: 'jquery',
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'vendor.js',
-    }),
   ],
   devServer: {
     port: 7000,
@@ -51,6 +48,7 @@ export default {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    disableHostCheck: true,
   },
   watchOptions: {
     aggregateTimeout: 300,

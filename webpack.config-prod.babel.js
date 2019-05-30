@@ -7,8 +7,10 @@ import webpackDev from './webpack.config.babel';
 const webpack = require('webpack');
 const _ = require('underscore');
 const CompressionPlugin = require('compression-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const prodConfig = _.defaults({
+  mode: 'production',
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'djAerolith/static/dist/'),
@@ -19,20 +21,19 @@ const prodConfig = _.defaults({
       $: 'jQuery',
       jQuery: 'jquery',
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'vendor.js',
-    }),
     new webpack.DefinePlugin({
       'process.env': {
         // For minifying React correctly.
         NODE_ENV: JSON.stringify('production'),
       },
     }),
-    new webpack.optimize.UglifyJsPlugin(),
+    // new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new CompressionPlugin(),
   ],
+  optimization: {
+    minimizer: [new UglifyJsPlugin()],
+  },
 }, webpackDev);
 
 export default prodConfig;
