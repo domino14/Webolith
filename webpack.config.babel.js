@@ -22,13 +22,13 @@ export default {
     extensions: ['.js', '.jsx', '.es6'],
   },
   entry: {
-    vendor: [
-      'jquery',
-      'bootstrap',
-      'underscore',
-    ],
+    // vendor: [
+    //   'jquery',
+    //   'bootstrap',
+    //   'underscore',
+    // ],
     wordwallsapp: [
-      'babel-polyfill',
+      '@babel/polyfill',
       'promise-polyfill',
       'whatwg-fetch',
       './djAerolith/wordwalls/static/js/wordwalls/index',
