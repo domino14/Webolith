@@ -12,7 +12,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const prodConfig = _.defaults({
   mode: 'production',
   output: {
-    filename: '[name].js',
+    filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'djAerolith/static/dist/'),
     publicPath: '/static/dist/',
   },
@@ -27,12 +27,21 @@ const prodConfig = _.defaults({
         NODE_ENV: JSON.stringify('production'),
       },
     }),
-    // new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new CompressionPlugin(),
+    new webpack.HashedModuleIdsPlugin(),
   ],
   optimization: {
     minimizer: [new UglifyJsPlugin()],
+    splitChunks: {
+      cacheGroups: {
+        node_vendors: {
+          test: /[\\/]node_modules[\\/]/, // is backslash for windows?
+          chunks: 'all',
+          priority: 1,
+        },
+      },
+    },
   },
 }, webpackDev);
 

@@ -5,7 +5,7 @@ const webpack = require('webpack');
 export default {
   mode: 'development',
   output: {
-    filename: '[name].js',
+    filename: '[name].[contenthash].js',
     publicPath: '/static/dist/',
   },
   devtool: 'source-map',
@@ -22,24 +22,33 @@ export default {
     extensions: ['.js', '.jsx', '.es6'],
   },
   entry: {
-    // vendor: [
-    //   'jquery',
-    //   'bootstrap',
-    //   'underscore',
-    // ],
     wordwallsapp: [
       '@babel/polyfill',
       'promise-polyfill',
       'whatwg-fetch',
       './djAerolith/wordwalls/static/js/wordwalls/index',
     ],
-    flashcardsapp: './djAerolith/flashcards/static/js/flashcards/main',
+    flashcardsapp: [
+      './djAerolith/flashcards/static/js/flashcards/main',
+    ],
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        node_vendors: {
+          test: /[\\/]node_modules[\\/]/, // is backslash for windows?
+          chunks: 'all',
+          priority: 1,
+        },
+      },
+    },
   },
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
     }),
+    new webpack.HashedModuleIdsPlugin(),
   ],
   devServer: {
     port: 7000,

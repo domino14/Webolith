@@ -1,4 +1,6 @@
 /* global window */
+import 'bootstrap'; // Needed by the app, so load it here.
+
 import App from './app';
 import Utils from './utils';
 
