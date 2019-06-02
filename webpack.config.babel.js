@@ -1,6 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // Used for development build.
+import path from 'path';
+
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 export default {
   mode: 'development',
@@ -49,6 +52,12 @@ export default {
       jQuery: 'jquery',
     }),
     new webpack.HashedModuleIdsPlugin(),
+    new HtmlWebpackPlugin({
+      // filename: path.resolve(__dirname, 'djAerolith/wordwalls/templates/wordwalls/include_scripts.html'),
+      // filename: path.resolve(__dirname, 'djAerolith/static/dist/include_scripts.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'djAerolith/wordwalls/templates/wordwalls/include_template.html'),
+    }),
   ],
   devServer: {
     port: 7000,
