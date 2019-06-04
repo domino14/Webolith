@@ -8,6 +8,7 @@ const webpack = require('webpack');
 const _ = require('underscore');
 const CompressionPlugin = require('compression-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const prodConfig = _.defaults({
   mode: 'production',
@@ -30,6 +31,18 @@ const prodConfig = _.defaults({
     new webpack.optimize.AggressiveMergingPlugin(),
     new CompressionPlugin(),
     new webpack.HashedModuleIdsPlugin(),
+    // For wordwalls app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'wordwalls_include_template.html'),
+    }),
+    // For flashcards app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/flashcards_dynamic/flashcards_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'flashcards_include_template.html'),
+    }),
   ],
   optimization: {
     minimizer: [new UglifyJsPlugin()],

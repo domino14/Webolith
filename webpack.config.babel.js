@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 export default {
   mode: 'development',
   output: {
+    path: path.resolve(__dirname, 'djAerolith/static/dist/'),
     filename: '[name].[contenthash].js',
     publicPath: '/static/dist/',
   },
@@ -52,11 +53,17 @@ export default {
       jQuery: 'jquery',
     }),
     new webpack.HashedModuleIdsPlugin(),
+    // For wordwalls app:
     new HtmlWebpackPlugin({
-      // filename: path.resolve(__dirname, 'djAerolith/wordwalls/templates/wordwalls/include_scripts.html'),
-      // filename: path.resolve(__dirname, 'djAerolith/static/dist/include_scripts.html'),
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
       inject: false,
-      template: path.resolve(__dirname, 'djAerolith/wordwalls/templates/wordwalls/include_template.html'),
+      template: path.resolve(__dirname, 'wordwalls_include_template.html'),
+    }),
+    // For flashcards app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/flashcards_dynamic/flashcards_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'flashcards_include_template.html'),
     }),
   ],
   devServer: {

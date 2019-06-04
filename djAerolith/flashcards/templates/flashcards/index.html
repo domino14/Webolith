@@ -8,10 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Aerolith Flashcards.">
     <meta name="author" content="Cesar Del Solar">
-    <link href="/static/css/flashcards/cards.css?v={{CURRENT_VERSION}}" rel="stylesheet">
+    <link href="/static/css/flashcards/cards.css" rel="stylesheet">
 
-    <link href="/static/lib/bootstrap/css/bootstrap-slate.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
-    <link href="/static/lib/tablesorter-theme.blackice.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
+    <link href="/static/lib/bootstrap/css/bootstrap-slate.min.css" rel="stylesheet">
+    <link href="/static/lib/tablesorter-theme.blackice.min.css" rel="stylesheet">
   </head>
 
   <body>
@@ -150,9 +150,9 @@
         'quizzes': "{{savedLists|escapejs}}"
     };
     </script>
-    <script src="{{STATIC_SRV}}/static/dist/node_vendors~flashcardsapp~wordwallsapp.js?v={{CURRENT_VERSION}}"></script>
-    <script src="{{STATIC_SRV}}/static/dist/node_vendors~flashcardsapp.js?v={{CURRENT_VERSION}}"></script>
-    <script src="{{STATIC_SRV}}/static/dist/flashcardsapp.js?v={{CURRENT_VERSION}}"></script>
+
+    {% include "flashcards_dynamic/flashcards_include.html" %}
+
 
   </body>
 </html>
