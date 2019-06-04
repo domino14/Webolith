@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.conf import settings
 
-from current_version import CURRENT_VERSION
 from base.models import Lexicon, WordList
 from base.utils import generate_question_map, quizzes_response
 from lib.response import response
@@ -24,7 +23,6 @@ def main(request):
                   'numCards': 0,
                   'savedLists': json.dumps(quizzes_response(
                                            quizzes)),
-                  'CURRENT_VERSION': CURRENT_VERSION,
                   'STATIC_SRV': (
                       settings.WEBPACK_DEV_SERVER_URL if (
                           settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)

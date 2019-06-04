@@ -45,7 +45,6 @@ from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
 import wordwalls.settings
 from lib.response import response, StatusCode
 from base.utils import get_alphas_from_words, UserListParseException
-from current_version import CURRENT_VERSION
 from wordwalls.challenges import toughies_challenge_date
 
 logger = logging.getLogger(__name__)
@@ -92,7 +91,6 @@ def table(request, tableid=None):
          'user': json.dumps(usermeta),
          'addParams': json.dumps(params),
          'avatarUrl': profile.avatarUrl,
-         'CURRENT_VERSION': CURRENT_VERSION,
          'lexicon': wgm.lexicon.lexiconName if wgm else None,
          'default_lexicon': profile.defaultLexicon.pk,
          'challenge_info': json.dumps(meta_info['challenge_info']),
