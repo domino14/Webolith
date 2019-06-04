@@ -1,0 +1,5 @@
+<% for (var jsfile in htmlWebpackPlugin.files.js) { %>
+    <% if (htmlWebpackPlugin.files.js[jsfile].indexOf('wordwallsapp') !== -1) { %>
+    <script src="{{STATIC_SRV}}<%= htmlWebpackPlugin.files.js[jsfile] %>"></script>
+    <% } %>
+<% } %>

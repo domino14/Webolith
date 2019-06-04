@@ -29,8 +29,8 @@ To contact the author, please email delsolar at gmail dot com
   <title>{% if tablenum %}WordWalls - table {{tablenum}}{% else %}Wordwalls - Create Table{% endif %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0,  maximum-scale=1, user-scalable=no">
 
-  <link href="/static/lib/bootstrap.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
-  <link href="/static/lib/bootstrap-datepicker-1.6.4.min.css?v={{CURRENT_VERSION}}" rel="stylesheet">
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-datepicker-1.6.4.min.css" rel="stylesheet">
   <style>
   @media (min-width: 768px) {
     .modal .modal-xl {
@@ -84,8 +84,7 @@ To contact the author, please email delsolar at gmail dot com
     defaultLexicon: {{default_lexicon}},
     challengeInfo: '{{challenge_info|escapejs}}',
     user: '{{ user | escapejs }}',
-    intercomAppID: '{{intercom_app_id}}',
-    appVersion: '{{CURRENT_VERSION}}'
+    intercomAppID: '{{intercom_app_id}}'
   };
 </script>
 
@@ -101,8 +100,7 @@ To contact the author, please email delsolar at gmail dot com
 <div id="fade"></div>
 <div id="infoDialog" title=""></div>
 
-<script src="{{STATIC_SRV}}/static/dist/vendor.js?v={{CURRENT_VERSION}}"></script>
-<script src="{{STATIC_SRV}}/static/dist/wordwallsapp.js?v={{CURRENT_VERSION}}"></script>
+{% include "wordwalls_dynamic/wordwalls_include.html" %}
 
 </body>
 </html>

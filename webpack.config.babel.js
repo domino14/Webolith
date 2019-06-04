@@ -1,15 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // Used for development build.
+import path from 'path';
+
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 export default {
+  mode: 'development',
   output: {
-    filename: '[name].js',
+    path: path.resolve(__dirname, 'djAerolith/static/dist/'),
+    filename: '[name].[contenthash].js',
     publicPath: '/static/dist/',
   },
   devtool: 'source-map',
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(js|jsx|es6)$/,
         loader: 'babel-loader',
@@ -21,27 +26,44 @@ export default {
     extensions: ['.js', '.jsx', '.es6'],
   },
   entry: {
-    vendor: [
-      'bootstrap',
-      'jquery',
-      'underscore',
-    ],
     wordwallsapp: [
-      'babel-polyfill',
+      '@babel/polyfill',
       'promise-polyfill',
       'whatwg-fetch',
       './djAerolith/wordwalls/static/js/wordwalls/index',
     ],
-    flashcardsapp: './djAerolith/flashcards/static/js/flashcards/main',
+    flashcardsapp: [
+      './djAerolith/flashcards/static/js/flashcards/main',
+    ],
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        node_vendors: {
+          test: /[\\/]node_modules[\\/]/, // is backslash for windows?
+          chunks: 'all',
+          priority: 1,
+        },
+      },
+    },
   },
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'vendor.js',
+    new webpack.HashedModuleIdsPlugin(),
+    // For wordwalls app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'wordwalls_include_template.html'),
+    }),
+    // For flashcards app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/flashcards_dynamic/flashcards_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'flashcards_include_template.html'),
     }),
   ],
   devServer: {
@@ -51,6 +73,7 @@ export default {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    disableHostCheck: true,
   },
   watchOptions: {
     aggregateTimeout: 300,

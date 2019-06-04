@@ -46,6 +46,8 @@ ADMINS = (
     ('Cesar Del Solar', 'delsolar@gmail.com'),
 )
 
+# If you want to disable the following, make sure to also take down
+# the webpack server entirely.
 USE_WEBPACK_DEV_SERVER = True
 WEBPACK_DEV_SERVER_URL = 'http://vm.aerolith.org'
 MANAGERS = ADMINS
@@ -138,7 +140,12 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
-        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+        'DIRS': [
+            os.path.join(PROJECT_ROOT, 'templates'),
+            # The following path is for dynamically generated templates
+            # (See webpack config).
+            os.path.join(PROJECT_ROOT, 'static', 'dist', 'templates'),
+        ],
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',

@@ -7,10 +7,13 @@ import webpackDev from './webpack.config.babel';
 const webpack = require('webpack');
 const _ = require('underscore');
 const CompressionPlugin = require('compression-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const prodConfig = _.defaults({
+  mode: 'production',
   output: {
-    filename: '[name].js',
+    filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'djAerolith/static/dist/'),
     publicPath: '/static/dist/',
   },
@@ -19,20 +22,40 @@ const prodConfig = _.defaults({
       $: 'jQuery',
       jQuery: 'jquery',
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'vendor.js',
-    }),
     new webpack.DefinePlugin({
       'process.env': {
         // For minifying React correctly.
         NODE_ENV: JSON.stringify('production'),
       },
     }),
-    new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new CompressionPlugin(),
+    new webpack.HashedModuleIdsPlugin(),
+    // For wordwalls app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'wordwalls_include_template.html'),
+    }),
+    // For flashcards app:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/flashcards_dynamic/flashcards_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'flashcards_include_template.html'),
+    }),
   ],
+  optimization: {
+    minimizer: [new UglifyJsPlugin()],
+    splitChunks: {
+      cacheGroups: {
+        node_vendors: {
+          test: /[\\/]node_modules[\\/]/, // is backslash for windows?
+          chunks: 'all',
+          priority: 1,
+        },
+      },
+    },
+  },
 }, webpackDev);
 
 export default prodConfig;

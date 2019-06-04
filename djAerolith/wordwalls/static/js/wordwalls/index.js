@@ -1,4 +1,6 @@
 /* global window */
+import 'bootstrap'; // Needed by the app, so load it here.
+
 import App from './app';
 import Utils from './utils';
 
@@ -16,7 +18,6 @@ App.initialize({
   defaultLexicon: window.TableGlobals.defaultLexicon,
   challengeInfo: JSON.parse(window.TableGlobals.challengeInfo),
   socketServer: window.TableGlobals.socketServer,
-  appVersion: window.TableGlobals.appVersion,
 });
 
 // Finally, initialize Intercom.

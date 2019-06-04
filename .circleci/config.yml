@@ -73,7 +73,7 @@ jobs:
       REPO: /opt/webolith
       SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
       # For collecting static files to later copy into Nginx. This
-      # dir must be in the context of the build, so inside the kubernetes dir.
+      # dir must be in the context of the build.
       STATIC_ROOT: /opt/webolith/static/webolith_static/
     docker:
       - image: domino14/webolith-base-pkg:py3-latest
@@ -152,7 +152,9 @@ workflows:
             - build_js
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - staging
       - deploy:
           requires:
             - build_docker

@@ -193,7 +193,8 @@ class Game {
     if (!question) {
       return false;
     }
-
+    // console.log('found question!!', question);
+    // console.log('updating in', this.origQuestions);
     this.origQuestions = this.origQuestions.update(question, (aObj) => {
       const newObj = aObj.set('wrongGuess', true);
       return newObj;

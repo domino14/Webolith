@@ -134,16 +134,21 @@ class WordwallsAppContainer extends React.Component {
     if (!game.answerExists(modifiedGuess)) {
       // If the guess wasn't valid, don't bother submitting it to
       // the server.
+      // console.log('not valid');
       if (game.originalAnswerExists(modifiedGuess)) {
+        // console.log('original answer exists')
         this.setState({
           lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
         });
       } else {
+        // console.log('does not exist')
         if (game.markPotentialIncorrectGuess(modifiedGuess)) {
+          // console.log('game.markpotentialincorrectguess')
           this.setState(state => ({
             wrongAnswers: state.wrongAnswers + 1,
           }));
         }
+        // console.log('setting to incorrect')
         this.setState({
           lastGuessCorrectness: GuessEnum.INCORRECT,
         });
