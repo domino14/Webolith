@@ -322,4 +322,18 @@ describe('Internal functions', () => {
       }
     });
   });
+
+  describe('alphagrammize', () => {
+    it('should alphagrammize properly', () => {
+      const testArray = [
+        ['ROBINIA', 'ABIINOR'],
+        ['ÑU', 'ÑU'],
+        ['PERSPICACITY', 'ACCEIIPPRSTY'],
+        ['ĆCZ13ŹÑ', 'CĆ1Ñ3ZŹ'],
+      ];
+      for (let i = 0; i < testArray.length; i += 1) {
+        expect(Internal().alphagrammize(testArray[i][0])).toEqual(testArray[i][1]);
+      }
+    });
+  });
 });

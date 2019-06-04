@@ -62,11 +62,12 @@ To contact the author, please email delsolar at gmail dot com
 
 
 <body>
+  {% value_from_settings DEBUG as DEBUG %}
+
 {% block content %}
 <script>
   // Our entry point will use window.TableGlobals to pass these in to the app.
   // Figure out the socket server protocol.
-  {% value_from_settings DEBUG as DEBUG %}
   {% if DEBUG %}
     var protocol = 'ws://';
   {% else %}
@@ -100,7 +101,13 @@ To contact the author, please email delsolar at gmail dot com
 <div id="fade"></div>
 <div id="infoDialog" title=""></div>
 
-{% include "wordwalls_dynamic/wordwalls_include.html" %}
+{% if DEBUG %}
+  <script src="{{STATIC_SRV}}/static/dist/node_vendors~flashcardsapp~wordwallsapp.js"></script>
+  <script src="{{STATIC_SRV}}/static/dist/node_vendors~wordwallsapp.js"></script>
+  <script src="{{STATIC_SRV}}/static/dist/wordwallsapp.js"></script>
+{% else %}
+  {% include "wordwalls_dynamic/wordwalls_include.html" %}
+{% endif %}
 
 </body>
 </html>
