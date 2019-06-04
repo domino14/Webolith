@@ -48,7 +48,7 @@ ADMINS = (
 
 # If you want to disable the following, make sure to also take down
 # the webpack server entirely.
-USE_WEBPACK_DEV_SERVER = False
+USE_WEBPACK_DEV_SERVER = True
 WEBPACK_DEV_SERVER_URL = 'http://vm.aerolith.org'
 MANAGERS = ADMINS
 
