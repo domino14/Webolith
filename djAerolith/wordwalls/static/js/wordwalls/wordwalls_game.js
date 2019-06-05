@@ -8,16 +8,29 @@
 import Immutable from 'immutable';
 import _ from 'underscore';
 
+const LETTER_SORT_MAP = {};
+const SORT_STRING_ORDER = 'AĄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓPQR3SŚTUVWXYZŹŻ?';
+
+function makeLetterSortMap() {
+  for (let i = 0; i < SORT_STRING_ORDER.length; i += 1) {
+    LETTER_SORT_MAP[SORT_STRING_ORDER[i]] = i;
+  }
+}
+
 /**
- * Alphagrammize the word. Note - this is not necessarily in the correct
- * sort order for non-english lexica, which means there may be a disconnect
- * between how the alphagram question comes in, and what this function
- * spits out. This should not be an issue if this function is used
- * consistently.
+ * Alphagrammize the word. Note - this follows the same "ghetto" function
+ * used in models.py, and handles Spanish, English, and Polish. This may need
+ * to be reworked.
  * @param {string} word
  */
 function alphagrammize(word) {
-  return word.split('').sort().join('');
+  if (_.size(LETTER_SORT_MAP) === 0) {
+    makeLetterSortMap();
+  }
+  return word
+    .split('')
+    .sort((a, b) => LETTER_SORT_MAP[a] - LETTER_SORT_MAP[b])
+    .join('');
 }
 
 /**
@@ -193,8 +206,6 @@ class Game {
     if (!question) {
       return false;
     }
-    // console.log('found question!!', question);
-    // console.log('updating in', this.origQuestions);
     this.origQuestions = this.origQuestions.update(question, (aObj) => {
       const newObj = aObj.set('wrongGuess', true);
       return newObj;
@@ -213,8 +224,8 @@ class Game {
   }
 
   /**
-   * Return the specific question if the guess is an anagram of any of
-   * the unanswered questions, or null.
+   * Return the specific question string if the guess is an anagram of
+   * any of the unanswered questions, or null.
    * @param {string} guess
    * @return {string?}
    */
@@ -426,5 +437,6 @@ export function Internal() {
     letterCounts,
     anagramOfQuestions,
     anagramOfQuestion,
+    alphagrammize,
   };
 }

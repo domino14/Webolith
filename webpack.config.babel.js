@@ -3,13 +3,12 @@
 import path from 'path';
 
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 export default {
   mode: 'development',
   output: {
     path: path.resolve(__dirname, 'djAerolith/static/dist/'),
-    filename: '[name].[contenthash].js',
+    filename: '[name].js',
     publicPath: '/static/dist/',
   },
   devtool: 'source-map',
@@ -51,19 +50,6 @@ export default {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-    }),
-    new webpack.HashedModuleIdsPlugin(),
-    // For wordwalls app:
-    new HtmlWebpackPlugin({
-      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
-      inject: false,
-      template: path.resolve(__dirname, 'wordwalls_include_template.html'),
-    }),
-    // For flashcards app:
-    new HtmlWebpackPlugin({
-      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/flashcards_dynamic/flashcards_include.html'),
-      inject: false,
-      template: path.resolve(__dirname, 'flashcards_include_template.html'),
     }),
   ],
   devServer: {
