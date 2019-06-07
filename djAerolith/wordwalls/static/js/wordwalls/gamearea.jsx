@@ -77,6 +77,7 @@ class GameArea extends React.Component {
         tableCreatorModalSelector={this.props.tableCreatorModalSelector}
         listName={this.props.listName}
         handleStart={this.props.handleStart}
+        hideErrors={this.props.hideErrors}
       />
     );
   }
@@ -108,6 +109,7 @@ GameArea.propTypes = {
   resetTableCreator: PropTypes.func.isRequired,
   tableCreatorModalSelector: PropTypes.string.isRequired,
   listName: PropTypes.string.isRequired,
+  hideErrors: PropTypes.bool.isRequired,
 
   handleStart: PropTypes.func.isRequired,
 };

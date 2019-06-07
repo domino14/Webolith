@@ -112,6 +112,7 @@ class GameInactiveArea extends React.Component {
       <div>
         <ChallengeResultsModal
           challengeData={this.props.challengeData}
+          hideErrors={this.props.hideErrors}
         />
         <SolutionsModal
           questions={this.props.questions}
@@ -152,6 +153,7 @@ GameInactiveArea.propTypes = {
   resetTableCreator: PropTypes.func.isRequired,
   tableCreatorModalSelector: PropTypes.string.isRequired,
   listName: PropTypes.string.isRequired,
+  hideErrors: PropTypes.bool.isRequired,
 
   handleStart: PropTypes.func.isRequired,
 };

@@ -43,16 +43,24 @@ class ChallengeResults extends React.Component {
     const { maxScore } = this.props.challengeData;
     this.props.challengeData.entries.forEach((entry, index) => {
       const userLink = ChallengeResults.getUserLink(entry.user, entry.addl);
+      let errorsColumn = null;
+      if (!this.props.hideErrors) {
+        errorsColumn = <td>{`${entry.w}`}</td>;
+      }
       const entryTr = (
         <tr key={entry.user}>
           <td>{index + 1}</td>
           <td>{userLink}</td>
           <td>{`${(100 * (entry.score / maxScore)).toFixed(1)}%`}</td>
-          <td>{`${entry.w}`}</td>
+          {errorsColumn}
           <td>{`${entry.tr} s.`}</td>
         </tr>);
       entries.push(entryTr);
     });
+    let errorsHeader = null;
+    if (!this.props.hideErrors) {
+      errorsHeader = <th>Errors</th>;
+    }
 
     return (
       <div
@@ -68,7 +76,7 @@ class ChallengeResults extends React.Component {
               <th>#</th>
               <th>User</th>
               <th>Score</th>
-              <th>Errors</th>
+              {errorsHeader}
               <th>Rem.</th>
             </tr>
           </thead>
@@ -93,6 +101,7 @@ ChallengeResults.propTypes = {
     lexicon: PropTypes.string,
     maxScore: PropTypes.number,
   }).isRequired,
+  hideErrors: PropTypes.bool.isRequired,
   height: PropTypes.number.isRequired,
 };
 

@@ -97,6 +97,7 @@ class WordwallsApp extends React.Component {
               listName={this.props.listName}
               answerers={this.props.answeredBy}
               handleStart={this.props.handleStart}
+              hideErrors={this.props.hideErrors}
             />
           </div>
         </div>
@@ -152,6 +153,7 @@ class WordwallsApp extends React.Component {
                 !this.props.displayStyle.hideLexiconSymbols}
               answers={this.props.answeredBy.get(this.props.username, Immutable.List())}
               wrongAnswers={this.props.wrongAnswers}
+              hideErrors={this.props.hideErrors}
               totalWords={this.props.totalWords}
               username={this.props.username}
               isBuild={this.props.isBuild}
@@ -225,6 +227,7 @@ WordwallsApp.propTypes = {
   onShuffleQuestion: PropTypes.func.isRequired,
   markMissed: PropTypes.func.isRequired,
   wrongAnswers: PropTypes.number.isRequired,
+  hideErrors: PropTypes.bool.isRequired,
 
   boardWidth: PropTypes.number.isRequired,
   boardHeight: PropTypes.number.isRequired,

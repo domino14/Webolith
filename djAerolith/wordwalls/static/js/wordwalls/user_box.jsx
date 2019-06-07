@@ -37,6 +37,21 @@ const UserBox = (props) => {
     (100 * (props.answers.size / props.totalWords)).toFixed(1) : 0;
 
   const fractionScore = `${props.answers.size}/${props.totalWords}`;
+  let wrongAnswers = null;
+  if (!props.hideErrors) {
+    wrongAnswers = (
+      <div className="col-sm-12">
+        <div
+          style={{
+            fontSize: '1em',
+            whiteSpace: 'nowrap',
+            textAlign: 'right',
+          }}
+          className="text text-danger"
+        >{props.wrongAnswers}
+        </div>
+      </div>);
+  }
 
   return (
     <div className="panel panel-default">
@@ -79,17 +94,7 @@ const UserBox = (props) => {
                 >{fractionScore}
                 </div>
               </div>
-              <div className="col-sm-12">
-                <div
-                  style={{
-                    fontSize: '1em',
-                    whiteSpace: 'nowrap',
-                    textAlign: 'right',
-                  }}
-                  className="text text-danger"
-                >{props.wrongAnswers}
-                </div>
-              </div>
+              {wrongAnswers}
             </div>
           </div>
         </div>
@@ -101,6 +106,7 @@ const UserBox = (props) => {
 UserBox.propTypes = {
   answers: PropTypes.instanceOf(Immutable.List).isRequired,
   wrongAnswers: PropTypes.number.isRequired,
+  hideErrors: PropTypes.bool.isRequired,
   totalWords: PropTypes.number.isRequired,
   username: PropTypes.string.isRequired,
   showLexiconSymbols: PropTypes.bool.isRequired,

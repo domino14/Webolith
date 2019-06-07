@@ -68,6 +68,7 @@ class ChallengeDialogContainer extends React.Component {
       lexicon: this.props.lexicon,
       date: this.state.currentDate.format(DATE_FORMAT_STRING),
       challenge: this.state.currentChallenge,
+      tiebreaker: this.props.hideErrors ? 'time' : 'errors',
     }, 'GET')
       .then(data => this.setState({
         challengeLeaderboardData: data || {},
@@ -128,6 +129,7 @@ class ChallengeDialogContainer extends React.Component {
         currentChallenge={this.state.currentChallenge}
         challengesDoneAtDate={this.state.challengesDoneAtDate}
         challengeLeaderboardData={this.state.challengeLeaderboardData}
+        hideErrors={this.props.hideErrors}
         specialChallengeInfo={this.state.specialChallengeInfo}
         onDateChange={(date) => {
           this.setState({
@@ -152,6 +154,7 @@ ChallengeDialogContainer.propTypes = {
   })).isRequired,
   showSpinner: PropTypes.func.isRequired,
   hideSpinner: PropTypes.func.isRequired,
+  hideErrors: PropTypes.bool.isRequired,
   api: PropTypes.instanceOf(WordwallsAPI).isRequired,
   setTimeAndQuestions: PropTypes.func.isRequired,
   tablenum: PropTypes.number.isRequired,

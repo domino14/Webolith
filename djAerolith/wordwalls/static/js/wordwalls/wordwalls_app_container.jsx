@@ -498,18 +498,12 @@ class WordwallsAppContainer extends React.Component {
     }
     if (this.state.numberOfRounds === 1 && this.state.isChallenge) {
       // XXX: Kind of ugly, breaks encapsulation.
-      $.ajax({
-        url: this.tableUrl(),
-        method: 'POST',
-        data: {
-          action: 'getDcData',
-        },
-        dataType: 'json',
-      }).done((data) => {
-        this.setState({
-          challengeData: data,
-        });
-      });
+      this.api.call('/wordwalls/api/challengers_by_tablenum/', {
+        tablenum: this.state.tablenum,
+        tiebreaker: this.state.displayStyle.hideErrors ? 'time' : 'errors',
+      }, 'GET').then(data => this.setState({
+        challengeData: data,
+      })).catch(error => this.addMessage(error.message));
     }
   }
 
@@ -669,6 +663,7 @@ class WordwallsAppContainer extends React.Component {
           gameGoing={this.state.gameGoing}
           setLoadingData={loading => this.setState({ loadingData: loading })}
           username={this.props.username}
+          hideErrors={this.state.displayStyle.hideErrors}
         />
         <WordwallsApp
           boardWidth={boardWidth}
@@ -707,6 +702,7 @@ class WordwallsAppContainer extends React.Component {
           username={this.props.username}
           currentHost={this.state.currentHost}
           wrongAnswers={this.state.wrongAnswers}
+          hideErrors={this.state.displayStyle.hideErrors}
 
           onGuessSubmit={this.onGuessSubmit}
           lastGuess={this.state.lastGuess}
