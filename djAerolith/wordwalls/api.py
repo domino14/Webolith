@@ -4,7 +4,6 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.utils import timezone
 
@@ -15,7 +14,8 @@ from base.models import Lexicon, WordList
 from base.forms import SavedListForm
 from lib.response import response, bad_request
 from lib.word_searches import SearchDescription
-from wordwalls.views import getLeaderboardData
+from wordwalls.views import (get_leaderboard_data,
+                             get_leaderboard_data_for_dc_instance)
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame, GameInitException
 # from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
@@ -44,14 +44,28 @@ def api_challengers(request):
     lex = request.GET.get('lexicon')
     ch_id = request.GET.get('challenge')
     ch_date = date_from_request_dict(request.GET)
-
+    tiebreaker = request.GET.get('tiebreaker', 'errors')
     try:
         lex = Lexicon.objects.get(pk=lex)
         ch_name = DailyChallengeName.objects.get(pk=ch_id)
     except (ObjectDoesNotExist, ValueError, TypeError):
         return bad_request('Bad lexicon or challenge.')
 
-    return response(getLeaderboardData(lex, ch_name, ch_date))
+    return response(get_leaderboard_data(lex, ch_name, ch_date, tiebreaker))
+
+
+def api_challengers_by_tablenum(request):
+    if request.method != 'GET':
+        return bad_request('Must use GET.')
+    tablenum = request.GET.get('tablenum')
+    tiebreaker = request.GET.get('tiebreaker', 'errors')
+    wwg = WordwallsGame()
+    dc_id = wwg.get_dc_id(tablenum)
+    if dc_id > 0:
+        dc = DailyChallenge.objects.get(pk=dc_id)
+        leaderboard_data = get_leaderboard_data_for_dc_instance(dc, tiebreaker)
+        return response(leaderboard_data)
+    return bad_request('No such daily challenge.')
 
 
 # Other API views with required auth.

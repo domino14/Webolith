@@ -362,6 +362,21 @@ class WordwallsSettings extends React.Component {
               <div className="row">
                 <div className="col-lg-8">
                   <Checkbox
+                    on={this.props.displayStyle.hideErrors}
+                    onChange={(event) => {
+                      this.props.onOptionsModify(
+                        'hideErrors',
+                        event.target.checked,
+                      );
+                    }}
+                    label="Hide error display completely"
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-lg-8">
+                  <Checkbox
                     on={this.props.displayStyle.requireOctothorp}
                     onChange={(event) => {
                       this.props.onOptionsModify(

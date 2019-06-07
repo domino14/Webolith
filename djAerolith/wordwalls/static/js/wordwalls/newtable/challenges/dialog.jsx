@@ -95,6 +95,7 @@ const ChallengeDialog = (props) => {
       <div className="col-sm-5">
         <ChallengeResults
           challengeData={props.challengeLeaderboardData}
+          hideErrors={props.hideErrors}
           height={400}
         />
       </div>
@@ -129,6 +130,7 @@ ChallengeDialog.propTypes = {
     lexicon: PropTypes.string,
     maxScore: PropTypes.number,
   }).isRequired,
+  hideErrors: PropTypes.bool.isRequired,
   specialChallengeInfo: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
     seconds: PropTypes.number,

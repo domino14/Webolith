@@ -13,6 +13,7 @@ const ResultsModal = props => (
     <ChallengeResults
       challengeData={props.challengeData}
       height={500}
+      hideErrors={props.hideErrors}
     />
   </ModalSkeleton>);
 
@@ -22,6 +23,7 @@ ResultsModal.propTypes = {
     entries: PropTypes.array,
     maxScore: PropTypes.number,
   }).isRequired,
+  hideErrors: PropTypes.bool.isRequired,
 };
 
 export default ResultsModal;

@@ -385,6 +385,7 @@ class TableCreator extends React.Component {
             tablenum={this.props.tablenum}
             onLoadNewList={this.props.onLoadNewList}
             challengeInfo={this.props.challengeInfo}
+            hideErrors={this.props.hideErrors}
             showSpinner={this.showSpinner}
             hideSpinner={this.hideSpinner}
             lexicon={this.state.currentLexicon}
@@ -569,6 +570,7 @@ TableCreator.propTypes = {
   onLoadNewList: PropTypes.func.isRequired,
   gameGoing: PropTypes.bool.isRequired,
   setLoadingData: PropTypes.func.isRequired,
+  hideErrors: PropTypes.bool.isRequired,
 };
 
 

@@ -278,3 +278,94 @@ class WordwallsSavedListMultiplayerTest(TestCase):
                          old_word_list.origQuestions)
         self.assertTrue(new_word_list.is_temporary)
         self.assertFalse(old_word_list.is_temporary)
+
+
+class WordwallsLeaderboardTest(TestCase):
+    fixtures = ['test/lexica.yaml',
+                'test/users.json',
+                'test/profiles.json',
+                'test/word_lists.json',
+                'challenge_names.json',
+                'test/daily_challenge.json',
+                'test/daily_challenge_leaderboard.json',
+                'test/daily_challenge_leaderboard_entry.json']
+    USER = 'user_4627'
+    PASSWORD = 'foobar'
+
+    def setUp(self):
+        self.client = Client()
+        result = self.client.login(username=self.USER, password=self.PASSWORD)
+        self.assertTrue(result)
+
+    def test_leaderboard_default(self):
+        resp = self.client.get(
+            '/wordwalls/api/challengers/?lexicon=7&challenge=7&date=2015-10-13')
+        loaded = json.loads(resp.content)
+        self.assertEqual(len(loaded['entries']), 35)
+        # Sort by score, then by wrong answers.
+        self.assertEqual(loaded['entries'][0:4], [
+            {
+                "score": 58,
+                "tr": 51,
+                "user": "user_541",
+                "w": 0,
+                "addl": None
+            },
+            {
+                "score": 58,
+                "tr": 185,
+                "user": "user_42",
+                "w": 3,
+                "addl": None
+            },
+            {
+                "score": 58,
+                "tr": 30,
+                "user": "user_3906",
+                "w": 3,
+                "addl": None
+            },
+            {
+                "score": 58,
+                "tr": 154,
+                "user": "user_39",
+                "w": 4,
+                "addl": None
+            }])
+
+    def test_leaderboard_by_time(self):
+        resp = self.client.get(
+            '/wordwalls/api/challengers/?lexicon=7&challenge=7&date=2015-10-13'
+            '&tiebreaker=time')
+        loaded = json.loads(resp.content)
+        self.assertEqual(len(loaded['entries']), 35)
+        # Sort by score, then by time.
+        self.assertEqual(loaded['entries'][0:4], [
+            {
+                "score": 58,
+                "tr": 185,
+                "user": "user_42",
+                "w": 3,
+                "addl": None
+            },
+            {
+                "score": 58,
+                "tr": 161,
+                "user": "user_2780",
+                "w": 5,
+                "addl": None
+            },
+            {
+                "score": 58,
+                "tr": 154,
+                "user": "user_39",
+                "w": 4,
+                "addl": None
+            },
+            {
+                "score": 58,
+                "tr": 142,
+                "user": "user_4561",
+                "w": 4,
+                "addl": None
+            }])

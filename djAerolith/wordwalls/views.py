@@ -180,11 +180,11 @@ def handle_table_post(request, tableid):
         profile.save()
         return response({'success': True})
     elif action == "getDcData":
-        # XXX: Obsolete me, replace with a GET.
+        # XXX XXX XXX Delete me after deploy.
         wwg = WordwallsGame()
         dcId = wwg.get_dc_id(tableid)
         if dcId > 0:
-            leaderboardData = getLeaderboardDataDcInstance(
+            leaderboardData = get_leaderboard_data_for_dc_instance(
                 DailyChallenge.objects.get(pk=dcId))
             return response(leaderboardData)
 
@@ -275,7 +275,7 @@ def create_user_list(contents: str, filename, lex, user):
     return True, ''
 
 
-def getLeaderboardDataDcInstance(dc):
+def get_leaderboard_data_for_dc_instance(dc, tiebreaker):
     """
     Gets leaderboard data given a daily challenge instance.
     Returns a dictionary of `entry`s.
@@ -306,9 +306,13 @@ def getLeaderboardDataDcInstance(dc):
                  'addl': addl_data}
         entries.append(entry)
 
-    entries = sorted(
-        entries,
-        key=lambda item: (-item['score'], item['w'], -item['tr']))
+    if tiebreaker == 'time':
+        tiebreak_fn = lambda i: (-i['score'], -i['tr'], i['w'])  # noqa
+
+    elif tiebreaker == 'errors':
+        tiebreak_fn = lambda i: (-i['score'], i['w'], -i['tr'])  # noqa
+
+    entries = sorted(entries, key=tiebreak_fn)
 
     retData['entries'] = entries
     retData['challengeName'] = dc.name.name
@@ -316,7 +320,7 @@ def getLeaderboardDataDcInstance(dc):
     return retData
 
 
-def getLeaderboardData(lex, chName, challengeDate):
+def get_leaderboard_data(lex, chName, challengeDate, tiebreaker):
     if chName.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         chdate = toughies_challenge_date(challengeDate)
     else:
@@ -327,7 +331,7 @@ def getLeaderboardData(lex, chName, challengeDate):
     except DailyChallenge.DoesNotExist:
         return None  # daily challenge doesn't exist
 
-    return getLeaderboardDataDcInstance(dc)
+    return get_leaderboard_data_for_dc_instance(dc, tiebreaker)
 
 
 @login_required

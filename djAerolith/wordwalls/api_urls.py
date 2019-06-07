@@ -19,6 +19,7 @@
 from django.conf.urls import url
 
 from wordwalls.api import (
+    api_challengers_by_tablenum,
     api_challengers,
     configure,
     challenges_played,
@@ -32,6 +33,7 @@ from wordwalls.api import (
 )
 
 urlpatterns = [
+    url(r'^challengers_by_tablenum/$', api_challengers_by_tablenum),
     url(r'^challengers/$', api_challengers),
     url(r'^configure/$', configure),
     url(r'^challenges_played/$', challenges_played),
