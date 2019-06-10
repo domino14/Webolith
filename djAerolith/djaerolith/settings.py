@@ -364,6 +364,8 @@ WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
 # See github.com/domino14/macondo
 # Tool used for generating blank bingos (and more in the future)
 MACONDO_ADDRESS = os.environ.get('MACONDO_ADDRESS')
+WORD_DB_SERVER_ADDRESS = os.environ.get('WORD_DB_SERVER_ADDRESS',
+                                        'http://word_db_server:8180')
 
 BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
 
