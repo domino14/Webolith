@@ -1,7 +1,7 @@
 import logging
+from typing import List
 
 from base.models import alphagrammize
-from lib.domain import Alphagram
 from lib.word_db_helper import WordDB
 from django.utils.translation import ugettext as _
 
@@ -13,10 +13,10 @@ class UserListParseException(Exception):
     pass
 
 
-def get_alphas_from_words(contents: str, max_words):
+def get_alphas_from_words(contents: str, max_words: int) -> List[str]:
     """
     Get all the alphagrams from the given words. Return a list of
-    Alphagram objects.
+    alphagrams
 
     """
     line_number = 0
@@ -36,7 +36,7 @@ def get_alphas_from_words(contents: str, max_words):
             except KeyError:
                 raise UserListParseException(
                     _('List contains invalid characters.'))
-    return [Alphagram(a) for a in alpha_set]
+    return list(alpha_set)
 
 
 def generate_question_list(questions):

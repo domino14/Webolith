@@ -30,7 +30,9 @@ from django.utils import timezone
 from gargoyle import gargoyle
 
 from base.forms import SavedListForm
-from lib.word_db_helper import WordDB, Questions, word_search, BadInput
+# from lib.word_db_helper import WordDB, Questions, word_search, BadInput
+from lib.domain import Questions
+from lib.wdb_interface.wdb_helper import questions_from_alphagrams, word_search
 from lib.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
@@ -476,20 +478,16 @@ class WordwallsGame(object):
                 answer_hash: {'word': (alphagram, idx), ...}
 
         """
-        # XXX this function is slow. When Aerolith becomes a publicly traded
-        # company, rewrite all word-db related stuff in Go and use gRPC to
-        # get question data.
-        db = WordDB(lexicon.lexiconName)
         alphagrams_to_fetch = []
         index_map = {}
         for i in qs:
             alphagrams_to_fetch.append(orig_questions[i])
             index_map[orig_questions[i]['q']] = i
 
-        questions = db.get_questions_from_alph_dicts(alphagrams_to_fetch)
+        questions = questions_from_alphagrams(lexicon, alphagrams_to_fetch,
+                                              expand=True)
         answer_hash = {}
         ret_q_array = []
-
         for q in questions.questions_array():
             words = []
             alphagram_str = q.alphagram.alphagram

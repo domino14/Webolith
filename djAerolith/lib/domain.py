@@ -113,6 +113,37 @@ class Questions:
             question.set_from_obj(q)
             self.append(question)
 
+    def set_from_pb_alphagrams(self, pba):
+        """
+        Set Questions from a protobuf Alphagrams object.
+
+        """
+        self.clear()
+        for alphagram in pba:
+            question = Question(
+                # sorry:
+                alphagram=Alphagram(alphagram.alphagram,
+                                    alphagram.probability,
+                                    alphagram.combinations),
+                answers=self.words_from_pb(alphagram.words))
+            self.append(question)
+
+    def words_from_pb(self, pbw):
+        """
+        Turn the protobuf list of Words into a list of domain.Word
+
+        """
+        words = []
+        for word in pbw:
+            w = Word(word=word.word, alphagram=word.alphagram,
+                     definition=word.definition, front_hooks=word.front_hooks,
+                     back_hooks=word.back_hooks,
+                     lexicon_symbols=word.lexicon_symbols,
+                     inner_front_hook=word.inner_front_hook,
+                     inner_back_hook=word.inner_back_hook)
+            words.append(w)
+        return words
+
     def sort_by_probability(self):
         self.questions.sort(key=lambda q: q.alphagram.probability)
 
