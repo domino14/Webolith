@@ -179,14 +179,6 @@ def handle_table_post(request, tableid):
         profile.customWordwallsStyle = request.POST['prefs']
         profile.save()
         return response({'success': True})
-    elif action == "getDcData":
-        # XXX XXX XXX Delete me after deploy.
-        wwg = WordwallsGame()
-        dcId = wwg.get_dc_id(tableid)
-        if dcId > 0:
-            leaderboardData = get_leaderboard_data_for_dc_instance(
-                DailyChallenge.objects.get(pk=dcId))
-            return response(leaderboardData)
 
     return response({'success': False, 'error': _('Unhandled action.')},
                     status=StatusCode.BAD_REQUEST)
@@ -213,7 +205,9 @@ def ajax_upload(request):
 
     filename = uploaded_file.name
     try:
-        file_contents = uploaded_file.read().decode('utf-8')
+        # utf-8-sig will throw away the UTF8 BOM if found at the beginning of
+        # the file.
+        file_contents = uploaded_file.read().decode('utf-8-sig')
     except UnicodeDecodeError:
         return response(_('Please make sure your file is utf-8 encoded.'),
                         StatusCode.BAD_REQUEST)
