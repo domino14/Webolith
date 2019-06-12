@@ -14,3 +14,5 @@ RUN pip install --upgrade pip
 RUN pip install -r /opt/prod_requirements.txt
 
 # Prod image can import this image, and build on top of it.
+# build like this:
+# docker build --no-cache --pull -t domino14/webolith-base-pkg:py3-latest -f base_pkg.dockerfile .

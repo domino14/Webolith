@@ -22,7 +22,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import url, include
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-#from registration.forms import RegistrationFormUniqueEmail
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from registration.backends.simple.views import RegistrationView
@@ -63,25 +62,23 @@ urlpatterns = [
     url(r'^accounts/register/$', AerolithRegistrationView.as_view(
         form_class=get_registration_form(settings.USE_CAPTCHA))),
 
-    #override the default registration urls
+    # override the default registration urls
     url(r'^accounts/password/change/$',
-        auth_views.password_change,
-        name='password_change'),
+        auth_views.PasswordChangeView.as_view()),
     url(r'^accounts/password/change/done/$',
-        auth_views.password_change_done,
+        auth_views.PasswordChangeDoneView.as_view(),
         name='password_change_done'),
     url(r'^accounts/password/reset/$',
-        auth_views.password_reset,
-        name='password_reset'),
+        auth_views.PasswordResetView.as_view()),
     url(r'^accounts/password/reset/done/$',
-        auth_views.password_reset_done,
+        auth_views.PasswordResetDoneView.as_view(),
         name='password_reset_done'),
     url(r'^accounts/password/reset/complete/$',
-        auth_views.password_reset_complete,
+        auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete'),
     url(r'^accounts/password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-'
         '(?P<token>.+)/$',
-        auth_views.password_reset_confirm,
+        auth_views.PasswordResetConfirmView.as_view(),
         name='password_reset_confirm'),
 
     url(r'^accounts/username/change/$', username_change,

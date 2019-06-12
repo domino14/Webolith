@@ -198,9 +198,9 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'accounts.backends.CaseInsensitiveModelBackend',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
-    'accounts.backends.CaseInsensitiveModelBackend',
 )
 
 SOCIAL_AUTH_PIPELINE = (
@@ -313,6 +313,11 @@ LOGGING = {
         'social': {
             'handlers': ['console'],
             'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.utils': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
             'propagate': False,
         },
         'django': {
