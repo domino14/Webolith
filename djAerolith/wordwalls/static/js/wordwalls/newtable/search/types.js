@@ -1,3 +1,5 @@
+import proto from '../../gen/searcher_pb';
+
 const SearchTypesInputs = {
   TWO_NUMBERS: 1,
   ONE_NUMBER: 2,

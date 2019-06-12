@@ -4,8 +4,14 @@ from django.conf import settings
 
 from base.models import Lexicon
 from lib.domain import Questions
-from lib.wdb_interface.rpc.searcher_pb2_twirp import QuestionSearcherClient
+from lib.wdb_interface.word_searches import SearchDescription
+from lib.wdb_interface.rpc.searcher_pb2_twirp import (QuestionSearcherClient,
+                                                      TwirpException)
 import lib.wdb_interface.rpc.searcher_pb2 as pb
+
+
+class WDBError(Exception):
+    pass
 
 
 def questions_from_alphagrams(lexicon: Lexicon,
@@ -15,34 +21,25 @@ def questions_from_alphagrams(lexicon: Lexicon,
     Given a list of alphagrams, get optionally fully populated questions.
 
     """
-    client = QuestionSearcherClient(settings.WORD_DB_SERVER_ADDRESS)
-
     # build search request
-    sr = pb.SearchRequest()
-    sr.expand = expand
-    sr.searchparams.add(
-        condition=pb.SearchRequest.Condition.LEXICON,
-        stringvalue=pb.SearchRequest.StringValue(
-            value=lexicon.lexiconName
-        )
-    )
-    sr.searchparams.add(
-        condition=pb.SearchRequest.Condition.ALPHAGRAM_LIST,
-        stringarray=pb.SearchRequest.StringArray(values=alphas)
-    )
-
-    response = client.search(sr)
+    resp = word_search([
+        SearchDescription.lexicon(lexicon),
+        SearchDescription.alphagram_list(alphas),
+    ], expand)
     qs = Questions()
-    qs.set_from_pb_alphagrams(response.alphagrams)
+    qs.set_from_pb_alphagrams(resp.alphagrams)
     return qs
 
 
-def word_search(search_descriptions, expand=False):
+def word_search(search_descriptions: List[pb.SearchRequest.SearchParam],
+                expand=False) -> pb.SearchResponse:
     client = QuestionSearcherClient(settings.WORD_DB_SERVER_ADDRESS)
-
     sr = pb.SearchRequest()
     sr.expand = expand
     for sd in search_descriptions:
-        sr.searchparams.add(
-            condition=
-        )
+        sr.searchparams.add(sd)
+    try:
+        response = client.search(sr)
+    except TwirpException as e:
+        raise WDBError(e)
+    return response

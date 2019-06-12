@@ -64,6 +64,7 @@
     "bootbox": "^4.4.0",
     "bootstrap": "^3.3.7",
     "bootstrap-datepicker": "^1.6.4",
+    "google-protobuf": "^3.8.0",
     "immutable": "^3.8.1",
     "jquery": "^3.1.1",
     "js-cookie": "^2.2.0",

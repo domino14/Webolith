@@ -13,7 +13,7 @@ from wordwalls.models import (
 from base.models import Lexicon, WordList
 from base.forms import SavedListForm
 from lib.response import response, bad_request
-from lib.word_searches import SearchDescription
+from lib.wdb_interface.word_searches import SearchDescription
 from wordwalls.views import (get_leaderboard_data,
                              get_leaderboard_data_for_dc_instance)
 from wordwalls.challenges import toughies_challenge_date

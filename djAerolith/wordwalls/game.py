@@ -18,10 +18,10 @@
 
 import json
 import datetime
-import time
 import copy
 import logging
 import re
+import time
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -32,7 +32,9 @@ from gargoyle import gargoyle
 from base.forms import SavedListForm
 # from lib.word_db_helper import WordDB, Questions, word_search, BadInput
 from lib.domain import Questions
-from lib.wdb_interface.wdb_helper import questions_from_alphagrams, word_search
+from lib.wdb_interface.wdb_helper import (questions_from_alphagrams,
+                                          word_search,
+                                          WDBError)
 from lib.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
@@ -274,7 +276,7 @@ class WordwallsGame(object):
         try:
             wl = self.initialize_word_list(word_search(search_description),
                                            lexicon, user)
-        except BadInput as e:
+        except WDBError as e:
             raise GameInitException(e)
         wgm = self.create_or_update_game_instance(
             user, lexicon, wl, use_table, multiplayer, timerSecs=time_secs,
