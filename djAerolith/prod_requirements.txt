@@ -1,13 +1,13 @@
 # These are the requirements for the prod Docker file.
 
-django>=2.0,<2.1
+django>=2.2,<2.3
 six >= 1.7
 Markdown
 django-registration-redux
 gargoyle-yplan
 requests
 django-recaptcha
-redis
+# redis
 jsonschema
 social-auth-app-django
 requests-oauthlib

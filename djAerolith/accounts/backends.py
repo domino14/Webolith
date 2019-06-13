@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 logger = logging.getLogger(__name__)
 
 
-class CaseInsensitiveModelBackend(object):
-    def authenticate(self, username=None, password=None):
+class CaseInsensitiveModelBackend:
+    def authenticate(self, request=None, username=None, password=None):
         try:
             user = User.objects.get(username__iexact=username)
             if user.check_password(password):

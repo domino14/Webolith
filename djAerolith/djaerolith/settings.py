@@ -198,9 +198,9 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'accounts.backends.CaseInsensitiveModelBackend',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
-    'accounts.backends.CaseInsensitiveModelBackend',
 )
 
 SOCIAL_AUTH_PIPELINE = (
@@ -315,6 +315,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
+        'django.utils': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'django': {
             'handlers': ['console', 'mail_admins'],
             'level': 'DEBUG' if DEBUG else 'INFO',
@@ -334,6 +339,8 @@ INTERCOM_APP_SECRET_KEY = os.environ.get('INTERCOM_APP_SECRET_KEY')
 # LOGGING config
 USE_CAPTCHA = tobool(os.environ.get('USE_CAPTCHA', True))
 NOCAPTCHA = True
+# Don't complain about captcha in debug mode.
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
 if os.environ.get('RECAPTCHA_PRIVATE_KEY'):
     RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"
