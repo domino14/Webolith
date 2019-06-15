@@ -5,7 +5,7 @@ from contextlib import closing
 from django.test import TransactionTestCase
 from django.db import connection, transaction
 
-from lib.word_searches import SearchDescription
+from lib.wdb_interface.word_searches import SearchDescription
 from base.models import Lexicon, WordList, User
 from wordwalls.game import WordwallsGame
 logger = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ class WordwallsConcurrentSolveTest(TransactionTestCase):
         """
         wwg = WordwallsGame()
         user = User.objects.get(username='cesar')
-        lex = Lexicon.objects.get(lexiconName='America')
+        lex = Lexicon.objects.get(lexiconName='NWL18')
         search = [
             SearchDescription.lexicon(lex),
             SearchDescription.length(length, length),

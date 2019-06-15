@@ -102,7 +102,7 @@ class WordwallsNewChallengeTest(TestCase):
         result = self.client.post(
             '/wordwalls/api/new_challenge/',
             data=json.dumps({
-                'lexicon': 7,
+                'lexicon': 9,
                 'challenge': 14,
                 'date': '2013-11-29',
                 'tablenum': 0
@@ -114,7 +114,7 @@ class WordwallsNewChallengeTest(TestCase):
         addl_params = json.loads(response.context['addParams'])
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
-                         'America Today\'s 15s - 2013-11-29')
+                         'NWL18 Today\'s 15s - 2013-11-29')
 
         game = WordwallsGame()
         old_word_list = game.get_wgm(tablenum, lock=False).word_list

@@ -175,7 +175,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     about 7s and 8s now so it would only give us those...
 
     Returns:
-        A list of Alphagram objects.
+        A list of string alphagrams.
     """
     # Find all challenges matching these parameters
     challenges = DailyChallenge.objects.filter(lexicon=lex).filter(
@@ -211,12 +211,12 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
                 mb_dict[alphagram] = alphagram, perc_correct
         else:
             mb_dict[alphagram] = alphagram, perc_correct
-    logger.debug('Created missed bingo dictionary...')
     # Sort by difficulty in reverse order (most difficult first)
-    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[:num]
-    logger.debug('Sorted by difficulty, returning...')
+    alphs = sorted(list(mb_dict.items()),
+                   key=lambda x: x[1][1], reverse=True)[:num]
+    logger.debug('Sorted by difficulty, returning... %s', alphs)
     # And just return the alphagram portion.
-    return [Alphagram(a[0]) for a in alphs]
+    return [a[0] for a in alphs]
 
 
 def generate_toughies_challenge(lexicon, requested_date):
@@ -233,7 +233,7 @@ def generate_toughies_challenge(lexicon, requested_date):
     alphagrams.extend(gen_toughies_by_challenge(
         DailyChallengeName.objects.get(name="Today's 8s"), 25, min_date,
         max_date, lexicon))
-    logger.debug('Generated!')
+    logger.debug('Generated! %s', alphagrams)
     return alphagrams
 
 

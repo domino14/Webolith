@@ -47,7 +47,7 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
             contents = f.read()
         create_user_list(
             contents, filename,
-            Lexicon.objects.get(lexiconName='America'), user)
+            Lexicon.objects.get(lexiconName='NWL18'), user)
         wl = WordList.objects.get(name='new_america_jqxz_6s')
         self.assert_wl(wl, {
             'numAlphagrams': 87, 'numCurAlphagrams': 87, 'numFirstMissed': 0,
@@ -69,7 +69,7 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
         with gzip.open(path, 'rt') as f:
             contents = f.read()
         create_user_list(contents, 'america_9s.txt',
-                         Lexicon.objects.get(lexiconName='America'), user)
+                         Lexicon.objects.get(lexiconName='NWL18'), user)
         wl = WordList.objects.get(name='america_9s')
         self.assert_wl(wl, {
             'numAlphagrams': 28291, 'numCurAlphagrams': 28291,
@@ -91,7 +91,7 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
             contents = f.read()
         create_user_list(
             contents, filename,
-            Lexicon.objects.get(lexiconName='FISE09'), user)
+            Lexicon.objects.get(lexiconName='FISE2'), user)
         wl = WordList.objects.get(name='spanish_words')
         self.assert_wl(wl, {
             'numAlphagrams': 3, 'numCurAlphagrams': 3, 'numFirstMissed': 0,

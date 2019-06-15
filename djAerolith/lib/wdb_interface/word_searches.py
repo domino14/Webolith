@@ -58,6 +58,7 @@ class SearchDescription(object):
 
     @staticmethod
     def alphagram_list(alphas: List[str]) -> pb.SearchRequest.SearchParam:
+        print('Got a list of alphagrams', alphas)
         return pb.SearchRequest.SearchParam(
             condition=pb.SearchRequest.Condition.ALPHAGRAM_LIST,
             stringarray=pb.SearchRequest.StringArray(values=alphas))
@@ -164,7 +165,6 @@ def temporary_list_name(
             else:
                 tokens.append(f'vowels: {sd.minmax.min} - {sd.minmax.max}')
         elif sd.condition == pb.SearchRequest.Condition.HAS_TAGS:
-            # XXX XXX FIXME
             tokens.append(f'tags: {", ".join(sd.tags)}')
         elif sd.condition == pb.SearchRequest.Condition.PROBABILITY_LIMIT:
             tokens.append(f'(limit {sd.minmax.min} - {sd.minmax.max})')
