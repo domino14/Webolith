@@ -46,7 +46,7 @@ def new_quiz(request):
     except GameInitException as e:
         return response(str(e), status=400)
 
-    questions = word_search(search_description)
+    questions = word_search(search_description, expand=True)
     if questions.size() == 0:
         return response('No questions were found.', status=400)
     wl = WordList()
