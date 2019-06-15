@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='wordsearcher',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\x92\x01\n\tAlphagram\x12\x11\n\talphagram\x18\x01 \x01(\t\x12!\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x14\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08\x12\x0e\n\x06length\x18\x04 \x01(\x05\x12\x13\n\x0bprobability\x18\x05 \x01(\x05\x12\x14\n\x0c\x63ombinations\x18\x06 \x01(\x03\"\xb0\x01\n\x04Word\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x11\n\talphagram\x18\x02 \x01(\t\x12\x12\n\ndefinition\x18\x03 \x01(\t\x12\x13\n\x0b\x66ront_hooks\x18\x04 \x01(\t\x12\x12\n\nback_hooks\x18\x05 \x01(\t\x12\x17\n\x0flexicon_symbols\x18\x06 \x01(\t\x12\x18\n\x10inner_front_hook\x18\x07 \x01(\x08\x12\x17\n\x0finner_back_hook\x18\x08 \x01(\x08\"\xce\x07\n\rSearchRequest\x12=\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParam\x12\x0e\n\x06\x65xpand\x18\x02 \x01(\x08\x1a\"\n\x06MinMax\x12\x0b\n\x03min\x18\x01 \x01(\x05\x12\x0b\n\x03max\x18\x02 \x01(\x05\x1a\x1c\n\x0bStringValue\x12\r\n\x05value\x18\x01 \x01(\t\x1a\x1d\n\x0bStringArray\x12\x0e\n\x06values\x18\x01 \x03(\t\x1a\x1d\n\x0bNumberArray\x12\x0e\n\x06values\x18\x01 \x03(\x05\x1a\x1c\n\x0bNumberValue\x12\r\n\x05value\x18\x01 \x01(\x05\x1a\x8f\x03\n\x0bSearchParam\x12\x38\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.Condition\x12\x34\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00\x12>\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00\x12>\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00\x12>\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00\x12>\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00\x42\x10\n\x0e\x63onditionparam\"\xff\x01\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12\t\n\x05REGEX\x10\x0c\x12\r\n\tWORD_LIST\x10\r\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"N\n\x0eSearchResponse\x12+\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.Alphagram\x12\x0f\n\x07lexicon\x18\x02 \x01(\t2\x9d\x01\n\x10QuestionSearcher\x12\x43\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\x12\x44\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponseb\x06proto3')
+  serialized_pb=_b('\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\x92\x01\n\tAlphagram\x12\x11\n\talphagram\x18\x01 \x01(\t\x12!\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x14\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08\x12\x0e\n\x06length\x18\x04 \x01(\x05\x12\x13\n\x0bprobability\x18\x05 \x01(\x05\x12\x14\n\x0c\x63ombinations\x18\x06 \x01(\x03\"\xb0\x01\n\x04Word\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x11\n\talphagram\x18\x02 \x01(\t\x12\x12\n\ndefinition\x18\x03 \x01(\t\x12\x13\n\x0b\x66ront_hooks\x18\x04 \x01(\t\x12\x12\n\nback_hooks\x18\x05 \x01(\t\x12\x17\n\x0flexicon_symbols\x18\x06 \x01(\t\x12\x18\n\x10inner_front_hook\x18\x07 \x01(\x08\x12\x17\n\x0finner_back_hook\x18\x08 \x01(\x08\"\x9c\x08\n\rSearchRequest\x12=\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParam\x12\x0e\n\x06\x65xpand\x18\x02 \x01(\x08\x1a\"\n\x06MinMax\x12\x0b\n\x03min\x18\x01 \x01(\x05\x12\x0b\n\x03max\x18\x02 \x01(\x05\x1a\x1c\n\x0bStringValue\x12\r\n\x05value\x18\x01 \x01(\t\x1a\x1d\n\x0bStringArray\x12\x0e\n\x06values\x18\x01 \x03(\t\x1a\x1d\n\x0bNumberArray\x12\x0e\n\x06values\x18\x01 \x03(\x05\x1a\x1c\n\x0bNumberValue\x12\r\n\x05value\x18\x01 \x01(\x05\x1a\x8f\x03\n\x0bSearchParam\x12\x38\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.Condition\x12\x34\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00\x12>\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00\x12>\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00\x12>\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00\x12>\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00\x42\x10\n\x0e\x63onditionparam\"\xcd\x02\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12\t\n\x05REGEX\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"N\n\x0eSearchResponse\x12+\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.Alphagram\x12\x0f\n\x07lexicon\x18\x02 \x01(\t2\x9d\x01\n\x10QuestionSearcher\x12\x43\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\x12\x44\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponseb\x06proto3')
 )
 
 
@@ -60,34 +60,50 @@ _SEARCHREQUEST_CONDITION = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='POINT_VALUE', index=7, number=8,
+      name='HAS_TAGS', index=7, number=7,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='MATCHING_ANAGRAM', index=8, number=9,
+      name='POINT_VALUE', index=8, number=8,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='ALPHAGRAM_LIST', index=9, number=10,
+      name='MATCHING_ANAGRAM', index=9, number=9,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='NOT_IN_LEXICON', index=10, number=11,
+      name='ALPHAGRAM_LIST', index=10, number=10,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='REGEX', index=11, number=12,
+      name='NOT_IN_LEXICON', index=11, number=11,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='WORD_LIST', index=12, number=13,
+      name='REGEX', index=12, number=12,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='WORD_LIST', index=13, number=13,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SINGLE_VALUE_LENGTH', index=14, number=14,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='NUM_TWO_BLANKS', index=15, number=15,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MAX_SOLUTIONS', index=16, number=16,
       serialized_options=None,
       type=None),
   ],
   containing_type=None,
   serialized_options=None,
   serialized_start=1035,
-  serialized_end=1290,
+  serialized_end=1368,
 )
 _sym_db.RegisterEnumDescriptor(_SEARCHREQUEST_CONDITION)
 
@@ -108,8 +124,8 @@ _SEARCHREQUEST_NOTINLEXCONDITION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1292,
-  serialized_end=1352,
+  serialized_start=1370,
+  serialized_end=1430,
 )
 _sym_db.RegisterEnumDescriptor(_SEARCHREQUEST_NOTINLEXCONDITION)
 
@@ -521,7 +537,7 @@ _SEARCHREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=378,
-  serialized_end=1352,
+  serialized_end=1430,
 )
 
 
@@ -558,8 +574,8 @@ _SEARCHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1354,
-  serialized_end=1432,
+  serialized_start=1432,
+  serialized_end=1510,
 )
 
 _ALPHAGRAM.fields_by_name['words'].message_type = _WORD
@@ -600,67 +616,67 @@ DESCRIPTOR.message_types_by_name['SearchRequest'] = _SEARCHREQUEST
 DESCRIPTOR.message_types_by_name['SearchResponse'] = _SEARCHRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-Alphagram = _reflection.GeneratedProtocolMessageType('Alphagram', (_message.Message,), {
-  'DESCRIPTOR' : _ALPHAGRAM,
-  '__module__' : 'rpc.wordsearcher.searcher_pb2'
+Alphagram = _reflection.GeneratedProtocolMessageType('Alphagram', (_message.Message,), dict(
+  DESCRIPTOR = _ALPHAGRAM,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
   # @@protoc_insertion_point(class_scope:wordsearcher.Alphagram)
-  })
+  ))
 _sym_db.RegisterMessage(Alphagram)
 
-Word = _reflection.GeneratedProtocolMessageType('Word', (_message.Message,), {
-  'DESCRIPTOR' : _WORD,
-  '__module__' : 'rpc.wordsearcher.searcher_pb2'
+Word = _reflection.GeneratedProtocolMessageType('Word', (_message.Message,), dict(
+  DESCRIPTOR = _WORD,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
   # @@protoc_insertion_point(class_scope:wordsearcher.Word)
-  })
+  ))
 _sym_db.RegisterMessage(Word)
 
-SearchRequest = _reflection.GeneratedProtocolMessageType('SearchRequest', (_message.Message,), {
+SearchRequest = _reflection.GeneratedProtocolMessageType('SearchRequest', (_message.Message,), dict(
 
-  'MinMax' : _reflection.GeneratedProtocolMessageType('MinMax', (_message.Message,), {
-    'DESCRIPTOR' : _SEARCHREQUEST_MINMAX,
-    '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  MinMax = _reflection.GeneratedProtocolMessageType('MinMax', (_message.Message,), dict(
+    DESCRIPTOR = _SEARCHREQUEST_MINMAX,
+    __module__ = 'rpc.wordsearcher.searcher_pb2'
     # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest.MinMax)
-    })
+    ))
   ,
 
-  'StringValue' : _reflection.GeneratedProtocolMessageType('StringValue', (_message.Message,), {
-    'DESCRIPTOR' : _SEARCHREQUEST_STRINGVALUE,
-    '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  StringValue = _reflection.GeneratedProtocolMessageType('StringValue', (_message.Message,), dict(
+    DESCRIPTOR = _SEARCHREQUEST_STRINGVALUE,
+    __module__ = 'rpc.wordsearcher.searcher_pb2'
     # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest.StringValue)
-    })
+    ))
   ,
 
-  'StringArray' : _reflection.GeneratedProtocolMessageType('StringArray', (_message.Message,), {
-    'DESCRIPTOR' : _SEARCHREQUEST_STRINGARRAY,
-    '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  StringArray = _reflection.GeneratedProtocolMessageType('StringArray', (_message.Message,), dict(
+    DESCRIPTOR = _SEARCHREQUEST_STRINGARRAY,
+    __module__ = 'rpc.wordsearcher.searcher_pb2'
     # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest.StringArray)
-    })
+    ))
   ,
 
-  'NumberArray' : _reflection.GeneratedProtocolMessageType('NumberArray', (_message.Message,), {
-    'DESCRIPTOR' : _SEARCHREQUEST_NUMBERARRAY,
-    '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  NumberArray = _reflection.GeneratedProtocolMessageType('NumberArray', (_message.Message,), dict(
+    DESCRIPTOR = _SEARCHREQUEST_NUMBERARRAY,
+    __module__ = 'rpc.wordsearcher.searcher_pb2'
     # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest.NumberArray)
-    })
+    ))
   ,
 
-  'NumberValue' : _reflection.GeneratedProtocolMessageType('NumberValue', (_message.Message,), {
-    'DESCRIPTOR' : _SEARCHREQUEST_NUMBERVALUE,
-    '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  NumberValue = _reflection.GeneratedProtocolMessageType('NumberValue', (_message.Message,), dict(
+    DESCRIPTOR = _SEARCHREQUEST_NUMBERVALUE,
+    __module__ = 'rpc.wordsearcher.searcher_pb2'
     # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest.NumberValue)
-    })
+    ))
   ,
 
-  'SearchParam' : _reflection.GeneratedProtocolMessageType('SearchParam', (_message.Message,), {
-    'DESCRIPTOR' : _SEARCHREQUEST_SEARCHPARAM,
-    '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  SearchParam = _reflection.GeneratedProtocolMessageType('SearchParam', (_message.Message,), dict(
+    DESCRIPTOR = _SEARCHREQUEST_SEARCHPARAM,
+    __module__ = 'rpc.wordsearcher.searcher_pb2'
     # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest.SearchParam)
-    })
+    ))
   ,
-  'DESCRIPTOR' : _SEARCHREQUEST,
-  '__module__' : 'rpc.wordsearcher.searcher_pb2'
+  DESCRIPTOR = _SEARCHREQUEST,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
   # @@protoc_insertion_point(class_scope:wordsearcher.SearchRequest)
-  })
+  ))
 _sym_db.RegisterMessage(SearchRequest)
 _sym_db.RegisterMessage(SearchRequest.MinMax)
 _sym_db.RegisterMessage(SearchRequest.StringValue)
@@ -669,11 +685,11 @@ _sym_db.RegisterMessage(SearchRequest.NumberArray)
 _sym_db.RegisterMessage(SearchRequest.NumberValue)
 _sym_db.RegisterMessage(SearchRequest.SearchParam)
 
-SearchResponse = _reflection.GeneratedProtocolMessageType('SearchResponse', (_message.Message,), {
-  'DESCRIPTOR' : _SEARCHRESPONSE,
-  '__module__' : 'rpc.wordsearcher.searcher_pb2'
+SearchResponse = _reflection.GeneratedProtocolMessageType('SearchResponse', (_message.Message,), dict(
+  DESCRIPTOR = _SEARCHRESPONSE,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
   # @@protoc_insertion_point(class_scope:wordsearcher.SearchResponse)
-  })
+  ))
 _sym_db.RegisterMessage(SearchResponse)
 
 
@@ -684,8 +700,8 @@ _QUESTIONSEARCHER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=1435,
-  serialized_end=1592,
+  serialized_start=1513,
+  serialized_end=1670,
   methods=[
   _descriptor.MethodDescriptor(
     name='Search',

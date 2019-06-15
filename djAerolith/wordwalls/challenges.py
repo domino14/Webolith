@@ -12,10 +12,11 @@ from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeMissedBingos,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from lib.word_db_helper import WordDB
 from lib.domain import Question, Questions, Alphagram
 from lib.macondo_interface import (gen_blank_challenges, gen_build_challenge,
                                    MacondoError)
+from lib.wdb_interface.wdb_helper import (questions_from_probability_list,
+                                          questions_from_alphagrams)
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,6 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     """
     logger.info('Trying to create challenge {} for {} ({})'.format(
         challenge_name, lex, challenge_date))
-    db = WordDB(lex.lexiconName)
     # capture number. first try to match to today's lists
     m = re.match("Today's (?P<length>[0-9]+)s",
                  challenge_name.name)
@@ -53,7 +53,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         r = list(range(min_p, max_p + 1))
         random.shuffle(r)
         # Just the first 50 elements for the daily challenge.
-        return (db.get_questions_for_probability_list(r[:50], word_length),
+        return (questions_from_probability_list(lex, r[:50], word_length),
                 challenge_name.timeSecs)
     # There was no match, check other possible challenge names.
     if challenge_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
@@ -61,7 +61,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         random.shuffle(alphagrams)
         if len(alphagrams) == 0:
             return Questions(), 0
-        return (db.get_questions_from_alphagrams(alphagrams),
+        return (questions_from_alphagrams(lex, alphagrams),
                 challenge_name.timeSecs)
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
         questions = generate_blank_bingos_challenge(lex)
@@ -74,8 +74,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             max_p = json.loads(lex.lengthCounts)[str(lgt)]
             r = list(range(min_p, max_p + 1))
             random.shuffle(r)
-            questions.extend(
-                db.get_questions_for_probability_list(r[:50], lgt))
+            questions.extend(questions_from_probability_list(lex, r[:50], lgt))
         return questions, challenge_name.timeSecs
     # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
     #                              DailyChallengeName.COMMON_LONG):

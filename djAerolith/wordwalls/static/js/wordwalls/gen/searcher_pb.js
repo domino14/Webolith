@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * @fileoverview
  * @enhanceable
@@ -986,12 +985,16 @@ proto.wordsearcher.SearchRequest.Condition = {
   PROBABILITY_LIMIT: 4,
   NUMBER_OF_ANAGRAMS: 5,
   NUMBER_OF_VOWELS: 6,
+  HAS_TAGS: 7,
   POINT_VALUE: 8,
   MATCHING_ANAGRAM: 9,
   ALPHAGRAM_LIST: 10,
   NOT_IN_LEXICON: 11,
   REGEX: 12,
-  WORD_LIST: 13
+  WORD_LIST: 13,
+  SINGLE_VALUE_LENGTH: 14,
+  NUM_TWO_BLANKS: 15,
+  MAX_SOLUTIONS: 16
 };
 
 /**

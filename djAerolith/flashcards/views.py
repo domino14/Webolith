@@ -8,8 +8,8 @@ from django.conf import settings
 from base.models import Lexicon, WordList
 from base.utils import generate_question_map, quizzes_response
 from lib.response import response
-from lib.word_db_helper import word_search
-from lib.word_searches import temporary_list_name
+from lib.wdb_interface.wdb_helper import word_search
+from lib.wdb_interface.word_searches import temporary_list_name
 from wordwalls.api import build_search_criteria
 from wordwalls.game import GameInitException
 

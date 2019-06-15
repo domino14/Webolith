@@ -12,7 +12,6 @@ from lib.domain import Alphagram
 from lib.word_db_helper import WordDB
 
 
-
 class Bingo(object):
     def __init__(self, bingo, pct, date, ntm, nta):
         self.bingo = Alphagram(bingo)

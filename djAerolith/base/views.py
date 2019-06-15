@@ -32,7 +32,7 @@ from base.models import WordList, Lexicon, AlphagramTag, alphagrammize
 
 from base.utils import (generate_question_map_from_alphagrams,
                         generate_question_list_from_alphagrams,
-                        question_list_from_probabilities)
+                        expanded_question_list_from_probabilities)
 from lib.macondo_interface import anagram_letters, MacondoError
 from lib.response import response, StatusCode
 
@@ -286,7 +286,7 @@ def question_map(request):
 @csrf_exempt
 def list_questions_view(request):
     """
-    Get list of questions - `get_questions_from_alph_dicts` as an API view.
+    Get list of questions - `questions_from_alpha_dicts` as an API view.
 
     Use POST since GET should not accept a request body in the standard.
 
@@ -317,7 +317,7 @@ def questions_for_prob_range(request):
         lex = Lexicon.objects.get(lexiconName=lexicon_name)
     except Lexicon.DoesNotExist:
         return response('Bad Lexicon', StatusCode.BAD_REQUEST)
-    return response(question_list_from_probabilities(lex, pmin, pmax, length))
+    return response(expanded_question_list_from_probabilities(lex, pmin, pmax, length))
 
 
 @login_required

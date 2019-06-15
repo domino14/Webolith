@@ -260,13 +260,3 @@ class QueryGenerator:
         logger.debug('Generated queries: %s', queries)
         return queries
 
-
-def get_tagged_alphagrams(tags, user, lexicon_name):
-    """
-    Get a list of all tagged alphagrams matching the above. Use the
-    Django ORM; this is not a SQLite-backed database.
-
-    """
-    tagged = AlphagramTag.objects.filter(user=user, tag__in=tags,
-                                         lexicon__lexiconName=lexicon_name)
-    return [t.alphagram for t in tagged]

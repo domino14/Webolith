@@ -29,13 +29,14 @@ from django.utils.translation import ugettext as _
 from django.utils import timezone
 from gargoyle import gargoyle
 
+from base.models import Lexicon
 from base.forms import SavedListForm
-# from lib.word_db_helper import WordDB, Questions, word_search, BadInput
 from lib.domain import Questions
-from lib.wdb_interface.wdb_helper import (questions_from_alphagrams,
+from lib.wdb_interface.wdb_helper import (questions_from_alpha_dicts,
+                                          questions_from_probability_range,
                                           word_search,
                                           WDBError)
-from lib.word_searches import temporary_list_name
+from lib.wdb_interface.word_searches import temporary_list_name
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
@@ -267,12 +268,13 @@ class WordwallsGame(object):
     def initialize_by_search_params(self, user, search_description, time_secs,
                                     questions_per_round=None, use_table=None,
                                     multiplayer=None):
-
         try:
-            lexicon = search_description[0]['lexicon']
-        except (KeyError, IndexError):
+            lexicon = Lexicon.objects.get(
+                lexiconName=search_description[0].stringvalue.value)
+        except Lexicon.DoesNotExist:
             raise GameInitException(
-                'Search description not properly formatted')
+                'Search description not properly initialized')
+
         try:
             wl = self.initialize_word_list(word_search(search_description),
                                            lexicon, user)
@@ -303,10 +305,9 @@ class WordwallsGame(object):
                                  questions_per_round=None, use_table=None,
                                  multiplayer=None):
         qs = json.loads(named_list.questions)
-        db = WordDB(lex.lexiconName)
         if named_list.isRange:
-            questions = db.get_questions_for_probability_range(
-                qs[0], qs[1], named_list.wordLength)
+            questions = questions_from_probability_range(
+                lex, qs[0], qs[1], named_list.wordLength)
             wl = self.initialize_word_list(questions, lex, user)
         else:
             # Initialize word list directly.
@@ -486,8 +487,7 @@ class WordwallsGame(object):
             alphagrams_to_fetch.append(orig_questions[i])
             index_map[orig_questions[i]['q']] = i
 
-        questions = questions_from_alphagrams(lexicon, alphagrams_to_fetch,
-                                              expand=True)
+        questions = questions_from_alpha_dicts(lexicon, alphagrams_to_fetch)
         answer_hash = {}
         ret_q_array = []
         for q in questions.questions_array():
@@ -737,7 +737,7 @@ class WordwallsGame(object):
         if len(uniqueMissed) != len(missed):
             logger.error("missed list is not unique!! %s %s", uniqueMissed,
                          missed)
-            #raise Exception('Missed list is not unique')
+            # raise Exception('Missed list is not unique')
 
         logger.info("%d missed this round, %d missed total",
                     len(missed_indices), len(missed))

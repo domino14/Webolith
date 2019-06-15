@@ -10,7 +10,8 @@ from django.db import connection
 
 from base.models import Lexicon, alphagrammize
 from wordwalls.models import NamedList
-from lib.word_db_helper import WordDB, Questions
+from lib.domain import Questions
+from lib.wdb_interface.wdb_helper import questions_from_probability_range
 
 logger = logging.getLogger(__name__)
 friendly_number_map = {
@@ -59,7 +60,7 @@ class Condition(object):
     ALPHAGRAM = 'alphagram'
 
 
-def get_questions_by_condition(db, min_prob, max_prob, length, condition,
+def get_questions_by_condition(lex, min_prob, max_prob, length, condition,
                                condition_type='alphagram'):
     """
     Get all questions that match the condition. Return a to_python
@@ -71,8 +72,8 @@ def get_questions_by_condition(db, min_prob, max_prob, length, condition,
                  'condition_type=%s', min_prob, max_prob, length, condition,
                  condition_type)
 
-    to_filter = db.get_questions_for_probability_range(min_prob, max_prob,
-                                                       length)
+    to_filter = questions_from_probability_range(lex, min_prob, max_prob,
+                                                 length)
     for q in to_filter.questions_array():
         if condition_type == Condition.ALPHAGRAM:
             test = condition(q.alphagram.alphagram)
@@ -101,7 +102,7 @@ def create_named_list(lexicon, num_questions, word_length, is_range,
     nl.save()
 
 
-def create_wl_lists(i, lex, db):
+def create_wl_lists(i, lex):
     """Create word lists for words with length `i`."""
     logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
     length_counts = json.loads(lex.lengthCounts)
@@ -122,7 +123,7 @@ def create_wl_lists(i, lex, db):
 
     if i >= 4 and i <= 8:
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda a: re.search(r'[JQXZ]', a))
         create_named_list(lex, len(qs), i, False, json.dumps(qs),
                           'JQXZ ' + friendly_number_map[i])
@@ -130,21 +131,21 @@ def create_wl_lists(i, lex, db):
     if i == 7:
         # 4+ vowel 7s
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda a: (len(re.findall(r'[AEIOU]', a)) >= 4))
         create_named_list(lex, len(qs), i, False, json.dumps(qs),
                           'Sevens with 4 or more vowels')
     if i == 8:
         # 5+ vowel 8s
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda a: (len(re.findall(r'[AEIOU]', a)) >= 5))
         create_named_list(lex, len(qs), i, False, json.dumps(qs),
                           'Eights with 5 or more vowels')
 
     if lex.lexiconName == 'NWL18':
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
@@ -152,7 +153,7 @@ def create_wl_lists(i, lex, db):
             'NWL18 {} not in America'.format(friendly_number_map[i]))
 
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda w: ('$' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
@@ -161,7 +162,7 @@ def create_wl_lists(i, lex, db):
 
         if i == 4:
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda w: ('+' in w.lexicon_symbols and
                            re.search(r'[JQXZ]', w.word) and
                            len(w.word) == 4),
@@ -171,7 +172,7 @@ def create_wl_lists(i, lex, db):
                 'NWL18 JQXZ 4s not in America')
         elif i == 5:
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda w: ('+' in w.lexicon_symbols and
                            re.search(r'[JQXZ]', w.word) and
                            len(w.word) == 5),
@@ -182,7 +183,7 @@ def create_wl_lists(i, lex, db):
 
         elif i == 6:
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda w: ('+' in w.lexicon_symbols and
                            re.search(r'[JQXZ]', w.word) and
                            len(w.word) == 6),
@@ -193,7 +194,7 @@ def create_wl_lists(i, lex, db):
 
     if lex.lexiconName == 'CSW19':
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
@@ -201,7 +202,7 @@ def create_wl_lists(i, lex, db):
             'CSW19 {} not in CSW15'.format(friendly_number_map[i]))
 
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda w: ('#' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
@@ -213,9 +214,8 @@ def createNamedLists(lex):
     """Create the lists for every word length, given a lexicon."""
     # create lists for every word length
     t1 = time.time()
-    db = WordDB(lex.lexiconName)
     for i in range(2, 16):
-        create_wl_lists(i, lex, db)
+        create_wl_lists(i, lex)
 
     if lex.lexiconName == 'OWL2':
         create_common_words_lists()
@@ -225,7 +225,6 @@ def createNamedLists(lex):
 
 def create_spanish_lists():
     lex = Lexicon.objects.get(lexiconName='FISE2')
-    db = WordDB(lex.lexiconName)
     for i in range(2, 16):
         logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -248,13 +247,13 @@ def create_spanish_lists():
 
         if i >= 4 and i <= 8:
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda a: re.search(r'[JQXZ]', a))
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               'JQXZ ' + mapa_amigable[i])
 
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda a: re.search(r'[123Ñ]', a))
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               '(ᴄʜ)(ʟʟ)(ʀʀ)Ñ ' + mapa_amigable[i])
@@ -262,20 +261,20 @@ def create_spanish_lists():
         if i == 7:
             # 4+ vowel 7s
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda a: (len(re.findall(r'[AEIOU]', a)) >= 4))
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               'Sietes con 4 o más vocales')
         if i == 8:
             # 5+ vowel 8s
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda a: (len(re.findall(r'[AEIOU]', a)) >= 5))
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               'Ochos con 5 o más vocales')
 
         qs = get_questions_by_condition(
-            db, min_prob, max_prob, i,
+            lex, min_prob, max_prob, i,
             lambda w: ('+' in w.lexicon_symbols),
             condition_type=Condition.WORD)
         create_named_list(
@@ -285,7 +284,6 @@ def create_spanish_lists():
 
 def create_polish_lists():
     lex = Lexicon.objects.get(lexiconName='OSPS40')
-    db = WordDB(lex.lexiconName)
     for i in range(2, 16):
         logger.debug('Creating WL for lex %s, length %s', lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -308,7 +306,7 @@ def create_polish_lists():
 
         if i >= 4 and i <= 8:
             qs = get_questions_by_condition(
-                db, min_prob, max_prob, i,
+                lex, min_prob, max_prob, i,
                 lambda a: re.search(r'[ĄĆĘŃÓŚŹŻ]', a))
             create_named_list(lex, len(qs), i, False, json.dumps(qs),
                               friendly_number_map[i] + ' with any of ĄĆĘŃÓŚŹŻ')

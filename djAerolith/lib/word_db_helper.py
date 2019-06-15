@@ -145,7 +145,7 @@ class WordDB:
         }
         return self.get_questions_from_configs(configs)
 
-    def get_questions_for_probability_range(self, p_min, p_max, length):
+    def get_questions_from_probability_range(self, p_min, p_max, length):
         """
         Use a single query to return alphagrams and words for a
         probability range, fully populated.

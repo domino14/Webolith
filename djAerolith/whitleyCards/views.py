@@ -7,8 +7,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
-from lib.word_db_helper import WordDB, word_search
 from lib.response import response
+from lib.wdb_interface.wdb_helper import (word_search,
+                                          questions_from_alpha_dicts,
+                                          questions_from_probability_range)
 from wordwalls.api import build_search_criteria
 from base.forms import LexiconForm, NamedListForm, SavedListForm
 from wordwalls.models import NamedList
@@ -16,6 +18,10 @@ from base.models import Lexicon, WordList
 logger = logging.getLogger(__name__)
 
 QUIZ_CHUNK_SIZE = 5000
+
+
+class ImproperCodingException(Exception):
+    pass
 
 
 @login_required
@@ -35,10 +41,12 @@ def search_criteria_to_b64(request_post):
         new_search = {}
         key = 'searchCriteria[{}]'.format(idx)
         search_type = request_post.get('{}[searchType]'.format(key))
-        logger.debug('Getting key %s, value %s', '{}[searchType]'.format(key),
-                     search_type)
         if not search_type:
             break
+        try:
+            search_type = int(search_type)
+        except ValueError:
+            raise ImproperCodingException()
         new_search['searchType'] = search_type
 
         for k in ('minValue', 'maxValue', 'value'):
@@ -68,7 +76,13 @@ def handle_create_post(request):
             lex = Lexicon.objects.get(
                 lexiconName=lexForm.cleaned_data['lexicon'])
             logger.debug('POST data %s', request.POST)
-            encoded_search = search_criteria_to_b64(request.POST)
+            try:
+                encoded_search = search_criteria_to_b64(request.POST)
+            except ImproperCodingException:
+                return response({
+                    'success': False,
+                    'error': 'Please refresh; the app has changed.'},
+                    status=400)
             return response({
                 'url': reverse('flashcards_by_search', args=(
                     lex.pk,
@@ -262,14 +276,12 @@ def savedListPk(request, slpk, option):
 
 
 def getWordDataByProb(lexicon, length, minP, maxP):
-    db = WordDB(lexicon.lexiconName)
-    questions = db.get_questions_for_probability_range(minP, maxP, length)
+    questions = questions_from_probability_range(lexicon, minP, maxP, length)
     return get_word_data(questions.questions_array())
 
 
 def getWordDataFromQuestions(lexicon, questions):
-    db = WordDB(lexicon.lexiconName)
-    questions = db.get_questions_from_alph_dicts(questions)
+    questions = questions_from_alpha_dicts(lexicon, questions)
     return get_word_data(questions.questions_array())
 
 

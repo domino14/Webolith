@@ -1,4 +1,6 @@
-import proto from '../../gen/searcher_pb';
+import searcher from '../../gen/searcher_pb';
+
+const pbsrConditions = searcher.SearchRequest.Condition;
 
 const SearchTypesInputs = {
   TWO_NUMBERS: 1,
@@ -8,26 +10,26 @@ const SearchTypesInputs = {
 };
 
 const SearchTypesEnum = {
-  PROBABILITY: 1,
-  LENGTH: 2,
-  TAGS: 3,
-  POINTS: 4,
-  NUM_ANAGRAMS: 5,
-  NUM_VOWELS: 6,
-  FIXED_LENGTH: 7,
-  NUM_TWO_BLANKS: 8,
-  MAX_SOLUTIONS: 9,
-  NOT_IN_LEXICON: 10,
-  PROBABILITY_LIMIT: 11,
-  MATCHING_ANAGRAM: 12,
+  PROBABILITY: pbsrConditions.PROBABILITY_RANGE,
+  LENGTH: pbsrConditions.LENGTH,
+  TAGS: pbsrConditions.HAS_TAGS,
+  POINTS: pbsrConditions.POINT_VALUE,
+  NUM_ANAGRAMS: pbsrConditions.NUMBER_OF_ANAGRAMS,
+  NUM_VOWELS: pbsrConditions.NUMBER_OF_VOWELS,
+  FIXED_LENGTH: pbsrConditions.SINGLE_VALUE_LENGTH,
+  NUM_TWO_BLANKS: pbsrConditions.NUM_TWO_BLANKS,
+  MAX_SOLUTIONS: pbsrConditions.MAX_SOLUTIONS,
+  NOT_IN_LEXICON: pbsrConditions.NOT_IN_LEXICON,
+  PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
+  MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
    * input is first placed on the screen.
    */
   properties: {
-    1: {
-      name: 'probability_range',
+    [pbsrConditions.PROBABILITY_RANGE]: {
+      code: pbsrConditions.PROBABILITY_RANGE,
       displayName: 'Probability Range',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -39,8 +41,8 @@ const SearchTypesEnum = {
       there are two blanks in the bag, and alphagrams with identical
       probabilities will still have different (but consecutive) numbers.`,
     },
-    2: {
-      name: 'length',
+    [pbsrConditions.LENGTH]: {
+      code: pbsrConditions.LENGTH,
       displayName: 'Word Length',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 2,
@@ -49,15 +51,15 @@ const SearchTypesEnum = {
       maxAllowed: 15,
       description: 'You can filter by length of word with this option.',
     },
-    3: {
-      name: 'has_tags',
+    [pbsrConditions.HAS_TAGS]: {
+      code: pbsrConditions.HAS_TAGS,
       displayName: 'Has Tags',
       default: '',
       inputType: SearchTypesInputs.ONE_STRING,
       description: 'This is an unreleased feature, hold tight :)',
     },
-    4: {
-      name: 'point_value',
+    [pbsrConditions.POINT_VALUE]: {
+      code: pbsrConditions.POINT_VALUE,
       displayName: 'Point Value',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 2,
@@ -67,8 +69,8 @@ const SearchTypesEnum = {
       description: `Filter by point value of the word. Letter values are taken
       from a certain crossword game HINT HINT.`,
     },
-    5: {
-      name: 'number_anagrams',
+    [pbsrConditions.NUMBER_OF_ANAGRAMS]: {
+      code: pbsrConditions.NUMBER_OF_ANAGRAMS,
       displayName: 'Number of Anagrams',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -78,8 +80,8 @@ const SearchTypesEnum = {
       description: `The number of total anagrams of this word, including
       the word itself.`,
     },
-    6: {
-      name: 'number_vowels',
+    [pbsrConditions.NUMBER_OF_VOWELS]: {
+      code: pbsrConditions.NUMBER_OF_VOWELS,
       displayName: 'Number of Vowels',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 0,
@@ -88,8 +90,8 @@ const SearchTypesEnum = {
       maxAllowed: 15,
       description: 'The number of vowels in this word',
     },
-    7: {
-      name: 'fixed_length',
+    [pbsrConditions.SINGLE_VALUE_LENGTH]: {
+      code: pbsrConditions.SINGLE_VALUE_LENGTH,
       displayName: 'Word Length',
       inputType: SearchTypesInputs.ONE_NUMBER,
       default: 5,
@@ -97,8 +99,8 @@ const SearchTypesEnum = {
       maxAllowed: 10,
       description: 'You can filter by length of word with this option.',
     },
-    8: {
-      name: 'number_2_blanks',
+    [pbsrConditions.NUM_TWO_BLANKS]: {
+      code: pbsrConditions.NUM_TWO_BLANKS,
       displayName: 'Number of 2-blank questions',
       inputType: SearchTypesInputs.ONE_NUMBER,
       default: 4,
@@ -106,8 +108,8 @@ const SearchTypesEnum = {
       maxAllowed: 50,
       description: 'How many questions with 2-blanks to generate in total.',
     },
-    9: {
-      name: 'max_solutions',
+    [pbsrConditions.MAX_SOLUTIONS]: {
+      code: pbsrConditions.MAX_SOLUTIONS,
       displayName: 'Maximum number of anagrams',
       inputType: SearchTypesInputs.ONE_NUMBER,
       default: 5,
@@ -116,8 +118,8 @@ const SearchTypesEnum = {
       description: `The maximum number of anagrams that a question can have.
       No questions will be generated that have more than this number of anagrams.`,
     },
-    10: {
-      name: 'not_in_lexicon',
+    [pbsrConditions.NOT_IN_LEXICON]: {
+      code: pbsrConditions.NOT_IN_LEXICON,
       displayName: 'Not in lexicon',
       inputType: SearchTypesInputs.SELECT,
       default: 'other_english',
@@ -130,8 +132,8 @@ const SearchTypesEnum = {
       using the NWL18 lexicon, and NWL18 if you are currently using the
       CSW19 lexicon. The "last version" refers to America and CSW15, respectively.`,
     },
-    11: {
-      name: 'probability_limit',
+    [pbsrConditions.PROBABILITY_LIMIT]: {
+      code: pbsrConditions.PROBABILITY_LIMIT,
       displayName: 'Probability limit',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -145,8 +147,8 @@ const SearchTypesEnum = {
       questions that were already in the 1-100 range by intrinsic probability,
       prior to applying any filters.`,
     },
-    12: {
-      name: 'matching_anagram',
+    [pbsrConditions.MATCHING_ANAGRAM]: {
+      code: pbsrConditions.MATCHING_ANAGRAM,
       displayName: 'Anagram match',
       inputType: SearchTypesInputs.ONE_STRING,
       default: 'AEINST??',
@@ -200,10 +202,11 @@ class SearchCriterion {
    * Convert this to an object that the backend would understand.
    */
   toJSObj() {
-    return {
-      searchType: SearchTypesEnum.properties[this.searchType].name,
+    const obj = {
+      searchType: SearchTypesEnum.properties[this.searchType].code,
       ...this.options,
     };
+    return obj;
   }
   /**
    * Set the option to the passed-in value. This function takes care
