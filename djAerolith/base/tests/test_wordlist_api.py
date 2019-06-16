@@ -27,7 +27,7 @@ class WordwallsAPITest(TestCase):
         resp = self.client.get('/base/api/saved_lists/')
         content = json.loads(resp.content)
         logger.debug('Content: %s', content)
-        self.assertEqual(len(content['lists']), 6)
+        self.assertEqual(len(content['lists']), 7)
 
     def test_lists_delete(self):
         resp = self.client.delete('/base/api/saved_lists/',
@@ -36,7 +36,7 @@ class WordwallsAPITest(TestCase):
         self.assertEqual(resp.content, b'"OK"')
         resp = self.client.get('/base/api/saved_lists/')
         content = json.loads(resp.content)
-        self.assertEqual(len(content['lists']), 4)
+        self.assertEqual(len(content['lists']), 5)
         profile = AerolithProfile.objects.get(user__username='cesar')
         self.assertEqual(profile.wordwallsSaveListSize,
                          55781 - 11 - 52)
@@ -49,6 +49,6 @@ class WordwallsAPITest(TestCase):
         resp = self.client.get('/base/api/saved_lists/')
         content = json.loads(resp.content)
         # No changes were made.
-        self.assertEqual(len(content['lists']), 6)
+        self.assertEqual(len(content['lists']), 7)
         profile = AerolithProfile.objects.get(user__username='cesar')
         self.assertEqual(profile.wordwallsSaveListSize, 55781)

@@ -49,8 +49,10 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
             contents, filename,
             Lexicon.objects.get(lexiconName='NWL18'), user)
         wl = WordList.objects.get(name='new_america_jqxz_6s')
+        # there's 87 words/alphagrams in the list but they deleted CAZHER in
+        # 2018 so there's only 86 now.
         self.assert_wl(wl, {
-            'numAlphagrams': 87, 'numCurAlphagrams': 87, 'numFirstMissed': 0,
+            'numAlphagrams': 86, 'numCurAlphagrams': 86, 'numFirstMissed': 0,
             'numMissed': 0, 'goneThruOnce': False, 'questionIndex': 0,
             'is_temporary': False
         })
@@ -58,7 +60,7 @@ class FileUploadTestCase(TestCase, WordListAssertMixin):
         # Check that it added to total. 55781 is the old value, in
         # profiles.json
         self.assertEqual(user.aerolithprofile.wordwallsSaveListSize,
-                         55781 + 87)
+                         55781 + 86)
         f.close()
 
     def test_create_giant_list(self):

@@ -195,11 +195,11 @@ class WordwallsNewSearchTest(TestCase):
                              'desiredTime': 4.5,
                              'questionsPerRound': 75,
                              'searchCriteria': [{
-                                 'searchType': 'length',
+                                 'searchType': 1,  # see protobuf file for defs
                                  'minValue': 9,
                                  'maxValue': 9,
                              }, {
-                                 'searchType': 'probability_range',
+                                 'searchType': 2,  # see protobuf file for defs
                                  'minValue': 84,
                                  'maxValue': 223,
                              }]

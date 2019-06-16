@@ -37,11 +37,11 @@ class WordwallsGameStartTest(TestCase):
                 'lexicon': 1,
                 'questionsPerRound': 60,
                 'searchCriteria': [{
-                    'searchType': 'length',
+                    'searchType': 1,
                     'minValue': 8,
                     'maxValue': 8,
                 }, {
-                    'searchType': 'probability_range',
+                    'searchType': 2,
                     'minValue': 523,
                     'maxValue': 784,
                 }],
@@ -62,14 +62,14 @@ class WordwallsGameStartTest(TestCase):
         result = self.client.post(
             '/wordwalls/api/new_search/', data=json.dumps({
                 'desiredTime': 5,
-                'lexicon': 9,
+                'lexicon': 7,
                 'questionsPerRound': 50,
                 'searchCriteria': [{
-                    'searchType': 'length',
+                    'searchType': 1,
                     'minValue': 8,
                     'maxValue': 8,
                 }, {
-                    'searchType': 'probability_range',
+                    'searchType': 2,
                     'minValue': 151,
                     'maxValue': 200,
                 }],
@@ -83,7 +83,7 @@ class WordwallsGameStartTest(TestCase):
         # Test that the temporary list name was generated correctly.
         addl_params = json.loads(response.context['addParams'])
         self.assertEqual(addl_params['tempListName'],
-                         'NWL18 8s (151 - 200) (2)')
+                         'America 8s (151 - 200) (2)')
 
     def test_play_existing_challenge(self):
         result = self.client.post(
