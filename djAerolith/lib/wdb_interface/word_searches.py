@@ -3,7 +3,7 @@ from typing import List
 
 from base.models import Lexicon, AlphagramTag, User
 
-import lib.wdb_interface.rpc.searcher_pb2 as pb
+import lib.word_db_server.rpc.wordsearcher.searcher_pb2 as pb
 logger = logging.getLogger(__name__)
 
 
