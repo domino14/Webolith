@@ -5,9 +5,9 @@ from django.conf import settings
 from base.models import Lexicon
 from lib.domain import Questions
 from lib.wdb_interface.word_searches import SearchDescription
-from lib.word_db_server.rpc.wordsearcher.searcher_pb2_twirp import (
+from rpc.wordsearcher.searcher_pb2_twirp import (
     QuestionSearcherClient, TwirpException)
-import lib.word_db_server.rpc.wordsearcher.searcher_pb2 as pb
+import rpc.wordsearcher.searcher_pb2 as pb
 
 
 class WDBError(Exception):
