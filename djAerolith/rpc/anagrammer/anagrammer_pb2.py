@@ -20,8 +20,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='rpc/anagrammer/anagrammer.proto',
   package='anagrammer',
   syntax='proto3',
-  serialized_options=None,
-  serialized_pb=_b('\n\x1frpc/anagrammer/anagrammer.proto\x12\nanagrammer\x1a\x1frpc/wordsearcher/searcher.proto\"\x8f\x01\n\x0e\x41nagramRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x0f\n\x07letters\x18\x02 \x01(\t\x12-\n\x04mode\x18\x03 \x01(\x0e\x32\x1f.anagrammer.AnagramRequest.Mode\x12\x0e\n\x06\x65xpand\x18\x04 \x01(\x08\"\x1c\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\"G\n\x0f\x41nagramResponse\x12!\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x11\n\tnum_words\x18\x02 \x01(\x05\"\x8c\x01\n\x1b\x42lankChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rnum_questions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x19\n\x11num_with_2_blanks\x18\x04 \x01(\x05\x12\x13\n\x0bword_length\x18\x05 \x01(\x05\"\xa5\x01\n\x1b\x42uildChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rmin_solutions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x12\n\nmin_length\x18\x04 \x01(\x05\x12\x12\n\nmax_length\x18\x05 \x01(\x05\x12\x1f\n\x17require_length_solution\x18\x06 \x01(\x08\x32\x90\x02\n\nAnagrammer\x12\x42\n\x07\x41nagram\x12\x1a.anagrammer.AnagramRequest\x1a\x1b.anagrammer.AnagramResponse\x12^\n\x15\x42lankChallengeCreator\x12\'.anagrammer.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\x12^\n\x15\x42uildChallengeCreator\x12\'.anagrammer.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponseb\x06proto3')
+  serialized_options=_b('Z1github.com/domino14/word_db_server/rpc/anagrammer'),
+  serialized_pb=_b('\n\x1frpc/anagrammer/anagrammer.proto\x12\nanagrammer\x1a\x1frpc/wordsearcher/searcher.proto\"\x8f\x01\n\x0e\x41nagramRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x0f\n\x07letters\x18\x02 \x01(\t\x12-\n\x04mode\x18\x03 \x01(\x0e\x32\x1f.anagrammer.AnagramRequest.Mode\x12\x0e\n\x06\x65xpand\x18\x04 \x01(\x08\"\x1c\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\"G\n\x0f\x41nagramResponse\x12!\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x11\n\tnum_words\x18\x02 \x01(\x05\"\x8c\x01\n\x1b\x42lankChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rnum_questions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x19\n\x11num_with_2_blanks\x18\x04 \x01(\x05\x12\x13\n\x0bword_length\x18\x05 \x01(\x05\"\xa5\x01\n\x1b\x42uildChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rmin_solutions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x12\n\nmin_length\x18\x04 \x01(\x05\x12\x12\n\nmax_length\x18\x05 \x01(\x05\x12\x1f\n\x17require_length_solution\x18\x06 \x01(\x08\x32\x90\x02\n\nAnagrammer\x12\x42\n\x07\x41nagram\x12\x1a.anagrammer.AnagramRequest\x1a\x1b.anagrammer.AnagramResponse\x12^\n\x15\x42lankChallengeCreator\x12\'.anagrammer.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\x12^\n\x15\x42uildChallengeCreator\x12\'.anagrammer.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponseB3Z1github.com/domino14/word_db_server/rpc/anagrammerb\x06proto3')
   ,
   dependencies=[rpc_dot_wordsearcher_dot_searcher__pb2.DESCRIPTOR,])
 
@@ -303,6 +303,7 @@ BuildChallengeCreateRequest = _reflection.GeneratedProtocolMessageType('BuildCha
 _sym_db.RegisterMessage(BuildChallengeCreateRequest)
 
 
+DESCRIPTOR._options = None
 
 _ANAGRAMMER = _descriptor.ServiceDescriptor(
   name='Anagrammer',

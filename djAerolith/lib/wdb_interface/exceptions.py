@@ -1,0 +1,2 @@
+class WDBError(Exception):
+    pass

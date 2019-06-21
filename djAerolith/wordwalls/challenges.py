@@ -13,8 +13,8 @@ from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
 from lib.domain import Question, Questions, Alphagram
-from lib.macondo_interface import (gen_blank_challenges, gen_build_challenge,
-                                   MacondoError)
+from lib.wdb_interface.anagrammer import (gen_blank_challenges, gen_build_challenge,
+                                          WDBError)
 from lib.wdb_interface.wdb_helper import (questions_from_probability_list,
                                           questions_from_alphagrams)
 
@@ -116,8 +116,8 @@ def generate_blank_bingos_challenge(lex):
     for length in (7, 8):
         try:
             challs = gen_blank_challenges(length, lex.lexiconName, 2, 25, 5)
-        except MacondoError:
-            logger.exception('[event=macondoerror]')
+        except WDBError:
+            logger.exception('[event=wdberror]')
             return bingos
         for chall in challs:
             question = Question(Alphagram(chall['q']), [])
@@ -155,13 +155,13 @@ def generate_word_builder_challenge(lex, lmin, lmax):
     q_struct = Questions()
 
     try:
-        question, num_answers = gen_build_challenge(
+        questions = gen_build_challenge(
             lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols)
-    except MacondoError:
-        logger.exception('[event=macondoerror]')
+    except WDBError:
+        logger.exception('[event=wdberror]')
         return q_struct
-    ret_question = Question(Alphagram(question['q']), [])
-    ret_question.set_answers_from_word_list(question['a'])
+    ret_question = Question(Alphagram(questions[0]['q']), [])
+    ret_question.set_answers_from_word_list(questions[0]['a'])
     q_struct.append(ret_question)
     q_struct.set_build_mode()
     return q_struct

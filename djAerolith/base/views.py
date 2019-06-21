@@ -33,7 +33,7 @@ from base.models import WordList, Lexicon, AlphagramTag, alphagrammize
 from base.utils import (generate_question_map_from_alphagrams,
                         generate_question_list_from_alphagrams,
                         expanded_question_list_from_probabilities)
-from lib.macondo_interface import anagram_letters, MacondoError
+from lib.wdb_interface.anagrammer import anagram_letters, WDBError
 from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
@@ -333,7 +333,7 @@ def word_lookup(request):
         return alphagram_history_search(request)
     try:
         results = anagram_letters(lexicon, letters)
-    except MacondoError as e:
+    except WDBError as e:
         return response(str(e), StatusCode.BAD_REQUEST)
     return response(results)
 

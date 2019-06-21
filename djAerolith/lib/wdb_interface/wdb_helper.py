@@ -4,14 +4,11 @@ from django.conf import settings
 
 from base.models import Lexicon
 from lib.domain import Questions
+from lib.wdb_interface.exceptions import WDBError
 from lib.wdb_interface.word_searches import SearchDescription
 from rpc.wordsearcher.searcher_pb2_twirp import (
     QuestionSearcherClient, TwirpException)
 import rpc.wordsearcher.searcher_pb2 as pb
-
-
-class WDBError(Exception):
-    pass
 
 
 def questions_from_alphagrams(lexicon: Lexicon,
@@ -33,7 +30,7 @@ def questions_from_alpha_dicts(lexicon: Lexicon,
                                alphas: List[dict]) -> Questions:
     """
     This has to use the client.expand function.
-    alphas loks like:
+    alphas looks like:
         [{'q': ..., 'a': [...]}, ...] where everything is a string.
     """
     client = QuestionSearcherClient(settings.WORD_DB_SERVER_ADDRESS)
