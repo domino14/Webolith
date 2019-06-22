@@ -18,7 +18,7 @@ jobs:
     docker:
       - image: domino14/webolith-base-pkg:py3-latest
       - image: postgres
-      - image: domino14/word-db-server:latest
+      - image: domino14/word_db_server:latest
         # settings file defaults to this name
         name: word_db_server
 
