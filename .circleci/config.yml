@@ -49,6 +49,8 @@ jobs:
           keys:
             - lexica
 
+      # Install docker so we can build the word dbs.
+      - run: apk add docker
       - run: |
           docker run --rm -it word_db_server
           -v $LEXICON_PATH:$LEXICON_PATH -e LEXICON_PATH=$LEXICON_PATH
