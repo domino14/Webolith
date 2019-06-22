@@ -42,7 +42,6 @@ jobs:
       - run: mkdir $LEXICON_PATH
       - run: mv /opt/word-game-lexica/*.txt $LEXICON_PATH
       # Generate the dbs needed for tests.
-      - run: go build
       - run: mkdir $LEXICON_PATH/db
       - run: mkdir $LEXICON_PATH/gaddag
 
