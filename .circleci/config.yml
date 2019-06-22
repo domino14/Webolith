@@ -63,7 +63,7 @@ jobs:
             mv /tmp/docker/* /usr/bin
 
       - run: |
-          docker run --rm -it word_db_server
+          docker run --rm -it domino14/word_db_server:latest
           -v $LEXICON_PATH:$LEXICON_PATH -e LEXICON_PATH=$LEXICON_PATH
           go run /go/src/github.com/domino14/word_db_server/main.go
           -outputdir $LEXICON_PATH/db -dbs NWL18,America,CSW19
