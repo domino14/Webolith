@@ -13,28 +13,49 @@ jobs:
       # Just some random secret key
       INTERCOM_APP_SECRET_KEY: abcdefghijklmnopqrstuvwxyz
       SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
-      WORD_DB_LOCATION: /opt/db
+      LEXICON_PATH: /opt/lexica/
+
     docker:
       - image: domino14/webolith-base-pkg:py3-latest
       - image: postgres
+      - image: domino14/word-db-server:latest
+        # settings file defaults to this name
+        name: word_db_server
+
     steps:
       - checkout  # Into the webolith-base-pkg
+
+      # Checkout the lexicon repo and make it.
       - add_ssh_keys:
           fingerprints:
-            - "ad:9e:01:fa:fa:e7:03:a4:49:74:98:91:52:a8:dc:3c"
+            - "bf:37:1b:e1:b2:b0:ec:20:92:43:20:86:40:7c:c4:e0"
       - run:
-          name: Install git and ssh
-          command: apk update && apk upgrade && apk add git openssh
+          name: Install git, ssh, and build-base (for tests)
+          command: apk update && apk upgrade && apk add git openssh build-base
       - run:
           name: Install ssl
           command: apk add --update ca-certificates openssl && update-ca-certificates
-      - run: if [ ! -n "$(grep "^bitbucket.org " ~/.ssh/known_hosts)" ]; then ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null; fi
+      - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run:
-          name: Clone word dbs Webolith repo
-          command: git clone git@bitbucket.org:cesar_del_solar/webolith-word-dbs.git /opt/webolith-word-dbs
-      - run: mkdir $WORD_DB_LOCATION
-      - run: cd /opt/webolith-word-dbs && tar xzvf dbs.tar.gz
-      - run: mv /opt/webolith-word-dbs/*.db $WORD_DB_LOCATION
+          name: Clone lexicon repo
+          command: git clone git@github.com:domino14/word-game-lexica /opt/word-game-lexica
+      - run: mkdir $LEXICON_PATH
+      - run: mv /opt/word-game-lexica/*.txt $LEXICON_PATH
+      # Generate the dbs needed for tests.
+      - run: go build
+      - run: mkdir $LEXICON_PATH/db
+      - run: mkdir $LEXICON_PATH/gaddag
+
+      - restore_cache:
+          keys:
+            - lexica
+
+      - run: |
+          docker run --rm -it word_db_server
+          -v $LEXICON_PATH:$LEXICON_PATH -e LEXICON_PATH=$LEXICON_PATH
+          go run /go/src/github.com/domino14/word_db_server/main.go
+          -outputdir $LEXICON_PATH/db -dbs NWL18,America,CSW19
+
       - run:
           name: install dockerize
           command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
@@ -44,8 +65,16 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
+          name: Wait for word-db-server
+          command: dockerize -wait tcp://word_db_server:8180 -timeout 1m
+      - run:
           name: Django tests
           command: cd djAerolith && ./manage.py test -v2
+
+      - save_cache:
+          key: lexica
+          paths:
+            - /opt/lexica
 
   build_js:
     working_directory: /opt/webolith
@@ -122,6 +151,7 @@ jobs:
     docker:
       - image: domino14/aerolith-deployer
     steps:
+      - run: mkdir -p ~/.ssh
       - add_ssh_keys:
           fingerprints:
             - "ad:9e:01:fa:fa:e7:03:a4:49:74:98:91:52:a8:dc:3c"
@@ -132,8 +162,8 @@ jobs:
       - run:
           name: Clone private Webolith repo
           command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
-      - run: cd aerolith-infra/deploy && fab create_k8s_configs:prod
-      - run: cd aerolith-infra/deploy && fab deploy:prod
+      - run: cd aerolith-infra/deploy && inv create-k8s-configs --role prod
+      - run: cd aerolith-infra/deploy && inv deploy --role prod
 
 workflows:
   version: 2
