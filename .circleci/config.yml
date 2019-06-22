@@ -23,6 +23,7 @@ jobs:
         name: word_db_server
 
     steps:
+      - setup_remote_docker
       - checkout  # Into the webolith-base-pkg
 
       # Checkout the lexicon repo and make it.
@@ -49,9 +50,6 @@ jobs:
           keys:
             - lexica
 
-      # Install docker so we can build the word dbs.
-      - run: apk add docker
-      - run: service docker start
       - run: |
           docker run --rm -it word_db_server
           -v $LEXICON_PATH:$LEXICON_PATH -e LEXICON_PATH=$LEXICON_PATH
