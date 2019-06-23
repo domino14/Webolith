@@ -63,11 +63,19 @@ jobs:
             mv /tmp/docker/* /usr/bin
 
       - run: >
-          docker run --rm -it -v $LEXICON_PATH:$LEXICON_PATH -e LEXICON_PATH=$LEXICON_PATH
+          docker run -d --name dbmaker --rm -it -e LEXICON_PATH=$LEXICON_PATH
           domino14/word_db_server:latest
-          go run /go/src/github.com/domino14/word_db_server/main.go
-          -outputdir $LEXICON_PATH/db -dbs NWL18,America,CSW19
-
+      - run: >
+          docker cp $LEXICON_PATH dbmaker:$LEXICON_PATH
+      - run: >
+          docker exec -it dbmaker
+            go run /go/src/github.com/domino14/word_db_server/main.go
+            -outputdir $LEXICON_PATH/db -dbs NWL18,America,CSW19
+      - run: |
+          docker cp dbmaker:$LEXICON_PATH/db $LEXICON_PATH/db
+          docker exec -it word_db_server mkdir $LEXICON_PATH/db
+          docker cp $LEXICON_PATH/db word_db_server:$LEXICON_PATH/db
+          docker stop dbmaker
       - run:
           name: install dockerize
           command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
@@ -82,6 +90,7 @@ jobs:
       - run:
           name: Django tests
           command: cd djAerolith && ./manage.py test -v2
+
 
       - save_cache:
           key: lexica
