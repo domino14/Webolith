@@ -1,32 +1,17 @@
 version: 2
 jobs:
   build_python:
+    # Use the machine executor because we have some special tests.
+    # Hopefully this remains free.
+    machine: true
     working_directory: /opt/webolith
     environment:
-      PGSQL_DB_NAME: circle
-      PGSQL_USER: postgres
-      PGSQL_HOST: 127.0.0.1
-      PGSQL_PASSWORD:
-      # Debug for tests is False even if I set this to True.
-      DEBUG: false
-      DEBUG_JS: false
-      # Just some random secret key
-      INTERCOM_APP_SECRET_KEY: abcdefghijklmnopqrstuvwxyz
-      SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
       LEXICON_PATH: /opt/lexica/
-
-    docker:
-      - image: domino14/webolith-base-pkg:py3-latest
-      - image: postgres
-      - image: domino14/word_db_server:latest
-        # settings file defaults to this name
-        name: word_db_server
-
+      DOCKER_WDB_SERVER: domino14/word_db_server:latest
     steps:
-      - setup_remote_docker
-      - checkout  # Into the webolith-base-pkg
+      - checkout
 
-      # Checkout the lexicon repo and make it.
+      # Checkout the lexicon repo.
       - add_ssh_keys:
           fingerprints:
             - "bf:37:1b:e1:b2:b0:ec:20:92:43:20:86:40:7c:c4:e0"
@@ -63,24 +48,19 @@ jobs:
             mv /tmp/docker/* /usr/bin
 
       - run: >
-          docker run -d --name dbmaker --rm -it -e LEXICON_PATH=$LEXICON_PATH
-          domino14/word_db_server:latest
-      - run: >
-          docker cp $LEXICON_PATH dbmaker:$LEXICON_PATH
-      - run: >
-          docker exec -it dbmaker
-          go run /go/src/github.com/domino14/word_db_server/main.go
+          docker run --name dbmaker --rm -it -e LEXICON_PATH=$LEXICON_PATH
+          -v $LEXICON_PATH:$LEXICON_PATH
+          $DOCKER_WDB_SERVER go run /go/src/github.com/domino14/word_db_server/main.go
           -outputdir $LEXICON_PATH/db -dbs NWL18,America,CSW19
-      - run: |
-          docker cp dbmaker:$LEXICON_PATH/db $LEXICON_PATH/db
-          docker exec -it word_db_server mkdir $LEXICON_PATH/db
-          docker cp $LEXICON_PATH/db word_db_server:$LEXICON_PATH/db
-          docker stop dbmaker
+
       - run:
           name: install dockerize
           command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
             DOCKERIZE_VERSION: v0.6.0
+      # Run the containers
+      - run: cp .circleci/docker-compose.yml .
+      - run: docker-compose up -d
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
@@ -89,8 +69,7 @@ jobs:
           command: dockerize -wait tcp://word_db_server:8180 -timeout 1m
       - run:
           name: Django tests
-          command: cd djAerolith && ./manage.py test -v2
-
+          command: docker-compose exec app ./manage.py test -v2
 
       - save_cache:
           key: lexica
