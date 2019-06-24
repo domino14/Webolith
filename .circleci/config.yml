@@ -6,7 +6,6 @@ jobs:
     machine:
       image: ubuntu-1604:201903-01
     environment:
-      LEXICON_PATH: /opt/lexica/
       DOCKER_WDB_SERVER: domino14/word_db_server:latest
     steps:
       - checkout
@@ -18,22 +17,22 @@ jobs:
       - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run:
           name: Clone lexicon repo
-          command: sudo git clone git@github.com:domino14/word-game-lexica /opt/word-game-lexica
-      - run: sudo mkdir $LEXICON_PATH
-      - run: sudo mv /opt/word-game-lexica/*.txt $LEXICON_PATH
+          command: >
+            git clone git@github.com:domino14/word-game-lexica ~/word-game-lexica &&
+            rm -rf ~/word-game-lexica/.git
       # Generate the dbs needed for tests.
-      - run: sudo mkdir $LEXICON_PATH/db
-      - run: sudo mkdir $LEXICON_PATH/gaddag
+      - run: mkdir ~/word-game-lexica/db
+      - run: mkdir ~/word-game-lexica/gaddag
 
       - restore_cache:
           keys:
             - lexica
 
       - run: >
-          docker run --name dbmaker --rm -it -e LEXICON_PATH=$LEXICON_PATH
-          -v $LEXICON_PATH:$LEXICON_PATH
+          docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica
+          -v ~/word-game-lexica:/opt/lexica
           $DOCKER_WDB_SERVER go run /go/src/github.com/domino14/word_db_server/main.go
-          -outputdir $LEXICON_PATH/db -dbs NWL18,America,CSW19
+          -outputdir /opt/lexica/db -dbs NWL18,America,CSW19
 
       - run:
           name: install dockerize
@@ -60,6 +59,10 @@ jobs:
           key: lexica
           paths:
             - /opt/lexica
+
+      - run:
+          name: Stop cleanly
+          command: docker-compose stop
 
   build_js:
     working_directory: /opt/webolith
