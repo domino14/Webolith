@@ -3,8 +3,8 @@ jobs:
   build_python:
     # Use the machine executor because we have some special tests.
     # Hopefully this remains free.
-    machine: true
-    working_directory: /opt/webolith
+    machine:
+      image: ubuntu-1604:201903-01
     environment:
       LEXICON_PATH: /opt/lexica/
       DOCKER_WDB_SERVER: domino14/word_db_server:latest
@@ -15,37 +15,19 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "bf:37:1b:e1:b2:b0:ec:20:92:43:20:86:40:7c:c4:e0"
-      - run:
-          name: Install git, ssh, and build-base (for tests)
-          command: apk update && apk upgrade && apk add git openssh build-base
-      - run:
-          name: Install ssl
-          command: apk add --update ca-certificates openssl && update-ca-certificates
       - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run:
           name: Clone lexicon repo
-          command: git clone git@github.com:domino14/word-game-lexica /opt/word-game-lexica
-      - run: mkdir $LEXICON_PATH
-      - run: mv /opt/word-game-lexica/*.txt $LEXICON_PATH
+          command: sudo git clone git@github.com:domino14/word-game-lexica /opt/word-game-lexica
+      - run: sudo mkdir $LEXICON_PATH
+      - run: sudo mv /opt/word-game-lexica/*.txt $LEXICON_PATH
       # Generate the dbs needed for tests.
-      - run: mkdir $LEXICON_PATH/db
-      - run: mkdir $LEXICON_PATH/gaddag
+      - run: sudo mkdir $LEXICON_PATH/db
+      - run: sudo mkdir $LEXICON_PATH/gaddag
 
       - restore_cache:
           keys:
             - lexica
-
-      - run:
-          name: Install curl
-          command: apk --no-cache add curl
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="18.09.1"
-            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
 
       - run: >
           docker run --name dbmaker --rm -it -e LEXICON_PATH=$LEXICON_PATH
@@ -55,7 +37,10 @@ jobs:
 
       - run:
           name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          command: >
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz &&
+            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz &&
+            rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
             DOCKERIZE_VERSION: v0.6.0
       # Run the containers
