@@ -26,7 +26,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - lexica
+            - lexicadb
+            - lexicagaddag
 
       - run: >
           docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica
@@ -56,9 +57,14 @@ jobs:
           command: docker-compose exec app ./manage.py test -v2
 
       - save_cache:
-          key: lexica
+          key: lexicadb
           paths:
-            - /opt/lexica
+            - /home/circleci/word-game-lexica/db
+
+      - save_cache:
+          key: lexicagaddag
+          paths:
+            - /home/circleci/word-game-lexica/gaddag
 
       - run:
           name: Stop cleanly

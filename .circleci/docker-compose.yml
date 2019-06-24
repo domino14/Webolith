@@ -45,8 +45,7 @@ services:
       LEXICON_PATH: /opt/lexica
       LOG_LEVEL: debug
     volumes:
-      - /opt/lexica:/opt/lexica
-    command: go run cmd/searchserver/main.go
+      - /home/circleci/word-game-lexica:/opt/lexica
     expose:
       - 8180
     ports:
