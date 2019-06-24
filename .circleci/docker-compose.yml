@@ -40,7 +40,7 @@ services:
       - aeronet
 
   word_db_server:
-    image: domino14/word-db-server:latest
+    image: domino14/word_db_server:latest
     environment:
       LEXICON_PATH: /opt/lexica
       LOG_LEVEL: debug
