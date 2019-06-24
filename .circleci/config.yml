@@ -50,7 +50,7 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Wait for word-db-server
-          command: dockerize -wait tcp://word_db_server:8180 -timeout 1m
+          command: dockerize -wait tcp://localhost:8180 -timeout 1m
       - run:
           name: Django tests
           command: docker-compose exec app ./manage.py test -v2
