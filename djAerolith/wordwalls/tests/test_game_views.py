@@ -34,7 +34,7 @@ class WordwallsGameStartTest(TestCase):
             '/wordwalls/api/new_search/',
             data=json.dumps({
                 'desiredTime': 5,
-                'lexicon': 1,
+                'lexicon': 12,
                 'questionsPerRound': 60,
                 'searchCriteria': [{
                     'searchType': 1,
@@ -55,7 +55,7 @@ class WordwallsGameStartTest(TestCase):
         # Test that the temporary list name was generated correctly.
         addl_params = json.loads(response.context['addParams'])
         self.assertEqual(addl_params['tempListName'],
-                         'CSW15 8s (523 - 784)')
+                         'CSW19 8s (523 - 784)')
 
     def test_unique_temp_list_name(self):
         # This would create a list with the same name for this user.
