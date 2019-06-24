@@ -24,7 +24,7 @@ services:
       - PGSQL_DB_NAME=circle
       - PGSQL_USER=postgres
       - PGSQL_HOST=pgdb
-      - PGSQL_PASSWORD=
+      - PGSQL_PASSWORD=pass
       - INTERCOM_APP_SECRET_KEY=abcdefghijklmnopqrstuvwxyz
       # Just some random secret key
       - SECRET_KEY=csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
