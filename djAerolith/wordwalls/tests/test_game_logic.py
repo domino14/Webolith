@@ -681,7 +681,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         challenge = DailyChallengeName.objects.get(name="Bingo Marathon")
         table_id = self.wwg.initialize_daily_challenge(
             self.user, Lexicon.objects.get(lexiconName='America'),
-            challenge, date(2016, 1, 1))
+            challenge, date(2015, 10, 15))
         # Assert that it did not create an additional challenge.
         self.assertEqual(num_challenges, DailyChallenge.objects.count())
         wgm = self.wwg.get_wgm(table_id)
@@ -756,10 +756,6 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
 
     """
     fixtures = ['test/lexica.yaml',
-                # Eventually get rid of these two, because they are
-                # replaced by sqlite, but for now we test for backwards
-                # compatibility, since we are doing an in-place
-                # migration.
                 'test/users.json',
                 'test/profiles.json',
                 'challenge_names.json',
