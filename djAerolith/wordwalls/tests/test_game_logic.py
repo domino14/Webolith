@@ -680,8 +680,8 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         num_challenges = DailyChallenge.objects.count()
         challenge = DailyChallengeName.objects.get(name="Bingo Marathon")
         table_id = self.wwg.initialize_daily_challenge(
-            self.user, Lexicon.objects.get(lexiconName='America'),
-            challenge, date(2015, 10, 15))
+            self.user, Lexicon.objects.get(lexiconName='CSW19'),
+            challenge, date(2016, 12, 8))
         # Assert that it did not create an additional challenge.
         self.assertEqual(num_challenges, DailyChallenge.objects.count())
         wgm = self.wwg.get_wgm(table_id)
