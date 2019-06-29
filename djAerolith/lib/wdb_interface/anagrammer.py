@@ -4,9 +4,9 @@ from typing import List
 from django.conf import settings
 
 from lib.wdb_interface.exceptions import WDBError
-from rpc.anagrammer.anagrammer_pb2_twirp import (AnagrammerClient,
+from rpc.wordsearcher.searcher_pb2_twirp import (AnagrammerClient,
                                                  TwirpException)
-import rpc.anagrammer.anagrammer_pb2 as pb
+import rpc.wordsearcher.searcher_pb2 as pb
 logger = logging.getLogger(__name__)
 
 

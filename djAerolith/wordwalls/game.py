@@ -744,6 +744,8 @@ class WordwallsGame(object):
         if state['gameType'] == 'challenge':
             state['gameType'] = 'regular'
             self.create_challenge_leaderboard_entry(state, tablenum)
+        # clear solvers so it doesn't grow out of control for large lists
+        state['solvers'] = {}
 
         # check if we've gone thru the quiz once.
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:

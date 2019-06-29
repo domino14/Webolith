@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='wordsearcher',
   syntax='proto3',
   serialized_options=_b('Z3github.com/domino14/word_db_server/rpc/wordsearcher'),
-  serialized_pb=_b('\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\x92\x01\n\tAlphagram\x12\x11\n\talphagram\x18\x01 \x01(\t\x12!\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x14\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08\x12\x0e\n\x06length\x18\x04 \x01(\x05\x12\x13\n\x0bprobability\x18\x05 \x01(\x05\x12\x14\n\x0c\x63ombinations\x18\x06 \x01(\x03\"\xb0\x01\n\x04Word\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x11\n\talphagram\x18\x02 \x01(\t\x12\x12\n\ndefinition\x18\x03 \x01(\t\x12\x13\n\x0b\x66ront_hooks\x18\x04 \x01(\t\x12\x12\n\nback_hooks\x18\x05 \x01(\t\x12\x17\n\x0flexicon_symbols\x18\x06 \x01(\t\x12\x18\n\x10inner_front_hook\x18\x07 \x01(\x08\x12\x17\n\x0finner_back_hook\x18\x08 \x01(\x08\"\x9c\x08\n\rSearchRequest\x12=\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParam\x12\x0e\n\x06\x65xpand\x18\x02 \x01(\x08\x1a\"\n\x06MinMax\x12\x0b\n\x03min\x18\x01 \x01(\x05\x12\x0b\n\x03max\x18\x02 \x01(\x05\x1a\x1c\n\x0bStringValue\x12\r\n\x05value\x18\x01 \x01(\t\x1a\x1d\n\x0bStringArray\x12\x0e\n\x06values\x18\x01 \x03(\t\x1a\x1d\n\x0bNumberArray\x12\x0e\n\x06values\x18\x01 \x03(\x05\x1a\x1c\n\x0bNumberValue\x12\r\n\x05value\x18\x01 \x01(\x05\x1a\x8f\x03\n\x0bSearchParam\x12\x38\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.Condition\x12\x34\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00\x12>\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00\x12>\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00\x12>\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00\x12>\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00\x42\x10\n\x0e\x63onditionparam\"\xcd\x02\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12\t\n\x05REGEX\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"N\n\x0eSearchResponse\x12+\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.Alphagram\x12\x0f\n\x07lexicon\x18\x02 \x01(\t2\x9d\x01\n\x10QuestionSearcher\x12\x43\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\x12\x44\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponseB5Z3github.com/domino14/word_db_server/rpc/wordsearcherb\x06proto3')
+  serialized_pb=_b('\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\x92\x01\n\tAlphagram\x12\x11\n\talphagram\x18\x01 \x01(\t\x12!\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x14\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08\x12\x0e\n\x06length\x18\x04 \x01(\x05\x12\x13\n\x0bprobability\x18\x05 \x01(\x05\x12\x14\n\x0c\x63ombinations\x18\x06 \x01(\x03\"\xb0\x01\n\x04Word\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x11\n\talphagram\x18\x02 \x01(\t\x12\x12\n\ndefinition\x18\x03 \x01(\t\x12\x13\n\x0b\x66ront_hooks\x18\x04 \x01(\t\x12\x12\n\nback_hooks\x18\x05 \x01(\t\x12\x17\n\x0flexicon_symbols\x18\x06 \x01(\t\x12\x18\n\x10inner_front_hook\x18\x07 \x01(\x08\x12\x17\n\x0finner_back_hook\x18\x08 \x01(\x08\"\x9c\x08\n\rSearchRequest\x12=\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParam\x12\x0e\n\x06\x65xpand\x18\x02 \x01(\x08\x1a\"\n\x06MinMax\x12\x0b\n\x03min\x18\x01 \x01(\x05\x12\x0b\n\x03max\x18\x02 \x01(\x05\x1a\x1c\n\x0bStringValue\x12\r\n\x05value\x18\x01 \x01(\t\x1a\x1d\n\x0bStringArray\x12\x0e\n\x06values\x18\x01 \x03(\t\x1a\x1d\n\x0bNumberArray\x12\x0e\n\x06values\x18\x01 \x03(\x05\x1a\x1c\n\x0bNumberValue\x12\r\n\x05value\x18\x01 \x01(\x05\x1a\x8f\x03\n\x0bSearchParam\x12\x38\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.Condition\x12\x34\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00\x12>\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00\x12>\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00\x12>\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00\x12>\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00\x42\x10\n\x0e\x63onditionparam\"\xcd\x02\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12\t\n\x05REGEX\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"N\n\x0eSearchResponse\x12+\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.Alphagram\x12\x0f\n\x07lexicon\x18\x02 \x01(\t\"\x91\x01\n\x0e\x41nagramRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x0f\n\x07letters\x18\x02 \x01(\t\x12/\n\x04mode\x18\x03 \x01(\x0e\x32!.wordsearcher.AnagramRequest.Mode\x12\x0e\n\x06\x65xpand\x18\x04 \x01(\x08\"\x1c\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\"G\n\x0f\x41nagramResponse\x12!\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x11\n\tnum_words\x18\x02 \x01(\x05\"\x8c\x01\n\x1b\x42lankChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rnum_questions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x19\n\x11num_with_2_blanks\x18\x04 \x01(\x05\x12\x13\n\x0bword_length\x18\x05 \x01(\x05\"\xa5\x01\n\x1b\x42uildChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rmin_solutions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x12\n\nmin_length\x18\x04 \x01(\x05\x12\x12\n\nmax_length\x18\x05 \x01(\x05\x12\x1f\n\x17require_length_solution\x18\x06 \x01(\x08\x32\x9d\x01\n\x10QuestionSearcher\x12\x43\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\x12\x44\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponse2\x98\x02\n\nAnagrammer\x12\x46\n\x07\x41nagram\x12\x1c.wordsearcher.AnagramRequest\x1a\x1d.wordsearcher.AnagramResponse\x12`\n\x15\x42lankChallengeCreator\x12).wordsearcher.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\x12`\n\x15\x42uildChallengeCreator\x12).wordsearcher.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponseB5Z3github.com/domino14/word_db_server/rpc/wordsearcherb\x06proto3')
 )
 
 
@@ -128,6 +128,28 @@ _SEARCHREQUEST_NOTINLEXCONDITION = _descriptor.EnumDescriptor(
   serialized_end=1430,
 )
 _sym_db.RegisterEnumDescriptor(_SEARCHREQUEST_NOTINLEXCONDITION)
+
+_ANAGRAMREQUEST_MODE = _descriptor.EnumDescriptor(
+  name='Mode',
+  full_name='wordsearcher.AnagramRequest.Mode',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='EXACT', index=0, number=0,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BUILD', index=1, number=1,
+      serialized_options=None,
+      type=None),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=1630,
+  serialized_end=1658,
+)
+_sym_db.RegisterEnumDescriptor(_ANAGRAMREQUEST_MODE)
 
 
 _ALPHAGRAM = _descriptor.Descriptor(
@@ -578,6 +600,222 @@ _SEARCHRESPONSE = _descriptor.Descriptor(
   serialized_end=1510,
 )
 
+
+_ANAGRAMREQUEST = _descriptor.Descriptor(
+  name='AnagramRequest',
+  full_name='wordsearcher.AnagramRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='lexicon', full_name='wordsearcher.AnagramRequest.lexicon', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='letters', full_name='wordsearcher.AnagramRequest.letters', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mode', full_name='wordsearcher.AnagramRequest.mode', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='expand', full_name='wordsearcher.AnagramRequest.expand', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _ANAGRAMREQUEST_MODE,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1513,
+  serialized_end=1658,
+)
+
+
+_ANAGRAMRESPONSE = _descriptor.Descriptor(
+  name='AnagramResponse',
+  full_name='wordsearcher.AnagramResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='words', full_name='wordsearcher.AnagramResponse.words', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='num_words', full_name='wordsearcher.AnagramResponse.num_words', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1660,
+  serialized_end=1731,
+)
+
+
+_BLANKCHALLENGECREATEREQUEST = _descriptor.Descriptor(
+  name='BlankChallengeCreateRequest',
+  full_name='wordsearcher.BlankChallengeCreateRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='lexicon', full_name='wordsearcher.BlankChallengeCreateRequest.lexicon', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='num_questions', full_name='wordsearcher.BlankChallengeCreateRequest.num_questions', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='max_solutions', full_name='wordsearcher.BlankChallengeCreateRequest.max_solutions', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='num_with_2_blanks', full_name='wordsearcher.BlankChallengeCreateRequest.num_with_2_blanks', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='word_length', full_name='wordsearcher.BlankChallengeCreateRequest.word_length', index=4,
+      number=5, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1734,
+  serialized_end=1874,
+)
+
+
+_BUILDCHALLENGECREATEREQUEST = _descriptor.Descriptor(
+  name='BuildChallengeCreateRequest',
+  full_name='wordsearcher.BuildChallengeCreateRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='lexicon', full_name='wordsearcher.BuildChallengeCreateRequest.lexicon', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='min_solutions', full_name='wordsearcher.BuildChallengeCreateRequest.min_solutions', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='max_solutions', full_name='wordsearcher.BuildChallengeCreateRequest.max_solutions', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='min_length', full_name='wordsearcher.BuildChallengeCreateRequest.min_length', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='max_length', full_name='wordsearcher.BuildChallengeCreateRequest.max_length', index=4,
+      number=5, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='require_length_solution', full_name='wordsearcher.BuildChallengeCreateRequest.require_length_solution', index=5,
+      number=6, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1877,
+  serialized_end=2042,
+)
+
 _ALPHAGRAM.fields_by_name['words'].message_type = _WORD
 _SEARCHREQUEST_MINMAX.containing_type = _SEARCHREQUEST
 _SEARCHREQUEST_STRINGVALUE.containing_type = _SEARCHREQUEST
@@ -610,10 +848,17 @@ _SEARCHREQUEST.fields_by_name['searchparams'].message_type = _SEARCHREQUEST_SEAR
 _SEARCHREQUEST_CONDITION.containing_type = _SEARCHREQUEST
 _SEARCHREQUEST_NOTINLEXCONDITION.containing_type = _SEARCHREQUEST
 _SEARCHRESPONSE.fields_by_name['alphagrams'].message_type = _ALPHAGRAM
+_ANAGRAMREQUEST.fields_by_name['mode'].enum_type = _ANAGRAMREQUEST_MODE
+_ANAGRAMREQUEST_MODE.containing_type = _ANAGRAMREQUEST
+_ANAGRAMRESPONSE.fields_by_name['words'].message_type = _WORD
 DESCRIPTOR.message_types_by_name['Alphagram'] = _ALPHAGRAM
 DESCRIPTOR.message_types_by_name['Word'] = _WORD
 DESCRIPTOR.message_types_by_name['SearchRequest'] = _SEARCHREQUEST
 DESCRIPTOR.message_types_by_name['SearchResponse'] = _SEARCHRESPONSE
+DESCRIPTOR.message_types_by_name['AnagramRequest'] = _ANAGRAMREQUEST
+DESCRIPTOR.message_types_by_name['AnagramResponse'] = _ANAGRAMRESPONSE
+DESCRIPTOR.message_types_by_name['BlankChallengeCreateRequest'] = _BLANKCHALLENGECREATEREQUEST
+DESCRIPTOR.message_types_by_name['BuildChallengeCreateRequest'] = _BUILDCHALLENGECREATEREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Alphagram = _reflection.GeneratedProtocolMessageType('Alphagram', (_message.Message,), dict(
@@ -692,6 +937,34 @@ SearchResponse = _reflection.GeneratedProtocolMessageType('SearchResponse', (_me
   ))
 _sym_db.RegisterMessage(SearchResponse)
 
+AnagramRequest = _reflection.GeneratedProtocolMessageType('AnagramRequest', (_message.Message,), dict(
+  DESCRIPTOR = _ANAGRAMREQUEST,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
+  # @@protoc_insertion_point(class_scope:wordsearcher.AnagramRequest)
+  ))
+_sym_db.RegisterMessage(AnagramRequest)
+
+AnagramResponse = _reflection.GeneratedProtocolMessageType('AnagramResponse', (_message.Message,), dict(
+  DESCRIPTOR = _ANAGRAMRESPONSE,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
+  # @@protoc_insertion_point(class_scope:wordsearcher.AnagramResponse)
+  ))
+_sym_db.RegisterMessage(AnagramResponse)
+
+BlankChallengeCreateRequest = _reflection.GeneratedProtocolMessageType('BlankChallengeCreateRequest', (_message.Message,), dict(
+  DESCRIPTOR = _BLANKCHALLENGECREATEREQUEST,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
+  # @@protoc_insertion_point(class_scope:wordsearcher.BlankChallengeCreateRequest)
+  ))
+_sym_db.RegisterMessage(BlankChallengeCreateRequest)
+
+BuildChallengeCreateRequest = _reflection.GeneratedProtocolMessageType('BuildChallengeCreateRequest', (_message.Message,), dict(
+  DESCRIPTOR = _BUILDCHALLENGECREATEREQUEST,
+  __module__ = 'rpc.wordsearcher.searcher_pb2'
+  # @@protoc_insertion_point(class_scope:wordsearcher.BuildChallengeCreateRequest)
+  ))
+_sym_db.RegisterMessage(BuildChallengeCreateRequest)
+
 
 DESCRIPTOR._options = None
 
@@ -701,8 +974,8 @@ _QUESTIONSEARCHER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=1513,
-  serialized_end=1670,
+  serialized_start=2045,
+  serialized_end=2202,
   methods=[
   _descriptor.MethodDescriptor(
     name='Search',
@@ -726,5 +999,47 @@ _QUESTIONSEARCHER = _descriptor.ServiceDescriptor(
 _sym_db.RegisterServiceDescriptor(_QUESTIONSEARCHER)
 
 DESCRIPTOR.services_by_name['QuestionSearcher'] = _QUESTIONSEARCHER
+
+
+_ANAGRAMMER = _descriptor.ServiceDescriptor(
+  name='Anagrammer',
+  full_name='wordsearcher.Anagrammer',
+  file=DESCRIPTOR,
+  index=1,
+  serialized_options=None,
+  serialized_start=2205,
+  serialized_end=2485,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='Anagram',
+    full_name='wordsearcher.Anagrammer.Anagram',
+    index=0,
+    containing_service=None,
+    input_type=_ANAGRAMREQUEST,
+    output_type=_ANAGRAMRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='BlankChallengeCreator',
+    full_name='wordsearcher.Anagrammer.BlankChallengeCreator',
+    index=1,
+    containing_service=None,
+    input_type=_BLANKCHALLENGECREATEREQUEST,
+    output_type=_SEARCHRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='BuildChallengeCreator',
+    full_name='wordsearcher.Anagrammer.BuildChallengeCreator',
+    index=2,
+    containing_service=None,
+    input_type=_BUILDCHALLENGECREATEREQUEST,
+    output_type=_SEARCHRESPONSE,
+    serialized_options=None,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_ANAGRAMMER)
+
+DESCRIPTOR.services_by_name['Anagrammer'] = _ANAGRAMMER
 
 # @@protoc_insertion_point(module_scope)

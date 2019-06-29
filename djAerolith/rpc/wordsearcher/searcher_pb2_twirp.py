@@ -99,3 +99,71 @@ class QuestionSearcherClient(object):
         resp_str = self.__make_request(body=body, full_method=full_method)
         return deserialize(resp_str)
 
+class AnagrammerClient(object):
+    def __init__(self, server_address):
+        """Creates a new client for the Anagrammer service.
+
+        Args:
+            server_address: The address of the server to send requests to, in
+                the full protocol://host:port form.
+        """
+        if sys.version_info[0] > 2:
+            self.__target = server_address
+        else:
+            self.__target = server_address.encode('ascii')
+        self.__service_name = "wordsearcher.Anagrammer"
+
+    def __make_request(self, body, full_method):
+        req = Request(
+            url=self.__target + "/twirp" + full_method,
+            data=body,
+            headers={"Content-Type": "application/protobuf"},
+        )
+        try:
+            resp = urlopen(req)
+        except HTTPError as err:
+            raise TwirpException.from_http_err(err)
+
+        return resp.read()
+
+    def anagram(self, anagram_request):
+        """
+        Anagram does a simple anagram search; it can either be
+        build mode or regular (exact) mode.
+        Maybe can add Regex later.
+        """
+
+        serialize = _sym_db.GetSymbol("wordsearcher.AnagramRequest").SerializeToString
+        deserialize = _sym_db.GetSymbol("wordsearcher.AnagramResponse").FromString
+
+        full_method = "/{}/{}".format(self.__service_name, "Anagram")
+        body = serialize(anagram_request)
+        resp_str = self.__make_request(body=body, full_method=full_method)
+        return deserialize(resp_str)
+
+    def blank_challenge_creator(self, blank_challenge_create_request):
+        """
+        BlankChallengeCreator creates blank challenges for Aerolith
+        """
+
+        serialize = _sym_db.GetSymbol("wordsearcher.BlankChallengeCreateRequest").SerializeToString
+        deserialize = _sym_db.GetSymbol("wordsearcher.SearchResponse").FromString
+
+        full_method = "/{}/{}".format(self.__service_name, "BlankChallengeCreator")
+        body = serialize(blank_challenge_create_request)
+        resp_str = self.__make_request(body=body, full_method=full_method)
+        return deserialize(resp_str)
+
+    def build_challenge_creator(self, build_challenge_create_request):
+        """
+        BuildChallengeCreator creates build challenges for Aerolith.
+        """
+
+        serialize = _sym_db.GetSymbol("wordsearcher.BuildChallengeCreateRequest").SerializeToString
+        deserialize = _sym_db.GetSymbol("wordsearcher.SearchResponse").FromString
+
+        full_method = "/{}/{}".format(self.__service_name, "BuildChallengeCreator")
+        body = serialize(build_challenge_create_request)
+        resp_str = self.__make_request(body=body, full_method=full_method)
+        return deserialize(resp_str)
+
