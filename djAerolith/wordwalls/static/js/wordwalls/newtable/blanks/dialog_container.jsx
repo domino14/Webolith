@@ -77,8 +77,7 @@ class BlanksDialogContainer extends React.Component {
     reqObj.setNumWith2Blanks(num2Blanks);
 
     this.props.wordServerRPC.blankChallengeCreator(reqObj)
-      .then((result) => {
-        console.log('thre result was', result);
+      .then(result =>
         this.props.api.call(RAW_QUESTIONS_URL, {
           lexicon: this.props.lexicon,
           rawQuestions: pbToQuestions(result),
@@ -87,8 +86,7 @@ class BlanksDialogContainer extends React.Component {
           tablenum: this.props.tablenum,
         })
           .then(data => this.props.onLoadNewList(data))
-          .catch(error => this.props.notifyError(error))
-      })
+          .catch(error => this.props.notifyError(error)))
       .catch((error) => {
         if (error.message.includes('timed out')) {
           this.props.notifyError([
