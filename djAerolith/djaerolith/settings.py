@@ -360,10 +360,9 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
-WORD_DB_LOCATION = os.environ.get('WORD_DB_LOCATION')
-# See github.com/domino14/macondo
-# Tool used for generating blank bingos (and more in the future)
-MACONDO_ADDRESS = os.environ.get('MACONDO_ADDRESS')
+# See github.com/domino14/word_db_server
+WORD_DB_SERVER_ADDRESS = os.environ.get('WORD_DB_SERVER_ADDRESS',
+                                        'http://word_db_server:8180')
 
 BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
 

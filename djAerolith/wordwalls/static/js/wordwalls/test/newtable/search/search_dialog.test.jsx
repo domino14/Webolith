@@ -64,11 +64,11 @@ describe('<SearchDialogContainer />', () => {
       sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
         lexicon: 3,
         searchCriteria: [{
-          searchType: 'length',
+          searchType: 1,
           minValue: 7,
           maxValue: 7,
         }, {
-          searchType: 'probability_range',
+          searchType: 2,
           minValue: 1,
           maxValue: 200,
         }],
@@ -103,15 +103,15 @@ describe('<SearchDialogContainer />', () => {
       sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
         lexicon: 3,
         searchCriteria: [{
-          searchType: 'length',
+          searchType: 1,
           minValue: 7,
           maxValue: 7,
         }, {
-          searchType: 'probability_range',
+          searchType: 2,
           minValue: 1,
           maxValue: 200,
         }, {
-          searchType: 'point_value',
+          searchType: 8,
           minValue: 2,
           maxValue: 30,
         }],

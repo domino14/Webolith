@@ -1,4 +1,5 @@
 """
+XXX: UPGRADE FOR word_db_helper
 A management script to get information about toughie bingos.
 
 """
@@ -9,7 +10,6 @@ from django.db import connection
 
 from lib.domain import Alphagram
 from lib.word_db_helper import WordDB
-
 
 
 class Bingo(object):

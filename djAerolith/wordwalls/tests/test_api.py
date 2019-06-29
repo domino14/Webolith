@@ -102,7 +102,7 @@ class WordwallsNewChallengeTest(TestCase):
         result = self.client.post(
             '/wordwalls/api/new_challenge/',
             data=json.dumps({
-                'lexicon': 7,
+                'lexicon': 9,
                 'challenge': 14,
                 'date': '2013-11-29',
                 'tablenum': 0
@@ -114,7 +114,7 @@ class WordwallsNewChallengeTest(TestCase):
         addl_params = json.loads(response.context['addParams'])
         tablenum = int(response.context['tablenum'])
         self.assertEqual(addl_params['tempListName'],
-                         'America Today\'s 15s - 2013-11-29')
+                         'NWL18 Today\'s 15s - 2013-11-29')
 
         game = WordwallsGame()
         old_word_list = game.get_wgm(tablenum, lock=False).word_list
@@ -124,13 +124,13 @@ class WordwallsNewChallengeTest(TestCase):
 
         result = self.client.post('/wordwalls/api/new_challenge/',
                                   data=json.dumps({'tablenum': tablenum,
-                                                   'lexicon': 1,
+                                                   'lexicon': 12,
                                                    'challenge': 7,
                                                    'date': '2016-10-12'}),
                                   content_type='application/json')
         result_obj = json.loads(result.content)
         self.assertEqual(result_obj['tablenum'], tablenum)
-        expected_list_name = 'CSW15 Today\'s 8s - 2016-10-12'
+        expected_list_name = 'CSW19 Today\'s 8s - 2016-10-12'
         self.assertEqual(result_obj['list_name'], expected_list_name)
         self.assertFalse(result_obj['autosave'])
         game = WordwallsGame()
@@ -191,15 +191,15 @@ class WordwallsNewSearchTest(TestCase):
         result = self.client.post(
             '/wordwalls/api/new_search/',
             data=json.dumps({'tablenum': tablenum,
-                             'lexicon': 1,
+                             'lexicon': 12,
                              'desiredTime': 4.5,
                              'questionsPerRound': 75,
                              'searchCriteria': [{
-                                 'searchType': 'length',
+                                 'searchType': 1,  # see protobuf file for defs
                                  'minValue': 9,
                                  'maxValue': 9,
                              }, {
-                                 'searchType': 'probability_range',
+                                 'searchType': 2,  # see protobuf file for defs
                                  'minValue': 84,
                                  'maxValue': 223,
                              }]
@@ -208,7 +208,7 @@ class WordwallsNewSearchTest(TestCase):
         self.assertEqual(result.status_code, 200)
         result_obj = json.loads(result.content)
         self.assertEqual(result_obj['tablenum'], tablenum)
-        expected_list_name = 'CSW15 9s (84 - 223)'
+        expected_list_name = 'CSW19 9s (84 - 223)'
         self.assertEqual(result_obj['list_name'], expected_list_name)
         self.assertFalse(result_obj['autosave'])
         game = WordwallsGame()

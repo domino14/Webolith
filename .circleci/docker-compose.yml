@@ -1,0 +1,62 @@
+# This file is used for tests. Note the paths are relative to the
+# root directory, not the .circleci directory. This docker-compose file
+# gets copied to the root directory in circleci.
+version: "3"
+
+services:
+  pgdb:
+    image: postgres
+    environment:
+      POSTGRES_DB: djaerolith
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - pg-data-volume:/var/lib/postgresql/data
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    networks:
+      aeronet:
+
+  app:
+    environment:
+      - PGSQL_DB_NAME=circle
+      - PGSQL_USER=postgres
+      - PGSQL_HOST=pgdb
+      - PGSQL_PASSWORD=pass
+      - INTERCOM_APP_SECRET_KEY=abcdefghijklmnopqrstuvwxyz
+      # Just some random secret key
+      - SECRET_KEY=csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
+    build: .
+    working_dir: /opt/webolith/djAerolith
+    depends_on:
+      - pgdb
+      - word_db_server
+    links:
+      - pgdb
+    command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - aeronet
+
+  word_db_server:
+    image: domino14/word_db_server:latest
+    environment:
+      LEXICON_PATH: /opt/lexica
+      LOG_LEVEL: debug
+    volumes:
+      - /home/circleci/word-game-lexica:/opt/lexica
+    expose:
+      - 8180
+    ports:
+      - 8180:8180
+    networks:
+      - aeronet
+
+volumes:
+  pg-data-volume:
+    external: false
+
+networks:
+  aeronet:
+    driver: bridge

@@ -9,13 +9,16 @@ import Pills from './pills';
 import Notifications from '../notifications';
 import Sidebar from './sidebar';
 import WordwallsAPI from '../wordwalls_api';
-import GenericRPC from '../generic_rpc';
 
 import ChallengeDialogContainer from './challenges/dialog_container';
 import BlankSearchDialogContainer from './blanks/dialog_container';
 import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
+
+// This auto-generated code has no exports. We will import it and use
+// its globals.
+import { createAnagrammerClient } from '../gen/rpc/wordsearcher/searcher_pb_twirp';
 
 const GAME_TYPE_NEW = 'Load New List';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
@@ -114,7 +117,7 @@ class TableCreator extends React.Component {
     this.showSpinner = this.showSpinner.bind(this);
     this.hideSpinner = this.hideSpinner.bind(this);
     this.api = new WordwallsAPI();
-    this.macondoRPC = new GenericRPC('/macondo/rpc');
+    this.wordServerRPC = createAnagrammerClient('/word_db_server');
   }
 
   /**
@@ -430,7 +433,7 @@ class TableCreator extends React.Component {
             notifyError={notifyError}
             redirectUrl={TableCreator.redirectUrl}
             api={this.api}
-            macondoRPC={this.macondoRPC}
+            wordServerRPC={this.wordServerRPC}
             disabled={this.props.gameGoing}
           />);
         break;

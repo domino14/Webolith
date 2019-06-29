@@ -1,12 +1,5 @@
 import json
 import random
-import sys
-
-
-def stdout_encode(u, default='UTF8'):
-    if sys.stdout.encoding:
-        return u.encode(sys.stdout.encoding)
-    return u.encode(default)
 
 
 class Word:
@@ -24,10 +17,10 @@ class Word:
         self.inner_back_hook = True if inner_back_hook == 1 else False
 
     def __repr__(self):
-        return stdout_encode(self.__str__())
+        return self.__str__()
 
     def __str__(self):
-        return '{%s}' % self.word
+        return f'{{self.word}}'
 
     def __eq__(self, other):
         return self.word == other.word
@@ -47,10 +40,10 @@ class Alphagram:
         return not self.__eq__(other)
 
     def __repr__(self):
-        return stdout_encode(self.__str__())
+        return self.__str__()
 
     def __str__(self):
-        return '{%s} (%s)' % (self.alphagram, self.probability)
+        return f'{self.alphagram} ({self.probability})'
 
 
 class Questions:
@@ -113,6 +106,37 @@ class Questions:
             question.set_from_obj(q)
             self.append(question)
 
+    def set_from_pb_alphagrams(self, pba):
+        """
+        Set Questions from a protobuf Alphagrams object.
+
+        """
+        self.clear()
+        for alphagram in pba:
+            question = Question(
+                # sorry:
+                alphagram=Alphagram(alphagram.alphagram,
+                                    alphagram.probability,
+                                    alphagram.combinations),
+                answers=self.words_from_pb(alphagram.words))
+            self.append(question)
+
+    def words_from_pb(self, pbw):
+        """
+        Turn the protobuf list of Words into a list of domain.Word
+
+        """
+        words = []
+        for word in pbw:
+            w = Word(word=word.word, alphagram=word.alphagram,
+                     definition=word.definition, front_hooks=word.front_hooks,
+                     back_hooks=word.back_hooks,
+                     lexicon_symbols=word.lexicon_symbols,
+                     inner_front_hook=word.inner_front_hook,
+                     inner_back_hook=word.inner_back_hook)
+            words.append(w)
+        return words
+
     def sort_by_probability(self):
         self.questions.sort(key=lambda q: q.alphagram.probability)
 
@@ -123,17 +147,17 @@ class Questions:
         return [a.alphagram.alphagram for a in self.questions]
 
     def __repr__(self):
-        return stdout_encode(self.__str__())
+        return self.__str__()
 
     def __str__(self):
-        return '{<Questions %s>}' % self.questions
+        return f'{{<Questions {self.questions}>}}'
 
 
 class Question:
     def __init__(self, alphagram=None, answers=None):
         """
         alphagram - An Alphagram object.
-        answers - A list of Word objects. see word_db_helper.py
+        answers - A list of Word objects. see wdb_helper.py
 
         """
         self.alphagram = alphagram
@@ -172,8 +196,7 @@ class Question:
         self.set_answers_from_word_list(obj['a'])
 
     def __repr__(self):
-        return stdout_encode(self.__str__())
+        return self.__str__()
 
     def __str__(self):
-        return '<Question: %s (%s)>' % (self.alphagram,
-                                        self.answers)
+        return f'<Question: {self.alphagram} ({self.answers})>'

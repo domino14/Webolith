@@ -1,9 +1,11 @@
 import logging
+from typing import List
+
+from django.utils.translation import ugettext as _
 
 from base.models import alphagrammize
-from lib.domain import Alphagram
-from lib.word_db_helper import WordDB
-from django.utils.translation import ugettext as _
+from lib.wdb_interface.wdb_helper import (questions_from_probability_range,
+                                          questions_from_alpha_dicts)
 
 logger = logging.getLogger(__name__)
 FETCH_MANY_SIZE = 1000
@@ -13,10 +15,10 @@ class UserListParseException(Exception):
     pass
 
 
-def get_alphas_from_words(contents: str, max_words):
+def get_alphas_from_words(contents: str, max_words: int) -> List[str]:
     """
     Get all the alphagrams from the given words. Return a list of
-    Alphagram objects.
+    alphagrams
 
     """
     line_number = 0
@@ -36,7 +38,7 @@ def get_alphas_from_words(contents: str, max_words):
             except KeyError:
                 raise UserListParseException(
                     _('List contains invalid characters.'))
-    return [Alphagram(a) for a in alpha_set]
+    return list(alpha_set)
 
 
 def generate_question_list(questions):
@@ -62,9 +64,8 @@ def generate_question_list_from_alphagrams(lexicon, alph_objects):
     objects.
 
     """
-    db = WordDB(lexicon.lexiconName)
-    return generate_question_list(
-        db.get_questions_from_alph_dicts(alph_objects))
+    return generate_question_list(questions_from_alpha_dicts(lexicon,
+                                                             alph_objects))
 
 
 def generate_question_map_from_alphagrams(lexicon, alph_objects):
@@ -72,15 +73,14 @@ def generate_question_map_from_alphagrams(lexicon, alph_objects):
     Generate a question map from a list of {'q': ..., 'a': [..]} objects.
 
     """
-    db = WordDB(lexicon.lexiconName)
-    return generate_question_map(
-        db.get_questions_from_alph_dicts(alph_objects))
+    return generate_question_map(questions_from_alpha_dicts(lexicon,
+                                                            alph_objects))
 
 
-def question_list_from_probabilities(lexicon, p_min, p_max, length):
-    """ Generate a list of questions from a probability range."""
-    db = WordDB(lexicon.lexiconName)
-    questions = db.get_questions_for_probability_range(p_min, p_max, length)
+def expanded_question_list_from_probabilities(lexicon, p_min, p_max, length):
+    """ Generate a full list of questions from a probability range."""
+    questions = questions_from_probability_range(lexicon, p_min, p_max, length,
+                                                 expand=True)
     return generate_question_list(questions)
 
 

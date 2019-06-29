@@ -13,7 +13,12 @@ from wordwalls.models import (
 from base.models import Lexicon, WordList
 from base.forms import SavedListForm
 from lib.response import response, bad_request
-from lib.word_searches import SearchDescription
+from lib.wdb_interface.word_searches import (SearchDescription,
+                                             MIN_MAX_DESCRIPTIONS,
+                                             SINGLE_NUMBER_DESCRIPTIONS,
+                                             SINGLE_STRING_DESCRIPTIONS,
+                                             TAGS_DESCRIPTION,
+                                             SearchCriterionFn)
 from wordwalls.views import (get_leaderboard_data,
                              get_leaderboard_data_for_dc_instance)
 from wordwalls.challenges import toughies_challenge_date
@@ -239,31 +244,35 @@ def build_search_criteria(user, lexicon, fe_search_criteria):
     ]
     hold_until_end = None
     for criterion in fe_search_criteria:
-        criterion_fn = getattr(SearchDescription, criterion['searchType'])
+        if isinstance(criterion['searchType'], str):
+            # XXX: Remove a bit after deploy.
+            raise GameInitException(
+                'Please refresh the app; there has been an update.')
+        try:
+            criterion_fn = SearchCriterionFn(criterion['searchType'])
+        except AttributeError:
+            raise GameInitException(
+                f'Cannot handle search type {criterion["searchType"]}')
 
-        if criterion['searchType'] in (SearchDescription.LENGTH,
-                                       SearchDescription.PROB_RANGE,
-                                       SearchDescription.NUM_ANAGRAMS,
-                                       SearchDescription.NUM_VOWELS,
-                                       SearchDescription.POINT_VALUE,
-                                       SearchDescription.PROB_LIMIT):
+        if criterion['searchType'] in MIN_MAX_DESCRIPTIONS:
             search.append(criterion_fn(int(criterion['minValue']),
                                        int(criterion['maxValue'])))
 
-        elif criterion['searchType'] in (SearchDescription.NOT_IN_LEXICON,):
+        elif criterion['searchType'] in SINGLE_NUMBER_DESCRIPTIONS:
             search.append(criterion_fn(criterion['value']))
 
-        elif criterion['searchType'] == SearchDescription.HAS_TAGS:
+        elif criterion['searchType'] == TAGS_DESCRIPTION:
             tags = criterion['value'].split(',')
             new_tags = []
             for t in tags:
                 stripped = t.strip()
                 if stripped != '':
                     new_tags.append(stripped)
+
             if hold_until_end:
                 raise GameInitException('You can only specify one set of tags')
-            hold_until_end = criterion_fn(new_tags, user)
-        elif criterion['searchType'] == SearchDescription.MATCHING_ANAGRAM:
+            hold_until_end = criterion_fn(new_tags, user, lexicon)
+        elif criterion['searchType'] in SINGLE_STRING_DESCRIPTIONS:
             search.append(criterion_fn(criterion['value'].strip()))
 
     if hold_until_end:
@@ -291,8 +300,7 @@ def new_search(request, parsed_req_body):
             multiplayer=parsed_req_body['multiplayer'])
     except GameInitException as e:
         return bad_request(str(e))
-    except AttributeError as e:
-        return bad_request('Stop hacking me bro')
+
     return table_response(tablenum)
 
 

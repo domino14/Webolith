@@ -7,7 +7,7 @@ import webpackDev from './webpack.config.babel';
 const webpack = require('webpack');
 const _ = require('underscore');
 const CompressionPlugin = require('compression-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const prodConfig = _.defaults({
@@ -45,7 +45,9 @@ const prodConfig = _.defaults({
     }),
   ],
   optimization: {
-    minimizer: [new UglifyJsPlugin()],
+    minimizer: [new TerserWebpackPlugin({
+      parallel: true,
+    })],
     splitChunks: {
       cacheGroups: {
         node_vendors: {

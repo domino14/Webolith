@@ -12,10 +12,11 @@ from wordwalls.models import (DailyChallengeName, DailyChallenge,
                               DailyChallengeMissedBingos,
                               DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry)
-from lib.word_db_helper import WordDB
 from lib.domain import Question, Questions, Alphagram
-from lib.macondo_interface import (gen_blank_challenges, gen_build_challenge,
-                                   MacondoError)
+from lib.wdb_interface.anagrammer import (gen_blank_challenges, gen_build_challenge,
+                                          WDBError)
+from lib.wdb_interface.wdb_helper import (questions_from_probability_list,
+                                          questions_from_alphagrams)
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,6 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     """
     logger.info('Trying to create challenge {} for {} ({})'.format(
         challenge_name, lex, challenge_date))
-    db = WordDB(lex.lexiconName)
     # capture number. first try to match to today's lists
     m = re.match("Today's (?P<length>[0-9]+)s",
                  challenge_name.name)
@@ -53,7 +53,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         r = list(range(min_p, max_p + 1))
         random.shuffle(r)
         # Just the first 50 elements for the daily challenge.
-        return (db.get_questions_for_probability_list(r[:50], word_length),
+        return (questions_from_probability_list(lex, r[:50], word_length),
                 challenge_name.timeSecs)
     # There was no match, check other possible challenge names.
     if challenge_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
@@ -61,7 +61,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
         random.shuffle(alphagrams)
         if len(alphagrams) == 0:
             return Questions(), 0
-        return (db.get_questions_from_alphagrams(alphagrams),
+        return (questions_from_alphagrams(lex, alphagrams),
                 challenge_name.timeSecs)
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
         questions = generate_blank_bingos_challenge(lex)
@@ -74,8 +74,7 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             max_p = json.loads(lex.lengthCounts)[str(lgt)]
             r = list(range(min_p, max_p + 1))
             random.shuffle(r)
-            questions.extend(
-                db.get_questions_for_probability_list(r[:50], lgt))
+            questions.extend(questions_from_probability_list(lex, r[:50], lgt))
         return questions, challenge_name.timeSecs
     # elif challenge_name.name in (DailyChallengeName.COMMON_SHORT,
     #                              DailyChallengeName.COMMON_LONG):
@@ -117,8 +116,8 @@ def generate_blank_bingos_challenge(lex):
     for length in (7, 8):
         try:
             challs = gen_blank_challenges(length, lex.lexiconName, 2, 25, 5)
-        except MacondoError:
-            logger.exception('[event=macondoerror]')
+        except WDBError:
+            logger.exception('[event=wdberror]')
             return bingos
         for chall in challs:
             question = Question(Alphagram(chall['q']), [])
@@ -156,13 +155,13 @@ def generate_word_builder_challenge(lex, lmin, lmax):
     q_struct = Questions()
 
     try:
-        question, num_answers = gen_build_challenge(
+        questions = gen_build_challenge(
             lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols)
-    except MacondoError:
-        logger.exception('[event=macondoerror]')
+    except WDBError:
+        logger.exception('[event=wdberror]')
         return q_struct
-    ret_question = Question(Alphagram(question['q']), [])
-    ret_question.set_answers_from_word_list(question['a'])
+    ret_question = Question(Alphagram(questions[0]['q']), [])
+    ret_question.set_answers_from_word_list(questions[0]['a'])
     q_struct.append(ret_question)
     q_struct.set_build_mode()
     return q_struct
@@ -176,7 +175,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     about 7s and 8s now so it would only give us those...
 
     Returns:
-        A list of Alphagram objects.
+        A list of string alphagrams.
     """
     # Find all challenges matching these parameters
     challenges = DailyChallenge.objects.filter(lexicon=lex).filter(
@@ -212,12 +211,12 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
                 mb_dict[alphagram] = alphagram, perc_correct
         else:
             mb_dict[alphagram] = alphagram, perc_correct
-    logger.debug('Created missed bingo dictionary...')
     # Sort by difficulty in reverse order (most difficult first)
-    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[:num]
-    logger.debug('Sorted by difficulty, returning...')
+    alphs = sorted(list(mb_dict.items()),
+                   key=lambda x: x[1][1], reverse=True)[:num]
+    logger.debug('Sorted by difficulty, returning... %s', alphs)
     # And just return the alphagram portion.
-    return [Alphagram(a[0]) for a in alphs]
+    return [a[0] for a in alphs]
 
 
 def generate_toughies_challenge(lexicon, requested_date):
@@ -234,7 +233,7 @@ def generate_toughies_challenge(lexicon, requested_date):
     alphagrams.extend(gen_toughies_by_challenge(
         DailyChallengeName.objects.get(name="Today's 8s"), 25, min_date,
         max_date, lexicon))
-    logger.debug('Generated!')
+    logger.debug('Generated! %s', alphagrams)
     return alphagrams
 
 

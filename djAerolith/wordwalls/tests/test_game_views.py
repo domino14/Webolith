@@ -34,14 +34,14 @@ class WordwallsGameStartTest(TestCase):
             '/wordwalls/api/new_search/',
             data=json.dumps({
                 'desiredTime': 5,
-                'lexicon': 1,
+                'lexicon': 12,
                 'questionsPerRound': 60,
                 'searchCriteria': [{
-                    'searchType': 'length',
+                    'searchType': 1,
                     'minValue': 8,
                     'maxValue': 8,
                 }, {
-                    'searchType': 'probability_range',
+                    'searchType': 2,
                     'minValue': 523,
                     'maxValue': 784,
                 }],
@@ -55,7 +55,7 @@ class WordwallsGameStartTest(TestCase):
         # Test that the temporary list name was generated correctly.
         addl_params = json.loads(response.context['addParams'])
         self.assertEqual(addl_params['tempListName'],
-                         'CSW15 8s (523 - 784)')
+                         'CSW19 8s (523 - 784)')
 
     def test_unique_temp_list_name(self):
         # This would create a list with the same name for this user.
@@ -65,11 +65,11 @@ class WordwallsGameStartTest(TestCase):
                 'lexicon': 7,
                 'questionsPerRound': 50,
                 'searchCriteria': [{
-                    'searchType': 'length',
+                    'searchType': 1,
                     'minValue': 8,
                     'maxValue': 8,
                 }, {
-                    'searchType': 'probability_range',
+                    'searchType': 2,
                     'minValue': 151,
                     'maxValue': 200,
                 }],
@@ -118,7 +118,7 @@ class WordwallsGameStartTest(TestCase):
         result = self.client.post(
             '/wordwalls/api/new_challenge/',
             data=json.dumps({
-                'lexicon': 7,
+                'lexicon': 9,
                 'challenge': 14,
                 'date': '2013-11-29',
                 'tablenum': 0,
@@ -130,7 +130,7 @@ class WordwallsGameStartTest(TestCase):
         addl_params = json.loads(response.context['addParams'])
         tablenum = response.context['tablenum']
         self.assertEqual(addl_params['tempListName'],
-                         'America Today\'s 15s - 2013-11-29')
+                         'NWL18 Today\'s 15s - 2013-11-29')
         word_list = WordwallsGameModel.objects.get(pk=tablenum).word_list
         qs = json.loads(word_list.origQuestions)
         self.assertEqual(len(qs), 50)

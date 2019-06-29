@@ -7,7 +7,8 @@ import ContainerWithSearchRows from '../dialog_container_with_search_rows';
 import { SearchTypesEnum, SearchCriterion } from '../search/types';
 
 import WordwallsAPI from '../../wordwalls_api';
-import GenericRPC from '../../generic_rpc';
+
+import wordsearcher from '../../gen/rpc/wordsearcher/searcher_pb';
 
 const RAW_QUESTIONS_URL = '/wordwalls/api/load_raw_questions/';
 
@@ -17,6 +18,24 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.NUM_TWO_BLANKS,
 ]);
 
+/**
+ * Convert the raw protobuf wordsearcher.SearchResponse object to a list of
+ * raw question dictionaries.
+ * Note: the pb object is not actually raw. The generated twirp code seems
+ * to parse it into an intermediate object.
+ */
+function pbToQuestions(pb) {
+  const alphList = pb.alphagramsList;
+  const rawQs = alphList.map((alph) => {
+    const words = alph.wordsList;
+    const wl = words.map(w => w.word);
+    return {
+      q: alph.alphagram,
+      a: wl,
+    };
+  });
+  return rawQs;
+}
 
 class BlanksDialogContainer extends React.Component {
   constructor(props) {
@@ -24,8 +43,8 @@ class BlanksDialogContainer extends React.Component {
     this.searchSubmit = this.searchSubmit.bind(this);
   }
 
-  // Return the NAME of the lexicon, rather than the number. Macondo requires
-  // the lexicon name.
+  // Return the NAME of the lexicon, rather than the number.
+  // word_db_server requires the lexicon name.
   getLexiconName() {
     return this.props.availableLexica.find(el => el.id === this.props.lexicon).lexicon;
   }
@@ -50,24 +69,26 @@ class BlanksDialogContainer extends React.Component {
           throw new Error('Unhandled search type');
       }
     });
-    this.props.macondoRPC.rpcwrap('AnagramService.BlankChallenge', {
-      wordLength,
-      numQuestions: this.props.questionsPerRound,
-      lexicon: this.getLexiconName(),
-      maxSolutions,
-      num2Blanks,
-    })
-      .then(result => this.props.api.call(RAW_QUESTIONS_URL, {
-        lexicon: this.props.lexicon,
-        rawQuestions: result.questions,
-        desiredTime: this.props.desiredTime,
-        questionsPerRound: this.props.questionsPerRound,
-        tablenum: this.props.tablenum,
-      }).then(data => this.props.onLoadNewList(data))
-        .catch(error => this.props.notifyError(error)))
+    const reqObj = new wordsearcher.BlankChallengeCreateRequest();
+    reqObj.setWordLength(wordLength);
+    reqObj.setNumQuestions(this.props.questionsPerRound);
+    reqObj.setLexicon(this.getLexiconName());
+    reqObj.setMaxSolutions(maxSolutions);
+    reqObj.setNumWith2Blanks(num2Blanks);
 
+    this.props.wordServerRPC.blankChallengeCreator(reqObj)
+      .then(result =>
+        this.props.api.call(RAW_QUESTIONS_URL, {
+          lexicon: this.props.lexicon,
+          rawQuestions: pbToQuestions(result),
+          desiredTime: this.props.desiredTime,
+          questionsPerRound: this.props.questionsPerRound,
+          tablenum: this.props.tablenum,
+        })
+          .then(data => this.props.onLoadNewList(data))
+          .catch(error => this.props.notifyError(error)))
       .catch((error) => {
-        if (error.message.includes('context deadline exceeded')) {
+        if (error.message.includes('timed out')) {
           this.props.notifyError([
             'Your query took too long; please try either fewer questions ',
             'or a shorter word length.',
@@ -108,7 +129,9 @@ BlanksDialogContainer.propTypes = {
   showSpinner: PropTypes.func.isRequired,
   hideSpinner: PropTypes.func.isRequired,
   api: PropTypes.instanceOf(WordwallsAPI).isRequired,
-  macondoRPC: PropTypes.instanceOf(GenericRPC).isRequired,
+  wordServerRPC: PropTypes.shape({
+    blankChallengeCreator: PropTypes.func,
+  }).isRequired,
   disabled: PropTypes.bool.isRequired,
 };
 

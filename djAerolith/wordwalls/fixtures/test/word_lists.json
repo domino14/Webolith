@@ -153,5 +153,28 @@
     },
     "model": "base.wordlist",
     "pk": 7222
+  },
+  {
+    "fields": {
+      "lexicon": 9,
+      "name": "This is my NWL list.",
+      "created": "2018-10-08T09:04:34+00:00",
+      "numAlphagrams": 11,
+      "numFirstMissed": 6,
+      "lastSaved": "2018-10-08T09:04:34+00:00",
+      "missed": "[]",
+      "curQuestions": "[]",
+      "version": 2,
+      "user": 1,
+      "numCurAlphagrams": 0,
+      "origQuestions": "[{\"q\": \"ADEINOST\", \"a\": [\"ASTONIED\", \"SEDATION\"]}, {\"q\": \"ADEIORST\", \"a\": [\"ASTEROID\"]}, {\"q\": \"AEIORSTU\", \"a\": [\"OUTRAISE\", \"SAUTOIRE\"]}, {\"q\": \"ADEEINRT\", \"a\": [\"DETAINER\", \"RETAINED\"]}, {\"q\": \"AEEILNRT\", \"a\": [\"ELATERIN\", \"ENTAILER\", \"TREENAIL\"]}, {\"q\": \"AEEILORT\", \"a\": [\"AEROLITE\"]}, {\"q\": \"ADEILORT\", \"a\": [\"IDOLATER\", \"TAILORED\"]}, {\"q\": \"AEILNORS\", \"a\": [\"AILERONS\", \"ALIENORS\"]}, {\"q\": \"ADEILNOT\", \"a\": [\"DELATION\"]}, {\"q\": \"AEILNOST\", \"a\": [\"ELATIONS\", \"INSOLATE\", \"TOENAILS\"]}, {\"q\": \"ADEINORS\", \"a\": [\"ANEROIDS\", \"ANODISER\"]}]",
+      "is_temporary": false,
+      "goneThruOnce": true,
+      "numMissed": 0,
+      "firstMissed": "[0, 4, 9, 5, 6, 10]",
+      "questionIndex": 0
+    },
+    "model": "base.wordlist",
+    "pk": 8000
   }
 ]

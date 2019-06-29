@@ -20,7 +20,7 @@ from base.forms import SavedListForm
 from wordwalls.game import WordwallsGame, GameInitException
 from wordwalls.models import DailyChallengeName, NamedList, DailyChallenge
 from wordwalls.tests.mixins import WordListAssertMixin
-from lib.word_searches import SearchDescription
+from lib.wdb_interface.word_searches import SearchDescription
 from base.models import Lexicon, WordList
 
 
@@ -44,7 +44,7 @@ class WordwallsBasicLogicTestBase(TestCase, WordListAssertMixin):
         """
         wwg = WordwallsGame()
         user = User.objects.get(username='cesar')
-        lex = Lexicon.objects.get(lexiconName='America')
+        lex = Lexicon.objects.get(lexiconName='NWL18')
         search = [
             SearchDescription.lexicon(lex),
             SearchDescription.length(length, length),
@@ -92,7 +92,7 @@ class WordwallsBasicLogicTest(WordwallsBasicLogicTestBase):
         word_list = wgm.word_list
         self.assert_wl(word_list, {
             'version': 2,
-            'lexicon': Lexicon.objects.get(lexiconName='America'),
+            'lexicon': Lexicon.objects.get(lexiconName='NWL18'),
             'user': user, 'numAlphagrams': 81, 'numCurAlphagrams': 81,
             'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
             'questionIndex': 0, 'is_temporary': True
@@ -144,7 +144,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
 
         self.assert_wl(word_list, {
             'version': 2,
-            'lexicon': Lexicon.objects.get(lexiconName='America'),
+            'lexicon': Lexicon.objects.get(lexiconName='NWL18'),
             'user': user, 'numAlphagrams': 81, 'numCurAlphagrams': 81,
             'numFirstMissed': 0, 'numMissed': 0, 'goneThruOnce': False,
             'questionIndex': 50, 'is_temporary': True
@@ -353,7 +353,7 @@ class WordwallsFullGameLogicTest(WordwallsBasicLogicTestBase):
         table_id, user = self.setup_quiz(p_min=5, p_max=15, length=8)
         wwg = WordwallsGame()
         # Try saving the word list.
-        LIST_NAME = 'This is my list.'
+        LIST_NAME = 'This is my NWL list.'
         resp = wwg.save(user, table_id, LIST_NAME)
         self.assertFalse(resp['success'])
 
@@ -367,7 +367,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
 
     def setUp(self):
         self.user = User.objects.get(username='cesar')
-        self.lex = Lexicon.objects.get(lexiconName='America')
+        self.lex = Lexicon.objects.get(lexiconName='NWL18')
         self.wwg = WordwallsGame()
 
     def test_firstmissed_not_allowed(self):
@@ -672,16 +672,16 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
             len(set([q['q'] for q in questions])), 50)
         params = self.wwg.start_quiz(table_id, self.user)
         self.assertEqual(len(params['questions']), 50)
-        # Blank bingos have no probability for their alphagram.
-        self.assertTrue(params['questions'][0]['p'] is None)
+        # Blank bingos have a zero probability for their alphagram.
+        self.assertTrue(params['questions'][0]['p'] == 0)
 
     def test_play_old_challenge(self):
         """ Play an old challenge instead of creating a new one. """
         num_challenges = DailyChallenge.objects.count()
         challenge = DailyChallengeName.objects.get(name="Bingo Marathon")
         table_id = self.wwg.initialize_daily_challenge(
-            self.user, Lexicon.objects.get(lexiconName='CSW15'),
-            challenge, date(2015, 12, 8))
+            self.user, Lexicon.objects.get(lexiconName='CSW19'),
+            challenge, date(2016, 12, 8))
         # Assert that it did not create an additional challenge.
         self.assertEqual(num_challenges, DailyChallenge.objects.count())
         wgm = self.wwg.get_wgm(table_id)
@@ -756,10 +756,6 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
 
     """
     fixtures = ['test/lexica.yaml',
-                # Eventually get rid of these two, because they are
-                # replaced by sqlite, but for now we test for backwards
-                # compatibility, since we are doing an in-place
-                # migration.
                 'test/users.json',
                 'test/profiles.json',
                 'challenge_names.json',

@@ -8,7 +8,7 @@ This repository holds the Python and Javascript required to serve Aerolith on a 
 
 ### Python
 
-The bulk of the back-end code is written in Python 3, using Django 1.11.x.
+The bulk of the back-end code is written in Python 3.7, using Django 2.2.x
 
 ### Javascript
 
@@ -17,13 +17,13 @@ Front-end code for Wordwalls is Javascript (ES6 mostly), using React. The rest o
 Javascript code uses the Airbnb eslint config. (See their style guide: https://github.com/airbnb/javascript/)
 If you wish to contribute, please use this same config in your code editor, as code will not deploy without passing this first linting step.
 
-### Macondo
+### word_db_server
 
-Macondo is at https://github.com/domino14/macondo.
+word_db_server is at https://github.com/domino14/word_db_server.
 
-It is used to generate the build challenges and blank challenges, as well as other ancillary word-related stuff.
+This server deals with anything word-related. It provides a Twirp API to the Python webapp.
 
-See [blank_challenges.go](https://github.com/domino14/macondo/tree/master/anagrammer/blank_challenges.go).
+It is also used to generate the build challenges and blank challenges.
 
 =======
 

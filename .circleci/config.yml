@@ -1,51 +1,73 @@
 version: 2
 jobs:
   build_python:
-    working_directory: /opt/webolith
+    # Use the machine executor because we have some special tests.
+    # Hopefully this remains free.
+    machine:
+      image: ubuntu-1604:201903-01
     environment:
-      PGSQL_DB_NAME: circle
-      PGSQL_USER: postgres
-      PGSQL_HOST: 127.0.0.1
-      PGSQL_PASSWORD:
-      # Debug for tests is False even if I set this to True.
-      DEBUG: false
-      DEBUG_JS: false
-      # Just some random secret key
-      INTERCOM_APP_SECRET_KEY: abcdefghijklmnopqrstuvwxyz
-      SECRET_KEY: csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
-      WORD_DB_LOCATION: /opt/db
-    docker:
-      - image: domino14/webolith-base-pkg:py3-latest
-      - image: postgres
+      DOCKER_WDB_SERVER: domino14/word_db_server:latest
     steps:
-      - checkout  # Into the webolith-base-pkg
+      - checkout
+
+      # Checkout the lexicon repo.
       - add_ssh_keys:
           fingerprints:
-            - "ad:9e:01:fa:fa:e7:03:a4:49:74:98:91:52:a8:dc:3c"
+            - "bf:37:1b:e1:b2:b0:ec:20:92:43:20:86:40:7c:c4:e0"
+      - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run:
-          name: Install git and ssh
-          command: apk update && apk upgrade && apk add git openssh
-      - run:
-          name: Install ssl
-          command: apk add --update ca-certificates openssl && update-ca-certificates
-      - run: if [ ! -n "$(grep "^bitbucket.org " ~/.ssh/known_hosts)" ]; then ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null; fi
-      - run:
-          name: Clone word dbs Webolith repo
-          command: git clone git@bitbucket.org:cesar_del_solar/webolith-word-dbs.git /opt/webolith-word-dbs
-      - run: mkdir $WORD_DB_LOCATION
-      - run: cd /opt/webolith-word-dbs && tar xzvf dbs.tar.gz
-      - run: mv /opt/webolith-word-dbs/*.db $WORD_DB_LOCATION
+          name: Clone lexicon repo
+          command: >
+            git clone git@github.com:domino14/word-game-lexica ~/word-game-lexica &&
+            rm -rf ~/word-game-lexica/.git
+      # Generate the dbs needed for tests.
+      - run: mkdir ~/word-game-lexica/db
+      - run: mkdir ~/word-game-lexica/gaddag
+
+      - restore_cache:
+          keys:
+            - lexicadb
+            - lexicagaddag
+
+      - run: >
+          docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica
+          -v ~/word-game-lexica:/opt/lexica
+          $DOCKER_WDB_SERVER go run /go/src/github.com/domino14/word_db_server/main.go
+          -outputdir /opt/lexica/db -dbs NWL18,America,CSW19,FISE2
+
+      - save_cache:
+          key: lexicadb
+          paths:
+            - /home/circleci/word-game-lexica/db
+      - save_cache:
+          key: lexicagaddag
+          paths:
+            - /home/circleci/word-game-lexica/gaddag
+
       - run:
           name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          command: >
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz &&
+            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz &&
+            rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
             DOCKERIZE_VERSION: v0.6.0
+      # Run the containers
+      - run: cp .circleci/docker-compose.yml .
+      - run: docker-compose up -d
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
+          name: Wait for word-db-server
+          command: dockerize -wait tcp://localhost:8180 -timeout 1m
+      - run:
           name: Django tests
-          command: cd djAerolith && ./manage.py test -v2
+          command: docker-compose exec app ./manage.py test -v2
+
+      - run:
+          name: Stop cleanly
+          command: docker-compose stop
 
   build_js:
     working_directory: /opt/webolith
@@ -132,8 +154,8 @@ jobs:
       - run:
           name: Clone private Webolith repo
           command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
-      - run: cd aerolith-infra/deploy && fab create_k8s_configs:prod
-      - run: cd aerolith-infra/deploy && fab deploy:prod
+      - run: cd aerolith-infra/deploy && inv create-k8s-configs --role prod
+      - run: cd aerolith-infra/deploy && inv deploy --role prod
 
 workflows:
   version: 2

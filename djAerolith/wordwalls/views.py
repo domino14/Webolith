@@ -25,20 +25,18 @@ import logging
 import calendar
 import hmac
 import hashlib
-from operator import itemgetter
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.utils.translation import ugettext as _
-from django.utils.timezone import localdate
 from django.views.decorators.http import require_http_methods
 from gargoyle import gargoyle
 
 from base.forms import LexiconForm
 from base.models import Lexicon, WordList, EXCLUDED_LEXICA
 from wordwalls.game import WordwallsGame
-from lib.word_db_helper import WordDB
+from lib.wdb_interface.wdb_helper import questions_from_alphagrams
 from wordwalls.models import (DailyChallenge, DailyChallengeLeaderboard,
                               DailyChallengeLeaderboardEntry,
                               DailyChallengeName, Medal, WordwallsGameModel)
@@ -250,9 +248,8 @@ def create_user_list(contents: str, filename, lex, user):
         return False, _(
             'This list would exceed your total list size limit. You can '
             'remove this limit by upgrading your membership!')
-    db = WordDB(lex.lexiconName)
 
-    questions = db.get_questions_from_alphagrams(alphas)
+    questions = questions_from_alphagrams(lex, alphas)
     num_alphagrams = questions.size()
 
     logger.info('number of uploaded alphagrams: %d', num_alphagrams)

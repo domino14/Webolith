@@ -31,9 +31,6 @@ const lexOptions = [{
   value: 'NWL18',
   displayValue: 'NWL18',
 }, {
-  value: 'CSW15', /* DELETE ME IN JULY */
-  displayValue: 'CSW15',
-}, {
   value: 'CSW19',
   displayValue: 'CSW19',
 }];
