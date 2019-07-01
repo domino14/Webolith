@@ -137,25 +137,13 @@ jobs:
             docker push domino14/webolith:latest
 
   deploy:
-    working_directory: /opt/
-    environment:
-      # This will get created by the clone below.
-      KUBECONFIG: /opt/webolith-private/admin.conf
     docker:
       - image: domino14/aerolith-deployer
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "ad:9e:01:fa:fa:e7:03:a4:49:74:98:91:52:a8:dc:3c"
       - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
-      - run: git clone git@github.com:domino14/aerolith-infra
-      # Clone the repo with the admin.conf file
-      - run: if [ ! -n "$(grep "^bitbucket.org " ~/.ssh/known_hosts)" ]; then ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts 2>/dev/null; fi
-      - run:
-          name: Clone private Webolith repo
-          command: git clone git@bitbucket.org:cesar_del_solar/webolith-private.git /opt/webolith-private
-      - run: cd aerolith-infra/deploy && inv create-k8s-configs --role prod
-      - run: cd aerolith-infra/deploy && inv deploy --role prod
+      - run: git clone git@github.com:domino14/aerolith-k8s
+      - run: doctl kubernetes cluster kubeconfig save k8s-clusterf
+      - run: inv deploy-webolith
 
 workflows:
   version: 2
