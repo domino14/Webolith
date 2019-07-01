@@ -143,7 +143,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             # This is the k8s-deploy-key fingerprint
-            - "bf:37:1b:e1:b2:b0:ec:20:92:43:20:86:40:7c:c4:e0"
+            - "84:74:a3:ce:d0:4e:9d:f5:ab:74:ed:10:15:9a:81:2b"
       - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run: git clone git@github.com:domino14/aerolith-k8s
       - run: doctl kubernetes cluster kubeconfig save k8s-clusterf
