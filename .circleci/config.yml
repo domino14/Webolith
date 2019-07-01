@@ -147,7 +147,7 @@ jobs:
       - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run: git clone git@github.com:domino14/aerolith-k8s
       - run: doctl kubernetes cluster kubeconfig save k8s-clusterf
-      - run: inv deploy-webolith
+      - run: cd aerolith-k8s && inv deploy-webolith
 
 workflows:
   version: 2
