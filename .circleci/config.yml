@@ -140,6 +140,10 @@ jobs:
     docker:
       - image: domino14/aerolith-deployer
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            # This is the k8s-deploy-key fingerprint
+            - "bf:37:1b:e1:b2:b0:ec:20:92:43:20:86:40:7c:c4:e0"
       - run: if [ ! -n "$(grep "^github.com " ~/.ssh/known_hosts)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
       - run: git clone git@github.com:domino14/aerolith-k8s
       - run: doctl kubernetes cluster kubeconfig save k8s-clusterf
