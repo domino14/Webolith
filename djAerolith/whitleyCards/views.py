@@ -166,7 +166,7 @@ def search(request, lex_id, paramsb64):
         lex = Lexicon.objects.get(pk=lex_id)
         search_params = build_search_criteria(
             request.user, lex, search_criteria_from_b64(paramsb64))
-        questions = word_search(search_params)
+        questions = word_search(search_params, expand=True)
 
         if action == 'getInitialSet':
             data = getQuizChunkByQuestions(lex, questions, 0, is_q_obj=True)
@@ -245,7 +245,6 @@ def getQuizChunkFromSavedList(slpk, minIndex, option):
         origQuestions = json.loads(sl.origQuestions)
         questions = [origQuestions[i] for i in questionIndices]
         data = getQuizChunkByQuestions(sl.lexicon, questions, minIndex)
-        print(questions, data)
         return data[0], data[1], data[2], sl.numFirstMissed
 
 
@@ -276,7 +275,8 @@ def savedListPk(request, slpk, option):
 
 
 def getWordDataByProb(lexicon, length, minP, maxP):
-    questions = questions_from_probability_range(lexicon, minP, maxP, length)
+    questions = questions_from_probability_range(lexicon, minP, maxP, length,
+                                                 expand=True)
     return get_word_data(questions.questions_array())
 
 
