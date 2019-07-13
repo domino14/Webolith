@@ -1,11 +1,13 @@
 import json
 import random
+from typing import List
 
 
 class Word:
-    def __init__(self, word, alphagram=None, definition=None, front_hooks=None,
-                 back_hooks=None, inner_front_hook=None, inner_back_hook=None,
-                 lexicon_symbols=None):
+    def __init__(self, word, alphagram: str = None, definition: str = None,
+                 front_hooks: str = None, back_hooks: str = None,
+                 inner_front_hook: bool = None, inner_back_hook: bool = None,
+                 lexicon_symbols: str = None):
         self.word = word
         self.alphagram = alphagram
         # Disallow None, to keep compatibility with old code.
@@ -26,8 +28,23 @@ class Word:
         return self.word == other.word
 
 
+def words_from_pb(pbw):
+    """ Turn the protobuf list of Words into a list of domain.Word """
+    words = []
+    for word in pbw:
+        w = Word(word=word.word, alphagram=word.alphagram,
+                 definition=word.definition, front_hooks=word.front_hooks,
+                 back_hooks=word.back_hooks,
+                 lexicon_symbols=word.lexicon_symbols,
+                 inner_front_hook=word.inner_front_hook,
+                 inner_back_hook=word.inner_back_hook)
+        words.append(w)
+    return words
+
+
 class Alphagram:
-    def __init__(self, alphagram, probability=None, combinations=None):
+    def __init__(self, alphagram: str, probability: int = None,
+                 combinations: int = None):
         self.alphagram = alphagram
         self.probability = probability
         self.length = len(alphagram)
@@ -46,12 +63,62 @@ class Alphagram:
         return f'{self.alphagram} ({self.probability})'
 
 
+class Question:
+    def __init__(self, alphagram: Alphagram = None,
+                 answers: List[Word] = None):
+        """
+        alphagram - An Alphagram object.
+        answers - A list of Word objects. see wdb_helper.py
+
+        """
+        self.alphagram = alphagram
+        self.answers = answers
+
+    def set_answers_from_word_list(self, word_list):
+        self.answers = []
+        for word in word_list:
+            self.answers.append(Word(word=word))
+
+    def to_python_full(self):
+        """ A complete representation of question. """
+        q = {
+            'question': self.alphagram.alphagram,
+            'probability': self.alphagram.probability,
+            'answers': []
+        }
+        for a in self.answers:
+            q['answers'].append({
+                'word': a.word,
+                'def': a.definition,
+                'f_hooks': a.front_hooks,
+                'b_hooks': a.back_hooks,
+                'symbols': a.lexicon_symbols,
+                'f_inner': a.inner_front_hook,
+                'b_inner': a.inner_back_hook
+            })
+        return q
+
+    def to_python(self):
+        return {'q': self.alphagram.alphagram,
+                'a': [w.word for w in self.answers]}
+
+    def set_from_obj(self, obj):
+        self.alphagram = Alphagram(obj['q'])
+        self.set_answers_from_word_list(obj['a'])
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return f'<Question: {self.alphagram} ({self.answers})>'
+
+
 class Questions:
     def __init__(self):
         self.questions = []
         self.build_mode = False
 
-    def questions_array(self):
+    def questions_array(self) -> List[Question]:
         return self.questions
 
     def set_build_mode(self):
@@ -118,24 +185,8 @@ class Questions:
                 alphagram=Alphagram(alphagram.alphagram,
                                     alphagram.probability,
                                     alphagram.combinations),
-                answers=self.words_from_pb(alphagram.words))
+                answers=words_from_pb(alphagram.words))
             self.append(question)
-
-    def words_from_pb(self, pbw):
-        """
-        Turn the protobuf list of Words into a list of domain.Word
-
-        """
-        words = []
-        for word in pbw:
-            w = Word(word=word.word, alphagram=word.alphagram,
-                     definition=word.definition, front_hooks=word.front_hooks,
-                     back_hooks=word.back_hooks,
-                     lexicon_symbols=word.lexicon_symbols,
-                     inner_front_hook=word.inner_front_hook,
-                     inner_back_hook=word.inner_back_hook)
-            words.append(w)
-        return words
 
     def sort_by_probability(self):
         self.questions.sort(key=lambda q: q.alphagram.probability)
@@ -151,52 +202,3 @@ class Questions:
 
     def __str__(self):
         return f'{{<Questions {self.questions}>}}'
-
-
-class Question:
-    def __init__(self, alphagram=None, answers=None):
-        """
-        alphagram - An Alphagram object.
-        answers - A list of Word objects. see wdb_helper.py
-
-        """
-        self.alphagram = alphagram
-        self.answers = answers
-
-    def set_answers_from_word_list(self, word_list):
-        self.answers = []
-        for word in word_list:
-            self.answers.append(Word(word=word))
-
-    def to_python_full(self):
-        """ A complete representation of question. """
-        q = {
-            'question': self.alphagram.alphagram,
-            'probability': self.alphagram.probability,
-            'answers': []
-        }
-        for a in self.answers:
-            q['answers'].append({
-                'word': a.word,
-                'def': a.definition,
-                'f_hooks': a.front_hooks,
-                'b_hooks': a.back_hooks,
-                'symbols': a.lexicon_symbols,
-                'f_inner': a.inner_front_hook,
-                'b_inner': a.inner_back_hook
-            })
-        return q
-
-    def to_python(self):
-        return {'q': self.alphagram.alphagram,
-                'a': [w.word for w in self.answers]}
-
-    def set_from_obj(self, obj):
-        self.alphagram = Alphagram(obj['q'])
-        self.set_answers_from_word_list(obj['a'])
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __str__(self):
-        return f'<Question: {self.alphagram} ({self.answers})>'

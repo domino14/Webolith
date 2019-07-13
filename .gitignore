@@ -29,3 +29,6 @@ __pycache__
 words
 wordsdir
 .env
+analysis/*.csv
+analysis/*.txt
+.ipynb_checkpoints

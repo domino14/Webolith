@@ -58,7 +58,6 @@ class SearchDescription(object):
 
     @staticmethod
     def alphagram_list(alphas: List[str]) -> pb.SearchRequest.SearchParam:
-        print('Got a list of alphagrams', alphas)
         return pb.SearchRequest.SearchParam(
             condition=pb.SearchRequest.Condition.ALPHAGRAM_LIST,
             stringarray=pb.SearchRequest.StringArray(values=alphas))
