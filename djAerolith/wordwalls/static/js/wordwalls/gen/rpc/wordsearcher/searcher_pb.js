@@ -365,7 +365,8 @@ proto.wordsearcher.Alphagram.toObject = function(includeInstance, msg) {
     expandedrepr: jspb.Message.getFieldWithDefault(msg, 3, false),
     length: jspb.Message.getFieldWithDefault(msg, 4, 0),
     probability: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    combinations: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    combinations: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    difficulty: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -426,6 +427,10 @@ proto.wordsearcher.Alphagram.deserializeBinaryFromReader = function(msg, reader)
     case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCombinations(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDifficulty(value);
       break;
     default:
       reader.skipField();
@@ -496,6 +501,13 @@ proto.wordsearcher.Alphagram.serializeBinaryToWriter = function(message, writer)
   if (f !== 0) {
     writer.writeInt64(
       6,
+      f
+    );
+  }
+  f = message.getDifficulty();
+  if (f !== 0) {
+    writer.writeInt32(
+      7,
       f
     );
   }
@@ -610,6 +622,21 @@ proto.wordsearcher.Alphagram.prototype.getCombinations = function() {
 /** @param {number} value */
 proto.wordsearcher.Alphagram.prototype.setCombinations = function(value) {
   jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional int32 difficulty = 7;
+ * @return {number}
+ */
+proto.wordsearcher.Alphagram.prototype.getDifficulty = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/** @param {number} value */
+proto.wordsearcher.Alphagram.prototype.setDifficulty = function(value) {
+  jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
@@ -1083,7 +1110,9 @@ proto.wordsearcher.SearchRequest.Condition = {
   WORD_LIST: 13,
   SINGLE_VALUE_LENGTH: 14,
   NUM_TWO_BLANKS: 15,
-  MAX_SOLUTIONS: 16
+  MAX_SOLUTIONS: 16,
+  DIFFICULTY_RANGE: 17,
+  PLAYABILITY_RANGE: 18
 };
 
 /**
