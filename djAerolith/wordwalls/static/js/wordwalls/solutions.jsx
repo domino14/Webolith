@@ -27,6 +27,7 @@ const Solutions = (props) => {
         wordSolved={word.get('solved', false)}
         correct={question.get('solved', false)}
         wrongGuess={question.get('wrongGuess', false)}
+        difficulty={question.get('d') || ''}
         markMissed={markMissed}
       />);
       wordIdx += 1;
@@ -63,6 +64,7 @@ const Solutions = (props) => {
                 <th>Word</th>
                 <th>&gt;</th>
                 <th>Definition</th>
+                <th>Difficulty</th>
                 <th>Actions</th>
               </tr>
             </thead>

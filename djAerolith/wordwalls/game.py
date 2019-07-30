@@ -507,7 +507,8 @@ class WordwallsGame(object):
                               'ibh': w.inner_back_hook})
                 answer_hash[w.word] = alphagram_str, i
             ret_q_array.append({'a': alphagram_str, 'ws': words,
-                                'p': q.alphagram.probability, 'idx': i})
+                                'p': q.alphagram.probability, 'idx': i,
+                                'd': q.alphagram.difficulty})
         return ret_q_array, answer_hash
 
     def did_timer_run_out(self, state):

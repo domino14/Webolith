@@ -27,6 +27,12 @@ class SearchDescription(object):
             minmax=pb.SearchRequest.MinMax(min=min_p, max=max_p))
 
     @staticmethod
+    def difficulty_range(min_d: int, max_d: int) -> pb.SearchRequest.SearchParam:  # noqa
+        return pb.SearchRequest.SearchParam(
+            condition=pb.SearchRequest.Condition.DIFFICULTY_RANGE,
+            minmax=pb.SearchRequest.MinMax(min=min_d, max=max_d))
+
+    @staticmethod
     def probability_limit(min_p: int, max_p: int) -> pb.SearchRequest.SearchParam:  # noqa
         return pb.SearchRequest.SearchParam(
             condition=pb.SearchRequest.Condition.PROBABILITY_LIMIT,
@@ -98,6 +104,7 @@ def SearchCriterionFn(searchType: int):
 MIN_MAX_DESCRIPTIONS = [
     pb.SearchRequest.Condition.LENGTH,
     pb.SearchRequest.Condition.PROBABILITY_RANGE,
+    pb.SearchRequest.Condition.DIFFICULTY_RANGE,
     pb.SearchRequest.Condition.NUMBER_OF_ANAGRAMS,
     pb.SearchRequest.Condition.NUMBER_OF_VOWELS,
     pb.SearchRequest.Condition.POINT_VALUE,
@@ -148,6 +155,11 @@ def temporary_list_name(
                 tokens.append('INVALID')
         elif sd.condition == pb.SearchRequest.Condition.PROBABILITY_RANGE:
             tokens.append(f'({sd.minmax.min} - {sd.minmax.max})')
+        elif sd.condition == pb.SearchRequest.Condition.DIFFICULTY_RANGE:
+            if sd.minmax.min == sd.minmax.max:
+                tokens.append(f'difficulty: {sd.minmax.min}')
+            else:
+                tokens.append(f'difficulty: {sd.minmax.min} - {sd.minmax.max}')
         elif sd.condition == pb.SearchRequest.Condition.NUMBER_OF_ANAGRAMS:
             if sd.minmax.min == 1 and sd.minmax.max == 1:
                 tokens.append('Single-anagram')

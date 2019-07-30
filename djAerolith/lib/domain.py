@@ -44,11 +44,12 @@ def words_from_pb(pbw):
 
 class Alphagram:
     def __init__(self, alphagram: str, probability: int = None,
-                 combinations: int = None):
+                 combinations: int = None, difficulty: int = None):
         self.alphagram = alphagram
         self.probability = probability
         self.length = len(alphagram)
         self.combinations = combinations
+        self.difficulty = difficulty
 
     def __eq__(self, other):
         return self.alphagram == other.alphagram
@@ -184,7 +185,8 @@ class Questions:
                 # sorry:
                 alphagram=Alphagram(alphagram.alphagram,
                                     alphagram.probability,
-                                    alphagram.combinations),
+                                    alphagram.combinations,
+                                    alphagram.difficulty),
                 answers=words_from_pb(alphagram.words))
             self.append(question)
 

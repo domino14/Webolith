@@ -83,6 +83,9 @@ class Solution extends React.Component {
           />
         </td>
         <td style={{ ...rowStyle, ...{ whiteSpace: 'pre-wrap' } }}>{this.props.definition}</td>
+        <td style={rowStyle}>{
+          this.props.wordPos === 0 ? this.props.difficulty : ''}
+        </td>
         <td style={rowStyle}>{markMissedBtn}</td>
       </tr>
     );
@@ -104,6 +107,7 @@ Solution.propTypes = {
   probability: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   frontHooks: PropTypes.string.isRequired,
   backHooks: PropTypes.string.isRequired,
+  difficulty: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   definition: PropTypes.string.isRequired,
 };
 

@@ -25,6 +25,7 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.PROBABILITY_LIMIT,
   SearchTypesEnum.MATCHING_ANAGRAM,
+  SearchTypesEnum.DIFFICULTY_RANGE,
 ]);
 
 const lexOptions = [{

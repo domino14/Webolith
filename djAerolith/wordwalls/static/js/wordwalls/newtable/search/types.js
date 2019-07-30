@@ -22,6 +22,7 @@ const SearchTypesEnum = {
   NOT_IN_LEXICON: pbsrConditions.NOT_IN_LEXICON,
   PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
   MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
+  DIFFICULTY_RANGE: pbsrConditions.DIFFICULTY_RANGE,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -35,11 +36,25 @@ const SearchTypesEnum = {
       defaultMin: 1,
       defaultMax: 100,
       minAllowed: 1,
-      maxAllowed: 70000, // XXX should be subject to change by lexicon
+      maxAllowed: 200000, // XXX should be subject to change by lexicon
       description: `Probability range lets you pick the top alphagrams by
       raw probability of drawing these tiles. Note: probability assumes
       there are two blanks in the bag, and alphagrams with identical
       probabilities will still have different (but consecutive) numbers.`,
+    },
+    [pbsrConditions.DIFFICULTY_RANGE]: {
+      code: pbsrConditions.DIFFICULTY_RANGE,
+      displayName: 'Difficulty Range',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
+      defaultMin: 8,
+      defaultMax: 10,
+      minAllowed: 1,
+      maxAllowed: 10,
+      description: `Difficulty range lets you pick the top 7 and 8-letter
+      alphagrams by difficulty. At the moment, this is only supported for
+      NWL18, but will come to other lexica as we collect more difficulty
+      data. Difficulty is a number from 1 to 10, with 1 being easiest and
+      10 being most difficult.`,
     },
     [pbsrConditions.LENGTH]: {
       code: pbsrConditions.LENGTH,
@@ -171,6 +186,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.TAGS,
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,
+  SearchTypesEnum.DIFFICULTY_RANGE,
   SearchTypesEnum.PROBABILITY_LIMIT,
 ];
 
