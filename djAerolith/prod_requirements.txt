@@ -20,3 +20,4 @@ gunicorn
 mock
 # wagtail
 protobuf
+stripe

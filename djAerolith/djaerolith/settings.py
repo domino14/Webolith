@@ -366,7 +366,7 @@ WORD_DB_SERVER_ADDRESS = os.environ.get('WORD_DB_SERVER_ADDRESS',
 
 BACKUP_BUCKET_SUFFIX = os.environ.get('BACKUP_BUCKET_SUFFIX')
 
-SAVE_LIST_LIMIT_NONMEMBER = 15000
+SAVE_LIST_LIMIT_NONMEMBER = 10000
 SAVE_LIST_LIMIT_MEMBER = 5000000
 WORDWALLS_QUESTIONS_PER_ROUND = 50
 
@@ -396,3 +396,12 @@ PASSWORD_HASHERS = [
     # XXX: This one is weak, but a lot of old users are on it.
     'django.contrib.auth.hashers.SHA1PasswordHasher'
 ]
+
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+MEMBERSHIPS = {
+    'GOLD': {
+        'cost': 2999,  # cents/year
+        'sku': os.environ.get('STRIPE_GOLD_MEMBERSHIP_SKU')
+    }
+}

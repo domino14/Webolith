@@ -89,9 +89,16 @@ class SavedListDialog extends React.Component {
   render() {
     const listInfo = `You currently have ${this.props.listOptions.limits.current}
     alphagrams all over your lists. `;
+    let becomeSupporterLink = null;
     let limitInfo = '';
     if (this.props.listOptions.limits.total !== 0) {
       limitInfo = `Your limit is ${this.props.listOptions.limits.total}.`;
+      becomeSupporterLink = (
+        <span>
+          If you would like to raise this limit,
+          you can <a href="/supporter">become a supporter</a>!
+        </span>
+      );
     }
 
     return (
@@ -103,7 +110,8 @@ class SavedListDialog extends React.Component {
               in <span className="bg-success">green</span> have already
               been played through once.
               </p>
-              <p>{listInfo}{limitInfo}</p>
+              <p>{listInfo}</p>
+              <p>{limitInfo} {becomeSupporterLink}</p>
             </div>
           </div>
 

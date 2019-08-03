@@ -121,8 +121,19 @@
           <a href="/wordwalls/stats" class="btn btn-sm btn-info space-down">{% trans "See your WordWalls statistics" %}</a><BR>
           <a href="/wordwalls/leaderboard" class="btn btn-sm btn-info space-down">{% trans "See Hall of Fame" %}</a><BR>
           <a href="/accounts/profile/{{user}}" class="btn btn-sm btn-info space-down">{% trans "Edit your profile and preferences" %}</a><BR>
+          <p></p>
+          {% if user.aerolithprofile.member %}
+              {% if user.aerolithprofile.membership_has_expired %}
+                <p>Your membership has expired. If you would like to renew, please
+                do so by <a href="/supporter">clicking here</a> :)</p>
+              {% elif user.aerolithprofile.membership_expires_soon %}
+                <p>Your membership expires soon - on {{ user.aerolithprofile.membershipExpiry|date:"D, M d Y" }}. If you wish
+                to renew your membership, you can do so by <a href="/supporter">clicking here</a>.
+              {% endif %}
+          {% endif %}
         {% endif %}
         </div>
+
         {% if USE_FB %}
         <div class="row" style="margin-top: 25px;">
         <iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FAerolithorg%2F187993161284057&amp;width=300&amp;height=290&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=false&amp;header=true&amp;appId=17369129469" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:290px;" allowTransparency="true"></iframe>

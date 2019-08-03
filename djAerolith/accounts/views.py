@@ -18,6 +18,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.http import HttpResponseRedirect, Http404
 from django.utils.translation import LANGUAGE_SESSION_KEY
 from django.contrib.auth.decorators import login_required
@@ -26,7 +27,7 @@ from django.shortcuts import render
 from django.views.decorators.http import require_POST
 
 from accounts.models import AerolithProfile
-from accounts.forms import ProfileEditForm, UsernameEditForm
+from accounts.forms import ProfileEditForm, UsernameEditForm, MembershipForm
 from base.models import Lexicon
 from lib.response import response, bad_request
 from wordwalls.models import Medal
@@ -123,6 +124,33 @@ def username_change(request):
     return render(
         request, 'accounts/edit_username.html',
         {'u_form': u_form})
+
+
+@login_required
+def new_membership(request):
+    m_form = MembershipForm()
+    if request.method == 'POST':
+        print(request.POST)
+        m_form = MembershipForm(request.POST)
+        if m_form.is_valid():
+            print('wuz valud')
+            handle_payment(request.user, m_form.cleaned_data['stripe_token'])
+            return HttpResponseRedirect('/supporter/created')
+        print('hmm ')
+    return render(request, 'support.html', {
+        'stripe_key': settings.STRIPE_PUBLIC_KEY
+    })
+
+
+def handle_payment(user, stripe_token):
+    # save token to database.
+    profile = user.aerolithprofile
+    profile.stripe_token = stripe_token
+    profile.save()
+
+    # call stripe and charge player
+
+    # update membership in profile
 
 
 @login_required

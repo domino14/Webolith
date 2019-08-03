@@ -15,15 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # To contact the author, please email delsolar at gmail dot com
-from django.db import models
-from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 import logging
 
+from django.db import models
 from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+from django.utils import timezone
 
 from base.models import Lexicon
 
 logger = logging.getLogger(__name__)
+
+SOON_DAYS = 14
 
 
 def getLexicon(request=None):
@@ -60,7 +64,7 @@ class AerolithProfile(models.Model):
     membershipType = models.IntegerField(choices=MEMBERSHIP_TYPES,
                                          default=NONE_MTYPE)
     membershipExpiry = models.DateTimeField(null=True, blank=True)
-
+    stripe_user_id = models.CharField(max_length=100, blank=True)
     # specific per game
     customWordwallsStyle = models.CharField(max_length=1000, blank=True)
     wordwallsSaveListSize = models.IntegerField(default=0)
@@ -73,6 +77,19 @@ class AerolithProfile(models.Model):
 
     def __str__(self):
         return "Profile for " + self.user.username
+
+    @property
+    def membership_expires_soon(self):
+        if not self.membershipExpiry:
+            return False
+        return (timezone.now() + timedelta(days=SOON_DAYS) >
+                self.membershipExpiry)
+
+    @property
+    def membership_has_expired(self):
+        if not self.membershipExpiry:
+            return False
+        return timezone.now() > self.membershipExpiry
 
 
 def user_registered_handler(sender, **kwargs):

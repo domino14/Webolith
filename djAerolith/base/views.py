@@ -139,7 +139,7 @@ def saved_lists_get(request):
                      'limits': {
                          'total': limit,
                          'current': profile.wordwallsSaveListSize,
-                     }
+                        }
                      })
 
 

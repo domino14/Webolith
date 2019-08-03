@@ -30,7 +30,7 @@ from registration_app.forms import get_registration_form
 
 from views import (health, login_error, new_social_user, js_error, test_500,
                    healthz, trigger500, jwt_req)
-from accounts.views import social, username_change
+from accounts.views import social, username_change, new_membership
 from base.views import listmanager
 gargoyle.autodiscover()
 
@@ -87,12 +87,17 @@ urlpatterns = [
     url(r'^accounts/username/change/done/$',
         TemplateView.as_view(template_name='accounts/edit_username_done.html')
         ),
+    url(r'^accounts/membership/new/', new_membership),
     url('', include('social_django.urls', namespace='social')),
     url(r'^login_error/', login_error),
     url(r'^new_users/', new_social_user),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^listmanager/', listmanager),
-    url(r'^supporter/', TemplateView.as_view(template_name='support.html')),
+    url(r'^supporter/$', TemplateView.as_view(
+        template_name='support.html',
+        extra_context={'stripe_key': settings.STRIPE_PUBLIC_KEY})),
+    url(r'^supporter/created', TemplateView.as_view(
+        template_name='created_supporter.html')),
     url(r'^wordwalls/', include('wordwalls.urls')),
     url(r'^flashcards/', include('whitleyCards.urls')),
     url(r'^cards/', include('flashcards.urls')),
