@@ -65,10 +65,7 @@ class MembershipForm(forms.Form):
     stripe_token = forms.CharField(required=True)
 
     def clean(self):
-        print('data tahts clean', self.cleaned_data)
         u = self.cleaned_data.get('stripe_token')
         if not u:
-            print('not u')
             raise forms.ValidationError(
                 'You must enter valid credit card info')
-        print('wuz clean')

@@ -402,6 +402,6 @@ STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 MEMBERSHIPS = {
     'GOLD': {
         'cost': 2999,  # cents/year
-        'sku': os.environ.get('STRIPE_GOLD_MEMBERSHIP_SKU')
+        'plan': os.environ.get('STRIPE_GOLD_MEMBERSHIP_PLAN')
     }
 }

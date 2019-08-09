@@ -93,7 +93,7 @@ urlpatterns = [
     url(r'^new_users/', new_social_user),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^listmanager/', listmanager),
-    url(r'^supporter/$', TemplateView.as_view(
+    url(r'^supporter/', TemplateView.as_view(
         template_name='support.html',
         extra_context={'stripe_key': settings.STRIPE_PUBLIC_KEY})),
     url(r'^supporter/created', TemplateView.as_view(

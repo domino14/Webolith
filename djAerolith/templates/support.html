@@ -35,7 +35,9 @@ Becoming a supporter of Aerolith.org helps to pay for the server and incites the
                 <div id="card-element" class="form-control">
                     <!-- Stripe element inserted here by script above. -->
                 </div>
-                <div id="card-errors" role="alert"></div>
+                <div id="card-errors" role="alert" class="alert alert-danger" style="margin-top: 10px;">
+                    {{ stripe_error }}
+                </div>
             </div>
             <button type="submit" class="btn btn-default">Submit Payment</button>
         </form>
@@ -93,6 +95,10 @@ Click <a href="/">here</a> to return to homepage.</P>
 
         // Submit the form
         form.submit();
+    }
+
+    if ('{{stripe_error}}' === '') {
+        $('#card-errors').hide();
     }
 </script>
 
