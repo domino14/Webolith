@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Supporter management{% endblock %}
+
+{% block content %}
+<script src="https://js.stripe.com/v3/"></script>
+
+{% if user.aerolithprofile.member %}
+
+    {% if automatic %}
+        <p>If your credit card has expired, you can edit it below.</p>
+
+        {% include "card_form.html" with form_action="/accounts/membership/edit_card/" submit_text="Save Card" %}
+        <br />
+        <hr />
+        <p>Your billing is automatic and you will be charged the yearly
+        rate ($29.99) again when your membership expires,
+        on {{user.aerolithprofile.membershipExpiry}}.</p>
+        <p><strong>To turn off automatic billing</strong> please click
+        the button below.</p>
+        <form action="/accounts/membership/cancel/" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                Turn off automatic billing
+            </button>
+        </form>
+        <p></p>
+        <small>Note: if you turn off automatic billing you will not be auto-subscribed
+        when your membership expires.</small>
+    {% else %}
+        <p>You are still a supporting member of Aerolith.org but your billing
+        is not currently automatic. </p>
+        <p>If you would like to renew this membership, please check the
+        <a href="/supporter">supporter</a> page when it expires.</p>
+    {% endif %}
+
+{% else %}
+
+<p>You are not currently an active supporter of this site. Please
+<a href="/supporter">go to this page</a> if you wish to start a membership.
+
+{% endif %}
+
+
+
+{% endblock %}

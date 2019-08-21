@@ -30,7 +30,9 @@ from registration_app.forms import get_registration_form
 
 from views import (health, login_error, new_social_user, js_error, test_500,
                    healthz, trigger500, jwt_req)
-from accounts.views import social, username_change, new_membership
+from accounts.views import (social, username_change, new_membership,
+                            cancel_membership, manage_membership,
+                            membership_webhooks, edit_card)
 from base.views import listmanager
 gargoyle.autodiscover()
 
@@ -88,16 +90,20 @@ urlpatterns = [
         TemplateView.as_view(template_name='accounts/edit_username_done.html')
         ),
     url(r'^accounts/membership/new/', new_membership),
+    url(r'^accounts/membership/edit_card/', edit_card),
+    url(r'^accounts/membership/cancel/', cancel_membership),
+    url(r'^accounts/membership/webhooks/', membership_webhooks),
     url('', include('social_django.urls', namespace='social')),
     url(r'^login_error/', login_error),
     url(r'^new_users/', new_social_user),
     url(r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^listmanager/', listmanager),
+    url(r'^supporter/created', TemplateView.as_view(
+        template_name='created_supporter.html')),
+    url(r'^supporter/manage', manage_membership),
     url(r'^supporter/', TemplateView.as_view(
         template_name='support.html',
         extra_context={'stripe_key': settings.STRIPE_PUBLIC_KEY})),
-    url(r'^supporter/created', TemplateView.as_view(
-        template_name='created_supporter.html')),
     url(r'^wordwalls/', include('wordwalls.urls')),
     url(r'^flashcards/', include('whitleyCards.urls')),
     url(r'^cards/', include('flashcards.urls')),

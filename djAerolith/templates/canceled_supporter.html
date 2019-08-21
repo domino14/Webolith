@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Awwww!{% endblock %}
+
+{% block content %}
+{% if error %}
+    {{ error }}
+{% else %}
+    <p>We are sorry to see you go! :(</p>
+    <br />
+    <p>Your membership will expire on {{ user.aerolithprofile.membershipExpiry}}
+    and will not be renewed.</p>
+    <br />
+    <p>Click <a href="/">here</a> to return to homepage.</p>
+{% endif %}
+{% endblock %}

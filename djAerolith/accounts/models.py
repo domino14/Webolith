@@ -64,7 +64,8 @@ class AerolithProfile(models.Model):
     membershipType = models.IntegerField(choices=MEMBERSHIP_TYPES,
                                          default=NONE_MTYPE)
     membershipExpiry = models.DateTimeField(null=True, blank=True)
-    stripe_user_id = models.CharField(max_length=100, blank=True)
+    stripe_user_id = models.CharField(max_length=100, blank=True,
+                                      db_index=True)
     # specific per game
     customWordwallsStyle = models.CharField(max_length=1000, blank=True)
     wordwallsSaveListSize = models.IntegerField(default=0)

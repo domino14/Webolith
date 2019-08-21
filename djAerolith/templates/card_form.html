@@ -1,0 +1,81 @@
+<div class="row">
+    <div class="col-md-6 col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Membership</h3>
+            </div>
+            <div class="panel-body">
+                <form action="{{form_action}}" method="post" id="payment-form">
+                    {% csrf_token %}
+                    <div class="form-row form-group">
+                        <label for="card-element">
+                            Credit or debit card
+                        </label>
+                        <div id="card-element" class="form-control">
+                            <!-- Stripe element inserted here by script above. -->
+                        </div>
+                        <div id="card-errors" role="alert" class="alert alert-danger" style="margin-top: 10px;">
+                            {{ stripe_error }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{submit_text}}</button>
+                </form>
+            </div>
+
+            <div class="panel-footer">
+                <small>Payments handled completely by <a href="https://www.stripe.com">Stripe</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const stripe = Stripe('{{ stripe_key }}');
+    const elements = stripe.elements();
+
+    const card = elements.create('card');
+    card.mount('#card-element');
+
+    card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                // Inform the customer that there was an error.
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // Send the token to your server.
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    function stripeTokenHandler(token) {
+        // Insert the token ID into the form so it gets submitted to the server
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripe_token');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+
+        // Submit the form
+        form.submit();
+    }
+
+    if ('{{stripe_error}}' === '') {
+        $('#card-errors').hide();
+    }
+</script>
+
