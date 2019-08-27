@@ -114,8 +114,12 @@ def save_stripe_card(request, stripe_card_token: str):
     except stripe.error.CardError as e:
         raise PaymentError(e)
 
-    # Try to pay any outstanding payments immediately.
+    # Try to reactivate any failed subscriptions immediately.
+    # Otherwise, let Stripe try to collect
     sub_info = subscription_info(request.user)
+
+    # XXX: HERE:
+    # if sub_info and sub_info['status'] ==
 
 
 def update_membership(profile):
