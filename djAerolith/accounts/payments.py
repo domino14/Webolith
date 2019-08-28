@@ -39,9 +39,6 @@ def handle_stripe_payment(request, stripe_card_token: str,
         )['id']
         profile.stripe_user_id = customer_id
         profile.save()
-
-    plan_id = settings.MEMBERSHIPS['GOLD']['plan']
-
     if failed_invoice_id:
         # First try to retrieve the invoice ID and make sure it's actually
         # payable.
@@ -51,40 +48,49 @@ def handle_stripe_payment(request, stripe_card_token: str,
         failed_invoice_id = None
 
     if not failed_invoice_id:
-        # Check to see if the customer already has a plan.
-        sub_info = subscription_info(request.user)
-        if sub_info and sub_info['status'] == 'active':
-            raise PaymentError(
-                'You already have an active subscription. Please contact '
-                'support (César) if you have any questions.')
-        try:
-            resp = stripe.Subscription.create(
-                customer=customer_id,
-                items=[{
-                    'plan': plan_id,
-                }],
-                expand=['latest_invoice.payment_intent']
-            )
-        except stripe.error.CardError as e:
-            raise PaymentError(e)
-        if resp['status'] == 'active' and resp['latest_invoice'][
-                'payment_intent']['status'] == 'succeeded':
-            # Everything is copacetic.
-            logger.info('Payment attempt succeeded for user %s',
-                        request.user)
-            # Update the membership in the payment_succeeded webhook.
-            return
-        # Otherwise, it didn't work.
-        logger.info('Payment attempt failed for user %s', request.user)
-        error_msg = resp['latest_invoice']['payment_intent'].get(
-            'last_payment_error', {}).get('message')
-        raise PaymentError(error_msg, resp['latest_invoice']['id'])
+        create_subscription(request.user, customer_id)
+        return
 
     # If we are here, we are trying to pay a failed invoice.
     logger.info('Trying to pay failed invoice %s', failed_invoice_id)
+    pay_invoice(request.user, failed_invoice_id)
+
+
+def create_subscription(user, customer_id):
+    # Check to see if the customer already has a plan.
+    plan_id = settings.MEMBERSHIPS['GOLD']['plan']
+    sub_info = subscription_info(user)
+    if sub_info and sub_info['status'] == 'active':
+        raise PaymentError(
+            'You already have an active subscription. Please contact '
+            'support (César) if you have any questions.')
+    try:
+        resp = stripe.Subscription.create(
+            customer=customer_id,
+            items=[{
+                'plan': plan_id,
+            }],
+            expand=['latest_invoice.payment_intent']
+        )
+    except stripe.error.CardError as e:
+        raise PaymentError(e)
+    if resp['status'] == 'active' and resp['latest_invoice'][
+            'payment_intent']['status'] == 'succeeded':
+        # Everything is copacetic.
+        logger.info('Payment attempt succeeded for user %s', user)
+        # Update the membership in the payment_succeeded webhook.
+        return
+    # Otherwise, it didn't work.
+    logger.info('Payment attempt failed for user %s', user)
+    error_msg = resp['latest_invoice']['payment_intent'].get(
+        'last_payment_error', {}).get('message')
+    raise PaymentError(error_msg, resp['latest_invoice']['id'])
+
+
+def pay_invoice(user, invoice_id):
     try:
         resp = stripe.Invoice.pay(
-            invoice=failed_invoice_id,
+            invoice=invoice_id,
             expand=['payment_intent']
         )
     except stripe.error.CardError as e:
@@ -92,12 +98,12 @@ def handle_stripe_payment(request, stripe_card_token: str,
     latest_invoice = resp
     status = latest_invoice['payment_intent']['status']
     if status == 'succeeded':
-        logger.info('Repayment attempt succeeded for user %s', request.user)
+        logger.info('Repayment attempt succeeded for user %s', user)
         # Update membership in the payment_succeeded webhook.
         return
     elif status == 'requires_payment_method':
         # It failed.
-        logger.info('Payment RE-attempt failed for user %s', request.user)
+        logger.info('Payment RE-attempt failed for user %s', user)
         error_msg = resp['latest_invoice']['payment_intent'].get(
             'last_payment_error', {}).get('message')
         raise PaymentError(error_msg)
@@ -115,11 +121,28 @@ def save_stripe_card(request, stripe_card_token: str):
         raise PaymentError(e)
 
     # Try to reactivate any failed subscriptions immediately.
-    # Otherwise, let Stripe try to collect
     sub_info = subscription_info(request.user)
 
     # XXX: HERE:
-    # if sub_info and sub_info['status'] ==
+    if sub_info:
+        if sub_info['status'] == 'past_due':
+            # We are still within the retry period; attempt to repay
+            # last invoice.
+            # https://stripe.com/docs/billing/lifecycle
+            logger.info('Subscription is past due; retrieving invoice...')
+            latest_invoice_id = sub_info['latest_invoice']['id']
+            invoice = stripe.Invoice.retrieve(latest_invoice_id)
+            logger.info('Invoice status is %s', invoice['status'])
+            if invoice['status'] != 'open':
+                logger.error('Invoice status was not open. ID=%s',
+                             latest_invoice_id)
+                return
+            pay_invoice(request.user, latest_invoice_id)
+        elif sub_info['status'] == 'canceled':
+            # Attempt to renew subscription. If the user updated their card,
+            # it's a fair bet they want to renew. A canceled subscription
+            # is an end state so we have to create a new one.
+            create_subscription(request.user, customer_id)
 
 
 def update_membership(profile):
