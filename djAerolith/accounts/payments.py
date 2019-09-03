@@ -123,7 +123,6 @@ def save_stripe_card(request, stripe_card_token: str):
     # Try to reactivate any failed subscriptions immediately.
     sub_info = subscription_info(request.user)
 
-    # XXX: HERE:
     if sub_info:
         if sub_info['status'] == 'past_due':
             # We are still within the retry period; attempt to repay
