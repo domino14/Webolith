@@ -32,7 +32,7 @@ def getLexicon(request=None):
     elif request.LANGUAGE_CODE == 'es':
         return Lexicon.objects.get(lexiconName='FISE2')
     elif request.LANGUAGE_CODE == 'pl':
-        return Lexicon.objects.get(lexiconName='OSPS40')
+        return Lexicon.objects.get(lexiconName='OSPS41')
     return Lexicon.objects.get(lexiconName='NWL18')
 
 

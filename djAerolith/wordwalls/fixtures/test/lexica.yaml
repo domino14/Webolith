@@ -48,7 +48,7 @@
   pk: 10
 - fields:
     lengthCounts: '{"10":290522,"11":331232,"12":339846,"13":321838,"14":283230,"15":230698,"2":100,"3":1107,"4":5198,"5":17913,"6":43642,"7":90127,"8":155129,"9":227533}'
-    lexiconDescription: "Polska Federacja Scrabble - Update 38"
+    lexiconDescription: "Polska Federacja Scrabble - Update 40"
     lexiconName: OSPS40
   model: base.lexicon
   pk: 11
@@ -58,3 +58,9 @@
     lexiconName: CSW19
   model: base.lexicon
   pk: 12
+- fields:
+    lengthCounts: '{"10":294792,"11":337454,"12":346722,"13":328105,"14":289330,"15":234554,"2":101,"3":1109,"4":5214,"5":17998,"6":43900,"7":90691,"8":156614,"9":231179}'
+    lexiconDescription: "Polska Federacja Scrabble - Update 41"
+    lexiconName: OSPS41
+  model: base.lexicon
+  pk: 13
