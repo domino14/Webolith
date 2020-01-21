@@ -28,18 +28,19 @@ from base.validators import word_list_format_validator
 from lib.dates import pretty_date
 
 EXCLUDED_LEXICA = [
-    'OWL2',
-    'CSW07',
-    'CSW12',
-    'America2016',
-    'FISE09',
-    'America',
-    'CSW15'
+    "OWL2",
+    "CSW07",
+    "CSW12",
+    "America2016",
+    "FISE09",
+    "America",
+    "CSW15",
+    "OSPS40",
 ]
 
 # XXX: This handles Spanish, English and Polish. It is pretty ghetto.
 # Consider reworking with lexicon-specific reordering (see macondo e.g.)
-SORT_STRING_ORDER = 'AĄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓPQR3SŚTUVWXYZŹŻ?'
+SORT_STRING_ORDER = "AĄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓPQR3SŚTUVWXYZŹŻ?"
 SORT_MAP = {}
 
 
@@ -54,7 +55,7 @@ def alphagrammize(word):
         make_sort_map()
     letters = list(word.upper())
     letters.sort(key=lambda y: SORT_MAP[y])
-    return ''.join(letters)
+    return "".join(letters)
 
 
 class Maintenance(models.Model):
@@ -74,14 +75,14 @@ class Lexicon(models.Model):
 
 
 class SavedList(models.Model):
-    CATEGORY_ANAGRAM = 'A'      # Regular word walls
-    CATEGORY_BUILD = 'B'        # Subwords
-    CATEGORY_THROUGH_TILES = 'T'
+    CATEGORY_ANAGRAM = "A"  # Regular word walls
+    CATEGORY_BUILD = "B"  # Subwords
+    CATEGORY_THROUGH_TILES = "T"
 
     LIST_CATEGORIES = (
-        (CATEGORY_ANAGRAM, 'Anagram'),
-        (CATEGORY_BUILD, 'Build'),
-        (CATEGORY_THROUGH_TILES, 'Through')
+        (CATEGORY_ANAGRAM, "Anagram"),
+        (CATEGORY_BUILD, "Build"),
+        (CATEGORY_THROUGH_TILES, "Through"),
     )
 
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
@@ -108,12 +109,20 @@ class SavedList(models.Model):
     # that should set it back to False is a save.
     is_temporary = models.BooleanField(default=False)
     version = models.IntegerField(default=2)
-    category = models.CharField(choices=LIST_CATEGORIES, max_length=2,
-                                default=CATEGORY_ANAGRAM)
+    category = models.CharField(
+        choices=LIST_CATEGORIES, max_length=2, default=CATEGORY_ANAGRAM
+    )
 
-    def initialize_list(self, questions, lexicon, user, shuffle=False,
-                        keep_old_name=False, save=True,
-                        category=CATEGORY_ANAGRAM):
+    def initialize_list(
+        self,
+        questions,
+        lexicon,
+        user,
+        shuffle=False,
+        keep_old_name=False,
+        save=True,
+        category=CATEGORY_ANAGRAM,
+    ):
         """
         Initialize a list with the passed in questions. Optionally saves
         it to the database.
@@ -174,15 +183,21 @@ class SavedList(models.Model):
             missed=self.missed,
             firstMissed=self.firstMissed,
             version=self.version,
-            category=self.category)
+            category=self.category,
+        )
         wl.save()
         return wl
 
     def restart_list(self, shuffle=False):
         """ Restart this list; save it back to the database. """
-        self.initialize_list(json.loads(self.origQuestions),
-                             self.lexicon, self.user, shuffle,
-                             keep_old_name=True, category=self.category)
+        self.initialize_list(
+            json.loads(self.origQuestions),
+            self.lexicon,
+            self.user,
+            shuffle,
+            keep_old_name=True,
+            category=self.category,
+        )
 
     def set_to_first_missed(self):
         """ Set this list to quiz on first missed questions; save. """
@@ -207,27 +222,27 @@ class SavedList(models.Model):
             Converts to a serializable Python object.
         """
         return {
-            'lexicon': self.lexicon.lexiconName,
-            'name': self.name,
-            'numAlphagrams': self.numAlphagrams,
-            'numCurAlphagrams': self.numCurAlphagrams,
-            'numFirstMissed': self.numFirstMissed,
-            'numMissed': self.numMissed,
-            'goneThruOnce': self.goneThruOnce,
-            'questionIndex': self.questionIndex,
-            'origQuestions': json.loads(self.origQuestions),
-            'curQuestions': json.loads(self.curQuestions),
-            'missed': json.loads(self.missed),
-            'firstMissed': json.loads(self.firstMissed),
-            'version': self.version,
-            'id': self.pk,
-            'temporary': self.is_temporary,
-            'category': self.category,
+            "lexicon": self.lexicon.lexiconName,
+            "name": self.name,
+            "numAlphagrams": self.numAlphagrams,
+            "numCurAlphagrams": self.numCurAlphagrams,
+            "numFirstMissed": self.numFirstMissed,
+            "numMissed": self.numMissed,
+            "goneThruOnce": self.goneThruOnce,
+            "questionIndex": self.questionIndex,
+            "origQuestions": json.loads(self.origQuestions),
+            "curQuestions": json.loads(self.curQuestions),
+            "missed": json.loads(self.missed),
+            "firstMissed": json.loads(self.firstMissed),
+            "version": self.version,
+            "id": self.pk,
+            "temporary": self.is_temporary,
+            "category": self.category,
         }
 
     def date_to_str(self, dt, human):
         if not human:
-            return dt.strftime('%Y-%m-%d %H:%M')
+            return dt.strftime("%Y-%m-%d %H:%M")
         return pretty_date(timezone.localtime(timezone.now()), dt)
 
     def to_python_reduced(self, last_saved_human=False):
@@ -237,41 +252,42 @@ class SavedList(models.Model):
 
         """
         return {
-            'lexicon': self.lexicon.lexiconName,
-            'name': self.name,
-            'numAlphagrams': self.numAlphagrams,
-            'numCurAlphagrams': self.numCurAlphagrams,
-            'numFirstMissed': self.numFirstMissed,
-            'numMissed': self.numMissed,
-            'goneThruOnce': self.goneThruOnce,
-            'questionIndex': self.questionIndex,
-            'version': self.version,
+            "lexicon": self.lexicon.lexiconName,
+            "name": self.name,
+            "numAlphagrams": self.numAlphagrams,
+            "numCurAlphagrams": self.numCurAlphagrams,
+            "numFirstMissed": self.numFirstMissed,
+            "numMissed": self.numMissed,
+            "goneThruOnce": self.goneThruOnce,
+            "questionIndex": self.questionIndex,
+            "version": self.version,
             # Note: This time is given in the Django installation's local
             # time (which happens to be Los Angeles). It is probably better
             # to make the local time UTC, and then do the transformation
             # client side. In this case, we'll have to transform the
             # time client side from Los Angeles time >.<
             # XXX: We should turn on time zone support, etc.
-            'lastSaved': self.date_to_str(self.lastSaved, last_saved_human),
-            'lastSavedDT': self.date_to_str(self.lastSaved, False),
-            'id': self.pk,
-            'temporary': self.is_temporary,
-            'category': self.category,
+            "lastSaved": self.date_to_str(self.lastSaved, last_saved_human),
+            "lastSavedDT": self.date_to_str(self.lastSaved, False),
+            "id": self.pk,
+            "temporary": self.is_temporary,
+            "category": self.category,
         }
 
     def __str__(self):
         return "(%s) %s%s (Saved %s)" % (
             self.lexicon.lexiconName,
             self.name,
-            '*' if self.goneThruOnce else '',
-            self.lastSaved)
+            "*" if self.goneThruOnce else "",
+            self.lastSaved,
+        )
 
     class Meta:
         # XXX: Unfortunately, changing this table name, and not just
         # moving to "WordList" will be tricky. Table names have to be
         # changed everywhere, including tests, etc...
-        db_table = 'wordwalls_savedlist'
-        unique_together = ('lexicon', 'name', 'user')
+        db_table = "wordwalls_savedlist"
+        unique_together = ("lexicon", "name", "user")
 
 
 class WordList(SavedList):
@@ -283,11 +299,11 @@ class WordList(SavedList):
 
 class AlphagramTag(models.Model):
     WORD_TAGS = (
-        ('D5', 'Very Easy'),
-        ('D4', 'Easy'),
-        ('D3', 'Average'),
-        ('D2', 'Hard'),
-        ('D1', 'Very Hard'),
+        ("D5", "Very Easy"),
+        ("D4", "Easy"),
+        ("D3", "Average"),
+        ("D2", "Hard"),
+        ("D1", "Very Hard"),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
@@ -295,7 +311,8 @@ class AlphagramTag(models.Model):
     tag = models.CharField(choices=WORD_TAGS, max_length=2)
 
     def __str__(self):
-        return '%s\'s tag (%s - %s)' % (self.user, self.alphagram, self.tag)
+        return "%s's tag (%s - %s)" % (self.user, self.alphagram, self.tag)
 
     class Meta:
-        unique_together = ('user', 'lexicon', 'alphagram')
+        unique_together = ("user", "lexicon", "alphagram")
+
