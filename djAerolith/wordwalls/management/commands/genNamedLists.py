@@ -80,7 +80,7 @@ def get_questions_by_condition(
     )
 
     to_filter = questions_from_probability_range(
-        lex, min_prob, max_prob, length
+        lex, min_prob, max_prob, length, expand=True
     )
     for q in to_filter.questions_array():
         if condition_type == Condition.ALPHAGRAM:
@@ -560,5 +560,5 @@ class Command(BaseCommand):
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
         #     createNamedLists(lex)
         # create_spanish_lists()
-        # NamedList.objects.filter(lexicon__lexiconName='OSPS40').delete()
+        NamedList.objects.filter(lexicon__lexiconName="OSPS41").delete()
         create_polish_lists()
