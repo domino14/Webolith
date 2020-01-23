@@ -32,6 +32,7 @@ class GenericRPC extends WordwallsAPI {
 
   async rpcwrap(method, params) {
     if (!this.RPCURL) {
+      // eslint-disable-next-line compat/compat
       await Promise.reject(new Error('No RPC URL was set.'));
     }
     // eslint-disable-next-line compat/compat

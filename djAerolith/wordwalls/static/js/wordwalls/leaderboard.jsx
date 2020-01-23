@@ -43,11 +43,11 @@ const Leaderboard = (props) => {
         </div>
         <div className="row">
           <div className="col-sm-12">
-              Last:
-              <WordPartDisplay
-                text={` ${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
-                classes="text-info small"
-              />
+            Last:
+            <WordPartDisplay
+              text={` ${word.get('w')}${showLexiconSymbols ? word.get('s') : ''}`}
+              classes="text-info small"
+            />
           </div>
         </div>
       </li>);

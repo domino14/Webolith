@@ -8,7 +8,8 @@ import TextInput from '../../forms/text_input';
 import {
   SearchTypesEnum,
   searchCriteriaOptions,
-  SearchTypesInputs } from './types';
+  SearchTypesInputs,
+} from './types';
 
 const convertOptions = options => options.map(el => ({
   value: el[0],

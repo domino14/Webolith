@@ -73,16 +73,18 @@ class PlayButton extends React.Component {
               </a>
             </li>) : null}
 
-          <li><a role="button" onClick={this.props.resetStartOver(this.props.listID)}>
-            Reset and start over
-              </a>
+          <li>
+            <a role="button" onClick={this.props.resetStartOver(this.props.listID)}>
+              Reset and start over
+            </a>
           </li>
 
           <li role="separator" className="divider" />
 
-          <li><a role="button" onClick={this.props.flashcardList(this.props.listID)}>
-            Flashcard entire list
-              </a>
+          <li>
+            <a role="button" onClick={this.props.flashcardList(this.props.listID)}>
+              Flashcard entire list
+            </a>
           </li>
 
           {this.props.goneThruOnce ? (
