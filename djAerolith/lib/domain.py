@@ -4,17 +4,24 @@ from typing import List
 
 
 class Word:
-    def __init__(self, word, alphagram: str = None, definition: str = None,
-                 front_hooks: str = None, back_hooks: str = None,
-                 inner_front_hook: bool = None, inner_back_hook: bool = None,
-                 lexicon_symbols: str = None):
+    def __init__(
+        self,
+        word,
+        alphagram: str = None,
+        definition: str = None,
+        front_hooks: str = None,
+        back_hooks: str = None,
+        inner_front_hook: bool = None,
+        inner_back_hook: bool = None,
+        lexicon_symbols: str = None,
+    ):
         self.word = word
         self.alphagram = alphagram
         # Disallow None, to keep compatibility with old code.
-        self.definition = definition or ''
-        self.front_hooks = front_hooks or ''
-        self.back_hooks = back_hooks or ''
-        self.lexicon_symbols = lexicon_symbols or ''
+        self.definition = definition or ""
+        self.front_hooks = front_hooks or ""
+        self.back_hooks = back_hooks or ""
+        self.lexicon_symbols = lexicon_symbols or ""
         self.inner_front_hook = True if inner_front_hook == 1 else False
         self.inner_back_hook = True if inner_back_hook == 1 else False
 
@@ -22,7 +29,7 @@ class Word:
         return self.__str__()
 
     def __str__(self):
-        return f'{{self.word}}'
+        return f"<{self.word}{self.lexicon_symbols}>"
 
     def __eq__(self, other):
         return self.word == other.word
@@ -32,19 +39,24 @@ def words_from_pb(pbw):
     """ Turn the protobuf list of Words into a list of domain.Word """
     words = []
     for word in pbw:
-        w = Word(word=word.word, alphagram=word.alphagram,
-                 definition=word.definition, front_hooks=word.front_hooks,
-                 back_hooks=word.back_hooks,
-                 lexicon_symbols=word.lexicon_symbols,
-                 inner_front_hook=word.inner_front_hook,
-                 inner_back_hook=word.inner_back_hook)
+        w = Word(
+            word=word.word,
+            alphagram=word.alphagram,
+            definition=word.definition,
+            front_hooks=word.front_hooks,
+            back_hooks=word.back_hooks,
+            lexicon_symbols=word.lexicon_symbols,
+            inner_front_hook=word.inner_front_hook,
+            inner_back_hook=word.inner_back_hook,
+        )
         words.append(w)
     return words
 
 
 class Alphagram:
-    def __init__(self, alphagram: str, probability: int = None,
-                 combinations: int = None):
+    def __init__(
+        self, alphagram: str, probability: int = None, combinations: int = None
+    ):
         self.alphagram = alphagram
         self.probability = probability
         self.length = len(alphagram)
@@ -60,12 +72,13 @@ class Alphagram:
         return self.__str__()
 
     def __str__(self):
-        return f'{self.alphagram} ({self.probability})'
+        return f"{self.alphagram} ({self.probability})"
 
 
 class Question:
-    def __init__(self, alphagram: Alphagram = None,
-                 answers: List[Word] = None):
+    def __init__(
+        self, alphagram: Alphagram = None, answers: List[Word] = None
+    ):
         """
         alphagram - An Alphagram object.
         answers - A list of Word objects. see wdb_helper.py
@@ -82,35 +95,39 @@ class Question:
     def to_python_full(self):
         """ A complete representation of question. """
         q = {
-            'question': self.alphagram.alphagram,
-            'probability': self.alphagram.probability,
-            'answers': []
+            "question": self.alphagram.alphagram,
+            "probability": self.alphagram.probability,
+            "answers": [],
         }
         for a in self.answers:
-            q['answers'].append({
-                'word': a.word,
-                'def': a.definition,
-                'f_hooks': a.front_hooks,
-                'b_hooks': a.back_hooks,
-                'symbols': a.lexicon_symbols,
-                'f_inner': a.inner_front_hook,
-                'b_inner': a.inner_back_hook
-            })
+            q["answers"].append(
+                {
+                    "word": a.word,
+                    "def": a.definition,
+                    "f_hooks": a.front_hooks,
+                    "b_hooks": a.back_hooks,
+                    "symbols": a.lexicon_symbols,
+                    "f_inner": a.inner_front_hook,
+                    "b_inner": a.inner_back_hook,
+                }
+            )
         return q
 
     def to_python(self):
-        return {'q': self.alphagram.alphagram,
-                'a': [w.word for w in self.answers]}
+        return {
+            "q": self.alphagram.alphagram,
+            "a": [w.word for w in self.answers],
+        }
 
     def set_from_obj(self, obj):
-        self.alphagram = Alphagram(obj['q'])
-        self.set_answers_from_word_list(obj['a'])
+        self.alphagram = Alphagram(obj["q"])
+        self.set_answers_from_word_list(obj["a"])
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return f'<Question: {self.alphagram} ({self.answers})>'
+        return f"<Question: {self.alphagram} ({self.answers})>"
 
 
 class Questions:
@@ -182,10 +199,13 @@ class Questions:
         for alphagram in pba:
             question = Question(
                 # sorry:
-                alphagram=Alphagram(alphagram.alphagram,
-                                    alphagram.probability,
-                                    alphagram.combinations),
-                answers=words_from_pb(alphagram.words))
+                alphagram=Alphagram(
+                    alphagram.alphagram,
+                    alphagram.probability,
+                    alphagram.combinations,
+                ),
+                answers=words_from_pb(alphagram.words),
+            )
             self.append(question)
 
     def sort_by_probability(self):
@@ -201,4 +221,5 @@ class Questions:
         return self.__str__()
 
     def __str__(self):
-        return f'{{<Questions {self.questions}>}}'
+        return f"{{<Questions {self.questions}>}}"
+
