@@ -80,7 +80,7 @@ def get_questions_by_condition(
     )
 
     to_filter = questions_from_probability_range(
-        lex, min_prob, max_prob, length, expand=True
+        lex, min_prob, max_prob, length, expand=False
     )
     for q in to_filter.questions_array():
         if condition_type == Condition.ALPHAGRAM:
@@ -449,7 +449,7 @@ def create_spanish_lists():
 
 
 def create_polish_lists():
-    lex = Lexicon.objects.get(lexiconName="OSPS41")
+    lex = Lexicon.objects.get(lexiconName="OSPS42")
     for i in range(2, 16):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -560,5 +560,5 @@ class Command(BaseCommand):
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
         #     createNamedLists(lex)
         # create_spanish_lists()
-        NamedList.objects.filter(lexicon__lexiconName="OSPS41").delete()
+        NamedList.objects.filter(lexicon__lexiconName="OSPS42").delete()
         create_polish_lists()
