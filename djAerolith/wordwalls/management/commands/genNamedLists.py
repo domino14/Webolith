@@ -2,7 +2,6 @@
 
 import json
 import time
-import re
 import logging
 
 from django.core.management.base import BaseCommand
@@ -10,8 +9,8 @@ from django.db import connection
 
 from base.models import Lexicon, alphagrammize
 from wordwalls.models import NamedList
-from lib.domain import Questions
-from lib.wdb_interface.wdb_helper import questions_from_probability_range
+from lib.wdb_interface.wdb_helper import word_search
+from lib.wdb_interface.word_searches import SearchDescription
 
 logger = logging.getLogger(__name__)
 friendly_number_map = {
@@ -55,45 +54,6 @@ FRIENDLY_COMMON_SHORT = "Common Short Words (8 or fewer letters)"
 FRIENDLY_COMMON_LONG = "Common Long Words (greater than 8 letters)"
 
 
-class Condition(object):
-    WORD = "word"
-    ALPHAGRAM = "alphagram"
-
-
-def get_questions_by_condition(
-    lex, min_prob, max_prob, length, condition, condition_type="alphagram"
-):
-    """
-    Get all questions that match the condition. Return a to_python
-    representation, ready for saving into the list.
-
-    """
-    qs = Questions()
-    logger.debug(
-        "Condition: min_prob=%s max_prob=%s length=%s condition=%s "
-        "condition_type=%s",
-        min_prob,
-        max_prob,
-        length,
-        condition,
-        condition_type,
-    )
-
-    to_filter = questions_from_probability_range(
-        lex, min_prob, max_prob, length, expand=False
-    )
-    for q in to_filter.questions_array():
-        if condition_type == Condition.ALPHAGRAM:
-            test = condition(q.alphagram.alphagram)
-        elif condition_type == Condition.WORD:
-            test = any(condition(word) for word in q.answers)
-        if test:
-            # print 'passed test', q, q['q'], q['a'][0].word
-            qs.append(q)
-
-    return qs.to_python()
-
-
 def create_named_list(
     lexicon, num_questions, word_length, is_range, questions, name
 ):
@@ -118,8 +78,6 @@ def create_wl_lists(i, lex):
     logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
     length_counts = json.loads(lex.lengthCounts)
     num_for_this_length = length_counts[str(i)]
-    min_prob = 1
-    max_prob = num_for_this_length
     create_named_list(
         lex,
         num_for_this_length,
@@ -143,9 +101,13 @@ def create_wl_lists(i, lex):
             )
 
     if i >= 4 and i <= 8:
-        qs = get_questions_by_condition(
-            lex, min_prob, max_prob, i, lambda a: re.search(r"[JQXZ]", a)
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.matching_anagram("[JQXZ]" + "?" * (i - 1)),
+            ]
+        ).to_python()
+
         create_named_list(
             lex,
             len(qs),
@@ -157,13 +119,14 @@ def create_wl_lists(i, lex):
 
     if i == 7:
         # 4+ vowel 7s
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda a: (len(re.findall(r"[AEIOU]", a)) >= 4),
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.matching_anagram(
+                    "[AEIOU][AEIOU][AEIOU][AEIOU]???"
+                ),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
@@ -174,13 +137,14 @@ def create_wl_lists(i, lex):
         )
     if i == 8:
         # 5+ vowel 8s
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda a: (len(re.findall(r"[AEIOU]", a)) >= 5),
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.matching_anagram(
+                    "[AEIOU][AEIOU][AEIOU][AEIOU][AEIOU]???"
+                ),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
@@ -191,14 +155,14 @@ def create_wl_lists(i, lex):
         )
 
     if lex.lexiconName == "NWL18":
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda w: ("+" in w.lexicon_symbols),
-            condition_type=Condition.WORD,
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
+
         create_named_list(
             lex,
             len(qs),
@@ -208,14 +172,13 @@ def create_wl_lists(i, lex):
             "NWL18 {} not in America".format(friendly_number_map[i]),
         )
 
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda w: ("$" in w.lexicon_symbols),
-            condition_type=Condition.WORD,
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("other_english"),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
@@ -225,80 +188,34 @@ def create_wl_lists(i, lex):
             "NWL18 {} not in CSW19".format(friendly_number_map[i]),
         )
 
-        if i == 4:
-            qs = get_questions_by_condition(
-                lex,
-                min_prob,
-                max_prob,
-                i,
-                lambda w: (
-                    "+" in w.lexicon_symbols
-                    and re.search(r"[JQXZ]", w.word)
-                    and len(w.word) == 4
-                ),
-                condition_type=Condition.WORD,
-            )
-            create_named_list(
-                lex,
-                len(qs),
-                i,
-                False,
-                json.dumps(qs),
-                "NWL18 JQXZ 4s not in America",
-            )
-        elif i == 5:
-            qs = get_questions_by_condition(
-                lex,
-                min_prob,
-                max_prob,
-                i,
-                lambda w: (
-                    "+" in w.lexicon_symbols
-                    and re.search(r"[JQXZ]", w.word)
-                    and len(w.word) == 5
-                ),
-                condition_type=Condition.WORD,
-            )
-            create_named_list(
-                lex,
-                len(qs),
-                i,
-                False,
-                json.dumps(qs),
-                "NWL18 JQXZ 5s not in America",
-            )
+        if i >= 4 and i <= 6:
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.not_in_lexicon("update"),
+                    SearchDescription.matching_anagram(
+                        "[JQXZ]" + "?" * (i - 1)
+                    ),
+                ]
+            ).to_python()
 
-        elif i == 6:
-            qs = get_questions_by_condition(
-                lex,
-                min_prob,
-                max_prob,
-                i,
-                lambda w: (
-                    "+" in w.lexicon_symbols
-                    and re.search(r"[JQXZ]", w.word)
-                    and len(w.word) == 6
-                ),
-                condition_type=Condition.WORD,
-            )
             create_named_list(
                 lex,
                 len(qs),
                 i,
                 False,
                 json.dumps(qs),
-                "NWL18 JQXZ 6s not in America",
+                f"NWL18 JQXZ {i}s not in America",
             )
 
     if lex.lexiconName == "CSW19":
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda w: ("+" in w.lexicon_symbols),
-            condition_type=Condition.WORD,
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
@@ -308,14 +225,13 @@ def create_wl_lists(i, lex):
             "CSW19 {} not in CSW15".format(friendly_number_map[i]),
         )
 
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda w: ("#" in w.lexicon_symbols),
-            condition_type=Condition.WORD,
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("other_english"),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
@@ -345,8 +261,6 @@ def create_spanish_lists():
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
         num_for_this_length = length_counts[str(i)]
-        min_prob = 1
-        max_prob = num_for_this_length
 
         create_named_list(
             lex,
@@ -371,9 +285,14 @@ def create_spanish_lists():
                 )
 
         if i >= 4 and i <= 8:
-            qs = get_questions_by_condition(
-                lex, min_prob, max_prob, i, lambda a: re.search(r"[JQXZ]", a)
-            )
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[JQXZ]" + "?" * (i - 1)
+                    ),
+                ]
+            ).to_python()
             create_named_list(
                 lex,
                 len(qs),
@@ -383,9 +302,14 @@ def create_spanish_lists():
                 "JQXZ " + mapa_amigable[i],
             )
 
-            qs = get_questions_by_condition(
-                lex, min_prob, max_prob, i, lambda a: re.search(r"[123Ñ]", a)
-            )
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[123Ñ]" + "?" * (i - 1)
+                    ),
+                ]
+            ).to_python()
             create_named_list(
                 lex,
                 len(qs),
@@ -397,13 +321,14 @@ def create_spanish_lists():
 
         if i == 7:
             # 4+ vowel 7s
-            qs = get_questions_by_condition(
-                lex,
-                min_prob,
-                max_prob,
-                i,
-                lambda a: (len(re.findall(r"[AEIOU]", a)) >= 4),
-            )
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[AEIOU][AEIOU][AEIOU][AEIOU]???"
+                    ),
+                ]
+            ).to_python()
             create_named_list(
                 lex,
                 len(qs),
@@ -414,13 +339,14 @@ def create_spanish_lists():
             )
         if i == 8:
             # 5+ vowel 8s
-            qs = get_questions_by_condition(
-                lex,
-                min_prob,
-                max_prob,
-                i,
-                lambda a: (len(re.findall(r"[AEIOU]", a)) >= 5),
-            )
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[AEIOU][AEIOU][AEIOU][AEIOU][AEIOU]???"
+                    ),
+                ]
+            ).to_python()
             create_named_list(
                 lex,
                 len(qs),
@@ -430,14 +356,13 @@ def create_spanish_lists():
                 "Ochos con 5 o más vocales",
             )
 
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda w: ("+" in w.lexicon_symbols),
-            condition_type=Condition.WORD,
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
@@ -454,8 +379,6 @@ def create_polish_lists():
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
         num_for_this_length = length_counts[str(i)]
-        min_prob = 1
-        max_prob = num_for_this_length
 
         create_named_list(
             lex,
@@ -480,13 +403,14 @@ def create_polish_lists():
                 )
 
         if i >= 4 and i <= 8:
-            qs = get_questions_by_condition(
-                lex,
-                min_prob,
-                max_prob,
-                i,
-                lambda a: re.search(r"[ĄĆĘŃÓŚŹŻ]", a),
-            )
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[ĄĆĘŃÓŚŹŻ]" + "?" * (i - 1)
+                    ),
+                ]
+            ).to_python()
             create_named_list(
                 lex,
                 len(qs),
@@ -497,21 +421,20 @@ def create_polish_lists():
             )
 
         # New words
-        qs = get_questions_by_condition(
-            lex,
-            min_prob,
-            max_prob,
-            i,
-            lambda w: ("+" in w.lexicon_symbols),
-            condition_type=Condition.WORD,
-        )
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
         create_named_list(
             lex,
             len(qs),
             i,
             False,
             json.dumps(qs),
-            "OSPS41 {} not in OSPS40".format(friendly_number_map[i]),
+            "OSPS42 {} not in OSPS40".format(friendly_number_map[i]),
         )
 
 
@@ -554,11 +477,15 @@ class Command(BaseCommand):
     help = """Populates database with named lists"""
 
     def handle(self, **options):
-        # NamedList.objects.filter(
-        #     lexicon__lexiconName__in=["CSW19", "NWL18"]
-        # ).delete()
-        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
-        #     createNamedLists(lex)
-        # create_spanish_lists()
+        import time
+
+        start = time.time()
+        NamedList.objects.filter(
+            lexicon__lexiconName__in=["CSW19", "NWL18"]
+        ).delete()
+        for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
+            createNamedLists(lex)
+        create_spanish_lists()
         NamedList.objects.filter(lexicon__lexiconName="OSPS42").delete()
         create_polish_lists()
+        print(f"Elapsed: {time.time()-start} s")
