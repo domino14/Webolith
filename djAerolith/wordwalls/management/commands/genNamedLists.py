@@ -480,12 +480,12 @@ class Command(BaseCommand):
         import time
 
         start = time.time()
-        NamedList.objects.filter(
-            lexicon__lexiconName__in=["CSW19", "NWL18"]
-        ).delete()
-        for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
-            createNamedLists(lex)
-        create_spanish_lists()
+        # NamedList.objects.filter(
+        #     lexicon__lexiconName__in=["CSW19", "NWL18"]
+        # ).delete()
+        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
+        #     createNamedLists(lex)
+        # create_spanish_lists()
         NamedList.objects.filter(lexicon__lexiconName="OSPS42").delete()
         create_polish_lists()
         print(f"Elapsed: {time.time()-start} s")
