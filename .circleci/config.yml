@@ -26,8 +26,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - lexicadb-v2
-            - lexicagaddag-v2
+            - lexicadb-v3
+            - lexicagaddag-v3
 
       - run: >
           docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica
@@ -35,12 +35,18 @@ jobs:
           $DOCKER_WDB_SERVER /opt/dbmaker
           -outputdir /opt/lexica/db -dbs NWL18,America,CSW19,FISE2
 
+      # The following is a hack to make tests pass; we are failing because
+      # word-db-server uppercases all lexica names.
+      # XXX: That needs to either be more clear, and/or we need to remove
+      # America, which is an obsolete lexicon, from these tests.
+      - run: mv ~/word-game-lexica/db/America.db ~/word-game-lexica/db/AMERICA.db
+
       - save_cache:
-          key: lexicadb-v2
+          key: lexicadb-v3
           paths:
             - /home/circleci/word-game-lexica/db
       - save_cache:
-          key: lexicagaddag-v2
+          key: lexicagaddag-v3
           paths:
             - /home/circleci/word-game-lexica/gaddag
 
