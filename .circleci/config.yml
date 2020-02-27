@@ -26,21 +26,21 @@ jobs:
 
       - restore_cache:
           keys:
-            - lexicadb
-            - lexicagaddag
+            - lexicadb-v3
+            - lexicagaddag-v3
 
       - run: >
           docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica
           -v ~/word-game-lexica:/opt/lexica
-          $DOCKER_WDB_SERVER go run /go/src/github.com/domino14/word_db_server/main.go
+          $DOCKER_WDB_SERVER /opt/dbmaker
           -outputdir /opt/lexica/db -dbs NWL18,America,CSW19,FISE2
 
       - save_cache:
-          key: lexicadb
+          key: lexicadb-v3
           paths:
             - /home/circleci/word-game-lexica/db
       - save_cache:
-          key: lexicagaddag
+          key: lexicagaddag-v3
           paths:
             - /home/circleci/word-game-lexica/gaddag
 

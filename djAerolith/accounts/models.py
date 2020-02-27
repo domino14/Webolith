@@ -28,17 +28,16 @@ logger = logging.getLogger(__name__)
 
 def getLexicon(request=None):
     if not request:
-        return Lexicon.objects.get(lexiconName='NWL18')
-    elif request.LANGUAGE_CODE == 'es':
-        return Lexicon.objects.get(lexiconName='FISE2')
-    elif request.LANGUAGE_CODE == 'pl':
-        return Lexicon.objects.get(lexiconName='OSPS41')
-    return Lexicon.objects.get(lexiconName='NWL18')
+        return Lexicon.objects.get(lexiconName="NWL18")
+    elif request.LANGUAGE_CODE == "es":
+        return Lexicon.objects.get(lexiconName="FISE2")
+    elif request.LANGUAGE_CODE == "pl":
+        return Lexicon.objects.get(lexiconName="OSPS42")
+    return Lexicon.objects.get(lexiconName="NWL18")
 
 
 class AerolithProfile(models.Model):
-    user = models.OneToOneField(User,
-                                on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     coins = models.IntegerField(default=0)
     profile = models.CharField(max_length=2000, blank=True)
@@ -57,8 +56,9 @@ class AerolithProfile(models.Model):
     )
 
     member = models.BooleanField(default=False)
-    membershipType = models.IntegerField(choices=MEMBERSHIP_TYPES,
-                                         default=NONE_MTYPE)
+    membershipType = models.IntegerField(
+        choices=MEMBERSHIP_TYPES, default=NONE_MTYPE
+    )
     membershipExpiry = models.DateTimeField(null=True, blank=True)
 
     # specific per game
@@ -66,19 +66,20 @@ class AerolithProfile(models.Model):
     wordwallsSaveListSize = models.IntegerField(default=0)
 
     # project-wide
-    defaultLexicon = models.ForeignKey(Lexicon, default=getLexicon,
-                                       on_delete=models.SET_DEFAULT)
+    defaultLexicon = models.ForeignKey(
+        Lexicon, default=getLexicon, on_delete=models.SET_DEFAULT
+    )
     avatarUrl = models.CharField(null=True, blank=True, max_length=512)
-    additional_data = models.TextField(default='{}', blank=True)
+    additional_data = models.TextField(default="{}", blank=True)
 
     def __str__(self):
         return "Profile for " + self.user.username
 
 
 def user_registered_handler(sender, **kwargs):
-    if kwargs['created'] and not kwargs.get('raw', False):
+    if kwargs["created"] and not kwargs.get("raw", False):
         profile = AerolithProfile()
-        profile.user = kwargs['instance']
+        profile.user = kwargs["instance"]
         profile.save()
 
 

@@ -36,6 +36,7 @@ EXCLUDED_LEXICA = [
     "America",
     "CSW15",
     "OSPS40",
+    "OSPS41",
 ]
 
 # XXX: This handles Spanish, English and Polish. It is pretty ghetto.
@@ -315,4 +316,3 @@ class AlphagramTag(models.Model):
 
     class Meta:
         unique_together = ("user", "lexicon", "alphagram")
-
