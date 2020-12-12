@@ -19,6 +19,7 @@
 from django.conf.urls import url
 
 from wordwalls.api import (
+    api_answers,
     api_challengers_by_tablenum,
     api_challengers,
     configure,
@@ -33,18 +34,18 @@ from wordwalls.api import (
 )
 
 urlpatterns = [
-    url(r'^challengers_by_tablenum/$', api_challengers_by_tablenum),
-    url(r'^challengers/$', api_challengers),
-    url(r'^configure/$', configure),
-    url(r'^challenges_played/$', challenges_played),
-    url(r'^special_challenges/$', special_challenges),
-    url(r'^default_lists/$', default_lists),
-    url(r'^new_challenge/$', new_challenge),
-    url(r'^new_search/$', new_search),
-    url(r'^load_aerolith_list/$', load_aerolith_list),
-    url(r'^load_saved_list/$', load_saved_list),
-    url(r'^load_raw_questions/$', load_raw_questions),
-
+    url(r"^answers/$", api_answers),
+    url(r"^challengers_by_tablenum/$", api_challengers_by_tablenum),
+    url(r"^challengers/$", api_challengers),
+    url(r"^configure/$", configure),
+    url(r"^challenges_played/$", challenges_played),
+    url(r"^special_challenges/$", special_challenges),
+    url(r"^default_lists/$", default_lists),
+    url(r"^new_challenge/$", new_challenge),
+    url(r"^new_search/$", new_search),
+    url(r"^load_aerolith_list/$", load_aerolith_list),
+    url(r"^load_saved_list/$", load_saved_list),
+    url(r"^load_raw_questions/$", load_raw_questions),
     # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
 ]

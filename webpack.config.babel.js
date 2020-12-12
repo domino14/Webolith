@@ -62,7 +62,7 @@ export default {
   devServer: {
     port: 7000,
     host: '0.0.0.0',
-    public: 'vm.aerolith.org',
+    public: 'aerolith.localhost',
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
