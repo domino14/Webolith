@@ -154,24 +154,7 @@ def create_wl_lists(i, lex):
             "Eights with 5 or more vowels",
         )
 
-    if lex.lexiconName == "NWL18":
-        qs = word_search(
-            [
-                SearchDescription.lexicon(lex),
-                SearchDescription.length(i, i),
-                SearchDescription.not_in_lexicon("update"),
-            ]
-        ).to_python()
-
-        create_named_list(
-            lex,
-            len(qs),
-            i,
-            False,
-            json.dumps(qs),
-            "NWL18 {} not in America".format(friendly_number_map[i]),
-        )
-
+    if lex.lexiconName == "NWL20":
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
@@ -185,28 +168,8 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "NWL18 {} not in CSW19".format(friendly_number_map[i]),
+            "NWL20 {} not in CSW19".format(friendly_number_map[i]),
         )
-
-        if i >= 4 and i <= 6:
-            qs = word_search(
-                [
-                    SearchDescription.lexicon(lex),
-                    SearchDescription.not_in_lexicon("update"),
-                    SearchDescription.matching_anagram(
-                        "[JQXZ]" + "?" * (i - 1)
-                    ),
-                ]
-            ).to_python()
-
-            create_named_list(
-                lex,
-                len(qs),
-                i,
-                False,
-                json.dumps(qs),
-                f"NWL18 JQXZ {i}s not in America",
-            )
 
     if lex.lexiconName == "CSW19":
         qs = word_search(
@@ -238,7 +201,7 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "CSW19 {} not in NWL18".format(friendly_number_map[i]),
+            "CSW19 {} not in NWL20".format(friendly_number_map[i]),
         )
 
 
@@ -480,12 +443,14 @@ class Command(BaseCommand):
         import time
 
         start = time.time()
-        # NamedList.objects.filter(
-        #     lexicon__lexiconName__in=["CSW19", "NWL18"]
-        # ).delete()
-        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL18", "CSW19"]):
-        #     createNamedLists(lex)
+        NamedList.objects.filter(
+            lexicon__lexiconName__in=["CSW19", "NWL20"]
+        ).delete()
+        for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW19"]):
+            createNamedLists(lex)
         # create_spanish_lists()
-        NamedList.objects.filter(lexicon__lexiconName="OSPS42").delete()
-        create_polish_lists()
+        # NamedList.objects.filter(lexicon__lexiconName="OSPS42").delete()
+        # create_polish_lists()
+        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
+        #     createNamedLists(lex)
         print(f"Elapsed: {time.time()-start} s")

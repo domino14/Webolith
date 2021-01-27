@@ -129,8 +129,9 @@ const SearchTypesEnum = {
       ],
       description: `Only looks for words that are NOT in the selected lexicon.
       The "other English-language lexicon" refers to CSW19 if you are currently
-      using the NWL18 lexicon, and NWL18 if you are currently using the
-      CSW19 lexicon. The "last version" refers to America and CSW15, respectively.`,
+      using the NWL20 lexicon, and NWL20 if you are currently using the
+      CSW19 lexicon. The "last version" is only CSW15 if you are using the CSW19
+      lexicon. NWL20 has no new words compared to NWL18.`,
     },
     [pbsrConditions.PROBABILITY_LIMIT]: {
       code: pbsrConditions.PROBABILITY_LIMIT,

@@ -34,6 +34,7 @@ EXCLUDED_LEXICA = [
     "America2016",
     "FISE09",
     "America",
+    "NWL18",
     "CSW15",
     "OSPS40",
     "OSPS41",
