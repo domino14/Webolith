@@ -70,3 +70,9 @@
     lexiconName: OSPS42
   model: base.lexicon
   pk: 14
+- fields:
+    lengthCounts: '{"10":23905,"11":17570,"12":12356,"13":8409,"14":5524,"15":3478,"2":79,"3":761,"4":2836,"5":6783,"6":12936,"7":21068,"8":28000,"9":28914}'
+    lexiconDescription: NASPA Word List 2020 Edition
+    lexiconName: NWL20
+  model: base.lexicon
+  pk: 15

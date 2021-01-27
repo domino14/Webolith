@@ -28,12 +28,12 @@ logger = logging.getLogger(__name__)
 
 def getLexicon(request=None):
     if not request:
-        return Lexicon.objects.get(lexiconName="NWL18")
+        return Lexicon.objects.get(lexiconName="NWL20")
     elif request.LANGUAGE_CODE == "es":
         return Lexicon.objects.get(lexiconName="FISE2")
     elif request.LANGUAGE_CODE == "pl":
         return Lexicon.objects.get(lexiconName="OSPS42")
-    return Lexicon.objects.get(lexiconName="NWL18")
+    return Lexicon.objects.get(lexiconName="NWL20")
 
 
 class AerolithProfile(models.Model):

@@ -262,7 +262,7 @@ class Game {
   }
   /**
    * @param {string} word
-   * @return {boolean} Whether the word is in a CSW lexicon and not NWL18.
+   * @return {boolean} Whether the word is in a CSW lexicon and not NWL.
    */
   isCSW(word) {
     const w = this.originalWordsHash[word];
