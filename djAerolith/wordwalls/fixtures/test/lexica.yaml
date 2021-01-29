@@ -76,3 +76,9 @@
     lexiconName: NWL20
   model: base.lexicon
   pk: 15
+- fields:
+    lengthCounts: '{"10":298370,"11":341581,"12":352416,"13":334410,"14":296234,"15":241247,"2":101,"3":1116,"4":5236,"5":18074,"6":44129,"7":91307,"8":157759,"9":233153}'
+    lexiconDescription: "Polska Federacja Scrabble - Update 44"
+    lexiconName: OSPS44
+  model: base.lexicon
+  pk: 16
