@@ -38,6 +38,7 @@ EXCLUDED_LEXICA = [
     "CSW15",
     "OSPS40",
     "OSPS41",
+    "OSPS42"
 ]
 
 # XXX: This handles Spanish, English and Polish. It is pretty ghetto.
