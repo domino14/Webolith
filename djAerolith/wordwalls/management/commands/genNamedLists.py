@@ -54,9 +54,7 @@ FRIENDLY_COMMON_SHORT = "Common Short Words (8 or fewer letters)"
 FRIENDLY_COMMON_LONG = "Common Long Words (greater than 8 letters)"
 
 
-def create_named_list(
-    lexicon, num_questions, word_length, is_range, questions, name
-):
+def create_named_list(lexicon, num_questions, word_length, is_range, questions, name):
     if num_questions == 0:
         logger.debug(">> Not creating empty list " + name)
         return
@@ -122,9 +120,7 @@ def create_wl_lists(i, lex):
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
-                SearchDescription.matching_anagram(
-                    "[AEIOU][AEIOU][AEIOU][AEIOU]???"
-                ),
+                SearchDescription.matching_anagram("[AEIOU][AEIOU][AEIOU][AEIOU]???"),
             ]
         ).to_python()
         create_named_list(
@@ -251,9 +247,7 @@ def create_spanish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[JQXZ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[JQXZ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -268,9 +262,7 @@ def create_spanish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[123Ñ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[123Ñ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -369,9 +361,7 @@ def create_polish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[ĄĆĘŃÓŚŹŻ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[ĄĆĘŃÓŚŹŻ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -399,6 +389,53 @@ def create_polish_lists():
             json.dumps(qs),
             "OSPS44 {} not in OSPS42".format(friendly_number_map[i]),
         )
+
+
+def create_german_lists():
+    lex = Lexicon.objects.get(lexiconName="Deutsch")
+    # deutsch list only goes up to 9 for now :/
+    for i in range(2, 10):
+        logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
+        length_counts = json.loads(lex.lengthCounts)
+        num_for_this_length = length_counts[str(i)]
+
+        create_named_list(
+            lex,
+            num_for_this_length,
+            i,
+            True,
+            json.dumps([1, num_for_this_length]),
+            "The " + friendly_number_map[i],
+        )
+        if i >= 7 and i <= 8:
+            # create 'every x' list
+            for p in range(1, num_for_this_length + 1, LIST_GRANULARITY):
+                min_p = p
+                max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
+                create_named_list(
+                    lex,
+                    max_p - min_p + 1,
+                    i,
+                    True,
+                    json.dumps([min_p, max_p]),
+                    "{} ({} to {})".format(friendly_number_map[i], p, max_p),
+                )
+
+        if i >= 4 and i <= 8:
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram("[ÄJÖQÜVXY]" + "?" * (i - 1)),
+                ]
+            ).to_python()
+            create_named_list(
+                lex,
+                len(qs),
+                i,
+                False,
+                json.dumps(qs),
+                friendly_number_map[i] + " with any of ÄJÖQÜVXY",
+            )
 
 
 def create_common_words_lists():

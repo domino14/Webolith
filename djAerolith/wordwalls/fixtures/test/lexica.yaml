@@ -82,3 +82,9 @@
     lexiconName: OSPS44
   model: base.lexicon
   pk: 16
+- fields:
+    lengthCounts: '{"2":63,"3":546,"4":2438,"5":6142,"6":12900,"7":24560,"8":39299,"9":58519}'
+    lexiconDescription: "German Lexicon"
+    lexiconName: Deutsch
+  model: base.lexicon
+  pk: 17

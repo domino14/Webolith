@@ -38,12 +38,12 @@ EXCLUDED_LEXICA = [
     "CSW15",
     "OSPS40",
     "OSPS41",
-    "OSPS42"
+    "OSPS42",
 ]
 
-# XXX: This handles Spanish, English and Polish. It is pretty ghetto.
+# XXX: This handles Spanish, English, Polish, German. It is pretty ghetto.
 # Consider reworking with lexicon-specific reordering (see macondo e.g.)
-SORT_STRING_ORDER = "AĄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓPQR3SŚTUVWXYZŹŻ?"
+SORT_STRING_ORDER = "AĄÄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓÖPQR3SŚTUÜVWXYZŹŻ?"
 SORT_MAP = {}
 
 
@@ -222,7 +222,7 @@ class SavedList(models.Model):
 
     def to_python(self):
         """
-            Converts to a serializable Python object.
+        Converts to a serializable Python object.
         """
         return {
             "lexicon": self.lexicon.lexiconName,
