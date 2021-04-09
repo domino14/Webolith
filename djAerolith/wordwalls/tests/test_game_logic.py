@@ -1208,8 +1208,8 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
         self.assert_wl(
             word_list,
             {
-                "numAlphagrams": 691,
-                "numCurAlphagrams": 691,
+                "numAlphagrams": 690,
+                "numCurAlphagrams": 690,
                 "numFirstMissed": 0,
                 "numMissed": 0,
                 "goneThruOnce": False,
@@ -1220,7 +1220,7 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
         orig_questions = set(
             json.dumps(q) for q in json.loads(word_list.origQuestions)
         )
-        self.assertEqual(len(orig_questions), 691)
+        self.assertEqual(len(orig_questions), 690)
         # Start the quiz.
         wwg = WordwallsGame()
         params = wwg.start_quiz(table_id, self.user)
