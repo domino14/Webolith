@@ -101,7 +101,7 @@ class WordwallsGameStartTest(TestCase):
         # Test that the temporary list name was generated correctly.
         addl_params = json.loads(response.context["addParams"])
         self.assertEqual(
-            addl_params["tempListName"], "America 8s (151 - 200) (2)"
+            addl_params["tempListName"], "NWL20 8s (151 - 200) (2)"
         )
 
     def test_play_existing_challenge(self):
