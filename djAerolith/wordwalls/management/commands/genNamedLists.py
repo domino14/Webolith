@@ -498,8 +498,8 @@ class Command(BaseCommand):
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW19"]):
         #     createNamedLists(lex)
         # create_spanish_lists()
-        NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
-        create_polish_lists()
+        # NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
+        create_german_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
         print(f"Elapsed: {time.time()-start} s")
