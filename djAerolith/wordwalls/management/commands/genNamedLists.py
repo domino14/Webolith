@@ -401,6 +401,55 @@ def create_polish_lists():
         )
 
 
+def create_german_lists():
+    lex = Lexicon.objects.get(lexiconName="Deutsch")
+    # deutsch list only goes up to 9 for now :/
+    for i in range(2, 10):
+        logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
+        length_counts = json.loads(lex.lengthCounts)
+        num_for_this_length = length_counts[str(i)]
+
+        create_named_list(
+            lex,
+            num_for_this_length,
+            i,
+            True,
+            json.dumps([1, num_for_this_length]),
+            "The " + friendly_number_map[i],
+        )
+        if i >= 7 and i <= 8:
+            # create 'every x' list
+            for p in range(1, num_for_this_length + 1, LIST_GRANULARITY):
+                min_p = p
+                max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
+                create_named_list(
+                    lex,
+                    max_p - min_p + 1,
+                    i,
+                    True,
+                    json.dumps([min_p, max_p]),
+                    "{} ({} to {})".format(friendly_number_map[i], p, max_p),
+                )
+
+        if i >= 4 and i <= 8:
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[ÄJÖQÜVXY]" + "?" * (i - 1)
+                    ),
+                ]
+            ).to_python()
+            create_named_list(
+                lex,
+                len(qs),
+                i,
+                False,
+                json.dumps(qs),
+                friendly_number_map[i] + " with any of ÄJÖQÜVXY",
+            )
+
+
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
     return
@@ -449,8 +498,8 @@ class Command(BaseCommand):
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW19"]):
         #     createNamedLists(lex)
         # create_spanish_lists()
-        NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
-        create_polish_lists()
+        # NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
+        create_german_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
         print(f"Elapsed: {time.time()-start} s")

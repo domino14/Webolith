@@ -33,6 +33,8 @@ def getLexicon(request=None):
         return Lexicon.objects.get(lexiconName="FISE2")
     elif request.LANGUAGE_CODE == "pl":
         return Lexicon.objects.get(lexiconName="OSPS44")
+    elif request.LANGUAGE_CODE == "de":
+        return Lexicon.objects.get(lexiconName="Deutsch")
     return Lexicon.objects.get(lexiconName="NWL20")
 
 
@@ -56,9 +58,7 @@ class AerolithProfile(models.Model):
     )
 
     member = models.BooleanField(default=False)
-    membershipType = models.IntegerField(
-        choices=MEMBERSHIP_TYPES, default=NONE_MTYPE
-    )
+    membershipType = models.IntegerField(choices=MEMBERSHIP_TYPES, default=NONE_MTYPE)
     membershipExpiry = models.DateTimeField(null=True, blank=True)
 
     # specific per game

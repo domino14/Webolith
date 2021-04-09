@@ -1,7 +1,7 @@
 [
   {
     "fields": {
-      "lexicon": 7,
+      "lexicon": 15,
       "name": "This is my list.",
       "created": "2015-10-08T09:04:34+00:00",
       "numAlphagrams": 11,
@@ -24,7 +24,7 @@
   },
   {
     "fields": {
-      "lexicon": 7,
+      "lexicon": 15,
       "name": "list the sécond",
       "created": "2015-10-08T09:06:48+00:00",
       "numAlphagrams": 11,
@@ -47,7 +47,7 @@
   },
   {
     "fields": {
-      "lexicon": 7,
+      "lexicon": 15,
       "name": "i live in a giant bucket",
       "created": "2015-10-08T09:19:40+00:00",
       "numAlphagrams": 11,
@@ -70,7 +70,7 @@
   },
   {
     "fields": {
-      "lexicon": 7,
+      "lexicon": 15,
       "name": "8s_2_53",
       "created": "2015-12-03T19:24:41+00:00",
       "numAlphagrams": 52,
@@ -91,7 +91,7 @@
   },
   {
     "fields": {
-      "lexicon": 7,
+      "lexicon": 15,
       "name": "8s_2_53",
       "created": "2015-12-03T19:24:41+00:00",
       "numAlphagrams": 52,
@@ -113,8 +113,8 @@
 
   {
     "fields": {
-      "lexicon": 7,
-      "name": "America 8s (151 - 200)",
+      "lexicon": 15,
+      "name": "NWL20 8s (151 - 200)",
       "created": "2015-12-03T19:24:41+00:00",
       "numAlphagrams": 50,
       "numFirstMissed": 0,
@@ -135,8 +135,8 @@
 
   {
     "fields": {
-      "lexicon": 7,
-      "name": "America 8s (151 - 200) (1)",
+      "lexicon": 15,
+      "name": "NWL20 8s (151 - 200) (1)",
       "created": "2015-12-03T19:24:41+00:00",
       "numAlphagrams": 50,
       "numFirstMissed": 0,
