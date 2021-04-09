@@ -967,7 +967,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         challenge = DailyChallengeName.objects.get(name="Blank Bingos")
         table_id = self.wwg.initialize_daily_challenge(
             self.user,
-            Lexicon.objects.get(lexiconName="America"),
+            Lexicon.objects.get(lexiconName="NWL20"),
             challenge,
             date(2016, 1, 1),
         )
@@ -1090,7 +1090,7 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
 
     def setUp(self):
         self.user = User.objects.get(username="cesar")
-        self.lex = Lexicon.objects.get(lexiconName="America")
+        self.lex = Lexicon.objects.get(lexiconName="NWL20")
         self.wwg = WordwallsGame()
 
     def test_load_missed_bingos(self):
@@ -1139,7 +1139,7 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
 
     def setUp(self):
         self.user = User.objects.get(username="cesar")
-        self.lex = Lexicon.objects.get(lexiconName="America")
+        self.lex = Lexicon.objects.get(lexiconName="NWL20")
         self.wwg = WordwallsGame()
 
     def test_range_list_short(self):
