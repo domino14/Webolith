@@ -40,7 +40,7 @@ class WordwallsChallengeAPITest(TestCase):
         # 40079 (40256, 2015-10-13), 40082 (40260, 2015-10-13),
         # 40128 (40307, 2015-10-15), 40134 (40313, 2015-10-15)
         resp = self.client.get(
-            "/wordwalls/api/challenges_played/?lexicon=7&date=2015-10-14"
+            "/wordwalls/api/challenges_played/?lexicon=15&date=2015-10-14"
         )
         self.assertEqual(json.loads(resp.content), [])
 
@@ -50,7 +50,7 @@ class WordwallsChallengeAPITest(TestCase):
         # 40079 (40256, 2015-10-13), 40082 (40260, 2015-10-13),
         # 40128 (40307, 2015-10-15), 40134 (40313, 2015-10-15)
         resp = self.client.get(
-            "/wordwalls/api/challenges_played/?lexicon=7&date=2015-10-13"
+            "/wordwalls/api/challenges_played/?lexicon=15&date=2015-10-13"
         )
         self.assertEqual(
             json.loads(resp.content), [{"challengeID": 6}, {"challengeID": 7}]
@@ -359,7 +359,7 @@ class WordwallsLeaderboardTest(TestCase):
 
     def test_leaderboard_default(self):
         resp = self.client.get(
-            "/wordwalls/api/challengers/?lexicon=7&challenge=7&date=2015-10-13"
+            "/wordwalls/api/challengers/?lexicon=15&challenge=7&date=2015-10-13"
         )
         loaded = json.loads(resp.content)
         self.assertEqual(len(loaded["entries"]), 35)
@@ -400,7 +400,7 @@ class WordwallsLeaderboardTest(TestCase):
 
     def test_leaderboard_by_time(self):
         resp = self.client.get(
-            "/wordwalls/api/challengers/?lexicon=7&challenge=7&date=2015-10-13"
+            "/wordwalls/api/challengers/?lexicon=15&challenge=7&date=2015-10-13"
             "&tiebreaker=time"
         )
         loaded = json.loads(resp.content)
