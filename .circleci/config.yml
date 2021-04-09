@@ -33,7 +33,7 @@ jobs:
           docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica -e LETTER_DISTRIBUTION_PATH=/opt/lexica/letterdistributions
           -v ~/word-game-lexica:/opt/lexica
           $DOCKER_WDB_SERVER /opt/dbmaker
-          -outputdir /opt/lexica/db -dbs NWL18,America,CSW19,FISE2
+          -outputdir /opt/lexica/db -dbs NWL20,CSW19,FISE2
 
       - save_cache:
           key: lexicadb-v3
