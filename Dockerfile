@@ -1,7 +1,5 @@
 FROM domino14/webolith-base-pkg:py3-latest
 
-RUN apk add --no-cache --update gettext
-
 COPY . /opt/webolith/
 WORKDIR /opt/webolith/djAerolith
 

@@ -21,7 +21,7 @@ COPY --from=builder /app /venv
 ENV PATH="/venv/.venv/bin:$PATH"
 
 # postgresql-dev -- needed for psycopg2
-RUN apk add --no-cache --update postgresql-dev
+RUN apk add --no-cache --update gettext postgresql-dev
 
 
 ENV PYTHONUNBUFFERED 1
