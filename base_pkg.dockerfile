@@ -17,8 +17,8 @@ RUN .venv/bin/pip install --no-cache-dir -r prod_requirements.txt && find /app/.
 FROM python:3-alpine
 WORKDIR /app
 
-COPY --from=builder /app /venv
-ENV PATH="/venv/.venv/bin:$PATH"
+COPY --from=builder /app /app
+ENV PATH="/app/.venv/bin:$PATH"
 
 # postgresql-dev -- needed for psycopg2
 RUN apk add --no-cache --update gettext postgresql-dev
