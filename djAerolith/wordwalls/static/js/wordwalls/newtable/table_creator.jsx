@@ -400,6 +400,7 @@ class TableCreator extends React.Component {
             showSpinner={this.showSpinner}
             hideSpinner={this.hideSpinner}
             lexicon={this.state.currentLexicon}
+            availableLexica={this.props.availableLexica}
             api={this.api}
             preSubmitHook={this.preSubmitHook}
             notifyError={notifyError}

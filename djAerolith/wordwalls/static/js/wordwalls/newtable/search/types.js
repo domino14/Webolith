@@ -22,6 +22,7 @@ const SearchTypesEnum = {
   NOT_IN_LEXICON: pbsrConditions.NOT_IN_LEXICON,
   PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
   MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
+  DIFFICULTY_RANGE: pbsrConditions.DIFFICULTY_RANGE,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -157,6 +158,19 @@ const SearchTypesEnum = {
       search. You can use up to 8 blank characters (use a ? character to
       represent a blank).`,
     },
+    [pbsrConditions.DIFFICULTY_RANGE]: {
+      code: pbsrConditions.DIFFICULTY_RANGE,
+      displayName: 'Difficulty range',
+      inputType: SearchTypesInputs.TWO_NUMBERS,
+      defaultMin: 1,
+      defaultMax: 100,
+      minAllowed: 1,
+      maxAllowed: 100,
+      description: `Difficulty range is only applicable to 7 and 8 letter words
+      in NWL20 currently. CSW support will be added soon. These words were
+      split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
+      to 100 (hardest).`,
+    },
   },
 };
 
@@ -169,6 +183,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.NUM_VOWELS,
   SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.FIXED_LENGTH,
+  SearchTypesEnum.DIFFICULTY_RANGE,
   SearchTypesEnum.TAGS,
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,

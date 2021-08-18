@@ -139,6 +139,8 @@ class ChallengeDialogContainer extends React.Component {
         currentDate={this.state.currentDate}
         onChallengeSubmit={() => this.props.preSubmitHook(this.challengeSubmit)}
         onChallengeSelected={challID => () => this.onChallengeSelected(challID)}
+        lexicon={this.props.lexicon}
+        availableLexica={this.props.availableLexica}
       />
     );
   }
@@ -151,6 +153,12 @@ ChallengeDialogContainer.propTypes = {
     numQuestions: PropTypes.number,
     name: PropTypes.string,
     orderPriority: PropTypes.number,
+  })).isRequired,
+  availableLexica: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    lexicon: PropTypes.string,
+    description: PropTypes.string,
+    counts: PropTypes.object,
   })).isRequired,
   showSpinner: PropTypes.func.isRequired,
   hideSpinner: PropTypes.func.isRequired,

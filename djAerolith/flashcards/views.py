@@ -19,15 +19,19 @@ logger = logging.getLogger(__name__)
 @login_required
 def main(request):
     quizzes = WordList.objects.filter(user=request.user, is_temporary=False)
-    return render(request, "flashcards/index.html", {
-                  'numCards': 0,
-                  'savedLists': json.dumps(quizzes_response(
-                                           quizzes)),
-                  'STATIC_SRV': (
-                      settings.WEBPACK_DEV_SERVER_URL if (
-                          settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)
-                      else '')
-                  })
+    return render(
+        request,
+        "flashcards/index.html",
+        {
+            "numCards": 0,
+            "savedLists": json.dumps(quizzes_response(quizzes)),
+            "STATIC_SRV": (
+                settings.WEBPACK_DEV_SERVER_URL
+                if (settings.USE_WEBPACK_DEV_SERVER and settings.DEBUG)
+                else ""
+            ),
+        },
+    )
 
 
 @login_required
@@ -38,29 +42,31 @@ def new_quiz(request):
     """
     body = json.loads(request.body)
     logger.debug(body)
-    lexicon = Lexicon.objects.get(lexiconName=body['lexicon'])
+    lexicon = Lexicon.objects.get(lexiconName=body["lexicon"])
     try:
         search_description = build_search_criteria(
-            request.user, lexicon, body['searchCriteria']
+            request.user, lexicon, body["searchCriteria"]
         )
     except GameInitException as e:
         return response(str(e), status=400)
 
     questions = word_search(search_description, expand=True)
     if questions.size() == 0:
-        return response('No questions were found.', status=400)
+        return response("No questions were found.", status=400)
     wl = WordList()
-    wl.initialize_list(list(questions.to_python()), lexicon, None,
-                       shuffle=True, save=False)
+    wl.initialize_list(
+        list(questions.to_python()), lexicon, None, shuffle=True, save=False
+    )
     q_map = generate_question_map(questions)
-    quiz_name = temporary_list_name(search_description,
-                                    lexicon.lexiconName)
+    quiz_name = temporary_list_name(search_description, lexicon.lexiconName)
     # XXX add 1000-question limit?
-    return response({
-        'list': wl.to_python(),
-        'q_map': q_map,
-        'quiz_name': quiz_name,
-    })
+    return response(
+        {
+            "list": wl.to_python(),
+            "q_map": q_map,
+            "quiz_name": quiz_name,
+        }
+    )
 
 
 # @login_required
@@ -105,4 +111,3 @@ def new_quiz(request):
 #     cards = Card.objects.filter(
 #         user=request.user, next_scheduled__lte=now)[:100]
 #     # Front end should take care of randomizing this.
-
