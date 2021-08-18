@@ -107,6 +107,15 @@ class SearchDescription(object):
         alphas = get_tagged_alphagrams(tags, user, lexicon)
         return SearchDescription.alphagram_list(alphas)
 
+    @staticmethod
+    def difficulty_range(
+        min_d: int, max_d: int
+    ) -> pb.SearchRequest.SearchParam:
+        return pb.SearchRequest.SearchParam(
+            condition=pb.SearchRequest.Condition.DIFFICULTY_RANGE,
+            minmax=pb.SearchRequest.MinMax(min=min_d, max=max_d),
+        )
+
 
 def SearchCriterionFn(searchType: int):
     """
@@ -125,6 +134,7 @@ MIN_MAX_DESCRIPTIONS = [
     pb.SearchRequest.Condition.NUMBER_OF_VOWELS,
     pb.SearchRequest.Condition.POINT_VALUE,
     pb.SearchRequest.Condition.PROBABILITY_LIMIT,
+    pb.SearchRequest.Condition.DIFFICULTY_RANGE,
 ]
 
 TAGS_DESCRIPTION = pb.SearchRequest.Condition.HAS_TAGS
@@ -218,5 +228,6 @@ def temporary_list_name(
             tokens.append(f"not in {desc}")
         elif sd.condition == pb.SearchRequest.Condition.MATCHING_ANAGRAM:
             tokens.append(f"matching {sd.stringvalue.value}")
+        elif sd.condition == pb.SearchRequest.Condition.DIFFICULTY_RANGE:
+            tokens.append(f"(difficulty {sd.minmax.min} - {sd.minmax.max})")
     return " ".join(tokens)
-

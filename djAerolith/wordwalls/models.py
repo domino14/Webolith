@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 class DailyChallengeName(models.Model):
     WEEKS_BINGO_TOUGHIES = "Week's Bingo Toughies"
+    ALLTIME_BINGO_TOUGHIES = "All-time Bingo Toughies"
     BLANK_BINGOS = "Blank Bingos"
     BINGO_MARATHON = "Bingo Marathon"
     COMMON_SHORT = "Common Words (short)"

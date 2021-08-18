@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 import logging
+from typing import List
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
@@ -30,6 +31,7 @@ from wordwalls.views import (
 )
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame, GameInitException
+import rpc.wordsearcher.searcher_pb2 as pb
 
 # from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
 
@@ -277,17 +279,14 @@ def new_challenge(request, parsed_req_body):
     return table_response(tablenum)
 
 
-def build_search_criteria(user, lexicon, fe_search_criteria):
+def build_search_criteria(
+    user, lexicon, fe_search_criteria
+) -> List[pb.SearchRequest.SearchParam]:
     search = [
         SearchDescription.lexicon(lexicon),
     ]
     hold_until_end = None
     for criterion in fe_search_criteria:
-        if isinstance(criterion["searchType"], str):
-            # XXX: Remove a bit after deploy.
-            raise GameInitException(
-                "Please refresh the app; there has been an update."
-            )
         try:
             criterion_fn = SearchCriterionFn(criterion["searchType"])
         except AttributeError:

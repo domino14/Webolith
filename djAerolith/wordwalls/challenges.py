@@ -24,7 +24,9 @@ from lib.wdb_interface.anagrammer import (
 from lib.wdb_interface.wdb_helper import (
     questions_from_probability_list,
     questions_from_alphagrams,
+    word_search,
 )
+from lib.wdb_interface.word_searches import SearchDescription
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +76,14 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     if challenge_name.name == DailyChallengeName.WEEKS_BINGO_TOUGHIES:
         alphagrams = generate_toughies_challenge(lex, challenge_date)
         random.shuffle(alphagrams)
+        if len(alphagrams) == 0:
+            return Questions(), 0
+        return (
+            questions_from_alphagrams(lex, alphagrams),
+            challenge_name.timeSecs,
+        )
+    elif challenge_name.name == DailyChallengeName.ALLTIME_BINGO_TOUGHIES:
+        alphagrams = generate_alltime_toughies_challenge(lex)
         if len(alphagrams) == 0:
             return Questions(), 0
         return (
@@ -281,6 +291,24 @@ def generate_toughies_challenge(lexicon, requested_date):
     )
     logger.debug("Generated! %s", alphagrams)
     return alphagrams
+
+
+def generate_alltime_toughies_challenge(lexicon):
+    try:
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lexicon),
+                SearchDescription.length(7, 8),
+                SearchDescription.difficulty_range(
+                    81, 100
+                ),  # top 20% hardest bingos
+            ]
+        )
+    except WDBError:
+        logger.exception("alltime-toughies-error")
+        return []
+    qs.shuffle()
+    return qs.alphagram_string_list()[:50]
 
 
 def toughies_challenge_date(req_date):

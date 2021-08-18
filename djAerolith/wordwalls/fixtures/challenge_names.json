@@ -78,7 +78,6 @@
       "name": "Today's 10s",
       "timeSecs": 330,
       "orderPriority": 3
-
     }
   },
   {
@@ -88,7 +87,6 @@
       "name": "Today's 11s",
       "timeSecs": 330,
       "orderPriority": 3
-
     }
   },
   {
@@ -243,6 +241,15 @@
       "name": "Special Challenge 5",
       "timeSecs": 300,
       "orderPriority": 5
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 28,
+    "fields": {
+      "name": "All-time Bingo Toughies",
+      "timeSecs": 300,
+      "orderPriority": 2
     }
   }
 ]

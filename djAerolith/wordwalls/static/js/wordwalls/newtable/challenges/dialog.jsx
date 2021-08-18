@@ -7,6 +7,12 @@ import DatePicker from '../../forms/date_picker';
 import ChallengeResults from './challenge_results';
 import ChallengeButtonRow from './challenge_button';
 
+// XXX merge with similar function in blanks/dialog_container.js
+function getLexiconName(availableLexica, lexicon) {
+  return availableLexica.find(el => el.id === lexicon).lexicon;
+}
+
+
 const ChallengeDialog = (props) => {
   // For the different order priorities, make different buttons.
   const rows = [];
@@ -50,8 +56,20 @@ const ChallengeDialog = (props) => {
     size="sm"
     key="ch3"
     challenges={
-      // Leave out the "Common Words (long)" for now.
-      props.challengeInfo.filter(ch => ch.orderPriority === 2 && ch.id !== 19)
+      // Leave out the "Common Words (long)" for now, and all-time toughies
+      // for all but permitted lexica.
+      props.challengeInfo.filter((ch) => {
+        if (ch.orderPriority !== 2) {
+          return false;
+        }
+        if (ch.id === 19) {
+          return false;
+        }
+        if (ch.id === 28 && !['NWL20'].includes(getLexiconName(props.availableLexica, props.lexicon))) {
+          return false;
+        }
+        return true;
+      })
     }
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}
@@ -130,6 +148,13 @@ ChallengeDialog.propTypes = {
     lexicon: PropTypes.string,
     maxScore: PropTypes.number,
   }).isRequired,
+  lexicon: PropTypes.number.isRequired,
+  availableLexica: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    lexicon: PropTypes.string,
+    description: PropTypes.string,
+    counts: PropTypes.object,
+  })).isRequired,
   hideErrors: PropTypes.bool.isRequired,
   specialChallengeInfo: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,

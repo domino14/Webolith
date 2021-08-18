@@ -1,11 +1,15 @@
+// source: rpc/wordsearcher/searcher.proto
 /**
  * @fileoverview
  * @enhanceable
+ * @suppress {missingRequire} reports error on implicit type usages.
  * @suppress {messageConventions} JS Compiler reports an error if a variable or
  *     field starts with 'MSG_' and isn't a translatable message.
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
+/* eslint-disable */
+// @ts-nocheck
 
 var jspb = require('google-protobuf');
 var goog = jspb;
@@ -24,6 +28,7 @@ goog.exportSymbol('proto.wordsearcher.SearchRequest.NotInLexCondition', null, gl
 goog.exportSymbol('proto.wordsearcher.SearchRequest.NumberArray', null, global);
 goog.exportSymbol('proto.wordsearcher.SearchRequest.NumberValue', null, global);
 goog.exportSymbol('proto.wordsearcher.SearchRequest.SearchParam', null, global);
+goog.exportSymbol('proto.wordsearcher.SearchRequest.SearchParam.ConditionparamCase', null, global);
 goog.exportSymbol('proto.wordsearcher.SearchRequest.StringArray', null, global);
 goog.exportSymbol('proto.wordsearcher.SearchRequest.StringValue', null, global);
 goog.exportSymbol('proto.wordsearcher.SearchResponse', null, global);
@@ -334,13 +339,15 @@ proto.wordsearcher.Alphagram.repeatedFields_ = [2];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.Alphagram.prototype.toObject = function(opt_includeInstance) {
@@ -350,8 +357,8 @@ proto.wordsearcher.Alphagram.prototype.toObject = function(opt_includeInstance) 
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.Alphagram} msg The msg instance to transform.
  * @return {!Object}
@@ -362,10 +369,11 @@ proto.wordsearcher.Alphagram.toObject = function(includeInstance, msg) {
     alphagram: jspb.Message.getFieldWithDefault(msg, 1, ""),
     wordsList: jspb.Message.toObjectList(msg.getWordsList(),
     proto.wordsearcher.Word.toObject, includeInstance),
-    expandedrepr: jspb.Message.getFieldWithDefault(msg, 3, false),
+    expandedrepr: jspb.Message.getBooleanFieldWithDefault(msg, 3, false),
     length: jspb.Message.getFieldWithDefault(msg, 4, 0),
     probability: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    combinations: jspb.Message.getFieldWithDefault(msg, 6, 0)
+    combinations: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    difficulty: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -426,6 +434,10 @@ proto.wordsearcher.Alphagram.deserializeBinaryFromReader = function(msg, reader)
     case 6:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCombinations(value);
+      break;
+    case 7:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setDifficulty(value);
       break;
     default:
       reader.skipField();
@@ -499,6 +511,13 @@ proto.wordsearcher.Alphagram.serializeBinaryToWriter = function(message, writer)
       f
     );
   }
+  f = message.getDifficulty();
+  if (f !== 0) {
+    writer.writeInt32(
+      7,
+      f
+    );
+  }
 };
 
 
@@ -511,9 +530,12 @@ proto.wordsearcher.Alphagram.prototype.getAlphagram = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+ */
 proto.wordsearcher.Alphagram.prototype.setAlphagram = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -527,9 +549,12 @@ proto.wordsearcher.Alphagram.prototype.getWordsList = function() {
 };
 
 
-/** @param {!Array<!proto.wordsearcher.Word>} value */
+/**
+ * @param {!Array<!proto.wordsearcher.Word>} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+*/
 proto.wordsearcher.Alphagram.prototype.setWordsList = function(value) {
-  jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
 };
 
 
@@ -545,26 +570,28 @@ proto.wordsearcher.Alphagram.prototype.addWords = function(opt_value, opt_index)
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.wordsearcher.Alphagram} returns this
  */
 proto.wordsearcher.Alphagram.prototype.clearWordsList = function() {
-  this.setWordsList([]);
+  return this.setWordsList([]);
 };
 
 
 /**
  * optional bool expandedRepr = 3;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.wordsearcher.Alphagram.prototype.getExpandedrepr = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 3, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 3, false));
 };
 
 
-/** @param {boolean} value */
+/**
+ * @param {boolean} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+ */
 proto.wordsearcher.Alphagram.prototype.setExpandedrepr = function(value) {
-  jspb.Message.setProto3BooleanField(this, 3, value);
+  return jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 
@@ -577,9 +604,12 @@ proto.wordsearcher.Alphagram.prototype.getLength = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+ */
 proto.wordsearcher.Alphagram.prototype.setLength = function(value) {
-  jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -592,9 +622,12 @@ proto.wordsearcher.Alphagram.prototype.getProbability = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+ */
 proto.wordsearcher.Alphagram.prototype.setProbability = function(value) {
-  jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
@@ -607,9 +640,30 @@ proto.wordsearcher.Alphagram.prototype.getCombinations = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+ */
 proto.wordsearcher.Alphagram.prototype.setCombinations = function(value) {
-  jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 6, value);
+};
+
+
+/**
+ * optional int32 difficulty = 7;
+ * @return {number}
+ */
+proto.wordsearcher.Alphagram.prototype.getDifficulty = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.Alphagram} returns this
+ */
+proto.wordsearcher.Alphagram.prototype.setDifficulty = function(value) {
+  return jspb.Message.setProto3IntField(this, 7, value);
 };
 
 
@@ -618,13 +672,15 @@ proto.wordsearcher.Alphagram.prototype.setCombinations = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.Word.prototype.toObject = function(opt_includeInstance) {
@@ -634,8 +690,8 @@ proto.wordsearcher.Word.prototype.toObject = function(opt_includeInstance) {
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.Word} msg The msg instance to transform.
  * @return {!Object}
@@ -649,8 +705,8 @@ proto.wordsearcher.Word.toObject = function(includeInstance, msg) {
     frontHooks: jspb.Message.getFieldWithDefault(msg, 4, ""),
     backHooks: jspb.Message.getFieldWithDefault(msg, 5, ""),
     lexiconSymbols: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    innerFrontHook: jspb.Message.getFieldWithDefault(msg, 7, false),
-    innerBackHook: jspb.Message.getFieldWithDefault(msg, 8, false)
+    innerFrontHook: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    innerBackHook: jspb.Message.getBooleanFieldWithDefault(msg, 8, false)
   };
 
   if (includeInstance) {
@@ -816,9 +872,12 @@ proto.wordsearcher.Word.prototype.getWord = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setWord = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -831,9 +890,12 @@ proto.wordsearcher.Word.prototype.getAlphagram = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setAlphagram = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -846,9 +908,12 @@ proto.wordsearcher.Word.prototype.getDefinition = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setDefinition = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -861,9 +926,12 @@ proto.wordsearcher.Word.prototype.getFrontHooks = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setFrontHooks = function(value) {
-  jspb.Message.setProto3StringField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -876,9 +944,12 @@ proto.wordsearcher.Word.prototype.getBackHooks = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setBackHooks = function(value) {
-  jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -891,43 +962,48 @@ proto.wordsearcher.Word.prototype.getLexiconSymbols = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setLexiconSymbols = function(value) {
-  jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
 /**
  * optional bool inner_front_hook = 7;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.wordsearcher.Word.prototype.getInnerFrontHook = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 7, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 7, false));
 };
 
 
-/** @param {boolean} value */
+/**
+ * @param {boolean} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setInnerFrontHook = function(value) {
-  jspb.Message.setProto3BooleanField(this, 7, value);
+  return jspb.Message.setProto3BooleanField(this, 7, value);
 };
 
 
 /**
  * optional bool inner_back_hook = 8;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.wordsearcher.Word.prototype.getInnerBackHook = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 8, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
 };
 
 
-/** @param {boolean} value */
+/**
+ * @param {boolean} value
+ * @return {!proto.wordsearcher.Word} returns this
+ */
 proto.wordsearcher.Word.prototype.setInnerBackHook = function(value) {
-  jspb.Message.setProto3BooleanField(this, 8, value);
+  return jspb.Message.setProto3BooleanField(this, 8, value);
 };
 
 
@@ -943,13 +1019,15 @@ proto.wordsearcher.SearchRequest.repeatedFields_ = [1];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.prototype.toObject = function(opt_includeInstance) {
@@ -959,8 +1037,8 @@ proto.wordsearcher.SearchRequest.prototype.toObject = function(opt_includeInstan
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest} msg The msg instance to transform.
  * @return {!Object}
@@ -970,7 +1048,7 @@ proto.wordsearcher.SearchRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     searchparamsList: jspb.Message.toObjectList(msg.getSearchparamsList(),
     proto.wordsearcher.SearchRequest.SearchParam.toObject, includeInstance),
-    expand: jspb.Message.getFieldWithDefault(msg, 2, false)
+    expand: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1083,7 +1161,9 @@ proto.wordsearcher.SearchRequest.Condition = {
   WORD_LIST: 13,
   SINGLE_VALUE_LENGTH: 14,
   NUM_TWO_BLANKS: 15,
-  MAX_SOLUTIONS: 16
+  MAX_SOLUTIONS: 16,
+  DIFFICULTY_RANGE: 17,
+  PLAYABILITY_RANGE: 18
 };
 
 /**
@@ -1099,13 +1179,15 @@ proto.wordsearcher.SearchRequest.NotInLexCondition = {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.MinMax.prototype.toObject = function(opt_includeInstance) {
@@ -1115,8 +1197,8 @@ proto.wordsearcher.SearchRequest.MinMax.prototype.toObject = function(opt_includ
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest.MinMax} msg The msg instance to transform.
  * @return {!Object}
@@ -1225,9 +1307,12 @@ proto.wordsearcher.SearchRequest.MinMax.prototype.getMin = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.SearchRequest.MinMax} returns this
+ */
 proto.wordsearcher.SearchRequest.MinMax.prototype.setMin = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1240,9 +1325,12 @@ proto.wordsearcher.SearchRequest.MinMax.prototype.getMax = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.SearchRequest.MinMax} returns this
+ */
 proto.wordsearcher.SearchRequest.MinMax.prototype.setMax = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -1251,13 +1339,15 @@ proto.wordsearcher.SearchRequest.MinMax.prototype.setMax = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.StringValue.prototype.toObject = function(opt_includeInstance) {
@@ -1267,8 +1357,8 @@ proto.wordsearcher.SearchRequest.StringValue.prototype.toObject = function(opt_i
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest.StringValue} msg The msg instance to transform.
  * @return {!Object}
@@ -1365,9 +1455,12 @@ proto.wordsearcher.SearchRequest.StringValue.prototype.getValue = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.SearchRequest.StringValue} returns this
+ */
 proto.wordsearcher.SearchRequest.StringValue.prototype.setValue = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1383,13 +1476,15 @@ proto.wordsearcher.SearchRequest.StringArray.repeatedFields_ = [1];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.StringArray.prototype.toObject = function(opt_includeInstance) {
@@ -1399,8 +1494,8 @@ proto.wordsearcher.SearchRequest.StringArray.prototype.toObject = function(opt_i
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest.StringArray} msg The msg instance to transform.
  * @return {!Object}
@@ -1408,7 +1503,7 @@ proto.wordsearcher.SearchRequest.StringArray.prototype.toObject = function(opt_i
  */
 proto.wordsearcher.SearchRequest.StringArray.toObject = function(includeInstance, msg) {
   var f, obj = {
-    valuesList: jspb.Message.getRepeatedField(msg, 1)
+    valuesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1497,26 +1592,31 @@ proto.wordsearcher.SearchRequest.StringArray.prototype.getValuesList = function(
 };
 
 
-/** @param {!Array<string>} value */
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.wordsearcher.SearchRequest.StringArray} returns this
+ */
 proto.wordsearcher.SearchRequest.StringArray.prototype.setValuesList = function(value) {
-  jspb.Message.setField(this, 1, value || []);
+  return jspb.Message.setField(this, 1, value || []);
 };
 
 
 /**
  * @param {string} value
  * @param {number=} opt_index
+ * @return {!proto.wordsearcher.SearchRequest.StringArray} returns this
  */
 proto.wordsearcher.SearchRequest.StringArray.prototype.addValues = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 1, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
 };
 
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.wordsearcher.SearchRequest.StringArray} returns this
  */
 proto.wordsearcher.SearchRequest.StringArray.prototype.clearValuesList = function() {
-  this.setValuesList([]);
+  return this.setValuesList([]);
 };
 
 
@@ -1532,13 +1632,15 @@ proto.wordsearcher.SearchRequest.NumberArray.repeatedFields_ = [1];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.NumberArray.prototype.toObject = function(opt_includeInstance) {
@@ -1548,8 +1650,8 @@ proto.wordsearcher.SearchRequest.NumberArray.prototype.toObject = function(opt_i
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest.NumberArray} msg The msg instance to transform.
  * @return {!Object}
@@ -1557,7 +1659,7 @@ proto.wordsearcher.SearchRequest.NumberArray.prototype.toObject = function(opt_i
  */
 proto.wordsearcher.SearchRequest.NumberArray.toObject = function(includeInstance, msg) {
   var f, obj = {
-    valuesList: jspb.Message.getRepeatedField(msg, 1)
+    valuesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1595,8 +1697,10 @@ proto.wordsearcher.SearchRequest.NumberArray.deserializeBinaryFromReader = funct
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {!Array<number>} */ (reader.readPackedInt32());
-      msg.setValuesList(value);
+      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addValues(values[i]);
+      }
       break;
     default:
       reader.skipField();
@@ -1646,26 +1750,31 @@ proto.wordsearcher.SearchRequest.NumberArray.prototype.getValuesList = function(
 };
 
 
-/** @param {!Array<number>} value */
+/**
+ * @param {!Array<number>} value
+ * @return {!proto.wordsearcher.SearchRequest.NumberArray} returns this
+ */
 proto.wordsearcher.SearchRequest.NumberArray.prototype.setValuesList = function(value) {
-  jspb.Message.setField(this, 1, value || []);
+  return jspb.Message.setField(this, 1, value || []);
 };
 
 
 /**
  * @param {number} value
  * @param {number=} opt_index
+ * @return {!proto.wordsearcher.SearchRequest.NumberArray} returns this
  */
 proto.wordsearcher.SearchRequest.NumberArray.prototype.addValues = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 1, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
 };
 
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.wordsearcher.SearchRequest.NumberArray} returns this
  */
 proto.wordsearcher.SearchRequest.NumberArray.prototype.clearValuesList = function() {
-  this.setValuesList([]);
+  return this.setValuesList([]);
 };
 
 
@@ -1674,13 +1783,15 @@ proto.wordsearcher.SearchRequest.NumberArray.prototype.clearValuesList = functio
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.NumberValue.prototype.toObject = function(opt_includeInstance) {
@@ -1690,8 +1801,8 @@ proto.wordsearcher.SearchRequest.NumberValue.prototype.toObject = function(opt_i
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest.NumberValue} msg The msg instance to transform.
  * @return {!Object}
@@ -1788,9 +1899,12 @@ proto.wordsearcher.SearchRequest.NumberValue.prototype.getValue = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.SearchRequest.NumberValue} returns this
+ */
 proto.wordsearcher.SearchRequest.NumberValue.prototype.setValue = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1828,13 +1942,15 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getConditionparamCase = f
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.toObject = function(opt_includeInstance) {
@@ -1844,8 +1960,8 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.toObject = function(opt_i
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchRequest.SearchParam} msg The msg instance to transform.
  * @return {!Object}
@@ -2012,9 +2128,12 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getCondition = function()
 };
 
 
-/** @param {!proto.wordsearcher.SearchRequest.Condition} value */
+/**
+ * @param {!proto.wordsearcher.SearchRequest.Condition} value
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
+ */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.setCondition = function(value) {
-  jspb.Message.setProto3EnumField(this, 1, value);
+  return jspb.Message.setProto3EnumField(this, 1, value);
 };
 
 
@@ -2028,17 +2147,21 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getMinmax = function() {
 };
 
 
-/** @param {?proto.wordsearcher.SearchRequest.MinMax|undefined} value */
+/**
+ * @param {?proto.wordsearcher.SearchRequest.MinMax|undefined} value
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
+*/
 proto.wordsearcher.SearchRequest.SearchParam.prototype.setMinmax = function(value) {
-  jspb.Message.setOneofWrapperField(this, 2, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 2, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
  */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.clearMinmax = function() {
-  this.setMinmax(undefined);
+  return this.setMinmax(undefined);
 };
 
 
@@ -2061,17 +2184,21 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getStringvalue = function
 };
 
 
-/** @param {?proto.wordsearcher.SearchRequest.StringValue|undefined} value */
+/**
+ * @param {?proto.wordsearcher.SearchRequest.StringValue|undefined} value
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
+*/
 proto.wordsearcher.SearchRequest.SearchParam.prototype.setStringvalue = function(value) {
-  jspb.Message.setOneofWrapperField(this, 3, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 3, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
  */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.clearStringvalue = function() {
-  this.setStringvalue(undefined);
+  return this.setStringvalue(undefined);
 };
 
 
@@ -2094,17 +2221,21 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getStringarray = function
 };
 
 
-/** @param {?proto.wordsearcher.SearchRequest.StringArray|undefined} value */
+/**
+ * @param {?proto.wordsearcher.SearchRequest.StringArray|undefined} value
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
+*/
 proto.wordsearcher.SearchRequest.SearchParam.prototype.setStringarray = function(value) {
-  jspb.Message.setOneofWrapperField(this, 4, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 4, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
  */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.clearStringarray = function() {
-  this.setStringarray(undefined);
+  return this.setStringarray(undefined);
 };
 
 
@@ -2127,17 +2258,21 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getNumberarray = function
 };
 
 
-/** @param {?proto.wordsearcher.SearchRequest.NumberArray|undefined} value */
+/**
+ * @param {?proto.wordsearcher.SearchRequest.NumberArray|undefined} value
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
+*/
 proto.wordsearcher.SearchRequest.SearchParam.prototype.setNumberarray = function(value) {
-  jspb.Message.setOneofWrapperField(this, 5, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 5, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
  */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.clearNumberarray = function() {
-  this.setNumberarray(undefined);
+  return this.setNumberarray(undefined);
 };
 
 
@@ -2160,17 +2295,21 @@ proto.wordsearcher.SearchRequest.SearchParam.prototype.getNumbervalue = function
 };
 
 
-/** @param {?proto.wordsearcher.SearchRequest.NumberValue|undefined} value */
+/**
+ * @param {?proto.wordsearcher.SearchRequest.NumberValue|undefined} value
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
+*/
 proto.wordsearcher.SearchRequest.SearchParam.prototype.setNumbervalue = function(value) {
-  jspb.Message.setOneofWrapperField(this, 6, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
+  return jspb.Message.setOneofWrapperField(this, 6, proto.wordsearcher.SearchRequest.SearchParam.oneofGroups_[0], value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.wordsearcher.SearchRequest.SearchParam} returns this
  */
 proto.wordsearcher.SearchRequest.SearchParam.prototype.clearNumbervalue = function() {
-  this.setNumbervalue(undefined);
+  return this.setNumbervalue(undefined);
 };
 
 
@@ -2193,9 +2332,12 @@ proto.wordsearcher.SearchRequest.prototype.getSearchparamsList = function() {
 };
 
 
-/** @param {!Array<!proto.wordsearcher.SearchRequest.SearchParam>} value */
+/**
+ * @param {!Array<!proto.wordsearcher.SearchRequest.SearchParam>} value
+ * @return {!proto.wordsearcher.SearchRequest} returns this
+*/
 proto.wordsearcher.SearchRequest.prototype.setSearchparamsList = function(value) {
-  jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
@@ -2211,26 +2353,28 @@ proto.wordsearcher.SearchRequest.prototype.addSearchparams = function(opt_value,
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.wordsearcher.SearchRequest} returns this
  */
 proto.wordsearcher.SearchRequest.prototype.clearSearchparamsList = function() {
-  this.setSearchparamsList([]);
+  return this.setSearchparamsList([]);
 };
 
 
 /**
  * optional bool expand = 2;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.wordsearcher.SearchRequest.prototype.getExpand = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 2, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
 };
 
 
-/** @param {boolean} value */
+/**
+ * @param {boolean} value
+ * @return {!proto.wordsearcher.SearchRequest} returns this
+ */
 proto.wordsearcher.SearchRequest.prototype.setExpand = function(value) {
-  jspb.Message.setProto3BooleanField(this, 2, value);
+  return jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 
@@ -2246,13 +2390,15 @@ proto.wordsearcher.SearchResponse.repeatedFields_ = [1];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.SearchResponse.prototype.toObject = function(opt_includeInstance) {
@@ -2262,8 +2408,8 @@ proto.wordsearcher.SearchResponse.prototype.toObject = function(opt_includeInsta
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.SearchResponse} msg The msg instance to transform.
  * @return {!Object}
@@ -2376,9 +2522,12 @@ proto.wordsearcher.SearchResponse.prototype.getAlphagramsList = function() {
 };
 
 
-/** @param {!Array<!proto.wordsearcher.Alphagram>} value */
+/**
+ * @param {!Array<!proto.wordsearcher.Alphagram>} value
+ * @return {!proto.wordsearcher.SearchResponse} returns this
+*/
 proto.wordsearcher.SearchResponse.prototype.setAlphagramsList = function(value) {
-  jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
@@ -2394,9 +2543,10 @@ proto.wordsearcher.SearchResponse.prototype.addAlphagrams = function(opt_value, 
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.wordsearcher.SearchResponse} returns this
  */
 proto.wordsearcher.SearchResponse.prototype.clearAlphagramsList = function() {
-  this.setAlphagramsList([]);
+  return this.setAlphagramsList([]);
 };
 
 
@@ -2409,9 +2559,12 @@ proto.wordsearcher.SearchResponse.prototype.getLexicon = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.SearchResponse} returns this
+ */
 proto.wordsearcher.SearchResponse.prototype.setLexicon = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -2420,13 +2573,15 @@ proto.wordsearcher.SearchResponse.prototype.setLexicon = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.AnagramRequest.prototype.toObject = function(opt_includeInstance) {
@@ -2436,8 +2591,8 @@ proto.wordsearcher.AnagramRequest.prototype.toObject = function(opt_includeInsta
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.AnagramRequest} msg The msg instance to transform.
  * @return {!Object}
@@ -2448,7 +2603,7 @@ proto.wordsearcher.AnagramRequest.toObject = function(includeInstance, msg) {
     lexicon: jspb.Message.getFieldWithDefault(msg, 1, ""),
     letters: jspb.Message.getFieldWithDefault(msg, 2, ""),
     mode: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    expand: jspb.Message.getFieldWithDefault(msg, 4, false)
+    expand: jspb.Message.getBooleanFieldWithDefault(msg, 4, false)
   };
 
   if (includeInstance) {
@@ -2578,9 +2733,12 @@ proto.wordsearcher.AnagramRequest.prototype.getLexicon = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.AnagramRequest} returns this
+ */
 proto.wordsearcher.AnagramRequest.prototype.setLexicon = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -2593,9 +2751,12 @@ proto.wordsearcher.AnagramRequest.prototype.getLetters = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.AnagramRequest} returns this
+ */
 proto.wordsearcher.AnagramRequest.prototype.setLetters = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -2608,26 +2769,30 @@ proto.wordsearcher.AnagramRequest.prototype.getMode = function() {
 };
 
 
-/** @param {!proto.wordsearcher.AnagramRequest.Mode} value */
+/**
+ * @param {!proto.wordsearcher.AnagramRequest.Mode} value
+ * @return {!proto.wordsearcher.AnagramRequest} returns this
+ */
 proto.wordsearcher.AnagramRequest.prototype.setMode = function(value) {
-  jspb.Message.setProto3EnumField(this, 3, value);
+  return jspb.Message.setProto3EnumField(this, 3, value);
 };
 
 
 /**
  * optional bool expand = 4;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.wordsearcher.AnagramRequest.prototype.getExpand = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 4, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 4, false));
 };
 
 
-/** @param {boolean} value */
+/**
+ * @param {boolean} value
+ * @return {!proto.wordsearcher.AnagramRequest} returns this
+ */
 proto.wordsearcher.AnagramRequest.prototype.setExpand = function(value) {
-  jspb.Message.setProto3BooleanField(this, 4, value);
+  return jspb.Message.setProto3BooleanField(this, 4, value);
 };
 
 
@@ -2643,13 +2808,15 @@ proto.wordsearcher.AnagramResponse.repeatedFields_ = [1];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.AnagramResponse.prototype.toObject = function(opt_includeInstance) {
@@ -2659,8 +2826,8 @@ proto.wordsearcher.AnagramResponse.prototype.toObject = function(opt_includeInst
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.AnagramResponse} msg The msg instance to transform.
  * @return {!Object}
@@ -2773,9 +2940,12 @@ proto.wordsearcher.AnagramResponse.prototype.getWordsList = function() {
 };
 
 
-/** @param {!Array<!proto.wordsearcher.Word>} value */
+/**
+ * @param {!Array<!proto.wordsearcher.Word>} value
+ * @return {!proto.wordsearcher.AnagramResponse} returns this
+*/
 proto.wordsearcher.AnagramResponse.prototype.setWordsList = function(value) {
-  jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
@@ -2791,9 +2961,10 @@ proto.wordsearcher.AnagramResponse.prototype.addWords = function(opt_value, opt_
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.wordsearcher.AnagramResponse} returns this
  */
 proto.wordsearcher.AnagramResponse.prototype.clearWordsList = function() {
-  this.setWordsList([]);
+  return this.setWordsList([]);
 };
 
 
@@ -2806,9 +2977,12 @@ proto.wordsearcher.AnagramResponse.prototype.getNumWords = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.AnagramResponse} returns this
+ */
 proto.wordsearcher.AnagramResponse.prototype.setNumWords = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -2817,13 +2991,15 @@ proto.wordsearcher.AnagramResponse.prototype.setNumWords = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.BlankChallengeCreateRequest.prototype.toObject = function(opt_includeInstance) {
@@ -2833,8 +3009,8 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.toObject = function(opt
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.BlankChallengeCreateRequest} msg The msg instance to transform.
  * @return {!Object}
@@ -2979,9 +3155,12 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.getLexicon = function()
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.BlankChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BlankChallengeCreateRequest.prototype.setLexicon = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -2994,9 +3173,12 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.getNumQuestions = funct
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BlankChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BlankChallengeCreateRequest.prototype.setNumQuestions = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -3009,9 +3191,12 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.getMaxSolutions = funct
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BlankChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BlankChallengeCreateRequest.prototype.setMaxSolutions = function(value) {
-  jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
@@ -3024,9 +3209,12 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.getNumWith2Blanks = fun
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BlankChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BlankChallengeCreateRequest.prototype.setNumWith2Blanks = function(value) {
-  jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -3039,9 +3227,12 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.getWordLength = functio
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BlankChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BlankChallengeCreateRequest.prototype.setWordLength = function(value) {
-  jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
@@ -3050,13 +3241,15 @@ proto.wordsearcher.BlankChallengeCreateRequest.prototype.setWordLength = functio
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.toObject = function(opt_includeInstance) {
@@ -3066,8 +3259,8 @@ proto.wordsearcher.BuildChallengeCreateRequest.prototype.toObject = function(opt
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.wordsearcher.BuildChallengeCreateRequest} msg The msg instance to transform.
  * @return {!Object}
@@ -3080,7 +3273,7 @@ proto.wordsearcher.BuildChallengeCreateRequest.toObject = function(includeInstan
     maxSolutions: jspb.Message.getFieldWithDefault(msg, 3, 0),
     minLength: jspb.Message.getFieldWithDefault(msg, 4, 0),
     maxLength: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    requireLengthSolution: jspb.Message.getFieldWithDefault(msg, 6, false)
+    requireLengthSolution: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -3224,9 +3417,12 @@ proto.wordsearcher.BuildChallengeCreateRequest.prototype.getLexicon = function()
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.wordsearcher.BuildChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.setLexicon = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -3239,9 +3435,12 @@ proto.wordsearcher.BuildChallengeCreateRequest.prototype.getMinSolutions = funct
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BuildChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.setMinSolutions = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -3254,9 +3453,12 @@ proto.wordsearcher.BuildChallengeCreateRequest.prototype.getMaxSolutions = funct
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BuildChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.setMaxSolutions = function(value) {
-  jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
@@ -3269,9 +3471,12 @@ proto.wordsearcher.BuildChallengeCreateRequest.prototype.getMinLength = function
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BuildChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.setMinLength = function(value) {
-  jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -3284,26 +3489,30 @@ proto.wordsearcher.BuildChallengeCreateRequest.prototype.getMaxLength = function
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.wordsearcher.BuildChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.setMaxLength = function(value) {
-  jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
 /**
  * optional bool require_length_solution = 6;
- * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
- * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.getRequireLengthSolution = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 6, false));
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
 };
 
 
-/** @param {boolean} value */
+/**
+ * @param {boolean} value
+ * @return {!proto.wordsearcher.BuildChallengeCreateRequest} returns this
+ */
 proto.wordsearcher.BuildChallengeCreateRequest.prototype.setRequireLengthSolution = function(value) {
-  jspb.Message.setProto3BooleanField(this, 6, value);
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 
