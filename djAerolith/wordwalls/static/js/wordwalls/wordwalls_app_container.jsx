@@ -3,7 +3,6 @@
  * should have all state, ajax, etc instead and wordwalls_app should
  * be as dumb as possible.
  */
-/* global JSON, window, document */
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -89,8 +88,8 @@ class WordwallsAppContainer extends React.Component {
     $(document).bind('keydown keypress', (e) => {
       if (e.which === 8) {
         // 8 == backspace
-        if (e.target.tagName !== 'INPUT' || e.target.disabled ||
-            e.target.readOnly) {
+        if (e.target.tagName !== 'INPUT' || e.target.disabled
+            || e.target.readOnly) {
           e.preventDefault();
         }
       }
@@ -114,6 +113,229 @@ class WordwallsAppContainer extends React.Component {
       this.myTableCreator.showModal();
       this.myTableCreator.resetDialog();
     }
+  }
+
+  handleListNameChange(newListName) {
+    this.setState({
+      listName: newListName,
+    });
+  }
+
+  /**
+   * NOTE: used for debugging/testing.
+   */
+  handleAllSolve() {
+    const answers = game.getRemainingAnswers();
+    answers.forEach((answer, idx) => {
+      window.setTimeout(() => {
+        this.submitGuess(answer);
+      }, (idx * 30));
+    });
+  }
+
+  /**
+   * NOTE: used for debugging/testing
+   * @param  {Object} contents
+   */
+  handleSolveWord(contents) {
+    this.submitGuess(contents.word);
+  }
+
+  handleAutoSaveToggle() {
+    this.setState((state) => {
+      const newAutoSave = !state.autoSave;
+      if (newAutoSave && !state.listName) {
+        return { autoSave: false }; // There is no list name, don't toggle the checkbox.
+      }
+      return { autoSave: newAutoSave };
+    }, () => {
+      if (this.state.autoSave && !this.state.gameGoing) {
+        this.saveGame();
+      }
+      this.showAutosaveMessage(this.state.autoSave);
+    });
+  }
+
+  handleStart() {
+    this.rpc.startGame()
+      .then((result) => this.handleStartReceived(result))
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
+  }
+
+  handleGiveup() {
+    this.rpc.giveUp()
+      .then(() => this.processGameEnded())
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
+  }
+
+  handleStartReceived(data) {
+    if (this.state.gameGoing) {
+      return;
+    }
+    if (_.has(data, 'serverMsg')) {
+      this.addMessage(data.serverMsg);
+    }
+    if (_.has(data, 'questions')) {
+      game.init(data.questions, data.gameType);
+      this.setState((state) => ({
+        numberOfRounds: state.numberOfRounds + 1,
+        origQuestions: game.getOriginalQuestionState(),
+        curQuestions: game.getQuestionState(),
+        answeredBy: game.getAnsweredBy(),
+        totalWords: game.getTotalNumWords(),
+        wrongAnswers: 0,
+      }));
+      this.wwApp.setGuessBoxFocus();
+      window.Intercom('trackEvent', 'started-game', {
+        isChallenge: data.gameType && data.gameType.includes('challenge'),
+        listname: this.state.listName,
+        multiplayer: false,
+      });
+    }
+
+    if (_.has(data, 'time')) {
+      // Convert time to milliseconds.
+      this.setState({
+        initialGameTime: data.time * 1000,
+        gameGoing: true,
+      });
+    }
+    if (_.has(data, 'gameType')) {
+      this.setState({
+        isChallenge: data.gameType.includes('challenge'),
+        isBuild: data.gameType.includes('build'),
+      });
+    }
+  }
+
+  handleResize() {
+    this.setState({
+      windowWidth: window.innerWidth,
+    });
+  }
+
+  handleGuessResponse(data) {
+    let endQuiz = false;
+    if (data.g === false) {
+      // The quiz has ended
+      endQuiz = true;
+    }
+    if (!_.has(data, 'C') || data.C === '') {
+      if (endQuiz) {
+        this.processGameEnded();
+      }
+      return;
+    }
+    // guessTimer.removeTimer(data.reqId);
+    // data.C contains the alphagram.
+    const solved = game.solve(data.w, data.C, data.s);
+    if (!solved) {
+      if (endQuiz) {
+        this.processGameEnded();
+      }
+      return;
+    }
+    this.setState({
+      curQuestions: game.getQuestionState(),
+      origQuestions: game.getOriginalQuestionState(),
+      answeredBy: game.getAnsweredBy(),
+    });
+    if (this.state.lastGuessCorrectness === GuessEnum.PENDING) {
+      if (data.s === this.props.username) {
+        this.setState({
+          lastGuessCorrectness: GuessEnum.CORRECT,
+        });
+      } else if (this.state.lastGuess === data.w) {
+        this.setState({
+          lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
+        });
+      }
+      // XXX: Otherwise keep it pending?
+    }
+    if (endQuiz) {
+      this.processGameEnded();
+    }
+  }
+
+  /**
+   * Handle the shuffling of tiles for display.
+   * @param  {number?} which The index (or undefined for all).
+   */
+  handleShuffleAll() {
+    game.shuffleAll();
+    this.setState({
+      curQuestions: game.getQuestionState(),
+    });
+    this.wwApp.setGuessBoxFocus();
+  }
+
+  handleAlphagram() {
+    game.resetAllOrders();
+    this.setState({
+      curQuestions: game.getQuestionState(),
+    });
+    this.wwApp.setGuessBoxFocus();
+  }
+
+  handleCustomOrder() {
+    game.setCustomLetterOrder(this.state.displayStyle.customTileOrder);
+    this.setState({
+      curQuestions: game.getQuestionState(),
+    });
+    this.wwApp.setGuessBoxFocus();
+  }
+
+  /**
+     * Handle the loading of a new list into a table. This only gets triggered
+     * when the user loads a new list, and not when the user clicks join on a
+     * table. XXX: This may be a code smell, why use parallel paths?
+     * @param  {Object} data
+     */
+  handleLoadNewList(data) {
+    let changeUrl = false;
+    const oldTablenum = this.state.tablenum;
+    // let useReplaceState = false;
+    if (data.tablenum !== oldTablenum) {
+      changeUrl = true;
+      // if (this.state.tablenum !== 0) {
+      //   useReplaceState = true; // Replace instead of push if we already have
+      //                           // a table num. This will probably come in use
+      //                           // for multiplayer mode. This prevents the user
+      //                           // from having to click back hella times.
+      // }
+    }
+    this.setState({
+      listName: data.list_name,
+      lexicon: data.lexicon,
+      autoSave: data.autosave && !data.multiplayer,
+      tablenum: data.tablenum,
+      numberOfRounds: 0,
+      curQuestions: Immutable.List(),
+    });
+    this.addMessage(`Loaded new list: ${data.list_name}`, 'info');
+    this.showAutosaveMessage(data.autosave);
+    if (changeUrl) {
+      // The .bind(history) is important because otherwise `this` changes
+      // and we get an "illegal invocation". 😒
+      // let stateChanger = history.pushState.bind(history);
+      // if (useReplaceState) {
+      //   stateChanger = history.replaceState.bind(history);
+      // }
+      window.history.replaceState(
+        {}, `Table ${data.tablenum}`,
+        this.tableUrl(data.tablenum),
+      );
+      this.rpc.setTablenum(data.tablenum);
+      document.title = `Wordwalls - table ${data.tablenum}`;
+    }
+    window.Intercom('trackEvent', 'loaded-new-list', {
+      listName: data.list_name,
+      multiplayer: false,
+    });
   }
 
   onGuessSubmit(guess) {
@@ -140,7 +362,7 @@ class WordwallsAppContainer extends React.Component {
         });
       } else {
         if (game.markPotentialIncorrectGuess(modifiedGuess)) {
-          this.setState(state => ({
+          this.setState((state) => ({
             wrongAnswers: state.wrongAnswers + 1,
           }));
         }
@@ -208,7 +430,7 @@ class WordwallsAppContainer extends React.Component {
       defaultLexicon: lexID,
     }).then(() => this.setState({
       defaultLexicon: lexID,
-    })).catch(error => this.addMessage(error.message));
+    })).catch((error) => this.addMessage(error.message));
   }
 
   getTables() {
@@ -223,49 +445,10 @@ class WordwallsAppContainer extends React.Component {
 
   submitGuess(guess) {
     this.rpc.guess(guess, this.state.wrongAnswers)
-      .then(result => this.handleGuessResponse(result))
+      .then((result) => this.handleGuessResponse(result))
       .catch((error) => {
         this.addMessage(error.message);
       });
-  }
-
-  handleListNameChange(newListName) {
-    this.setState({
-      listName: newListName,
-    });
-  }
-
-  /**
-   * NOTE: used for debugging/testing.
-   */
-  handleAllSolve() {
-    const answers = game.getRemainingAnswers();
-    answers.forEach((answer, idx) => {
-      window.setTimeout(() => {
-        this.submitGuess(answer);
-      }, (idx * 30));
-    });
-  }
-  /**
-   * NOTE: used for debugging/testing
-   * @param  {Object} contents
-   */
-  handleSolveWord(contents) {
-    this.submitGuess(contents.word);
-  }
-
-  handleAutoSaveToggle() {
-    const newAutoSave = !this.state.autoSave;
-    if (newAutoSave && !this.state.listName) {
-      return; // There is no list name, don't toggle the checkbox.
-    }
-    this.setState({
-      autoSave: newAutoSave,
-    });
-    if (newAutoSave && !this.state.gameGoing) {
-      this.saveGame();
-    }
-    this.showAutosaveMessage(newAutoSave);
   }
 
   showAutosaveMessage(autosave) {
@@ -294,68 +477,6 @@ class WordwallsAppContainer extends React.Component {
         method: 'POST',
       });
     }
-  }
-
-  handleStart() {
-    this.rpc.startGame()
-      .then(result => this.handleStartReceived(result))
-      .catch((error) => {
-        this.addMessage(error.message);
-      });
-  }
-
-  handleGiveup() {
-    this.rpc.giveUp()
-      .then(() => this.processGameEnded())
-      .catch((error) => {
-        this.addMessage(error.message);
-      });
-  }
-
-  handleStartReceived(data) {
-    if (this.state.gameGoing) {
-      return;
-    }
-    if (_.has(data, 'serverMsg')) {
-      this.addMessage(data.serverMsg);
-    }
-    if (_.has(data, 'questions')) {
-      game.init(data.questions, data.gameType);
-      this.setState({
-        numberOfRounds: this.state.numberOfRounds + 1,
-        origQuestions: game.getOriginalQuestionState(),
-        curQuestions: game.getQuestionState(),
-        answeredBy: game.getAnsweredBy(),
-        totalWords: game.getTotalNumWords(),
-        wrongAnswers: 0,
-      });
-      this.wwApp.setGuessBoxFocus();
-      window.Intercom('trackEvent', 'started-game', {
-        isChallenge: data.gameType && data.gameType.includes('challenge'),
-        listname: this.state.listName,
-        multiplayer: false,
-      });
-    }
-
-    if (_.has(data, 'time')) {
-      // Convert time to milliseconds.
-      this.setState({
-        initialGameTime: data.time * 1000,
-        gameGoing: true,
-      });
-    }
-    if (_.has(data, 'gameType')) {
-      this.setState({
-        isChallenge: data.gameType.includes('challenge'),
-        isBuild: data.gameType.includes('build'),
-      });
-    }
-  }
-
-  handleResize() {
-    this.setState({
-      windowWidth: window.innerWidth,
-    });
   }
 
   /**
@@ -404,49 +525,6 @@ class WordwallsAppContainer extends React.Component {
       .replace(/LL/g, '2')
       .replace(/RR/g, '3');
     return newGuess;
-  }
-
-  handleGuessResponse(data) {
-    let endQuiz = false;
-    if (data.g === false) {
-      // The quiz has ended
-      endQuiz = true;
-    }
-    if (!_.has(data, 'C') || data.C === '') {
-      if (endQuiz) {
-        this.processGameEnded();
-      }
-      return;
-    }
-    // guessTimer.removeTimer(data.reqId);
-    // data.C contains the alphagram.
-    const solved = game.solve(data.w, data.C, data.s);
-    if (!solved) {
-      if (endQuiz) {
-        this.processGameEnded();
-      }
-      return;
-    }
-    this.setState({
-      curQuestions: game.getQuestionState(),
-      origQuestions: game.getOriginalQuestionState(),
-      answeredBy: game.getAnsweredBy(),
-    });
-    if (this.state.lastGuessCorrectness === GuessEnum.PENDING) {
-      if (data.s === this.props.username) {
-        this.setState({
-          lastGuessCorrectness: GuessEnum.CORRECT,
-        });
-      } else if (this.state.lastGuess === data.w) {
-        this.setState({
-          lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
-        });
-      }
-      // XXX: Otherwise keep it pending?
-    }
-    if (endQuiz) {
-      this.processGameEnded();
-    }
   }
 
   markMissed(alphaIdx, alphagram) {
@@ -501,9 +579,9 @@ class WordwallsAppContainer extends React.Component {
       this.api.call('/wordwalls/api/challengers_by_tablenum/', {
         tablenum: this.state.tablenum,
         tiebreaker: this.state.displayStyle.hideErrors ? 'time' : 'errors',
-      }, 'GET').then(data => this.setState({
+      }, 'GET').then((data) => this.setState({
         challengeData: data,
-      })).catch(error => this.addMessage(error.message));
+      })).catch((error) => this.addMessage(error.message));
     }
   }
 
@@ -532,84 +610,7 @@ class WordwallsAppContainer extends React.Component {
           this.addMessage(data.info);
         }
       })
-      .fail(jqXHR => this.addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error'));
-  }
-
-  /**
-   * Handle the shuffling of tiles for display.
-   * @param  {number?} which The index (or undefined for all).
-   */
-  handleShuffleAll() {
-    game.shuffleAll();
-    this.setState({
-      curQuestions: game.getQuestionState(),
-    });
-    this.wwApp.setGuessBoxFocus();
-  }
-
-  handleAlphagram() {
-    game.resetAllOrders();
-    this.setState({
-      curQuestions: game.getQuestionState(),
-    });
-    this.wwApp.setGuessBoxFocus();
-  }
-
-  handleCustomOrder() {
-    game.setCustomLetterOrder(this.state.displayStyle.customTileOrder);
-    this.setState({
-      curQuestions: game.getQuestionState(),
-    });
-    this.wwApp.setGuessBoxFocus();
-  }
-
-  /**
-   * Handle the loading of a new list into a table. This only gets triggered
-   * when the user loads a new list, and not when the user clicks join on a
-   * table. XXX: This may be a code smell, why use parallel paths?
-   * @param  {Object} data
-   */
-  handleLoadNewList(data) {
-    let changeUrl = false;
-    const oldTablenum = this.state.tablenum;
-    // let useReplaceState = false;
-    if (data.tablenum !== oldTablenum) {
-      changeUrl = true;
-      // if (this.state.tablenum !== 0) {
-      //   useReplaceState = true; // Replace instead of push if we already have
-      //                           // a table num. This will probably come in use
-      //                           // for multiplayer mode. This prevents the user
-      //                           // from having to click back hella times.
-      // }
-    }
-    this.setState({
-      listName: data.list_name,
-      lexicon: data.lexicon,
-      autoSave: data.autosave && !data.multiplayer,
-      tablenum: data.tablenum,
-      numberOfRounds: 0,
-      curQuestions: Immutable.List(),
-    });
-    this.addMessage(`Loaded new list: ${data.list_name}`, 'info');
-    this.showAutosaveMessage(data.autosave);
-    if (changeUrl) {
-      // The .bind(history) is important because otherwise `this` changes
-      // and we get an "illegal invocation". 😒
-      // let stateChanger = history.pushState.bind(history);
-      // if (useReplaceState) {
-      //   stateChanger = history.replaceState.bind(history);
-      // }
-      window.history.replaceState(
-        {}, `Table ${data.tablenum}`,
-        this.tableUrl(data.tablenum),
-      );
-      this.rpc.setTablenum(data.tablenum);
-      document.title = `Wordwalls - table ${data.tablenum}`;
-    }
-    window.Intercom('trackEvent', 'loaded-new-list', {
-      listName: data.list_name,
-      multiplayer: false,
-    });
+      .fail((jqXHR) => this.addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error'));
   }
 
   resetTableCreator() {
@@ -661,7 +662,7 @@ class WordwallsAppContainer extends React.Component {
           currentHost={this.state.currentHost}
           onLoadNewList={this.handleLoadNewList}
           gameGoing={this.state.gameGoing}
-          setLoadingData={loading => this.setState({ loadingData: loading })}
+          setLoadingData={(loading) => this.setState({ loadingData: loading })}
           username={this.props.username}
           hideErrors={this.state.displayStyle.hideErrors}
         />
@@ -671,22 +672,17 @@ class WordwallsAppContainer extends React.Component {
           boardGridWidth={boardGridWidth}
           boardGridHeight={boardGridHeight}
           windowWidth={this.state.windowWidth}
-
           listName={this.state.listName}
           autoSave={this.state.autoSave}
           onListNameChange={this.handleListNameChange}
           onAutoSaveToggle={this.handleAutoSaveToggle}
-
           displayStyle={this.state.displayStyle}
           setDisplayStyle={this.setDisplayStyle}
-
           handleStart={this.handleStart}
           handleGiveup={this.handleGiveup}
           gameGoing={this.state.gameGoing}
-
           initialGameTime={this.state.initialGameTime}
           timerRanOut={this.timerRanOut}
-
           numberOfRounds={this.state.numberOfRounds}
           isChallenge={this.state.isChallenge}
           isBuild={this.state.isBuild}
@@ -703,12 +699,10 @@ class WordwallsAppContainer extends React.Component {
           currentHost={this.state.currentHost}
           wrongAnswers={this.state.wrongAnswers}
           hideErrors={this.state.displayStyle.hideErrors}
-
           onGuessSubmit={this.onGuessSubmit}
           lastGuess={this.state.lastGuess}
           lastGuessCorrectness={this.state.lastGuessCorrectness}
           onHotKey={this.onHotKey}
-
           handleShuffleAll={this.handleShuffleAll}
           handleAlphagram={this.handleAlphagram}
           handleCustomOrder={this.handleCustomOrder}
@@ -745,7 +739,6 @@ WordwallsAppContainer.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
 };
 

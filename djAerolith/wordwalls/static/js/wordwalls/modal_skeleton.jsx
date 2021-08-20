@@ -42,13 +42,15 @@ class ModalSkeleton extends React.Component {
               </button>
               <h4
                 className="modal-title"
-              >{this.props.title}
+              >
+                {this.props.title}
               </h4>
             </div>
             {this.props.children /* the body and footer, if any. */}
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 }
 

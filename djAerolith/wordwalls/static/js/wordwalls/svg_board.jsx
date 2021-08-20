@@ -69,7 +69,8 @@ const SVGBoard = (props) => {
       width={props.scaleTransform * (props.width + (2 * leftMargin))}
       height={props.scaleTransform * (props.height + (2 * topMargin))}
       onMouseDown={(e) => { e.preventDefault(); }}
-    >{questions}
+    >
+      {questions}
     </svg>
   );
 };

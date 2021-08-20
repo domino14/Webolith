@@ -75,11 +75,9 @@ jobs:
       - image: node:alpine
     steps:
       - checkout
-      - run: apk add yarn
-      - run: yarn install
-      # XXX: UNCOMMENT THIS AS SOON AS FIXED
-      # - run: yarn eslint
-      - run: yarn jshint && yarn test && yarn prod:build
+      - run: npm install
+      - run: npm run eslint
+      - run: npm run jshint && npm run test && npm run prod:build
       - run: apk add --update ca-certificates openssl && update-ca-certificates
       - persist_to_workspace:
           root: djAerolith/static

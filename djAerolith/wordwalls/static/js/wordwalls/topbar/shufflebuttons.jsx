@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ShuffleButton = props => (
+const ShuffleButton = (props) => (
   <div style={{ display: 'inline-block' }}>
     <div className="hidden-xs hidden-sm col-md-3 col-lg-3">
       <button
@@ -14,8 +14,11 @@ const ShuffleButton = props => (
       >
         <span
           className="badge"
-        >{props.hotKey}
-        </span> {props.buttonText}
+        >
+          {props.hotKey}
+        </span>
+        {' '}
+        {props.buttonText}
       </button>
     </div>
     <div className="visible-xs-inline-block visible-sm-inline-block">
@@ -29,14 +32,17 @@ const ShuffleButton = props => (
       >
         <span
           className="badge"
-        >{props.hotKey}
-        </span><i
+        >
+          {props.hotKey}
+        </span>
+        <i
           className={`glyphicon ${props.glyphIcon}`}
           style={{ marginLeft: '0.5em' }}
         />
       </button>
     </div>
-  </div>);
+  </div>
+);
 
 ShuffleButton.propTypes = {
   trigger: PropTypes.func.isRequired,
@@ -45,7 +51,7 @@ ShuffleButton.propTypes = {
   glyphIcon: PropTypes.string.isRequired,
 };
 
-const ShuffleButtons = props => (
+const ShuffleButtons = (props) => (
   <div
     className="row"
     style={{ whiteSpace: 'nowrap' }}
@@ -68,7 +74,8 @@ const ShuffleButtons = props => (
       buttonText="Custom"
       glyphIcon="glyphicon-sort"
     />
-  </div>);
+  </div>
+);
 
 ShuffleButtons.propTypes = {
   shuffle: PropTypes.func.isRequired,

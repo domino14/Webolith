@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Pills from '../newtable/pills';
 
-const SettingsSidebar = props => (
+const SettingsSidebar = (props) => (
   <div>
     <Pills
       stacked

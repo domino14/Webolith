@@ -9,20 +9,19 @@ import ChallengeButtonRow from './challenge_button';
 
 // XXX merge with similar function in blanks/dialog_container.js
 function getLexiconName(availableLexica, lexicon) {
-  return availableLexica.find(el => el.id === lexicon).lexicon;
+  return availableLexica.find((el) => el.id === lexicon).lexicon;
 }
-
 
 const ChallengeDialog = (props) => {
   // For the different order priorities, make different buttons.
   const rows = [];
-  const challs = props.challengesDoneAtDate.map(el => el.challengeID);
+  const challs = props.challengesDoneAtDate.map((el) => el.challengeID);
 
   rows.push(<ChallengeButtonRow
     title="By Word Length"
     size="md"
     key="ch2"
-    challenges={props.challengeInfo.filter(ch => ch.orderPriority === 1)}
+    challenges={props.challengeInfo.filter((ch) => ch.orderPriority === 1)}
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}
     selectedChallenge={props.currentChallenge}
@@ -33,7 +32,7 @@ const ChallengeDialog = (props) => {
       title="Special Challenges"
       size="sm"
       key="ch6"
-      challenges={props.specialChallengeInfo.filter(ch => ch.orderPriority === 5)}
+      challenges={props.specialChallengeInfo.filter((ch) => ch.orderPriority === 5)}
       onChallengeClick={props.onChallengeSelected}
       solvedChallenges={challs}
       selectedChallenge={props.currentChallenge}
@@ -44,7 +43,7 @@ const ChallengeDialog = (props) => {
     title="Word Builder"
     size="sm"
     key="ch5"
-    challenges={props.challengeInfo.filter(ch => ch.orderPriority === 4)}
+    challenges={props.challengeInfo.filter((ch) => ch.orderPriority === 4)}
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}
     selectedChallenge={props.currentChallenge}
@@ -85,7 +84,7 @@ const ChallengeDialog = (props) => {
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}
     selectedChallenge={props.currentChallenge}
-    challenges={props.challengeInfo.filter(ch => ch.orderPriority === 3)}
+    challenges={props.challengeInfo.filter((ch) => ch.orderPriority === 3)}
   />);
 
   return (
@@ -102,12 +101,14 @@ const ChallengeDialog = (props) => {
         {rows}
 
         <button
+          type="button"
           className="btn btn-primary"
           style={{ marginTop: '0.75em' }}
           onClick={props.onChallengeSubmit}
           data-dismiss="modal"
           disabled={props.disabled ? 'disabled' : ''}
-        >Play!
+        >
+          Play!
         </button>
       </div>
       <div className="col-sm-5">
@@ -153,7 +154,6 @@ ChallengeDialog.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
   hideErrors: PropTypes.bool.isRequired,
   specialChallengeInfo: PropTypes.arrayOf(PropTypes.shape({

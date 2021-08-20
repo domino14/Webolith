@@ -112,7 +112,8 @@ class ListSaveBar extends React.Component {
             className="hovertip"
             data-toggle="tooltip"
             title={listNameTitle}
-          >{this.props.listName}
+          >
+            {this.props.listName}
           </div>
           <div
             className="glyphicon glyphicon-pencil hovertip"
@@ -131,22 +132,26 @@ class ListSaveBar extends React.Component {
             data-toggle="tooltip"
             title="Click to toggle autosave at the end of each round."
             onClick={this.handleAutoSaveToggle}
-          ><span
-            className="glyphicon glyphicon-hdd"
-          />
+          >
+            <span
+              className="glyphicon glyphicon-hdd"
+            />
           </div>
           <div>
             <label
               className="checkbox-inline hidden-xs hidden-sm"
               style={saveStyle}
               htmlFor="auto-save-checkbox"
-            ><input
-              type="checkbox"
-              id="auto-save-checkbox"
-              checked={this.props.autoSave}
-              onChange={this.handleAutoSaveToggle}
-              value="autoSaveSomething"
-            /> Autosave
+            >
+              <input
+                type="checkbox"
+                id="auto-save-checkbox"
+                checked={this.props.autoSave}
+                onChange={this.handleAutoSaveToggle}
+                value="autoSaveSomething"
+              />
+              {' '}
+              Autosave
             </label>
           </div>
         </div>

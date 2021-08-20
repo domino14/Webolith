@@ -44,6 +44,7 @@ export default {
   },
   optimization: {
     splitChunks: {
+      name: (module, chunks, cacheGroupKey) => (`${cacheGroupKey}~${chunks.map((c) => c.name).join('~')}`),
       cacheGroups: {
         node_vendors: {
           test: /[\\/]node_modules[\\/]/, // is backslash for windows?
@@ -62,11 +63,12 @@ export default {
   devServer: {
     port: 7000,
     host: '0.0.0.0',
-    public: 'aerolith.localhost',
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
-    disableHostCheck: true,
+    allowedHosts: [
+      'aerolith.localhost',
+    ],
   },
   watchOptions: {
     aggregateTimeout: 300,
@@ -75,4 +77,3 @@ export default {
 };
 
 // https://medium.com/@andyccs/webpack-and-docker-for-development-and-deployment-ae0e73243db4
-

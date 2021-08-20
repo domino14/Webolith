@@ -9,8 +9,8 @@ import fonts from './fonts';
 const QuestionText = (props) => {
   let fontColor = '#111111';
   // If the background is dark, make the text white.
-  if (darkBackgrounds.has(props.background) ||
-      (props.background === '' && darkBackgrounds.has(props.bodyBackground))) {
+  if (darkBackgrounds.has(props.background)
+      || (props.background === '' && darkBackgrounds.has(props.bodyBackground))) {
     fontColor = '#eeeeee';
   }
 
@@ -27,7 +27,8 @@ const QuestionText = (props) => {
       fill={fontColor}
       fontWeight={fontWeight}
       strokeWidth="0.5px"
-    >{Utils.displaySpanishDigraphs(props.letters)}
+    >
+      {Utils.displaySpanishDigraphs(props.letters)}
     </text>
   );
 };

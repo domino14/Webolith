@@ -34,13 +34,13 @@ class SearchDialogContainer extends React.Component {
     this.props.showSpinner();
     this.props.api.call(SEARCH_URL, {
       lexicon: this.props.lexicon,
-      searchCriteria: this.props.searches.map(s => s.toJSObj()),
+      searchCriteria: this.props.searches.map((s) => s.toJSObj()),
       desiredTime: this.props.desiredTime,
       questionsPerRound: this.props.questionsPerRound,
       tablenum: this.props.tablenum,
     })
-      .then(data => this.props.onLoadNewList(data))
-      .catch(error => this.props.notifyError(error))
+      .then((data) => this.props.onLoadNewList(data))
+      .catch((error) => this.props.notifyError(error))
       .finally(() => this.props.hideSpinner());
   }
 
@@ -54,10 +54,10 @@ class SearchDialogContainer extends React.Component {
     this.props.api.callLegacy(FLASHCARD_URL, {
       action: 'searchParamsFlashcard',
       lexicon: this.props.lexicon,
-      searchCriteria: this.props.searches.map(s => s.toJSObj()),
+      searchCriteria: this.props.searches.map((s) => s.toJSObj()),
     })
-      .then(data => this.props.redirectUrl(data.url))
-      .catch(resp => this.props.notifyError(resp))
+      .then((data) => this.props.redirectUrl(data.url))
+      .catch((resp) => this.props.notifyError(resp))
       .finally(() => this.props.hideSpinner());
   }
 
@@ -68,7 +68,8 @@ class SearchDialogContainer extends React.Component {
         onFlashcardSubmit={this.flashcardSearchSubmit}
         allowedSearchTypes={allowedSearchTypes}
         {...this.props}
-      />);
+      />
+    );
   }
 }
 

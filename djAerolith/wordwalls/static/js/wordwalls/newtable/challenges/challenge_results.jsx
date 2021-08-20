@@ -20,19 +20,24 @@ class ChallengeResults extends React.Component {
    */
   static getUserLink(user, addlData) {
     const parsedAddl = JSON.parse(addlData);
-    const medalName = ChallengeResults.getMedalName(parsedAddl ?
-      parsedAddl.medal.toLowerCase() : null);
-    const medal = medalName ? (<img
-      src={`/static/img/aerolith/${medalName}_16x16.png`}
-      alt={medalName}
-    />) : '';
+    const medalName = ChallengeResults.getMedalName(parsedAddl
+      ? parsedAddl.medal.toLowerCase() : null);
+    const medal = medalName ? (
+      <img
+        src={`/static/img/aerolith/${medalName}_16x16.png`}
+        alt={medalName}
+      />
+    ) : '';
     return (
       <a
         href={`/accounts/profile/${user}`}
         target="_blank"
         rel="noopener noreferrer"
-      >{medal}{user}
-      </a>);
+      >
+        {medal}
+        {user}
+      </a>
+    );
   }
 
   render() {
@@ -54,7 +59,8 @@ class ChallengeResults extends React.Component {
           <td>{`${(100 * (entry.score / maxScore)).toFixed(1)}%`}</td>
           {errorsColumn}
           <td>{`${entry.tr} s.`}</td>
-        </tr>);
+        </tr>
+      );
       entries.push(entryTr);
     });
     let errorsHeader = null;
@@ -106,4 +112,3 @@ ChallengeResults.propTypes = {
 };
 
 export default ChallengeResults;
-

@@ -27,7 +27,7 @@ class Presence {
     const key = isLobby ? 'lobby' : 'table';
     this.messages = this.messages.update(
       key, Immutable.List(),
-      existingList => existingList.push(message),
+      (existingList) => existingList.push(message),
     );
     // Trim the message list.
     let maxMessages = MAX_MESSAGES;
@@ -37,7 +37,7 @@ class Presence {
     if (this.messages.get(key).size > maxMessages) {
       this.messages = this.messages.update(
         key,
-        existingList => existingList.shift(),
+        (existingList) => existingList.shift(),
       );
     }
   }
@@ -62,9 +62,10 @@ class Presence {
     }
     this.tables = this.tables.update(
       room,
-      existingMap => existingMap.set('users', userList),
+      (existingMap) => existingMap.set('users', userList),
     );
   }
+
   /**
    * Set the "host" in the room to the passed-in host.
    * @param {string} host
@@ -76,7 +77,7 @@ class Presence {
     }
     this.tables = this.tables.update(
       room,
-      existingMap => existingMap.set('host', host),
+      (existingMap) => existingMap.set('host', host),
     );
   }
 
@@ -91,6 +92,7 @@ class Presence {
     }
     return this.tables.get(room).get('host');
   }
+
   /**
    * Idempotently set tables to the passed in list.
    * @param {Array.<Object>} tables
@@ -107,6 +109,7 @@ class Presence {
     // XXX: Note that this turns the keys in this.tables into strings.
     this.tables = Immutable.fromJS(tableObj);
   }
+
   /**
    * Add table to existing lists of tables, or idempotently update table
    * already there.

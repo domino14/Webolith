@@ -66,7 +66,8 @@ class WordwallsApp extends React.Component {
           />
         </div>
 
-      </div>);
+      </div>
+    );
   }
 
   renderLeftSide() {
@@ -150,7 +151,8 @@ class WordwallsApp extends React.Component {
           <div className="col-sm-12 col-md-12 col-lg-12">
             <UserBox
               showLexiconSymbols={
-                !this.props.displayStyle.hideLexiconSymbols}
+                !this.props.displayStyle.hideLexiconSymbols
+}
               answers={this.props.answeredBy.get(this.props.username, Immutable.List())}
               wrongAnswers={this.props.wrongAnswers}
               hideErrors={this.props.hideErrors}
@@ -160,7 +162,8 @@ class WordwallsApp extends React.Component {
             />
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 
   render() {
@@ -192,7 +195,8 @@ class WordwallsApp extends React.Component {
           </div>
         </div>
 
-      </div>);
+      </div>
+    );
   }
 }
 
@@ -236,7 +240,13 @@ WordwallsApp.propTypes = {
   windowWidth: PropTypes.number.isRequired,
 
   challengeData: PropTypes.shape({
-    entries: PropTypes.array,
+    entries: PropTypes.arrayOf(PropTypes.shape({
+      user: PropTypes.string,
+      score: PropTypes.number,
+      tr: PropTypes.number,
+      w: PropTypes.number,
+      addl: PropTypes.string,
+    })),
     maxScore: PropTypes.number,
   }).isRequired,
   resetTableCreator: PropTypes.func.isRequired,
@@ -258,4 +268,3 @@ WordwallsApp.propTypes = {
   })).isRequired,
 };
 export default WordwallsApp;
-

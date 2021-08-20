@@ -27,22 +27,26 @@ class Solution extends React.Component {
     if (!this.props.wordSolved) {
       wTdClass += ' danger';
     }
-    const wordDisplay = (this.props.innerFrontHook ? '･' : '') + this.props.word +
-      (this.props.innerBackHook ? '･' : '') + this.props.lexiconSymbols;
+    const wordDisplay = (this.props.innerFrontHook ? '･' : '') + this.props.word
+      + (this.props.innerBackHook ? '･' : '') + this.props.lexiconSymbols;
 
     if (this.props.correct && this.props.wordPos === 0) {
       markMissedBtn = (
         <button
+          type="button"
           className="btn btn-sm btn-danger"
           onClick={this.markMissed}
-        >Mark missed
+        >
+          Mark missed
         </button>
       );
     }
     const alphagram = (
-      this.props.wordPos === 0 ? (<WordPartDisplay
-        text={this.props.alphagram}
-      />) : '');
+      this.props.wordPos === 0 ? (
+        <WordPartDisplay
+          text={this.props.alphagram}
+        />
+      ) : '');
 
     // Visually separate different alphagrams.
     if (this.props.wordPos === 0) {
@@ -51,13 +55,16 @@ class Solution extends React.Component {
 
     return (
       <tr>
-        <td style={rowStyle}>{
-          this.props.wordPos === 0 ? this.props.probability : ''}
+        <td style={rowStyle}>
+          {
+          this.props.wordPos === 0 ? this.props.probability : ''
+}
         </td>
         <td
           style={rowStyle}
           className={qTdClass}
-        >{alphagram}
+        >
+          {alphagram}
         </td>
         <td
           style={rowStyle}

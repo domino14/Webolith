@@ -53,8 +53,7 @@ const COLLINS_19_LICENSE_TEXT = `
 Collins Official Scrabble Words 2019 © HarperCollins Publishers 2019`;
 const DEUTSCH_LICENSE_TEXT = `
 The “Scrabble®-Turnierliste” used as the German Lexicon is subject to copyright and related rights of Scrabble® Deutschland e.V.
-With the friendly assistance of Gero Illings SuperDic.`
-
+With the friendly assistance of Gero Illings SuperDic.`;
 
 const DEFAULT_TIME_PER_QUIZ = '5'; // minutes
 const DEFAULT_TIME_PER_BLANK_QUIZ = '10';
@@ -200,8 +199,8 @@ class TableCreator extends React.Component {
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
-      .done(data => this.props.onLoadNewList(data))
-      .fail(jqXHR => Notifications.alert(
+      .done((data) => this.props.onLoadNewList(data))
+      .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to load list: ${jqXHR.responseJSON}`,
       ))
@@ -219,8 +218,8 @@ class TableCreator extends React.Component {
         namedList: this.state.selectedList,
       },
     })
-      .done(data => TableCreator.redirectUrl(data.url))
-      .fail(jqXHR => Notifications.alert(
+      .done((data) => TableCreator.redirectUrl(data.url))
+      .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to process: ${jqXHR.responseJSON.error}`,
       ))
@@ -263,7 +262,7 @@ class TableCreator extends React.Component {
         this.props.onLoadNewList(data);
         this.modal.dismiss();
       })
-      .fail(jqXHR => Notifications.alert(
+      .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to load list: ${jqXHR.responseJSON}`,
       ))
@@ -285,8 +284,8 @@ class TableCreator extends React.Component {
         // will hopefully replace it soon.
       },
     })
-      .done(data => TableCreator.redirectUrl(data.url))
-      .fail(jqXHR => Notifications.alert(
+      .done((data) => TableCreator.redirectUrl(data.url))
+      .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to process: ${jqXHR.responseJSON.error}`,
       ))
@@ -302,7 +301,7 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-      .done(data => this.setState({
+      .done((data) => this.setState({
         aerolithLists: data,
         selectedList: data[0] ? String(data[0].id) : '',
       }))
@@ -323,7 +322,7 @@ class TableCreator extends React.Component {
       },
       method: 'GET',
     })
-      .done(data => this.setState({ savedLists: data }))
+      .done((data) => this.setState({ savedLists: data }))
       .always(() => this.hideSpinner());
   }
 
@@ -340,7 +339,7 @@ class TableCreator extends React.Component {
       contentType: false,
     })
       .done(() => this.loadSavedListInfo())
-      .fail(jqXHR => Notifications.alert(
+      .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to upload list: ${jqXHR.responseJSON}`,
       ))
@@ -409,7 +408,8 @@ class TableCreator extends React.Component {
             ref={(ref) => {
               this.challengeDialogContainer = ref;
             }}
-          />);
+          />
+        );
         break;
       case LIST_TYPE_WORDSEARCH:
         selectedQuizSearchDialog = (
@@ -425,7 +425,8 @@ class TableCreator extends React.Component {
             redirectUrl={TableCreator.redirectUrl}
             api={this.api}
             disabled={this.props.gameGoing}
-          />);
+          />
+        );
 
         break;
       case LIST_TYPE_BLANKS:
@@ -444,19 +445,21 @@ class TableCreator extends React.Component {
             api={this.api}
             wordServerRPC={this.wordServerRPC}
             disabled={this.props.gameGoing}
-          />);
+          />
+        );
         break;
 
       case LIST_TYPE_SAVED_LIST:
         selectedQuizSearchDialog = (
           <SavedListDialog
             listOptions={this.state.savedLists}
-            onListSubmit={(listID, action) =>
-              this.preSubmitHook(() => this.savedListSubmit(listID, action))}
+            // eslint-disable-next-line max-len
+            onListSubmit={(listID, action) => this.preSubmitHook(() => this.savedListSubmit(listID, action))}
             onListUpload={this.listUpload}
-            onListFlashcard={(listID, action) =>
-              this.preSubmitHook(() => this.flashcardSavedListSubmit(listID, action))}
-          />);
+            // eslint-disable-next-line max-len
+            onListFlashcard={(listID, action) => this.preSubmitHook(() => this.flashcardSavedListSubmit(listID, action))}
+          />
+        );
         break;
       case LIST_TYPE_AEROLITH_LISTS:
         selectedQuizSearchDialog = (
@@ -466,7 +469,8 @@ class TableCreator extends React.Component {
             onSelectedListChange={this.selectedListChange}
             onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
             onFlashcardSubmit={() => this.preSubmitHook(this.flashcardAerolithListSubmit)}
-          />);
+          />
+        );
         break;
       default:
         selectedQuizSearchDialog = null;
@@ -482,7 +486,7 @@ class TableCreator extends React.Component {
             LIST_TYPE_SAVED_LIST,
           ]}
           activePill={this.state.activeListType}
-          onPillClick={option => () => {
+          onPillClick={(option) => () => {
             this.setState({
               activeListType: option,
             });
@@ -504,7 +508,8 @@ class TableCreator extends React.Component {
           }}
         />
         {selectedQuizSearchDialog}
-      </div>);
+      </div>
+    );
   }
 
   render() {
@@ -523,26 +528,27 @@ class TableCreator extends React.Component {
               <Sidebar
                 gameTypes={[GAME_TYPE_NEW]}
                 activeGameType={this.state.activeGameType}
-                setGameType={option => () => this.setState({
+                setGameType={(option) => () => this.setState({
                   activeGameType: option,
                 })}
                 currentLexicon={this.state.currentLexicon}
                 defaultLexicon={this.props.defaultLexicon}
                 availableLexica={this.props.availableLexica}
-                setLexicon={lex => this.setState({
+                setLexicon={(lex) => this.setState({
                   currentLexicon: lex,
                 })}
                 setDefaultLexicon={this.props.setDefaultLexicon}
                 desiredTime={this.state.desiredTime}
-                setTime={t => this.setState({
+                setTime={(t) => this.setState({
                   desiredTime: t,
                 })}
                 questionsPerRound={this.state.questionsPerRound}
-                setQuestionsPerRound={q => this.setState({
+                setQuestionsPerRound={(q) => this.setState({
                   questionsPerRound: q,
                 })}
                 disabledInputs={
-                  this.state.activeListType === LIST_TYPE_CHALLENGE}
+                  this.state.activeListType === LIST_TYPE_CHALLENGE
+}
               />
             </div>
             <div className="col-sm-10">
@@ -554,7 +560,8 @@ class TableCreator extends React.Component {
         <div className="modal-footer">
           <small
             style={{ marginRight: 10 }}
-          >{this.renderLicenseText()}
+          >
+            {this.renderLicenseText()}
           </small>
         </div>
       </ModalSkeleton>
@@ -569,7 +576,6 @@ TableCreator.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
   challengeInfo: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
@@ -584,6 +590,5 @@ TableCreator.propTypes = {
   setLoadingData: PropTypes.func.isRequired,
   hideErrors: PropTypes.bool.isRequired,
 };
-
 
 export default TableCreator;

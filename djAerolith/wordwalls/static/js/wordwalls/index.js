@@ -1,4 +1,3 @@
-/* global window */
 import 'bootstrap'; // Needed by the app, so load it here.
 
 import App from './app';
@@ -29,4 +28,3 @@ window.Intercom('boot', {
   created_at: user.createdAt,
   username: user.username,
 });
-

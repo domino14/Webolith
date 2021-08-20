@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Styling from './style';
 
-const WordwallsQuestionPlaceholder = props => (
+const WordwallsQuestionPlaceholder = (props) => (
   <g>
     <rect
       width={props.xSize}

@@ -154,7 +154,8 @@ const GameTile = (props) => {
         fontSize={`${fontSize}%`}
         stroke={color.textColor}
         fill={color.textColor}
-      >{letter}
+      >
+        {letter}
       </text>
       {/* <PointValue
         fontFamily={fonts[props.font].fontFamily}
@@ -199,7 +200,8 @@ const PointValue = (props) => {
       stroke={props.stroke}
       strokeWidth="0.05px"
       fill={props.fill}
-    >{props.value}
+    >
+      {props.value}
     </text>
   );
 };

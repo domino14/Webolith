@@ -41,7 +41,8 @@ class SettingsModalBody extends React.Component {
           onOptionsModify={this.props.onWordwallsOptionsModify}
           displayStyle={this.props.displayStyle}
           allowSave={this.allowSave}
-        />);
+        />
+      );
     }
     // } else if (this.state.activeSettingsType === SETTINGS_TYPE_TABLE_SETTINGS) {
     //   subPanel = (
@@ -63,7 +64,7 @@ class SettingsModalBody extends React.Component {
                   // SETTINGS_TYPE_BASE_SETTINGS,
                 ]}
                 activeSettingsType={this.state.activeSettingsType}
-                setSettingsType={option => () => this.setState({
+                setSettingsType={(option) => () => this.setState({
                   activeSettingsType: option,
                 })}
               />
@@ -79,14 +80,16 @@ class SettingsModalBody extends React.Component {
             type="button"
             className="btn btn-default"
             data-dismiss="modal"
-          >Close
+          >
+            Close
           </button>
           <button
             type="button"
             className={savebtnClass}
             onClick={this.props.saveWordwallsChanges}
             data-dismiss="modal"
-          >Save changes
+          >
+            Save changes
           </button>
         </div>
 

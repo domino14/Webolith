@@ -10,7 +10,7 @@ import QuestionText from './question_text';
 
 const DEFAULT_BLANK_CHARACTER = '?';
 
-const getRandomInt = max => Math.floor(Math.random() * Math.floor(max));
+const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
 
 class WordwallsQuestion extends React.Component {
   /**
@@ -51,16 +51,18 @@ class WordwallsQuestion extends React.Component {
    * @return {React.Element}
    */
   borderRectangle() {
-    return (<rect
-      width={this.props.xSize}
-      height={this.props.ySize}
-      x={this.props.gridX}
-      y={this.props.gridY}
-      stroke="#7e7f7a"
-      strokeWidth="1px"
-      fill="none"
-      strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
-    />);
+    return (
+      <rect
+        width={this.props.xSize}
+        height={this.props.ySize}
+        x={this.props.gridX}
+        y={this.props.gridY}
+        stroke="#7e7f7a"
+        strokeWidth="1px"
+        fill="none"
+        strokeOpacity={this.props.displayStyle.showBorders ? '1' : '0'}
+      />
+    );
   }
 
   clickedQ() {
@@ -107,8 +109,8 @@ class WordwallsQuestion extends React.Component {
         i += 1, letterIdx += 1) {
         x = xPadding + (i * (tileWidth + strokeWidth));
         letter = this.props.letters[letterIdx];
-        if (letter === DEFAULT_BLANK_CHARACTER &&
-            this.props.displayStyle.blankCharacter !== '') {
+        if (letter === DEFAULT_BLANK_CHARACTER
+            && this.props.displayStyle.blankCharacter !== '') {
           letter = this.props.displayStyle.blankCharacter;
         }
         let angle = 0;
@@ -147,14 +149,17 @@ class WordwallsQuestion extends React.Component {
 
     return (
       <g
-        onMouseDown={/* disallow highlighting text */e => e.preventDefault()}
+        onMouseDown={/* disallow highlighting text */(e) => e.preventDefault()}
         onClick={this.clickedQ}
         style={{
           cursor: 'default',
         }}
         transform={
-          `scale(${this.props.scaleTransform})`}
-      >{tiles}{this.borderRectangle()}
+          `scale(${this.props.scaleTransform})`
+}
+      >
+        {tiles}
+        {this.borderRectangle()}
       </g>
     );
   }

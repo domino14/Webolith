@@ -16,7 +16,7 @@ const SavedListTable = (props) => {
     flashcardFirstMissed,
   } = props;
 
-  const rows = props.lists.map(option => (
+  const rows = props.lists.map((option) => (
     <SavedListRow
       key={option.id}
       list={option}
@@ -45,7 +45,8 @@ const SavedListTable = (props) => {
       <tbody>
         {rows}
       </tbody>
-    </table>);
+    </table>
+  );
 };
 
 SavedListTable.propTypes = {

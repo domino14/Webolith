@@ -3,11 +3,12 @@ import React from 'react';
 
 import { SearchTypesEnum, SearchTypesOrder } from './types';
 
-const SingleHelpNode = props => (
+const SingleHelpNode = (props) => (
   <div>
     <h4>{SearchTypesEnum.properties[props.searchType].displayName}</h4>
     <div>{SearchTypesEnum.properties[props.searchType].description}</div>
-  </div>);
+  </div>
+);
 
 SingleHelpNode.propTypes = {
   searchType: PropTypes.number.isRequired,
@@ -22,7 +23,7 @@ class HelpText extends React.Component {
   }
 
   toggleShow() {
-    this.setState(state => ({
+    this.setState((state) => ({
       showingText: !state.showingText,
     }));
   }
@@ -43,12 +44,15 @@ class HelpText extends React.Component {
     return (
       <div>
         <button
+          type="button"
           className="btn btn-sm btn-default"
           onClick={() => this.toggleShow()}
-        >{this.state.showingText ? 'Hide help' : 'Show help'}
+        >
+          {this.state.showingText ? 'Hide help' : 'Show help'}
         </button>
         {this.renderText()}
-      </div>);
+      </div>
+    );
   }
 }
 

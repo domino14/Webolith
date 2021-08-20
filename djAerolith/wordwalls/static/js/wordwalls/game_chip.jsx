@@ -100,7 +100,8 @@ const GameChip = (props) => {
         stroke={color.textColor}
         fill={color.textColor}
         strokeWidth="1px"
-      >{props.number}
+      >
+        {props.number}
       </text>
     </g>
   );

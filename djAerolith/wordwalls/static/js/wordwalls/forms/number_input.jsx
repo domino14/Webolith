@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /**
  * @fileOverview A Bootstrap-based text numerical input component.
  */
@@ -24,14 +24,14 @@ const NumberInput = (props) => {
         <div className={inputColSizeClass}>
           <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
             {props.label}
+            <input
+              type="number"
+              {...addlInputProps}
+              value={props.value}
+              className="form-control input-sm"
+              onChange={props.onChange}
+            />
           </label>
-          <input
-            type="number"
-            {...addlInputProps}
-            value={props.value}
-            className="form-control input-sm"
-            onChange={props.onChange}
-          />
         </div>
       </div>
     </div>

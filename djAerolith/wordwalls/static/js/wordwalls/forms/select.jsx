@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -16,8 +16,10 @@ const Select = (props) => {
       <option
         value={element.value}
         key={element.value}
-      >{element.displayValue}
-      </option>);
+      >
+        {element.displayValue}
+      </option>
+    );
     options.push(o);
   });
   if (props.numItems > 1) {
@@ -31,19 +33,22 @@ const Select = (props) => {
       <div className="row">
         <div className={inputColSizeClass}>
           <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            {props.label} {badge}
+            {props.label}
+            {' '}
+            {badge}
+            <select
+              value={props.selectedValue}
+              onChange={props.onChange}
+              className="form-control"
+              {...additionalSelectProps}
+            >
+              {options}
+            </select>
           </label>
-          <select
-            value={props.selectedValue}
-            onChange={props.onChange}
-            className="form-control"
-            {...additionalSelectProps}
-          >
-            {options}
-          </select>
         </div>
       </div>
-    </div>);
+    </div>
+  );
 };
 
 Select.propTypes = {
@@ -65,6 +70,5 @@ Select.defaultProps = {
   disabled: false,
   numItems: 1,
 };
-
 
 export default Select;

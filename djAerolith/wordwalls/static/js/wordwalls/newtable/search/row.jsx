@@ -11,12 +11,12 @@ import {
   SearchTypesInputs,
 } from './types';
 
-const convertOptions = options => options.map(el => ({
+const convertOptions = (options) => options.map((el) => ({
   value: el[0],
   displayValue: el[1],
 }));
 
-const SelectValue = props => (
+const SelectValue = (props) => (
   <div className="col-xs-6">
     <Select
       colSize={12}
@@ -27,7 +27,8 @@ const SelectValue = props => (
         props.modifySearchParam(props.index, 'value', event.target.value);
       }}
     />
-  </div>);
+  </div>
+);
 
 SelectValue.propTypes = {
   index: PropTypes.number.isRequired,
@@ -37,7 +38,7 @@ SelectValue.propTypes = {
   modifySearchParam: PropTypes.func.isRequired,
 };
 
-const NumberValue = props => (
+const NumberValue = (props) => (
   <div className="col-xs-3">
     <NumberInput
       colSize={12}
@@ -45,13 +46,14 @@ const NumberValue = props => (
       value={String(props.defaultValue)}
       minAllowed={props.minAllowed}
       maxAllowed={props.maxAllowed}
-      onChange={event => props.modifySearchParam(
+      onChange={(event) => props.modifySearchParam(
         props.index,
         props.paramName,
         event.target.value,
       )}
     />
-  </div>);
+  </div>
+);
 
 NumberValue.propTypes = {
   minAllowed: PropTypes.number.isRequired,
@@ -63,7 +65,7 @@ NumberValue.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
-const MinMaxValues = props => (
+const MinMaxValues = (props) => (
   <div style={{ marginTop: '2px' }}>
     <NumberValue
       label="Min"
@@ -83,7 +85,8 @@ const MinMaxValues = props => (
       index={props.index}
       paramName="maxValue"
     />
-  </div>);
+  </div>
+);
 
 MinMaxValues.propTypes = {
   minValue: PropTypes.number.isRequired,
@@ -94,19 +97,20 @@ MinMaxValues.propTypes = {
   index: PropTypes.number.isRequired,
 };
 
-const StringValue = props => (
+const StringValue = (props) => (
   <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
     <TextInput
       colSize={12}
       label="Value"
       value={props.value}
-      onChange={event => props.modifySearchParam(
+      onChange={(event) => props.modifySearchParam(
         props.index,
         'value',
         event.target.value,
       )}
     />
-  </div>);
+  </div>
+);
 
 StringValue.propTypes = {
   value: PropTypes.string.isRequired,
@@ -127,7 +131,8 @@ const SearchRow = (props) => {
           maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
           index={props.index}
-        />);
+        />
+      );
       break;
     case SearchTypesInputs.ONE_NUMBER:
       specificForm = (
@@ -139,7 +144,8 @@ const SearchRow = (props) => {
           maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
           index={props.index}
-        />);
+        />
+      );
       break;
     case SearchTypesInputs.ONE_STRING:
       specificForm = (
@@ -147,7 +153,8 @@ const SearchRow = (props) => {
           value={props.searchCriterion.value}
           index={props.index}
           modifySearchParam={props.modifySearchParam}
-        />);
+        />
+      );
       break;
     case SearchTypesInputs.SELECT:
       specificForm = (
@@ -157,7 +164,8 @@ const SearchRow = (props) => {
           index={props.index}
           modifySearchParam={props.modifySearchParam}
           options={SearchTypesEnum.properties[props.searchType].options}
-        />);
+        />
+      );
       break;
     default:
       break;
@@ -167,17 +175,21 @@ const SearchRow = (props) => {
     <div className="row search-row">
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
+          type="button"
           className="btn btn-info btn-xs btn-add-search-row"
           onClick={props.addRow}
-        ><span className="glyphicon glyphicon-plus" aria-hidden="true" />
+        >
+          <span className="glyphicon glyphicon-plus" aria-hidden="true" />
         </button>
       </div>
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
+          type="button"
           className="btn btn-info btn-xs btn-remove-search-row"
           onClick={() => props.removeRow(props.index)}
           disabled={props.removeDisabled}
-        ><span className="glyphicon glyphicon-minus" aria-hidden="true" />
+        >
+          <span className="glyphicon glyphicon-minus" aria-hidden="true" />
         </button>
       </div>
       <div className="col-xs-4">
@@ -216,4 +228,3 @@ SearchRow.defaultProps = {
 };
 
 export default SearchRow;
-

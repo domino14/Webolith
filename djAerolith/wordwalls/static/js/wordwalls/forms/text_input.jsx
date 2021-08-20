@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /**
  * @fileOverview A Bootstrap-based text input component.
  */
@@ -14,15 +14,15 @@ const TextInput = (props) => {
         <div className={inputColSizeClass}>
           <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
             {props.label}
+            <input
+              type="text"
+              value={props.value}
+              className="form-control input-sm"
+              maxLength={props.maxLength}
+              onChange={props.onChange}
+              onKeyPress={props.onKeyPress}
+            />
           </label>
-          <input
-            type="text"
-            value={props.value}
-            className="form-control input-sm"
-            maxLength={props.maxLength}
-            onChange={props.onChange}
-            onKeyPress={props.onKeyPress}
-          />
         </div>
       </div>
     </div>

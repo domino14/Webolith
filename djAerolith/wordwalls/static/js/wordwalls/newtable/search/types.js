@@ -192,8 +192,8 @@ const SearchTypesOrder = [
 
 function searchCriteriaOptions(allowedSearchTypes) {
   return SearchTypesOrder
-    .filter(t => allowedSearchTypes.has(t))
-    .map(el => ({
+    .filter((t) => allowedSearchTypes.has(t))
+    .map((el) => ({
       value: String(el),
       displayValue: SearchTypesEnum.properties[el].displayName,
     }));
@@ -214,6 +214,7 @@ class SearchCriterion {
       ...this.options,
     });
   }
+
   /**
    * Convert this to an object that the backend would understand.
    */
@@ -224,6 +225,7 @@ class SearchCriterion {
     };
     return obj;
   }
+
   /**
    * Set the option to the passed-in value. This function takes care
    * of converting the optionValue to the proper type, based on the
@@ -249,7 +251,7 @@ class SearchCriterion {
   }
 
   setOptions(options) {
-    Object.keys(options).forEach(key => this.setOption(key, options[key]));
+    Object.keys(options).forEach((key) => this.setOption(key, options[key]));
   }
 
   resetSearchType(searchType) {
@@ -290,8 +292,8 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
   });
   // Find the first search type that's not in the map.
   const newtypeId = SearchTypesOrder
-    .filter(t => allowedSearchTypes.has(t))
-    .find(tid => stmap[tid] == null);
+    .filter((t) => allowedSearchTypes.has(t))
+    .find((tid) => stmap[tid] == null);
 
   if (!newtypeId) {
     return null;

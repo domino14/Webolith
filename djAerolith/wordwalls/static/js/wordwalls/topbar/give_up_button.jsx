@@ -16,7 +16,8 @@ class GiveUpButton extends React.Component {
     this.youSureTimeout = null;
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.gameGoing && nextProps.gameGoing) {
       // Give the button the correct IDLE state once the game starts.
       this.setState({
@@ -56,7 +57,7 @@ class GiveUpButton extends React.Component {
 
     if (!this.props.gameGoing) {
       return null;
-    } else if (this.state.buttonState === BUTTON_STATE_IDLE) {
+    } if (this.state.buttonState === BUTTON_STATE_IDLE) {
       buttonText = 'Give Up';
       buttonClass = 'btn btn-danger btn-sm';
     } else if (this.state.buttonState === BUTTON_STATE_GIVEUP_TIMING_OUT) {
@@ -71,7 +72,9 @@ class GiveUpButton extends React.Component {
         style={{
           marginTop: '-6px',
         }}
-      >{buttonText}
+        type="button"
+      >
+        {buttonText}
       </button>
     );
   }

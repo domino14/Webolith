@@ -4,17 +4,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const StartButton = props => (
+const StartButton = (props) => (
   <button
+    type="button"
     className={props.buttonClass}
     onClick={props.handleButtonClick}
     style={{
       marginTop: '-6px',
     }}
-  >{props.buttonText}
+  >
+    {props.buttonText}
   </button>
 );
-
 
 StartButton.propTypes = {
   handleButtonClick: PropTypes.func.isRequired,
@@ -23,4 +24,3 @@ StartButton.propTypes = {
 };
 
 export default StartButton;
-

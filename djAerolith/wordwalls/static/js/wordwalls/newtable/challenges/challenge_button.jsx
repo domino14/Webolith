@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 const TODAY_REGEX = /Today's (\d+)s/;
 
-
 const ChallengeButton = (props) => {
   let extraClassName = '';
   const challengeName = props.challenge.name;
@@ -28,7 +27,8 @@ const ChallengeButton = (props) => {
       type="button"
       className={btnClassName}
       onClick={props.onClick(props.challenge.id)}
-    >{displayName}
+    >
+      {displayName}
     </button>
   );
 };
@@ -82,7 +82,8 @@ const ChallengeButtonRow = (props) => {
           </div>
         </div>
       </div>
-    </div>);
+    </div>
+  );
 };
 
 ChallengeButtonRow.propTypes = {

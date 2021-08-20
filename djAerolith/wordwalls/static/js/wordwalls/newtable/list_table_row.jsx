@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import PlayButton from './play_button';
 
-
 function progressString(questionIndex, totalQuestions) {
   let displayedQuestionIndex = questionIndex;
   if (questionIndex > totalQuestions) {
@@ -12,7 +11,7 @@ function progressString(questionIndex, totalQuestions) {
   return `${displayedQuestionIndex} / ${totalQuestions}`;
 }
 
-const SavedListRow = props => (
+const SavedListRow = (props) => (
   <tr
     className={`list-table-row ${props.list.goneThruOnce ? 'success' : ''}`}
   >

@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const HeroButton = props => (
+const HeroButton = (props) => (
   <div className="col-md-6 col-sm-12" style={{ marginTop: 6 }}>
     <button
+      type="button"
       className={`btn btn-lg ${props.addlButtonClass}`}
       onClick={props.onClick} // () => $(props.modalSelector).modal()}
       data-toggle="modal"
       data-target={props.modalSelector}
-    >{props.buttonText}
+    >
+      {props.buttonText}
     </button>
   </div>
 );
@@ -26,4 +28,3 @@ HeroButton.propTypes = {
 };
 
 export default HeroButton;
-

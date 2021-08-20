@@ -90,7 +90,7 @@ function anagramOfQuestion(guessLetters, question, buildMode, minLength, maxLeng
  */
 function anagramOfQuestions(guess, alphaHash, buildMode, minLength, maxLength) {
   const guessLetters = guess.split('');
-  return Object.keys(alphaHash).find(val => anagramOfQuestion(
+  return Object.keys(alphaHash).find((val) => anagramOfQuestion(
     guessLetters,
     val,
     buildMode,
@@ -107,6 +107,7 @@ class Game {
     this.missedWordsHash = {};
     this.originalWordsHash = {};
   }
+
   /**
    * Initializes the main data structures when a new array comes in.
    * @param  {Array.<Object>} questions The array of questions.
@@ -257,9 +258,10 @@ class Game {
     // exist, it creates one with an empty list.
     this.answeredBy = this.answeredBy.update(
       solver, Immutable.List(),
-      existingList => existingList.push(wObj),
+      (existingList) => existingList.push(wObj),
     );
   }
+
   /**
    * @param {string} word
    * @return {boolean} Whether the word is in a CSW lexicon and not NWL.
@@ -322,9 +324,8 @@ class Game {
         delete this.alphaAnswersHash[alphagram];
       }
       // Replace the alphagram in curQuestions with a blank space.
-      this.curQuestions = this.curQuestions.update(aidx, () =>
-        // Create an empty map. This will not be rendered by the front end.
-        Immutable.fromJS({}));
+      // Create an empty map. This will not be rendered by the front end.
+      this.curQuestions = this.curQuestions.update(aidx, () => Immutable.fromJS({}));
 
       if (this.alphagramsLeft >= this.maxOnScreenQuestions) {
         // If we can't fit all the words in the screen, we want to replace
@@ -345,6 +346,7 @@ class Game {
   setMaxOnScreenQuestions(n) {
     this.maxOnScreenQuestions = n;
   }
+
   /**
    * Get the current question state.
    * @return {Immutable.List}
@@ -412,7 +414,7 @@ class Game {
      * @return {string}
      */
     const customOrder = (letters) => {
-      const sortedLetters = _.sortBy(letters, letter => order.indexOf(letter));
+      const sortedLetters = _.sortBy(letters, (letter) => order.indexOf(letter));
       return sortedLetters.join('');
     };
 

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import SearchRow from './row';
 import { SearchTypesEnum, SearchCriterion } from './types';
 
-const SearchRows = props => (
+const SearchRows = (props) => (
   /* XXX Enzyme doesn't seem to like React Fragments yet (i.e. lists
   of React elements), so we wrap a div around it. :/ */
   <div>
@@ -23,7 +23,8 @@ const SearchRows = props => (
         modifySearchType={props.modifySearchType}
         modifySearchParam={props.modifySearchParam}
         allowedSearchTypes={props.allowedSearchTypes}
-      />))}
+      />
+    ))}
   </div>
 );
 

@@ -18,8 +18,8 @@ class PlayButton extends React.Component {
       const $button = $(this).children('.dropdown-toggle');
       // Ugh, the position of the <tr>, plus the offset of the UL relative
       // to the dropdown toggle button.
-      const ulOffsetTop = $ul.parents('.list-table-row').position().top +
-        $ul.position().top;
+      const ulOffsetTop = $ul.parents('.list-table-row').position().top
+        + $ul.position().top;
       // how much space would be left on the top if the dropdown opened that
       // direction
       const spaceUp = ulOffsetTop - $button.height() - $ul.height();
@@ -53,7 +53,8 @@ class PlayButton extends React.Component {
           type="button"
           className="btn btn-primary btn-xs"
           onClick={this.props.continueList(this.props.listID)}
-        >Continue
+        >
+          Continue
         </button>
         <button
           type="button"
@@ -61,7 +62,8 @@ class PlayButton extends React.Component {
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-        ><span className="caret" />
+        >
+          <span className="caret" />
         </button>
 
         <ul className="dropdown-menu">
@@ -71,7 +73,8 @@ class PlayButton extends React.Component {
               <a role="button" onClick={this.props.playFirstMissed(this.props.listID)}>
                 Play first missed
               </a>
-            </li>) : null}
+            </li>
+          ) : null}
 
           <li>
             <a role="button" onClick={this.props.resetStartOver(this.props.listID)}>
@@ -92,7 +95,8 @@ class PlayButton extends React.Component {
               <a role="button" onClick={this.props.flashcardFirstMissed(this.props.listID)}>
                 Flashcard first missed
               </a>
-            </li>) : null}
+            </li>
+          ) : null}
 
           <li role="separator" className="divider" />
 
@@ -121,4 +125,3 @@ PlayButton.propTypes = {
 };
 
 export default PlayButton;
-

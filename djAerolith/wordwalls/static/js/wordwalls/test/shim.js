@@ -4,4 +4,3 @@ import '@babel/polyfill'; // Need polyfill for tests to pass.
 global.requestAnimationFrame = (callback) => {
   setTimeout(callback, 0);
 };
-

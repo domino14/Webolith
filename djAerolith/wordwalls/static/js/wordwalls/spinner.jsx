@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const SPINNER_LOC = '/static/img/aerolith/blue_spinner.gif';
 
-const Spinner = props => (
+const Spinner = (props) => (
   <img
     alt="Loading..."
     src={SPINNER_LOC}
@@ -13,7 +13,7 @@ const Spinner = props => (
       left: '50%',
       top: '20%',
       zIndex: 10000, // Default z-index for Bootstrap modal is 1050, need
-                       // this higher than that.
+      // this higher than that.
     }}
   />
 );

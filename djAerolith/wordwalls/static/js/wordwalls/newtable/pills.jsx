@@ -4,7 +4,7 @@ jsx-a11y/click-events-have-key-events,jsx-a11y/anchor-is-valid */
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Pill = props => (
+const Pill = (props) => (
   <li role="presentation" className={props.active ? 'active' : ''}>
     <a onClick={props.onPillClick}>{props.name}</a>
   </li>
@@ -25,13 +25,14 @@ const Pills = (props) => {
   }
   // For every option, create a pill.
   const { activePill } = props;
-  const pills = props.options.map(option => (
+  const pills = props.options.map((option) => (
     <Pill
       active={activePill === option}
       onPillClick={props.onPillClick(option)}
       name={option}
       key={option}
-    />));
+    />
+  ));
   return (
     <ul className={className}>
       {pills}
