@@ -176,7 +176,7 @@ const SearchRow = (props) => {
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
           type="button"
-          className="btn btn-info btn-xs btn-add-search-row"
+          className="btn btn-info btn-sm btn-add-search-row"
           onClick={props.addRow}
         >
           <span className="glyphicon glyphicon-plus" aria-hidden="true" />
@@ -185,7 +185,7 @@ const SearchRow = (props) => {
       <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
           type="button"
-          className="btn btn-info btn-xs btn-remove-search-row"
+          className="btn btn-info btn-sm btn-remove-search-row"
           onClick={() => props.removeRow(props.index)}
           disabled={props.removeDisabled}
         >

@@ -9,7 +9,7 @@ const Select = (props) => {
   const additionalSelectProps = {};
   let badge;
   if (props.badge) {
-    badge = (<span className="label label-success">{props.badge}</span>);
+    badge = (<span className="badge badge-success">{props.badge}</span>);
   }
   props.options.forEach((element) => {
     const o = (

@@ -139,7 +139,7 @@ class ListSaveBar extends React.Component {
           </div>
           <div>
             <label
-              className="checkbox-inline hidden-xs hidden-sm"
+              className="hidden-xs hidden-sm"
               style={saveStyle}
               htmlFor="auto-save-checkbox"
             >
@@ -159,7 +159,7 @@ class ListSaveBar extends React.Component {
         <div className="col-xs-12">
           <input
             type="text"
-            className="form-control input-sm"
+            className="form-control-sm"
             style={inputStyle}
             value={this.props.listName}
             onChange={this.handleNameChange}

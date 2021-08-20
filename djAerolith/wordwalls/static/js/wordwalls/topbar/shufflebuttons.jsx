@@ -5,7 +5,7 @@ const ShuffleButton = (props) => (
   <div style={{ display: 'inline-block' }}>
     <div className="hidden-xs hidden-sm col-md-3 col-lg-3">
       <button
-        className="btn btn-info btn-xs"
+        className="btn btn-info btn-sm"
         style={{
           width: 105,
         }}
@@ -23,7 +23,7 @@ const ShuffleButton = (props) => (
     </div>
     <div className="visible-xs-inline-block visible-sm-inline-block">
       <button
-        className="btn btn-info btn-xs"
+        className="btn btn-info btn-sm"
         type="button"
         style={{
           marginLeft: '0.5em',

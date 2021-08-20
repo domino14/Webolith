@@ -58,12 +58,12 @@ const UserBox = (props) => {
   }
 
   return (
-    <div className="panel panel-default">
-      <div className="panel-heading">
+    <div className="card">
+      <div className="card-header">
         <span>{props.username}</span>
       </div>
       <div
-        className="panel-body"
+        className="card-body"
         style={{
           height: 200,
           overflow: 'auto',
@@ -77,7 +77,7 @@ const UserBox = (props) => {
       >
         {answers}
       </div>
-      <div className="panel-footer">
+      <div className="card-footer">
         <div className="row">
           <div className="col-sm-4 col-md-4">
             <span

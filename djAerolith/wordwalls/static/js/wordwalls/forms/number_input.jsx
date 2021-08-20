@@ -28,7 +28,7 @@ const NumberInput = (props) => {
               type="number"
               {...addlInputProps}
               value={props.value}
-              className="form-control input-sm"
+              className="form-control-sm"
               onChange={props.onChange}
             />
           </label>

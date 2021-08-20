@@ -15,11 +15,11 @@ const ChatBox = (props) => {
   ));
   return (
     <div
-      className="panel panel-default"
+      className="card"
       style={{ marginBottom: '2px' }}
     >
       <div
-        className="panel-body"
+        className="card-body"
         style={{
           height: props.height,
           overflow: 'auto',

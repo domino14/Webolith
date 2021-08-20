@@ -17,7 +17,7 @@ const TextInput = (props) => {
             <input
               type="text"
               value={props.value}
-              className="form-control input-sm"
+              className="form-control-sm"
               maxLength={props.maxLength}
               onChange={props.onChange}
               onKeyPress={props.onKeyPress}

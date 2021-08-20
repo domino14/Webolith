@@ -70,13 +70,13 @@ class ChallengeResults extends React.Component {
 
     return (
       <div
-        className="modal-body table-responsive"
+        className="modal-body"
         style={{
           overflowY: 'scroll',
           height: this.props.height,
         }}
       >
-        <table className="table table-condensed">
+        <table className="table table-sm table-responsive">
           <thead>
             <tr>
               <th>#</th>

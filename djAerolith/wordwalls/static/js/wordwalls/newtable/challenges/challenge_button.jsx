@@ -19,7 +19,7 @@ const ChallengeButton = (props) => {
   } else if (props.solvedChallenges.includes(props.challenge.id)) {
     extraClassName = 'btn-link';
   } else {
-    extraClassName = 'btn-default';
+    extraClassName = 'btn-secondary';
   }
   const btnClassName = `btn ${extraClassName}`;
   return (

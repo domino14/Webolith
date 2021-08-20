@@ -57,9 +57,9 @@ const Leaderboard = (props) => {
   });
 
   return (
-    <div className="panel panel-default">
+    <div className="card">
       <div
-        className="panel-body"
+        className="card-body"
         style={{
           height: 300,
           overflow: 'auto',
