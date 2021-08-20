@@ -1,4 +1,4 @@
-import 'bootstrap'; // Needed by the app, so load it here.
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import App from './app';
 import Utils from './utils';

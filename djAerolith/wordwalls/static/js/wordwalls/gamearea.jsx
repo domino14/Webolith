@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
-import $ from 'jquery';
+import { Modal } from 'bootstrap';
 
 import GameInactiveArea from './game_inactive_area';
 import Styling from './style';
@@ -13,7 +13,8 @@ class GameArea extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.gameGoing && !this.props.gameGoing) {
       // A game just started. Hide any modals.
-      $('.modal').modal('hide');
+      const modalEl = document.querySelector('.modal');
+      Modal.getOrCreateInstance(modalEl).hide();
     }
   }
 

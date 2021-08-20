@@ -19,6 +19,13 @@ export default {
         loader: 'babel-loader',
         exclude: [/node_modules/],
       },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+        ],
+      },
     ],
   },
   resolve: {
@@ -69,6 +76,9 @@ export default {
     allowedHosts: [
       'aerolith.localhost',
     ],
+    client: {
+      webSocketURL: 'ws://aerolith.localhost/ws',
+    },
   },
   watchOptions: {
     aggregateTimeout: 300,

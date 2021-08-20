@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "test": "jest --coverage --verbose",
-    "dev:wds": "webpack-dev-server --progress",
+    "dev:wds": "webpack-dev-server",
     "jshint": "jshint djAerolith/flashcards/static/js/flashcards",
     "eslint": "eslint djAerolith/wordwalls/static/js/wordwalls webpack.config.babel.js webpack.config-prod.babel.js --ext .js,.jsx",
     "prod:build": "rimraf djAerolith/static/dist && webpack --progress --config webpack.config-prod.babel.js"

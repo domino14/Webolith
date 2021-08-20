@@ -7,6 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Tooltip } from 'bootstrap';
 import $ from 'jquery';
 import _ from 'underscore';
 import Immutable from 'immutable';
@@ -96,10 +97,9 @@ class WordwallsAppContainer extends React.Component {
     });
 
     window.addEventListener('resize', this.handleResize.bind(this));
-    // Tooltip.
-    $('.hovertip').tooltip({
-      placement: 'bottom',
-    });
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map((tooltipTriggerEl) => new Tooltip(tooltipTriggerEl));
 
     $('body').css({
       'background-image': backgroundURL(this.props.displayStyle.bodyBackground),

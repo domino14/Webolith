@@ -3,17 +3,20 @@
  * code.
  */
 import React from 'react';
+import { Modal } from 'bootstrap';
 import PropTypes from 'prop-types';
-
-import $ from 'jquery';
 
 class ModalSkeleton extends React.Component {
   dismiss() {
-    $(this.modal).modal('hide');
+    const modal = new Modal(this.modal);
+    modal.hide();
   }
 
   show() {
-    $(this.modal).modal('show');
+    const modal = new Modal(this.modal);
+    console.log('modal was', modal);
+
+    modal.show();
   }
 
   render() {
