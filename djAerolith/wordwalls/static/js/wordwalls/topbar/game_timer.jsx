@@ -107,9 +107,9 @@ class GameTimer extends React.Component {
   render() {
     let cn;
     if (this.state.timeRemaining <= this.props.warningCountdown) {
-      cn = 'label label-warning';
+      cn = 'badge bg-warning';
     } else {
-      cn = 'label label-info';
+      cn = 'badge bg-info';
     }
     return (
       <span

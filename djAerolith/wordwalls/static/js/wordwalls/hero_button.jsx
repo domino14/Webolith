@@ -6,9 +6,9 @@ const HeroButton = (props) => (
     <button
       type="button"
       className={`btn btn-lg ${props.addlButtonClass}`}
-      onClick={props.onClick} // () => $(props.modalSelector).modal()}
-      data-toggle="modal"
-      data-target={props.modalSelector}
+      onClick={props.onClick}
+      data-bs-toggle="modal"
+      data-bs-target={props.modalSelector}
     >
       {props.buttonText}
     </button>

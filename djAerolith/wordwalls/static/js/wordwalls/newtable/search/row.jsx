@@ -17,7 +17,7 @@ const convertOptions = (options) => options.map((el) => ({
 }));
 
 const SelectValue = (props) => (
-  <div className="col-xs-6">
+  <div className="row">
     <Select
       colSize={12}
       label={props.label}
@@ -39,9 +39,9 @@ SelectValue.propTypes = {
 };
 
 const NumberValue = (props) => (
-  <div className="col-xs-3">
+  <div className={props.makeRow ? 'row' : ''}>
     <NumberInput
-      colSize={12}
+      colSize={props.colSize}
       label={props.label}
       value={String(props.defaultValue)}
       minAllowed={props.minAllowed}
@@ -63,28 +63,40 @@ NumberValue.propTypes = {
   index: PropTypes.number.isRequired,
   paramName: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
+  makeRow: PropTypes.bool.isRequired,
+  colSize: PropTypes.number,
+};
+
+NumberValue.defaultProps = {
+  colSize: null,
 };
 
 const MinMaxValues = (props) => (
-  <div style={{ marginTop: '2px' }}>
-    <NumberValue
-      label="Min"
-      defaultValue={props.minValue}
-      minAllowed={props.minAllowed}
-      maxAllowed={props.maxAllowed}
-      modifySearchParam={props.modifySearchParam}
-      index={props.index}
-      paramName="minValue"
-    />
-    <NumberValue
-      label="Max"
-      defaultValue={props.maxValue}
-      minAllowed={props.minAllowed}
-      maxAllowed={props.maxAllowed}
-      modifySearchParam={props.modifySearchParam}
-      index={props.index}
-      paramName="maxValue"
-    />
+  <div className="row">
+    <div className="col-6">
+      <NumberValue
+        label="Min"
+        defaultValue={props.minValue}
+        minAllowed={props.minAllowed}
+        maxAllowed={props.maxAllowed}
+        modifySearchParam={props.modifySearchParam}
+        index={props.index}
+        paramName="minValue"
+        makeRow={false}
+      />
+    </div>
+    <div className="col-6">
+      <NumberValue
+        label="Max"
+        defaultValue={props.maxValue}
+        minAllowed={props.minAllowed}
+        maxAllowed={props.maxAllowed}
+        modifySearchParam={props.modifySearchParam}
+        index={props.index}
+        paramName="maxValue"
+        makeRow={false}
+      />
+    </div>
   </div>
 );
 
@@ -98,7 +110,7 @@ MinMaxValues.propTypes = {
 };
 
 const StringValue = (props) => (
-  <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
+  <div className="row">
     <TextInput
       colSize={12}
       label="Value"
@@ -139,11 +151,13 @@ const SearchRow = (props) => {
         <NumberValue
           label="Value"
           paramName="value"
+          colSize={12}
           defaultValue={props.searchCriterion.value}
           minAllowed={props.minAllowedValue}
           maxAllowed={props.maxAllowedValue}
           modifySearchParam={props.modifySearchParam}
           index={props.index}
+          makeRow
         />
       );
       break;
@@ -172,27 +186,27 @@ const SearchRow = (props) => {
   }
 
   return (
-    <div className="row search-row">
-      <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
+    <div className="row search-row mt-3 pt-3">
+      <div className="col-1 pt-4 mt-3">
         <button
           type="button"
-          className="btn btn-info btn-sm btn-add-search-row"
+          className="btn btn-sm btn-add-search-row btn-secondary"
           onClick={props.addRow}
         >
-          <span className="glyphicon glyphicon-plus" aria-hidden="true" />
+          <i className="bi bi-plus-lg" />
         </button>
       </div>
-      <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
+      <div className="col-1 pt-4 mt-3">
         <button
           type="button"
-          className="btn btn-info btn-sm btn-remove-search-row"
+          className="btn btn-sm btn-remove-search-row btn-secondary"
           onClick={() => props.removeRow(props.index)}
           disabled={props.removeDisabled}
         >
-          <span className="glyphicon glyphicon-minus" aria-hidden="true" />
+          <i className="bi bi-x-lg" />
         </button>
       </div>
-      <div className="col-xs-4">
+      <div className="col-5">
         <Select
           colSize={12}
           label="Search Criterion"
@@ -203,7 +217,9 @@ const SearchRow = (props) => {
           }}
         />
       </div>
-      {specificForm}
+      <div className="col-5">
+        {specificForm}
+      </div>
     </div>
   );
 };

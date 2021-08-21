@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/no-static-element-interactions,
 jsx-a11y/click-events-have-key-events */
 import React from 'react';
@@ -48,7 +49,7 @@ class ListSaveBar extends React.Component {
     let inputStyle;
     let pencilStyle;
     let saveStyle;
-    let saveClass = 'hovertip hidden-md hidden-lg';
+    let saveClass = 'hidden-md hidden-lg';
     let listNameContainerClass;
     let saveContainerClass;
     if (this.state.inputEditable) {
@@ -72,7 +73,6 @@ class ListSaveBar extends React.Component {
       };
       pencilStyle = {
         marginLeft: '5px',
-        top: '-4px',
         display: 'inline-block',
       };
       saveStyle = {
@@ -81,11 +81,11 @@ class ListSaveBar extends React.Component {
       inputStyle = {
         display: 'none',
       };
-      listNameContainerClass = 'col-xs-10 col-md-8';
-      saveContainerClass = 'col-xs-2 col-md-4';
+      listNameContainerClass = 'col-10 col-md-8';
+      saveContainerClass = 'col-2 col-md-4';
     }
     if (this.props.autoSave) {
-      saveClass = 'text-success hovertip hidden-md hidden-lg';
+      saveClass = 'text-success hidden-md hidden-lg';
     }
     if (this.props.disableEditing) {
       pencilStyle = {
@@ -95,11 +95,10 @@ class ListSaveBar extends React.Component {
         display: 'none',
       };
       listNameTitle = 'You cannot change or save a list in a multiplayer table.';
-      listNameContainerClass = 'col-xs-12 col-md-12';
+      listNameContainerClass = 'col-12 col-md-12';
       saveContainerClass = 'hidden';
     } else {
-      listNameTitle = `This is the name of the word list. You can click the
-              pencil to change the name, or the disk icon to toggle autosave.`;
+      listNameTitle = 'This is the name of the word list. You can click the pencil to change the name, or the disk icon to toggle autosave.';
     }
     return (
       <div
@@ -109,27 +108,30 @@ class ListSaveBar extends React.Component {
         <div className={listNameContainerClass}>
           <div
             style={listNameStyle}
-            className="hovertip"
-            data-toggle="tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
             title={listNameTitle}
           >
             {this.props.listName}
           </div>
           <div
-            className="glyphicon glyphicon-pencil hovertip"
             aria-hidden="true"
             style={pencilStyle}
-            data-toggle="tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
             title="Edit the list name"
             onClick={this.handleEdit}
-          />
+          >
+            <i className="bi bi-pencil" />
+          </div>
         </div>
 
         <div className={saveContainerClass}>
           <div
             className={saveClass}
             style={saveStyle}
-            data-toggle="tooltip"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
             title="Click to toggle autosave at the end of each round."
             onClick={this.handleAutoSaveToggle}
           >
@@ -143,20 +145,20 @@ class ListSaveBar extends React.Component {
               style={saveStyle}
               htmlFor="auto-save-checkbox"
             >
-              <input
-                type="checkbox"
-                id="auto-save-checkbox"
-                checked={this.props.autoSave}
-                onChange={this.handleAutoSaveToggle}
-                value="autoSaveSomething"
-              />
-              {' '}
               Autosave
             </label>
+
+            <input
+              type="checkbox"
+              id="auto-save-checkbox"
+              checked={this.props.autoSave}
+              onChange={this.handleAutoSaveToggle}
+              value="autoSaveSomething"
+            />
           </div>
         </div>
 
-        <div className="col-xs-12">
+        <div className="col-12">
           <input
             type="text"
             className="form-control-sm"

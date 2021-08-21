@@ -1,12 +1,16 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions,
-jsx-a11y/click-events-have-key-events,jsx-a11y/anchor-is-valid */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
 const Pill = (props) => (
-  <li role="presentation" className={props.active ? 'active' : ''}>
-    <a onClick={props.onPillClick}>{props.name}</a>
+  <li role="presentation" className="nav-item">
+    <button
+      className={`nav-link${props.active ? ' active' : ''}`}
+      role="tab"
+      type="button"
+      onClick={props.onPillClick}
+    >
+      {props.name}
+    </button>
   </li>
 );
 
@@ -34,7 +38,7 @@ const Pills = (props) => {
     />
   ));
   return (
-    <ul className={className}>
+    <ul className={className} role="tablist">
       {pills}
     </ul>
   );

@@ -13,18 +13,17 @@ const CheckBox = (props) => {
     };
   }
   return (
-    <div className="form-group">
-      <div className="checkbox">
-        <label>
-          <input
-            type="checkbox"
-            {...addlInputProps}
-            checked={props.on}
-            onChange={props.onChange}
-          />
-          {props.label}
-        </label>
-      </div>
+    <div className="form-check">
+      <label className="form-label mb-1">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          {...addlInputProps}
+          checked={props.on}
+          onChange={props.onChange}
+        />
+        {props.label}
+      </label>
     </div>
   );
 };

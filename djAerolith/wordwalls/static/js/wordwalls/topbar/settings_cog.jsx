@@ -25,14 +25,14 @@ class SettingsCog extends React.Component {
           data-toggle="modal"
           title="Settings"
           onClick={this.resetSettings}
-          data-target=".settings-modal"
+          data-bs-target=".settings-modal"
         >
           <i
-            className="glyphicon glyphicon-cog hovertip"
+            className="bi bi-tools"
             style={{ fontSize: '175%' }}
             aria-hidden="true"
             title="Settings"
-            data-toggle="tooltip"
+            data-bs-toggle="tooltip"
           />
         </div>
         <SettingsModal

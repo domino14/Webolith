@@ -6,7 +6,7 @@ import { SearchTypesEnum, SearchTypesOrder } from './types';
 const SingleHelpNode = (props) => (
   <div>
     <h4>{SearchTypesEnum.properties[props.searchType].displayName}</h4>
-    <div>{SearchTypesEnum.properties[props.searchType].description}</div>
+    <p>{SearchTypesEnum.properties[props.searchType].description}</p>
   </div>
 );
 
@@ -36,7 +36,7 @@ class HelpText extends React.Component {
       if (!this.props.allowedSearchTypes.has(st)) {
         return null;
       }
-      return <SingleHelpNode searchType={st} />;
+      return <SingleHelpNode searchType={st} key={st} />;
     });
   }
 
@@ -50,7 +50,9 @@ class HelpText extends React.Component {
         >
           {this.state.showingText ? 'Hide help' : 'Show help'}
         </button>
-        {this.renderText()}
+        <div className="pt-4">
+          {this.renderText()}
+        </div>
       </div>
     );
   }

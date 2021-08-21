@@ -29,24 +29,20 @@ const Select = (props) => {
     additionalSelectProps.disabled = true;
   }
   return (
-    <div className="form-group">
-      <div className="row">
-        <div className={inputColSizeClass}>
-          <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            {props.label}
-            {' '}
-            {badge}
-            <select
-              value={props.selectedValue}
-              onChange={props.onChange}
-              className="form-control"
-              {...additionalSelectProps}
-            >
-              {options}
-            </select>
-          </label>
-        </div>
-      </div>
+    <div className={inputColSizeClass}>
+      <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} className="form-label mb-1">
+        {props.label}
+        {' '}
+        {badge}
+      </label>
+      <select
+        value={props.selectedValue}
+        onChange={props.onChange}
+        className="form-select"
+        {...additionalSelectProps}
+      >
+        {options}
+      </select>
     </div>
   );
 };

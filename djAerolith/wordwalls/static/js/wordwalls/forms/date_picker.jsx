@@ -55,9 +55,9 @@ class DatePicker extends React.Component {
               this.inputNode = node;
             }}
           />
-          <div className="input-group-addon">
-            <span className="glyphicon glyphicon-th" />
-          </div>
+          <span className="input-group-text">
+            <i className="bi bi-calendar4" />
+          </span>
         </div>
       </div>
     );

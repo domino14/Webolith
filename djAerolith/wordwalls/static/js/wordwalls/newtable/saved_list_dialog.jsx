@@ -34,10 +34,6 @@ class SavedListDialog extends React.Component {
     this.onDrop = this.onDrop.bind(this);
   }
 
-  componentDidUpdate() {
-    $('.hovertip').tooltip({ placement: 'auto' });
-  }
-
   onDrop(files) {
     this.props.onListUpload(files);
   }

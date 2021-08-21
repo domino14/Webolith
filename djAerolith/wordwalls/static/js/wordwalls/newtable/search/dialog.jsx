@@ -49,8 +49,8 @@ const WordSearchDialog = (props) => {
     />
   ) : null;
   return (
-    <div className="row" style={{ marginTop: '8px' }}>
-      <div className="col-sm-8">
+    <div className="row mt-1">
+      <div className="col-sm-7">
         <SearchRows
           searches={props.searches}
           addSearchRow={props.addSearchRow}
@@ -59,15 +59,17 @@ const WordSearchDialog = (props) => {
           modifySearchParam={props.onSearchParamChange}
           allowedSearchTypes={props.allowedSearchTypes}
         />
-        <PlayButton
-          onSearchSubmit={props.onSearchSubmit}
-          disabled={props.disabled}
-        />
-        {flashcardButton}
+        <div className="mt-4">
+          <PlayButton
+            onSearchSubmit={props.onSearchSubmit}
+            disabled={props.disabled}
+          />
+          {flashcardButton}
+        </div>
       </div>
       <div
-        className="col-sm-4"
-        style={{ overflowY: 'scroll', height: 400, marginTop: 32 }}
+        className="col-sm-5 mt-4 pt-5"
+        style={{ overflowY: 'scroll', height: 600 }}
       >
         <HelpText
           allowedSearchTypes={props.allowedSearchTypes}

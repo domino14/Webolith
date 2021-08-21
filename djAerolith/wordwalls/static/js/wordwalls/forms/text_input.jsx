@@ -9,21 +9,19 @@ import PropTypes from 'prop-types';
 const TextInput = (props) => {
   const inputColSizeClass = `col-md-${props.colSize}`;
   return (
-    <div className="form-group">
-      <div className="row">
-        <div className={inputColSizeClass}>
-          <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            {props.label}
-            <input
-              type="text"
-              value={props.value}
-              className="form-control-sm"
-              maxLength={props.maxLength}
-              onChange={props.onChange}
-              onKeyPress={props.onKeyPress}
-            />
-          </label>
-        </div>
+    <div className="row">
+      <div className={inputColSizeClass}>
+        <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }} className="form-label mb-1">
+          {props.label}
+        </label>
+        <input
+          type="text"
+          value={props.value}
+          className="form-control"
+          maxLength={props.maxLength}
+          onChange={props.onChange}
+          onKeyPress={props.onKeyPress}
+        />
       </div>
     </div>
   );

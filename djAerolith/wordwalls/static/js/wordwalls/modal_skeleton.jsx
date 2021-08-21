@@ -14,8 +14,6 @@ class ModalSkeleton extends React.Component {
 
   show() {
     const modal = new Modal(this.modal);
-    console.log('modal was', modal);
-
     modal.show();
   }
 
@@ -35,19 +33,17 @@ class ModalSkeleton extends React.Component {
         >
           <div className="modal-content">
             <div className="modal-header">
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
               <h4
                 className="modal-title"
               >
                 {this.props.title}
               </h4>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
             </div>
             {this.props.children /* the body and footer, if any. */}
           </div>

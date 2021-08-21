@@ -29,7 +29,7 @@ class WordwallsApp extends React.Component {
     return (
       <div className="row">
         <div
-          className="col-xs-6 col-sm-5 col-md-5 col-lg-5"
+          className="col-6 col-sm-5 col-md-5 col-lg-5"
         >
           <ListSaveBar
             listName={this.props.listName}
@@ -40,7 +40,7 @@ class WordwallsApp extends React.Component {
           />
         </div>
         <div
-          className="col-xs-1 col-sm-1 col-md-1 col-lg-1"
+          className="col-1 col-sm-1 col-md-1 col-lg-1"
           style={{
             marginTop: '-4px',
           }}
@@ -51,7 +51,7 @@ class WordwallsApp extends React.Component {
           />
         </div>
         <div
-          className="col-xs-4 col-sm-4 col-sm-offset-2 col-md-3
+          className="col-4 col-sm-4 col-sm-offset-2 col-md-3
             col-md-offset-3 col-lg-2"
           style={{ whiteSpace: 'nowrap' }}
         >
@@ -74,7 +74,7 @@ class WordwallsApp extends React.Component {
     return (
       <div>
         <div className="row">
-          <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div className="col-12 col-sm-12 col-md-12 col-lg-12">
             <GameArea
               numberOfRounds={this.props.numberOfRounds}
               isChallenge={this.props.isChallenge}
@@ -109,7 +109,7 @@ class WordwallsApp extends React.Component {
             marginTop: '4px',
           }}
         >
-          <div className="col-xs-7 col-sm-6 col-md-6 col-lg-5">
+          <div className="col-7 col-sm-6 col-md-6 col-lg-5">
             <GuessBox
               onGuessSubmit={this.props.onGuessSubmit}
               lastGuess={this.props.lastGuess}
@@ -122,7 +122,7 @@ class WordwallsApp extends React.Component {
             />
           </div>
           <div
-            className="col-xs-5 col-sm-6 col-md-6 col-lg-7"
+            className="col-5 col-sm-6 col-md-6 col-lg-7"
             style={{
               marginTop: '-3px',
             }}
@@ -136,7 +136,7 @@ class WordwallsApp extends React.Component {
         </div>
 
         <div className="row" style={{ marginTop: '4px' }}>
-          <div className="col-xs-12">
+          <div className="col-12">
             <ChatBox messages={this.props.tableMessages} />
           </div>
         </div>
@@ -170,12 +170,12 @@ class WordwallsApp extends React.Component {
     return (
       <div>
         <div className="row">
-          <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+          <div className="col-12 col-sm-9 col-md-9 col-lg-9">
             {this.renderTopNav()}
           </div>
         </div>
         <div className="row">
-          <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+          <div className="col-12 col-sm-9 col-md-9 col-lg-9">
             {this.renderLeftSide()}
           </div>
           <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
@@ -184,7 +184,7 @@ class WordwallsApp extends React.Component {
         </div>
 
         <div className="row visible-xs-block">
-          <div className="col-xs-12">
+          <div className="col-12">
             <ReducedUserBox
               numCorrect={this.getNumCorrectAnswers()}
               wrongAnswers={this.props.wrongAnswers}

@@ -69,7 +69,7 @@ class GuessBox extends React.Component {
 
     return (
       <div className="row">
-        <div className="col-xs-7 col-sm-6">
+        <div className="col-7 col-sm-6">
           <input
             className="form-control"
             type="text"
@@ -93,7 +93,7 @@ class GuessBox extends React.Component {
           {' '}
           <strong className={guessClass}>{this.props.lastGuess}</strong>
         </div>
-        <div className="col-xs-5 visible-xs-inline-block">
+        <div className="col-5 visible-xs-inline-block">
           <strong className={guessClass}>
             {this.props.lastGuess}
           </strong>
