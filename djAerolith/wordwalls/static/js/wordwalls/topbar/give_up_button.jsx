@@ -59,10 +59,10 @@ class GiveUpButton extends React.Component {
       return null;
     } if (this.state.buttonState === BUTTON_STATE_IDLE) {
       buttonText = 'Give Up';
-      buttonClass = 'btn btn-danger btn-sm';
+      buttonClass = 'btn btn-danger';
     } else if (this.state.buttonState === BUTTON_STATE_GIVEUP_TIMING_OUT) {
       buttonText = 'Are you sure?';
-      buttonClass = 'btn btn-danger btn-sm';
+      buttonClass = 'btn btn-danger';
     }
 
     return (

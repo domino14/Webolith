@@ -51,9 +51,8 @@ class WordwallsApp extends React.Component {
           />
         </div>
         <div
-          className="col-4 col-sm-4 col-sm-offset-2 col-md-3
-            col-md-offset-3 col-lg-2"
-          style={{ whiteSpace: 'nowrap' }}
+          className="col-4 col-sm-4 offset-sm-2 col-md-3 offset-md-3 col-lg-2"
+          style={{ whiteSpace: 'nowrap', marginTop: '-4px' }}
         >
           <GiveUpButton
             handleGiveup={this.props.handleGiveup}

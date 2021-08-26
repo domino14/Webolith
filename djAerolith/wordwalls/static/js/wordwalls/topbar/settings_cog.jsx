@@ -29,7 +29,7 @@ class SettingsCog extends React.Component {
         >
           <i
             className="bi bi-tools"
-            style={{ fontSize: '175%' }}
+            style={{ fontSize: '125%' }}
             aria-hidden="true"
             title="Settings"
             data-bs-toggle="tooltip"

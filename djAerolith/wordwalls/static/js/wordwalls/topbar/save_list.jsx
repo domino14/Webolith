@@ -48,8 +48,7 @@ class ListSaveBar extends React.Component {
     let listNameTitle;
     let inputStyle;
     let pencilStyle;
-    let saveStyle;
-    let saveClass = 'hidden-md hidden-lg';
+    let saveClass = 'd-md-none';
     let listNameContainerClass;
     let saveContainerClass;
     if (this.state.inputEditable) {
@@ -59,24 +58,16 @@ class ListSaveBar extends React.Component {
       pencilStyle = {
         display: 'none',
       };
-      saveStyle = {
-        display: 'none',
-      };
+      saveContainerClass = 'd-none';
     } else {
       listNameStyle = {
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
         maxWidth: 'calc(100% - 5px)',
-        display: 'inline-block',
+        display: 'inline-flex',
         fontWeight: '500',
       };
       pencilStyle = {
         marginLeft: '5px',
-        display: 'inline-block',
-      };
-      saveStyle = {
-        display: 'inline-block',
+        display: 'inline-flex',
       };
       inputStyle = {
         display: 'none',
@@ -85,18 +76,15 @@ class ListSaveBar extends React.Component {
       saveContainerClass = 'col-2 col-md-4';
     }
     if (this.props.autoSave) {
-      saveClass = 'text-success hidden-md hidden-lg';
+      saveClass = 'text-success d-md-none';
     }
     if (this.props.disableEditing) {
       pencilStyle = {
         display: 'none',
       };
-      saveStyle = {
-        display: 'none',
-      };
       listNameTitle = 'You cannot change or save a list in a multiplayer table.';
       listNameContainerClass = 'col-12 col-md-12';
-      saveContainerClass = 'hidden';
+      saveContainerClass = 'd-none';
     } else {
       listNameTitle = 'This is the name of the word list. You can click the pencil to change the name, or the disk icon to toggle autosave.';
     }
@@ -112,56 +100,61 @@ class ListSaveBar extends React.Component {
             data-bs-placement="bottom"
             title={listNameTitle}
           >
-            {this.props.listName}
+            <div style={{
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+            }}
+            >
+              {this.props.listName}
+            </div>
           </div>
-          <div
-            aria-hidden="true"
+          <i
+            className="bi bi-pencil"
             style={pencilStyle}
             data-bs-toggle="tooltip"
             data-bs-placement="bottom"
             title="Edit the list name"
             onClick={this.handleEdit}
-          >
-            <i className="bi bi-pencil" />
-          </div>
+          />
         </div>
-
         <div className={saveContainerClass}>
           <div
             className={saveClass}
-            style={saveStyle}
+            style={{ display: 'inline-flex' }}
             data-bs-toggle="tooltip"
             data-bs-placement="bottom"
             title="Click to toggle autosave at the end of each round."
             onClick={this.handleAutoSaveToggle}
           >
-            <span
-              className="glyphicon glyphicon-hdd"
+            <i
+              className="bi bi-hdd"
             />
           </div>
           <div>
             <label
-              className="hidden-xs hidden-sm"
-              style={saveStyle}
+              className="d-none d-md-block"
+              style={{ display: 'inline-flex' }}
               htmlFor="auto-save-checkbox"
             >
+              <input
+                type="checkbox"
+                id="auto-save-checkbox"
+                checked={this.props.autoSave}
+                onChange={this.handleAutoSaveToggle}
+                value="autoSaveSomething"
+              />
+              {' '}
               Autosave
             </label>
 
-            <input
-              type="checkbox"
-              id="auto-save-checkbox"
-              checked={this.props.autoSave}
-              onChange={this.handleAutoSaveToggle}
-              value="autoSaveSomething"
-            />
           </div>
         </div>
 
         <div className="col-12">
           <input
             type="text"
-            className="form-control-sm"
+            className="form-control"
             style={inputStyle}
             value={this.props.listName}
             onChange={this.handleNameChange}
