@@ -377,8 +377,11 @@ class Game {
    */
   shuffle(which) {
     this.curQuestions = this.curQuestions.update(which, (aObj) => {
-      const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a')).join(''));
-      return newObj;
+      if (aObj.get('a')) {
+        const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a').split('')).join(''));
+        return newObj;
+      }
+      return aObj;
     });
   }
 

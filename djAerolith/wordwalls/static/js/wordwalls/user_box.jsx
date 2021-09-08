@@ -13,8 +13,8 @@ const UserBox = (props) => {
     const wordEl = (
       <div
         key={word.get('w')}
-        data-toggle="tooltip"
-        data-placement="left"
+        data-bs-toggle="tooltip"
+        data-bs-placement="left"
         title={word.get('d')}
       >
         <WordPartDisplay

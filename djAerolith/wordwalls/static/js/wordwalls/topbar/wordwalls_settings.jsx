@@ -105,7 +105,7 @@ class WordwallsSettings extends React.Component {
     // XXX: This should be moved into a utility shuffle function or something.
     this.setState((state) => {
       const newQuestions = state.questions.update(idx, (aObj) => {
-        const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a')).join(''));
+        const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a').split('')).join(''));
         return newObj;
       });
       return { questions: newQuestions };

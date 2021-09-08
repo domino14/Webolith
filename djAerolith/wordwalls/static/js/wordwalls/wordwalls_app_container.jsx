@@ -464,7 +464,9 @@ class WordwallsAppContainer extends React.Component {
   }
 
   beforeUnload() {
+    // alert('gamegoing', this.state.gameGoing);
     if (this.state.gameGoing) {
+      console.log('gameGoing');
       $.ajax({
         url: this.tableUrl(),
         async: false,

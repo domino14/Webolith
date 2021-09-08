@@ -105,7 +105,7 @@ const ChallengeDialog = (props) => {
           className="btn btn-primary"
           style={{ marginTop: '0.75em' }}
           onClick={props.onChallengeSubmit}
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           disabled={props.disabled ? 'disabled' : ''}
         >
           Play!

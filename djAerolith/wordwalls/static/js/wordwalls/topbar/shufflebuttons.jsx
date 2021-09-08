@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const ShuffleButton = (props) => (
-  <div style={{ display: 'inline-block' }}>
-    <div className="hidden-xs hidden-sm col-md-3 col-lg-3">
+  <>
+    <div className="d-none d-md-block col-md-3 col-lg-3">
       <button
         className="btn btn-info btn-sm"
         style={{
@@ -13,7 +13,7 @@ const ShuffleButton = (props) => (
         onClick={props.trigger}
       >
         <span
-          className="badge"
+          className="badge rounded-pill bg-secondary"
         >
           {props.hotKey}
         </span>
@@ -21,7 +21,7 @@ const ShuffleButton = (props) => (
         {props.buttonText}
       </button>
     </div>
-    <div className="visible-xs-inline-block visible-sm-inline-block">
+    <div className="d-md-none col-sm-3 col-3">
       <button
         className="btn btn-info btn-sm"
         type="button"
@@ -31,24 +31,24 @@ const ShuffleButton = (props) => (
         onClick={props.trigger}
       >
         <span
-          className="badge"
+          className="badge rounded-pill bg-secondary"
         >
           {props.hotKey}
         </span>
         <i
-          className={`glyphicon ${props.glyphIcon}`}
+          className={`bi ${props.icon}`}
           style={{ marginLeft: '0.5em' }}
         />
       </button>
     </div>
-  </div>
+  </>
 );
 
 ShuffleButton.propTypes = {
   trigger: PropTypes.func.isRequired,
   hotKey: PropTypes.string.isRequired,
   buttonText: PropTypes.string.isRequired,
-  glyphIcon: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
 };
 
 const ShuffleButtons = (props) => (
@@ -60,19 +60,19 @@ const ShuffleButtons = (props) => (
       trigger={props.shuffle}
       hotKey="1"
       buttonText="Shuffle"
-      glyphIcon="glyphicon-random"
+      icon="bi-shuffle"
     />
     <ShuffleButton
       trigger={props.alphagram}
       hotKey="2"
       buttonText="Alphagram"
-      glyphIcon="glyphicon-sort-by-alphabet"
+      icon="bi-sort-alpha-down"
     />
     <ShuffleButton
       trigger={props.customOrder}
       hotKey="3"
       buttonText="Custom"
-      glyphIcon="glyphicon-sort"
+      icon="bi-sort-up-alt"
     />
   </div>
 );

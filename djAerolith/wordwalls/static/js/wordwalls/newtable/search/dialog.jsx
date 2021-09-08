@@ -11,7 +11,7 @@ const PlayButton = (props) => (
     className="btn btn-primary submit-word-search"
     style={{ marginTop: '0.75em' }}
     onClick={props.onSearchSubmit}
-    data-dismiss="modal"
+    data-bs-dismiss="modal"
     disabled={props.disabled ? 'disabled' : ''}
   >
     Play!
@@ -29,7 +29,7 @@ const FlashcardButton = (props) => (
     className="btn btn-info"
     style={{ marginTop: '0.75em', marginLeft: '1em' }}
     onClick={props.onFlashcardSubmit}
-    data-dismiss="modal"
+    data-bs-dismiss="modal"
     disabled={props.disabled ? 'disabled' : ''}
   >
     Flashcard

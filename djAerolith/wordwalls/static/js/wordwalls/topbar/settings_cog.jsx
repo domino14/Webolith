@@ -22,7 +22,7 @@ class SettingsCog extends React.Component {
     return (
       <div>
         <div
-          data-toggle="modal"
+          data-bs-toggle="modal"
           title="Settings"
           onClick={this.resetSettings}
           data-bs-target=".settings-modal"

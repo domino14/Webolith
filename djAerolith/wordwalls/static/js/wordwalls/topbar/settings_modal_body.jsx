@@ -79,7 +79,7 @@ class SettingsModalBody extends React.Component {
           <button
             type="button"
             className="btn btn-secondary"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
           >
             Close
           </button>
@@ -87,7 +87,7 @@ class SettingsModalBody extends React.Component {
             type="button"
             className={savebtnClass}
             onClick={this.props.saveWordwallsChanges}
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
           >
             Save changes
           </button>

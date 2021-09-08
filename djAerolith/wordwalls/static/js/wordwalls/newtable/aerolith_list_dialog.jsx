@@ -29,7 +29,7 @@ class AerolithListDialog extends React.Component {
             className="btn btn-primary"
             style={{ marginTop: '0.75em' }}
             onClick={this.props.onListSubmit}
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
           >
             Play!
           </button>
@@ -38,7 +38,7 @@ class AerolithListDialog extends React.Component {
             type="button"
             style={{ marginTop: '0.75em', marginLeft: '1em' }}
             onClick={this.props.onFlashcardSubmit}
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
           >
             Flashcard
           </button>
