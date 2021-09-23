@@ -12,6 +12,8 @@ function getLexiconName(availableLexica, lexicon) {
   return availableLexica.find(el => el.id === lexicon).lexicon;
 }
 
+const ALL_TIME_TOUGHIE_LEXICA = ['CSW19', 'NWL20'];
+
 
 const ChallengeDialog = (props) => {
   // For the different order priorities, make different buttons.
@@ -65,7 +67,7 @@ const ChallengeDialog = (props) => {
         if (ch.id === 19) {
           return false;
         }
-        if (ch.id === 28 && !['NWL20'].includes(getLexiconName(props.availableLexica, props.lexicon))) {
+        if (ch.id === 28 && !ALL_TIME_TOUGHIE_LEXICA.includes(getLexiconName(props.availableLexica, props.lexicon))) {
           return false;
         }
         return true;
