@@ -167,7 +167,7 @@ const SearchTypesEnum = {
       minAllowed: 1,
       maxAllowed: 100,
       description: `Difficulty range is only applicable to 7 and 8 letter words
-      in NWL20 currently. CSW support will be added soon. These words were
+      in NWL20 and CSW19 currently. These words were
       split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
       to 100 (hardest).`,
     },
