@@ -1,0 +1,5 @@
+*.html
+*.js
+*.jsx
+
+### Ignore everything for now, as we are not using prettier in this project.
