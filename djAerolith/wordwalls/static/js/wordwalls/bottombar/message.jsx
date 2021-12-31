@@ -8,7 +8,7 @@ const classMap = {
   chat: '',
 };
 
-const Message = (props) => {
+function Message(props) {
   let contents;
   if (props.type === 'chat') {
     contents = `${props.author}: ${props.children}`;
@@ -20,7 +20,7 @@ const Message = (props) => {
       <span className={classMap[props.type]}>{contents}</span>
     </div>
   );
-};
+}
 
 Message.propTypes = {
   type: PropTypes.string.isRequired,
@@ -33,4 +33,3 @@ Message.defaultProps = {
 };
 
 export default Message;
-

@@ -75,6 +75,7 @@ class Styling {
   toJSON() {
     return this.style.toJSON();
   }
+
   /**
    * Getters are provided here so that the underlying users of this
    * class don't need to know the structure of the `style` object.

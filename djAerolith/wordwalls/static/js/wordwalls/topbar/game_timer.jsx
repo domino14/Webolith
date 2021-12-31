@@ -40,7 +40,7 @@ class GameTimer extends React.Component {
    * when timer is reset).
    * @param  {Object} newProps
    */
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     if (!newProps.gameGoing) {
       this.setState({
         prevTime: null,
@@ -83,7 +83,7 @@ class GameTimer extends React.Component {
     if (timeRemainingInInterval < (interval / 2.0)) {
       timeout += interval;
     }
-
+    // eslint-disable-next-line react/no-access-state-in-setstate
     const newTimeRemaining = Math.max(this.state.timeRemaining - dt, 0);
     const countdownComplete = (this.state.prevTime && newTimeRemaining <= 0);
     if (this.state.timeoutId) {

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../forms/checkbox';
 
-
 class TableSettings extends React.Component {
   constructor(props) {
     super(props);
@@ -24,8 +23,9 @@ class TableSettings extends React.Component {
                 }}
                 label="Private"
               />
-              <p>Note: To switch between single and multiplayer tables, you
-              must instead create a new table.
+              <p>
+                Note: To switch between single and multiplayer tables, you
+                must instead create a new table.
               </p>
             </form>
           </div>

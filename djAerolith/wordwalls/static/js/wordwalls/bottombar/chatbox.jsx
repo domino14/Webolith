@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 
 import Message from './message';
 
-const ChatBox = (props) => {
-  const messageNodes = props.messages.map(message => (
+function ChatBox(props) {
+  const messageNodes = props.messages.map((message) => (
     <Message
       author={message.author}
       key={message.id}
       type={message.type}
-    >{message.content}
+    >
+      {message.content}
     </Message>
   ));
   return (
@@ -29,11 +30,12 @@ const ChatBox = (props) => {
           }
           domNode.scrollTop = domNode.scrollHeight; // eslint-disable-line no-param-reassign
         }}
-      >{messageNodes}
+      >
+        {messageNodes}
       </div>
     </div>
   );
-};
+}
 
 ChatBox.propTypes = {
   messages: PropTypes.arrayOf(PropTypes.shape({

@@ -104,7 +104,7 @@ function tileProps(width) {
   };
 }
 
-const GameTile = (props) => {
+function GameTile(props) {
   let { fontSize, letter } = props;
   let transform = `translate(${props.x},${props.y})`;
   if (props.angle !== 0) {
@@ -154,7 +154,8 @@ const GameTile = (props) => {
         fontSize={`${fontSize}%`}
         stroke={color.textColor}
         fill={color.textColor}
-      >{letter}
+      >
+        {letter}
       </text>
       {/* <PointValue
         fontFamily={fonts[props.font].fontFamily}
@@ -167,7 +168,7 @@ const GameTile = (props) => {
       /> */}
     </g>
   );
-};
+}
 
 GameTile.propTypes = {
   width: PropTypes.number.isRequired,
@@ -183,7 +184,7 @@ GameTile.propTypes = {
   angle: PropTypes.number.isRequired,
 };
 
-const PointValue = (props) => {
+function PointValue(props) {
   if (!props.value) {
     return null;
   }
@@ -199,10 +200,11 @@ const PointValue = (props) => {
       stroke={props.stroke}
       strokeWidth="0.05px"
       fill={props.fill}
-    >{props.value}
+    >
+      {props.value}
     </text>
   );
-};
+}
 
 PointValue.propTypes = {
   fontFamily: PropTypes.string.isRequired,

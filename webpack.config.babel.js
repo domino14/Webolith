@@ -19,6 +19,10 @@ export default {
         loader: 'babel-loader',
         exclude: [/node_modules/],
       },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
     ],
   },
   resolve: {
@@ -38,12 +42,11 @@ export default {
       'whatwg-fetch',
       './djAerolith/wordwalls/static/js/wordwalls/index',
     ],
-    flashcardsapp: [
-      './djAerolith/flashcards/static/js/flashcards/main',
-    ],
+    flashcardsapp: ['./djAerolith/flashcards/static/js/flashcards/main'],
   },
   optimization: {
     splitChunks: {
+      name: (module, chunks, cacheGroupKey) => `${cacheGroupKey}~${chunks.map((c) => c.name).join('~')}`,
       cacheGroups: {
         node_vendors: {
           test: /[\\/]node_modules[\\/]/, // is backslash for windows?
@@ -62,11 +65,13 @@ export default {
   devServer: {
     port: 7000,
     host: '0.0.0.0',
-    public: 'aerolith.localhost',
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
-    disableHostCheck: true,
+    allowedHosts: ['aerolith.localhost'],
+    client: {
+      webSocketURL: 'ws://aerolith.localhost/ws',
+    },
   },
   watchOptions: {
     aggregateTimeout: 300,
@@ -75,4 +80,3 @@ export default {
 };
 
 // https://medium.com/@andyccs/webpack-and-docker-for-development-and-deployment-ae0e73243db4
-

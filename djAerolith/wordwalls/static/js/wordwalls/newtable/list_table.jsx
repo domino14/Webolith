@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SavedListRow from './list_table_row';
 
-const SavedListTable = (props) => {
+function SavedListTable(props) {
   const {
     continueList,
     playFirstMissed,
@@ -16,7 +16,7 @@ const SavedListTable = (props) => {
     flashcardFirstMissed,
   } = props;
 
-  const rows = props.lists.map(option => (
+  const rows = props.lists.map((option) => (
     <SavedListRow
       key={option.id}
       list={option}
@@ -45,8 +45,9 @@ const SavedListTable = (props) => {
       <tbody>
         {rows}
       </tbody>
-    </table>);
-};
+    </table>
+  );
+}
 
 SavedListTable.propTypes = {
   lists: PropTypes.arrayOf(PropTypes.shape({

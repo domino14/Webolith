@@ -7,12 +7,15 @@ import PropTypes from 'prop-types';
 
 import Utils from './utils';
 
-const WordPartDisplay = props => (
-  <span
-    className={props.classes}
-  >{Utils.displaySpanishDigraphs(props.text)}
-  </span>
-);
+function WordPartDisplay(props) {
+  return (
+    <span
+      className={props.classes}
+    >
+      {Utils.displaySpanishDigraphs(props.text)}
+    </span>
+  );
+}
 
 WordPartDisplay.defaultProps = {
   classes: null,

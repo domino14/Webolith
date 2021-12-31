@@ -18,7 +18,7 @@ const PlayOptions = {
 
 class SavedListDialog extends React.Component {
   static genOptions(listOptions) {
-    const opts = listOptions.lists.map(option => ({
+    const opts = listOptions.lists.map((option) => ({
       value: String(option.id),
       displayValue: option.name,
     }));
@@ -99,11 +99,18 @@ class SavedListDialog extends React.Component {
         <div className="col-sm-11">
           <div className="row">
             <div className="col-sm-12">
-              <p>Please select a list from below. Lists that are highlighted
-              in <span className="bg-success">green</span> have already
-              been played through once.
+              <p>
+                Please select a list from below. Lists that are highlighted
+                in
+                <span className="bg-success">green</span>
+                {' '}
+                have already
+                been played through once.
               </p>
-              <p>{listInfo}{limitInfo}</p>
+              <p>
+                {listInfo}
+                {limitInfo}
+              </p>
             </div>
           </div>
 
@@ -118,19 +125,19 @@ class SavedListDialog extends React.Component {
           >
             <ListTable
               lists={this.props.listOptions.lists}
-              continueList={listID => () => this.continueList(listID)}
-              playFirstMissed={listID => () => this.playFirstMissed(listID)}
-              resetStartOver={listID => () => this.resetStartOver(listID)}
-              deleteList={listID => () => this.deleteList(listID)}
-              flashcardList={listID => () => this.flashcardList(listID)}
-              flashcardFirstMissed={listID => () => this.flashcardFirstMissed(listID)}
+              continueList={(listID) => () => this.continueList(listID)}
+              playFirstMissed={(listID) => () => this.playFirstMissed(listID)}
+              resetStartOver={(listID) => () => this.resetStartOver(listID)}
+              deleteList={(listID) => () => this.deleteList(listID)}
+              flashcardList={(listID) => () => this.flashcardList(listID)}
+              flashcardFirstMissed={(listID) => () => this.flashcardFirstMissed(listID)}
             />
           </div>
           <div className="row">
             <div className="col-sm-12">
               <p>
-              You can also upload your own list with the button below. The list
-              must consist of just words, one per line.
+                You can also upload your own list with the button below. The list
+                must consist of just words, one per line.
               </p>
             </div>
           </div>
@@ -145,9 +152,11 @@ class SavedListDialog extends React.Component {
               style={{ display: 'none' }}
             />
             <button
+              type="button"
               className="btn btn-info"
               onClick={() => this.dropzone.open()}
-            >Upload a file
+            >
+              Upload a file
             </button>
           </div>
         </div>

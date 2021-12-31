@@ -14,12 +14,11 @@ import Notifications from '../notifications';
  * @return {Array.<Object>}
  */
 function getLexiconOptions(lexicaObject) {
-  return lexicaObject.map(obj => ({
+  return lexicaObject.map((obj) => ({
     value: String(obj.id),
     displayValue: obj.lexicon,
   }));
 }
-
 
 class MakeDefaultLexLink extends React.Component {
   constructor(props) {
@@ -30,7 +29,7 @@ class MakeDefaultLexLink extends React.Component {
   confirmNewDefault() {
     const userFriendlyName = this.props
       .availableLexica
-      .find(lex => lex.id === this.props.selectedLexicon).lexicon;
+      .find((lex) => lex.id === this.props.selectedLexicon).lexicon;
 
     Notifications.confirm(
       'Are you sure?',
@@ -50,7 +49,8 @@ class MakeDefaultLexLink extends React.Component {
       >
         <a
           onClick={this.confirmNewDefault}
-        >Make default
+        >
+          Make default
         </a>
       </div>
     );
@@ -66,56 +66,56 @@ MakeDefaultLexLink.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
 };
 
+function Sidebar(props) {
+  return (
+    <div>
 
-const Sidebar = props => (
-  <div>
+      <Pills
+        stacked
+        options={props.gameTypes}
+        activePill={props.activeGameType}
+        onPillClick={props.setGameType}
+      />
 
-    <Pills
-      stacked
-      options={props.gameTypes}
-      activePill={props.activeGameType}
-      onPillClick={props.setGameType}
-    />
-
-    <div className="row" style={{ marginTop: 10 }}>
-      <div className="col-sm-12">
-        <form>
-          <Select
-            colSize={10}
-            label="Lexicon"
-            selectedValue={String(props.currentLexicon)}
-            options={getLexiconOptions(props.availableLexica)}
-            onChange={e => props.setLexicon(parseInt(e.target.value, 10))}
-          />
-          <MakeDefaultLexLink
-            defaultLexicon={props.defaultLexicon}
-            setDefaultLexicon={props.setDefaultLexicon}
-            selectedLexicon={props.currentLexicon}
-            availableLexica={props.availableLexica}
-          />
-          <NumberInput
-            colSize={10}
-            label="Minutes"
-            value={props.desiredTime}
-            onChange={e => props.setTime(e.target.value)}
-            disabled={props.disabledInputs}
-          />
-          <NumberInput
-            colSize={10}
-            label="Questions Per Round"
-            value={String(props.questionsPerRound)}
-            onChange={e => props.setQuestionsPerRound(parseInt(e.target.value, 10))}
-            disabled={props.disabledInputs}
-          />
-        </form>
+      <div className="row" style={{ marginTop: 10 }}>
+        <div className="col-sm-12">
+          <form>
+            <Select
+              colSize={10}
+              label="Lexicon"
+              selectedValue={String(props.currentLexicon)}
+              options={getLexiconOptions(props.availableLexica)}
+              onChange={(e) => props.setLexicon(parseInt(e.target.value, 10))}
+            />
+            <MakeDefaultLexLink
+              defaultLexicon={props.defaultLexicon}
+              setDefaultLexicon={props.setDefaultLexicon}
+              selectedLexicon={props.currentLexicon}
+              availableLexica={props.availableLexica}
+            />
+            <NumberInput
+              colSize={10}
+              label="Minutes"
+              value={props.desiredTime}
+              onChange={(e) => props.setTime(e.target.value)}
+              disabled={props.disabledInputs}
+            />
+            <NumberInput
+              colSize={10}
+              label="Questions Per Round"
+              value={String(props.questionsPerRound)}
+              onChange={(e) => props.setQuestionsPerRound(parseInt(e.target.value, 10))}
+              disabled={props.disabledInputs}
+            />
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+}
 
 Sidebar.propTypes = {
   gameTypes: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -135,9 +135,7 @@ Sidebar.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
 };
 
 export default Sidebar;
-

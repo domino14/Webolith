@@ -20,8 +20,8 @@ class DatePicker extends React.Component {
       format: {
         // datepicker stores dates in utc internally, so we need to show them
         // correctly.
-        toDisplay: date => moment.utc(date).format('ddd MMM DD YYYY'),
-        toValue: date => new Date(date),
+        toDisplay: (date) => moment.utc(date).format('ddd MMM DD YYYY'),
+        toValue: (date) => new Date(date),
       },
     })
       .on('changeDate', (e) => {
@@ -41,7 +41,8 @@ class DatePicker extends React.Component {
         <label // eslint-disable-line jsx-a11y/label-has-for
           htmlFor={this.props.id}
           style={{ marginTop: '0.75em' }}
-        >{this.props.label}
+        >
+          {this.props.label}
         </label>
         <div className="input-group date col-sm-6">
           <input
@@ -58,7 +59,8 @@ class DatePicker extends React.Component {
             <span className="glyphicon glyphicon-th" />
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 }
 

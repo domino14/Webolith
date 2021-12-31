@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 
 import WordPartDisplay from './word_part_display';
 
-const Leaderboard = (props) => {
+function Leaderboard(props) {
   const leaderboard = [];
   const displayLeaderboard = [];
   // Take the map and turn it into a data structure suitable for sorting
@@ -21,7 +21,7 @@ const Leaderboard = (props) => {
   leaderboard.sort((a, b) => {
     if (a.correct < b.correct) {
       return 1;
-    } else if (a.correct > b.correct) {
+    } if (a.correct > b.correct) {
       return -1;
     }
     return 0;
@@ -38,7 +38,8 @@ const Leaderboard = (props) => {
           <div
             className="col-sm-9"
             style={{ whiteSpace: 'nowrap', overflowX: 'hidden' }}
-          >{item.player}
+          >
+            {item.player}
           </div>
         </div>
         <div className="row">
@@ -50,7 +51,8 @@ const Leaderboard = (props) => {
             />
           </div>
         </div>
-      </li>);
+      </li>
+    );
     displayLeaderboard.push(lbItem);
   });
 
@@ -69,7 +71,7 @@ const Leaderboard = (props) => {
       </div>
     </div>
   );
-};
+}
 
 Leaderboard.propTypes = {
   answerers: PropTypes.instanceOf(Immutable.Map).isRequired,

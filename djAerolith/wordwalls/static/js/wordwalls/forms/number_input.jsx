@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /**
  * @fileOverview A Bootstrap-based text numerical input component.
  */
@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const NumberInput = (props) => {
+function NumberInput(props) {
   const inputColSizeClass = `col-md-${props.colSize}`;
   const addlInputProps = {};
   if (props.disabled === true) {
@@ -36,7 +36,7 @@ const NumberInput = (props) => {
       </div>
     </div>
   );
-};
+}
 
 NumberInput.defaultProps = {
   minAllowed: null,

@@ -13,10 +13,6 @@ class GuessBox extends React.Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
-  setFocus() {
-    this.inputBox.focus();
-  }
-
   handleGuessChange(e) {
     this.setState({
       guessText: e.target.value,
@@ -27,8 +23,8 @@ class GuessBox extends React.Component {
     const keyCode = e.which || e.keyCode;
     if (keyCode === 13 || keyCode === 32) {
       // Return/Enter or Spacebar
-      if (this.state.guessText.length < 1 ||
-          this.state.guessText.length > 18) {
+      if (this.state.guessText.length < 1
+          || this.state.guessText.length > 18) {
         return; // ignore
       }
       const guess = this.state.guessText.trim().toUpperCase();
@@ -46,6 +42,11 @@ class GuessBox extends React.Component {
       this.props.onHotKey('3');
       e.preventDefault();
     }
+  }
+
+  // eslint-disable-next-line react/no-unused-class-component-methods
+  setFocus() {
+    this.inputBox.focus();
   }
 
   render() {
@@ -89,7 +90,9 @@ class GuessBox extends React.Component {
         <div className="hidden-xs col-sm-6">
           <span className="text-muted">
             Last:
-          </span> <strong className={guessClass}>{this.props.lastGuess}</strong>
+          </span>
+          {' '}
+          <strong className={guessClass}>{this.props.lastGuess}</strong>
         </div>
         <div className="col-xs-5 visible-xs-inline-block">
           <strong className={guessClass}>

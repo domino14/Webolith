@@ -8,9 +8,8 @@ import Styling from './style';
 import SVGBoard from './svg_board';
 import BuildBoard from './build_board';
 
-
 class GameArea extends React.Component {
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.gameGoing && !this.props.gameGoing) {
       // A game just started. Hide any modals.
       $('.modal').modal('hide');
@@ -96,7 +95,13 @@ GameArea.propTypes = {
   answerers: PropTypes.instanceOf(Immutable.Map).isRequired,
 
   challengeData: PropTypes.shape({
-    entries: PropTypes.array,
+    entries: PropTypes.arrayOf(PropTypes.shape({
+      user: PropTypes.string,
+      score: PropTypes.number,
+      tr: PropTypes.number,
+      w: PropTypes.number,
+      addl: PropTypes.string,
+    })),
     maxScore: PropTypes.number,
   }).isRequired,
   isChallenge: PropTypes.bool.isRequired,

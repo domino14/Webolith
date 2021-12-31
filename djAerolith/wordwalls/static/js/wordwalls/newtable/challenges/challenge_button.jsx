@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 
 const TODAY_REGEX = /Today's (\d+)s/;
 
-
-const ChallengeButton = (props) => {
+function ChallengeButton(props) {
   let extraClassName = '';
   const challengeName = props.challenge.name;
   let displayName = challengeName;
@@ -28,10 +27,11 @@ const ChallengeButton = (props) => {
       type="button"
       className={btnClassName}
       onClick={props.onClick(props.challenge.id)}
-    >{displayName}
+    >
+      {displayName}
     </button>
   );
-};
+}
 
 ChallengeButton.propTypes = {
   challenge: PropTypes.shape({
@@ -46,7 +46,7 @@ ChallengeButton.propTypes = {
   selectedChallenge: PropTypes.number.isRequired,
 };
 
-const ChallengeButtonRow = (props) => {
+function ChallengeButtonRow(props) {
   let groupClassName = 'btn-group';
   if (props.size !== 'md') {
     groupClassName += ` btn-group-${props.size}`;
@@ -82,8 +82,9 @@ const ChallengeButtonRow = (props) => {
           </div>
         </div>
       </div>
-    </div>);
-};
+    </div>
+  );
+}
 
 ChallengeButtonRow.propTypes = {
   size: PropTypes.oneOf(['xs', 'sm', 'lg', 'md']).isRequired,

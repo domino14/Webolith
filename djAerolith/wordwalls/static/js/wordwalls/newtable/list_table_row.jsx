@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import PlayButton from './play_button';
 
-
 function progressString(questionIndex, totalQuestions) {
   let displayedQuestionIndex = questionIndex;
   if (questionIndex > totalQuestions) {
@@ -12,28 +11,30 @@ function progressString(questionIndex, totalQuestions) {
   return `${displayedQuestionIndex} / ${totalQuestions}`;
 }
 
-const SavedListRow = props => (
-  <tr
-    className={`list-table-row ${props.list.goneThruOnce ? 'success' : ''}`}
-  >
-    <td>
-      <PlayButton
-        listID={props.list.id}
-        goneThruOnce={props.list.goneThruOnce}
-        continueList={props.continueList}
-        playFirstMissed={props.playFirstMissed}
-        resetStartOver={props.resetStartOver}
-        flashcardList={props.flashcardList}
-        flashcardFirstMissed={props.flashcardFirstMissed}
-        deleteList={props.deleteList}
-      />
-    </td>
-    <td>{props.list.name}</td>
-    <td>{progressString(props.list.questionIndex, props.list.numCurAlphagrams)}</td>
-    <td>{props.list.numAlphagrams}</td>
-    <td>{props.list.lastSaved}</td>
-  </tr>
-);
+function SavedListRow(props) {
+  return (
+    <tr
+      className={`list-table-row ${props.list.goneThruOnce ? 'success' : ''}`}
+    >
+      <td>
+        <PlayButton
+          listID={props.list.id}
+          goneThruOnce={props.list.goneThruOnce}
+          continueList={props.continueList}
+          playFirstMissed={props.playFirstMissed}
+          resetStartOver={props.resetStartOver}
+          flashcardList={props.flashcardList}
+          flashcardFirstMissed={props.flashcardFirstMissed}
+          deleteList={props.deleteList}
+        />
+      </td>
+      <td>{props.list.name}</td>
+      <td>{progressString(props.list.questionIndex, props.list.numCurAlphagrams)}</td>
+      <td>{props.list.numAlphagrams}</td>
+      <td>{props.list.lastSaved}</td>
+    </tr>
+  );
+}
 
 SavedListRow.propTypes = {
   list: PropTypes.shape({
