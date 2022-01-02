@@ -4,7 +4,7 @@ jobs:
     # Use the machine executor because we have some special tests.
     # Hopefully this remains free.
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202111-02
     environment:
       DOCKER_WDB_SERVER: domino14/word_db_server:latest
     steps:
