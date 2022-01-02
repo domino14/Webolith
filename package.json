@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.6",
     "backbone": "^1.4.0",
     "bootbox": "^5.5.2",
     "bootstrap": "^3.4.1",
@@ -86,6 +87,7 @@
     "setupFiles": [
       "./djAerolith/wordwalls/static/js/wordwalls/test/shim.js",
       "./djAerolith/wordwalls/static/js/wordwalls/test/setup_enzyme.js"
-    ]
+    ],
+    "testEnvironment": "jsdom"
   }
 }
