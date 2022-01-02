@@ -3,7 +3,6 @@
  * should have all state, ajax, etc instead and wordwalls_app should
  * be as dumb as possible.
  */
-/* global JSON, window, document */
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -89,8 +88,8 @@ class WordwallsAppContainer extends React.Component {
     $(document).bind('keydown keypress', (e) => {
       if (e.which === 8) {
         // 8 == backspace
-        if (e.target.tagName !== 'INPUT' || e.target.disabled ||
-            e.target.readOnly) {
+        if (e.target.tagName !== 'INPUT' || e.target.disabled
+            || e.target.readOnly) {
           e.preventDefault();
         }
       }
@@ -116,119 +115,6 @@ class WordwallsAppContainer extends React.Component {
     }
   }
 
-  onGuessSubmit(guess) {
-    let modifiedGuess = this.maybeModifyGuess(guess);
-    if (!this.state.gameGoing) {
-      // Don't bother submitting guess if the game is over.
-      return;
-    }
-    const hadOctothorp = modifiedGuess.endsWith('#');
-    this.setState({
-      lastGuess: guess,
-      lastGuessCorrectness: GuessEnum.PENDING,
-    });
-    if (hadOctothorp) {
-      // Remove the octothorp.
-      modifiedGuess = modifiedGuess.substr(0, modifiedGuess.length - 1);
-    }
-    if (!game.answerExists(modifiedGuess)) {
-      // If the guess wasn't valid, don't bother submitting it to
-      // the server.
-      if (game.originalAnswerExists(modifiedGuess)) {
-        this.setState({
-          lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
-        });
-      } else {
-        if (game.markPotentialIncorrectGuess(modifiedGuess)) {
-          this.setState(state => ({
-            wrongAnswers: state.wrongAnswers + 1,
-          }));
-        }
-        this.setState({
-          lastGuessCorrectness: GuessEnum.INCORRECT,
-        });
-      }
-      return;
-    }
-    if (this.state.displayStyle.requireOctothorp && !this.state.isChallenge) {
-      const isCSW = game.isCSW(modifiedGuess);
-      if ((isCSW && !hadOctothorp) || (!isCSW && hadOctothorp)) {
-        // If the word the user guessed is CSW but doesn't include an
-        // octothorp, and the user's settings require an octothorp,
-        // mark it zero, dude. (Or, the other way around).
-        this.setState({
-          lastGuessCorrectness: GuessEnum.INCORRECT_LEXICON_SYMBOL,
-        });
-        return;
-      }
-    }
-    this.submitGuess(modifiedGuess);
-  }
-
-  onHotKey(key) {
-    // Hot key map.
-    const fnMap = {
-      1: this.handleShuffleAll,
-      2: this.handleAlphagram,
-      3: this.handleCustomOrder,
-    };
-    fnMap[key]();
-  }
-
-  onShuffleQuestion(idx) {
-    game.shuffle(idx);
-    this.setState({
-      curQuestions: game.getQuestionState(),
-    });
-  }
-
-  /**
-   * Set the current display style, and persist to backend.
-   * @param {Styling} style
-   */
-  setDisplayStyle(style) {
-    this.setState({
-      displayStyle: style,
-    });
-    // Also persist to the backend.
-    $.ajax({
-      url: '/wordwalls/api/configure/',
-      method: 'POST',
-      dataType: 'json',
-      data: JSON.stringify(style),
-      contentType: 'application/json; charset=utf-8',
-    });
-    $('body').css({
-      'background-image': backgroundURL(style.bodyBackground),
-    });
-  }
-
-  setDefaultLexicon(lexID) {
-    this.api.call('/accounts/profile/set_default_lexicon/', {
-      defaultLexicon: lexID,
-    }).then(() => this.setState({
-      defaultLexicon: lexID,
-    })).catch(error => this.addMessage(error.message));
-  }
-
-  getTables() {
-    $.ajax({
-      url: '/wordwalls/api/tables/',
-      method: 'GET',
-    })
-      .done((data) => {
-        this.handleTables(data);
-      });
-  }
-
-  submitGuess(guess) {
-    this.rpc.guess(guess, this.state.wrongAnswers)
-      .then(result => this.handleGuessResponse(result))
-      .catch((error) => {
-        this.addMessage(error.message);
-      });
-  }
-
   handleListNameChange(newListName) {
     this.setState({
       listName: newListName,
@@ -238,6 +124,7 @@ class WordwallsAppContainer extends React.Component {
   /**
    * NOTE: used for debugging/testing.
    */
+  // eslint-disable-next-line react/no-unused-class-component-methods
   handleAllSolve() {
     const answers = game.getRemainingAnswers();
     answers.forEach((answer, idx) => {
@@ -246,59 +133,34 @@ class WordwallsAppContainer extends React.Component {
       }, (idx * 30));
     });
   }
+
   /**
    * NOTE: used for debugging/testing
    * @param  {Object} contents
    */
+  // eslint-disable-next-line react/no-unused-class-component-methods
   handleSolveWord(contents) {
     this.submitGuess(contents.word);
   }
 
   handleAutoSaveToggle() {
-    const newAutoSave = !this.state.autoSave;
-    if (newAutoSave && !this.state.listName) {
-      return; // There is no list name, don't toggle the checkbox.
-    }
-    this.setState({
-      autoSave: newAutoSave,
+    this.setState((state) => {
+      const newAutoSave = !state.autoSave;
+      if (newAutoSave && !state.listName) {
+        return { autoSave: false }; // There is no list name, don't toggle the checkbox.
+      }
+      return { autoSave: newAutoSave };
+    }, () => {
+      if (this.state.autoSave && !this.state.gameGoing) {
+        this.saveGame();
+      }
+      this.showAutosaveMessage(this.state.autoSave);
     });
-    if (newAutoSave && !this.state.gameGoing) {
-      this.saveGame();
-    }
-    this.showAutosaveMessage(newAutoSave);
-  }
-
-  showAutosaveMessage(autosave) {
-    if (autosave) {
-      this.addMessage(
-        `Autosave is now on! Aerolith will save your
-        list progress to ${this.state.listName} at the end of every round.`,
-        'info',
-      );
-    } else {
-      this.addMessage('Autosave is off.', 'error');
-    }
-  }
-
-  beforeUnload() {
-    if (this.state.gameGoing) {
-      $.ajax({
-        url: this.tableUrl(),
-        async: false,
-        data: {
-          action: 'giveUpAndSave',
-          // Fool the endpoint; if autosave is not on, don't actually
-          // save with a listname.
-          listname: this.state.autoSave ? this.state.listName : '',
-        },
-        method: 'POST',
-      });
-    }
   }
 
   handleStart() {
     this.rpc.startGame()
-      .then(result => this.handleStartReceived(result))
+      .then((result) => this.handleStartReceived(result))
       .catch((error) => {
         this.addMessage(error.message);
       });
@@ -321,14 +183,14 @@ class WordwallsAppContainer extends React.Component {
     }
     if (_.has(data, 'questions')) {
       game.init(data.questions, data.gameType);
-      this.setState({
-        numberOfRounds: this.state.numberOfRounds + 1,
+      this.setState((state) => ({
+        numberOfRounds: state.numberOfRounds + 1,
         origQuestions: game.getOriginalQuestionState(),
         curQuestions: game.getQuestionState(),
         answeredBy: game.getAnsweredBy(),
         totalWords: game.getTotalNumWords(),
         wrongAnswers: 0,
-      });
+      }));
       this.wwApp.setGuessBoxFocus();
       window.Intercom('trackEvent', 'started-game', {
         isChallenge: data.gameType && data.gameType.includes('challenge'),
@@ -356,54 +218,6 @@ class WordwallsAppContainer extends React.Component {
     this.setState({
       windowWidth: window.innerWidth,
     });
-  }
-
-  /**
-   * Called when the front-end timer runs out. Make a call to the
-   * back-end to possibly end the game.
-   */
-  timerRanOut() {
-    this.rpc.timerRanOut()
-      .then(() => this.processGameEnded())
-      .catch((error) => {
-        this.addMessage(error.message);
-      });
-  }
-
-  /**
-   * Compute the tableUrl based on the optional table number, or the
-   * table number in the state.
-   * @param  {number?} optTablenum
-   * @return {string}
-   */
-  tableUrl(optTablenum) {
-    let { tablenum } = this.state;
-    if (optTablenum) {
-      tablenum = optTablenum;
-    }
-    return `/wordwalls/table/${tablenum}/`;
-  }
-
-  /**
-   * Maybe modify the guess to strip of non-acceptable characters, and
-   * to replace spanish digraph tiles with their proper code if
-   * lexicon is Spanish.
-   * @param  {string} guess
-   * @return {string}
-   */
-  maybeModifyGuess(guess) {
-    // Strip whitespace from guess.
-    let newGuess = guess.replace(/\s/g, '');
-
-    if (this.state.lexicon !== 'FISE2') {
-      return newGuess;
-    }
-    // Replace.
-    newGuess = newGuess
-      .replace(/CH/g, '1')
-      .replace(/LL/g, '2')
-      .replace(/RR/g, '3');
-    return newGuess;
   }
 
   handleGuessResponse(data) {
@@ -447,92 +261,6 @@ class WordwallsAppContainer extends React.Component {
     if (endQuiz) {
       this.processGameEnded();
     }
-  }
-
-  markMissed(alphaIdx, alphagram) {
-    // Mark the alphagram missed.
-    $.ajax({
-      url: `${this.tableUrl()}missed/`,
-      method: 'POST',
-      dataType: 'json',
-      data: {
-        idx: alphaIdx,
-      },
-    })
-      .done((data) => {
-        if (data.success === true) {
-          game.miss(alphagram);
-          this.setState({
-            origQuestions: game.getOriginalQuestionState(),
-          });
-        }
-      });
-  }
-
-  addErrorMessage(errMsg) {
-    this.addMessage(errMsg.error);
-  }
-
-  addMessage(serverMsg, optType, optSender) {
-    const message = {
-      author: optSender || '',
-      id: _.uniqueId('msg_'),
-      content: serverMsg,
-      type: optType || 'server',
-    };
-    presence.addMessage(message, false);
-    this.setState({
-      messages: presence.getMessages(),
-    });
-  }
-
-  processGameEnded() {
-    if (!this.state.gameGoing) {
-      return;
-    }
-    this.setState({
-      gameGoing: false,
-    });
-    if (this.state.autoSave) {
-      this.saveGame();
-    }
-    if (this.state.numberOfRounds === 1 && this.state.isChallenge) {
-      // XXX: Kind of ugly, breaks encapsulation.
-      this.api.call('/wordwalls/api/challengers_by_tablenum/', {
-        tablenum: this.state.tablenum,
-        tiebreaker: this.state.displayStyle.hideErrors ? 'time' : 'errors',
-      }, 'GET').then(data => this.setState({
-        challengeData: data,
-      })).catch(error => this.addMessage(error.message));
-    }
-  }
-
-  /**
-   * Save the game on the server.
-   */
-  saveGame() {
-    if (this.state.listName === '') {
-      this.addMessage('You must enter a list name for saving!', 'error');
-      return;
-    }
-    $.ajax({
-      url: this.tableUrl(),
-      method: 'POST',
-      data: {
-        action: 'save',
-        listname: this.state.listName,
-      },
-      dataType: 'json',
-    })
-      .done((data) => {
-        if (data.success === true) {
-          this.addMessage(`Saved as ${data.listname}`, 'info');
-        }
-        if (data.info) {
-          this.addMessage(data.info);
-        }
-      })
-      .fail(jqXHR => this.addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error'));
   }
 
   /**
@@ -600,7 +328,8 @@ class WordwallsAppContainer extends React.Component {
       //   stateChanger = history.replaceState.bind(history);
       // }
       window.history.replaceState(
-        {}, `Table ${data.tablenum}`,
+        {},
+        `Table ${data.tablenum}`,
         this.tableUrl(data.tablenum),
       );
       this.rpc.setTablenum(data.tablenum);
@@ -610,6 +339,283 @@ class WordwallsAppContainer extends React.Component {
       listName: data.list_name,
       multiplayer: false,
     });
+  }
+
+  onGuessSubmit(guess) {
+    let modifiedGuess = this.maybeModifyGuess(guess);
+    if (!this.state.gameGoing) {
+      // Don't bother submitting guess if the game is over.
+      return;
+    }
+    const hadOctothorp = modifiedGuess.endsWith('#');
+    this.setState({
+      lastGuess: guess,
+      lastGuessCorrectness: GuessEnum.PENDING,
+    });
+    if (hadOctothorp) {
+      // Remove the octothorp.
+      modifiedGuess = modifiedGuess.substr(0, modifiedGuess.length - 1);
+    }
+    if (!game.answerExists(modifiedGuess)) {
+      // If the guess wasn't valid, don't bother submitting it to
+      // the server.
+      if (game.originalAnswerExists(modifiedGuess)) {
+        this.setState({
+          lastGuessCorrectness: GuessEnum.ALREADYGUESSED,
+        });
+      } else {
+        if (game.markPotentialIncorrectGuess(modifiedGuess)) {
+          this.setState((state) => ({
+            wrongAnswers: state.wrongAnswers + 1,
+          }));
+        }
+        this.setState({
+          lastGuessCorrectness: GuessEnum.INCORRECT,
+        });
+      }
+      return;
+    }
+    if (this.state.displayStyle.requireOctothorp && !this.state.isChallenge) {
+      const isCSW = game.isCSW(modifiedGuess);
+      if ((isCSW && !hadOctothorp) || (!isCSW && hadOctothorp)) {
+        // If the word the user guessed is CSW but doesn't include an
+        // octothorp, and the user's settings require an octothorp,
+        // mark it zero, dude. (Or, the other way around).
+        this.setState({
+          lastGuessCorrectness: GuessEnum.INCORRECT_LEXICON_SYMBOL,
+        });
+        return;
+      }
+    }
+    this.submitGuess(modifiedGuess);
+  }
+
+  onHotKey(key) {
+    // Hot key map.
+    const fnMap = {
+      1: this.handleShuffleAll,
+      2: this.handleAlphagram,
+      3: this.handleCustomOrder,
+    };
+    fnMap[key]();
+  }
+
+  onShuffleQuestion(idx) {
+    game.shuffle(idx);
+    this.setState({
+      curQuestions: game.getQuestionState(),
+    });
+  }
+
+  /**
+   * Set the current display style, and persist to backend.
+   * @param {Styling} style
+   */
+  setDisplayStyle(style) {
+    this.setState({
+      displayStyle: style,
+    });
+    // Also persist to the backend.
+    $.ajax({
+      url: '/wordwalls/api/configure/',
+      method: 'POST',
+      dataType: 'json',
+      data: JSON.stringify(style),
+      contentType: 'application/json; charset=utf-8',
+    });
+    $('body').css({
+      'background-image': backgroundURL(style.bodyBackground),
+    });
+  }
+
+  setDefaultLexicon(lexID) {
+    this.api.call('/accounts/profile/set_default_lexicon/', {
+      defaultLexicon: lexID,
+    }).then(() => this.setState({
+      defaultLexicon: lexID,
+    })).catch((error) => this.addMessage(error.message));
+  }
+
+  // eslint-disable-next-line react/no-unused-class-component-methods
+  getTables() {
+    $.ajax({
+      url: '/wordwalls/api/tables/',
+      method: 'GET',
+    })
+      .done((data) => {
+        this.handleTables(data);
+      });
+  }
+
+  submitGuess(guess) {
+    this.rpc.guess(guess, this.state.wrongAnswers)
+      .then((result) => this.handleGuessResponse(result))
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
+  }
+
+  showAutosaveMessage(autosave) {
+    if (autosave) {
+      this.addMessage(
+        `Autosave is now on! Aerolith will save your
+        list progress to ${this.state.listName} at the end of every round.`,
+        'info',
+      );
+    } else {
+      this.addMessage('Autosave is off.', 'error');
+    }
+  }
+
+  beforeUnload() {
+    if (this.state.gameGoing) {
+      $.ajax({
+        url: this.tableUrl(),
+        async: false,
+        data: {
+          action: 'giveUpAndSave',
+          // Fool the endpoint; if autosave is not on, don't actually
+          // save with a listname.
+          listname: this.state.autoSave ? this.state.listName : '',
+        },
+        method: 'POST',
+      });
+    }
+  }
+
+  /**
+   * Called when the front-end timer runs out. Make a call to the
+   * back-end to possibly end the game.
+   */
+  timerRanOut() {
+    this.rpc.timerRanOut()
+      .then(() => this.processGameEnded())
+      .catch((error) => {
+        this.addMessage(error.message);
+      });
+  }
+
+  /**
+   * Compute the tableUrl based on the optional table number, or the
+   * table number in the state.
+   * @param  {number?} optTablenum
+   * @return {string}
+   */
+  tableUrl(optTablenum) {
+    let { tablenum } = this.state;
+    if (optTablenum) {
+      tablenum = optTablenum;
+    }
+    return `/wordwalls/table/${tablenum}/`;
+  }
+
+  /**
+   * Maybe modify the guess to strip of non-acceptable characters, and
+   * to replace spanish digraph tiles with their proper code if
+   * lexicon is Spanish.
+   * @param  {string} guess
+   * @return {string}
+   */
+  maybeModifyGuess(guess) {
+    // Strip whitespace from guess.
+    let newGuess = guess.replace(/\s/g, '');
+
+    if (this.state.lexicon !== 'FISE2') {
+      return newGuess;
+    }
+    // Replace.
+    newGuess = newGuess
+      .replace(/CH/g, '1')
+      .replace(/LL/g, '2')
+      .replace(/RR/g, '3');
+    return newGuess;
+  }
+
+  markMissed(alphaIdx, alphagram) {
+    // Mark the alphagram missed.
+    $.ajax({
+      url: `${this.tableUrl()}missed/`,
+      method: 'POST',
+      dataType: 'json',
+      data: {
+        idx: alphaIdx,
+      },
+    })
+      .done((data) => {
+        if (data.success === true) {
+          game.miss(alphagram);
+          this.setState({
+            origQuestions: game.getOriginalQuestionState(),
+          });
+        }
+      });
+  }
+
+  // eslint-disable-next-line react/no-unused-class-component-methods
+  addErrorMessage(errMsg) {
+    this.addMessage(errMsg.error);
+  }
+
+  addMessage(serverMsg, optType, optSender) {
+    const message = {
+      author: optSender || '',
+      id: _.uniqueId('msg_'),
+      content: serverMsg,
+      type: optType || 'server',
+    };
+    presence.addMessage(message, false);
+    this.setState({
+      messages: presence.getMessages(),
+    });
+  }
+
+  processGameEnded() {
+    if (!this.state.gameGoing) {
+      return;
+    }
+    this.setState({
+      gameGoing: false,
+    });
+    if (this.state.autoSave) {
+      this.saveGame();
+    }
+    if (this.state.numberOfRounds === 1 && this.state.isChallenge) {
+      // XXX: Kind of ugly, breaks encapsulation.
+      this.api.call('/wordwalls/api/challengers_by_tablenum/', {
+        tablenum: this.state.tablenum,
+        tiebreaker: this.state.displayStyle.hideErrors ? 'time' : 'errors',
+      }, 'GET').then((data) => this.setState({
+        challengeData: data,
+      })).catch((error) => this.addMessage(error.message));
+    }
+  }
+
+  /**
+   * Save the game on the server.
+   */
+  saveGame() {
+    if (this.state.listName === '') {
+      this.addMessage('You must enter a list name for saving!', 'error');
+      return;
+    }
+    $.ajax({
+      url: this.tableUrl(),
+      method: 'POST',
+      data: {
+        action: 'save',
+        listname: this.state.listName,
+      },
+      dataType: 'json',
+    })
+      .done((data) => {
+        if (data.success === true) {
+          this.addMessage(`Saved as ${data.listname}`, 'info');
+        }
+        if (data.info) {
+          this.addMessage(data.info);
+        }
+      })
+      .fail((jqXHR) => this.addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error'));
   }
 
   resetTableCreator() {
@@ -661,7 +667,7 @@ class WordwallsAppContainer extends React.Component {
           currentHost={this.state.currentHost}
           onLoadNewList={this.handleLoadNewList}
           gameGoing={this.state.gameGoing}
-          setLoadingData={loading => this.setState({ loadingData: loading })}
+          setLoadingData={(loading) => this.setState({ loadingData: loading })}
           username={this.props.username}
           hideErrors={this.state.displayStyle.hideErrors}
         />
@@ -671,22 +677,17 @@ class WordwallsAppContainer extends React.Component {
           boardGridWidth={boardGridWidth}
           boardGridHeight={boardGridHeight}
           windowWidth={this.state.windowWidth}
-
           listName={this.state.listName}
           autoSave={this.state.autoSave}
           onListNameChange={this.handleListNameChange}
           onAutoSaveToggle={this.handleAutoSaveToggle}
-
           displayStyle={this.state.displayStyle}
           setDisplayStyle={this.setDisplayStyle}
-
           handleStart={this.handleStart}
           handleGiveup={this.handleGiveup}
           gameGoing={this.state.gameGoing}
-
           initialGameTime={this.state.initialGameTime}
           timerRanOut={this.timerRanOut}
-
           numberOfRounds={this.state.numberOfRounds}
           isChallenge={this.state.isChallenge}
           isBuild={this.state.isBuild}
@@ -703,12 +704,10 @@ class WordwallsAppContainer extends React.Component {
           currentHost={this.state.currentHost}
           wrongAnswers={this.state.wrongAnswers}
           hideErrors={this.state.displayStyle.hideErrors}
-
           onGuessSubmit={this.onGuessSubmit}
           lastGuess={this.state.lastGuess}
           lastGuessCorrectness={this.state.lastGuessCorrectness}
           onHotKey={this.onHotKey}
-
           handleShuffleAll={this.handleShuffleAll}
           handleAlphagram={this.handleAlphagram}
           handleCustomOrder={this.handleCustomOrder}
@@ -745,7 +744,6 @@ WordwallsAppContainer.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
 };
 

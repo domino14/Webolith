@@ -1,4 +1,3 @@
-
 /**
  * Return a url string that can be given to a style.
  * @param {string} option The name of a background.

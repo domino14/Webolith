@@ -55,7 +55,8 @@ class GameInactiveArea extends React.Component {
         buttonText="Start"
         buttonClass="btn btn-primary btn-lg"
         handleButtonClick={this.handleStartClick}
-      />);
+      />
+    );
 
     if (this.props.isChallenge) {
       challengeButton = (
@@ -70,8 +71,12 @@ class GameInactiveArea extends React.Component {
       jumbotronHeader = (
         <div>
           <h1>Game over!</h1>
-          <p>You can continue by clicking {startButton} again, or
-          view solutions / results below.
+          <p>
+            You can continue by clicking
+            {startButton}
+            {' '}
+            again, or
+            view solutions / results below.
           </p>
           <div className="row">
             <HeroButton
@@ -93,8 +98,14 @@ class GameInactiveArea extends React.Component {
     } else {
       jumbotronHeader = (
         <div>
-          <p>Ready to {startButton}</p>
-          <p>List name: {this.props.listName.trim()}</p>
+          <p>
+            Ready to
+            {startButton}
+          </p>
+          <p>
+            List name:
+            {this.props.listName.trim()}
+          </p>
           <p>Press Start to quiz, or one of the options below.</p>
         </div>
       );
@@ -146,7 +157,13 @@ GameInactiveArea.propTypes = {
   showLexiconSymbols: PropTypes.bool.isRequired,
   isChallenge: PropTypes.bool.isRequired,
   challengeData: PropTypes.shape({
-    entries: PropTypes.array,
+    entries: PropTypes.arrayOf(PropTypes.shape({
+      user: PropTypes.string,
+      score: PropTypes.number,
+      tr: PropTypes.number,
+      w: PropTypes.number,
+      addl: PropTypes.string,
+    })),
     maxScore: PropTypes.number,
   }).isRequired,
   numberOfRounds: PropTypes.number.isRequired,
@@ -159,4 +176,3 @@ GameInactiveArea.propTypes = {
 };
 
 export default GameInactiveArea;
-

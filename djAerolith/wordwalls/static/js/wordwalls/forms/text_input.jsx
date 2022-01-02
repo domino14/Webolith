@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /**
  * @fileOverview A Bootstrap-based text input component.
  */
@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const TextInput = (props) => {
+function TextInput(props) {
   const inputColSizeClass = `col-md-${props.colSize}`;
   return (
     <div className="form-group">
@@ -27,7 +27,7 @@ const TextInput = (props) => {
       </div>
     </div>
   );
-};
+}
 
 TextInput.defaultProps = {
   onKeyPress: () => {},

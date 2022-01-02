@@ -132,7 +132,7 @@ describe('<SearchDialogContainer />', () => {
       // And search specifically that fixed length wasn't rendered.
       const selectOptions = wrapper.find('.search-row').at(0).find('select option');
       const optionSet = new Set();
-      selectOptions.forEach(node => optionSet.add(parseInt(node.props().value, 10)));
+      selectOptions.forEach((node) => optionSet.add(parseInt(node.props().value, 10)));
 
       expect(optionSet.has(SearchTypesEnum.FIXED_LENGTH)).toBeFalsy();
       expect(optionSet.has(SearchTypesEnum.LENGTH)).toBeTruthy();

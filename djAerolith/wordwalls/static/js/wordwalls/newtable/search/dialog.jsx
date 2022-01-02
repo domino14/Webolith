@@ -5,39 +5,47 @@ import SearchRows from './rows';
 import HelpText from './help_text';
 import { SearchCriterion } from './types';
 
-const PlayButton = props => (
-  <button
-    className="btn btn-primary submit-word-search"
-    style={{ marginTop: '0.75em' }}
-    onClick={props.onSearchSubmit}
-    data-dismiss="modal"
-    disabled={props.disabled ? 'disabled' : ''}
-  >Play!
-  </button>
-);
+function PlayButton(props) {
+  return (
+    <button
+      type="button"
+      className="btn btn-primary submit-word-search"
+      style={{ marginTop: '0.75em' }}
+      onClick={props.onSearchSubmit}
+      data-dismiss="modal"
+      disabled={props.disabled ? 'disabled' : ''}
+    >
+      Play!
+    </button>
+  );
+}
 
 PlayButton.propTypes = {
   onSearchSubmit: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
 };
 
-const FlashcardButton = props => (
-  <button
-    className="btn btn-info"
-    style={{ marginTop: '0.75em', marginLeft: '1em' }}
-    onClick={props.onFlashcardSubmit}
-    data-dismiss="modal"
-    disabled={props.disabled ? 'disabled' : ''}
-  >Flashcard
-  </button>
-);
+function FlashcardButton(props) {
+  return (
+    <button
+      type="button"
+      className="btn btn-info"
+      style={{ marginTop: '0.75em', marginLeft: '1em' }}
+      onClick={props.onFlashcardSubmit}
+      data-dismiss="modal"
+      disabled={props.disabled ? 'disabled' : ''}
+    >
+      Flashcard
+    </button>
+  );
+}
 
 FlashcardButton.propTypes = {
   onFlashcardSubmit: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
 };
 
-const WordSearchDialog = (props) => {
+function WordSearchDialog(props) {
   const flashcardButton = props.flashcardAllowed ? (
     <FlashcardButton
       onFlashcardSubmit={props.onFlashcardSubmit}
@@ -71,7 +79,7 @@ const WordSearchDialog = (props) => {
       </div>
     </div>
   );
-};
+}
 
 WordSearchDialog.defaultProps = {
   flashcardAllowed: true,

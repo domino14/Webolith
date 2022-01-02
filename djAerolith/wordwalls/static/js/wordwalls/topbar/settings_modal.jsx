@@ -23,9 +23,9 @@ class SettingsModal extends React.Component {
    * which will update the state accordingly.
    */
   onWordwallsOptionsModify(stateKey, value) {
-    this.state.style.setStyleKey(stateKey, value);
-    this.setState({
-      style: this.state.style,
+    this.setState((state) => {
+      state.style.setStyleKey(stateKey, value);
+      return { style: state.style };
     });
   }
 

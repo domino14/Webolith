@@ -30,7 +30,6 @@ const prodConfig = _.defaults({
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new CompressionPlugin(),
-    new webpack.HashedModuleIdsPlugin(),
     // For wordwalls app:
     new HtmlWebpackPlugin({
       filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
@@ -45,6 +44,7 @@ const prodConfig = _.defaults({
     }),
   ],
   optimization: {
+    moduleIds: 'deterministic',
     minimizer: [new TerserWebpackPlugin({
       parallel: true,
     })],

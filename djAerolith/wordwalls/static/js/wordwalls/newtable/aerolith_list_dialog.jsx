@@ -5,7 +5,7 @@ import Select from '../forms/select';
 
 class AerolithListDialog extends React.Component {
   static genOptions(listOptions) {
-    const opts = listOptions.map(option => ({
+    const opts = listOptions.map((option) => ({
       value: String(option.id),
       displayValue: option.name,
     }));
@@ -21,7 +21,7 @@ class AerolithListDialog extends React.Component {
             numItems={15}
             label="Aerolith Lists"
             selectedValue={this.props.selectedList}
-            onChange={event => this.props.onSelectedListChange(event.target.value)}
+            onChange={(event) => this.props.onSelectedListChange(event.target.value)}
             options={AerolithListDialog.genOptions(this.props.listOptions)}
           />
           <button
@@ -29,14 +29,18 @@ class AerolithListDialog extends React.Component {
             style={{ marginTop: '0.75em' }}
             onClick={this.props.onListSubmit}
             data-dismiss="modal"
-          >Play!
+            type="button"
+          >
+            Play!
           </button>
           <button
             className="btn btn-info"
             style={{ marginTop: '0.75em', marginLeft: '1em' }}
             onClick={this.props.onFlashcardSubmit}
             data-dismiss="modal"
-          >Flashcard
+            type="button"
+          >
+            Flashcard
           </button>
         </div>
       </div>

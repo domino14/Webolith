@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 
 import Solution from './solution';
 
-const Solutions = (props) => {
+function Solutions(props) {
   const tableRows = [];
   let wordIdx = 0;
   const { showLexiconSymbols, markMissed } = props;
@@ -74,7 +74,7 @@ const Solutions = (props) => {
       </div>
     </div>
   );
-};
+}
 
 Solutions.propTypes = {
   questions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,

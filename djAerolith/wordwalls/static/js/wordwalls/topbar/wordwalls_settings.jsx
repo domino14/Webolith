@@ -101,6 +101,17 @@ class WordwallsSettings extends React.Component {
     this.handleShuffle = this.handleShuffle.bind(this);
   }
 
+  handleShuffle(idx) {
+    // XXX: This should be moved into a utility shuffle function or something.
+    this.setState((state) => {
+      const newQuestions = state.questions.update(idx, (aObj) => {
+        const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a').split('')).join(''));
+        return newObj;
+      });
+      return { questions: newQuestions };
+    });
+  }
+
   onTileOrderChange(event) {
     // XXX: Check if it has all letters before setting state. If not,
     // set some sort of indicator.
@@ -176,17 +187,6 @@ class WordwallsSettings extends React.Component {
     return formElements;
   }
 
-  handleShuffle(idx) {
-    // XXX: This should be moved into a utility shuffle function or something.
-    const newQuestions = this.state.questions.update(idx, (aObj) => {
-      const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a')).join(''));
-      return newObj;
-    });
-    this.setState({
-      questions: newQuestions,
-    });
-  }
-
   render() {
     const stateLetRem = this.state.tileOrderLettersRemaining;
     let letRem;
@@ -196,11 +196,13 @@ class WordwallsSettings extends React.Component {
         <span
           className="text-danger"
         >
-          <strong>{
+          <strong>
+            {
             `${stateLetRem} (${stateLetRem.length})`
           }
           </strong>
-        </span>);
+        </span>
+      );
     } else {
       letRem = (
         <span className="text-success">
@@ -208,7 +210,8 @@ class WordwallsSettings extends React.Component {
             className="glyphicon glyphicon-ok"
             aria-hidden="true"
           />
-        </span>);
+        </span>
+      );
     }
 
     return (
@@ -277,7 +280,9 @@ class WordwallsSettings extends React.Component {
               />
               <div className="row">
                 <div className="col-lg-6">
-                  Letters remaining: {letRem}
+                  Letters remaining:
+                  {' '}
+                  {letRem}
                 </div>
               </div>
               <hr />
@@ -312,9 +317,9 @@ class WordwallsSettings extends React.Component {
                     on={this.props.displayStyle.showBorders}
                     onChange={(event) => {
                       this.props.onOptionsModify(
-'showBorders',
+                        'showBorders',
                         event.target.checked,
-);
+                      );
                     }}
                     label="Show borders around questions"
                   />
@@ -324,9 +329,9 @@ class WordwallsSettings extends React.Component {
                     on={this.props.displayStyle.showChips}
                     onChange={(event) => {
                       this.props.onOptionsModify(
-'showChips',
+                        'showChips',
                         event.target.checked,
-);
+                      );
                     }}
                     label="Show number of anagrams"
                   />
@@ -392,7 +397,8 @@ class WordwallsSettings extends React.Component {
             </form>
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 }
 

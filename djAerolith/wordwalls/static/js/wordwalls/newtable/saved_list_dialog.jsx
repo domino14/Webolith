@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import PropTypes from 'prop-types';
 
 import $ from 'jquery';
@@ -15,10 +15,10 @@ const PlayOptions = {
   PLAY_START_OVER: 'startover',
   PLAY_DELETE: 'delete',
 };
-
+const dropzoneRef = createRef();
 class SavedListDialog extends React.Component {
   static genOptions(listOptions) {
-    const opts = listOptions.lists.map(option => ({
+    const opts = listOptions.lists.map((option) => ({
       value: String(option.id),
       displayValue: option.name,
     }));
@@ -99,11 +99,19 @@ class SavedListDialog extends React.Component {
         <div className="col-sm-11">
           <div className="row">
             <div className="col-sm-12">
-              <p>Please select a list from below. Lists that are highlighted
-              in <span className="bg-success">green</span> have already
-              been played through once.
+              <p>
+                Please select a list from below. Lists that are highlighted
+                in
+                {' '}
+                <span className="bg-success">green</span>
+                {' '}
+                have already
+                been played through once.
               </p>
-              <p>{listInfo}{limitInfo}</p>
+              <p>
+                {listInfo}
+                {limitInfo}
+              </p>
             </div>
           </div>
 
@@ -118,37 +126,41 @@ class SavedListDialog extends React.Component {
           >
             <ListTable
               lists={this.props.listOptions.lists}
-              continueList={listID => () => this.continueList(listID)}
-              playFirstMissed={listID => () => this.playFirstMissed(listID)}
-              resetStartOver={listID => () => this.resetStartOver(listID)}
-              deleteList={listID => () => this.deleteList(listID)}
-              flashcardList={listID => () => this.flashcardList(listID)}
-              flashcardFirstMissed={listID => () => this.flashcardFirstMissed(listID)}
+              continueList={(listID) => () => this.continueList(listID)}
+              playFirstMissed={(listID) => () => this.playFirstMissed(listID)}
+              resetStartOver={(listID) => () => this.resetStartOver(listID)}
+              deleteList={(listID) => () => this.deleteList(listID)}
+              flashcardList={(listID) => () => this.flashcardList(listID)}
+              flashcardFirstMissed={(listID) => () => this.flashcardFirstMissed(listID)}
             />
           </div>
           <div className="row">
             <div className="col-sm-12">
               <p>
-              You can also upload your own list with the button below. The list
-              must consist of just words, one per line.
+                You can also upload your own list below. The list
+                must be a text file that consists of just words, one per line.
               </p>
             </div>
           </div>
-          <div>
-            <Dropzone
-              ref={(dropzone) => {
-                this.dropzone = dropzone;
-              }}
-              onDrop={this.onDrop}
-              multiple={false}
-              maxSize={1000000}
-              style={{ display: 'none' }}
-            />
-            <button
-              className="btn btn-info"
-              onClick={() => this.dropzone.open()}
-            >Upload a file
-            </button>
+          <div className="row">
+            <div className="col-sm-12">
+              <Dropzone
+                ref={dropzoneRef}
+                onDrop={this.onDrop}
+                maxFiles={1}
+                maxSize={1000000}
+                minSize={2}
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div {...getRootProps({ className: 'dropzone' })}>
+                      <input {...getInputProps()} />
+                      <p>Drag and drop a file here, or click to select files</p>
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
+            </div>
           </div>
         </div>
       </div>

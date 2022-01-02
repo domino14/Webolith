@@ -7,14 +7,18 @@ import WordwallsQuestion from './wordwalls_question';
 import backgroundURL from './background';
 
 const SolutionPanel = (props) => {
-  let words = props.solvedWords.sort().map(word => (
-    <span key={word}>{word} </span>
+  let words = props.solvedWords.sort().map((word) => (
+    <span key={word}>
+      {word}
+      {' '}
+    </span>
   ));
   if (!words.length) {
     words = (
       <span className="text-muted">
         {`${props.totalCount} words of length ${props.wordLength}`}
-      </span>);
+      </span>
+    );
   }
   const panel = (
     <li className="list-group-item">
@@ -23,7 +27,8 @@ const SolutionPanel = (props) => {
       </span>
       <span
         className={
-          `${props.totalCount === props.solvedWords.length ? 'text-success' : ''}`}
+          `${props.totalCount === props.solvedWords.length ? 'text-success' : ''}`
+}
       >
         {words}
       </span>
@@ -65,7 +70,12 @@ class BuildBoard extends React.Component {
     this.props.answerers.forEach((answered) => {
       // Answerers is a map of player to answers
       answered.forEach((word) => {
-        solsarr[word.get('w').length - 1].push(<span>{word.get('w')} </span>);
+        solsarr[word.get('w').length - 1].push(
+          <span>
+            {word.get('w')}
+            {' '}
+          </span>,
+        );
       });
     });
 
@@ -121,18 +131,20 @@ class BuildBoard extends React.Component {
           xSize={200}
           onShuffle={this.props.onShuffle}
           scaleTransform={this.props.scaleTransform * 1.75}
-        />);
+        />
+      );
     }
 
     return (
       <div>
         <svg
           style={style}
-          width={this.props.scaleTransform *
-            (this.props.width + (2 * leftMargin))}
+          width={this.props.scaleTransform
+            * (this.props.width + (2 * leftMargin))}
           height={this.props.scaleTransform * (60 + (2 * topMargin))}
           onMouseDown={(e) => { e.preventDefault(); }}
-        >{renderedQuestion}
+        >
+          {renderedQuestion}
         </svg>
         <ul className="list-group">
           {this.renderAnswers()}

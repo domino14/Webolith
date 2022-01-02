@@ -32,23 +32,23 @@ class ChallengeDialogContainer extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     let loaded = false;
-    if ((prevProps.lexicon !== this.props.lexicon) ||
-        (prevState.currentDate.format(DATE_FORMAT_STRING) !==
-        this.state.currentDate.format(DATE_FORMAT_STRING))) {
+    if ((prevProps.lexicon !== this.props.lexicon)
+        || (prevState.currentDate.format(DATE_FORMAT_STRING)
+        !== this.state.currentDate.format(DATE_FORMAT_STRING))) {
       this.loadChallengePlayedInfo();
       this.loadSpecialChallenges();
       loaded = true;
     }
-    if ((prevState.currentChallenge !== this.state.currentChallenge) ||
-        loaded) {
+    if ((prevState.currentChallenge !== this.state.currentChallenge)
+        || loaded) {
       this.loadChallengeLeaderboardData();
     }
   }
 
   onChallengeSelected(challID) {
-    let challenge = this.props.challengeInfo.find(c => c.id === challID);
+    let challenge = this.props.challengeInfo.find((c) => c.id === challID);
     if (!challenge) {
-      challenge = this.state.specialChallengeInfo.find(c => c.id === challID);
+      challenge = this.state.specialChallengeInfo.find((c) => c.id === challID);
     }
     this.setState({
       currentChallenge: challID,
@@ -70,10 +70,10 @@ class ChallengeDialogContainer extends React.Component {
       challenge: this.state.currentChallenge,
       tiebreaker: this.props.hideErrors ? 'time' : 'errors',
     }, 'GET')
-      .then(data => this.setState({
+      .then((data) => this.setState({
         challengeLeaderboardData: data || {},
       }))
-      .catch(error => this.props.notifyError(error))
+      .catch((error) => this.props.notifyError(error))
       .finally(() => this.props.hideSpinner());
   }
 
@@ -88,8 +88,8 @@ class ChallengeDialogContainer extends React.Component {
       challenge: this.state.currentChallenge,
       tablenum: this.props.tablenum,
     })
-      .then(data => this.props.onLoadNewList(data))
-      .catch(error => this.props.notifyError(error))
+      .then((data) => this.props.onLoadNewList(data))
+      .catch((error) => this.props.notifyError(error))
       .finally(() => this.props.hideSpinner());
   }
 
@@ -100,10 +100,10 @@ class ChallengeDialogContainer extends React.Component {
       lexicon: this.props.lexicon,
       date: this.state.currentDate.format(DATE_FORMAT_STRING),
     }, 'GET')
-      .then(data => this.setState({
+      .then((data) => this.setState({
         challengesDoneAtDate: data,
       }))
-      .catch(error => this.props.notifyError(error))
+      .catch((error) => this.props.notifyError(error))
       .finally(() => this.props.hideSpinner());
   }
 
@@ -114,10 +114,10 @@ class ChallengeDialogContainer extends React.Component {
       lexicon: this.props.lexicon,
       date: this.state.currentDate.format(DATE_FORMAT_STRING),
     }, 'GET')
-      .then(data => this.setState({
+      .then((data) => this.setState({
         specialChallengeInfo: data,
       }))
-      .catch(error => this.props.notifyError(error))
+      .catch((error) => this.props.notifyError(error))
       .finally(() => this.props.hideSpinner());
   }
 
@@ -138,7 +138,7 @@ class ChallengeDialogContainer extends React.Component {
         }}
         currentDate={this.state.currentDate}
         onChallengeSubmit={() => this.props.preSubmitHook(this.challengeSubmit)}
-        onChallengeSelected={challID => () => this.onChallengeSelected(challID)}
+        onChallengeSelected={(challID) => () => this.onChallengeSelected(challID)}
         lexicon={this.props.lexicon}
         availableLexica={this.props.availableLexica}
       />
@@ -158,7 +158,6 @@ ChallengeDialogContainer.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
   showSpinner: PropTypes.func.isRequired,
   hideSpinner: PropTypes.func.isRequired,
@@ -173,4 +172,3 @@ ChallengeDialogContainer.propTypes = {
 };
 
 export default ChallengeDialogContainer;
-

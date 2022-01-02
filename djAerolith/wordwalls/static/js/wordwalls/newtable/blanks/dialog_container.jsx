@@ -28,7 +28,7 @@ function pbToQuestions(pb) {
   const alphList = pb.alphagramsList;
   const rawQs = alphList.map((alph) => {
     const words = alph.wordsList;
-    const wl = words.map(w => w.word);
+    const wl = words.map((w) => w.word);
     return {
       q: alph.alphagram,
       a: wl,
@@ -46,7 +46,7 @@ class BlanksDialogContainer extends React.Component {
   // Return the NAME of the lexicon, rather than the number.
   // word_db_server requires the lexicon name.
   getLexiconName() {
-    return this.props.availableLexica.find(el => el.id === this.props.lexicon).lexicon;
+    return this.props.availableLexica.find((el) => el.id === this.props.lexicon).lexicon;
   }
 
   searchSubmit() {
@@ -77,16 +77,15 @@ class BlanksDialogContainer extends React.Component {
     reqObj.setNumWith2Blanks(num2Blanks);
 
     this.props.wordServerRPC.blankChallengeCreator(reqObj)
-      .then(result =>
-        this.props.api.call(RAW_QUESTIONS_URL, {
-          lexicon: this.props.lexicon,
-          rawQuestions: pbToQuestions(result),
-          desiredTime: this.props.desiredTime,
-          questionsPerRound: this.props.questionsPerRound,
-          tablenum: this.props.tablenum,
-        })
-          .then(data => this.props.onLoadNewList(data))
-          .catch(error => this.props.notifyError(error)))
+      .then((result) => this.props.api.call(RAW_QUESTIONS_URL, {
+        lexicon: this.props.lexicon,
+        rawQuestions: pbToQuestions(result),
+        desiredTime: this.props.desiredTime,
+        questionsPerRound: this.props.questionsPerRound,
+        tablenum: this.props.tablenum,
+      })
+        .then((data) => this.props.onLoadNewList(data))
+        .catch((error) => this.props.notifyError(error)))
       .catch((error) => {
         if (error.message.includes('timed out')) {
           this.props.notifyError([
@@ -107,7 +106,8 @@ class BlanksDialogContainer extends React.Component {
         flashcardAllowed={false}
         allowedSearchTypes={allowedSearchTypes}
         {...this.props}
-      />);
+      />
+    );
   }
 }
 
@@ -118,7 +118,6 @@ BlanksDialogContainer.propTypes = {
     id: PropTypes.number,
     lexicon: PropTypes.string,
     description: PropTypes.string,
-    counts: PropTypes.object,
   })).isRequired,
   desiredTime: PropTypes.number.isRequired,
   questionsPerRound: PropTypes.number.isRequired,

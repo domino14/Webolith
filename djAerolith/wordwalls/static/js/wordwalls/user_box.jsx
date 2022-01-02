@@ -6,7 +6,7 @@ import Immutable from 'immutable';
 // import { pointsForWord } from './build_mode';
 import WordPartDisplay from './word_part_display';
 
-const UserBox = (props) => {
+function UserBox(props) {
   const answers = [];
   const { showLexiconSymbols } = props;
   props.answers.forEach((word) => {
@@ -23,18 +23,20 @@ const UserBox = (props) => {
         />
         <WordPartDisplay
           text={
-            `${word.get('ifh') ? '･' : ''}${word.get('w')}` +
-            `${word.get('ibh') ? '･' : ''}${showLexiconSymbols ? word.get('s') : ''}`}
+            `${word.get('ifh') ? '･' : ''}${word.get('w')}`
+            + `${word.get('ibh') ? '･' : ''}${showLexiconSymbols ? word.get('s') : ''}`
+}
         />
         <WordPartDisplay
           text={` ${word.get('bh')}`}
           classes="text-info small"
         />
-      </div>);
+      </div>
+    );
     answers.push(wordEl);
   });
-  const percentScore = props.totalWords > 0 ?
-    (100 * (props.answers.size / props.totalWords)).toFixed(1) : 0;
+  const percentScore = props.totalWords > 0
+    ? (100 * (props.answers.size / props.totalWords)).toFixed(1) : 0;
 
   const fractionScore = `${props.answers.size}/${props.totalWords}`;
   let wrongAnswers = null;
@@ -48,9 +50,11 @@ const UserBox = (props) => {
             textAlign: 'right',
           }}
           className="text text-danger"
-        >{props.wrongAnswers}
+        >
+          {props.wrongAnswers}
         </div>
-      </div>);
+      </div>
+    );
   }
 
   return (
@@ -70,7 +74,8 @@ const UserBox = (props) => {
           }
           domNode.scrollTop = domNode.scrollHeight; // eslint-disable-line no-param-reassign
         }}
-      >{answers}
+      >
+        {answers}
       </div>
       <div className="panel-footer">
         <div className="row">
@@ -78,7 +83,8 @@ const UserBox = (props) => {
             <span
               style={{ fontSize: '1.5em' }}
               className="text text-success"
-            >{`${percentScore}%`}
+            >
+              {`${percentScore}%`}
             </span>
           </div>
           <div className="col-sm-8 col-md-6 col-md-offset-2">
@@ -91,7 +97,8 @@ const UserBox = (props) => {
                     textAlign: 'right',
                   }}
                   className="text text-success"
-                >{fractionScore}
+                >
+                  {fractionScore}
                 </div>
               </div>
               {wrongAnswers}
@@ -101,7 +108,7 @@ const UserBox = (props) => {
       </div>
     </div>
   );
-};
+}
 
 UserBox.propTypes = {
   answers: PropTypes.instanceOf(Immutable.List).isRequired,

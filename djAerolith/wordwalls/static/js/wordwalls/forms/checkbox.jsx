@@ -1,11 +1,11 @@
-/* eslint-disable jsx-a11y/label-has-for */
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /**
  * @fileOverview A Bootstrap-based checkbox component.
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const CheckBox = (props) => {
+function CheckBox(props) {
   let addlInputProps = {};
   if (props.disabled === true) {
     addlInputProps = {
@@ -25,8 +25,9 @@ const CheckBox = (props) => {
           {props.label}
         </label>
       </div>
-    </div>);
-};
+    </div>
+  );
+}
 
 CheckBox.propTypes = {
   on: PropTypes.bool.isRequired,

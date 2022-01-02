@@ -12,14 +12,14 @@ const maybeReorderCriteria = (searchCriteria) => {
   const arrCopy = [];
   const toPushBack = [];
   searchCriteria.forEach((val) => {
-    if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM ||
-        val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
+    if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM
+        || val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
       toPushBack.push(val);
     } else {
       arrCopy.push(val);
     }
   });
-  toPushBack.forEach(val => arrCopy.push(val));
+  toPushBack.forEach((val) => arrCopy.push(val));
   return arrCopy;
 };
 
@@ -32,7 +32,7 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
       this.addSearchRow = this.addSearchRow.bind(this);
       this.removeSearchRow = this.removeSearchRow.bind(this);
 
-      const scCopy = searchCriteria.map(sc => sc.deepCopy());
+      const scCopy = searchCriteria.map((sc) => sc.deepCopy());
       this.state = {
         // Do a deep copy.
         searchCriteria: scCopy,
@@ -53,18 +53,18 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
     }
 
     removeSearchRow(criteriaIndex) {
-      const currentCriteria = this.state.searchCriteria;
-      currentCriteria.splice(criteriaIndex, 1);
-      this.setState({
-        searchCriteria: currentCriteria,
+      this.setState((state) => {
+        const currentCriteria = state.searchCriteria;
+        currentCriteria.splice(criteriaIndex, 1);
+        return { searchCriteria: currentCriteria };
       });
     }
 
     searchParamChange(index, paramName, paramValue) {
-      const criteria = this.state.searchCriteria;
-      criteria[index].setOption(paramName, paramValue);
-      this.setState({
-        searchCriteria: criteria,
+      this.setState((state) => {
+        const criteria = state.searchCriteria;
+        criteria[index].setOption(paramName, paramValue);
+        return { searchCriteria: criteria };
       });
     }
 
@@ -93,4 +93,3 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
 }
 
 export default withSearchRows;
-

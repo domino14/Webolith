@@ -12,7 +12,6 @@ config/prod_config.env
 config/dev_config.env
 *.DS_Store
 npm-debug.log
-yarn-error.log
 djAerolith/static/dist/*
 kubernetes/secrets-*.yaml
 kubernetes/webolith_static/*

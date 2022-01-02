@@ -8,7 +8,7 @@ import WordwallsQuestion from './wordwalls_question';
 import QuestionPlaceholder from './wordwalls_question_placeholder';
 import backgroundURL from './background';
 
-const SVGBoard = (props) => {
+function SVGBoard(props) {
   const leftMargin = 5;
   const topMargin = 4;
   const questions = [];
@@ -69,10 +69,11 @@ const SVGBoard = (props) => {
       width={props.scaleTransform * (props.width + (2 * leftMargin))}
       height={props.scaleTransform * (props.height + (2 * topMargin))}
       onMouseDown={(e) => { e.preventDefault(); }}
-    >{questions}
+    >
+      {questions}
     </svg>
   );
-};
+}
 
 SVGBoard.defaultProps = {
   scaleTransform: 1.0,

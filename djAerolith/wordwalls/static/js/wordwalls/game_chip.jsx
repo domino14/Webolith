@@ -76,7 +76,7 @@ function getColorFromAnagrams(numAnagrams) {
   }[effectiveNumAnagrams];
 }
 
-const GameChip = (props) => {
+function GameChip(props) {
   const transform = `translate(${props.x + props.radius}, ${props.y + props.radius})`;
   const color = getColorFromAnagrams(props.number);
   return (
@@ -100,11 +100,12 @@ const GameChip = (props) => {
         stroke={color.textColor}
         fill={color.textColor}
         strokeWidth="1px"
-      >{props.number}
+      >
+        {props.number}
       </text>
     </g>
   );
-};
+}
 
 GameChip.propTypes = {
   x: PropTypes.number.isRequired,

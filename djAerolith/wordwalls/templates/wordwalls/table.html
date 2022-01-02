@@ -38,6 +38,22 @@ To contact the author, please email delsolar at gmail dot com
       max-width:1200px;
     }
   }
+
+    .dropzone {
+        /*flex: 1;
+        display: flex;
+        flex-direction: column;*/
+        align-items: center;
+        padding: 20px;
+        border-width: 2px;
+        border-radius: 2px;
+        border-color: #eeeeee;
+        border-style: dashed;
+        background-color: #fafafa;
+        color: #bdbdbd;
+        outline: none;
+        transition: border .24s ease-in-out;
+    }
   </style>
 
 {% if USE_GA %}
@@ -102,7 +118,7 @@ To contact the author, please email delsolar at gmail dot com
 <div id="infoDialog" title=""></div>
 
 {% if DEBUG %}
-  <script src="{{STATIC_SRV}}/static/dist/node_vendors~flashcardsapp~wordwallsapp.js"></script>
+  <script src="{{STATIC_SRV}}/static/dist/node_vendors~wordwallsapp~flashcardsapp.js"></script>
   <script src="{{STATIC_SRV}}/static/dist/node_vendors~wordwallsapp.js"></script>
   <script src="{{STATIC_SRV}}/static/dist/wordwallsapp.js"></script>
 {% else %}

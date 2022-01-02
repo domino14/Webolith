@@ -1,9 +1,14 @@
 FROM node:alpine
-ENV NODE_PATH="/usr/lib/node_modules"
 
-COPY . /opt/webolith/
 WORKDIR /opt/webolith/
+
+ENV PATH /opt/webolith/node_modules/.bin:$PATH
+
+COPY ./package.json ./
+COPY ./package-lock.json ./
 
 EXPOSE 7000
 
-CMD ["yarn", "dev:wds"]
+RUN ["npm", "ci"]
+
+CMD ["npm", "run", "dev:wds"]
