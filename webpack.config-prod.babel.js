@@ -54,6 +54,7 @@ const prodConfig = _.defaults({
           test: /[\\/]node_modules[\\/]/, // is backslash for windows?
           chunks: 'all',
           priority: 1,
+          name: 'vendors',
         },
       },
     },
