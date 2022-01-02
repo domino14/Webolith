@@ -44,7 +44,7 @@ const prodConfig = _.defaults({
     }),
   ],
   optimization: {
-    moduleIds: 'hashed',
+    moduleIds: 'deterministic',
     minimizer: [new TerserWebpackPlugin({
       parallel: true,
     })],
