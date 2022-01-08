@@ -7,6 +7,7 @@ const SearchTypesInputs = {
   ONE_NUMBER: 2,
   ONE_STRING: 3,
   SELECT: 4,
+  NONE: 5,
 };
 
 const SearchTypesEnum = {
@@ -23,6 +24,7 @@ const SearchTypesEnum = {
   PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
   MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
   DIFFICULTY_RANGE: pbsrConditions.DIFFICULTY_RANGE,
+  DELETED_WORDS: pbsrConditions.DELETED_WORDS,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -171,6 +173,14 @@ const SearchTypesEnum = {
       split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
       to 100 (hardest).`,
     },
+    [pbsrConditions.DELETED_WORDS]: {
+      code: pbsrConditions.DELETED_WORDS,
+      displayName: 'Words deleted from previous lexicon',
+      inputType: SearchTypesInputs.NONE,
+      description: `You can search for words that are not in this lexicon but were
+      in the previous version of this lexicon. At the moment, this only works with English lexica.
+      The only filter you can use with this search is the word length filter.`,
+    },
   },
 };
 
@@ -188,6 +198,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,
   SearchTypesEnum.PROBABILITY_LIMIT,
+  SearchTypesEnum.DELETED_WORDS,
 ];
 
 function searchCriteriaOptions(allowedSearchTypes) {
@@ -243,6 +254,8 @@ class SearchCriterion {
           return val.trim();
         case SearchTypesInputs.SELECT:
           return val;
+        case SearchTypesInputs.NONE:
+          return '';
         default:
           throw new Error('Unsupported option name');
       }
@@ -312,6 +325,8 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
         minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
         maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
       });
+    case SearchTypesInputs.NONE:
+      return new SearchCriterion(newtypeId, {});
     default:
       break;
   }
