@@ -22,6 +22,7 @@ import copy
 import logging
 import re
 import time
+from typing import List
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -39,6 +40,7 @@ from lib.wdb_interface.wdb_helper import (
     WDBError,
 )
 from lib.wdb_interface.word_searches import temporary_list_name
+import rpc.wordsearcher.searcher_pb2 as pb
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
@@ -307,7 +309,7 @@ class WordwallsGame(object):
     def initialize_by_search_params(
         self,
         user,
-        search_description,
+        search_description: List[pb.SearchRequest.SearchParam],
         time_secs,
         questions_per_round=None,
         use_table=None,
@@ -323,11 +325,17 @@ class WordwallsGame(object):
             )
 
         try:
-            wl = self.initialize_word_list(
-                word_search(search_description), lexicon, user
-            )
+            questions = word_search(search_description)
         except WDBError as e:
             raise GameInitException(e)
+
+        category = WordList.CATEGORY_ANAGRAM
+        for sd in search_description:
+            if sd.condition == pb.SearchRequest.Condition.DELETED_WORD:
+                category = WordList.CATEGORY_TYPING
+
+        wl = self.initialize_word_list(questions, lexicon, user, category)
+
         wgm = self.create_or_update_game_instance(
             user,
             lexicon,
@@ -557,7 +565,7 @@ class WordwallsGame(object):
             logger.error("Question set is not unique!!")
         orig_questions = json.loads(word_list.origQuestions)
         questions, answer_hash = self.load_questions(
-            qs, orig_questions, word_list.lexicon
+            qs, orig_questions, word_list
         )
 
         state["quizGoing"] = True  # start quiz
@@ -579,6 +587,8 @@ class WordwallsGame(object):
         game_type = state["gameType"]
         if word_list.category == WordList.CATEGORY_BUILD:
             game_type += "_build"  # This is hell of ghetto.
+        elif word_list.category == WordList.CATEGORY_TYPING:
+            game_type += "_typing"
         ret = {
             "questions": questions,
             "time": state["timerSecs"],
@@ -588,7 +598,7 @@ class WordwallsGame(object):
 
         return ret
 
-    def load_questions(self, qs, orig_questions, lexicon):
+    def load_questions(self, qs, orig_questions, word_list):
         """
         Turn the qs array into an array of full question objects, ready
         for the front-end.
@@ -610,7 +620,11 @@ class WordwallsGame(object):
             alphagrams_to_fetch.append(orig_questions[i])
             index_map[orig_questions[i]["q"]] = i
 
-        questions = questions_from_alpha_dicts(lexicon, alphagrams_to_fetch)
+        if word_list.category != WordList.CATEGORY_TYPING:
+            questions = questions_from_alpha_dicts(word_list.lexicon, alphagrams_to_fetch)
+        else:
+            questions = Questions()
+            questions.set_from_list(alphagrams_to_fetch)
         answer_hash = {}
         ret_q_array = []
         for q in questions.questions_array():

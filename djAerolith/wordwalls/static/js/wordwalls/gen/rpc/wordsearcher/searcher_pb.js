@@ -1163,7 +1163,8 @@ proto.wordsearcher.SearchRequest.Condition = {
   NUM_TWO_BLANKS: 15,
   MAX_SOLUTIONS: 16,
   DIFFICULTY_RANGE: 17,
-  PLAYABILITY_RANGE: 18
+  PLAYABILITY_RANGE: 18,
+  DELETED_WORD: 19
 };
 
 /**

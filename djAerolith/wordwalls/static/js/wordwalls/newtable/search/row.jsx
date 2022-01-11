@@ -175,6 +175,9 @@ function SearchRow(props) {
         />
       );
       break;
+    case SearchTypesInputs.NONE:
+      specificForm = null;
+      break;
     default:
       break;
   }

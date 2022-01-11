@@ -40,6 +40,7 @@ class WordwallsAppContainer extends React.Component {
       messages: presence.getMessages(),
       isChallenge: false,
       isBuild: false,
+      isTyping: false,
       totalWords: 0,
       wrongAnswers: 0,
       answeredBy: game.getAnsweredBy(),
@@ -210,6 +211,7 @@ class WordwallsAppContainer extends React.Component {
       this.setState({
         isChallenge: data.gameType.includes('challenge'),
         isBuild: data.gameType.includes('build'),
+        isTyping: data.gameType.includes('typing'),
       });
     }
   }
@@ -691,6 +693,7 @@ class WordwallsAppContainer extends React.Component {
           numberOfRounds={this.state.numberOfRounds}
           isChallenge={this.state.isChallenge}
           isBuild={this.state.isBuild}
+          isTyping={this.state.isTyping}
           curQuestions={this.state.curQuestions}
           origQuestions={this.state.origQuestions}
           totalWords={this.state.totalWords}

@@ -23,14 +23,34 @@ admin.site.register(Maintenance)
 
 
 class WordwallsWordListAdmin(admin.ModelAdmin):
-    fields = ['user', 'name', 'lexicon', 'created', 'lastSaved',
-              'numAlphagrams', 'numCurAlphagrams', 'goneThruOnce', 'missed',
-              'firstMissed', 'origQuestions', 'curQuestions', 'is_temporary',
-              'version', 'questionIndex']
-    search_fields = ['user__username', 'name', 'lexicon__lexiconName']
-    list_display = ['user', 'name', 'lexicon', 'created', 'lastSaved',
-                    'is_temporary']
-    readonly_fields = ('lastSaved', 'created', 'is_temporary')
+    fields = [
+        "user",
+        "name",
+        "lexicon",
+        "created",
+        "lastSaved",
+        "category",
+        "numAlphagrams",
+        "numCurAlphagrams",
+        "goneThruOnce",
+        "missed",
+        "firstMissed",
+        "origQuestions",
+        "curQuestions",
+        "is_temporary",
+        "version",
+        "questionIndex",
+    ]
+    search_fields = ["user__username", "name", "lexicon__lexiconName"]
+    list_display = [
+        "user",
+        "name",
+        "lexicon",
+        "created",
+        "lastSaved",
+        "is_temporary",
+    ]
+    readonly_fields = ("lastSaved", "created", "is_temporary")
 
 
 admin.site.register(WordList, WordwallsWordListAdmin)

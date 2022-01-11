@@ -116,6 +116,12 @@ class SearchDescription(object):
             minmax=pb.SearchRequest.MinMax(min=min_d, max=max_d),
         )
 
+    @staticmethod
+    def deleted_word() -> pb.SearchRequest.SearchParam:
+        return pb.SearchRequest.SearchParam(
+            condition=pb.SearchRequest.Condition.DELETED_WORD
+        )
+
 
 def SearchCriterionFn(searchType: int):
     """
@@ -167,7 +173,7 @@ def get_tagged_alphagrams(tags: List[str], user: User, lexicon: Lexicon):
 def temporary_list_name(
     search_descriptions: List[pb.SearchRequest.SearchParam], lexicon_name: str
 ) -> str:
-    """ Build up a temporary list name given a search description. """
+    """Build up a temporary list name given a search description."""
     tokens = []
     for sd in search_descriptions:
         if sd.condition == pb.SearchRequest.Condition.LEXICON:
@@ -210,8 +216,8 @@ def temporary_list_name(
                 == pb.SearchRequest.NotInLexCondition.OTHER_ENGLISH
             ):  # noqa
                 if lexicon_name == "NWL20":
-                    desc = "CSW19"
-                elif lexicon_name == "CSW19":
+                    desc = "CSW21"
+                elif lexicon_name == "CSW21":
                     desc = "NWL20"
             elif (
                 sd.numbervalue.value
@@ -219,8 +225,8 @@ def temporary_list_name(
             ):  # noqa
                 if lexicon_name == "NWL20":
                     desc = "NWL18"
-                elif lexicon_name == "CSW19":
-                    desc = "CSW15"
+                elif lexicon_name == "CSW21":
+                    desc = "CSW19"
                 elif lexicon_name == "FISE2":
                     desc = "FISE09"
                 elif lexicon_name == "OSPS44":
@@ -230,4 +236,6 @@ def temporary_list_name(
             tokens.append(f"matching {sd.stringvalue.value}")
         elif sd.condition == pb.SearchRequest.Condition.DIFFICULTY_RANGE:
             tokens.append(f"(difficulty {sd.minmax.min} - {sd.minmax.max})")
+        elif sd.condition == pb.SearchRequest.Condition.DELETED_WORD:
+            tokens.append("deleted words")
     return " ".join(tokens)

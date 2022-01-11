@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z3github.com/domino14/word_db_server/rpc/wordsearcher',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\xa6\x01\n\tAlphagram\x12\x11\n\talphagram\x18\x01 \x01(\t\x12!\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x14\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08\x12\x0e\n\x06length\x18\x04 \x01(\x05\x12\x13\n\x0bprobability\x18\x05 \x01(\x05\x12\x14\n\x0c\x63ombinations\x18\x06 \x01(\x03\x12\x12\n\ndifficulty\x18\x07 \x01(\x05\"\xb0\x01\n\x04Word\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x11\n\talphagram\x18\x02 \x01(\t\x12\x12\n\ndefinition\x18\x03 \x01(\t\x12\x13\n\x0b\x66ront_hooks\x18\x04 \x01(\t\x12\x12\n\nback_hooks\x18\x05 \x01(\t\x12\x17\n\x0flexicon_symbols\x18\x06 \x01(\t\x12\x18\n\x10inner_front_hook\x18\x07 \x01(\x08\x12\x17\n\x0finner_back_hook\x18\x08 \x01(\x08\"\xc9\x08\n\rSearchRequest\x12=\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParam\x12\x0e\n\x06\x65xpand\x18\x02 \x01(\x08\x1a\"\n\x06MinMax\x12\x0b\n\x03min\x18\x01 \x01(\x05\x12\x0b\n\x03max\x18\x02 \x01(\x05\x1a\x1c\n\x0bStringValue\x12\r\n\x05value\x18\x01 \x01(\t\x1a\x1d\n\x0bStringArray\x12\x0e\n\x06values\x18\x01 \x03(\t\x1a\x1d\n\x0bNumberArray\x12\x0e\n\x06values\x18\x01 \x03(\x05\x1a\x1c\n\x0bNumberValue\x12\r\n\x05value\x18\x01 \x01(\x05\x1a\x8f\x03\n\x0bSearchParam\x12\x38\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.Condition\x12\x34\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00\x12>\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00\x12>\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00\x12>\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00\x12>\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00\x42\x10\n\x0e\x63onditionparam\"\xfa\x02\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12\t\n\x05REGEX\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\x12\x14\n\x10\x44IFFICULTY_RANGE\x10\x11\x12\x15\n\x11PLAYABILITY_RANGE\x10\x12\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"N\n\x0eSearchResponse\x12+\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.Alphagram\x12\x0f\n\x07lexicon\x18\x02 \x01(\t\"\x91\x01\n\x0e\x41nagramRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x0f\n\x07letters\x18\x02 \x01(\t\x12/\n\x04mode\x18\x03 \x01(\x0e\x32!.wordsearcher.AnagramRequest.Mode\x12\x0e\n\x06\x65xpand\x18\x04 \x01(\x08\"\x1c\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\"G\n\x0f\x41nagramResponse\x12!\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x11\n\tnum_words\x18\x02 \x01(\x05\"\x8c\x01\n\x1b\x42lankChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rnum_questions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x19\n\x11num_with_2_blanks\x18\x04 \x01(\x05\x12\x13\n\x0bword_length\x18\x05 \x01(\x05\"\xa5\x01\n\x1b\x42uildChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rmin_solutions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x12\n\nmin_length\x18\x04 \x01(\x05\x12\x12\n\nmax_length\x18\x05 \x01(\x05\x12\x1f\n\x17require_length_solution\x18\x06 \x01(\x08\x32\x9d\x01\n\x10QuestionSearcher\x12\x43\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\x12\x44\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponse2\x98\x02\n\nAnagrammer\x12\x46\n\x07\x41nagram\x12\x1c.wordsearcher.AnagramRequest\x1a\x1d.wordsearcher.AnagramResponse\x12`\n\x15\x42lankChallengeCreator\x12).wordsearcher.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\x12`\n\x15\x42uildChallengeCreator\x12).wordsearcher.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponseB5Z3github.com/domino14/word_db_server/rpc/wordsearcherb\x06proto3'
+  serialized_pb=b'\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\xa6\x01\n\tAlphagram\x12\x11\n\talphagram\x18\x01 \x01(\t\x12!\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x14\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08\x12\x0e\n\x06length\x18\x04 \x01(\x05\x12\x13\n\x0bprobability\x18\x05 \x01(\x05\x12\x14\n\x0c\x63ombinations\x18\x06 \x01(\x03\x12\x12\n\ndifficulty\x18\x07 \x01(\x05\"\xb0\x01\n\x04Word\x12\x0c\n\x04word\x18\x01 \x01(\t\x12\x11\n\talphagram\x18\x02 \x01(\t\x12\x12\n\ndefinition\x18\x03 \x01(\t\x12\x13\n\x0b\x66ront_hooks\x18\x04 \x01(\t\x12\x12\n\nback_hooks\x18\x05 \x01(\t\x12\x17\n\x0flexicon_symbols\x18\x06 \x01(\t\x12\x18\n\x10inner_front_hook\x18\x07 \x01(\x08\x12\x17\n\x0finner_back_hook\x18\x08 \x01(\x08\"\xdb\x08\n\rSearchRequest\x12=\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParam\x12\x0e\n\x06\x65xpand\x18\x02 \x01(\x08\x1a\"\n\x06MinMax\x12\x0b\n\x03min\x18\x01 \x01(\x05\x12\x0b\n\x03max\x18\x02 \x01(\x05\x1a\x1c\n\x0bStringValue\x12\r\n\x05value\x18\x01 \x01(\t\x1a\x1d\n\x0bStringArray\x12\x0e\n\x06values\x18\x01 \x03(\t\x1a\x1d\n\x0bNumberArray\x12\x0e\n\x06values\x18\x01 \x03(\x05\x1a\x1c\n\x0bNumberValue\x12\r\n\x05value\x18\x01 \x01(\x05\x1a\x8f\x03\n\x0bSearchParam\x12\x38\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.Condition\x12\x34\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00\x12>\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00\x12>\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00\x12>\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00\x12>\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00\x42\x10\n\x0e\x63onditionparam\"\x8c\x03\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12\t\n\x05REGEX\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\x12\x14\n\x10\x44IFFICULTY_RANGE\x10\x11\x12\x15\n\x11PLAYABILITY_RANGE\x10\x12\x12\x10\n\x0c\x44\x45LETED_WORD\x10\x13\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"N\n\x0eSearchResponse\x12+\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.Alphagram\x12\x0f\n\x07lexicon\x18\x02 \x01(\t\"\x91\x01\n\x0e\x41nagramRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x0f\n\x07letters\x18\x02 \x01(\t\x12/\n\x04mode\x18\x03 \x01(\x0e\x32!.wordsearcher.AnagramRequest.Mode\x12\x0e\n\x06\x65xpand\x18\x04 \x01(\x08\"\x1c\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\"G\n\x0f\x41nagramResponse\x12!\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.Word\x12\x11\n\tnum_words\x18\x02 \x01(\x05\"\x8c\x01\n\x1b\x42lankChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rnum_questions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x19\n\x11num_with_2_blanks\x18\x04 \x01(\x05\x12\x13\n\x0bword_length\x18\x05 \x01(\x05\"\xa5\x01\n\x1b\x42uildChallengeCreateRequest\x12\x0f\n\x07lexicon\x18\x01 \x01(\t\x12\x15\n\rmin_solutions\x18\x02 \x01(\x05\x12\x15\n\rmax_solutions\x18\x03 \x01(\x05\x12\x12\n\nmin_length\x18\x04 \x01(\x05\x12\x12\n\nmax_length\x18\x05 \x01(\x05\x12\x1f\n\x17require_length_solution\x18\x06 \x01(\x08\x32\x9d\x01\n\x10QuestionSearcher\x12\x43\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\x12\x44\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponse2\x98\x02\n\nAnagrammer\x12\x46\n\x07\x41nagram\x12\x1c.wordsearcher.AnagramRequest\x1a\x1d.wordsearcher.AnagramResponse\x12`\n\x15\x42lankChallengeCreator\x12).wordsearcher.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\x12`\n\x15\x42uildChallengeCreator\x12).wordsearcher.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponseB5Z3github.com/domino14/word_db_server/rpc/wordsearcherb\x06proto3'
 )
 
 
@@ -126,11 +126,16 @@ _SEARCHREQUEST_CONDITION = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='DELETED_WORD', index=19, number=19,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
   serialized_start=1055,
-  serialized_end=1433,
+  serialized_end=1451,
 )
 _sym_db.RegisterEnumDescriptor(_SEARCHREQUEST_CONDITION)
 
@@ -154,8 +159,8 @@ _SEARCHREQUEST_NOTINLEXCONDITION = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1435,
-  serialized_end=1495,
+  serialized_start=1453,
+  serialized_end=1513,
 )
 _sym_db.RegisterEnumDescriptor(_SEARCHREQUEST_NOTINLEXCONDITION)
 
@@ -179,8 +184,8 @@ _ANAGRAMREQUEST_MODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1695,
-  serialized_end=1723,
+  serialized_start=1713,
+  serialized_end=1741,
 )
 _sym_db.RegisterEnumDescriptor(_ANAGRAMREQUEST_MODE)
 
@@ -610,7 +615,7 @@ _SEARCHREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=398,
-  serialized_end=1495,
+  serialized_end=1513,
 )
 
 
@@ -648,8 +653,8 @@ _SEARCHRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1497,
-  serialized_end=1575,
+  serialized_start=1515,
+  serialized_end=1593,
 )
 
 
@@ -702,8 +707,8 @@ _ANAGRAMREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1578,
-  serialized_end=1723,
+  serialized_start=1596,
+  serialized_end=1741,
 )
 
 
@@ -741,8 +746,8 @@ _ANAGRAMRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1725,
-  serialized_end=1796,
+  serialized_start=1743,
+  serialized_end=1814,
 )
 
 
@@ -801,8 +806,8 @@ _BLANKCHALLENGECREATEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1799,
-  serialized_end=1939,
+  serialized_start=1817,
+  serialized_end=1957,
 )
 
 
@@ -868,8 +873,8 @@ _BUILDCHALLENGECREATEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1942,
-  serialized_end=2107,
+  serialized_start=1960,
+  serialized_end=2125,
 )
 
 _ALPHAGRAM.fields_by_name['words'].message_type = _WORD
@@ -1031,8 +1036,8 @@ _QUESTIONSEARCHER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2110,
-  serialized_end=2267,
+  serialized_start=2128,
+  serialized_end=2285,
   methods=[
   _descriptor.MethodDescriptor(
     name='Search',
@@ -1067,8 +1072,8 @@ _ANAGRAMMER = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2270,
-  serialized_end=2550,
+  serialized_start=2288,
+  serialized_end=2568,
   methods=[
   _descriptor.MethodDescriptor(
     name='Anagram',

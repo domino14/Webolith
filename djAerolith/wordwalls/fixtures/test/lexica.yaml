@@ -88,3 +88,15 @@
     lexiconName: Deutsch
   model: base.lexicon
   pk: 17
+- fields:
+    lengthCounts: '{"10":35415,"11":28237,"12":20669,"13":14211,"14":9334,"15":5889,"2":93,"3":879,"4":3484,"5":8647,"6":17011,"7":27485,"8":36497,"9":39317}'
+    lexiconDescription: Collins 2021 International English Word List
+    lexiconName: CSW21
+  model: base.lexicon
+  pk: 18
+- fields:
+    lengthCounts: '{"10":52562,"11":50917,"12":42889,"13":31377,"14":20311,"15":11868,"2":65,"3":491,"4":1829,"5":5271,"6":12111,"7":22632,"8":35438,"9":46720}'
+    lexiconDescription: French 2020 Word List
+    lexiconName: FRA20
+  model: base.lexicon
+  pk: 19

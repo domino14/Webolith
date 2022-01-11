@@ -49,6 +49,7 @@ function SVGBoard(props) {
         xSize={xSize}
         onShuffle={onShuffle}
         scaleTransform={props.scaleTransform}
+        isTyping={props.isTyping}
       />);
     } else {
       questions.push(<QuestionPlaceholder
@@ -88,6 +89,7 @@ SVGBoard.propTypes = {
   scaleTransform: PropTypes.number,
   questions: PropTypes.instanceOf(Immutable.List).isRequired,
   onShuffle: PropTypes.func.isRequired,
+  isTyping: PropTypes.bool.isRequired,
 };
 
 export default SVGBoard;

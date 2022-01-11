@@ -57,6 +57,7 @@ class GameArea extends React.Component {
           windowWidth={this.props.windowWidth}
           questions={this.props.curQuestions}
           scaleTransform={scaleTransform}
+          isTyping={this.props.isTyping}
         />
       );
     }
@@ -106,6 +107,7 @@ GameArea.propTypes = {
   }).isRequired,
   isChallenge: PropTypes.bool.isRequired,
   isBuild: PropTypes.bool.isRequired,
+  isTyping: PropTypes.bool.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   gridWidth: PropTypes.number.isRequired,

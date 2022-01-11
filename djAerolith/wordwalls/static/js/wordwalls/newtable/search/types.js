@@ -7,6 +7,7 @@ const SearchTypesInputs = {
   ONE_NUMBER: 2,
   ONE_STRING: 3,
   SELECT: 4,
+  NONE: 5,
 };
 
 const SearchTypesEnum = {
@@ -23,6 +24,7 @@ const SearchTypesEnum = {
   PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
   MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
   DIFFICULTY_RANGE: pbsrConditions.DIFFICULTY_RANGE,
+  DELETED_WORD: pbsrConditions.DELETED_WORD,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -126,13 +128,14 @@ const SearchTypesEnum = {
       default: 'other_english',
       options: [
         ['other_english', 'Other English-language lexicon'],
-        ['update', 'Last version of this lexicon'],
+        // ['update', 'Last version of this lexicon'],
+        // Uncomment above when we get a lexicon that adds words.
       ],
       description: `Only looks for words that are NOT in the selected lexicon.
-      The "other English-language lexicon" refers to CSW19 if you are currently
+      The "other English-language lexicon" refers to CSW21 if you are currently
       using the NWL20 lexicon, and NWL20 if you are currently using the
-      CSW19 lexicon. The "last version" is only CSW15 if you are using the CSW19
-      lexicon. NWL20 has no new words compared to NWL18.`,
+      CSW21 lexicon. NWL20 has no new words compared to NWL18, and CSW21 has no new words
+      compared to CSW19.`,
     },
     [pbsrConditions.PROBABILITY_LIMIT]: {
       code: pbsrConditions.PROBABILITY_LIMIT,
@@ -167,9 +170,17 @@ const SearchTypesEnum = {
       minAllowed: 1,
       maxAllowed: 100,
       description: `Difficulty range is only applicable to 7 and 8 letter words
-      in NWL20 and CSW19 currently. These words were
+      in NWL20 and CSW21 currently. These words were
       split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
       to 100 (hardest).`,
+    },
+    [pbsrConditions.DELETED_WORD]: {
+      code: pbsrConditions.DELETED_WORD,
+      displayName: 'Words deleted from previous lexicon',
+      inputType: SearchTypesInputs.NONE,
+      description: `You can search for words that are not in this lexicon but were
+      in the previous version of this lexicon. At the moment, this only works with English lexica.
+      The only filter you can use with this search is the word length filter.`,
     },
   },
 };
@@ -188,6 +199,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,
   SearchTypesEnum.PROBABILITY_LIMIT,
+  SearchTypesEnum.DELETED_WORD,
 ];
 
 function searchCriteriaOptions(allowedSearchTypes) {
@@ -243,6 +255,8 @@ class SearchCriterion {
           return val.trim();
         case SearchTypesInputs.SELECT:
           return val;
+        case SearchTypesInputs.NONE:
+          return '';
         default:
           throw new Error('Unsupported option name');
       }
@@ -312,6 +326,8 @@ function searchCriterionToAdd(wordSearchCriteria, allowedSearchTypes) {
         minValue: SearchTypesEnum.properties[newtypeId].defaultMin,
         maxValue: SearchTypesEnum.properties[newtypeId].defaultMax,
       });
+    case SearchTypesInputs.NONE:
+      return new SearchCriterion(newtypeId, {});
     default:
       break;
   }

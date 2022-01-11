@@ -73,6 +73,7 @@ class GameInactiveArea extends React.Component {
           <h1>Game over!</h1>
           <p>
             You can continue by clicking
+            {' '}
             {startButton}
             {' '}
             again, or
@@ -100,10 +101,12 @@ class GameInactiveArea extends React.Component {
         <div>
           <p>
             Ready to
+            {' '}
             {startButton}
           </p>
           <p>
             List name:
+            {' '}
             {this.props.listName.trim()}
           </p>
           <p>Press Start to quiz, or one of the options below.</p>
