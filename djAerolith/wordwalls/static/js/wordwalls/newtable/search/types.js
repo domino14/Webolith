@@ -24,7 +24,7 @@ const SearchTypesEnum = {
   PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
   MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
   DIFFICULTY_RANGE: pbsrConditions.DIFFICULTY_RANGE,
-  DELETED_WORDS: pbsrConditions.DELETED_WORDS,
+  DELETED_WORD: pbsrConditions.DELETED_WORD,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
@@ -173,8 +173,8 @@ const SearchTypesEnum = {
       split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
       to 100 (hardest).`,
     },
-    [pbsrConditions.DELETED_WORDS]: {
-      code: pbsrConditions.DELETED_WORDS,
+    [pbsrConditions.DELETED_WORD]: {
+      code: pbsrConditions.DELETED_WORD,
       displayName: 'Words deleted from previous lexicon',
       inputType: SearchTypesInputs.NONE,
       description: `You can search for words that are not in this lexicon but were
@@ -198,7 +198,7 @@ const SearchTypesOrder = [
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,
   SearchTypesEnum.PROBABILITY_LIMIT,
-  SearchTypesEnum.DELETED_WORDS,
+  SearchTypesEnum.DELETED_WORD,
 ];
 
 function searchCriteriaOptions(allowedSearchTypes) {

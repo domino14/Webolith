@@ -88,7 +88,8 @@ class WordwallsQuestion extends React.Component {
     const letterFontSize = dims[0] * 7;
     const numberFontSize = dims[0] * 5;
     let countFrom = 0;
-    if (this.props.displayStyle.showChips) {
+    // don't show chips for "typing" quizzes.
+    if (this.props.displayStyle.showChips && !this.props.isTyping) {
       tiles.push(<Chip
         radius={(tileWidth / 2) - 1}
         x={xPadding + 0.5}
@@ -181,6 +182,7 @@ WordwallsQuestion.propTypes = {
   ySize: PropTypes.number.isRequired,
   onShuffle: PropTypes.func.isRequired,
   scaleTransform: PropTypes.number,
+  isTyping: PropTypes.bool.isRequired,
 };
 
 export default WordwallsQuestion;

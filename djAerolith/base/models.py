@@ -81,11 +81,13 @@ class SavedList(models.Model):
     CATEGORY_ANAGRAM = "A"  # Regular word walls
     CATEGORY_BUILD = "B"  # Subwords
     CATEGORY_THROUGH_TILES = "T"
+    CATEGORY_TYPING = "Y"  # Words are not scrambled; essentially a typing test
 
     LIST_CATEGORIES = (
         (CATEGORY_ANAGRAM, "Anagram"),
         (CATEGORY_BUILD, "Build"),
         (CATEGORY_THROUGH_TILES, "Through"),
+        (CATEGORY_TYPING, "Typing"),
     )
 
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)

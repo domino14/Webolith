@@ -6,6 +6,7 @@ from twirp.exceptions import TwirpServerException
 
 from base.models import Lexicon
 from lib.domain import Questions
+from lib.wdb_interface.constants import TIMEOUT
 from lib.wdb_interface.exceptions import WDBError
 from lib.wdb_interface.word_searches import SearchDescription
 from rpc.wordsearcher.searcher_twirp import QuestionSearcherClient
@@ -38,7 +39,9 @@ def questions_from_alpha_dicts(
     alphas looks like:
         [{'q': ..., 'a': [...]}, ...] where everything is a string.
     """
-    client = QuestionSearcherClient(settings.WORD_DB_SERVER_ADDRESS)
+    client = QuestionSearcherClient(
+        settings.WORD_DB_SERVER_ADDRESS, timeout=TIMEOUT
+    )
 
     sr = pb.SearchResponse()
     sr.lexicon = lexicon.lexiconName
@@ -57,6 +60,7 @@ def questions_from_alpha_dicts(
         response = client.Expand(ctx=Context(), request=sr)
     except TwirpServerException as e:
         raise WDBError(e)
+    print("response", response)
     qs = Questions()
     qs.set_from_pb_alphagrams(response.alphagrams)
     return qs
@@ -93,7 +97,9 @@ def questions_from_probability_list(
 def word_search(
     search_descriptions: List[pb.SearchRequest.SearchParam], expand=False
 ) -> Questions:
-    client = QuestionSearcherClient(settings.WORD_DB_SERVER_ADDRESS)
+    client = QuestionSearcherClient(
+        settings.WORD_DB_SERVER_ADDRESS, timeout=TIMEOUT
+    )
     sr = pb.SearchRequest()
     sr.expand = expand
     sr.searchparams.extend(search_descriptions)

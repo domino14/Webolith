@@ -99,7 +99,7 @@ def api_answers(request):
 @login_required
 @require_GET
 def challenges_played(request):
-    """ Get the challenges for the given day, played by the logged-in user. """
+    """Get the challenges for the given day, played by the logged-in user."""
 
     lex = request.GET.get("lexicon")
     ch_date = date_from_request_dict(request.GET)
@@ -175,7 +175,7 @@ def special_challenges(request):
 
 def load_new_words(f):
     def wrap(request, *args, **kwargs):
-        """ A decorator for all the functions that load new words. """
+        """A decorator for all the functions that load new words."""
         try:
             body = json.loads(request.body)
         except (TypeError, ValueError):
@@ -317,6 +317,10 @@ def build_search_criteria(
             hold_until_end = criterion_fn(new_tags, user, lexicon)
         elif criterion["searchType"] in SINGLE_STRING_DESCRIPTIONS:
             search.append(criterion_fn(criterion["value"].strip()))
+        else:
+            # No value, this criterion must not be associated with a specific
+            # filter value.
+            search.append(criterion_fn())
 
     if hold_until_end:
         search.append(hold_until_end)
@@ -356,7 +360,7 @@ def new_search(request, parsed_req_body):
 @require_POST
 @load_new_words
 def load_aerolith_list(request, parsed_req_body):
-    """ Load an Aerolith list (a pre-defined list) into this table. """
+    """Load an Aerolith list (a pre-defined list) into this table."""
 
     try:
         named_list = NamedList.objects.get(pk=parsed_req_body["selectedList"])
@@ -380,7 +384,7 @@ def load_aerolith_list(request, parsed_req_body):
 @require_POST
 @load_new_words
 def load_saved_list(request, parsed_req_body):
-    """ Load a user Saved List into this table. """
+    """Load a user Saved List into this table."""
 
     try:
         saved_list = WordList.objects.get(
@@ -495,7 +499,7 @@ def access_to_table(tablenum, user):
 
 
 def date_from_request_dict(request_dict):
-    """ Get the date from the given request dictionary. """
+    """Get the date from the given request dictionary."""
     # YYYY-mm-dd
     dt = request_dict.get("date")
     return date_from_str(dt)

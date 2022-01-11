@@ -80,6 +80,7 @@ class WordwallsApp extends React.Component {
               numberOfRounds={this.props.numberOfRounds}
               isChallenge={this.props.isChallenge}
               isBuild={this.props.isBuild}
+              isTyping={this.props.isTyping}
               curQuestions={this.props.curQuestions}
               origQuestions={this.props.origQuestions}
               displayStyle={this.props.displayStyle}
@@ -225,6 +226,7 @@ WordwallsApp.propTypes = {
   numberOfRounds: PropTypes.number.isRequired,
   isChallenge: PropTypes.bool.isRequired,
   isBuild: PropTypes.bool.isRequired,
+  isTyping: PropTypes.bool.isRequired,
   curQuestions: PropTypes.instanceOf(Immutable.List).isRequired,
   origQuestions: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
   totalWords: PropTypes.number.isRequired,
