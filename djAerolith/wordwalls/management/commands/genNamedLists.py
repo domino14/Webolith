@@ -86,7 +86,7 @@ def create_wl_lists(i, lex):
         json.dumps([1, num_for_this_length]),
         "The " + friendly_number_map[i],
     )
-    if i >= 7 and i <= 8:
+    if i >= 7 and i <= 9:
         # create 'every x' list
         for p in range(1, num_for_this_length + 1, LIST_GRANULARITY):
             min_p = p
@@ -168,10 +168,10 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "NWL20 {} not in CSW19".format(friendly_number_map[i]),
+            "NWL20 {} not in CSW21".format(friendly_number_map[i]),
         )
 
-    if lex.lexiconName == "CSW19":
+    if lex.lexiconName == "CSW21":
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
@@ -179,15 +179,6 @@ def create_wl_lists(i, lex):
                 SearchDescription.not_in_lexicon("update"),
             ]
         ).to_python()
-        create_named_list(
-            lex,
-            len(qs),
-            i,
-            False,
-            json.dumps(qs),
-            "CSW19 {} not in CSW15".format(friendly_number_map[i]),
-        )
-
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
@@ -201,7 +192,7 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "CSW19 {} not in NWL20".format(friendly_number_map[i]),
+            "CSW21 {} not in NWL20".format(friendly_number_map[i]),
         )
 
 
@@ -450,6 +441,54 @@ def create_german_lists():
             )
 
 
+def create_french_lists():
+    lex = Lexicon.objects.get(lexiconName="FRA20")
+    for i in range(2, 15):
+        logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
+        length_counts = json.loads(lex.lengthCounts)
+        num_for_this_length = length_counts[str(i)]
+
+        create_named_list(
+            lex,
+            num_for_this_length,
+            i,
+            True,
+            json.dumps([1, num_for_this_length]),
+            "The " + friendly_number_map[i],
+        )
+        if i >= 7 and i <= 9:
+            # create 'every x' list
+            for p in range(1, num_for_this_length + 1, LIST_GRANULARITY):
+                min_p = p
+                max_p = min(p + LIST_GRANULARITY - 1, num_for_this_length)
+                create_named_list(
+                    lex,
+                    max_p - min_p + 1,
+                    i,
+                    True,
+                    json.dumps([min_p, max_p]),
+                    "{} ({} to {})".format(friendly_number_map[i], p, max_p),
+                )
+
+        if i >= 4 and i <= 8:
+            qs = word_search(
+                [
+                    SearchDescription.lexicon(lex),
+                    SearchDescription.matching_anagram(
+                        "[JKQWXYZ]" + "?" * (i - 1)
+                    ),
+                ]
+            ).to_python()
+            create_named_list(
+                lex,
+                len(qs),
+                i,
+                False,
+                json.dumps(qs),
+                friendly_number_map[i] + " with any of JKQWXYZ",
+            )
+
+
 def create_common_words_lists():
     """Creates common words lists for OWL2."""
     return
@@ -492,14 +531,12 @@ class Command(BaseCommand):
         import time
 
         start = time.time()
-        # NamedList.objects.filter(
-        #     lexicon__lexiconName__in=["CSW19", "NWL20"]
-        # ).delete()
-        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW19"]):
-        #     createNamedLists(lex)
+        NamedList.objects.filter(lexicon__lexiconName__in=["NWL20"]).delete()
+        for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW21"]):
+            createNamedLists(lex)
         # create_spanish_lists()
         # NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
-        create_german_lists()
+        create_french_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
         print(f"Elapsed: {time.time()-start} s")

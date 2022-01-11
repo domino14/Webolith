@@ -128,13 +128,14 @@ const SearchTypesEnum = {
       default: 'other_english',
       options: [
         ['other_english', 'Other English-language lexicon'],
-        ['update', 'Last version of this lexicon'],
+        // ['update', 'Last version of this lexicon'],
+        // Uncomment above when we get a lexicon that adds words.
       ],
       description: `Only looks for words that are NOT in the selected lexicon.
-      The "other English-language lexicon" refers to CSW19 if you are currently
+      The "other English-language lexicon" refers to CSW21 if you are currently
       using the NWL20 lexicon, and NWL20 if you are currently using the
-      CSW19 lexicon. The "last version" is only CSW15 if you are using the CSW19
-      lexicon. NWL20 has no new words compared to NWL18.`,
+      CSW21 lexicon. NWL20 has no new words compared to NWL18, and CSW21 has no new words
+      compared to CSW19.`,
     },
     [pbsrConditions.PROBABILITY_LIMIT]: {
       code: pbsrConditions.PROBABILITY_LIMIT,
@@ -169,7 +170,7 @@ const SearchTypesEnum = {
       minAllowed: 1,
       maxAllowed: 100,
       description: `Difficulty range is only applicable to 7 and 8 letter words
-      in NWL20 and CSW19 currently. These words were
+      in NWL20 and CSW21 currently. These words were
       split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
       to 100 (hardest).`,
     },

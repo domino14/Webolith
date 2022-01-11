@@ -31,6 +31,7 @@ EXCLUDED_LEXICA = [
     "OWL2",
     "CSW07",
     "CSW12",
+    "CSW19",
     "America2016",
     "FISE09",
     "America",
@@ -41,7 +42,8 @@ EXCLUDED_LEXICA = [
     "OSPS42",
 ]
 
-# XXX: This handles Spanish, English, Polish, German. It is pretty ghetto.
+# XXX: This handles Spanish, English, Polish, German, French.
+# It is pretty ghetto.
 # Consider reworking with lexicon-specific reordering (see macondo e.g.)
 SORT_STRING_ORDER = "AĄÄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓÖPQR3SŚTUÜVWXYZŹŻ?"
 SORT_MAP = {}
@@ -194,7 +196,7 @@ class SavedList(models.Model):
         return wl
 
     def restart_list(self, shuffle=False):
-        """ Restart this list; save it back to the database. """
+        """Restart this list; save it back to the database."""
         self.initialize_list(
             json.loads(self.origQuestions),
             self.lexicon,
@@ -205,7 +207,7 @@ class SavedList(models.Model):
         )
 
     def set_to_first_missed(self):
-        """ Set this list to quiz on first missed questions; save. """
+        """Set this list to quiz on first missed questions; save."""
         self.curQuestions = self.firstMissed
         self.numCurAlphagrams = self.numFirstMissed
         self.questionIndex = 0
@@ -214,7 +216,7 @@ class SavedList(models.Model):
         self.save()
 
     def set_to_missed(self):
-        """ Set this list to start quizzing on the missed questions; save. """
+        """Set this list to start quizzing on the missed questions; save."""
         self.curQuestions = self.missed
         self.numCurAlphagrams = self.numMissed
         self.questionIndex = 0

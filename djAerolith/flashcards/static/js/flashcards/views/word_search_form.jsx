@@ -8,12 +8,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import SearchRows from '../../../../../wordwalls/static/js/wordwalls/newtable/search/rows';
-import { SearchTypesEnum,
-  SearchCriterion } from '../../../../../wordwalls/static/js/wordwalls/newtable/search/types';
+import {
+  SearchTypesEnum,
+  SearchCriterion,
+} from '../../../../../wordwalls/static/js/wordwalls/newtable/search/types';
 
 import Select from '../../../../../wordwalls/static/js/wordwalls/forms/select';
 import ContainerWithSearchRows from '../../../../../wordwalls/static/js/wordwalls/newtable/dialog_container_with_search_rows';
-
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -32,8 +33,8 @@ const lexOptions = [{
   value: 'NWL20',
   displayValue: 'NWL20',
 }, {
-  value: 'CSW19',
-  displayValue: 'CSW19',
+  value: 'CSW21',
+  displayValue: 'CSW21',
 }];
 
 class WordSearchForm extends React.Component {
@@ -48,7 +49,7 @@ class WordSearchForm extends React.Component {
 
   searchSubmit() {
     this.props.loadWords({
-      searchCriteria: this.props.searches.map(s => s.toJSObj()),
+      searchCriteria: this.props.searches.map((s) => s.toJSObj()),
       lexicon: this.state.lexicon,
     });
   }
@@ -91,7 +92,8 @@ class WordSearchForm extends React.Component {
               className="btn btn-primary"
               type="button"
               onClick={this.searchSubmit}
-            >Search
+            >
+              Search
             </button>
           </div>
         </div>
