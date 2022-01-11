@@ -176,13 +176,6 @@ def create_wl_lists(i, lex):
             [
                 SearchDescription.lexicon(lex),
                 SearchDescription.length(i, i),
-                SearchDescription.not_in_lexicon("update"),
-            ]
-        ).to_python()
-        qs = word_search(
-            [
-                SearchDescription.lexicon(lex),
-                SearchDescription.length(i, i),
                 SearchDescription.not_in_lexicon("other_english"),
             ]
         ).to_python()
