@@ -12,7 +12,7 @@ function getLexiconName(availableLexica, lexicon) {
   return availableLexica.find((el) => el.id === lexicon).lexicon;
 }
 
-const ALL_TIME_TOUGHIE_LEXICA = ['CSW19', 'NWL20'];
+const ALL_TIME_TOUGHIE_LEXICA = ['CSW21', 'NWL20'];
 
 function ChallengeDialog(props) {
   // For the different order priorities, make different buttons.
