@@ -32,16 +32,13 @@ const FLASHCARD_URL = '/flashcards/';
 const NO_LOAD_WHILE_PLAYING = (
   'Please wait until the end of the game to perform that action.');
 
-const COLLINS_LEX_ID = 1;
 const NWL20_LEX_ID = 15;
 const FISE2_LEX_ID = 10;
 const OSPS_LEX_ID = 16;
-const COLLINS_19_LEX_ID = 12;
+const COLLINS_21_LEX_ID = 18;
 const DEUTSCH_LEX_ID = 17;
 
-const COLLINS_LICENSE_TEXT = `
-The Collins Official Scrabble Words 2015 (CSW15) is copyright of
-HarperCollins Publishers 2015 and used with permission.`;
+const COLLINS_LICENSE_TEXT = 'Published under license with Collins, an imprint of HarperCollins Publishers Limited';
 const NASPA_LICENSE_TEXT = `
 NASPA Word List, 2020 Edition (NWL20), © 2020 North American Word Game
 Players Association.  All rights reserved.`;
@@ -50,8 +47,6 @@ const FISE2_LICENSE_TEXT = `
 Reservados Todos Los Derechos.`;
 const OSPS_LICENSE_TEXT = `
 Copyright 2019 Polska Federacja Scrabble. Used with permission.`;
-const COLLINS_19_LICENSE_TEXT = `
-Collins Official Scrabble Words 2019 © HarperCollins Publishers 2019`;
 const DEUTSCH_LICENSE_TEXT = `
 The “Scrabble®-Turnierliste” used as the German Lexicon is subject to copyright and related rights of Scrabble® Deutschland e.V.
 With the friendly assistance of Gero Illings SuperDic.`;
@@ -370,10 +365,8 @@ class TableCreator extends React.Component {
 
   renderLicenseText() {
     switch (this.state.currentLexicon) {
-      case COLLINS_LEX_ID:
+      case COLLINS_21_LEX_ID:
         return (<span>{COLLINS_LICENSE_TEXT}</span>);
-      case COLLINS_19_LEX_ID:
-        return (<span>{COLLINS_19_LICENSE_TEXT}</span>);
       case NWL20_LEX_ID:
         return (<span>{NASPA_LICENSE_TEXT}</span>);
       case FISE2_LEX_ID:
