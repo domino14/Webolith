@@ -128,7 +128,7 @@ describe('<SearchDialogContainer />', () => {
         // Click 'add' a whole bunch of times.
         wrapper.find('.btn-add-search-row').at(0).simulate('click');
       }
-      expect(wrapper.find(SearchRow).length).toBe(10);
+      expect(wrapper.find(SearchRow).length).toBe(11);
       // And search specifically that fixed length wasn't rendered.
       const selectOptions = wrapper.find('.search-row').at(0).find('select option');
       const optionSet = new Set();
