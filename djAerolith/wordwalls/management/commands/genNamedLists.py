@@ -321,7 +321,7 @@ def create_spanish_lists():
 
 
 def create_polish_lists():
-    lex = Lexicon.objects.get(lexiconName="OSPS44")
+    lex = Lexicon.objects.get(lexiconName="OSPS46")
     for i in range(2, 16):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -381,7 +381,7 @@ def create_polish_lists():
             i,
             False,
             json.dumps(qs),
-            "OSPS44 {} not in OSPS42".format(friendly_number_map[i]),
+            "OSPS46 {} not in OSPS44".format(friendly_number_map[i]),
         )
 
 
@@ -524,12 +524,13 @@ class Command(BaseCommand):
         import time
 
         start = time.time()
-        NamedList.objects.filter(lexicon__lexiconName__in=["NWL20"]).delete()
-        for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW21"]):
-            createNamedLists(lex)
+        # NamedList.objects.filter(lexicon__lexiconName__in=["NWL20"]).delete()
+        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW21"]):
+        #     createNamedLists(lex)
         # create_spanish_lists()
         # NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
-        create_french_lists()
+        # create_french_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
+        create_polish_lists()
         print(f"Elapsed: {time.time()-start} s")

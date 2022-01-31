@@ -229,8 +229,8 @@ def temporary_list_name(
                     desc = "CSW19"
                 elif lexicon_name == "FISE2":
                     desc = "FISE09"
-                elif lexicon_name == "OSPS44":
-                    desc = "OSPS42"
+                elif lexicon_name == "OSPS46":
+                    desc = "OSPS44"
             tokens.append(f"not in {desc}")
         elif sd.condition == pb.SearchRequest.Condition.MATCHING_ANAGRAM:
             tokens.append(f"matching {sd.stringvalue.value}")

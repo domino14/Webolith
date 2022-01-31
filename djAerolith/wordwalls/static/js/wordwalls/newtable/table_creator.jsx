@@ -34,7 +34,7 @@ const NO_LOAD_WHILE_PLAYING = (
 
 const NWL20_LEX_ID = 15;
 const FISE2_LEX_ID = 10;
-const OSPS_LEX_ID = 16;
+const OSPS_LEX_ID = 20;
 const COLLINS_21_LEX_ID = 18;
 const DEUTSCH_LEX_ID = 17;
 
@@ -46,7 +46,7 @@ const FISE2_LICENSE_TEXT = `
 © 2016 FISE (Federación Internacional de Scrabble en Español).
 Reservados Todos Los Derechos.`;
 const OSPS_LICENSE_TEXT = `
-Copyright 2019 Polska Federacja Scrabble. Used with permission.`;
+Copyright 2022 Polska Federacja Scrabble. Used with permission.`;
 const DEUTSCH_LICENSE_TEXT = `
 The “Scrabble®-Turnierliste” used as the German Lexicon is subject to copyright and related rights of Scrabble® Deutschland e.V.
 With the friendly assistance of Gero Illings SuperDic.`;
