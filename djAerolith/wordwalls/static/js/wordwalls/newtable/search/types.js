@@ -125,11 +125,10 @@ const SearchTypesEnum = {
       code: pbsrConditions.NOT_IN_LEXICON,
       displayName: 'Not in lexicon',
       inputType: SearchTypesInputs.SELECT,
-      default: 'other_english',
-      options: [
+      default: 'update',
+        options: [
+        ['update', 'Last version of this lexicon'],
         ['other_english', 'Other English-language lexicon'],
-        // ['update', 'Last version of this lexicon'],
-        // Uncomment above when we get a lexicon that adds words.
       ],
       description: `Only looks for words that are NOT in the selected lexicon.
       The "other English-language lexicon" refers to CSW21 if you are currently
