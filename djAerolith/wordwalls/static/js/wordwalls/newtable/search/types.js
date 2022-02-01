@@ -126,7 +126,7 @@ const SearchTypesEnum = {
       displayName: 'Not in lexicon',
       inputType: SearchTypesInputs.SELECT,
       default: 'update',
-        options: [
+      options: [
         ['update', 'Last version of this lexicon'],
         ['other_english', 'Other English-language lexicon'],
       ],
