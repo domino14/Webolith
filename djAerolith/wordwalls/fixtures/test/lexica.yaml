@@ -100,3 +100,9 @@
     lexiconName: FRA20
   model: base.lexicon
   pk: 19
+- fields:
+    lengthCounts: '{"10":303710,"11":348991,"12":360073,"13":341299,"14":302301,"15":246260,"2":101,"3":1124,"4":5263,"5":18224,"6":44553,"7":92463,"8":160219,"9":236917}'
+    lexiconDescription: "Polska Federacja Scrabble - Update 46"
+    lexiconName: OSPS46
+  model: base.lexicon
+  pk: 20
