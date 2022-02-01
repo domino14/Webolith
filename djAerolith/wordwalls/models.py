@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 class DailyChallengeName(models.Model):
     WEEKS_BINGO_TOUGHIES = "Week's Bingo Toughies"
     ALLTIME_BINGO_TOUGHIES = "All-time Bingo Toughies"
+    HIGHPROB_TOUGHIES = "High Probability Toughies"
     BLANK_BINGOS = "Blank Bingos"
     BINGO_MARATHON = "Bingo Marathon"
     COMMON_SHORT = "Common Words (short)"
@@ -51,18 +52,18 @@ class DailyChallengeName(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['orderPriority', 'id']
+        ordering = ["orderPriority", "id"]
 
 
 class DailyChallenge(models.Model):
-    CATEGORY_ANAGRAM = 'A'
-    CATEGORY_BUILD = 'B'
-    CATEGORY_THROUGH_TILES = 'T'
+    CATEGORY_ANAGRAM = "A"
+    CATEGORY_BUILD = "B"
+    CATEGORY_THROUGH_TILES = "T"
 
     CHALLENGE_CATEGORIES = (
-        (CATEGORY_ANAGRAM, 'Anagram'),
-        (CATEGORY_BUILD, 'Build'),
-        (CATEGORY_THROUGH_TILES, 'Through'),
+        (CATEGORY_ANAGRAM, "Anagram"),
+        (CATEGORY_BUILD, "Build"),
+        (CATEGORY_THROUGH_TILES, "Through"),
     )
 
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
@@ -73,18 +74,22 @@ class DailyChallenge(models.Model):
     # the `name` above is poorly named and should be named something like
     # challenge type.
     # Even this should be localizable .. eventually :/
-    visible_name = models.CharField(blank=True, default='', max_length=32)
+    visible_name = models.CharField(blank=True, default="", max_length=32)
     # XXX: alphagrams should be more aptly renamed to 'questions' in order
     # to make challenges more generic (subwords, through-tiles, etc)
     alphagrams = models.TextField()
     # the number of seconds alloted for this challenge
     seconds = models.IntegerField()
-    category = models.CharField(choices=CHALLENGE_CATEGORIES, max_length=2,
-                                default=CATEGORY_ANAGRAM)
+    category = models.CharField(
+        choices=CHALLENGE_CATEGORIES, max_length=2, default=CATEGORY_ANAGRAM
+    )
 
     def __str__(self):
-        return "%s %s (%s)" % (self.date, self.name.name,
-                               self.lexicon.lexiconName)
+        return "%s %s (%s)" % (
+            self.date,
+            self.name.name,
+            self.lexicon.lexiconName,
+        )
 
     class Meta:
         unique_together = ("name", "lexicon", "date")
@@ -93,8 +98,7 @@ class DailyChallenge(models.Model):
 
 
 class DailyChallengeLeaderboard(models.Model):
-    challenge = models.OneToOneField(DailyChallenge,
-                                     on_delete=models.CASCADE)
+    challenge = models.OneToOneField(DailyChallenge, on_delete=models.CASCADE)
     maxScore = models.IntegerField()
     medalsAwarded = models.BooleanField(default=False)
 
@@ -103,8 +107,9 @@ class DailyChallengeLeaderboard(models.Model):
 
 
 class DailyChallengeLeaderboardEntry(models.Model):
-    board = models.ForeignKey(DailyChallengeLeaderboard,
-                              on_delete=models.CASCADE)
+    board = models.ForeignKey(
+        DailyChallengeLeaderboard, on_delete=models.CASCADE
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()
     wrong_answers = models.IntegerField(default=0)
@@ -113,9 +118,12 @@ class DailyChallengeLeaderboardEntry(models.Model):
     qualifyForAward = models.BooleanField(default=True)
 
     def __str__(self):
-        return '{0} --- {1} {2} ({3} s.)'.format(
-            self.board.challenge.__str__(), self.user.username,
-            self.score, self.timeRemaining)
+        return "{0} --- {1} {2} ({3} s.)".format(
+            self.board.challenge.__str__(),
+            self.user.username,
+            self.score,
+            self.timeRemaining,
+        )
 
     class Meta:
         unique_together = ("board", "user")
@@ -125,13 +133,14 @@ class DailyChallengeLeaderboardEntry(models.Model):
 
 
 class WordwallsGameModel(GenericTableGameModel):
-    word_list = models.ForeignKey(WordList,
-                                  on_delete=models.SET_NULL, null=True)
+    word_list = models.ForeignKey(
+        WordList, on_delete=models.SET_NULL, null=True
+    )
 
     def delete(self, *args, **kwargs):
         # Delete related word_list, if it's temporary.
         if self.word_list and self.word_list.is_temporary:
-            logger.info('Deleting temporary word list: %s', self.word_list)
+            logger.info("Deleting temporary word list: %s", self.word_list)
             self.word_list.delete()
         super(WordwallsGameModel, self).delete(*args, **kwargs)
 
@@ -139,24 +148,25 @@ class WordwallsGameModel(GenericTableGameModel):
 class DailyChallengeMissedBingos(models.Model):
     # only tracks missed 7&8 letter words from daily challenges
     challenge = models.ForeignKey(DailyChallenge, on_delete=models.CASCADE)
-    alphagram_string = models.CharField(max_length=15, default='')
+    alphagram_string = models.CharField(max_length=15, default="")
     numTimesMissed = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ("alphagram_string", "challenge")
-        verbose_name = 'Daily Challenge Missed Bingo'
-        verbose_name_plural = 'Daily Challenge Missed Bingos'
+        verbose_name = "Daily Challenge Missed Bingo"
+        verbose_name_plural = "Daily Challenge Missed Bingos"
 
     def __str__(self):
         return "%s, %s, %d" % (
             self.challenge.__str__(),
             self.alphagram_string,
-            self.numTimesMissed)
+            self.numTimesMissed,
+        )
 
 
 class NamedList(models.Model):
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, default='')
+    name = models.CharField(max_length=50, default="")
     numQuestions = models.IntegerField()
     wordLength = models.IntegerField()
     isRange = models.BooleanField()
@@ -168,30 +178,33 @@ class Medal(models.Model):
     A medal is a sort of badge awarded for high performance at a challenge.
 
     """
-    TYPE_BRONZE = 'B'
-    TYPE_SILVER = 'S'
-    TYPE_GOLD = 'G'
-    TYPE_PLATINUM = 'PS'
-    TYPE_GOLD_STAR = 'GS'
+
+    TYPE_BRONZE = "B"
+    TYPE_SILVER = "S"
+    TYPE_GOLD = "G"
+    TYPE_PLATINUM = "PS"
+    TYPE_GOLD_STAR = "GS"
 
     MEDAL_TYPES = (
-        (TYPE_BRONZE, 'Bronze'),
-        (TYPE_SILVER, 'Silver'),
-        (TYPE_GOLD, 'Gold'),
-        (TYPE_PLATINUM, 'Platinum'),
-        (TYPE_GOLD_STAR, 'GoldStar')
+        (TYPE_BRONZE, "Bronze"),
+        (TYPE_SILVER, "Silver"),
+        (TYPE_GOLD, "Gold"),
+        (TYPE_PLATINUM, "Platinum"),
+        (TYPE_GOLD_STAR, "GoldStar"),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    leaderboard = models.ForeignKey(DailyChallengeLeaderboard,
-                                    on_delete=models.CASCADE)
+    leaderboard = models.ForeignKey(
+        DailyChallengeLeaderboard, on_delete=models.CASCADE
+    )
     medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
 
     def __str__(self):
-        return '{0}: {1} ({2})'.format(self.user, self.medal_type,
-                                       self.leaderboard)
+        return "{0}: {1} ({2})".format(
+            self.user, self.medal_type, self.leaderboard
+        )
 
     class Meta:
-        unique_together = ('user', 'leaderboard')
+        unique_together = ("user", "leaderboard")
 
 
 # class Message(models.Model):

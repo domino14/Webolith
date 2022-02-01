@@ -90,6 +90,14 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
             questions_from_alphagrams(lex, alphagrams),
             challenge_name.timeSecs,
         )
+    elif challenge_name.name == DailyChallengeName.HIGHPROB_TOUGHIES:
+        alphagrams = generate_highprob_toughies_challenge(lex)
+        if len(alphagrams) == 0:
+            return Questions(), 0
+        return (
+            questions_from_alphagrams(lex, alphagrams),
+            challenge_name.timeSecs,
+        )
     elif challenge_name.name == DailyChallengeName.BLANK_BINGOS:
         questions = generate_blank_bingos_challenge(lex)
         questions.shuffle()
@@ -156,7 +164,7 @@ def generate_blank_bingos_challenge(lex):
 
 
 def generate_word_builder_challenge(lex, lmin, lmax):
-    """ Contact builder server and generate builder challenges. """
+    """Contact builder server and generate builder challenges."""
     # Require the lmax rack to have a word in it some percentage of the time.
     min_sols_mu = 0
     min_sols_sigma = 0
@@ -306,6 +314,25 @@ def generate_alltime_toughies_challenge(lexicon):
         )
     except WDBError:
         logger.exception("alltime-toughies-error")
+        return []
+    qs.shuffle()
+    return qs.alphagram_string_list()[:50]
+
+
+def generate_highprob_toughies_challenge(lexicon):
+    try:
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lexicon),
+                SearchDescription.length(7, 8),
+                SearchDescription.probability_range(1, 10000),
+                SearchDescription.difficulty_range(
+                    81, 100
+                ),  # top 20% hardest bingos
+            ]
+        )
+    except WDBError:
+        logger.exception("highprob-toughies-error")
         return []
     qs.shuffle()
     return qs.alphagram_string_list()[:50]

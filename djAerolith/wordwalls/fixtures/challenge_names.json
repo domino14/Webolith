@@ -131,7 +131,7 @@
     "fields": {
       "name": "Week's Bingo Toughies",
       "timeSecs": 300,
-      "orderPriority": 2
+      "orderPriority": 6
     }
   },
   {
@@ -159,7 +159,7 @@
     "fields": {
       "name": "Common Words (short)",
       "timeSecs": 300,
-      "orderPriority": 0
+      "orderPriority": 7
     }
   },
   {
@@ -168,7 +168,7 @@
     "fields": {
       "name": "Common Words (long)",
       "timeSecs": 360,
-      "orderPriority": 2
+      "orderPriority": 7
     }
   },
   {
@@ -249,7 +249,16 @@
     "fields": {
       "name": "All-time Bingo Toughies",
       "timeSecs": 300,
-      "orderPriority": 2
+      "orderPriority": 6
+    }
+  },
+  {
+    "model": "wordwalls.DailyChallengeName",
+    "pk": 29,
+    "fields": {
+      "name": "High Probability Toughies",
+      "timeSecs": 300,
+      "orderPriority": 6
     }
   }
 ]
