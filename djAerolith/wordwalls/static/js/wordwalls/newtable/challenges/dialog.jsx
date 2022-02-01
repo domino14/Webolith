@@ -51,22 +51,19 @@ function ChallengeDialog(props) {
     selectedChallenge={props.currentChallenge}
   />);
 
-  // Hard challenges
+  // Bingo toughies
   rows.push(<ChallengeButtonRow
-    title="Tougher Challenges"
+    title="Bingo Toughies"
     size="sm"
     key="ch3"
     challenges={
       // Leave out the "Common Words (long)" for now, and all-time toughies
       // for all but permitted lexica.
       props.challengeInfo.filter((ch) => {
-        if (ch.orderPriority !== 2) {
+        if (ch.orderPriority !== 6) {
           return false;
         }
-        if (ch.id === 19) {
-          return false;
-        }
-        if (ch.id === 28 && !ALL_TIME_TOUGHIE_LEXICA.includes(
+        if ((ch.id === 28 || ch.id === 29) && !ALL_TIME_TOUGHIE_LEXICA.includes(
           getLexiconName(props.availableLexica, props.lexicon),
         )) {
           return false;
@@ -74,6 +71,17 @@ function ChallengeDialog(props) {
         return true;
       })
     }
+    onChallengeClick={props.onChallengeSelected}
+    solvedChallenges={challs}
+    selectedChallenge={props.currentChallenge}
+  />);
+
+  // Longer challenges
+  rows.push(<ChallengeButtonRow
+    title="Longer challenges"
+    size="sm"
+    key="ch3"
+    challenges={props.challengeInfo.filter((ch) => ch.orderPriority === 2)}
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}
     selectedChallenge={props.currentChallenge}
