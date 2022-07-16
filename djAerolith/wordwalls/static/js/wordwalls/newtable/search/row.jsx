@@ -222,6 +222,7 @@ function SearchRow(props) {
 SearchRow.propTypes = {
   searchType: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
   searchCriterion: PropTypes.objectOf(PropTypes.any).isRequired,
   minAllowedValue: PropTypes.number,
   maxAllowedValue: PropTypes.number,
