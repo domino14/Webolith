@@ -1,3 +1,4 @@
+// REWRITE THESE TESTS - enzyme no longer updated
 import React from 'react';
 import { render, mount } from 'enzyme';
 import sinon from 'sinon';
