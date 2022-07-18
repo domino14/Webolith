@@ -1,4 +1,3 @@
-// REWRITE THESE TESTS - enzyme no longer updated
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import sinon from 'sinon';
