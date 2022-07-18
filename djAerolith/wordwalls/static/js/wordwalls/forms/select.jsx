@@ -16,6 +16,7 @@ function Select(props) {
       <option
         value={element.value}
         key={element.value}
+        data-testid={`searchrow-${element.value}`}
       >
         {element.displayValue}
       </option>
