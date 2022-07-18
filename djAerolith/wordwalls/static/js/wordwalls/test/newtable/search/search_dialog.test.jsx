@@ -4,7 +4,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import sinon from 'sinon';
 
 import SearchDialogContainer from '../../../newtable/search/dialog_container';
-import SearchRow from '../../../newtable/search/row';
 import { SearchTypesEnum } from '../../../newtable/search/types';
 
 const props = {
@@ -41,7 +40,7 @@ describe('<SearchDialogContainer />', () => {
   describe('Static Analysis', () => {
     it('renders correctly', () => {
       const container = render(<SearchDialogContainer {...props} />);
-      expect(container).toMatchSnapshot()
+      expect(container).toMatchSnapshot();
     });
   });
 
@@ -50,7 +49,7 @@ describe('<SearchDialogContainer />', () => {
       render(<SearchDialogContainer {...propsWithSpy} />);
 
       // Simulate the click.
-      fireEvent.click(screen.getByText("Play!"));
+      fireEvent.click(screen.getByText('Play!'));
 
       sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
         lexicon: 3,
@@ -70,27 +69,26 @@ describe('<SearchDialogContainer />', () => {
     });
   });
 
-
   describe('Interactions', () => {
     it('adds a search row when button is clicked', () => {
       render(<SearchDialogContainer {...props} />);
       // The very first button should be a `+`
-      fireEvent.click(screen.getAllByRole("button")[0]);
-      expect(screen.getAllByRole("combobox").length).toBe(3);
+      fireEvent.click(screen.getAllByRole('button')[0]);
+      expect(screen.getAllByRole('combobox').length).toBe(3);
     });
   });
 
   it('removes a search row when button is clicked', () => {
     render(<SearchDialogContainer {...props} />);
     // Click the second button (minus)
-    fireEvent.click(screen.getAllByRole("button")[1]);
-    expect(screen.getAllByRole("combobox").length).toBe(1);
+    fireEvent.click(screen.getAllByRole('button')[1]);
+    expect(screen.getAllByRole('combobox').length).toBe(1);
   });
 
   it('submits more search parameters to api after button is clicked', () => {
     render(<SearchDialogContainer {...propsWithSpy} />);
-    fireEvent.click(screen.getAllByRole("button")[0]);
-    fireEvent.click(screen.getByText("Play!"));
+    fireEvent.click(screen.getAllByRole('button')[0]);
+    fireEvent.click(screen.getByText('Play!'));
 
     sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
       lexicon: 3,
@@ -117,9 +115,9 @@ describe('<SearchDialogContainer />', () => {
     render(<SearchDialogContainer {...props} />);
     for (let i = 0; i < 15; i += 1) {
       // Click 'add' a whole bunch of times.
-      fireEvent.click(screen.getAllByRole("button")[0]);
+      fireEvent.click(screen.getAllByRole('button')[0]);
     }
-    expect(screen.getAllByText("Search Criterion").length).toBe(11);
+    expect(screen.getAllByText('Search Criterion').length).toBe(11);
     // And search specifically that fixed length wasn't rendered.
     expect(screen.getAllByTestId(`searchrow-${SearchTypesEnum.LENGTH}`).length).toBe(11);
     expect(screen.findAllByTestId(`searchrow-${SearchTypesEnum.FIXED_LENGTH}`).length).toBe(undefined);
