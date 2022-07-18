@@ -1,0 +1,880 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SearchDialogContainer /> Static Analysis renders correctly 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="row"
+        style="margin-top: 8px;"
+      >
+        <div
+          class="col-sm-8"
+        >
+          <div>
+            <div
+              class="row search-row"
+            >
+              <div
+                class="col-xs-1"
+                style="margin-top: 33px; margin-bottom: 5px;"
+              >
+                <button
+                  class="btn btn-info btn-xs btn-add-search-row"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="glyphicon glyphicon-plus"
+                  />
+                </button>
+              </div>
+              <div
+                class="col-xs-1"
+                style="margin-top: 33px; margin-bottom: 5px;"
+              >
+                <button
+                  class="btn btn-info btn-xs btn-remove-search-row"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="glyphicon glyphicon-minus"
+                  />
+                </button>
+              </div>
+              <div
+                class="col-xs-4"
+              >
+                <div
+                  class="form-group"
+                >
+                  <div
+                    class="row"
+                  >
+                    <div
+                      class="col-md-12"
+                    >
+                      <label
+                        style="overflow: hidden; white-space: nowrap;"
+                      >
+                        Search Criterion
+                         
+                      </label>
+                      <select
+                        class="form-control"
+                      >
+                        <option
+                          data-testid="searchrow-1"
+                          value="1"
+                        >
+                          Word Length
+                        </option>
+                        <option
+                          data-testid="searchrow-2"
+                          value="2"
+                        >
+                          Probability Range
+                        </option>
+                        <option
+                          data-testid="searchrow-8"
+                          value="8"
+                        >
+                          Point Value
+                        </option>
+                        <option
+                          data-testid="searchrow-9"
+                          value="9"
+                        >
+                          Anagram match
+                        </option>
+                        <option
+                          data-testid="searchrow-5"
+                          value="5"
+                        >
+                          Number of Anagrams
+                        </option>
+                        <option
+                          data-testid="searchrow-6"
+                          value="6"
+                        >
+                          Number of Vowels
+                        </option>
+                        <option
+                          data-testid="searchrow-11"
+                          value="11"
+                        >
+                          Not in lexicon
+                        </option>
+                        <option
+                          data-testid="searchrow-17"
+                          value="17"
+                        >
+                          Difficulty range
+                        </option>
+                        <option
+                          data-testid="searchrow-7"
+                          value="7"
+                        >
+                          Has Tags
+                        </option>
+                        <option
+                          data-testid="searchrow-4"
+                          value="4"
+                        >
+                          Probability limit
+                        </option>
+                        <option
+                          data-testid="searchrow-19"
+                          value="19"
+                        >
+                          Words deleted from previous lexicon
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="margin-top: 2px;"
+              >
+                <div
+                  class="col-xs-3"
+                >
+                  <div
+                    class="form-group"
+                  >
+                    <div
+                      class="row"
+                    >
+                      <div
+                        class="col-md-12"
+                      >
+                        <label
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Min
+                        </label>
+                        <input
+                          class="form-control input-sm"
+                          max="15"
+                          min="2"
+                          type="number"
+                          value="7"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="col-xs-3"
+                >
+                  <div
+                    class="form-group"
+                  >
+                    <div
+                      class="row"
+                    >
+                      <div
+                        class="col-md-12"
+                      >
+                        <label
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Max
+                        </label>
+                        <input
+                          class="form-control input-sm"
+                          max="15"
+                          min="2"
+                          type="number"
+                          value="7"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="row search-row"
+            >
+              <div
+                class="col-xs-1"
+                style="margin-top: 33px; margin-bottom: 5px;"
+              >
+                <button
+                  class="btn btn-info btn-xs btn-add-search-row"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="glyphicon glyphicon-plus"
+                  />
+                </button>
+              </div>
+              <div
+                class="col-xs-1"
+                style="margin-top: 33px; margin-bottom: 5px;"
+              >
+                <button
+                  class="btn btn-info btn-xs btn-remove-search-row"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="glyphicon glyphicon-minus"
+                  />
+                </button>
+              </div>
+              <div
+                class="col-xs-4"
+              >
+                <div
+                  class="form-group"
+                >
+                  <div
+                    class="row"
+                  >
+                    <div
+                      class="col-md-12"
+                    >
+                      <label
+                        style="overflow: hidden; white-space: nowrap;"
+                      >
+                        Search Criterion
+                         
+                      </label>
+                      <select
+                        class="form-control"
+                      >
+                        <option
+                          data-testid="searchrow-1"
+                          value="1"
+                        >
+                          Word Length
+                        </option>
+                        <option
+                          data-testid="searchrow-2"
+                          value="2"
+                        >
+                          Probability Range
+                        </option>
+                        <option
+                          data-testid="searchrow-8"
+                          value="8"
+                        >
+                          Point Value
+                        </option>
+                        <option
+                          data-testid="searchrow-9"
+                          value="9"
+                        >
+                          Anagram match
+                        </option>
+                        <option
+                          data-testid="searchrow-5"
+                          value="5"
+                        >
+                          Number of Anagrams
+                        </option>
+                        <option
+                          data-testid="searchrow-6"
+                          value="6"
+                        >
+                          Number of Vowels
+                        </option>
+                        <option
+                          data-testid="searchrow-11"
+                          value="11"
+                        >
+                          Not in lexicon
+                        </option>
+                        <option
+                          data-testid="searchrow-17"
+                          value="17"
+                        >
+                          Difficulty range
+                        </option>
+                        <option
+                          data-testid="searchrow-7"
+                          value="7"
+                        >
+                          Has Tags
+                        </option>
+                        <option
+                          data-testid="searchrow-4"
+                          value="4"
+                        >
+                          Probability limit
+                        </option>
+                        <option
+                          data-testid="searchrow-19"
+                          value="19"
+                        >
+                          Words deleted from previous lexicon
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="margin-top: 2px;"
+              >
+                <div
+                  class="col-xs-3"
+                >
+                  <div
+                    class="form-group"
+                  >
+                    <div
+                      class="row"
+                    >
+                      <div
+                        class="col-md-12"
+                      >
+                        <label
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Min
+                        </label>
+                        <input
+                          class="form-control input-sm"
+                          max="70000"
+                          min="1"
+                          type="number"
+                          value="1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="col-xs-3"
+                >
+                  <div
+                    class="form-group"
+                  >
+                    <div
+                      class="row"
+                    >
+                      <div
+                        class="col-md-12"
+                      >
+                        <label
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Max
+                        </label>
+                        <input
+                          class="form-control input-sm"
+                          max="70000"
+                          min="1"
+                          type="number"
+                          value="200"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary submit-word-search"
+            data-dismiss="modal"
+            style="margin-top: 0.75em;"
+            type="button"
+          >
+            Play!
+          </button>
+          <button
+            class="btn btn-info"
+            data-dismiss="modal"
+            style="margin-top: 0.75em; margin-left: 1em;"
+            type="button"
+          >
+            Flashcard
+          </button>
+        </div>
+        <div
+          class="col-sm-4"
+          style="overflow-y: scroll; height: 400px; margin-top: 32px;"
+        >
+          <div>
+            <button
+              class="btn btn-sm btn-default"
+              type="button"
+            >
+              Show help
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="row"
+      style="margin-top: 8px;"
+    >
+      <div
+        class="col-sm-8"
+      >
+        <div>
+          <div
+            class="row search-row"
+          >
+            <div
+              class="col-xs-1"
+              style="margin-top: 33px; margin-bottom: 5px;"
+            >
+              <button
+                class="btn btn-info btn-xs btn-add-search-row"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  class="glyphicon glyphicon-plus"
+                />
+              </button>
+            </div>
+            <div
+              class="col-xs-1"
+              style="margin-top: 33px; margin-bottom: 5px;"
+            >
+              <button
+                class="btn btn-info btn-xs btn-remove-search-row"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  class="glyphicon glyphicon-minus"
+                />
+              </button>
+            </div>
+            <div
+              class="col-xs-4"
+            >
+              <div
+                class="form-group"
+              >
+                <div
+                  class="row"
+                >
+                  <div
+                    class="col-md-12"
+                  >
+                    <label
+                      style="overflow: hidden; white-space: nowrap;"
+                    >
+                      Search Criterion
+                       
+                    </label>
+                    <select
+                      class="form-control"
+                    >
+                      <option
+                        data-testid="searchrow-1"
+                        value="1"
+                      >
+                        Word Length
+                      </option>
+                      <option
+                        data-testid="searchrow-2"
+                        value="2"
+                      >
+                        Probability Range
+                      </option>
+                      <option
+                        data-testid="searchrow-8"
+                        value="8"
+                      >
+                        Point Value
+                      </option>
+                      <option
+                        data-testid="searchrow-9"
+                        value="9"
+                      >
+                        Anagram match
+                      </option>
+                      <option
+                        data-testid="searchrow-5"
+                        value="5"
+                      >
+                        Number of Anagrams
+                      </option>
+                      <option
+                        data-testid="searchrow-6"
+                        value="6"
+                      >
+                        Number of Vowels
+                      </option>
+                      <option
+                        data-testid="searchrow-11"
+                        value="11"
+                      >
+                        Not in lexicon
+                      </option>
+                      <option
+                        data-testid="searchrow-17"
+                        value="17"
+                      >
+                        Difficulty range
+                      </option>
+                      <option
+                        data-testid="searchrow-7"
+                        value="7"
+                      >
+                        Has Tags
+                      </option>
+                      <option
+                        data-testid="searchrow-4"
+                        value="4"
+                      >
+                        Probability limit
+                      </option>
+                      <option
+                        data-testid="searchrow-19"
+                        value="19"
+                      >
+                        Words deleted from previous lexicon
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              style="margin-top: 2px;"
+            >
+              <div
+                class="col-xs-3"
+              >
+                <div
+                  class="form-group"
+                >
+                  <div
+                    class="row"
+                  >
+                    <div
+                      class="col-md-12"
+                    >
+                      <label
+                        style="overflow: hidden; white-space: nowrap;"
+                      >
+                        Min
+                      </label>
+                      <input
+                        class="form-control input-sm"
+                        max="15"
+                        min="2"
+                        type="number"
+                        value="7"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-xs-3"
+              >
+                <div
+                  class="form-group"
+                >
+                  <div
+                    class="row"
+                  >
+                    <div
+                      class="col-md-12"
+                    >
+                      <label
+                        style="overflow: hidden; white-space: nowrap;"
+                      >
+                        Max
+                      </label>
+                      <input
+                        class="form-control input-sm"
+                        max="15"
+                        min="2"
+                        type="number"
+                        value="7"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="row search-row"
+          >
+            <div
+              class="col-xs-1"
+              style="margin-top: 33px; margin-bottom: 5px;"
+            >
+              <button
+                class="btn btn-info btn-xs btn-add-search-row"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  class="glyphicon glyphicon-plus"
+                />
+              </button>
+            </div>
+            <div
+              class="col-xs-1"
+              style="margin-top: 33px; margin-bottom: 5px;"
+            >
+              <button
+                class="btn btn-info btn-xs btn-remove-search-row"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  class="glyphicon glyphicon-minus"
+                />
+              </button>
+            </div>
+            <div
+              class="col-xs-4"
+            >
+              <div
+                class="form-group"
+              >
+                <div
+                  class="row"
+                >
+                  <div
+                    class="col-md-12"
+                  >
+                    <label
+                      style="overflow: hidden; white-space: nowrap;"
+                    >
+                      Search Criterion
+                       
+                    </label>
+                    <select
+                      class="form-control"
+                    >
+                      <option
+                        data-testid="searchrow-1"
+                        value="1"
+                      >
+                        Word Length
+                      </option>
+                      <option
+                        data-testid="searchrow-2"
+                        value="2"
+                      >
+                        Probability Range
+                      </option>
+                      <option
+                        data-testid="searchrow-8"
+                        value="8"
+                      >
+                        Point Value
+                      </option>
+                      <option
+                        data-testid="searchrow-9"
+                        value="9"
+                      >
+                        Anagram match
+                      </option>
+                      <option
+                        data-testid="searchrow-5"
+                        value="5"
+                      >
+                        Number of Anagrams
+                      </option>
+                      <option
+                        data-testid="searchrow-6"
+                        value="6"
+                      >
+                        Number of Vowels
+                      </option>
+                      <option
+                        data-testid="searchrow-11"
+                        value="11"
+                      >
+                        Not in lexicon
+                      </option>
+                      <option
+                        data-testid="searchrow-17"
+                        value="17"
+                      >
+                        Difficulty range
+                      </option>
+                      <option
+                        data-testid="searchrow-7"
+                        value="7"
+                      >
+                        Has Tags
+                      </option>
+                      <option
+                        data-testid="searchrow-4"
+                        value="4"
+                      >
+                        Probability limit
+                      </option>
+                      <option
+                        data-testid="searchrow-19"
+                        value="19"
+                      >
+                        Words deleted from previous lexicon
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              style="margin-top: 2px;"
+            >
+              <div
+                class="col-xs-3"
+              >
+                <div
+                  class="form-group"
+                >
+                  <div
+                    class="row"
+                  >
+                    <div
+                      class="col-md-12"
+                    >
+                      <label
+                        style="overflow: hidden; white-space: nowrap;"
+                      >
+                        Min
+                      </label>
+                      <input
+                        class="form-control input-sm"
+                        max="70000"
+                        min="1"
+                        type="number"
+                        value="1"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-xs-3"
+              >
+                <div
+                  class="form-group"
+                >
+                  <div
+                    class="row"
+                  >
+                    <div
+                      class="col-md-12"
+                    >
+                      <label
+                        style="overflow: hidden; white-space: nowrap;"
+                      >
+                        Max
+                      </label>
+                      <input
+                        class="form-control input-sm"
+                        max="70000"
+                        min="1"
+                        type="number"
+                        value="200"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="btn btn-primary submit-word-search"
+          data-dismiss="modal"
+          style="margin-top: 0.75em;"
+          type="button"
+        >
+          Play!
+        </button>
+        <button
+          class="btn btn-info"
+          data-dismiss="modal"
+          style="margin-top: 0.75em; margin-left: 1em;"
+          type="button"
+        >
+          Flashcard
+        </button>
+      </div>
+      <div
+        class="col-sm-4"
+        style="overflow-y: scroll; height: 400px; margin-top: 32px;"
+      >
+        <div>
+          <button
+            class="btn btn-sm btn-default"
+            type="button"
+          >
+            Show help
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

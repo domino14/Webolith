@@ -6,7 +6,7 @@ import Styling from './style';
 import WordwallsQuestion from './wordwalls_question';
 import backgroundURL from './background';
 
-const SolutionPanel = (props) => {
+function SolutionPanel(props) {
   let words = props.solvedWords.sort().map((word) => (
     <span key={word}>
       {word}
@@ -35,7 +35,7 @@ const SolutionPanel = (props) => {
     </li>
   );
   return panel;
-};
+}
 
 SolutionPanel.propTypes = {
   wordLength: PropTypes.number.isRequired,

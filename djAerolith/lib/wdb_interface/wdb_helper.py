@@ -60,7 +60,6 @@ def questions_from_alpha_dicts(
         response = client.Expand(ctx=Context(), request=sr)
     except TwirpServerException as e:
         raise WDBError(e)
-    print("response", response)
     qs = Questions()
     qs.set_from_pb_alphagrams(response.alphagrams)
     return qs

@@ -69,7 +69,6 @@ function withSearchRows(WrappedDialogContainer, allowedSearchTypes, searchCriter
     }
 
     searchTypeChange(index, value) {
-      console.log('saerch type changed', index, value);
       const criteria = this.state.searchCriteria;
       const searchType = parseInt(value, 10);
       criteria[index].resetSearchType(searchType);
