@@ -321,7 +321,7 @@ def create_spanish_lists():
 
 
 def create_polish_lists():
-    lex = Lexicon.objects.get(lexiconName="OSPS46")
+    lex = Lexicon.objects.get(lexiconName="OSPS48")
     for i in range(2, 16):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -381,7 +381,7 @@ def create_polish_lists():
             i,
             False,
             json.dumps(qs),
-            "OSPS46 {} not in OSPS44".format(friendly_number_map[i]),
+            "OSPS48 {} not in OSPS46".format(friendly_number_map[i]),
         )
 
 

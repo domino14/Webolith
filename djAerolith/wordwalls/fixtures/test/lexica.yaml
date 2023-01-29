@@ -106,3 +106,9 @@
     lexiconName: OSPS46
   model: base.lexicon
   pk: 20
+- fields:
+    lengthCounts: '{"10":309185,"11":355308,"12":367375,"13":349407,"14":309702,"15":252902,"2":101,"3":1129,"4":5295,"5":18377,"6":45084,"7":93870,"8":162828,"9":240896}'
+    lexiconDescription: "Polska Federacja Scrabble - Update 48"
+    lexiconName: OSPS48
+  model: base.lexicon
+  pk: 21
