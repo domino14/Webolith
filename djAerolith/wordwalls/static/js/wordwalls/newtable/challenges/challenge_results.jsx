@@ -46,6 +46,12 @@ class ChallengeResults extends React.Component {
       return null;
     }
     const { maxScore } = this.props.challengeData;
+    const userTHStyle = {};
+    const tableLayoutStyle = {};
+    if (this.props.fixedLayout) {
+      userTHStyle.width = '45%';
+      tableLayoutStyle.tableLayout = 'fixed';
+    }
     this.props.challengeData.entries.forEach((entry, index) => {
       const userLink = ChallengeResults.getUserLink(entry.user, entry.addl);
       let errorsColumn = null;
@@ -53,12 +59,9 @@ class ChallengeResults extends React.Component {
         errorsColumn = <td>{`${entry.w}`}</td>;
       }
       const overflowStyle = {};
-      const userTHStyle = {};
-      const tableLayoutStyle = {};
+
       if (this.props.fixedLayout) {
         overflowStyle.overflow = 'hidden';
-        userTHStyle.width = '45%';
-        tableLayoutStyle.tableLayout = 'fixed';
       }
       const entryTr = (
         <tr key={entry.user}>
