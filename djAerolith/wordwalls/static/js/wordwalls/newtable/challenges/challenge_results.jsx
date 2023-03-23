@@ -49,7 +49,7 @@ class ChallengeResults extends React.Component {
     const userTHStyle = {};
     const tableLayoutStyle = {};
     if (this.props.fixedLayout) {
-      userTHStyle.width = '45%';
+      userTHStyle.width = '35%';
       tableLayoutStyle.tableLayout = 'fixed';
     }
     this.props.challengeData.entries.forEach((entry, index) => {
