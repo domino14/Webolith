@@ -52,10 +52,18 @@ class ChallengeResults extends React.Component {
       if (!this.props.hideErrors) {
         errorsColumn = <td>{`${entry.w}`}</td>;
       }
+      const overflowStyle = {};
+      const userTHStyle = {};
+      const tableLayoutStyle = {};
+      if (this.props.fixedLayout) {
+        overflowStyle['overflow'] = "hidden";
+        userTHStyle['width'] = "45%";
+        tableLayoutStyle['tableLayout'] = "fixed";
+      }
       const entryTr = (
         <tr key={entry.user}>
           <td>{index + 1}</td>
-          <td>{userLink}</td>
+          <td style={overflowStyle}>{userLink}</td>
           <td>{`${(100 * (entry.score / maxScore)).toFixed(1)}%`}</td>
           {errorsColumn}
           <td>{`${entry.tr} s.`}</td>
@@ -76,11 +84,11 @@ class ChallengeResults extends React.Component {
           height: this.props.height,
         }}
       >
-        <table className="table table-condensed">
+        <table className="table table-condensed" style={tableLayoutStyle}>
           <thead>
             <tr>
               <th>#</th>
-              <th>User</th>
+              <th style={userTHStyle}>User</th>
               <th>Score</th>
               {errorsHeader}
               <th>Rem.</th>
@@ -109,6 +117,7 @@ ChallengeResults.propTypes = {
   }).isRequired,
   hideErrors: PropTypes.bool.isRequired,
   height: PropTypes.number.isRequired,
+  fixedLayout: PropTypes.bool,
 };
 
 export default ChallengeResults;

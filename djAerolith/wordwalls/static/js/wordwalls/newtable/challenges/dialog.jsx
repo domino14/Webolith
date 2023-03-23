@@ -128,6 +128,7 @@ function ChallengeDialog(props) {
           challengeData={props.challengeLeaderboardData}
           hideErrors={props.hideErrors}
           height={400}
+          fixedLayout
         />
       </div>
     </div>
