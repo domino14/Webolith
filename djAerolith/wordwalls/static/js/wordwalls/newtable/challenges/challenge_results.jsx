@@ -56,9 +56,9 @@ class ChallengeResults extends React.Component {
       const userTHStyle = {};
       const tableLayoutStyle = {};
       if (this.props.fixedLayout) {
-        overflowStyle['overflow'] = "hidden";
-        userTHStyle['width'] = "45%";
-        tableLayoutStyle['tableLayout'] = "fixed";
+        overflowStyle.overflow = 'hidden';
+        userTHStyle.width = '45%';
+        tableLayoutStyle.tableLayout = 'fixed';
       }
       const entryTr = (
         <tr key={entry.user}>
@@ -102,6 +102,10 @@ class ChallengeResults extends React.Component {
     );
   }
 }
+
+ChallengeResults.defaultProps = {
+  fixedLayout: false,
+};
 
 ChallengeResults.propTypes = {
   challengeData: PropTypes.shape({
