@@ -20,7 +20,7 @@
 import os
 import sys
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from logging_filters import skip_suspicious_operations
 
@@ -131,6 +131,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "middleware.session_expiry.SessionIdleTimeout",
+    "waffle.middleware.WaffleMiddleware"
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -188,7 +189,7 @@ INSTALLED_APPS = (
     "accounts",
     "django.contrib.staticfiles",
     "whitleyCards",
-    "gargoyle",
+    "waffle",
     "registration",
     "social_django",
     "captcha",

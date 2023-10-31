@@ -1,11 +1,11 @@
 # These are the requirements for the prod Docker file.
 
 bleach
-django<4.0
+django ~= 4.2.0  # LTS
 six >= 1.7
 Markdown
 django-registration-redux
-gargoyle-yplan
+django-waffle
 requests
 django-recaptcha
 # redis

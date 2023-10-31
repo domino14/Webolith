@@ -26,9 +26,9 @@ from typing import List
 
 from django.conf import settings
 from django.db import IntegrityError
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils import timezone
-from gargoyle import gargoyle
+import waffle
 
 from base.models import Lexicon
 from base.forms import SavedListForm
@@ -62,7 +62,7 @@ class GameInitException(Exception):
 
 class WordwallsGame(object):
     def _initial_state(self):
-        """ Return an initial state object, for a brand new game. """
+        """Return an initial state object, for a brand new game."""
         return {
             "answerHash": {},
             "originalAnswerHash": {},
@@ -82,15 +82,15 @@ class WordwallsGame(object):
 
         """
         orig_list_name = list_name
-        user_lists = WordList.objects.filter(
-            user=user, is_temporary=False
-        ).filter(name=list_name)
+        user_lists = WordList.objects.filter(user=user, is_temporary=False).filter(
+            name=list_name
+        )
         repeat = 1
         while user_lists.count() > 0:
             list_name = "{0} ({1})".format(orig_list_name, repeat)
-            user_lists = WordList.objects.filter(
-                user=user, is_temporary=False
-            ).filter(name=list_name)
+            user_lists = WordList.objects.filter(user=user, is_temporary=False).filter(
+                name=list_name
+            )
             repeat += 1
         return list_name
 
@@ -151,15 +151,8 @@ class WordwallsGame(object):
         wgm.save()
         if old_word_list and old_word_list.is_temporary:
             # This word list is old. Check to make sure it's in no tables.
-            if (
-                WordwallsGameModel.objects.filter(
-                    word_list=old_word_list
-                ).count()
-                == 0
-            ):
-                logger.info(
-                    "Deleting old, temporary word list: %s", old_word_list
-                )
+            if WordwallsGameModel.objects.filter(word_list=old_word_list).count() == 0:
+                logger.info("Deleting old, temporary word list: %s", old_word_list)
                 old_word_list.delete()
             else:
                 logger.info("Old word list is still in use, not deleting...")
@@ -196,9 +189,7 @@ class WordwallsGame(object):
         Gets a challenge with date, lex, name.
 
         """
-        dc = DailyChallenge.objects.get(
-            date=ch_date, lexicon=ch_lex, name=ch_name
-        )
+        dc = DailyChallenge.objects.get(date=ch_date, lexicon=ch_lex, name=ch_name)
         qs = Questions()
         qs.set_from_json(dc.alphagrams)
         qs.shuffle()
@@ -320,9 +311,7 @@ class WordwallsGame(object):
                 lexiconName=search_description[0].stringvalue.value
             )
         except Lexicon.DoesNotExist:
-            raise GameInitException(
-                "Search description not properly initialized"
-            )
+            raise GameInitException("Search description not properly initialized")
 
         try:
             questions = word_search(search_description)
@@ -343,9 +332,7 @@ class WordwallsGame(object):
             use_table,
             multiplayer,
             timerSecs=time_secs,
-            temp_list_name=temporary_list_name(
-                search_description, lexicon.lexiconName
-            ),
+            temp_list_name=temporary_list_name(search_description, lexicon.lexiconName),
             questionsToPull=questions_per_round,
         )
         return wgm.pk  # this is a table number id!
@@ -442,8 +429,7 @@ class WordwallsGame(object):
                 "gone thru list once."
             )
             raise GameInitException(
-                "Cannot quiz on first missed unless you "
-                "have gone through list once."
+                "Cannot quiz on first missed unless you " "have gone through list once."
             )
         temp_list_name = None
         save_name = saved_list.name
@@ -502,11 +488,9 @@ class WordwallsGame(object):
         if state["quizGoing"]:
             logger.info("The quiz is going, state %s", state)
             # The quiz is running right now; do not attempt to start again
-            return self.create_error_message(
-                _("The quiz is currently running.")
-            )
+            return self.create_error_message(_("The quiz is currently running."))
 
-        if gargoyle.is_active("disable_games"):
+        if waffle.switch_is_active("disable_games"):
             return self.create_error_message(
                 _(
                     "Please wait a few minutes. Aerolith is currently "
@@ -564,9 +548,7 @@ class WordwallsGame(object):
         if len(qs_set) != len(qs):
             logger.error("Question set is not unique!!")
         orig_questions = json.loads(word_list.origQuestions)
-        questions, answer_hash = self.load_questions(
-            qs, orig_questions, word_list
-        )
+        questions, answer_hash = self.load_questions(qs, orig_questions, word_list)
 
         state["quizGoing"] = True  # start quiz
         state["quizStartTime"] = time.time()
@@ -621,7 +603,9 @@ class WordwallsGame(object):
             index_map[orig_questions[i]["q"]] = i
 
         if word_list.category != WordList.CATEGORY_TYPING:
-            questions = questions_from_alpha_dicts(word_list.lexicon, alphagrams_to_fetch)
+            questions = questions_from_alpha_dicts(
+                word_list.lexicon, alphagrams_to_fetch
+            )
         else:
             questions = Questions()
             questions.set_from_list(alphagrams_to_fetch)
@@ -671,9 +655,7 @@ class WordwallsGame(object):
         """
         try:
             if lock:
-                wgm = WordwallsGameModel.objects.select_for_update().get(
-                    pk=tablenum
-                )
+                wgm = WordwallsGameModel.objects.select_for_update().get(pk=tablenum)
             else:
                 wgm = WordwallsGameModel.objects.get(pk=tablenum)
         except WordwallsGameModel.DoesNotExist:
@@ -912,9 +894,7 @@ class WordwallsGame(object):
         # check if the list is unique
         uniqueMissed = set(missed)
         if len(uniqueMissed) != len(missed):
-            logger.error(
-                "missed list is not unique!! %s %s", uniqueMissed, missed
-            )
+            logger.error("missed list is not unique!! %s %s", uniqueMissed, missed)
             # raise Exception('Missed list is not unique')
 
         logger.info(
@@ -965,9 +945,7 @@ class WordwallsGame(object):
         # Now create an entry; if one exists, don't modify it, just return.
 
         try:
-            lbe = DailyChallengeLeaderboardEntry.objects.get(
-                user=wgm.host, board=lb
-            )
+            lbe = DailyChallengeLeaderboardEntry.objects.get(user=wgm.host, board=lb)
             # If it exists, we're here. don't update the leaderboard
             # entry because we can only do the quiz once.
             return
@@ -1079,17 +1057,13 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
         if not state["quizGoing"]:
             return None
-        time_remaining = (
-            state["quizStartTime"] + state["timerSecs"]
-        ) - time.time()
+        time_remaining = (state["quizStartTime"] + state["timerSecs"]) - time.time()
         questions = state.get("questions")
         return {"questions": questions, "time_remaining": time_remaining}
 
     def guess(self, guess_str, tablenum, user, *, sleep=None, wrong_answers=0):
-        """ Handle a guess submission from the front end. """
-        logger.debug(
-            "User %s guessed %s (wrong=%s)", user, guess_str, wrong_answers
-        )
+        """Handle a guess submission from the front end."""
+        logger.debug("User %s guessed %s (wrong=%s)", user, guess_str, wrong_answers)
         guess_str = guess_str.upper()
         wgm = self.get_wgm(tablenum)
         last_correct = ""
@@ -1184,13 +1158,12 @@ class WordwallsGame(object):
 
         return {
             "going": state["quizGoing"],
-            "time": state["timerSecs"]
-            - (time.time() - state["quizStartTime"]),
+            "time": state["timerSecs"] - (time.time() - state["quizStartTime"]),
             "gameType": state["gameType"],
         }
 
     def state(self, tablenum):
-        """ Get the state. """
+        """Get the state."""
         wgm = self.get_wgm(tablenum, lock=False)
         state = json.loads(wgm.currentGameState)
         return state

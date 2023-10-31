@@ -16,7 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.conf.urls import url, include
+from django.urls import re_path, include
 
 from wordwalls.views import table, mark_missed, ajax_upload, log
 from wordwalls.rpc import table_rpc
@@ -24,18 +24,17 @@ from wordwalls.stats import leaderboard, get_medals, main, get_stats
 
 
 urlpatterns = [
-    url(r'^$', table),
-    url(r'^table/(?P<tableid>\d+)/$', table, name='wordwalls_table'),
-    url(r'^table/(?P<tableid>\d+)/rpc/$', table_rpc),
-    url(r'^table/(?P<tableid>\d+)/missed/$', mark_missed),
-    url(r'^ajax_upload/$', ajax_upload, name='ajax_upload'),
-    url(r'^api/', include('wordwalls.api_urls')),
-    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
+    re_path(r"^$", table),
+    re_path(r"^table/(?P<tableid>\d+)/$", table, name="wordwalls_table"),
+    re_path(r"^table/(?P<tableid>\d+)/rpc/$", table_rpc),
+    re_path(r"^table/(?P<tableid>\d+)/missed/$", mark_missed),
+    re_path(r"^ajax_upload/$", ajax_upload, name="ajax_upload"),
+    re_path(r"^api/", include("wordwalls.api_urls")),
+    # re_path(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
-    url(r'^leaderboard/$', leaderboard),
-    url(r'^leaderboard/getboard/$', get_medals),
-    url(r'^stats/$', main),
-    url(r'^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$',
-        get_stats),
-    url(r'^log/$', log),
+    re_path(r"^leaderboard/$", leaderboard),
+    re_path(r"^leaderboard/getboard/$", get_medals),
+    re_path(r"^stats/$", main),
+    re_path(r"^stats/api/(?P<lexicon>\d+)/(?P<type_of_challenge_id>\d+)/$", get_stats),
+    re_path(r"^log/$", log),
 ]

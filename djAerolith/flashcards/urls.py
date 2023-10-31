@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from flashcards.views import main, new_quiz
 
 urlpatterns = [
-    url(r'^$', main),
-    url(r'^api/new_quiz$', new_quiz),
+    re_path(r"^$", main),
+    re_path(r"^api/new_quiz$", new_quiz),
 ]
