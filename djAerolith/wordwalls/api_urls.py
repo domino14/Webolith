@@ -16,7 +16,7 @@
 
 # To contact the author, please email delsolar at gmail dot com
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from wordwalls.api import (
     api_answers,
@@ -34,18 +34,18 @@ from wordwalls.api import (
 )
 
 urlpatterns = [
-    url(r"^answers/$", api_answers),
-    url(r"^challengers_by_tablenum/$", api_challengers_by_tablenum),
-    url(r"^challengers/$", api_challengers),
-    url(r"^configure/$", configure),
-    url(r"^challenges_played/$", challenges_played),
-    url(r"^special_challenges/$", special_challenges),
-    url(r"^default_lists/$", default_lists),
-    url(r"^new_challenge/$", new_challenge),
-    url(r"^new_search/$", new_search),
-    url(r"^load_aerolith_list/$", load_aerolith_list),
-    url(r"^load_saved_list/$", load_saved_list),
-    url(r"^load_raw_questions/$", load_raw_questions),
-    # url(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
+    re_path(r"^answers/$", api_answers),
+    re_path(r"^challengers_by_tablenum/$", api_challengers_by_tablenum),
+    re_path(r"^challengers/$", api_challengers),
+    re_path(r"^configure/$", configure),
+    re_path(r"^challenges_played/$", challenges_played),
+    re_path(r"^special_challenges/$", special_challenges),
+    re_path(r"^default_lists/$", default_lists),
+    re_path(r"^new_challenge/$", new_challenge),
+    re_path(r"^new_search/$", new_search),
+    re_path(r"^load_aerolith_list/$", load_aerolith_list),
+    re_path(r"^load_saved_list/$", load_saved_list),
+    re_path(r"^load_raw_questions/$", load_raw_questions),
+    # re_path(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
 ]

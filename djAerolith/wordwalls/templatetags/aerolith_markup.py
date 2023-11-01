@@ -4,7 +4,7 @@ import markdown
 import bleach
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -43,7 +43,7 @@ def my_markdown(value):
 
     sanitized_html = bleach.clean(
         markdown.markdown(
-            force_text(value),
+            force_str(value),
             extensions=extensions,
             safe_mode=True,
             enable_attributes=False,

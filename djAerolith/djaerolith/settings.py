@@ -20,7 +20,7 @@
 import os
 import sys
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from logging_filters import skip_suspicious_operations
 
@@ -61,6 +61,8 @@ DATABASES = {
         "ATOMIC_REQUESTS": True,
     }
 }
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -129,6 +131,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "middleware.session_expiry.SessionIdleTimeout",
+    "waffle.middleware.WaffleMiddleware"
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -152,6 +155,7 @@ TEMPLATES = [
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
+                "django.template.context_processors.request",
                 "django.contrib.messages.context_processors.messages",
                 "processors.maintenance.maintenance",
                 "social_django.context_processors.backends",
@@ -185,7 +189,7 @@ INSTALLED_APPS = (
     "accounts",
     "django.contrib.staticfiles",
     "whitleyCards",
-    "gargoyle",
+    "waffle",
     "registration",
     "social_django",
     "captcha",
@@ -229,9 +233,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get("SOCIAL_AUTH_FACEBOOK_SECRET", "")
 SOCIAL_AUTH_FACEBOOK_SCOPE = ["email"]
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {"fields": "id, name, email"}
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
-    "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", ""
-)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", ""
 )

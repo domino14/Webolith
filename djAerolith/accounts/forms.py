@@ -20,7 +20,7 @@ import re
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from base.models import Lexicon, EXCLUDED_LEXICA
 
@@ -29,33 +29,37 @@ class ProfileEditForm(forms.Form):
     lexiconChoices = Lexicon.objects.exclude(lexiconName__in=EXCLUDED_LEXICA)
     defaultLexicon = forms.ModelChoiceField(
         queryset=lexiconChoices,
-        label='Default Lexicon',
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        empty_label=None)
+        label="Default Lexicon",
+        widget=forms.Select(attrs={"class": "form-control"}),
+        empty_label=None,
+    )
     profileText = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control'}),
-        label='Your profile',
-        required=False)
-    disableChat = forms.BooleanField(label='Disable Chat', required=False)
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        label="Your profile",
+        required=False,
+    )
+    disableChat = forms.BooleanField(label="Disable Chat", required=False)
     default_language = forms.ChoiceField(
         choices=settings.LANGUAGES,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
 
 class UsernameEditForm(forms.Form):
-    username = forms.CharField(label='Your desired username', required=True)
+    username = forms.CharField(label="Your desired username", required=True)
 
     def clean(self):
-        u = self.cleaned_data.get('username')
+        u = self.cleaned_data.get("username")
         if not u:
-            raise forms.ValidationError(_('You must enter a username'))
-        if not re.match(r'\w+$', u):
+            raise forms.ValidationError(_("You must enter a username"))
+        if not re.match(r"\w+$", u):
             raise forms.ValidationError(
-                _('Your username must consist of alphanumeric characters.'))
+                _("Your username must consist of alphanumeric characters.")
+            )
         # Case-insensitive username match
         users = User.objects.filter(username__iexact=u)
         if users.count() > 0:
             raise forms.ValidationError(
-                _('This username already exists in our system!'))
+                _("This username already exists in our system!")
+            )
