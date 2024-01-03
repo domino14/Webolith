@@ -22,3 +22,6 @@ mock
 # wagtail
 protobuf
 twirp
+opentelemetry-sdk
+opentelemetry-instrumentation-django
+opentelemetry-instrumentation-psycopg2
