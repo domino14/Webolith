@@ -1,3 +1,5 @@
 coverage
 pylint
 pylint-django
+pytest
+pytest-reportlog

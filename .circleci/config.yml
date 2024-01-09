@@ -56,15 +56,19 @@ jobs:
       - run: cp .circleci/docker-compose.yml .
       - run: docker-compose up -d
       - run:
+          name: Download Codecomet
+          command: curl -Lo codecomet.zip https://github.com/codecomet-io/cli/releases/download/${CODECOMET_VERSION}/codecomet-${CODECOMET_VERSION}-linux-x86_64.zip
+      - run: unzip codecomet.zip
+      - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Wait for word-db-server
           command: dockerize -wait tcp://localhost:8180 -timeout 1m
+      - run: docker-compose cp codecomet app:.
       - run:
           name: Django tests
-          command: docker-compose exec app ./manage.py test -v2
-
+          command: docker-compose exec app ./codecomet -s webolith-backend-tests -r CCI:${CIRCLE_BUILD_NUM} -- pytest
       - run:
           name: Stop cleanly
           command: docker-compose stop
