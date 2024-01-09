@@ -28,8 +28,11 @@ services:
       - INTERCOM_APP_SECRET_KEY=abcdefghijklmnopqrstuvwxyz
       # Just some random secret key
       - SECRET_KEY=csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
+      - DJANGO_SETTINGS_MODULE=djaerolith.settings
     build: .
     working_dir: /opt/webolith/djAerolith
+    volumes:
+      - /home/circleci:/opt/circlehome
     depends_on:
       - pgdb
       - word_db_server
