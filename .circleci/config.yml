@@ -7,7 +7,7 @@ jobs:
       image: ubuntu-2004:202111-02
     environment:
       DOCKER_WDB_SERVER: domino14/word_db_server:latest
-      CODECOMET_VERSION: v0.1.0-beta.2
+      CODECOMET_VERSION: v0.1.0-beta.3
     steps:
       - checkout
 
@@ -59,7 +59,7 @@ jobs:
       - run:
           name: Download Codecomet
           command: curl -Lo codecomet.zip https://github.com/codecomet-io/cli/releases/download/${CODECOMET_VERSION}/codecomet-${CODECOMET_VERSION}-linux-x86_64.zip
-      - run: unzip codecomet.zip
+      - run: unzip codecomet.zip && pwd && ls -al
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
