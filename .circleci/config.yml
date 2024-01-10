@@ -68,7 +68,7 @@ jobs:
           command: dockerize -wait tcp://localhost:8180 -timeout 1m
       - run:
           name: Django tests
-          command: docker-compose exec app ./codecomet -s webolith-backend-tests -r CCI:${CIRCLE_BUILD_NUM} -- pytest
+          command: docker-compose exec app ls -al && ./codecomet -s webolith-backend-tests -r CCI:${CIRCLE_BUILD_NUM} -- pytest
       - run:
           name: Stop cleanly
           command: docker-compose stop
