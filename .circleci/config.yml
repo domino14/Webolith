@@ -67,7 +67,7 @@ jobs:
           name: Wait for word-db-server
           command: dockerize -wait tcp://localhost:8180 -timeout 1m
       - run: pwd && ls -all
-      - run: docker-compose exec app cp /opt/circlehome/webolith/codecomet /opt/webolith/djAerolith
+      - run: docker-compose exec app pwd && ls -al && cp /opt/circlehome/webolith/codecomet /opt/webolith/djAerolith
       - run:
           name: Django tests
           command: docker-compose exec app ./codecomet -s webolith-backend-tests -r CCI:${CIRCLE_BUILD_NUM} -- pytest
