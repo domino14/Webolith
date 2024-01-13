@@ -109,7 +109,6 @@
         <div class="row">
         {% if user and user.username == "" %}
           <p>{% trans "Welcome to Aerolith 2.0!" %}</p>
-          <a href="{% url 'social:begin' 'facebook' %}"><img src="/static/img/aerolith/login_with_facebook.png"></a><br><br>
           <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
 
           <p style="margin-top: 70px;">

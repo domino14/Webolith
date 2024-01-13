@@ -59,7 +59,6 @@ urlpatterns = [
     re_path(r"^bigfatphony/", trigger500),
     re_path(r"^about/", TemplateView.as_view(template_name="about.html")),
     re_path(r"^privacy/", TemplateView.as_view(template_name="privacy.html")),
-    re_path(r"^tos/", TemplateView.as_view(template_name="tos.html")),
     re_path(r"^admin/", admin.site.urls),
     re_path(r"^accounts/social/$", social),
     re_path(r"^accounts/profile/", include("accounts.urls")),
