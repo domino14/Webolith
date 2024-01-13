@@ -4,3 +4,4 @@ pylint-django
 pytest
 pytest-django
 pytest-reportlog
+pytest-cov

@@ -30,6 +30,7 @@ services:
       - SECRET_KEY=csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
       - DJANGO_SETTINGS_MODULE=djaerolith.settings
       - CODECOMET_API_KEY=${CODECOMET_API_KEY}
+      - CIRCLECI=true
       - CIRCLE_BUILD_NUM=${CIRCLE_BUILD_NUM}
       - CIRCLE_PROJECT_REPONAME=${CIRCLE_PROJECT_REPONAME}
       - CIRCLE_PROJECT_USERNAME=${CIRCLE_PROJECT_USERNAME}
