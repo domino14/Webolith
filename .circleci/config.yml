@@ -18,11 +18,10 @@ jobs:
       - run:
           name: Clone lexicon repo
           command: >
-            git clone git@github.com:domino14/word-game-lexica ~/word-game-lexica &&
+            git clone --depth 1 git@github.com:domino14/word-game-lexica ~/word-game-lexica &&
             rm -rf ~/word-game-lexica/.git
       # Generate the dbs needed for tests.
       - run: mkdir ~/word-game-lexica/db
-      - run: mkdir ~/word-game-lexica/gaddag
 
       - restore_cache:
           keys:
@@ -30,19 +29,16 @@ jobs:
             - lexicagaddag-v3
 
       - run: >
-          docker run --name dbmaker --rm -it -e LEXICON_PATH=/opt/lexica -e LETTER_DISTRIBUTION_PATH=/opt/lexica/letterdistributions
-          -v ~/word-game-lexica:/opt/lexica
+          docker run --name dbmaker --rm -it -e WDB_DATA_PATH=/opt/data
+          -v ~/word-game-lexica:/opt/data/lexica
+          -v ~/word-game-lexica/letterdistributions:/opt/data/letterdistributions
           $DOCKER_WDB_SERVER /opt/dbmaker
-          -outputdir /opt/lexica/db -dbs NWL18,NWL20,CSW19,FISE2
+          -outputdir /opt/data/lexica/db -dbs NWL18,NWL20,CSW19,FISE2
 
       - save_cache:
           key: lexicadb-v3
           paths:
             - /home/circleci/word-game-lexica/db
-      - save_cache:
-          key: lexicagaddag-v3
-          paths:
-            - /home/circleci/word-game-lexica/gaddag
 
       - run:
           name: install dockerize
