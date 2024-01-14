@@ -83,7 +83,7 @@
   model: base.lexicon
   pk: 16
 - fields:
-    lengthCounts: '{"2":63,"3":546,"4":2438,"5":6142,"6":12900,"7":24560,"8":39299,"9":58519}'
+    lengthCounts: '{"10":76297,"11":85269,"12":87162,"13":76861,"14":64757,"15":49831,"2":63,"3":546,"4":2438,"5":6142,"6":12900,"7":24560,"8":39299,"9":58519}'
     lexiconDescription: "German Lexicon"
     lexiconName: Deutsch
   model: base.lexicon
@@ -112,3 +112,15 @@
     lexiconName: OSPS48
   model: base.lexicon
   pk: 21
+- fields:
+    lengthCounts: '{"10":312818,"11":359461,"12":371874,"13":353757,"14":313781,"15":256464,"2":102,"3":1134,"4":5315,"5":18468,"6":45374,"7":94641,"8":164417,"9":243457}'
+    lexiconDescription: "Polska Federacja Scrabble - Update 49"
+    lexiconName: OSPS49
+  model: base.lexicon
+  pk: 22
+- fields:
+    lengthCounts: '{"10":53160,"11":51505,"12":43391,"13":31726,"14":20556,"15":12018,"2":65,"3":494,"4":1844,"5":5326,"6":12242,"7":22850,"8":35805,"9":47228}'
+    lexiconDescription: French 2024 Word List
+    lexiconName: FRA24
+  model: base.lexicon
+  pk: 23

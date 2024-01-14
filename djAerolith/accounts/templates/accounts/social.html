@@ -19,11 +19,6 @@ $(function() {
     var service, imgUrl, href, assocId, discUrl;
     // backends comes from a context processor
     {% for assoc in backends.associated %}
-        {% if assoc.provider == 'facebook' %}
-            service = 'Facebook';
-            assocId = {{assoc.id}};
-            discUrl = '{% url 'social:disconnect_individual' 'facebook' assoc.id %}';
-        {% endif %}
         {% if assoc.provider == 'google-oauth2' %}
             service = 'Google';
             assocId = {{assoc.id}};
@@ -45,10 +40,6 @@ $(function() {
     {% endfor %}
 
     {% for assoc in backends.not_associated %}
-        {% if assoc == 'facebook' %}
-            imgUrl = "/static/img/aerolith/login_with_facebook.png";
-            href = '{% url "social:begin" "facebook" %}';
-        {% endif %}
         {% if assoc == 'google-oauth2' %}
             imgUrl = "/static/img/aerolith/login_with_google.png";
             href = '{% url "social:begin" "google-oauth2" %}';
