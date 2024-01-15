@@ -30,7 +30,7 @@ friendly_number_map = {
     15: "Fifteens",
 }
 
-mapa_amigable = {
+mapa_amigable = {  # Los?
     2: "Dos",
     3: "Tres",
     4: "Cuatros",
@@ -47,6 +47,58 @@ mapa_amigable = {
     15: "Quinces",
 }
 
+friendly_number_map_german = {  # Use Die
+    2: "Zweien",
+    3: "Dreien",
+    4: "Vieren",
+    5: "Fünfen",
+    6: "Sechsen",
+    7: "Siebenen",
+    8: "Achten",
+    9: "Neunen",
+    10: "Zehnen",
+    11: "Elfen",
+    12: "Zwölfen",
+    13: "Dreizehnen",
+    14: "Vierzehnen",
+    15: "Fünfzehnen",
+}
+
+# French dictionary (French numbers do not change in plural, so it's the same as singular)
+friendly_number_map_french = {  # Use Les
+    2: "Deux",
+    3: "Trois",
+    4: "Quatre",
+    5: "Cinq",
+    6: "Six",
+    7: "Sept",
+    8: "Huit",
+    9: "Neuf",
+    10: "Dix",
+    11: "Onze",
+    12: "Douze",
+    13: "Treize",
+    14: "Quatorze",
+    15: "Quinze",
+}
+
+friendly_number_map_polish = {  # Don't use article
+    2: "Dwójki",
+    3: "Trójki",
+    4: "Czwórki",
+    5: "Piątki",
+    6: "Szóstki",
+    7: "Siódemki",
+    8: "Ósemki",
+    9: "Dziewiątki",
+    10: "Dziesiątki",
+    11: "Jedenastki",
+    12: "Dwunastki",
+    13: "Trzynastki",
+    14: "Czternastki",
+    15: "Piętnastki",
+}
+
 LIST_GRANULARITY = 1000
 COMMON_WORDS_DIR = "base/misc/"
 OWL2_LEX_INDEX = 4
@@ -54,9 +106,7 @@ FRIENDLY_COMMON_SHORT = "Common Short Words (8 or fewer letters)"
 FRIENDLY_COMMON_LONG = "Common Long Words (greater than 8 letters)"
 
 
-def create_named_list(
-    lexicon, num_questions, word_length, is_range, questions, name
-):
+def create_named_list(lexicon, num_questions, word_length, is_range, questions, name):
     if num_questions == 0:
         logger.debug(">> Not creating empty list " + name)
         return
@@ -122,9 +172,7 @@ def create_wl_lists(i, lex):
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
-                SearchDescription.matching_anagram(
-                    "[AEIOU][AEIOU][AEIOU][AEIOU]???"
-                ),
+                SearchDescription.matching_anagram("[AEIOU][AEIOU][AEIOU][AEIOU]???"),
             ]
         ).to_python()
         create_named_list(
@@ -235,9 +283,7 @@ def create_spanish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[JQXZ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[JQXZ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -252,9 +298,7 @@ def create_spanish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[123Ñ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[123Ñ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -321,7 +365,7 @@ def create_spanish_lists():
 
 
 def create_polish_lists():
-    lex = Lexicon.objects.get(lexiconName="OSPS48")
+    lex = Lexicon.objects.get(lexiconName="OSPS49")
     for i in range(2, 16):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -333,7 +377,7 @@ def create_polish_lists():
             i,
             True,
             json.dumps([1, num_for_this_length]),
-            "The " + friendly_number_map[i],
+            friendly_number_map_polish[i],
         )
         if i >= 7 and i <= 8:
             # create 'every x' list
@@ -346,16 +390,14 @@ def create_polish_lists():
                     i,
                     True,
                     json.dumps([min_p, max_p]),
-                    "{} ({} to {})".format(friendly_number_map[i], p, max_p),
+                    "{} ({} do {})".format(friendly_number_map_polish[i], p, max_p),
                 )
 
         if i >= 4 and i <= 8:
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[ĄĆĘŃÓŚŹŻ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[ĄĆĘŃÓŚŹŻ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -364,7 +406,7 @@ def create_polish_lists():
                 i,
                 False,
                 json.dumps(qs),
-                friendly_number_map[i] + " with any of ĄĆĘŃÓŚŹŻ",
+                friendly_number_map_polish[i] + " z ĄĆĘŃÓŚŹŻ",
             )
 
         # New words
@@ -381,14 +423,13 @@ def create_polish_lists():
             i,
             False,
             json.dumps(qs),
-            "OSPS48 {} not in OSPS46".format(friendly_number_map[i]),
+            "OSPS49 {} nie jest w OSPS48".format(friendly_number_map_polish[i]),
         )
 
 
 def create_german_lists():
     lex = Lexicon.objects.get(lexiconName="Deutsch")
-    # deutsch list only goes up to 9 for now :/
-    for i in range(2, 10):
+    for i in range(2, 15):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
         num_for_this_length = length_counts[str(i)]
@@ -399,7 +440,7 @@ def create_german_lists():
             i,
             True,
             json.dumps([1, num_for_this_length]),
-            "The " + friendly_number_map[i],
+            "Die " + friendly_number_map_german[i],
         )
         if i >= 7 and i <= 8:
             # create 'every x' list
@@ -412,16 +453,14 @@ def create_german_lists():
                     i,
                     True,
                     json.dumps([min_p, max_p]),
-                    "{} ({} to {})".format(friendly_number_map[i], p, max_p),
+                    "{} ({} bis {})".format(friendly_number_map_german[i], p, max_p),
                 )
 
         if i >= 4 and i <= 8:
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[ÄJÖQÜVXY]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[ÄJÖQÜVXY]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -430,12 +469,12 @@ def create_german_lists():
                 i,
                 False,
                 json.dumps(qs),
-                friendly_number_map[i] + " with any of ÄJÖQÜVXY",
+                friendly_number_map_german[i] + " mit ÄJÖQÜVXY",
             )
 
 
 def create_french_lists():
-    lex = Lexicon.objects.get(lexiconName="FRA20")
+    lex = Lexicon.objects.get(lexiconName="FRA24")
     for i in range(2, 15):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -447,7 +486,7 @@ def create_french_lists():
             i,
             True,
             json.dumps([1, num_for_this_length]),
-            "The " + friendly_number_map[i],
+            "Les " + friendly_number_map_french[i],
         )
         if i >= 7 and i <= 9:
             # create 'every x' list
@@ -460,16 +499,14 @@ def create_french_lists():
                     i,
                     True,
                     json.dumps([min_p, max_p]),
-                    "{} ({} to {})".format(friendly_number_map[i], p, max_p),
+                    "{} ({} à {})".format(friendly_number_map_french[i], p, max_p),
                 )
 
         if i >= 4 and i <= 8:
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram(
-                        "[JKQWXYZ]" + "?" * (i - 1)
-                    ),
+                    SearchDescription.matching_anagram("[JKQWXYZ]" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -478,8 +515,25 @@ def create_french_lists():
                 i,
                 False,
                 json.dumps(qs),
-                friendly_number_map[i] + " with any of JKQWXYZ",
+                friendly_number_map_french[i] + " avec JKQWXYZ",
             )
+
+        # New words
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
+        create_named_list(
+            lex,
+            len(qs),
+            i,
+            False,
+            json.dumps(qs),
+            "FRA24 {} pas dans FRA20".format(friendly_number_map[i]),
+        )
 
 
 def create_common_words_lists():
@@ -533,4 +587,7 @@ class Command(BaseCommand):
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
         create_polish_lists()
+        create_french_lists()
+        NamedList.objects.filter(lexicon__lexiconName__in=["Deutsch"]).delete()
+        create_german_lists()
         print(f"Elapsed: {time.time()-start} s")

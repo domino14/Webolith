@@ -60,9 +60,7 @@ class SearchDescription(object):
         )
 
     @staticmethod
-    def point_value(
-        min_n: int, max_n: int
-    ) -> pb.SearchRequest.SearchParam:  # noqa
+    def point_value(min_n: int, max_n: int) -> pb.SearchRequest.SearchParam:  # noqa
         return pb.SearchRequest.SearchParam(
             condition=pb.SearchRequest.Condition.POINT_VALUE,
             minmax=pb.SearchRequest.MinMax(min=min_n, max=max_n),
@@ -108,9 +106,7 @@ class SearchDescription(object):
         return SearchDescription.alphagram_list(alphas)
 
     @staticmethod
-    def difficulty_range(
-        min_d: int, max_d: int
-    ) -> pb.SearchRequest.SearchParam:
+    def difficulty_range(min_d: int, max_d: int) -> pb.SearchRequest.SearchParam:
         return pb.SearchRequest.SearchParam(
             condition=pb.SearchRequest.Condition.DIFFICULTY_RANGE,
             minmax=pb.SearchRequest.MinMax(min=min_d, max=max_d),
@@ -160,9 +156,7 @@ def get_tagged_alphagrams(tags: List[str], user: User, lexicon: Lexicon):
     Django ORM; this is not a SQLite-backed database.
 
     """
-    tagged = AlphagramTag.objects.filter(
-        user=user, tag__in=tags, lexicon=lexicon
-    )
+    tagged = AlphagramTag.objects.filter(user=user, tag__in=tags, lexicon=lexicon)
     logger.debug(
         f"tags: {tags}, user: {user}, lexicon: {lexicon} "
         f"Found {tagged.count()} tagged alphagrams"
@@ -212,8 +206,7 @@ def temporary_list_name(
         elif sd.condition == pb.SearchRequest.Condition.NOT_IN_LEXICON:
             desc = ""
             if (
-                sd.numbervalue.value
-                == pb.SearchRequest.NotInLexCondition.OTHER_ENGLISH
+                sd.numbervalue.value == pb.SearchRequest.NotInLexCondition.OTHER_ENGLISH
             ):  # noqa
                 if lexicon_name == "NWL20":
                     desc = "CSW21"
@@ -229,8 +222,10 @@ def temporary_list_name(
                     desc = "CSW19"
                 elif lexicon_name == "FISE2":
                     desc = "FISE09"
-                elif lexicon_name == "OSPS48":
-                    desc = "OSPS46"
+                elif lexicon_name == "OSPS49":
+                    desc = "OSPS48"
+                elif lexicon_name == "FRA24":
+                    desc = "FRA20"
             tokens.append(f"not in {desc}")
         elif sd.condition == pb.SearchRequest.Condition.MATCHING_ANAGRAM:
             tokens.append(f"matching {sd.stringvalue.value}")

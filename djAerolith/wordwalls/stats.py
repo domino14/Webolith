@@ -17,23 +17,36 @@ from wordwalls.models import (
 # If not logged in, will ask user to log in and forward back to the main url
 @login_required
 def main(request):
-
     return render(request, "wordwalls/stats.html")
 
 
 @login_required
 def get_stats(request, lexicon, type_of_challenge_id):
-
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
     lexicon = Lexicon.objects.get(id=lexicon)
 
-    if lexicon.lexiconName in ("OWL2", "America", "NWL18", "NWL20"):
-        lexica = ["OWL2", "America", "NWL18", "NWL20"]
-    elif lexicon.lexiconName in ("CSW12", "CSW15", "CSW19", "CSW21"):
-        lexica = ["CSW12", "CSW15", "CSW19", "CSW21"]
-    elif lexicon.lexiconName in ("OSPS40", "OSPS41", "OSPS42", "OSPS44", "OSPS46", "OSPS48"):
-        lexica = ["OSPS40", "OSPS41", "OSPS42", "OSPS44", "OSPS46", "OSPS48"]
+    american_lexica = ["OWL2", "America", "NWL18", "NWL20"]
+    world_english_lexica = ["CSW12", "CSW15", "CSW19", "CSW21"]
+    polish_lexica = [
+        "OSPS40",
+        "OSPS41",
+        "OSPS42",
+        "OSPS44",
+        "OSPS46",
+        "OSPS48",
+        "OSPS49",
+    ]
+    french_lexica = ["FRA20", "FRA24"]
+
+    if lexicon.lexiconName in american_lexica:
+        lexica = american_lexica
+    elif lexicon.lexiconName in world_english_lexica:
+        lexica = world_english_lexica
+    elif lexicon.lexiconName in polish_lexica:
+        lexica = polish_lexica
+    elif lexicon.lexiconName in french_lexica:
+        lexica = french_lexica
     else:
         lexica = [lexicon.lexiconName]
 
@@ -54,9 +67,7 @@ def get_stats(request, lexicon, type_of_challenge_id):
     else:
         challenges = challenges.filter(date__range=(start_date, end_date))
 
-    leaderboards = DailyChallengeLeaderboard.objects.filter(
-        challenge__in=challenges
-    )
+    leaderboards = DailyChallengeLeaderboard.objects.filter(challenge__in=challenges)
     entries = DailyChallengeLeaderboardEntry.objects.filter(
         user=request.user, board__in=leaderboards
     )

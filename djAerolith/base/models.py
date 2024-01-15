@@ -41,7 +41,9 @@ EXCLUDED_LEXICA = [
     "OSPS41",
     "OSPS42",
     "OSPS44",
-    "OSPS46"
+    "OSPS46",
+    "OSPS48",
+    "FRA20",
 ]
 
 # XXX: This handles Spanish, English, Polish, German, French.
