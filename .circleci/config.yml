@@ -7,7 +7,7 @@ jobs:
       image: ubuntu-2004:202111-02
     environment:
       DOCKER_WDB_SERVER: domino14/word_db_server:latest
-      CODECOMET_VERSION: v0.1.0-beta.3
+      CODECOMET_VERSION: v0.1.0-beta.4
     steps:
       - checkout
 
