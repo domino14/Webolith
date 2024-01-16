@@ -111,8 +111,11 @@
           <p>{% trans "Welcome to Aerolith 2.0!" %}</p>
           <a href="{% url 'social:begin' 'google-oauth2' %}"><img src="/static/img/aerolith/login_with_google.png"></a><br><br>
 
-          <p style="margin-top: 70px;">
+          <p style="margin-top: 50px;">
           {% blocktrans %}Or <a href="accounts/register">register</a> with a username and password...{% endblocktrans %}
+          <p>
+            <strong>If you used to previously log in with Facebook, <a href="fb_recover">please click here to learn how to recover your account.</a></strong>
+          </p>
           </p>
         {% else %}
           {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>

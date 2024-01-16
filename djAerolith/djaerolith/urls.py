@@ -111,6 +111,7 @@ urlpatterns = [
     re_path(r"^js_errors/", js_error),
     re_path(r"^500tester/", test_500),
     re_path(r"^healthz/", healthz),
+    re_path(r"^fb_recover/", TemplateView.as_view(template_name="fb_recover.html")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()  # for static serving, only works
