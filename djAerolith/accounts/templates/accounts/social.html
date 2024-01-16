@@ -19,24 +19,27 @@ $(function() {
     var service, imgUrl, href, assocId, discUrl;
     // backends comes from a context processor
     {% for assoc in backends.associated %}
+        service = '';
         {% if assoc.provider == 'google-oauth2' %}
             service = 'Google';
             assocId = {{assoc.id}};
             discUrl = '{% url 'social:disconnect_individual' 'google-oauth2' assoc.id %}'
         {% endif %}
-        $socialButtons.append([
-            '<div class="row" style="margin-bottom:10px;">',
-            '<div class="col-sm-1">',
-            service,
-            '</div><div class="col-sm-1">',
-            '<form action="', discUrl, '" method="POST">',
-            '<input type="hidden" name="next" value="/accounts/social/"/>',
-            '<input type="hidden" name="csrfmiddlewaretoken" value="',
-            '{{csrf_token}}"/>',
-            '<button class="btn btn-sm btn-default disassoc" data-provider="',
-            service, '" type="submit">X</button>',
-            '</div></div>'
-        ].join(''));
+        if (service) {
+            $socialButtons.append([
+                '<div class="row" style="margin-bottom:10px;">',
+                '<div class="col-sm-1">',
+                service,
+                '</div><div class="col-sm-1">',
+                '<form action="', discUrl, '" method="POST">',
+                '<input type="hidden" name="next" value="/accounts/social/"/>',
+                '<input type="hidden" name="csrfmiddlewaretoken" value="',
+                '{{csrf_token}}"/>',
+                '<button class="btn btn-sm btn-default disassoc" data-provider="',
+                service, '" type="submit">X</button>',
+                '</div></div>'
+            ].join(''));
+        }
     {% endfor %}
 
     {% for assoc in backends.not_associated %}
