@@ -32,7 +32,7 @@ const FLASHCARD_URL = '/flashcards/';
 const NO_LOAD_WHILE_PLAYING = (
   'Please wait until the end of the game to perform that action.');
 
-const NWL20_LEX_ID = 15;
+const NWL23_LEX_ID = 24;
 const FISE2_LEX_ID = 10;
 const OSPS_LEX_ID = 22;
 const COLLINS_21_LEX_ID = 18;
@@ -40,7 +40,7 @@ const DEUTSCH_LEX_ID = 17;
 
 const COLLINS_LICENSE_TEXT = 'Published under license with Collins, an imprint of HarperCollins Publishers Limited';
 const NASPA_LICENSE_TEXT = `
-NASPA Word List, 2020 Edition (NWL20), © 2020 North American Word Game
+NASPA Word List, 2023 Edition (NWL23), © 2023 North American Word Game
 Players Association.  All rights reserved.`;
 const FISE2_LICENSE_TEXT = `
 © 2016 FISE (Federación Internacional de Scrabble en Español).
@@ -367,8 +367,8 @@ class TableCreator extends React.Component {
     switch (this.state.currentLexicon) {
       case COLLINS_21_LEX_ID:
         return (<span>{COLLINS_LICENSE_TEXT}</span>);
-      case NWL20_LEX_ID:
-        return (<span>{NASPA_LICENSE_TEXT}</span>);
+      case NWL23_LEX_ID:
+        return (<span><a href="https://www.scrabbleplayers.org/landing/aerolith/" target="_blank">{NASPA_LICENSE_TEXT}</a></span>);
       case FISE2_LEX_ID:
         return (<span>{FISE2_LICENSE_TEXT}</span>);
       case OSPS_LEX_ID:

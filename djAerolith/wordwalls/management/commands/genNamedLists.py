@@ -202,7 +202,7 @@ def create_wl_lists(i, lex):
             "Eights with 5 or more vowels",
         )
 
-    if lex.lexiconName == "NWL20":
+    if lex.lexiconName == "NWL23":
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
@@ -216,7 +216,7 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "NWL20 {} not in CSW21".format(friendly_number_map[i]),
+            "NWL23 {} not in CSW21".format(friendly_number_map[i]),
         )
 
     if lex.lexiconName == "CSW21":
@@ -233,7 +233,7 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "CSW21 {} not in NWL20".format(friendly_number_map[i]),
+            "CSW21 {} not in NWL23".format(friendly_number_map[i]),
         )
 
 

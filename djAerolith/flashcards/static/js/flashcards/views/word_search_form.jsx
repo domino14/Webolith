@@ -30,8 +30,8 @@ const allowedSearchTypes = new Set([
 ]);
 
 const lexOptions = [{
-  value: 'NWL20',
-  displayValue: 'NWL20',
+  value: 'NWL23',
+  displayValue: 'NWL23',
 }, {
   value: 'CSW21',
   displayValue: 'CSW21',
