@@ -202,7 +202,7 @@ def create_wl_lists(i, lex):
             "Eights with 5 or more vowels",
         )
 
-    if lex.lexiconName == "NWL20":
+    if lex.lexiconName == "NWL23":
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
@@ -216,7 +216,23 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "NWL20 {} not in CSW21".format(friendly_number_map[i]),
+            "NWL23 {} not in CSW21".format(friendly_number_map[i]),
+        )
+
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
+        create_named_list(
+            lex,
+            len(qs),
+            i,
+            False,
+            json.dumps(qs),
+            "NWL23 {} not in NWL20".format(friendly_number_map[i]),
         )
 
     if lex.lexiconName == "CSW21":
@@ -233,7 +249,7 @@ def create_wl_lists(i, lex):
             i,
             False,
             json.dumps(qs),
-            "CSW21 {} not in NWL20".format(friendly_number_map[i]),
+            "CSW21 {} not in NWL23".format(friendly_number_map[i]),
         )
 
 
@@ -578,16 +594,16 @@ class Command(BaseCommand):
         import time
 
         start = time.time()
-        # NamedList.objects.filter(lexicon__lexiconName__in=["NWL20"]).delete()
-        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW21"]):
-        #     createNamedLists(lex)
+        NamedList.objects.filter(lexicon__lexiconName__in=["NWL23", "CSW21"]).delete()
+        for lex in Lexicon.objects.filter(lexiconName__in=["NWL23", "CSW21"]):
+            createNamedLists(lex)
         # create_spanish_lists()
         # NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
         # create_french_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
-        create_polish_lists()
-        create_french_lists()
-        NamedList.objects.filter(lexicon__lexiconName__in=["Deutsch"]).delete()
-        create_german_lists()
+        # create_polish_lists()
+        # create_french_lists()
+        # NamedList.objects.filter(lexicon__lexiconName__in=["Deutsch"]).delete()
+        # create_german_lists()
         print(f"Elapsed: {time.time()-start} s")

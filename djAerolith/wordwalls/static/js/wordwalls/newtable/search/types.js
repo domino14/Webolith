@@ -132,9 +132,8 @@ const SearchTypesEnum = {
       ],
       description: `Only looks for words that are NOT in the selected lexicon.
       The "other English-language lexicon" refers to CSW21 if you are currently
-      using the NWL20 lexicon, and NWL20 if you are currently using the
-      CSW21 lexicon. NWL20 has no new words compared to NWL18, and CSW21 has no new words
-      compared to CSW19.`,
+      using the NWL23 lexicon, and NWL23 if you are currently using the
+      CSW21 lexicon. CSW21 has no new words compared to CSW19.`,
     },
     [pbsrConditions.PROBABILITY_LIMIT]: {
       code: pbsrConditions.PROBABILITY_LIMIT,

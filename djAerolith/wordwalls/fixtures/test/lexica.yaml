@@ -124,3 +124,10 @@
     lexiconName: FRA24
   model: base.lexicon
   pk: 23
+- fields:
+    lengthCounts: '{"10":24137,"11":18362,"12":13350,"13":9255,"14":6067,"15":3822,"2":79,"3":769,"4":2861,"5":6843,"6":13032,"7":21223,"8":28177,"9":29115}'
+    lexiconDescription: NASPA Word List 2023 Edition
+    lexiconName: NWL23
+  model: base.lexicon
+  pk: 24
+
