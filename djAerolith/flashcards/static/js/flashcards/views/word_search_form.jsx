@@ -43,7 +43,7 @@ class WordSearchForm extends React.Component {
     this.searchSubmit = this.searchSubmit.bind(this);
 
     this.state = {
-      lexicon: 'NWL20',
+      lexicon: 'NWL23',
     };
   }
 

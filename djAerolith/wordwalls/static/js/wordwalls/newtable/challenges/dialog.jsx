@@ -9,7 +9,11 @@ import ChallengeButtonRow from './challenge_button';
 
 // XXX merge with similar function in blanks/dialog_container.js
 function getLexiconName(availableLexica, lexicon) {
-  return availableLexica.find((el) => el.id === lexicon).lexicon;
+  const lex = availableLexica.find((el) => el.id === lexicon);
+  if (lex) {
+    return lex.lexicon;
+  }
+  return '';
 }
 
 const ALL_TIME_TOUGHIE_LEXICA = ['CSW21', 'NWL23'];
@@ -80,7 +84,7 @@ function ChallengeDialog(props) {
   rows.push(<ChallengeButtonRow
     title="Longer challenges"
     size="sm"
-    key="ch3"
+    key="ch3-long"
     challenges={props.challengeInfo.filter((ch) => ch.orderPriority === 2)}
     onChallengeClick={props.onChallengeSelected}
     solvedChallenges={challs}

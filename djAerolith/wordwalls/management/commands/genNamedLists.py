@@ -219,6 +219,22 @@ def create_wl_lists(i, lex):
             "NWL23 {} not in CSW21".format(friendly_number_map[i]),
         )
 
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
+        create_named_list(
+            lex,
+            len(qs),
+            i,
+            False,
+            json.dumps(qs),
+            "NWL23 {} not in NWL20".format(friendly_number_map[i]),
+        )
+
     if lex.lexiconName == "CSW21":
         qs = word_search(
             [
@@ -578,7 +594,7 @@ class Command(BaseCommand):
         import time
 
         start = time.time()
-        # NamedList.objects.filter(lexicon__lexiconName__in=["NWL20"]).delete()
+        NamedList.objects.filter(lexicon__lexiconName__in=["NWL23", "CSW21"]).delete()
         for lex in Lexicon.objects.filter(lexiconName__in=["NWL23", "CSW21"]):
             createNamedLists(lex)
         # create_spanish_lists()
