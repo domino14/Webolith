@@ -579,15 +579,15 @@ class Command(BaseCommand):
 
         start = time.time()
         # NamedList.objects.filter(lexicon__lexiconName__in=["NWL20"]).delete()
-        # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20", "CSW21"]):
-        #     createNamedLists(lex)
+        for lex in Lexicon.objects.filter(lexiconName__in=["NWL23", "CSW21"]):
+            createNamedLists(lex)
         # create_spanish_lists()
         # NamedList.objects.filter(lexicon__lexiconName="OSPS44").delete()
         # create_french_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
-        create_polish_lists()
-        create_french_lists()
-        NamedList.objects.filter(lexicon__lexiconName__in=["Deutsch"]).delete()
-        create_german_lists()
+        # create_polish_lists()
+        # create_french_lists()
+        # NamedList.objects.filter(lexicon__lexiconName__in=["Deutsch"]).delete()
+        # create_german_lists()
         print(f"Elapsed: {time.time()-start} s")
