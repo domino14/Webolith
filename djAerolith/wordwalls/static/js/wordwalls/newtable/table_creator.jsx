@@ -368,7 +368,7 @@ class TableCreator extends React.Component {
       case COLLINS_21_LEX_ID:
         return (<span>{COLLINS_LICENSE_TEXT}</span>);
       case NWL23_LEX_ID:
-        return (<span><a href="https://www.scrabbleplayers.org/landing/aerolith/" target="_blank">{NASPA_LICENSE_TEXT}</a></span>);
+        return (<span><a href="https://www.scrabbleplayers.org/landing/aerolith/" target="_blank" rel="noreferrer">{NASPA_LICENSE_TEXT}</a></span>);
       case FISE2_LEX_ID:
         return (<span>{FISE2_LICENSE_TEXT}</span>);
       case OSPS_LEX_ID:
