@@ -7,6 +7,7 @@ jobs:
       image: ubuntu-2004:202111-02
     environment:
       DOCKER_WDB_SERVER: domino14/word_db_server:latest
+      CODECOMET_VERSION: v0.1.0-beta.5
     steps:
       - checkout
 
@@ -52,6 +53,11 @@ jobs:
       - run: cp .circleci/docker-compose.yml .
       - run: docker-compose up -d
       - run:
+          name: Download Codecomet
+          command: curl -Lo codecomet.zip https://github.com/codecomet-io/cli/releases/download/${CODECOMET_VERSION}/codecomet-${CODECOMET_VERSION}-linux-x86_64.zip
+      - run: unzip codecomet.zip && pwd && ls -al
+      - run: docker-compose exec app cp /opt/circlehome/project/codecomet codecomet
+      - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
@@ -59,8 +65,7 @@ jobs:
           command: dockerize -wait tcp://localhost:8180 -timeout 1m
       - run:
           name: Django tests
-          command: docker-compose exec app ./manage.py test -v2
-
+          command: docker-compose exec app ./codecomet -s webolith-backend-tests -- pytest
       - run:
           name: Stop cleanly
           command: docker-compose stop
