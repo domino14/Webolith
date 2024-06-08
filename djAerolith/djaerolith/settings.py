@@ -20,6 +20,10 @@
 import os
 import sys
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 from django.utils.translation import gettext_lazy as _
 
 from logging_filters import skip_suspicious_operations
@@ -113,14 +117,17 @@ ADMIN_MEDIA_PREFIX = "/static/admin/"
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get("SECRET_KEY")
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, "static")]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
+# For codecomet middleware
+CODECOMET_API_KEY = os.environ.get("CODECOMET_API_KEY")
+CODECOMET_PROJECT_ID = os.environ.get("CODECOMET_PROJECT_ID")
+CODECOMET_EXTERNAL_SERVER_URL = os.environ.get("CODECOMET_EXTERNAL_SERVER_URL")
 
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -130,8 +137,9 @@ MIDDLEWARE = (
     "social_django.middleware.SocialAuthExceptionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "middleware.cc.CaptureMiddleware",
     "middleware.session_expiry.SessionIdleTimeout",
-    "waffle.middleware.WaffleMiddleware"
+    "waffle.middleware.WaffleMiddleware",
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -142,10 +150,10 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "APP_DIRS": True,
         "DIRS": [
-            os.path.join(PROJECT_ROOT, "templates"),
+            BASE_DIR / "templates",
             # The following path is for dynamically generated templates
             # (See webpack config).
-            os.path.join(PROJECT_ROOT, "static", "dist", "templates"),
+            BASE_DIR / "static" / "dist" / "templates",
         ],
         "OPTIONS": {
             "context_processors": [
@@ -166,10 +174,10 @@ TEMPLATES = [
 ]
 
 LOCALE_PATHS = [
-    os.path.join(PROJECT_ROOT, "locale"),
-    os.path.join(PROJECT_ROOT, "base", "locale"),
-    os.path.join(PROJECT_ROOT, "wordwalls", "locale"),
-    os.path.join(PROJECT_ROOT, "accounts", "locale"),
+    BASE_DIR / "locale",
+    BASE_DIR / "base" / "locale",
+    BASE_DIR / "wordwalls" / "locale",
+    BASE_DIR / "accounts" / "locale",
 ]
 
 INSTALLED_APPS = (

@@ -31,3 +31,4 @@ wordsdir
 analysis/*.csv
 analysis/*.txt
 .ipynb_checkpoints
+djAerolith/venv
