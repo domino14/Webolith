@@ -42,6 +42,9 @@ class CaptureMiddleware:
             response = self.get_response(request)
             return response
 
+        if not hasattr(request, "error_logged"):
+            request.error_logged = False
+
         request_timestamp = now()
         request.cc_request_data = {}
         request.cc_request_data["request_time"] = request_timestamp.strftime(
@@ -72,6 +75,9 @@ class CaptureMiddleware:
         return response
 
     def process_exception(self, request, exception):
+        if not hasattr(request, "error_logged"):
+            request.error_logged = False
+
         request.cc_request_data["status_code"] = 500
         self.handle_exception(request, exception)
         # Allow default exception handling to kick in, return nothing
@@ -94,6 +100,8 @@ class CaptureMiddleware:
         data = request.cc_request_data
         if not self.capture_all and data.get("status_code") < 500:
             return
+        if hasattr(request, "error_logged") and request.error_logged:
+            return
         try:
             data["executable_path"] = str(self.app_directory)
             wrapper = {"log": data}
@@ -103,5 +111,6 @@ class CaptureMiddleware:
             )
             if response.status_code != 200:
                 print(f"Failed to log data: {response.status_code} - {response.text}")
+            request.error_logged = True
         except Exception as ex:
             print(f"Error sending data to external server: {ex}")
