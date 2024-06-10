@@ -3,6 +3,7 @@ import json
 import requests
 import traceback
 
+from django.http.request import HttpRequest
 from django.utils.timezone import now
 from django.conf import settings
 
@@ -76,8 +77,11 @@ class CaptureMiddleware:
         # Allow default exception handling to kick in, return nothing
         self.send_data_to_external_server(request)
 
-    def get_raw_headers(self, request):
-        return {key: value for key, value in request.headers.items()}
+    def get_raw_headers(self, request: HttpRequest):
+        headers = []
+        for key, value in request.headers.items():
+            headers.append(f"{key}: {value}")
+        return "\n".join(headers)
 
     def handle_exception(self, request, exception):
         request.cc_request_data["exception_message"] = str(exception)
