@@ -4,6 +4,7 @@ import requests
 import traceback
 
 from django.http.request import HttpRequest
+from django.http import Http404
 from django.utils.timezone import now
 from django.conf import settings
 
@@ -78,10 +79,13 @@ class CaptureMiddleware:
         if not hasattr(request, "error_logged"):
             request.error_logged = False
 
-        request.cc_request_data["status_code"] = 500
+        if isinstance(exception, Http404):
+            request.cc_request_data["status_code"] = 404
+        else:
+            request.cc_request_data["status_code"] = 500
         self.handle_exception(request, exception)
-        # Allow default exception handling to kick in, return nothing
         self.send_data_to_external_server(request)
+        # Allow default exception handling to kick in, return nothing
 
     def get_raw_headers(self, request: HttpRequest):
         headers = []
