@@ -59,12 +59,18 @@ class CaptureMiddleware:
         request.cc_request_data["path"] = request.path
         request.cc_request_data["query_string"] = request.META["QUERY_STRING"]
         request.cc_request_data["request_headers"] = self.get_raw_headers(request)
-        request.cc_request_data["raw_request"] = request.body.decode("utf-8")
+        try:
+            request.cc_request_data["raw_request"] = request.body.decode("utf-8")
+        except UnicodeDecodeError:
+            request.cc_request_data["raw_request"] = "<binary data>"
 
-        # No need to wrap Django middleware in try/except
+        # No need to wrap Django middleware's call to get_response in try/except
         # https://docs.djangoproject.com/en/5.0/topics/http/middleware/#exception-handling
         response = self.get_response(request)
-        response_body_text = response.content.decode("utf-8")
+        try:
+            response_body_text = response.content.decode("utf-8")
+        except UnicodeDecodeError:
+            response_body_text = "<binary data>"
         response_timestamp = now()
         request.cc_request_data["response_time"] = response_timestamp.strftime(
             self.RFC3339_FMT
