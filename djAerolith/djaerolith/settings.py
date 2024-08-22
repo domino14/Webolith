@@ -137,7 +137,7 @@ MIDDLEWARE = (
     "social_django.middleware.SocialAuthExceptionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "middleware.cc.CaptureMiddleware",
+    # "middleware.cc.CaptureMiddleware",
     "middleware.session_expiry.SessionIdleTimeout",
     "waffle.middleware.WaffleMiddleware",
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
