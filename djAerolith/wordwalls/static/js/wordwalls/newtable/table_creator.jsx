@@ -19,7 +19,9 @@ import AerolithListDialog from './aerolith_list_dialog';
 
 // This auto-generated code has no exports. We will import it and use
 // its globals.
-import { createAnagrammerClient } from '../gen/rpc/wordsearcher/searcher_pb_twirp';
+import * as searcherTwirp from '../gen/rpc/wordsearcher/searcher_pb_twirp';
+
+const { createAnagrammerClient } = searcherTwirp;
 
 const GAME_TYPE_NEW = 'Load New List';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';

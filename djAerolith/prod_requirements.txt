@@ -22,3 +22,4 @@ mock
 # wagtail
 protobuf
 twirp
+django-vite

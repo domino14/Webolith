@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 
 import Styling from './style';
-import Chip from './game_chip';
+import { GameChip } from './game_chip';
 import Tile from './game_tile';
 import QuestionText from './question_text';
 
@@ -90,7 +90,7 @@ class WordwallsQuestion extends React.Component {
     let countFrom = 0;
     // don't show chips for "typing" quizzes.
     if (this.props.displayStyle.showChips && !this.props.isTyping) {
-      tiles.push(<Chip
+      tiles.push(<GameChip
         radius={(tileWidth / 2) - 1}
         x={xPadding + 0.5}
         y={y + 0.5}
@@ -111,7 +111,7 @@ class WordwallsQuestion extends React.Component {
         x = xPadding + (i * (tileWidth + strokeWidth));
         letter = this.props.letters[letterIdx];
         if (letter === DEFAULT_BLANK_CHARACTER
-            && this.props.displayStyle.blankCharacter !== '') {
+          && this.props.displayStyle.blankCharacter !== '') {
           letter = this.props.displayStyle.blankCharacter;
         }
         let angle = 0;
@@ -157,7 +157,7 @@ class WordwallsQuestion extends React.Component {
         }}
         transform={
           `scale(${this.props.scaleTransform})`
-}
+        }
       >
         {tiles}
         {this.borderRectangle()}
