@@ -1,7 +1,10 @@
-import 'bootstrap'; // Needed by the app, so load it here.
-
 import App from './app';
 import Utils from './utils';
+
+
+// Import Bootstrap's JavaScript and CSS with relative paths
+// import 'bootstrap';
+
 
 const user = JSON.parse(window.TableGlobals.user);
 

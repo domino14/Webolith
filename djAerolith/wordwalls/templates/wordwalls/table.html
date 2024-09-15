@@ -21,9 +21,17 @@ To contact the author, please email delsolar at gmail dot com
 {% load value_from_settings %}
 {% value_from_settings USE_GA as USE_GA %}
 
+{% load django_vite %}
+
+
 <!DOCTYPE html>
 <html>
 <head>
+    {% vite_hmr_client %}
+    {% vite_react_refresh %}
+
+
+    {% vite_asset 'main.js' %}
   <meta charset="utf-8">
   <link rel="shortcut icon" href="/static/favicon.ico" />
   <title>{% if tablenum %}WordWalls - table {{tablenum}}{% else %}Wordwalls - Create Table{% endif %}</title>
@@ -80,6 +88,8 @@ To contact the author, please email delsolar at gmail dot com
 <body>
   {% value_from_settings DEBUG as DEBUG %}
 
+
+
 {% block content %}
 <script>
   // Our entry point will use window.TableGlobals to pass these in to the app.
@@ -117,13 +127,10 @@ To contact the author, please email delsolar at gmail dot com
 <div id="fade"></div>
 <div id="infoDialog" title=""></div>
 
-{% if DEBUG %}
-  <script src="{{STATIC_SRV}}/static/dist/node_vendors~wordwallsapp~flashcardsapp.js"></script>
-  <script src="{{STATIC_SRV}}/static/dist/node_vendors~wordwallsapp.js"></script>
-  <script src="{{STATIC_SRV}}/static/dist/wordwallsapp.js"></script>
+<!-- {% if DEBUG %}
+  <script type="module" src="/vitefe/main.js"></script>
 {% else %}
-  {% include "wordwalls_dynamic/wordwalls_include.html" %}
-{% endif %}
-
+  <script type="module" src="{{STATIC_URL}}dist/main.js"></script>
+{% endif %} -->
 </body>
 </html>

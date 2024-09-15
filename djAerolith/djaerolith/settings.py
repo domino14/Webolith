@@ -190,6 +190,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     # 'basic.blog',
     # 'basic.inlines',
+    "django_vite",
     "base",
     "flashcards",
     "tablegame",
@@ -200,12 +201,21 @@ INSTALLED_APPS = (
     "waffle",
     "registration",
     "social_django",
-    "captcha",
+    "django_recaptcha",
     # 'debug_toolbar',
     # 'locking'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+# Using proxy locally.
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": DEBUG,
+        "dev_server_port": 80,
+        "dev_server_host": "aerolith.localhost",
+    }
+}
 
 AUTHENTICATION_BACKENDS = (
     "accounts.backends.CaseInsensitiveModelBackend",
@@ -340,7 +350,7 @@ INTERCOM_APP_SECRET_KEY = os.environ.get("INTERCOM_APP_SECRET_KEY")
 USE_CAPTCHA = tobool(os.environ.get("USE_CAPTCHA", True))
 NOCAPTCHA = True
 # Don't complain about captcha in debug mode.
-SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+SILENCED_SYSTEM_CHECKS = ["django_recaptcha.recaptcha_test_key_error"]
 
 if os.environ.get("RECAPTCHA_PRIVATE_KEY"):
     RECAPTCHA_PUBLIC_KEY = "6LctSMUSAAAAAAe-qMSIt5Y-iTw5hcFRsk2BPYl2"

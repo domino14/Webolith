@@ -1,5 +1,5 @@
 # Base image that we can base the prod image on.
-
+# OBSOLETE XXX DELETE ME
 FROM python:3-alpine AS builder
 LABEL maintainer="Cesar Del Solar <delsolar@gmail.com>"
 

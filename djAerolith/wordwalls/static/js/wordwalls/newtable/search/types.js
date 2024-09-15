@@ -1,4 +1,4 @@
-import searcher from '../../gen/rpc/wordsearcher/searcher_pb';
+import * as searcher from '../../gen/rpc/wordsearcher/searcher_pb';
 
 const pbsrConditions = searcher.SearchRequest.Condition;
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import fonts from './fonts';
 
+// Constants can remain as-is
 const ColorConstants = {
   White: '#feffff',
   Black: '#3e3f3a',
@@ -13,78 +14,35 @@ const ColorConstants = {
   Magenta: '#e95ad6',
 };
 
-function getColorFromAnagrams(numAnagrams) {
-  let effectiveNumAnagrams = numAnagrams;
-  if (numAnagrams > 9) {
-    effectiveNumAnagrams = 9;
-  }
-  return {
-    9: {
-      color: ColorConstants.Black,
-      opacity: 1,
-      textColor: ColorConstants.White,
-      outline: '#7e7f7a',
-    },
-    8: {
-      color: ColorConstants.Black,
-      opacity: 0.65,
-      textColor: ColorConstants.White,
-      outline: '#7e7f7a',
-    },
-    7: {
-      color: '#325d88',
-      opacity: 1,
-      textColor: ColorConstants.White,
-      outline: '#7e7f7a',
-    },
-    6: {
-      color: ColorConstants.Magenta,
-      opacity: 1,
-      textColor: ColorConstants.White,
-      outline: '#7e7f7a',
-    },
-    5: {
-      color: ColorConstants.Green,
-      opacity: 1,
-      textColor: ColorConstants.Black,
-      outline: '#7e7f7a',
-    },
-    4: {
-      color: ColorConstants.Yellow,
-      opacity: 1,
-      textColor: ColorConstants.Black,
-      outline: '#7e7f7a',
-    },
-    3: {
-      color: ColorConstants.Blue,
-      opacity: 1,
-      textColor: ColorConstants.White,
-      outline: '#7e7f7a',
-    },
-    2: {
-      color: ColorConstants.Purple,
-      opacity: 1,
-      textColor: ColorConstants.White,
-      outline: '#7e7f7a',
-    },
-    1: {
-      color: ColorConstants.White,
-      opacity: 1,
-      textColor: ColorConstants.Black,
-      outline: '#7e7f7a',
-    },
-  }[effectiveNumAnagrams];
-}
+// Helper function for color logic
+const getColorFromAnagrams = (numAnagrams) => {
+  const effectiveNumAnagrams = numAnagrams > 9 ? 9 : numAnagrams;
+  const colors = {
+    9: { color: ColorConstants.Black, opacity: 1, textColor: ColorConstants.White, outline: '#7e7f7a' },
+    8: { color: ColorConstants.Black, opacity: 0.65, textColor: ColorConstants.White, outline: '#7e7f7a' },
+    7: { color: '#325d88', opacity: 1, textColor: ColorConstants.White, outline: '#7e7f7a' },
+    6: { color: ColorConstants.Magenta, opacity: 1, textColor: ColorConstants.White, outline: '#7e7f7a' },
+    5: { color: ColorConstants.Green, opacity: 1, textColor: ColorConstants.Black, outline: '#7e7f7a' },
+    4: { color: ColorConstants.Yellow, opacity: 1, textColor: ColorConstants.Black, outline: '#7e7f7a' },
+    3: { color: ColorConstants.Blue, opacity: 1, textColor: ColorConstants.White, outline: '#7e7f7a' },
+    2: { color: ColorConstants.Purple, opacity: 1, textColor: ColorConstants.White, outline: '#7e7f7a' },
+    1: { color: ColorConstants.White, opacity: 1, textColor: ColorConstants.Black, outline: '#7e7f7a' },
+  };
 
-function GameChip(props) {
-  const transform = `translate(${props.x + props.radius}, ${props.y + props.radius})`;
-  const color = getColorFromAnagrams(props.number);
+  return colors[effectiveNumAnagrams];
+};
+
+// Functional component using modern React patterns
+export const GameChip = ({ x, y, radius, fontSize, number }) => {
+  const transform = `translate(${x + radius}, ${y + radius})`;
+  const color = getColorFromAnagrams(number);
+
   return (
     <g transform={transform}>
       <circle
         cx={0}
         cy={0}
-        r={props.radius}
+        r={radius}
         stroke={color.outline}
         strokeWidth="0.5px"
         fill={color.color}
@@ -96,17 +54,18 @@ function GameChip(props) {
         dy={fonts.sansmono.dy}
         textAnchor="middle"
         fontFamily={fonts.sansmono.fontFamily}
-        fontSize={`${props.fontSize}%`}
+        fontSize={`${fontSize}%`}
         stroke={color.textColor}
         fill={color.textColor}
         strokeWidth="1px"
       >
-        {props.number}
+        {number}
       </text>
     </g>
   );
-}
+};
 
+// Modern use of PropTypes
 GameChip.propTypes = {
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
@@ -115,4 +74,3 @@ GameChip.propTypes = {
   number: PropTypes.number.isRequired,
 };
 
-export default GameChip;
