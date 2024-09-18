@@ -11,8 +11,6 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 ENV PYTHONUNBUFFERED 1
 
-RUN pip install ddtrace
-
 EXPOSE 8000
 # Run command in exec form because /bin/sh does not pass signals to its children.
-CMD ["ddtrace-run", "gunicorn", "djaerolith.wsgi:application", "--config", "gunicorn.py"]
+CMD ["gunicorn", "djaerolith.wsgi:application", "--config", "gunicorn.py"]

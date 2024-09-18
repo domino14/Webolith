@@ -1,6 +1,6 @@
-import searcher from '../../gen/rpc/wordsearcher/searcher_pb';
+import { SearchRequest_Condition } from '../../gen/wordsearcher/searcher_pb';
 
-const pbsrConditions = searcher.SearchRequest.Condition;
+const cond = SearchRequest_Condition;
 
 const SearchTypesInputs = {
   TWO_NUMBERS: 1,
@@ -11,28 +11,28 @@ const SearchTypesInputs = {
 };
 
 const SearchTypesEnum = {
-  PROBABILITY: pbsrConditions.PROBABILITY_RANGE,
-  LENGTH: pbsrConditions.LENGTH,
-  TAGS: pbsrConditions.HAS_TAGS,
-  POINTS: pbsrConditions.POINT_VALUE,
-  NUM_ANAGRAMS: pbsrConditions.NUMBER_OF_ANAGRAMS,
-  NUM_VOWELS: pbsrConditions.NUMBER_OF_VOWELS,
-  FIXED_LENGTH: pbsrConditions.SINGLE_VALUE_LENGTH,
-  NUM_TWO_BLANKS: pbsrConditions.NUM_TWO_BLANKS,
-  MAX_SOLUTIONS: pbsrConditions.MAX_SOLUTIONS,
-  NOT_IN_LEXICON: pbsrConditions.NOT_IN_LEXICON,
-  PROBABILITY_LIMIT: pbsrConditions.PROBABILITY_LIMIT,
-  MATCHING_ANAGRAM: pbsrConditions.MATCHING_ANAGRAM,
-  DIFFICULTY_RANGE: pbsrConditions.DIFFICULTY_RANGE,
-  DELETED_WORD: pbsrConditions.DELETED_WORD,
+  PROBABILITY: cond.PROBABILITY_RANGE,
+  LENGTH: cond.LENGTH,
+  TAGS: cond.HAS_TAGS,
+  POINTS: cond.POINT_VALUE,
+  NUM_ANAGRAMS: cond.NUMBER_OF_ANAGRAMS,
+  NUM_VOWELS: cond.NUMBER_OF_VOWELS,
+  FIXED_LENGTH: cond.SINGLE_VALUE_LENGTH,
+  NUM_TWO_BLANKS: cond.NUM_TWO_BLANKS,
+  MAX_SOLUTIONS: cond.MAX_SOLUTIONS,
+  NOT_IN_LEXICON: cond.NOT_IN_LEXICON,
+  PROBABILITY_LIMIT: cond.PROBABILITY_LIMIT,
+  MATCHING_ANAGRAM: cond.MATCHING_ANAGRAM,
+  DIFFICULTY_RANGE: cond.DIFFICULTY_RANGE,
+  DELETED_WORD: cond.DELETED_WORD,
   /**
    * The inputs won't allow user to go beyond minAllowed and maxAllowed.
    * defaultMin and defaultMax are the values that show up when the
    * input is first placed on the screen.
    */
   properties: {
-    [pbsrConditions.PROBABILITY_RANGE]: {
-      code: pbsrConditions.PROBABILITY_RANGE,
+    [cond.PROBABILITY_RANGE]: {
+      code: cond.PROBABILITY_RANGE,
       displayName: 'Probability Range',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -44,8 +44,8 @@ const SearchTypesEnum = {
       there are two blanks in the bag, and alphagrams with identical
       probabilities will still have different (but consecutive) numbers.`,
     },
-    [pbsrConditions.LENGTH]: {
-      code: pbsrConditions.LENGTH,
+    [cond.LENGTH]: {
+      code: cond.LENGTH,
       displayName: 'Word Length',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 2,
@@ -54,15 +54,15 @@ const SearchTypesEnum = {
       maxAllowed: 15,
       description: 'You can filter by length of word with this option.',
     },
-    [pbsrConditions.HAS_TAGS]: {
-      code: pbsrConditions.HAS_TAGS,
+    [cond.HAS_TAGS]: {
+      code: cond.HAS_TAGS,
       displayName: 'Has Tags',
       default: '',
       inputType: SearchTypesInputs.ONE_STRING,
       description: 'This is an unreleased feature, hold tight :)',
     },
-    [pbsrConditions.POINT_VALUE]: {
-      code: pbsrConditions.POINT_VALUE,
+    [cond.POINT_VALUE]: {
+      code: cond.POINT_VALUE,
       displayName: 'Point Value',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 2,
@@ -72,8 +72,8 @@ const SearchTypesEnum = {
       description: `Filter by point value of the word. Letter values are taken
       from a certain crossword game HINT HINT.`,
     },
-    [pbsrConditions.NUMBER_OF_ANAGRAMS]: {
-      code: pbsrConditions.NUMBER_OF_ANAGRAMS,
+    [cond.NUMBER_OF_ANAGRAMS]: {
+      code: cond.NUMBER_OF_ANAGRAMS,
       displayName: 'Number of Anagrams',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -83,8 +83,8 @@ const SearchTypesEnum = {
       description: `The number of total anagrams of this word, including
       the word itself.`,
     },
-    [pbsrConditions.NUMBER_OF_VOWELS]: {
-      code: pbsrConditions.NUMBER_OF_VOWELS,
+    [cond.NUMBER_OF_VOWELS]: {
+      code: cond.NUMBER_OF_VOWELS,
       displayName: 'Number of Vowels',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 0,
@@ -93,8 +93,8 @@ const SearchTypesEnum = {
       maxAllowed: 15,
       description: 'The number of vowels in this word',
     },
-    [pbsrConditions.SINGLE_VALUE_LENGTH]: {
-      code: pbsrConditions.SINGLE_VALUE_LENGTH,
+    [cond.SINGLE_VALUE_LENGTH]: {
+      code: cond.SINGLE_VALUE_LENGTH,
       displayName: 'Word Length',
       inputType: SearchTypesInputs.ONE_NUMBER,
       default: 5,
@@ -102,8 +102,8 @@ const SearchTypesEnum = {
       maxAllowed: 10,
       description: 'You can filter by length of word with this option.',
     },
-    [pbsrConditions.NUM_TWO_BLANKS]: {
-      code: pbsrConditions.NUM_TWO_BLANKS,
+    [cond.NUM_TWO_BLANKS]: {
+      code: cond.NUM_TWO_BLANKS,
       displayName: 'Number of 2-blank questions',
       inputType: SearchTypesInputs.ONE_NUMBER,
       default: 4,
@@ -111,8 +111,8 @@ const SearchTypesEnum = {
       maxAllowed: 50,
       description: 'How many questions with 2-blanks to generate in total.',
     },
-    [pbsrConditions.MAX_SOLUTIONS]: {
-      code: pbsrConditions.MAX_SOLUTIONS,
+    [cond.MAX_SOLUTIONS]: {
+      code: cond.MAX_SOLUTIONS,
       displayName: 'Maximum number of anagrams',
       inputType: SearchTypesInputs.ONE_NUMBER,
       default: 5,
@@ -121,8 +121,8 @@ const SearchTypesEnum = {
       description: `The maximum number of anagrams that a question can have.
       No questions will be generated that have more than this number of anagrams.`,
     },
-    [pbsrConditions.NOT_IN_LEXICON]: {
-      code: pbsrConditions.NOT_IN_LEXICON,
+    [cond.NOT_IN_LEXICON]: {
+      code: cond.NOT_IN_LEXICON,
       displayName: 'Not in lexicon',
       inputType: SearchTypesInputs.SELECT,
       default: 'update',
@@ -135,8 +135,8 @@ const SearchTypesEnum = {
       using the NWL23 lexicon, and NWL23 if you are currently using the
       CSW21 lexicon. CSW21 has no new words compared to CSW19.`,
     },
-    [pbsrConditions.PROBABILITY_LIMIT]: {
-      code: pbsrConditions.PROBABILITY_LIMIT,
+    [cond.PROBABILITY_LIMIT]: {
+      code: cond.PROBABILITY_LIMIT,
       displayName: 'Probability limit',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -150,8 +150,8 @@ const SearchTypesEnum = {
       questions that were already in the 1-100 range by intrinsic probability,
       prior to applying any filters.`,
     },
-    [pbsrConditions.MATCHING_ANAGRAM]: {
-      code: pbsrConditions.MATCHING_ANAGRAM,
+    [cond.MATCHING_ANAGRAM]: {
+      code: cond.MATCHING_ANAGRAM,
       displayName: 'Anagram match',
       inputType: SearchTypesInputs.ONE_STRING,
       default: 'AEINST??',
@@ -159,8 +159,8 @@ const SearchTypesEnum = {
       search. You can use up to 8 blank characters (use a ? character to
       represent a blank).`,
     },
-    [pbsrConditions.DIFFICULTY_RANGE]: {
-      code: pbsrConditions.DIFFICULTY_RANGE,
+    [cond.DIFFICULTY_RANGE]: {
+      code: cond.DIFFICULTY_RANGE,
       displayName: 'Difficulty range',
       inputType: SearchTypesInputs.TWO_NUMBERS,
       defaultMin: 1,
@@ -172,8 +172,8 @@ const SearchTypesEnum = {
       split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
       to 100 (hardest).`,
     },
-    [pbsrConditions.DELETED_WORD]: {
-      code: pbsrConditions.DELETED_WORD,
+    [cond.DELETED_WORD]: {
+      code: cond.DELETED_WORD,
       displayName: 'Words deleted from previous lexicon',
       inputType: SearchTypesInputs.NONE,
       description: `You can search for words that are not in this lexicon but were
