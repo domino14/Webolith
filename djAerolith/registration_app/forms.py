@@ -1,4 +1,4 @@
-from captcha.fields import ReCaptchaField
+from django_recaptcha.fields import ReCaptchaField
 
 from django.contrib.auth.models import User
 from django.utils.translation import gettext
