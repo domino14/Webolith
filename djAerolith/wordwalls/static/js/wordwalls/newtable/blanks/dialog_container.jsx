@@ -26,7 +26,7 @@ const allowedSearchTypes = new Set([
  */
 function pbToQuestions(pb) {
   const rawQs = pb.alphagrams.map((alph) => {
-    const words = alph.words;
+    const { words } = alph;
     const wl = words.map((w) => w.word);
     return {
       q: alph.alphagram,

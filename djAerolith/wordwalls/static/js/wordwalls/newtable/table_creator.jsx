@@ -70,16 +70,12 @@ const notifyError = (error) => {
 */
 const TableCreator = React.forwardRef((props, ref) => {
   /**
-   * Redirect to the given URL. This forces the user to leave the table
-   * they are currently in.
-   * @param  {string} url
-   */
+     * Redirect to the given URL. This forces the user to leave the table
+     * they are currently in.
+     * @param  {string} url
+     */
   const redirectUrl = (url) => {
     window.location.href = url;
-  };
-
-  const joinClicked = (tablenum) => {
-    redirectUrl(`/wordwalls/table/${tablenum}`);
   };
 
   const [activeGameType, setActiveGameType] = useState(GAME_TYPE_NEW);
@@ -105,10 +101,7 @@ const TableCreator = React.forwardRef((props, ref) => {
 
   const api = useMemo(() => new WordwallsAPI(), []);
   const wordServerRPC = useClient(Anagrammer);
-
-  const selectedListChange = (listId) => {
-    setSelectedList(listId);
-  };
+  const modalRef = useRef(null);
 
   const showSpinner = () => {
     props.setLoadingData(true);
@@ -116,6 +109,26 @@ const TableCreator = React.forwardRef((props, ref) => {
 
   const hideSpinner = () => {
     props.setLoadingData(false);
+  };
+
+  const loadSavedListInfo = () => {
+    showSpinner();
+    $.ajax({
+      url: '/base/api/saved_lists/',
+      data: {
+        lexicon_id: currentLexicon,
+        order_by: 'modified',
+        temp: 0,
+        last_saved: 'human',
+      },
+      method: 'GET',
+    })
+      .done((data) => setSavedLists(data))
+      .always(() => hideSpinner());
+  };
+
+  const selectedListChange = (listId) => {
+    setSelectedList(listId);
   };
 
   const aerolithListSubmit = () => {
@@ -241,22 +254,6 @@ const TableCreator = React.forwardRef((props, ref) => {
       .always(() => hideSpinner());
   };
 
-  const loadSavedListInfo = () => {
-    showSpinner();
-    $.ajax({
-      url: '/base/api/saved_lists/',
-      data: {
-        lexicon_id: currentLexicon,
-        order_by: 'modified',
-        temp: 0,
-        last_saved: 'human',
-      },
-      method: 'GET',
-    })
-      .done((data) => setSavedLists(data))
-      .always(() => hideSpinner());
-  };
-
   const listUpload = (files) => {
     const data = new FormData();
     data.append('file', files[0]);
@@ -328,8 +325,6 @@ const TableCreator = React.forwardRef((props, ref) => {
     // If the lexicon changes, we have to load new word lists no matter what.
     loadInfoForListType(activeListType);
   }, [currentLexicon]);
-
-  const modalRef = useRef(null);
 
   const renderLicenseText = () => {
     switch (currentLexicon) {

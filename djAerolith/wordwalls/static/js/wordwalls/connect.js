@@ -1,10 +1,9 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { ServiceType } from "@bufbuild/protobuf";
-import { createConnectTransport } from "@connectrpc/connect-web";
+import { createConnectTransport } from '@connectrpc/connect-web';
 import {
   createPromiseClient,
-} from "@connectrpc/connect";
+} from '@connectrpc/connect';
 
 const loc = window.location;
 const apiEndpoint = loc.host;
@@ -23,12 +22,10 @@ export const binaryTransport = createConnectTransport({
 
 export function useClient(
   service,
-  binary = false
+  binary = false,
 ) {
   const tf = binary ? binaryTransport : transport;
   return useMemo(() => createPromiseClient(service, tf), [service, tf]);
 }
 
-export const connectErrorMessage = (e) => {
-  return e.rawMessage;
-};
+export const connectErrorMessage = (e) => e.rawMessage;

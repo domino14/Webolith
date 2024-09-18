@@ -1,5 +1,7 @@
+// eslint-disable-next-line camelcase
 import { SearchRequest_Condition } from '../../gen/wordsearcher/searcher_pb';
 
+// eslint-disable-next-line camelcase
 const cond = SearchRequest_Condition;
 
 const SearchTypesInputs = {

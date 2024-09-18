@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 from django.conf import settings
 import requests
 from google.protobuf.json_format import MessageToDict, ParseDict
+from requests.exceptions import HTTPError
 
 from base.models import Lexicon
 from lib.domain import Questions
@@ -53,9 +54,14 @@ def make_pb_request(
             json=MessageToDict(pb_obj),
             timeout=TIMEOUT,
         )
+        r.raise_for_status()
+
         resp_pb = ParseDict(r.json(), expected_pb_response_obj)
+    except HTTPError as exc:
+        resp = exc.response.json()
+        raise WDBError(resp.get("message"))
     except Exception as e:
-        raise WDBError(e)
+        raise WDBError(f"Unknown error: {e}")
 
     return resp_pb
 
