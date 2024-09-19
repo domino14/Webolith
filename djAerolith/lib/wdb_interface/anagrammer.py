@@ -1,13 +1,9 @@
 import logging
 from typing import List
 
-from django.conf import settings
-from twirp.context import Context
-from twirp.exceptions import TwirpServerException
 
-from lib.wdb_interface.constants import TIMEOUT
 from lib.wdb_interface.exceptions import WDBError
-from rpc.wordsearcher.searcher_twirp import AnagrammerClient
+from lib.wdb_interface.wdb_helper import make_pb_request
 import rpc.wordsearcher.searcher_pb2 as pb
 
 logger = logging.getLogger(__name__)
@@ -33,7 +29,6 @@ def gen_blank_challenges(
     Generate a set of blank challenges with the given parameters.
 
     """
-    client = AnagrammerClient(settings.WORD_DB_SERVER_ADDRESS, timeout=TIMEOUT)
     sr = pb.BlankChallengeCreateRequest(
         lexicon=lexicon_name,
         num_questions=num_questions,
@@ -43,8 +38,10 @@ def gen_blank_challenges(
     )
 
     try:
-        response = client.BlankChallengeCreator(ctx=Context(), request=sr)
-    except TwirpServerException as e:
+        response = make_pb_request(
+            sr, "wordsearcher.Anagrammer", "BlankChallengeCreator", pb.SearchResponse()
+        )
+    except Exception as e:
         raise WDBError(e)
     return resp_to_alphagram_dicts(response)
 
@@ -57,7 +54,6 @@ def gen_build_challenge(
     min_solutions: int,
     max_solutions: int,
 ):
-    client = AnagrammerClient(settings.WORD_DB_SERVER_ADDRESS, timeout=TIMEOUT)
     sr = pb.BuildChallengeCreateRequest(
         lexicon=lexicon_name,
         min_solutions=min_solutions,
@@ -67,20 +63,21 @@ def gen_build_challenge(
         require_length_solution=require_length_solution,
     )
     try:
-        response = client.BuildChallengeCreator(ctx=Context(), request=sr)
-    except TwirpServerException as e:
+        response = make_pb_request(
+            sr, "wordsearcher.Anagrammer", "BuildChallengeCreator", pb.SearchResponse()
+        )
+    except Exception as e:
         raise WDBError(e)
     return resp_to_alphagram_dicts(response)
 
 
-def anagram_letters(
-    lexicon_name: str, letters: str, mode=pb.AnagramRequest.Mode.EXACT
-):
-    client = AnagrammerClient(settings.WORD_DB_SERVER_ADDRESS, timeout=TIMEOUT)
+def anagram_letters(lexicon_name: str, letters: str, mode=pb.AnagramRequest.Mode.EXACT):
     sr = pb.AnagramRequest(lexicon=lexicon_name, letters=letters, mode=mode)
     try:
-        response = client.Anagram(ctx=Context(), request=sr)
-    except TwirpServerException as e:
+        response = make_pb_request(
+            sr, "wordsearcher.Anagrammer", "Anagram", pb.AnagramResponse()
+        )
+    except Exception as e:
         raise WDBError(e)
     words = [w.word for w in response.words]
     return words

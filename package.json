@@ -61,11 +61,13 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
+    "@bufbuild/protobuf": "^1.10.0",
+    "@connectrpc/connect": "^1.5.0",
+    "@connectrpc/connect-web": "^1.5.0",
     "backbone": "^1.4.1",
     "bootbox": "^5.5.3",
     "bootstrap": "^3.4.1",
     "bootstrap-datepicker": "^1.9.0",
-    "google-protobuf": "^3.20.1",
     "immutable": "^4.1.0",
     "jquery": "^3.6.0",
     "js-cookie": "^3.0.1",
@@ -79,7 +81,6 @@
     "react-dropzone": "^11.5.3",
     "tablesorter": "^2.31.3",
     "tether": "^2.0.0",
-    "twirp": "0.0.7",
     "underscore": "^1.13.4",
     "whatwg-fetch": "^3.6.2"
   },

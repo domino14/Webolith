@@ -1,6 +1,12 @@
 /* eslint-disable react/no-unused-class-component-methods */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useImperativeHandle,
+} from 'react';
 import PropTypes from 'prop-types';
 
 import $ from 'jquery';
@@ -17,9 +23,8 @@ import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
 
-// This auto-generated code has no exports. We will import it and use
-// its globals.
-import { createAnagrammerClient } from '../gen/rpc/wordsearcher/searcher_pb_twirp';
+import { useClient } from '../connect';
+import { Anagrammer } from '../gen/wordsearcher/searcher_connect';
 
 const GAME_TYPE_NEW = 'Load New List';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
@@ -59,220 +64,165 @@ const notifyError = (error) => {
 };
 
 /**
- * TableCreator should mostly manage its own state, do its own AJAX queries,
- * etc.. It is mostly an independent app. It will have parallels to
- * WordwallsApp, even though it is a part of it.
- */
-class TableCreator extends React.Component {
+* TableCreator should mostly manage its own state, do its own AJAX queries,
+* etc.. It is mostly an independent app. It will have parallels to
+* WordwallsApp, even though it is a part of it.
+*/
+const TableCreator = React.forwardRef((props, ref) => {
   /**
-   * Redirect to the given URL. This forces the user to leave the table
-   * they are currently in.
-   * @param  {string} url
-   */
-  static redirectUrl(url) {
+     * Redirect to the given URL. This forces the user to leave the table
+     * they are currently in.
+     * @param  {string} url
+     */
+  const redirectUrl = (url) => {
     window.location.href = url;
-  }
+  };
 
-  static joinClicked(tablenum) {
-    TableCreator.redirectUrl(`/wordwalls/table/${tablenum}`);
-  }
+  const [activeGameType, setActiveGameType] = useState(GAME_TYPE_NEW);
+  const [activeListType, setActiveListType] = useState(LIST_TYPE_CHALLENGE);
 
-  // We must pass the props to the constructor if we want to use
-  // them in the state initializer.
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeGameType: GAME_TYPE_NEW,
-      activeListType: LIST_TYPE_CHALLENGE,
+  const [currentLexicon, setCurrentLexicon] = useState(props.defaultLexicon);
 
-      currentLexicon: this.props.defaultLexicon,
+  const [desiredTime, setDesiredTime] = useState(DEFAULT_TIME_PER_QUIZ);
+  const [questionsPerRound, setQuestionsPerRound] = useState(50);
 
-      desiredTime: DEFAULT_TIME_PER_QUIZ,
-      questionsPerRound: 50,
+  // Aerolith lists
+  const [aerolithLists, setAerolithLists] = useState([]);
+  const [selectedList, setSelectedList] = useState('');
+  // Saved lists
+  const [savedLists, setSavedLists] = useState({
+    lists: [],
+    count: 0,
+    limits: {
+      total: 0,
+      current: 0,
+    },
+  });
 
-      // Aerolith lists
-      aerolithLists: [],
-      selectedList: '',
-      // Saved lists - the format here is a little different because
-      // we are using another API 😐
-      savedLists: {
-        lists: [],
-        count: 0,
-        limits: {
-          total: 0,
-          current: 0,
-        },
+  const api = useMemo(() => new WordwallsAPI(), []);
+  const wordServerRPC = useClient(Anagrammer);
+  const modalRef = useRef(null);
+
+  const showSpinner = () => {
+    props.setLoadingData(true);
+  };
+
+  const hideSpinner = () => {
+    props.setLoadingData(false);
+  };
+
+  const loadSavedListInfo = () => {
+    showSpinner();
+    $.ajax({
+      url: '/base/api/saved_lists/',
+      data: {
+        lexicon_id: currentLexicon,
+        order_by: 'modified',
+        temp: 0,
+        last_saved: 'human',
       },
+      method: 'GET',
+    })
+      .done((data) => setSavedLists(data))
+      .always(() => hideSpinner());
+  };
 
-    };
+  const selectedListChange = (listId) => {
+    setSelectedList(listId);
+  };
 
-    this.selectedListChange = this.selectedListChange.bind(this);
-    this.aerolithListSubmit = this.aerolithListSubmit.bind(this);
-    this.flashcardAerolithListSubmit = this.flashcardAerolithListSubmit.bind(this);
-    this.savedListSubmit = this.savedListSubmit.bind(this);
-    this.flashcardSavedListSubmit = this.flashcardSavedListSubmit.bind(this);
-    this.listUpload = this.listUpload.bind(this);
-    this.preSubmitHook = this.preSubmitHook.bind(this);
-    this.setTimeAndQuestions = this.setTimeAndQuestions.bind(this);
-
-    this.showSpinner = this.showSpinner.bind(this);
-    this.hideSpinner = this.hideSpinner.bind(this);
-    this.api = new WordwallsAPI();
-    this.wordServerRPC = createAnagrammerClient('/word_db_server');
-  }
-
-  /**
-   * If certain fields in the state have changed, we should make
-   * some network requests.
-   */
-  componentDidUpdate(prevProps, prevState) {
-    // XXX: this should be moved to individual dialog containers.
-    // If the lexicon changes, we have to load new word lists no matter what.
-    if (prevState.currentLexicon !== this.state.currentLexicon) {
-      // We may need to load new lists.
-      this.loadInfoForListType(this.state.activeListType);
-    }
-  }
-
-  setTimeAndQuestions(o) {
-    this.setState({
-      desiredTime: o.desiredTime,
-      questionsPerRound: o.questionsPerRound,
-    });
-  }
-
-  loadInfoForListType(option) {
-    switch (option) {
-      case LIST_TYPE_SAVED_LIST:
-        this.loadSavedListInfo();
-        break;
-
-      case LIST_TYPE_AEROLITH_LISTS:
-        this.loadAerolithListInfo();
-        break;
-      default:
-        // ??
-        break;
-    }
-  }
-
-  // Reset dialog is called from the parent. This is a bit of an anti
-  // pattern. We just make sure we reload any lists/etc when a user
-  // reopens the dialog.
-  resetDialog() {
-    this.loadInfoForListType(this.state.activeListType);
-    if (this.challengeDialogContainer) {
-      // XXX: This is an anti-pattern, but modals and React don't play
-      // 100% well together.
-      this.challengeDialogContainer.loadChallengePlayedInfo();
-      this.challengeDialogContainer.loadChallengeLeaderboardData();
-    }
-  }
-
-  showModal() {
-    this.modal.show();
-  }
-
-  showSpinner() {
-    this.props.setLoadingData(true);
-  }
-
-  hideSpinner() {
-    this.props.setLoadingData(false);
-  }
-
-  aerolithListSubmit() {
-    this.showSpinner();
+  const aerolithListSubmit = () => {
+    showSpinner();
     $.ajax({
       url: '/wordwalls/api/load_aerolith_list/',
       data: JSON.stringify({
-        lexicon: this.state.currentLexicon,
-        desiredTime: parseFloat(this.state.desiredTime),
-        questionsPerRound: this.state.questionsPerRound,
-        selectedList: this.state.selectedList,
-        tablenum: this.props.tablenum,
+        lexicon: currentLexicon,
+        desiredTime: parseFloat(desiredTime),
+        questionsPerRound,
+        selectedList,
+        tablenum: props.tablenum,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
-      .done((data) => this.props.onLoadNewList(data))
+      .done((data) => props.onLoadNewList(data))
       .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to load list: ${jqXHR.responseJSON}`,
       ))
-      .always(() => this.hideSpinner());
-  }
+      .always(() => hideSpinner());
+  };
 
-  flashcardAerolithListSubmit() {
-    this.showSpinner();
+  const flashcardAerolithListSubmit = () => {
+    showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
       method: 'POST',
       data: {
         action: 'namedListsFlashcard',
-        lexicon: this.state.currentLexicon,
-        namedList: this.state.selectedList,
+        lexicon: currentLexicon,
+        namedList: selectedList,
       },
     })
-      .done((data) => TableCreator.redirectUrl(data.url))
+      .done((data) => redirectUrl(data.url))
       .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to process: ${jqXHR.responseJSON.error}`,
       ))
-      .always(() => this.hideSpinner());
-  }
+      .always(() => hideSpinner());
+  };
 
-  savedListSubmit(listID, action) {
-    this.showSpinner();
+  const savedListSubmit = (listID, action) => {
+    showSpinner();
     if (action === PlayOptions.PLAY_DELETE) {
       $.ajax({
         url: `/base/api/saved_list/${listID}`,
         method: 'DELETE',
       })
-      // XXX: Probably should do smart updating instead of reloading
-      // from the server.
-        .done(() => this.loadSavedListInfo()) // This will hide when it's over.
+        // XXX: Probably should do smart updating instead of reloading
+        // from the server.
+        .done(() => loadSavedListInfo()) // This will hide when it's over.
         .fail((jqXHR) => {
           Notifications.alert(
             'Error',
             `Failed to delete list: ${jqXHR.responseJSON}`,
           );
-          this.hideSpinner();
+          hideSpinner();
         });
       return;
     }
     $.ajax({
       url: '/wordwalls/api/load_saved_list/',
       data: JSON.stringify({
-        lexicon: this.state.currentLexicon,
-        desiredTime: parseFloat(this.state.desiredTime),
-        questionsPerRound: this.state.questionsPerRound,
+        lexicon: currentLexicon,
+        desiredTime: parseFloat(desiredTime),
+        questionsPerRound,
         selectedList: listID,
-        tablenum: this.props.tablenum,
+        tablenum: props.tablenum,
         listOption: action,
       }),
       contentType: 'application/json; charset=utf-8',
       method: 'POST',
     })
       .done((data) => {
-        this.props.onLoadNewList(data);
-        this.modal.dismiss();
+        props.onLoadNewList(data);
+        modalRef.current.dismiss();
       })
       .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to load list: ${jqXHR.responseJSON}`,
       ))
-      .always(() => this.hideSpinner());
-  }
+      .always(() => hideSpinner());
+  };
 
-  flashcardSavedListSubmit(listID, action) {
-    this.showSpinner();
+  const flashcardSavedListSubmit = (listID, action) => {
+    showSpinner();
     $.ajax({
       url: FLASHCARD_URL,
       method: 'POST',
       data: {
         action,
-        lexicon: this.state.currentLexicon,
+        lexicon: currentLexicon,
         wordList: listID,
         listOption: '1', // This is a hack to make the form validator pass.
         // This variable has no effect.
@@ -280,53 +230,35 @@ class TableCreator extends React.Component {
         // will hopefully replace it soon.
       },
     })
-      .done((data) => TableCreator.redirectUrl(data.url))
+      .done((data) => redirectUrl(data.url))
       .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to process: ${jqXHR.responseJSON.error}`,
       ))
-      .always(() => this.hideSpinner());
-  }
+      .always(() => hideSpinner());
+  };
 
-  loadAerolithListInfo() {
-    this.showSpinner();
+  const loadAerolithListInfo = () => {
+    showSpinner();
     $.ajax({
       url: '/wordwalls/api/default_lists/',
       data: {
-        lexicon: this.state.currentLexicon,
+        lexicon: currentLexicon,
       },
       method: 'GET',
     })
-      .done((data) => this.setState({
-        aerolithLists: data,
-        selectedList: data[0] ? String(data[0].id) : '',
-      }))
-      .always(() => this.hideSpinner());
-  }
+      .done((data) => {
+        setAerolithLists(data);
+        setSelectedList(data[0] ? String(data[0].id) : '');
+      })
+      .always(() => hideSpinner());
+  };
 
-  loadSavedListInfo() {
-    this.showSpinner();
-    $.ajax({
-      url: '/base/api/saved_lists/',
-      data: {
-        // Note the API is slightly different. We're using the cards
-        // API here to avoid writing yet another saved list API.
-        lexicon_id: this.state.currentLexicon,
-        order_by: 'modified',
-        temp: 0,
-        last_saved: 'human',
-      },
-      method: 'GET',
-    })
-      .done((data) => this.setState({ savedLists: data }))
-      .always(() => this.hideSpinner());
-  }
-
-  listUpload(files) {
+  const listUpload = (files) => {
     const data = new FormData();
     data.append('file', files[0]);
-    data.append('lexicon', this.state.currentLexicon);
-    this.showSpinner();
+    data.append('lexicon', currentLexicon);
+    showSpinner();
     $.ajax({
       url: '/wordwalls/ajax_upload/',
       method: 'POST',
@@ -334,37 +266,68 @@ class TableCreator extends React.Component {
       processData: false,
       contentType: false,
     })
-      .done(() => this.loadSavedListInfo())
+      .done(() => loadSavedListInfo())
       .fail((jqXHR) => Notifications.alert(
         'Error',
         `Failed to upload list: ${jqXHR.responseJSON}`,
       ))
-      .always(() => this.hideSpinner());
-  }
+      .always(() => hideSpinner());
+  };
 
-  selectedListChange(listId) {
-    this.setState({
-      selectedList: listId,
-    });
-  }
-
-  /**
-   * This hook gets called prior to every submit function, in order to
-   * check common things such as the host of the table and whether a game
-   * is running.
-   * @param {Function} callback
-   * @param {string} name
-   */
-  preSubmitHook(callback) {
-    if (this.props.gameGoing) {
+  const preSubmitHook = (callback) => {
+    if (props.gameGoing) {
       Notifications.alert('Error', NO_LOAD_WHILE_PLAYING);
     } else {
       callback();
     }
-  }
+  };
 
-  renderLicenseText() {
-    switch (this.state.currentLexicon) {
+  const setTimeAndQuestions = (o) => {
+    setDesiredTime(o.desiredTime);
+    setQuestionsPerRound(o.questionsPerRound);
+  };
+
+  const loadInfoForListType = (option) => {
+    switch (option) {
+      case LIST_TYPE_SAVED_LIST:
+        loadSavedListInfo();
+        break;
+
+      case LIST_TYPE_AEROLITH_LISTS:
+        loadAerolithListInfo();
+        break;
+      default:
+        // ??
+        break;
+    }
+  };
+
+  const challengeDialogContainerRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    resetDialog() {
+      loadInfoForListType(activeListType);
+      if (challengeDialogContainerRef.current) {
+        // XXX: This is an anti-pattern, but modals and React don't play
+        // 100% well together.
+        challengeDialogContainerRef.current.loadChallengePlayedInfo();
+        challengeDialogContainerRef.current.loadChallengeLeaderboardData();
+      }
+    },
+    showModal() {
+      modalRef.current.show();
+    },
+  }));
+
+  useEffect(() => {
+    // If certain fields in the state have changed, we should make
+    // some network requests.
+    // If the lexicon changes, we have to load new word lists no matter what.
+    loadInfoForListType(activeListType);
+  }, [currentLexicon]);
+
+  const renderLicenseText = () => {
+    switch (currentLexicon) {
       case COLLINS_21_LEX_ID:
         return (<span>{COLLINS_LICENSE_TEXT}</span>);
       case NWL23_LEX_ID:
@@ -378,47 +341,45 @@ class TableCreator extends React.Component {
       default:
         return null;
     }
-  }
+  };
 
-  renderQuizSearch() {
+  const renderQuizSearch = () => {
     let selectedQuizSearchDialog;
-    switch (this.state.activeListType) {
+    switch (activeListType) {
       case LIST_TYPE_CHALLENGE:
         selectedQuizSearchDialog = (
           <ChallengeDialogContainer
-            tablenum={this.props.tablenum}
-            onLoadNewList={this.props.onLoadNewList}
-            challengeInfo={this.props.challengeInfo}
-            hideErrors={this.props.hideErrors}
-            showSpinner={this.showSpinner}
-            hideSpinner={this.hideSpinner}
-            lexicon={this.state.currentLexicon}
-            availableLexica={this.props.availableLexica}
-            api={this.api}
-            preSubmitHook={this.preSubmitHook}
+            tablenum={props.tablenum}
+            onLoadNewList={props.onLoadNewList}
+            challengeInfo={props.challengeInfo}
+            hideErrors={props.hideErrors}
+            showSpinner={showSpinner}
+            hideSpinner={hideSpinner}
+            lexicon={currentLexicon}
+            availableLexica={props.availableLexica}
+            api={api}
+            preSubmitHook={preSubmitHook}
             notifyError={notifyError}
-            setTimeAndQuestions={this.setTimeAndQuestions}
-            disabled={this.props.gameGoing}
-            ref={(ref) => {
-              this.challengeDialogContainer = ref;
-            }}
+            setTimeAndQuestions={setTimeAndQuestions}
+            disabled={props.gameGoing}
+            ref={challengeDialogContainerRef}
           />
         );
         break;
       case LIST_TYPE_WORDSEARCH:
         selectedQuizSearchDialog = (
           <WordSearchDialogContainer
-            tablenum={this.props.tablenum}
-            onLoadNewList={this.props.onLoadNewList}
-            showSpinner={this.showSpinner}
-            hideSpinner={this.hideSpinner}
-            lexicon={this.state.currentLexicon}
-            desiredTime={parseFloat(this.state.desiredTime)}
-            questionsPerRound={this.state.questionsPerRound}
+            tablenum={props.tablenum}
+            onLoadNewList={props.onLoadNewList}
+            showSpinner={showSpinner}
+            hideSpinner={hideSpinner}
+            lexicon={currentLexicon}
+            desiredTime={parseFloat(desiredTime)}
+            questionsPerRound={questionsPerRound}
             notifyError={notifyError}
-            redirectUrl={TableCreator.redirectUrl}
-            api={this.api}
-            disabled={this.props.gameGoing}
+            redirectUrl={redirectUrl}
+            api={api}
+            disabled={props.gameGoing}
           />
         );
 
@@ -426,19 +387,19 @@ class TableCreator extends React.Component {
       case LIST_TYPE_BLANKS:
         selectedQuizSearchDialog = (
           <BlankSearchDialogContainer
-            tablenum={this.props.tablenum}
-            onLoadNewList={this.props.onLoadNewList}
-            showSpinner={this.showSpinner}
-            hideSpinner={this.hideSpinner}
-            lexicon={this.state.currentLexicon}
-            availableLexica={this.props.availableLexica}
-            desiredTime={parseFloat(this.state.desiredTime)}
-            questionsPerRound={this.state.questionsPerRound}
+            tablenum={props.tablenum}
+            onLoadNewList={props.onLoadNewList}
+            showSpinner={showSpinner}
+            hideSpinner={hideSpinner}
+            lexicon={currentLexicon}
+            availableLexica={props.availableLexica}
+            desiredTime={parseFloat(desiredTime)}
+            questionsPerRound={questionsPerRound}
             notifyError={notifyError}
-            redirectUrl={TableCreator.redirectUrl}
-            api={this.api}
-            wordServerRPC={this.wordServerRPC}
-            disabled={this.props.gameGoing}
+            redirectUrl={redirectUrl}
+            api={api}
+            wordServerRPC={wordServerRPC}
+            disabled={props.gameGoing}
           />
         );
         break;
@@ -446,13 +407,13 @@ class TableCreator extends React.Component {
       case LIST_TYPE_SAVED_LIST:
         selectedQuizSearchDialog = (
           <SavedListDialog
-            listOptions={this.state.savedLists}
-            onListSubmit={(listID, action) => this.preSubmitHook(
-              () => this.savedListSubmit(listID, action),
+            listOptions={savedLists}
+            onListSubmit={(listID, action) => preSubmitHook(
+              () => savedListSubmit(listID, action),
             )}
-            onListUpload={this.listUpload}
-            onListFlashcard={(listID, action) => this.preSubmitHook(
-              () => this.flashcardSavedListSubmit(listID, action),
+            onListUpload={listUpload}
+            onListFlashcard={(listID, action) => preSubmitHook(
+              () => flashcardSavedListSubmit(listID, action),
             )}
           />
         );
@@ -460,11 +421,11 @@ class TableCreator extends React.Component {
       case LIST_TYPE_AEROLITH_LISTS:
         selectedQuizSearchDialog = (
           <AerolithListDialog
-            listOptions={this.state.aerolithLists}
-            selectedList={this.state.selectedList}
-            onSelectedListChange={this.selectedListChange}
-            onListSubmit={() => this.preSubmitHook(this.aerolithListSubmit)}
-            onFlashcardSubmit={() => this.preSubmitHook(this.flashcardAerolithListSubmit)}
+            listOptions={aerolithLists}
+            selectedList={selectedList}
+            onSelectedListChange={selectedListChange}
+            onListSubmit={() => preSubmitHook(aerolithListSubmit)}
+            onFlashcardSubmit={() => preSubmitHook(flashcardAerolithListSubmit)}
           />
         );
         break;
@@ -481,89 +442,71 @@ class TableCreator extends React.Component {
             LIST_TYPE_AEROLITH_LISTS,
             LIST_TYPE_SAVED_LIST,
           ]}
-          activePill={this.state.activeListType}
+          activePill={activeListType}
           onPillClick={(option) => () => {
-            this.setState({
-              activeListType: option,
-            });
+            setActiveListType(option);
             if (option !== LIST_TYPE_CHALLENGE) {
               // Reset the time back to the defaults.
               if (option !== LIST_TYPE_BLANKS) {
-                this.setState({
-                  desiredTime: DEFAULT_TIME_PER_QUIZ,
-                  questionsPerRound: 50,
-                });
+                setDesiredTime(DEFAULT_TIME_PER_QUIZ);
+                setQuestionsPerRound(50);
               } else {
-                this.setState({
-                  desiredTime: DEFAULT_TIME_PER_BLANK_QUIZ,
-                  questionsPerRound: 50,
-                });
+                setDesiredTime(DEFAULT_TIME_PER_BLANK_QUIZ);
+                setQuestionsPerRound(50);
               }
             }
-            this.loadInfoForListType(option);
+            loadInfoForListType(option);
           }}
         />
         {selectedQuizSearchDialog}
       </div>
     );
-  }
+  };
 
-  render() {
-    return (
-      <ModalSkeleton
-        title="Lobby"
-        modalClass="table-modal"
-        ref={(el) => {
-          this.modal = el;
-        }}
-        size="modal-xl"
-      >
-        <div className="modal-body">
-          <div className="row">
-            <div className="col-sm-2">
-              <Sidebar
-                gameTypes={[GAME_TYPE_NEW]}
-                activeGameType={this.state.activeGameType}
-                setGameType={(option) => () => this.setState({
-                  activeGameType: option,
-                })}
-                currentLexicon={this.state.currentLexicon}
-                defaultLexicon={this.props.defaultLexicon}
-                availableLexica={this.props.availableLexica}
-                setLexicon={(lex) => this.setState({
-                  currentLexicon: lex,
-                })}
-                setDefaultLexicon={this.props.setDefaultLexicon}
-                desiredTime={this.state.desiredTime}
-                setTime={(t) => this.setState({
-                  desiredTime: t,
-                })}
-                questionsPerRound={this.state.questionsPerRound}
-                setQuestionsPerRound={(q) => this.setState({
-                  questionsPerRound: q,
-                })}
-                disabledInputs={
-                  this.state.activeListType === LIST_TYPE_CHALLENGE
-}
-              />
-            </div>
-            <div className="col-sm-10">
-              {this.renderQuizSearch()}
-            </div>
-
+  return (
+    <ModalSkeleton
+      title="Lobby"
+      modalClass="table-modal"
+      ref={modalRef}
+      size="modal-xl"
+    >
+      <div className="modal-body">
+        <div className="row">
+          <div className="col-sm-2">
+            <Sidebar
+              gameTypes={[GAME_TYPE_NEW]}
+              activeGameType={activeGameType}
+              setGameType={(option) => () => setActiveGameType(option)}
+              currentLexicon={currentLexicon}
+              defaultLexicon={props.defaultLexicon}
+              availableLexica={props.availableLexica}
+              setLexicon={setCurrentLexicon}
+              setDefaultLexicon={props.setDefaultLexicon}
+              desiredTime={desiredTime}
+              setTime={setDesiredTime}
+              questionsPerRound={questionsPerRound}
+              setQuestionsPerRound={setQuestionsPerRound}
+              disabledInputs={
+                activeListType === LIST_TYPE_CHALLENGE
+              }
+            />
           </div>
+          <div className="col-sm-10">
+            {renderQuizSearch()}
+          </div>
+
         </div>
-        <div className="modal-footer">
-          <small
-            style={{ marginRight: 10 }}
-          >
-            {this.renderLicenseText()}
-          </small>
-        </div>
-      </ModalSkeleton>
-    );
-  }
-}
+      </div>
+      <div className="modal-footer">
+        <small
+          style={{ marginRight: 10 }}
+        >
+          {renderLicenseText()}
+        </small>
+      </div>
+    </ModalSkeleton>
+  );
+});
 
 TableCreator.propTypes = {
   defaultLexicon: PropTypes.number.isRequired,

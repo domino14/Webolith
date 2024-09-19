@@ -27,13 +27,13 @@ export default {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.es6'],
-    alias: {
-      // this alias is needed for the auto-generated RPC file import.
-      './rpc/wordsearcher': path.resolve(
-        __dirname,
-        './djAerolith/wordwalls/static/js/wordwalls/gen/rpc/wordsearcher',
-      ),
-    },
+    // alias: {
+    //   // this alias is needed for the auto-generated RPC file import.
+    //   './rpc/wordsearcher': path.resolve(
+    //     __dirname,
+    //     './djAerolith/wordwalls/static/js/wordwalls/gen/rpc/wordsearcher',
+    //   ),
+    // },
   },
   entry: {
     wordwallsapp: [

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Styling from './style';
 import WordwallsAppContainer from './wordwalls_app_container';
@@ -23,9 +23,10 @@ class App {
       listName = options.addlParams.tempListName;
       autoSave = false;
     }
-
+    const container = document.getElementById('main-app-content');
+    const root = createRoot(container);
     // Render.
-    ReactDOM.render(
+    root.render(
       <WordwallsAppContainer
         username={options.username}
         listName={listName}
@@ -39,7 +40,6 @@ class App {
         availableLexica={options.availableLexica}
         socketServer={options.socketServer}
       />,
-      document.getElementById('main-app-content'),
     );
   }
 }

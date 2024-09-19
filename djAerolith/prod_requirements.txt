@@ -21,4 +21,3 @@ gunicorn
 mock
 # wagtail
 protobuf
-twirp

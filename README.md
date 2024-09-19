@@ -21,7 +21,7 @@ If you wish to contribute, please use this same config in your code editor, as c
 
 word_db_server is at https://github.com/domino14/word_db_server.
 
-This server deals with anything word-related. It provides a Twirp API to the Python webapp.
+This server deals with anything word-related. It provides a ConnectRPC API to the Python webapp.
 
 It is also used to generate the build challenges and blank challenges.
 

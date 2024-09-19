@@ -50,6 +50,8 @@ jobs:
             DOCKERIZE_VERSION: v0.6.0
       # Run the containers
       - run: cp .circleci/docker-compose.yml .
+      - run: pwd
+      - run: ls -al
       - run: docker-compose up -d
       - run:
           name: Wait for db

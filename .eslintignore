@@ -1,2 +1,2 @@
 djAerolith/flashcards/**/*.js
-djAerolith/wordwalls/static/js/wordwalls/gen/rpc/**/*.js
+djAerolith/wordwalls/static/js/wordwalls/gen/wordsearcher/*.js

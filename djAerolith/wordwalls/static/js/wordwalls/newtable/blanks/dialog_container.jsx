@@ -8,7 +8,7 @@ import { SearchTypesEnum, SearchCriterion } from '../search/types';
 
 import WordwallsAPI from '../../wordwalls_api';
 
-import wordsearcher from '../../gen/rpc/wordsearcher/searcher_pb';
+import { BlankChallengeCreateRequest } from '../../gen/wordsearcher/searcher_pb';
 
 const RAW_QUESTIONS_URL = '/wordwalls/api/load_raw_questions/';
 
@@ -25,9 +25,8 @@ const allowedSearchTypes = new Set([
  * to parse it into an intermediate object.
  */
 function pbToQuestions(pb) {
-  const alphList = pb.alphagramsList;
-  const rawQs = alphList.map((alph) => {
-    const words = alph.wordsList;
+  const rawQs = pb.alphagrams.map((alph) => {
+    const { words } = alph;
     const wl = words.map((w) => w.word);
     return {
       q: alph.alphagram,
@@ -69,12 +68,13 @@ class BlanksDialogContainer extends React.Component {
           throw new Error('Unhandled search type');
       }
     });
-    const reqObj = new wordsearcher.BlankChallengeCreateRequest();
-    reqObj.setWordLength(wordLength);
-    reqObj.setNumQuestions(this.props.questionsPerRound);
-    reqObj.setLexicon(this.getLexiconName());
-    reqObj.setMaxSolutions(maxSolutions);
-    reqObj.setNumWith2Blanks(num2Blanks);
+    const reqObj = new BlankChallengeCreateRequest({
+      wordLength,
+      numQuestions: this.props.questionsPerRound,
+      lexicon: this.getLexiconName(),
+      maxSolutions,
+      numWith2Blanks: num2Blanks,
+    });
 
     this.props.wordServerRPC.blankChallengeCreator(reqObj)
       .then((result) => this.props.api.call(RAW_QUESTIONS_URL, {
