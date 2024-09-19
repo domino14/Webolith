@@ -106,6 +106,7 @@ jobs:
             tar -xz -C /tmp -f /tmp/docker-$VER.tgz
             mv /tmp/docker/* /usr/bin
       - run: cd djAerolith && pip install -r prod_requirements.txt
+      - run: apt-get update && apt-get install -y gettext
       - run:
           name: Collect static files
           command: cd djAerolith && ./manage.py collectstatic --noinput
