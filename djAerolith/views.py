@@ -103,7 +103,7 @@ def jwt_req(request):
     access_token = jwt.encode(
         {
             "iss": "aerolith.org",
-            "sub": request.user.pk,
+            "sub": f"{request.user.pk}",
             "usn": request.user.username,
             "exp": int(time.time()) + ACCESS_TOKEN_EXPIRATION,
         },
