@@ -6,18 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_remove_aerolithprofile_wordwallsmedals'),
+        ("accounts", "0002_remove_aerolithprofile_wordwallsmedals"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='aerolithprofile',
-            name='additional_data',
-            field=models.TextField(blank=True, default='{}'),
+            model_name="aerolithprofile",
+            name="additional_data",
+            field=models.TextField(blank=True, default="{}"),
         ),
         migrations.AlterField(
-            model_name='aerolithprofile',
-            name='membershipType',
-            field=models.IntegerField(choices=[(0, 'None'), (1, 'Bronze'), (2, 'Silver'), (3, 'Gold')], default=0),
+            model_name="aerolithprofile",
+            name="membershipType",
+            field=models.IntegerField(
+                choices=[(0, "None"), (1, "Bronze"), (2, "Silver"), (3, "Gold")],
+                default=0,
+            ),
         ),
     ]

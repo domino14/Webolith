@@ -22,16 +22,19 @@ from wordwalls.models import DailyChallengeName
 
 class TimeForm(forms.Form):
     quizTime = forms.FloatField(
-        max_value=100, min_value=0.05, initial=4,
-        label='Time (minutes)',
-        widget=forms.TextInput())
+        max_value=100,
+        min_value=0.05,
+        initial=4,
+        label="Time (minutes)",
+        widget=forms.TextInput(),
+    )
 
 
 class DailyChallengesForm(forms.Form):
-    challengeDate = forms.DateField(label='Date', required=False)
+    challengeDate = forms.DateField(label="Date", required=False)
     challenge = forms.ModelChoiceField(
         # Remove common words for now.
         queryset=DailyChallengeName.objects.exclude(pk__in=(18, 19)),
-        label='Challenge',
-        widget=forms.Select(attrs={'size': '13',
-                                   'class': 'form-control'}))
+        label="Challenge",
+        widget=forms.Select(attrs={"size": "13", "class": "form-control"}),
+    )

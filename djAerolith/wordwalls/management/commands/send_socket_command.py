@@ -16,20 +16,17 @@ class Command(BaseCommand):
     help = """ Send a command. if contents are provided, must be in JSON """
 
     def add_arguments(self, parser):
-        parser.add_argument('command', type=str)
-        parser.add_argument('channel', type=str)
-        parser.add_argument('--contents', type=str)
+        parser.add_argument("command", type=str)
+        parser.add_argument("channel", type=str)
+        parser.add_argument("--contents", type=str)
 
     def handle(self, *args, **options):
-        if 'command' not in options or 'channel' not in options:
-            raise CommandError('Required args: command channel')
+        if "command" not in options or "channel" not in options:
+            raise CommandError("Required args: command channel")
         try:
-            contents_obj = json.loads(options['contents'])
+            contents_obj = json.loads(options["contents"])
         except (TypeError, ValueError):
             contents_obj = {}
-        Group(options['channel']).send({
-            'text': json.dumps({
-                'type': options['command'],
-                'contents': contents_obj
-            })
-        })
+        Group(options["channel"]).send(
+            {"text": json.dumps({"type": options["command"], "contents": contents_obj})}
+        )

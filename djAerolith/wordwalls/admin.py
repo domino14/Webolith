@@ -18,64 +18,89 @@
 from django.contrib import admin
 
 from wordwalls.models import (
-    DailyChallenge, DailyChallengeLeaderboard, DailyChallengeLeaderboardEntry,
-    DailyChallengeName, NamedList)
+    DailyChallenge,
+    DailyChallengeLeaderboard,
+    DailyChallengeLeaderboardEntry,
+    DailyChallengeName,
+    NamedList,
+)
 from wordwalls.models import WordwallsGameModel, DailyChallengeMissedBingos
 
 
 class DailyChallengeAdmin(admin.ModelAdmin):
-    fields = ['lexicon', 'date', 'name', 'seconds', 'alphagrams',
-              'visible_name']
-    search_fields = ['name__name', 'visible_name']
-    list_display = ('date', 'name', 'lexicon', 'visible_name')
+    fields = ["lexicon", "date", "name", "seconds", "alphagrams", "visible_name"]
+    search_fields = ["name__name", "visible_name"]
+    list_display = ("date", "name", "lexicon", "visible_name")
 
 
 class DailyChallengeLeaderboardAdmin(admin.ModelAdmin):
-    fields = ['challenge', 'maxScore']
-    search_fields = ['challenge__name__name']
-    readonly_fields = ('challenge', 'maxScore')
-    list_display = ['challenge', 'maxScore']
+    fields = ["challenge", "maxScore"]
+    search_fields = ["challenge__name__name"]
+    readonly_fields = ("challenge", "maxScore")
+    list_display = ["challenge", "maxScore"]
 
 
 class DailyChallengeLeaderboardEntryAdmin(admin.ModelAdmin):
-    fields = ['user', 'score', 'timeRemaining', 'board', 'qualifyForAward',
-              'wrong_answers']
-    search_fields = ['user__username', 'board__challenge__name__name']
-    list_display = ['user', 'score', 'wrong_answers', 'timeRemaining', 'board']
+    fields = [
+        "user",
+        "score",
+        "timeRemaining",
+        "board",
+        "qualifyForAward",
+        "wrong_answers",
+    ]
+    search_fields = ["user__username", "board__challenge__name__name"]
+    list_display = ["user", "score", "wrong_answers", "timeRemaining", "board"]
 
 
 class WordwallsGameAdmin(admin.ModelAdmin):
-    fields = ['host', 'inTable', 'lastActivity', 'currentGameState',
-              'gameType', 'playerType', 'word_list']
-    search_fields = ['host__username', 'lastActivity', 'word_list__name',
-                     'word_list__lexicon__lexiconName']
-    readonly_fields = ('lastActivity', 'word_list', 'inTable', 'host',
-                       'gameType', 'playerType', 'currentGameState')
-    list_display = ['host', 'lastActivity', 'word_list']
+    fields = [
+        "host",
+        "inTable",
+        "lastActivity",
+        "currentGameState",
+        "gameType",
+        "playerType",
+        "word_list",
+    ]
+    search_fields = [
+        "host__username",
+        "lastActivity",
+        "word_list__name",
+        "word_list__lexicon__lexiconName",
+    ]
+    readonly_fields = (
+        "lastActivity",
+        "word_list",
+        "inTable",
+        "host",
+        "gameType",
+        "playerType",
+        "currentGameState",
+    )
+    list_display = ["host", "lastActivity", "word_list"]
 
 
 admin.site.register(WordwallsGameModel, WordwallsGameAdmin)
 
 
 class DailyChallengeMissedBingosAdmin(admin.ModelAdmin):
-    fields = ['challenge', 'alphagram_string', 'numTimesMissed']
-    search_fields = ['alphagram_string']
-    list_display = ('challenge', 'alphagram_string', 'numTimesMissed')
-    readonly_fields = ('challenge', 'alphagram_string', 'numTimesMissed')
+    fields = ["challenge", "alphagram_string", "numTimesMissed"]
+    search_fields = ["alphagram_string"]
+    list_display = ("challenge", "alphagram_string", "numTimesMissed")
+    readonly_fields = ("challenge", "alphagram_string", "numTimesMissed")
 
 
 class NamedListAdmin(admin.ModelAdmin):
-    fields = ['lexicon', 'name']
-    search_fields = ['lexicon__lexiconName', 'name']
-    list_display = ('lexicon', 'name', 'numQuestions', 'wordLength', 'isRange')
-    readonly_fields = ['questions']
+    fields = ["lexicon", "name"]
+    search_fields = ["lexicon__lexiconName", "name"]
+    list_display = ("lexicon", "name", "numQuestions", "wordLength", "isRange")
+    readonly_fields = ["questions"]
 
 
-admin.site.register(DailyChallengeMissedBingos,
-                    DailyChallengeMissedBingosAdmin)
+admin.site.register(DailyChallengeMissedBingos, DailyChallengeMissedBingosAdmin)
 admin.site.register(DailyChallengeLeaderboard, DailyChallengeLeaderboardAdmin)
-admin.site.register(DailyChallengeLeaderboardEntry,
-                    DailyChallengeLeaderboardEntryAdmin)
+admin.site.register(DailyChallengeLeaderboardEntry, DailyChallengeLeaderboardEntryAdmin)
 admin.site.register(DailyChallenge, DailyChallengeAdmin)
 admin.site.register(DailyChallengeName)
 admin.site.register(NamedList, NamedListAdmin)

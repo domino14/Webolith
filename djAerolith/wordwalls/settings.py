@@ -17,4 +17,3 @@
 # To contact the author, please email delsolar at gmail dot com
 
 UPLOAD_FILE_LINE_LIMIT = 40000
-

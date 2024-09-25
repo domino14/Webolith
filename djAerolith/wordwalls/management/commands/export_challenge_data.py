@@ -3,13 +3,13 @@ import json
 import csv
 from django.db import connection
 
-FILENAME = '/tmp/challenges_raw.csv'
+FILENAME = "/tmp/challenges_raw.csv"
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         """
-            Exports all challenge data to csv.
+        Exports all challenge data to csv.
         """
 
         # Use a raw SQL query as it is about 10000 times faster or something
@@ -31,10 +31,19 @@ class Command(BaseCommand):
         """
         cursor = connection.cursor()
         cursor.execute(query)
-        with open(FILENAME, 'wb') as csvfile:
+        with open(FILENAME, "wb") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['Date', 'Username', 'Challenge Name', 'Max Score',
-                             'Score', 'Time Remaining', 'Lexicon'])
+            writer.writerow(
+                [
+                    "Date",
+                    "Username",
+                    "Challenge Name",
+                    "Max Score",
+                    "Score",
+                    "Time Remaining",
+                    "Lexicon",
+                ]
+            )
             row = cursor.fetchone()
             while row is not None:
                 writer.writerow(row)

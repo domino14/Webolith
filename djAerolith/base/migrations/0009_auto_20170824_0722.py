@@ -11,22 +11,53 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('base', '0008_savedlist_category'),
+        ("base", "0008_savedlist_category"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AlphagramTag',
+            name="AlphagramTag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('alphagram', models.CharField(max_length=15)),
-                ('tag', models.CharField(choices=[(b'D5', b'Very Easy'), (b'D4', b'Easy'), (b'D3', b'Average'), (b'D2', b'Hard'), (b'D1', b'Very Hard')], max_length=2)),
-                ('lexicon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='base.Lexicon')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("alphagram", models.CharField(max_length=15)),
+                (
+                    "tag",
+                    models.CharField(
+                        choices=[
+                            (b"D5", b"Very Easy"),
+                            (b"D4", b"Easy"),
+                            (b"D3", b"Average"),
+                            (b"D2", b"Hard"),
+                            (b"D1", b"Very Hard"),
+                        ],
+                        max_length=2,
+                    ),
+                ),
+                (
+                    "lexicon",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="base.Lexicon"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='alphagramtag',
-            unique_together=set([('user', 'lexicon', 'alphagram')]),
+            name="alphagramtag",
+            unique_together=set([("user", "lexicon", "alphagram")]),
         ),
     ]

@@ -7,48 +7,48 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wordwalls', '0002_wordwallsgamemodel_word_list'),
+        ("wordwalls", "0002_wordwallsgamemodel_word_list"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='curQuestions',
+            model_name="wordwallsgamemodel",
+            name="curQuestions",
             field=models.TextField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='firstMissed',
+            model_name="wordwallsgamemodel",
+            name="firstMissed",
             field=models.TextField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='missed',
+            model_name="wordwallsgamemodel",
+            name="missed",
             field=models.TextField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='numCurQuestions',
+            model_name="wordwallsgamemodel",
+            name="numCurQuestions",
             field=models.IntegerField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='numFirstMissed',
+            model_name="wordwallsgamemodel",
+            name="numFirstMissed",
             field=models.IntegerField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='numMissed',
+            model_name="wordwallsgamemodel",
+            name="numMissed",
             field=models.IntegerField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='numOrigQuestions',
+            model_name="wordwallsgamemodel",
+            name="numOrigQuestions",
             field=models.IntegerField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='origQuestions',
+            model_name="wordwallsgamemodel",
+            name="origQuestions",
             field=models.TextField(null=True, blank=True),
         ),
     ]

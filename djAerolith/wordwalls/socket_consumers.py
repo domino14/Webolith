@@ -9,10 +9,11 @@ from django.dispatch import receiver
 
 from wordwalls.game import WordwallsGame
 from wordwalls.models import WordwallsGameModel
+
 logger = logging.getLogger(__name__)
 
 
-LOBBY_CHANNEL_NAME = 'lobby'
+LOBBY_CHANNEL_NAME = "lobby"
 ACTIVE_SECONDS = 60
 
 

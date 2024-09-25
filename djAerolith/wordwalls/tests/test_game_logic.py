@@ -38,8 +38,7 @@ class WordwallsBasicLogicTestBase(TestCase, WordListAssertMixin):
     def setUp(self):
         cursor = connection.cursor()
         cursor.execute(
-            "select setval('%s_id_seq', %d, True)"
-            % ("wordwalls_savedlist", 123456)
+            "select setval('%s_id_seq', %d, True)" % ("wordwalls_savedlist", 123456)
         )
 
     def setup_quiz(self, p_min=10, p_max=90, length=8):
@@ -67,9 +66,7 @@ class WordwallsBasicLogicTest(WordwallsBasicLogicTestBase):
         self.assertEqual(len(params["questions"]), 50)
         self.assertEqual(params["time"], 240)
         self.assertEqual(params["gameType"], "regular")
-        self.assertEqual(
-            params["serverMsg"], "These are questions 1 through 50 of 81."
-        )
+        self.assertEqual(params["serverMsg"], "These are questions 1 through 50 of 81.")
         guess_state = wwg.guess("CATS", table_id, user)
         self.assertTrue(guess_state["going"])
         self.assertEqual(guess_state["alphagram"], "")
@@ -496,9 +493,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
     def test_restart_unfinished_list(self):
         LIST_NAME = "i live in a giant bucket"
         word_list = WordList.objects.get(name=LIST_NAME)
-        questions = set(
-            json.dumps(q) for q in json.loads(word_list.origQuestions)
-        )
+        questions = set(json.dumps(q) for q in json.loads(word_list.origQuestions))
         # Try restarting the list.
         table_id = self.wwg.initialize_by_saved_list(
             self.lex,
@@ -521,9 +516,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
                 "name": LIST_NAME,
             },
         )
-        orig_questions = set(
-            json.dumps(q) for q in json.loads(word_list.origQuestions)
-        )
+        orig_questions = set(json.dumps(q) for q in json.loads(word_list.origQuestions))
         # Make sure old questions == new questions
         self.assertEqual(orig_questions, questions)
         # Start the quiz and make sure we got all 11 questions
@@ -579,9 +572,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
                 "name": LIST_NAME,
             },
         )
-        self.assertEqual(
-            set([0, 2, 3, 10]), set(json.loads(word_list.firstMissed))
-        )
+        self.assertEqual(set([0, 2, 3, 10]), set(json.loads(word_list.firstMissed)))
 
     def test_firstmissed_allowed(self):
         LIST_NAME = "list the sécond"
@@ -646,7 +637,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
         )
 
     def test_continue_finished_list(self):
-        """ Continue a list that is tested through all the way."""
+        """Continue a list that is tested through all the way."""
         LIST_NAME = "This is my list."
         word_list = WordList.objects.get(name=LIST_NAME)
         table_id = self.wwg.initialize_by_saved_list(
@@ -662,7 +653,7 @@ class WordwallsSavedListModesTest(WordwallsBasicLogicTestBase):
         self.assertTrue("quiz is done" in params["error"])
 
     def test_can_save_loaded_list(self):
-        """ Can we save a list we just loaded? """
+        """Can we save a list we just loaded?"""
         LIST_NAME = "list the sécond"
         num_lists_before = WordList.objects.filter(user=self.user).count()
         word_list = WordList.objects.get(name=LIST_NAME)
@@ -813,7 +804,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         self.wwg = WordwallsGame()
 
     def test_length_challenge(self):
-        """ Test a regular challenge by word length (Today's 6s). """
+        """Test a regular challenge by word length (Today's 6s)."""
         num_challenges = DailyChallenge.objects.count()
         challenge = DailyChallengeName.objects.get(name="Today's 6s")
         table_id = self.wwg.initialize_daily_challenge(
@@ -846,7 +837,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         self.assertEqual(len(set([q["q"] for q in questions])), 50)
 
     def test_bingo_marathon_challenge(self):
-        """ Test bingo marathon challenge. """
+        """Test bingo marathon challenge."""
         challenge = DailyChallengeName.objects.get(name="Bingo Marathon")
         table_id = self.wwg.initialize_daily_challenge(
             self.user,
@@ -892,7 +883,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         side_effect=blank_bingo_generator,
     )
     def test_blank_bingos(self, mock_content):
-        """ Test blank bingos. (This comment is unnecessary, right?)"""
+        """Test blank bingos. (This comment is unnecessary, right?)"""
         challenge = DailyChallengeName.objects.get(name="Blank Bingos")
         table_id = self.wwg.initialize_daily_challenge(
             self.user,
@@ -924,7 +915,7 @@ class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
         self.assertTrue(params["questions"][0]["p"] == 0)
 
     def test_play_old_challenge(self):
-        """ Play an old challenge instead of creating a new one. """
+        """Play an old challenge instead of creating a new one."""
         num_challenges = DailyChallenge.objects.count()
         challenge = DailyChallengeName.objects.get(name="Bingo Marathon")
         table_id = self.wwg.initialize_daily_challenge(
@@ -1094,9 +1085,7 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
         self.wwg = WordwallsGame()
 
     def test_load_missed_bingos(self):
-        challenge = DailyChallengeName.objects.get(
-            name="Week's Bingo Toughies"
-        )
+        challenge = DailyChallengeName.objects.get(name="Week's Bingo Toughies")
         table_id = self.wwg.initialize_daily_challenge(
             self.user, self.lex, challenge, date(2015, 10, 20)
         )
@@ -1121,13 +1110,11 @@ class WordwallsMissedBingosTest(WordwallsBasicLogicTestBase):
         )
         questions = json.loads(word_list.origQuestions)
         # logger.debug('Questions: %s', questions)
-        self.assertEqual(
-            set([q["q"] for q in questions]), self.expected_missed_bingos
-        )
+        self.assertEqual(set([q["q"] for q in questions]), self.expected_missed_bingos)
 
 
 class WordwallsNamedListTest(TestCase, WordListAssertMixin):
-    """ "Named" lists. """
+    """ "Named" lists."""
 
     fixtures = [
         "test/lexica.yaml",
@@ -1161,9 +1148,7 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
                 "is_temporary": True,
             },
         )
-        orig_questions = set(
-            json.dumps(q) for q in json.loads(word_list.origQuestions)
-        )
+        orig_questions = set(json.dumps(q) for q in json.loads(word_list.origQuestions))
         self.assertEqual(len(orig_questions), 1000)
         # Start the quiz.
         wwg = WordwallsGame()
@@ -1189,9 +1174,7 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
                 "is_temporary": True,
             },
         )
-        orig_questions = set(
-            json.dumps(q) for q in json.loads(word_list.origQuestions)
-        )
+        orig_questions = set(json.dumps(q) for q in json.loads(word_list.origQuestions))
         self.assertEqual(len(orig_questions), 21063)
         # Start the quiz.
         wwg = WordwallsGame()
@@ -1217,15 +1200,11 @@ class WordwallsNamedListTest(TestCase, WordListAssertMixin):
                 "is_temporary": True,
             },
         )
-        orig_questions = set(
-            json.dumps(q) for q in json.loads(word_list.origQuestions)
-        )
+        orig_questions = set(json.dumps(q) for q in json.loads(word_list.origQuestions))
         self.assertEqual(len(orig_questions), 690)
         # Start the quiz.
         wwg = WordwallsGame()
         params = wwg.start_quiz(table_id, self.user)
         self.assertEqual(len(params["questions"]), 50)
         logger.debug(params["questions"])
-        self.assertNotEqual(
-            re.search(r"[JQXZ]", params["questions"][0]["a"]), None
-        )
+        self.assertNotEqual(re.search(r"[JQXZ]", params["questions"][0]["a"]), None)

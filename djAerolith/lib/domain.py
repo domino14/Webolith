@@ -36,7 +36,7 @@ class Word:
 
 
 def words_from_pb(pbw):
-    """ Turn the protobuf list of Words into a list of domain.Word """
+    """Turn the protobuf list of Words into a list of domain.Word"""
     words = []
     for word in pbw:
         w = Word(
@@ -76,9 +76,7 @@ class Alphagram:
 
 
 class Question:
-    def __init__(
-        self, alphagram: Alphagram = None, answers: List[Word] = None
-    ):
+    def __init__(self, alphagram: Alphagram = None, answers: List[Word] = None):
         """
         alphagram - An Alphagram object.
         answers - A list of Word objects. see wdb_helper.py
@@ -93,7 +91,7 @@ class Question:
             self.answers.append(Word(word=word))
 
     def to_python_full(self):
-        """ A complete representation of question. """
+        """A complete representation of question."""
         q = {
             "question": self.alphagram.alphagram,
             "probability": self.alphagram.probability,
@@ -222,4 +220,3 @@ class Questions:
 
     def __str__(self):
         return f"{{<Questions {self.questions}>}}"
-

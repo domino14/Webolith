@@ -1,6 +1,7 @@
 """
 A management script to get information about toughie bingos.
 """
+
 import csv
 from typing import Set
 from lib.wdb_interface.wdb_helper import (
@@ -166,12 +167,8 @@ order by pct_missed desc
                 ntm += t.ntm
                 nta += t.nta
             pct = ntm / float(nta)
-            contains_update = any(
-                ["+" in w.lexicon_symbols for w in q.answers]
-            )
-            contains_csw_only = any(
-                ["#" in w.lexicon_symbols for w in q.answers]
-            )
+            contains_update = any(["+" in w.lexicon_symbols for w in q.answers])
+            contains_csw_only = any(["#" in w.lexicon_symbols for w in q.answers])
             if q.alphagram.alphagram in latest_bingos:
                 csv_writer.writerow(
                     [
