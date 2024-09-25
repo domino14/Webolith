@@ -26,8 +26,7 @@ class WordwallsGameStartTest(TestCase):
         # XXX: Figure out a better way of doing this.
         cursor = connection.cursor()
         cursor.execute(
-            "select setval('%s_id_seq', %d, True)"
-            % ("wordwalls_savedlist", 123456)
+            "select setval('%s_id_seq', %d, True)" % ("wordwalls_savedlist", 123456)
         )
         self.client = Client()
         result = self.client.login(username=self.USER, password=self.PASSWORD)
@@ -60,9 +59,7 @@ class WordwallsGameStartTest(TestCase):
         )
         self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(
-            "/wordwalls/table/{0}/".format(content["tablenum"])
-        )
+        response = self.client.get("/wordwalls/table/{0}/".format(content["tablenum"]))
         # Test that the temporary list name was generated correctly.
         addl_params = json.loads(response.context["addParams"])
         self.assertEqual(addl_params["tempListName"], "CSW19 8s (523 - 784)")
@@ -95,14 +92,10 @@ class WordwallsGameStartTest(TestCase):
         )
         self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(
-            "/wordwalls/table/{0}/".format(content["tablenum"])
-        )
+        response = self.client.get("/wordwalls/table/{0}/".format(content["tablenum"]))
         # Test that the temporary list name was generated correctly.
         addl_params = json.loads(response.context["addParams"])
-        self.assertEqual(
-            addl_params["tempListName"], "NWL20 8s (151 - 200) (2)"
-        )
+        self.assertEqual(addl_params["tempListName"], "NWL20 8s (151 - 200) (2)")
 
     def test_play_existing_challenge(self):
         result = self.client.post(
@@ -119,9 +112,7 @@ class WordwallsGameStartTest(TestCase):
         )
         self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(
-            "/wordwalls/table/{0}/".format(content["tablenum"])
-        )
+        response = self.client.get("/wordwalls/table/{0}/".format(content["tablenum"]))
         addl_params = json.loads(response.context["addParams"])
         tablenum = response.context["tablenum"]
         self.assertEqual(
@@ -152,14 +143,10 @@ class WordwallsGameStartTest(TestCase):
             content_type="application/json",
         )
         content = json.loads(result.content)
-        response = self.client.get(
-            "/wordwalls/table/{0}/".format(content["tablenum"])
-        )
+        response = self.client.get("/wordwalls/table/{0}/".format(content["tablenum"]))
         addl_params = json.loads(response.context["addParams"])
         tablenum = response.context["tablenum"]
-        self.assertEqual(
-            addl_params["tempListName"], "NWL18 Today's 15s - 2013-11-29"
-        )
+        self.assertEqual(addl_params["tempListName"], "NWL18 Today's 15s - 2013-11-29")
         word_list = WordwallsGameModel.objects.get(pk=tablenum).word_list
         qs = json.loads(word_list.origQuestions)
         self.assertEqual(len(qs), 50)

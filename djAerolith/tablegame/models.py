@@ -38,11 +38,12 @@ class GenericTableGameModel(models.Model):
         (MULTIPLAYER_GAME, "MultiPlayer"),
     )
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
-    host = models.ForeignKey(User,
-                             related_name="%(app_label)s_%(class)s_host",
-                             on_delete=models.CASCADE)
+    host = models.ForeignKey(
+        User, related_name="%(app_label)s_%(class)s_host", on_delete=models.CASCADE
+    )
     inTable = models.ManyToManyField(
-        User, related_name="%(app_label)s_%(class)s_inTable")
+        User, related_name="%(app_label)s_%(class)s_inTable"
+    )
     lastActivity = models.DateTimeField(auto_now=True)
     currentGameState = models.TextField()
     gameType = models.IntegerField(choices=GAME_TYPES)
@@ -50,8 +51,7 @@ class GenericTableGameModel(models.Model):
 
     # table number will be a primary id
     def __str__(self):
-        return "Table game #%d - last activity: %s" % (self.pk,
-                                                       self.lastActivity)
+        return "Table game #%d - last activity: %s" % (self.pk, self.lastActivity)
 
     def is_multiplayer(self):
         return self.playerType == GenericTableGameModel.MULTIPLAYER_GAME

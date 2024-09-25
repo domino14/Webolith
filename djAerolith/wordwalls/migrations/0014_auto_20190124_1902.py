@@ -6,43 +6,54 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wordwalls', '0013_dailychallenge_category'),
+        ("wordwalls", "0013_dailychallenge_category"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dailychallenge',
-            name='visible_name',
-            field=models.CharField(blank=True, default='', max_length=32),
+            model_name="dailychallenge",
+            name="visible_name",
+            field=models.CharField(blank=True, default="", max_length=32),
         ),
         migrations.AlterField(
-            model_name='dailychallenge',
-            name='date',
+            model_name="dailychallenge",
+            name="date",
             field=models.DateField(db_index=True),
         ),
         migrations.AlterField(
-            model_name='dailychallengemissedbingos',
-            name='alphagram_string',
-            field=models.CharField(default='', max_length=15),
+            model_name="dailychallengemissedbingos",
+            name="alphagram_string",
+            field=models.CharField(default="", max_length=15),
         ),
         migrations.AlterField(
-            model_name='medal',
-            name='medal_type',
-            field=models.CharField(choices=[('B', 'Bronze'), ('S', 'Silver'), ('G', 'Gold'), ('PS', 'Platinum'), ('GS', 'GoldStar')], max_length=2),
+            model_name="medal",
+            name="medal_type",
+            field=models.CharField(
+                choices=[
+                    ("B", "Bronze"),
+                    ("S", "Silver"),
+                    ("G", "Gold"),
+                    ("PS", "Platinum"),
+                    ("GS", "GoldStar"),
+                ],
+                max_length=2,
+            ),
         ),
         migrations.AlterField(
-            model_name='namedlist',
-            name='name',
-            field=models.CharField(default='', max_length=50),
+            model_name="namedlist",
+            name="name",
+            field=models.CharField(default="", max_length=50),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='gameType',
-            field=models.IntegerField(choices=[(1, 'WordWalls'), (2, 'WordGrids')]),
+            model_name="wordwallsgamemodel",
+            name="gameType",
+            field=models.IntegerField(choices=[(1, "WordWalls"), (2, "WordGrids")]),
         ),
         migrations.AlterField(
-            model_name='wordwallsgamemodel',
-            name='playerType',
-            field=models.IntegerField(choices=[(1, 'SinglePlayer'), (2, 'MultiPlayer')]),
+            model_name="wordwallsgamemodel",
+            name="playerType",
+            field=models.IntegerField(
+                choices=[(1, "SinglePlayer"), (2, "MultiPlayer")]
+            ),
         ),
     ]

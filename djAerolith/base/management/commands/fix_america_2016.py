@@ -20,6 +20,7 @@ there are no name collisions.
 9. Bring back site.
 
 """
+
 import sqlite3
 import os
 
@@ -32,10 +33,10 @@ from accounts.models import AerolithProfile
 
 
 def fixup_america2016():
-    """ Fix the America2016 lexicon to match the probability orders of
-    the America lexicon. """
-    file_path_2016 = os.path.join(settings.WORD_DB_LOCATION, 'America2016.db')
-    file_path_2014 = os.path.join(settings.WORD_DB_LOCATION, 'America.db')
+    """Fix the America2016 lexicon to match the probability orders of
+    the America lexicon."""
+    file_path_2016 = os.path.join(settings.WORD_DB_LOCATION, "America2016.db")
+    file_path_2014 = os.path.join(settings.WORD_DB_LOCATION, "America.db")
     conn_2016 = sqlite3.connect(file_path_2016)
     conn_2014 = sqlite3.connect(file_path_2014)
 
@@ -65,37 +66,34 @@ def fixup_america2016():
 
 
 def migrate_users_to_America():
-    """ Migrate all users on America2016 to America as their default lex. """
+    """Migrate all users on America2016 to America as their default lex."""
     # Get all America2016 profiles
-    profiles = AerolithProfile.objects.filter(
-        defaultLexicon__lexiconName='America2016')
+    profiles = AerolithProfile.objects.filter(defaultLexicon__lexiconName="America2016")
     ct = profiles.count()
-    america = Lexicon.objects.get(lexiconName='America')
-    print('Need to migrate {0} profiles'.format(ct))
+    america = Lexicon.objects.get(lexiconName="America")
+    print("Need to migrate {0} profiles".format(ct))
     for profile in profiles:
         profile.defaultLexicon = america
         profile.save()
-    print('Migrated {0} profiles'.format(ct))
+    print("Migrated {0} profiles".format(ct))
 
 
 def migrate_lists_to_America():
-    """ Migrate all America2016 lists to America. """
-    lists = WordList.objects.filter(
-        lexicon__lexiconName='America2016'
-    )
-    print('Need to migrate {0} lists'.format(lists.count()))
-    print('Non-temp lists are')
+    """Migrate all America2016 lists to America."""
+    lists = WordList.objects.filter(lexicon__lexiconName="America2016")
+    print("Need to migrate {0} lists".format(lists.count()))
+    print("Non-temp lists are")
     for wl in lists:
         if not wl.is_temporary:
             print(wl)
-    america = Lexicon.objects.get(lexiconName='America')
+    america = Lexicon.objects.get(lexiconName="America")
     for wl in lists:
         wl.lexicon = america
         try:
             wl.save()
         except IntegrityError:
             print("Could not migrate list; name collision: {0}".format(wl))
-    print('Migrated the lists!')
+    print("Migrated the lists!")
 
 
 class Command(BaseCommand):
@@ -106,7 +104,7 @@ class Command(BaseCommand):
         migrate_users_to_America()
         migrate_lists_to_America()
         # Change America length counts.
-        america = Lexicon.objects.get(lexiconName='America')
-        america2016 = Lexicon.objects.get(lexiconName='America2016')
+        america = Lexicon.objects.get(lexiconName="America")
+        america2016 = Lexicon.objects.get(lexiconName="America2016")
         america.lengthCounts = america2016.lengthCounts
         america.save()

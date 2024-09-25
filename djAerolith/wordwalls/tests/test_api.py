@@ -66,7 +66,7 @@ class WordwallsChallengeAPITest(TestCase):
         self.assertEqual(dt, date(2014, 3, 2))
 
     def test_bad_date_from_request(self):
-        """ Test that entering a date in a bad format results in today. """
+        """Test that entering a date in a bad format results in today."""
         self.factory = RequestFactory()
         request = self.factory.get(
             "/wordwalls/api/challenges_played/?lexicon=1&date=04032014"
@@ -76,7 +76,7 @@ class WordwallsChallengeAPITest(TestCase):
         self.assertEqual(dt, timezone.localtime(timezone.now()).date())
 
     def test_future_date_from_request(self):
-        """ Test that entering a future date results in today. """
+        """Test that entering a future date results in today."""
         self.factory = RequestFactory()
         request = self.factory.get(
             "/wordwalls/api/challenges_played/?lexicon=1&date=2900-01-03"
@@ -87,7 +87,7 @@ class WordwallsChallengeAPITest(TestCase):
 
 
 class WordwallsNewChallengeTest(TestCase):
-    """ Test the new challenge behavior, list replacement etc """
+    """Test the new challenge behavior, list replacement etc"""
 
     fixtures = [
         "test/lexica.yaml",
@@ -105,8 +105,7 @@ class WordwallsNewChallengeTest(TestCase):
         # XXX: Figure out a better way of doing this.
         cursor = connection.cursor()
         cursor.execute(
-            "select setval('%s_id_seq', %d, True)"
-            % ("wordwalls_savedlist", 123456)
+            "select setval('%s_id_seq', %d, True)" % ("wordwalls_savedlist", 123456)
         )
         self.client = Client()
         result = self.client.login(username=self.USER, password=self.PASSWORD)
@@ -127,14 +126,10 @@ class WordwallsNewChallengeTest(TestCase):
         )
         self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(
-            "/wordwalls/table/{0}/".format(content["tablenum"])
-        )
+        response = self.client.get("/wordwalls/table/{0}/".format(content["tablenum"]))
         addl_params = json.loads(response.context["addParams"])
         tablenum = int(response.context["tablenum"])
-        self.assertEqual(
-            addl_params["tempListName"], "NWL18 Today's 15s - 2013-11-29"
-        )
+        self.assertEqual(addl_params["tempListName"], "NWL18 Today's 15s - 2013-11-29")
 
         game = WordwallsGame()
         old_word_list = game.get_wgm(tablenum, lock=False).word_list
@@ -170,7 +165,7 @@ class WordwallsNewChallengeTest(TestCase):
 
 
 class WordwallsNewSearchTest(TestCase):
-    """ Test the new search behavior. """
+    """Test the new search behavior."""
 
     fixtures = [
         "test/lexica.yaml",
@@ -188,8 +183,7 @@ class WordwallsNewSearchTest(TestCase):
         # XXX: Figure out a better way of doing this.
         cursor = connection.cursor()
         cursor.execute(
-            "select setval('%s_id_seq', %d, True)"
-            % ("wordwalls_savedlist", 123456)
+            "select setval('%s_id_seq', %d, True)" % ("wordwalls_savedlist", 123456)
         )
         self.client = Client()
         result = self.client.login(username=self.USER, password=self.PASSWORD)
@@ -211,14 +205,10 @@ class WordwallsNewSearchTest(TestCase):
         )
         self.assertEqual(result.status_code, 200)
         content = json.loads(result.content)
-        response = self.client.get(
-            "/wordwalls/table/{0}/".format(content["tablenum"])
-        )
+        response = self.client.get("/wordwalls/table/{0}/".format(content["tablenum"]))
         addl_params = json.loads(response.context["addParams"])
         tablenum = int(response.context["tablenum"])
-        self.assertEqual(
-            addl_params["tempListName"], "NWL20 Today's 15s - 2013-11-29"
-        )
+        self.assertEqual(addl_params["tempListName"], "NWL20 Today's 15s - 2013-11-29")
         game = WordwallsGame()
         old_word_list = game.get_wgm(tablenum, lock=False).word_list
         self.assertTrue(old_word_list.is_temporary)
@@ -266,7 +256,7 @@ class WordwallsNewSearchTest(TestCase):
 
 
 class WordwallsSavedListMultiplayerTest(TestCase):
-    """ Test the new search behavior. """
+    """Test the new search behavior."""
 
     fixtures = [
         "test/lexica.yaml",
@@ -284,8 +274,7 @@ class WordwallsSavedListMultiplayerTest(TestCase):
         # XXX: Figure out a better way of doing this.
         cursor = connection.cursor()
         cursor.execute(
-            "select setval('%s_id_seq', %d, True)"
-            % ("wordwalls_savedlist", 123456)
+            "select setval('%s_id_seq', %d, True)" % ("wordwalls_savedlist", 123456)
         )
         self.client = Client()
         result = self.client.login(username=self.USER, password=self.PASSWORD)
@@ -331,9 +320,7 @@ class WordwallsSavedListMultiplayerTest(TestCase):
         game = WordwallsGame()
         new_word_list = game.get_wgm(tablenum, lock=False).word_list
         old_word_list = WordList.objects.get(pk=2)
-        self.assertEqual(
-            new_word_list.origQuestions, old_word_list.origQuestions
-        )
+        self.assertEqual(new_word_list.origQuestions, old_word_list.origQuestions)
         self.assertTrue(new_word_list.is_temporary)
         self.assertFalse(old_word_list.is_temporary)
 

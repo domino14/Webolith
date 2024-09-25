@@ -2,6 +2,7 @@
 Helper functions for generating challenges.
 
 """
+
 import json
 from datetime import timedelta
 import random
@@ -227,9 +228,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
     )
     # And the missed bingos...
     # XXX: Rewrite as a raw SQL query.
-    mbs = DailyChallengeMissedBingos.objects.filter(
-        challenge__in=list(challenges)
-    )
+    mbs = DailyChallengeMissedBingos.objects.filter(challenge__in=list(challenges))
     num_solved = {}
     logger.debug("Got all relevant challenges and bingos...")
     # How many people did each challenge? Store this to avoid looking it
@@ -259,9 +258,7 @@ def gen_toughies_by_challenge(challenge_name, num, min_date, max_date, lex):
         else:
             mb_dict[alphagram] = alphagram, perc_correct
     # Sort by difficulty in reverse order (most difficult first)
-    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[
-        :num
-    ]
+    alphs = sorted(list(mb_dict.items()), key=lambda x: x[1][1], reverse=True)[:num]
     logger.debug("Sorted by difficulty, returning... %s", alphs)
     # And just return the alphagram portion.
     return [a[0] for a in alphs]
@@ -307,9 +304,7 @@ def generate_alltime_toughies_challenge(lexicon):
             [
                 SearchDescription.lexicon(lexicon),
                 SearchDescription.length(7, 8),
-                SearchDescription.difficulty_range(
-                    81, 100
-                ),  # top 20% hardest bingos
+                SearchDescription.difficulty_range(81, 100),  # top 20% hardest bingos
             ]
         )
     except WDBError:
@@ -326,9 +321,7 @@ def generate_highprob_toughies_challenge(lexicon):
                 SearchDescription.lexicon(lexicon),
                 SearchDescription.length(7, 8),
                 SearchDescription.probability_range(1, 10000),
-                SearchDescription.difficulty_range(
-                    81, 100
-                ),  # top 20% hardest bingos
+                SearchDescription.difficulty_range(81, 100),  # top 20% hardest bingos
             ]
         )
     except WDBError:
@@ -344,10 +337,7 @@ def toughies_challenge_date(req_date):
     the closest Tuesday going backwards (depends on a constant).
 
     """
-    diff = (
-        req_date.isoweekday()
-        - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
-    )
+    diff = req_date.isoweekday() - DailyChallengeName.WEEKS_BINGO_TOUGHIES_ISOWEEKDAY
     if diff < 0:
         diff = 7 - abs(diff)
     challenge_date = req_date - timedelta(days=diff)

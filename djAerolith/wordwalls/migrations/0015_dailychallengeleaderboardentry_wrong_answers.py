@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('wordwalls', '0014_auto_20190124_1902'),
+        ("wordwalls", "0014_auto_20190124_1902"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dailychallengeleaderboardentry',
-            name='wrong_answers',
+            model_name="dailychallengeleaderboardentry",
+            name="wrong_answers",
             field=models.IntegerField(default=0),
         ),
     ]

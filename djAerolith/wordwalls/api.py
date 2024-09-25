@@ -188,9 +188,7 @@ def load_new_words(f):
             # If tablenum is None, the utility functions in game.py know
             # to create a new table, instead of using an existing table
             # number.
-            "tablenum": body["tablenum"]
-            if body["tablenum"] != 0
-            else None
+            "tablenum": body["tablenum"] if body["tablenum"] != 0 else None
         }
 
         lex_id = body.get("lexicon")
@@ -215,9 +213,7 @@ def load_new_words(f):
             parsed_req["questions_per_round"] > 200
             or parsed_req["questions_per_round"] < 10
         ):
-            return bad_request(
-                "Questions per round must be between 10 and 200."
-            )
+            return bad_request("Questions per round must be between 10 and 200.")
         parsed_req["search_criteria"] = body.get("searchCriteria", [])
         parsed_req["list_option"] = body.get("listOption")
         parsed_req["selectedList"] = body.get("selectedList")
@@ -261,9 +257,7 @@ def new_challenge(request, parsed_req_body):
 
     """
     try:
-        challenge_name = DailyChallengeName.objects.get(
-            pk=parsed_req_body["challenge"]
-        )
+        challenge_name = DailyChallengeName.objects.get(pk=parsed_req_body["challenge"])
     except DailyChallengeName.DoesNotExist:
         return bad_request("Bad challenge.")
     try:
@@ -296,9 +290,7 @@ def build_search_criteria(
 
         if criterion["searchType"] in MIN_MAX_DESCRIPTIONS:
             search.append(
-                criterion_fn(
-                    int(criterion["minValue"]), int(criterion["maxValue"])
-                )
+                criterion_fn(int(criterion["minValue"]), int(criterion["maxValue"]))
             )
 
         elif criterion["searchType"] in SINGLE_NUMBER_DESCRIPTIONS:

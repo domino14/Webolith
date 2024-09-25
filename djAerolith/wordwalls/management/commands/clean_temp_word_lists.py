@@ -8,15 +8,14 @@ from datetime import timedelta
 
 
 class Command(BaseCommand):
-    args = 'days'
+    args = "days"
     help = """
     Deletes Temporary Word Lists that have not been saved in over a week.
     """
 
     def handle(self, *args, **options):
         del_date = timezone.now() - timedelta(days=7)
-        wls = WordList.objects.filter(lastSaved__lt=del_date,
-                                      is_temporary=True)
+        wls = WordList.objects.filter(lastSaved__lt=del_date, is_temporary=True)
         num_objs = len(wls)
         print("Found", num_objs, "objects to delete")
         wls.delete()

@@ -23,17 +23,17 @@ from django import forms
 class ProfileAdminForm(forms.ModelForm):
     class Meta:
         model = AerolithProfile
-        fields = '__all__'
+        fields = "__all__"
         widgets = {
-            'profile': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
-            'customWordwallsStyle': forms.Textarea(
-                attrs={'cols': 80, 'rows': 3})
+            "profile": forms.Textarea(attrs={"cols": 80, "rows": 10}),
+            "customWordwallsStyle": forms.Textarea(attrs={"cols": 80, "rows": 3}),
         }
 
 
 class AerolithProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'member', 'wordwallsSaveListSize']
-    search_fields = ['user__username', 'member']
+    list_display = ["user", "member", "wordwallsSaveListSize"]
+    search_fields = ["user__username", "member"]
     form = ProfileAdminForm
+
 
 admin.site.register(AerolithProfile, AerolithProfileAdmin)

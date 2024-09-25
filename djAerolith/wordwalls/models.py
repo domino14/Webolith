@@ -107,9 +107,7 @@ class DailyChallengeLeaderboard(models.Model):
 
 
 class DailyChallengeLeaderboardEntry(models.Model):
-    board = models.ForeignKey(
-        DailyChallengeLeaderboard, on_delete=models.CASCADE
-    )
+    board = models.ForeignKey(DailyChallengeLeaderboard, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()
     wrong_answers = models.IntegerField(default=0)
@@ -133,9 +131,7 @@ class DailyChallengeLeaderboardEntry(models.Model):
 
 
 class WordwallsGameModel(GenericTableGameModel):
-    word_list = models.ForeignKey(
-        WordList, on_delete=models.SET_NULL, null=True
-    )
+    word_list = models.ForeignKey(WordList, on_delete=models.SET_NULL, null=True)
 
     def delete(self, *args, **kwargs):
         # Delete related word_list, if it's temporary.
@@ -193,15 +189,11 @@ class Medal(models.Model):
         (TYPE_GOLD_STAR, "GoldStar"),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    leaderboard = models.ForeignKey(
-        DailyChallengeLeaderboard, on_delete=models.CASCADE
-    )
+    leaderboard = models.ForeignKey(DailyChallengeLeaderboard, on_delete=models.CASCADE)
     medal_type = models.CharField(choices=MEDAL_TYPES, max_length=2)
 
     def __str__(self):
-        return "{0}: {1} ({2})".format(
-            self.user, self.medal_type, self.leaderboard
-        )
+        return "{0}: {1} ({2})".format(self.user, self.medal_type, self.leaderboard)
 
     class Meta:
         unique_together = ("user", "leaderboard")

@@ -8,13 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0007_maintenance'),
+        ("base", "0007_maintenance"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='savedlist',
-            name='category',
-            field=models.CharField(choices=[('A', 'Anagram'), ('B', 'Build'), ('T', 'Through')], default='A', max_length=2),
+            model_name="savedlist",
+            name="category",
+            field=models.CharField(
+                choices=[("A", "Anagram"), ("B", "Build"), ("T", "Through")],
+                default="A",
+                max_length=2,
+            ),
         ),
     ]

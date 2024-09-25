@@ -2,6 +2,7 @@
 The schema for the alphagrams should be here.
 
 """
+
 import json
 import logging
 
@@ -58,7 +59,7 @@ def validate(value, schema):
     try:
         data = json.loads(value)
     except (ValueError, TypeError):
-        raise ValidationError('Invalid JSON in word list format.')
+        raise ValidationError("Invalid JSON in word list format.")
     try:
         jsonschema.validate(data, schema)
     except jsonschema.ValidationError as e:

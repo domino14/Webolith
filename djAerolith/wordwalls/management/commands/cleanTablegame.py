@@ -14,14 +14,15 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser):
-        parser.add_argument('days', type=int)
+        parser.add_argument("days", type=int)
 
     def handle(self, *args, **options):
-        if 'days' not in options:
-            raise CommandError('There must be exactly one argument; the '
-                               'number of days in the past')
+        if "days" not in options:
+            raise CommandError(
+                "There must be exactly one argument; the " "number of days in the past"
+            )
 
-        days = options['days']
+        days = options["days"]
         delDate = timezone.now() - timedelta(days=days)
         wgms = WordwallsGameModel.objects.filter(lastActivity__lt=delDate)
         numObjs = len(wgms)

@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand
 
 from base.models import WordList
 from wordwalls.models import WordwallsGameModel
+
 logger = logging.getLogger(__name__)
 
 FETCH_MANY_SIZE = 1000
@@ -32,13 +33,13 @@ def migrate_table_word_list(wgm, state):
         numCurAlphagrams=wgm.numCurQuestions,
         numFirstMissed=wgm.numFirstMissed,
         numMissed=wgm.numMissed,
-        goneThruOnce=state['goneThruOnce'],
-        questionIndex=state['questionIndex'],
+        goneThruOnce=state["goneThruOnce"],
+        questionIndex=state["questionIndex"],
         origQuestions=wgm.origQuestions,
         curQuestions=wgm.curQuestions,
         missed=wgm.missed,
         firstMissed=wgm.firstMissed,
-        version=1
+        version=1,
     )
     wgm.word_list = word_list
     wgm.save()
@@ -48,21 +49,25 @@ def migrate_table_word_list(wgm, state):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         games = WordwallsGameModel.objects.count()
-        logger.debug('Number of games: %s', games)
+        logger.debug("Number of games: %s", games)
         for game in WordwallsGameModel.objects.all():
             state = json.loads(game.currentGameState)
-            if 'saveName' in state:
+            if "saveName" in state:
                 try:
                     game.word_list = WordList.objects.get(
-                        name=state['saveName'],
-                        lexicon=game.lexicon,
-                        user=game.host)
+                        name=state["saveName"], lexicon=game.lexicon, user=game.host
+                    )
                 except WordList.DoesNotExist:
-                    logger.warning('Could not get word list: %s %s %s',
-                                   game.pk, state['saveName'],
-                                   game.host.username)
-                    logger.warning('This list could possibly have been '
-                                   'deleted\n####################')
+                    logger.warning(
+                        "Could not get word list: %s %s %s",
+                        game.pk,
+                        state["saveName"],
+                        game.host.username,
+                    )
+                    logger.warning(
+                        "This list could possibly have been "
+                        "deleted\n####################"
+                    )
                     continue
                 game.save()
             else:

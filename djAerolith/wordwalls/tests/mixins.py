@@ -6,9 +6,8 @@ class WordListAssertMixin(object):
         """
         for param, value in params.items():
             self.assertEqual(
-                getattr(word_list, param), value,
-                msg='Not equal: %s (%s, %s != %s)' % (
-                    word_list,
-                    param,
-                    repr(value),
-                    repr(getattr(word_list, param))))
+                getattr(word_list, param),
+                value,
+                msg="Not equal: %s (%s, %s != %s)"
+                % (word_list, param, repr(value), repr(getattr(word_list, param))),
+            )
