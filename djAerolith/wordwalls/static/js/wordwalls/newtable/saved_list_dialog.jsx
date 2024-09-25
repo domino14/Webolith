@@ -38,8 +38,15 @@ class SavedListDialog extends React.Component {
     $('.hovertip').tooltip({ placement: 'auto' });
   }
 
-  onDrop(files) {
-    this.props.onListUpload(files);
+  onDrop(files, rejected) {
+    if (rejected.length > 0) {
+      const error = rejected[0].errors[0];
+      if (error.code === 'file-too-large') {
+        Notifications.alert('Upload error', 'File is too large. Maximum file size is 1MB.');
+      } else Notifications.alert('Upload error', error);
+    } else {
+      this.props.onListUpload(files);
+    }
   }
 
   // For most of the following, confirm that the user actually wants to
