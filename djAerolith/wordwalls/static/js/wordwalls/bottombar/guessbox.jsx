@@ -75,6 +75,7 @@ class GuessBox extends React.Component {
             className="form-control"
             type="text"
             placeholder="Guess"
+            spellCheck="false"
             onChange={this.handleGuessChange}
             value={this.state.guessText}
             onKeyPress={this.handleKeyPress}
