@@ -41,7 +41,7 @@ class WordSearchForm extends React.Component {
   constructor(props) {
     super(props);
     this.searchSubmit = this.searchSubmit.bind(this);
-
+    this.addToWordVault = this.addToWordVault.bind(this);
     this.state = {
       lexicon: 'NWL23',
     };

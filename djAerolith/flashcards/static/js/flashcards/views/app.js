@@ -71,11 +71,14 @@ define([
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         data: toPost,
-        success: _.bind(this.alertCallback, this),
+        success: _.bind(this.successCallback, this),
         error: _.bind(this.alertCallback, this)
       });
     },
-
+    successCallback: function(jqXHR) {
+      this.displaySpinner_(false);
+      this.quiz.renderAlert(jqXHR.msg, true);
+    },
     // getScheduledCards: function() {
     //   $.get(SCHEDULED_URL, function(data) {
     //   }, 'json');
