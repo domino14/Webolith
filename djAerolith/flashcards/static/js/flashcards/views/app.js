@@ -12,9 +12,10 @@ define([
 ], function(Backbone, _, $, React, ReactDOM, Router, Quiz,
   QuizSelector, WordSearchForm) {
   "use strict";
-  var App, NEW_QUIZ_URL, SCHEDULED_URL;
+  var App, NEW_QUIZ_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
-  SCHEDULED_URL = '/cards/api/scheduled';
+  // ADD_WORDVAULT_URL should maybe talk directly to the wordvault endpoint.
+  ADD_WORDVAULT_URL = '/cards/api/add_to_wordvault';
   App = Backbone.View.extend({
     initialize: function(options) {
       var router;
@@ -68,9 +69,14 @@ define([
      * Load a new quiz by a set of search criteria.
      */
     loadWords: function(criteria) {
-
       $.post(NEW_QUIZ_URL, JSON.stringify(criteria),
         _.bind(this.startQuiz, this), 'json').fail(
+        _.bind(this.alertCallback, this));
+    },
+
+    addToWordVault: function(criteria) {
+      $.post(ADD_WORDVAULT_URL, JSON.stringify(criteria),
+        _.bind(this.alertCallback, this), 'json').fail(
         _.bind(this.alertCallback, this));
     },
 
@@ -86,7 +92,8 @@ define([
       // Use default because this is an ES6 `default` export.
       ReactDOM.render(
         React.createElement(WordSearchForm['default'], {
-          loadWords: _.bind(this.loadWords, this)
+          loadWords: _.bind(this.loadWords, this),
+          addToWordVault: _.bind(this.addToWordVault, this),
         }),
         document.getElementById('card-setup'));
       this.$('#card-setup').show();

@@ -12,6 +12,7 @@ from lib.wdb_interface.constants import TIMEOUT
 from lib.wdb_interface.exceptions import WDBError
 from lib.wdb_interface.word_searches import SearchDescription
 import rpc.wordsearcher.searcher_pb2 as pb
+import rpc.wordvault.api_pb2 as vaultpb
 
 
 def questions_from_alphagrams(
@@ -33,7 +34,11 @@ def questions_from_alphagrams(
 
 
 def make_pb_request(
-    pb_obj, endpoint_service: str, endpoint_name: str, expected_pb_response_obj
+    pb_obj,
+    endpoint_service: str,
+    endpoint_name: str,
+    expected_pb_response_obj,
+    auth_token: str = "",
 ):
     """
     Sends a Protobuf object as JSON to a given API endpoint and returns the response as a Protobuf object.
@@ -48,9 +53,12 @@ def make_pb_request(
     wdb_addr = settings.WORD_DB_SERVER_ADDRESS
 
     try:
+        headers = {"Accept-Encoding": "gzip"}
+        if auth_token:
+            headers["Authorization"] = "Bearer " + auth_token
         r = requests.post(
             f"{wdb_addr}/api/{endpoint_service}/{endpoint_name}",
-            headers={"Accept-Encoding": "gzip"},
+            headers=headers,
             json=MessageToDict(pb_obj),
             timeout=TIMEOUT,
         )
@@ -138,3 +146,18 @@ def word_search(
     qs = Questions()
     qs.set_from_pb_alphagrams(response.alphagrams)
     return qs
+
+
+def add_to_wordvault(alphagram_list: List[str], lexicon: str, auth_token: str) -> int:
+    req = vaultpb.AddCardsRequest()
+    req.lexicon = lexicon
+    req.alphagrams.extend(alphagram_list)
+
+    response = make_pb_request(
+        req,
+        "wordvault.WordVaultService",
+        "AddCards",
+        vaultpb.AddCardsResponse(),
+        auth_token,
+    )
+    return response.num_cards_added

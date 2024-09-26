@@ -54,6 +54,13 @@ class WordSearchForm extends React.Component {
     });
   }
 
+  addToWordVault() {
+    this.props.addToWordVault({
+      searchCriteria: this.props.searches.map((s) => s.toJSObj()),
+      lexicon: this.state.lexicon,
+    });
+  }
+
   render() {
     return (
       <form>
@@ -93,7 +100,14 @@ class WordSearchForm extends React.Component {
               type="button"
               onClick={this.searchSubmit}
             >
-              Search
+              Create Flashcard Quiz
+            </button>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={this.addToWordVault}
+            >
+              Add to WordVault
             </button>
           </div>
         </div>
@@ -106,6 +120,7 @@ class WordSearchForm extends React.Component {
 WordSearchForm.propTypes = {
   searches: PropTypes.arrayOf(PropTypes.instanceOf(SearchCriterion)).isRequired,
   loadWords: PropTypes.func.isRequired,
+  addToWordVault: PropTypes.func.isRequired,
   addSearchRow: PropTypes.func.isRequired,
   removeSearchRow: PropTypes.func.isRequired,
   onSearchTypeChange: PropTypes.func.isRequired,
