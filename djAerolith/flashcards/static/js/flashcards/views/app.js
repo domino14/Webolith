@@ -51,7 +51,7 @@ define([
      * Load a new quiz by a set of search criteria.
      */
     loadWords: function(criteria) {
-      const toPost = JSON.stringify(criteria);
+      var toPost = JSON.stringify(criteria);
       $.ajax({
         url: NEW_QUIZ_URL,
         type: 'POST',
@@ -64,7 +64,7 @@ define([
     },
 
     addToWordVault: function(criteria) {
-      const toPost = JSON.stringify(criteria);
+      var toPost = JSON.stringify(criteria);
       $.ajax({
         url: ADD_WORDVAULT_URL,
         type: 'POST',
