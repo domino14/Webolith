@@ -12,7 +12,7 @@ define([
 ], function(Backbone, _, $, React, ReactDOM, Router, Quiz,
   QuizSelector, WordSearchForm) {
   "use strict";
-  var App, NEW_QUIZ_URL;
+  var App, NEW_QUIZ_URL, ADD_WORDVAULT_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
   // ADD_WORDVAULT_URL should maybe talk directly to the wordvault endpoint.
   ADD_WORDVAULT_URL = '/cards/api/add_to_wordvault';
@@ -48,36 +48,32 @@ define([
       this.fixTableDropup();
     },
     /**
-     * Loads a new quiz by probability.
-     */
-    loadByProbability: function() {
-      var min, max, length, lex;
-      min = $('#prob-low').val();
-      max = $('#prob-high').val();
-      length = $('#word-length').val();
-      lex = $('#lexicon').val();
-      this.displaySpinner_(true);
-      $.post(NEW_QUIZ_URL, JSON.stringify({
-        min: min,
-        max: max,
-        length: length,
-        lex: lex
-      }), _.bind(this.startQuiz, this),
-      'json').fail(_.bind(this.alertCallback, this));
-    },
-    /**
      * Load a new quiz by a set of search criteria.
      */
     loadWords: function(criteria) {
-      $.post(NEW_QUIZ_URL, JSON.stringify(criteria),
-        _.bind(this.startQuiz, this), 'json').fail(
-        _.bind(this.alertCallback, this));
+      const toPost = JSON.stringify(criteria);
+      $.ajax({
+        url: NEW_QUIZ_URL,
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: toPost,
+        success: _.bind(this.startQuiz, this),
+        error: _.bind(this.alertCallback, this)
+      });
     },
 
     addToWordVault: function(criteria) {
-      $.post(ADD_WORDVAULT_URL, JSON.stringify(criteria),
-        _.bind(this.alertCallback, this), 'json').fail(
-        _.bind(this.alertCallback, this));
+      const toPost = JSON.stringify(criteria);
+      $.ajax({
+        url: ADD_WORDVAULT_URL,
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: toPost,
+        success: _.bind(this.alertCallback, this),
+        error: _.bind(this.alertCallback, this)
+      });
     },
 
     // getScheduledCards: function() {

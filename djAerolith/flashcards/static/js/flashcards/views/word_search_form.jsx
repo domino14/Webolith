@@ -94,7 +94,7 @@ class WordSearchForm extends React.Component {
         </div>
 
         <div className="row" style={{ marginBottom: 10 }}>
-          <div className="col-xs-3">
+          <div className="col-xs-4">
             <button
               className="btn btn-primary"
               type="button"
@@ -102,6 +102,8 @@ class WordSearchForm extends React.Component {
             >
               Create Flashcard Quiz
             </button>
+          </div>
+          <div className="col-xs-4">
             <button
               className="btn btn-secondary"
               type="button"
