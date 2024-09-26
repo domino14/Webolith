@@ -18,7 +18,6 @@
 
 import logging
 import json
-import time
 from urllib.parse import urlencode
 
 from django.shortcuts import render
@@ -30,10 +29,11 @@ from django.http import JsonResponse, HttpResponseRedirect, HttpResponseBadReque
 import jwt
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 
+from django.contrib.auth.models import User
+from lib.auth import create_jwt
 from lib.response import response, StatusCode
 
 logger = logging.getLogger(__name__)
-ACCESS_TOKEN_EXPIRATION = 3600 * 6
 
 
 def health(request):
@@ -100,16 +100,7 @@ def healthz(request):
 
 @login_required
 def jwt_req(request):
-    access_token = jwt.encode(
-        {
-            "iss": "aerolith.org",
-            "sub": f"{request.user.pk}",
-            "usn": request.user.username,
-            "exp": int(time.time()) + ACCESS_TOKEN_EXPIRATION,
-        },
-        settings.SECRET_KEY,
-        algorithm="HS256",
-    )
+    access_token = create_jwt(request.user)
 
     # Check for a 'callback' parameter in the request
     callback_url = request.GET.get("callback")
@@ -138,19 +129,7 @@ def jwt_extend(request):
     try:
         # Decode and verify the JWT
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-
-        # Re-issue a new JWT with the same claims
-        access_token = jwt.encode(
-            {
-                "iss": decoded_token["iss"],
-                "sub": decoded_token["sub"],
-                "usn": decoded_token["usn"],
-                "exp": int(time.time()) + ACCESS_TOKEN_EXPIRATION,
-            },
-            settings.SECRET_KEY,
-            algorithm="HS256",
-        )
-
+        access_token = create_jwt(User.objects.get(pk=int(decoded_token["sub"])))
         return JsonResponse({"token": access_token})
 
     except ExpiredSignatureError:

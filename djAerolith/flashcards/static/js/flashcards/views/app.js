@@ -12,9 +12,10 @@ define([
 ], function(Backbone, _, $, React, ReactDOM, Router, Quiz,
   QuizSelector, WordSearchForm) {
   "use strict";
-  var App, NEW_QUIZ_URL, SCHEDULED_URL;
+  var App, NEW_QUIZ_URL, ADD_WORDVAULT_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
-  SCHEDULED_URL = '/cards/api/scheduled';
+  // ADD_WORDVAULT_URL should maybe talk directly to the wordvault endpoint.
+  ADD_WORDVAULT_URL = '/cards/api/add_to_wordvault';
   App = Backbone.View.extend({
     initialize: function(options) {
       var router;
@@ -47,33 +48,37 @@ define([
       this.fixTableDropup();
     },
     /**
-     * Loads a new quiz by probability.
-     */
-    loadByProbability: function() {
-      var min, max, length, lex;
-      min = $('#prob-low').val();
-      max = $('#prob-high').val();
-      length = $('#word-length').val();
-      lex = $('#lexicon').val();
-      this.displaySpinner_(true);
-      $.post(NEW_QUIZ_URL, JSON.stringify({
-        min: min,
-        max: max,
-        length: length,
-        lex: lex
-      }), _.bind(this.startQuiz, this),
-      'json').fail(_.bind(this.alertCallback, this));
-    },
-    /**
      * Load a new quiz by a set of search criteria.
      */
     loadWords: function(criteria) {
-
-      $.post(NEW_QUIZ_URL, JSON.stringify(criteria),
-        _.bind(this.startQuiz, this), 'json').fail(
-        _.bind(this.alertCallback, this));
+      var toPost = JSON.stringify(criteria);
+      $.ajax({
+        url: NEW_QUIZ_URL,
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: toPost,
+        success: _.bind(this.startQuiz, this),
+        error: _.bind(this.alertCallback, this)
+      });
     },
 
+    addToWordVault: function(criteria) {
+      var toPost = JSON.stringify(criteria);
+      $.ajax({
+        url: ADD_WORDVAULT_URL,
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: toPost,
+        success: _.bind(this.successCallback, this),
+        error: _.bind(this.alertCallback, this)
+      });
+    },
+    successCallback: function(jqXHR) {
+      this.displaySpinner_(false);
+      this.quiz.renderAlert(jqXHR.msg, true);
+    },
     // getScheduledCards: function() {
     //   $.get(SCHEDULED_URL, function(data) {
     //   }, 'json');
@@ -86,7 +91,8 @@ define([
       // Use default because this is an ES6 `default` export.
       ReactDOM.render(
         React.createElement(WordSearchForm['default'], {
-          loadWords: _.bind(this.loadWords, this)
+          loadWords: _.bind(this.loadWords, this),
+          addToWordVault: _.bind(this.addToWordVault, this),
         }),
         document.getElementById('card-setup'));
       this.$('#card-setup').show();

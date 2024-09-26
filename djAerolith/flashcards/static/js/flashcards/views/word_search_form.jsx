@@ -41,7 +41,7 @@ class WordSearchForm extends React.Component {
   constructor(props) {
     super(props);
     this.searchSubmit = this.searchSubmit.bind(this);
-
+    this.addToWordVault = this.addToWordVault.bind(this);
     this.state = {
       lexicon: 'NWL23',
     };
@@ -49,6 +49,13 @@ class WordSearchForm extends React.Component {
 
   searchSubmit() {
     this.props.loadWords({
+      searchCriteria: this.props.searches.map((s) => s.toJSObj()),
+      lexicon: this.state.lexicon,
+    });
+  }
+
+  addToWordVault() {
+    this.props.addToWordVault({
       searchCriteria: this.props.searches.map((s) => s.toJSObj()),
       lexicon: this.state.lexicon,
     });
@@ -87,13 +94,22 @@ class WordSearchForm extends React.Component {
         </div>
 
         <div className="row" style={{ marginBottom: 10 }}>
-          <div className="col-xs-3">
+          <div className="col-xs-4">
             <button
               className="btn btn-primary"
               type="button"
               onClick={this.searchSubmit}
             >
-              Search
+              Create Flashcard Quiz
+            </button>
+          </div>
+          <div className="col-xs-4">
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={this.addToWordVault}
+            >
+              Add to WordVault
             </button>
           </div>
         </div>
@@ -106,6 +122,7 @@ class WordSearchForm extends React.Component {
 WordSearchForm.propTypes = {
   searches: PropTypes.arrayOf(PropTypes.instanceOf(SearchCriterion)).isRequired,
   loadWords: PropTypes.func.isRequired,
+  addToWordVault: PropTypes.func.isRequired,
   addSearchRow: PropTypes.func.isRequired,
   removeSearchRow: PropTypes.func.isRequired,
   onSearchTypeChange: PropTypes.func.isRequired,
