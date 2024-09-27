@@ -22,6 +22,7 @@ from urllib.parse import urlencode
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -172,3 +173,11 @@ def csrf_failure(request, reason=""):
 
     # Otherwise
     return response({"error": ERROR_MSG}, StatusCode.FORBIDDEN)
+
+
+@staff_member_required
+def slow_view(request):
+    import time
+
+    time.sleep(5)
+    return response({"msg": "You go"})

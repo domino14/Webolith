@@ -38,6 +38,7 @@ from views import (
     trigger500,
     jwt_req,
     jwt_extend,
+    slow_view,
 )
 from accounts.views import social, username_change
 from base.views import listmanager
@@ -58,6 +59,7 @@ urlpatterns = [
     re_path(r"^health/", health),
     re_path(r"^jwt/", jwt_req),
     re_path(r"^jwt_extend/", jwt_extend),
+    re_path(r"^heymanslowdown/", slow_view),
     re_path(r"^bigfatphony/", trigger500),
     re_path(r"^about/", TemplateView.as_view(template_name="about.html")),
     re_path(r"^privacy/", TemplateView.as_view(template_name="privacy.html")),
