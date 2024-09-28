@@ -7,9 +7,13 @@ ACCESS_TOKEN_EXPIRATION = 3600 * 6
 
 
 def create_jwt(user):
+    if settings.DEBUG:
+        iss = "aerolith.localhost"
+    else:
+        iss = "aerolith.org"
     access_token = jwt.encode(
         {
-            "iss": "aerolith.org",
+            "iss": iss,
             "sub": f"{user.id}",
             "usn": user.username,
             "mbr": user.aerolithprofile.member,

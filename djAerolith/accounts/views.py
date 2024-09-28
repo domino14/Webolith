@@ -55,6 +55,16 @@ def set_default_lexicon(request):
 
 
 @login_required
+def default_lexicon(request):
+    try:
+        profile = AerolithProfile.objects.get(user=request.user)
+    except AerolithProfile.DoesNotExist:
+        raise Http404
+
+    return response({"defaultLexicon": profile.defaultLexicon.lexiconName})
+
+
+@login_required
 def editProfile(request):
     try:
         profile = AerolithProfile.objects.get(user=request.user)
