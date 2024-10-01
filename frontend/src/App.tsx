@@ -1,6 +1,7 @@
 import "@mantine/core/styles.css";
 
 import {
+  Alert,
   AppShell,
   Burger,
   Group,
@@ -12,13 +13,14 @@ import { useDisclosure } from "@mantine/hooks";
 import wordvault from "./assets/wordvault.png";
 import { Text } from "@mantine/core";
 import { Outlet } from "react-router-dom";
-import { AppContext, AppContextProvider } from "./app_context";
-import { useContext, useEffect, useState } from "react";
+import { AppContext } from "./app_context";
+import { useContext, useEffect } from "react";
+import { LoginState } from "./constants";
 
 function App() {
   const [opened, { toggle }] = useDisclosure();
-  const { lexicon, setLexicon } = useContext(AppContext);
-
+  const { lexicon, setLexicon, loggedIn } = useContext(AppContext);
+  const loginURL = `${window.location.protocol}//${window.location.host}/accounts/login?next=/wordvault`;
   useEffect(() => {
     const fetchDefaultLexicon = async () => {
       try {
@@ -71,6 +73,12 @@ function App() {
       </AppShell.Navbar>
 
       <AppShell.Main>
+        {loggedIn === LoginState.NotLoggedIn ? (
+          <Alert variant="light" color="red" title="Not logged in">
+            You don't appear to be logged in to Aerolith. Please log in here:{" "}
+            <a href={loginURL}>{loginURL}</a>
+          </Alert>
+        ) : null}
         <Outlet />
       </AppShell.Main>
     </AppShell>

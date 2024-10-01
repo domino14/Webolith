@@ -99,8 +99,9 @@ def healthz(request):
     return response("Bad method.", StatusCode.BAD_REQUEST)
 
 
-@login_required
 def jwt_req(request):
+    if not request.user.is_authenticated:
+        return response("Unauthenticated", StatusCode.UNAUTHORIZED)
     access_token = create_jwt(request.user)
 
     # Check for a 'callback' parameter in the request
@@ -120,6 +121,7 @@ def jwt_req(request):
     )
 
 
+@csrf_exempt
 def jwt_extend(request):
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):

@@ -7,31 +7,46 @@ interface FlashcardProps {
   cards: WordVaultCard[];
 }
 
+interface HistoryEntry {
+  cardIndex: number;
+  response: string;
+}
+
 const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
   const [flipped, setFlipped] = useState<boolean>(false);
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
 
-  const handlePrev = useCallback(() => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(currentCardIndex - 1);
-      setFlipped(false);
-    }
-  }, [currentCardIndex]);
-
   const handleResponse = useCallback(
     (response: string) => {
-      submitResponse(cards[currentCardIndex], response);
+      const card = cards[currentCardIndex];
+      submitResponse(card, response);
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { cardIndex: currentCardIndex, response },
+      ]);
       if (currentCardIndex < cards.length - 1) {
-        setCurrentCardIndex(currentCardIndex + 1);
+        setCurrentCardIndex((prevIndex) => prevIndex + 1);
         setFlipped(false);
+      } else {
+        // End of deck
+        console.log("End of deck");
       }
     },
     [cards, currentCardIndex]
   );
+
+  const handleUndo = useCallback(() => {
+    if (history.length > 0 && currentCardIndex > 0) {
+      setHistory((prevHistory) => prevHistory.slice(0, -1));
+      setCurrentCardIndex((prevIndex) => prevIndex - 1);
+      setFlipped(false);
+    }
+  }, [history, currentCardIndex]);
 
   const card = cards[currentCardIndex];
 
@@ -41,8 +56,6 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
       if (!flipped) {
         if (event.key.toLowerCase() === "f") {
           handleFlip();
-        } else if (event.key.toLowerCase() === "p") {
-          handlePrev();
         }
       } else {
         switch (event.key) {
@@ -62,6 +75,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
             break;
         }
       }
+      if (event.key.toLowerCase() === "u") {
+        handleUndo();
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -69,10 +85,16 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [flipped, currentCardIndex, handlePrev, handleResponse]);
+  }, [flipped, handleResponse, handleUndo]);
+
+  const previousCardEntry =
+    history.length > 0 ? history[history.length - 1] : null;
+  const previousCard = previousCardEntry
+    ? cards[previousCardEntry.cardIndex]
+    : null;
 
   return (
-    <Center style={{ width: "100%", height: "100%" }}>
+    <Center style={{ width: "100%", height: "100%", flexDirection: "column" }}>
       <Card
         shadow="sm"
         padding="lg"
@@ -93,19 +115,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
             )}
             <Group mt="md">
               <Button onClick={handleFlip} size="lg">
-                Flip
+                Show answer
                 <Text component="span" c="dimmed" size="sm">
                   &nbsp; (F)
-                </Text>
-              </Button>
-              <Button
-                onClick={handlePrev}
-                disabled={currentCardIndex === 0}
-                size="lg"
-              >
-                Previous
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (P)
                 </Text>
               </Button>
             </Group>
@@ -152,6 +164,50 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
           </Stack>
         )}
       </Card>
+
+      {/* Previous card summary */}
+      {previousCardEntry && previousCard && (
+        <Card
+          shadow="sm"
+          padding="lg"
+          radius="md"
+          withBorder
+          style={{ maxWidth: 600, width: "100%", marginTop: "20px" }}
+        >
+          <Group style={{ justifyContent: "space-between", width: "100%" }}>
+            <Text size="md" fw={500}>
+              Previous Card:
+            </Text>
+            <Button onClick={handleUndo} size="xs">
+              Undo
+              <Text component="span" c="dimmed" size="sm">
+                &nbsp; (U)
+              </Text>
+            </Button>
+          </Group>
+          <Stack align="center" gap="sm">
+            <Text size="lg" fw={500} ta="center">
+              {previousCard.alphagram?.alphagram.toUpperCase()}
+            </Text>
+            <Text size="sm" ta="center">
+              Response: {previousCardEntry.response}
+            </Text>
+            <Text size="sm" ta="center">
+              Next Due Date: [Stub]
+            </Text>
+            <Text size="sm" ta="center">
+              Times Solved: [Stub], Times Missed: [Stub]
+            </Text>
+          </Stack>
+        </Card>
+      )}
+
+      {/* Progress summary */}
+      <Center style={{ marginTop: "20px" }}>
+        <Text size="md">
+          Card {currentCardIndex + 1} of {cards.length}
+        </Text>
+      </Center>
     </Center>
   );
 };
