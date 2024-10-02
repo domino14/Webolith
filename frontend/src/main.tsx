@@ -10,6 +10,8 @@ import {
 import ErrorPage from "./error_page.tsx";
 import LoadScheduledQuestions from "./load_scheduled_questions.tsx";
 import { AppContextProvider } from "./app_context.tsx";
+import "@mantine/notifications/styles.css";
+import { Notifications } from "@mantine/notifications";
 
 const router = createBrowserRouter(
   [
@@ -47,7 +49,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MantineProvider defaultColorScheme="auto">
+    <MantineProvider defaultColorScheme="dark">
+      <Notifications position="top-center" />
       <RouterProvider router={router} />
     </MantineProvider>
   </StrictMode>

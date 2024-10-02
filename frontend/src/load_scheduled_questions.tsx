@@ -1,4 +1,4 @@
-import { Button, Text } from "@mantine/core";
+import { Button, Loader, Text } from "@mantine/core";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useClient } from "./use_client";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
@@ -6,16 +6,17 @@ import Flashcard from "./flashcard";
 import { Link } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { Card } from "./gen/rpc/wordvault/api_pb";
+import { notifications } from "@mantine/notifications";
 
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
-  const [cardsToLoad, setCardsToLoad] = useState(0);
+  const [cardsToLoad, setCardsToLoad] = useState<number | undefined>(undefined);
   const { jwt, lexicon } = useContext(AppContext);
   const wordvaultClient = useClient(WordVaultService);
 
   const [cards, setCards] = useState<Card[]>([]);
   useEffect(() => {
-    if (jwt === "" || cardsOngoing) {
+    if (jwt === "" || lexicon === "" || cardsOngoing) {
       return;
     }
 
@@ -31,7 +32,11 @@ export default function LoadScheduledQuestions() {
         );
         setCardsToLoad(counts.breakdown["overdue"]);
       } catch (error) {
-        console.error("Error getting due count:", error);
+        notifications.show({
+          title: "error",
+          message: "Error getting due count: " + String(error),
+          color: "red",
+        });
       }
     };
 
@@ -63,7 +68,7 @@ export default function LoadScheduledQuestions() {
 interface CardLoaderProps {
   jwt: string;
   lexicon: string;
-  cardsToLoad: number;
+  cardsToLoad: number | undefined;
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
 }
 
@@ -83,9 +88,18 @@ const CardLoader: React.FC<CardLoaderProps> = ({
       );
       setCards(cards.cards);
     } catch (error) {
-      console.error("error loading cards", error);
+      notifications.show({
+        title: "error",
+        message: "Error loading cards: " + String(error),
+        color: "red",
+      });
     }
   }, [wordvaultClient, lexicon, jwt, setCards]);
+
+  if (cardsToLoad === undefined) {
+    return <Loader type="bars" />;
+  }
+
   return (
     <>
       <Text>
