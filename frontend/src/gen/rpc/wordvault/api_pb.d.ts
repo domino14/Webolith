@@ -204,6 +204,11 @@ export declare class ScoreCardResponse extends Message<ScoreCardResponse> {
    */
   nextScheduled?: Timestamp;
 
+  /**
+   * @generated from field: bytes card_json_repr = 2;
+   */
+  cardJsonRepr: Uint8Array;
+
   constructor(data?: PartialMessage<ScoreCardResponse>);
 
   static readonly runtime: typeof proto3;

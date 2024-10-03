@@ -84,6 +84,7 @@ export const ScoreCardResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.ScoreCardResponse",
   () => [
     { no: 1, name: "next_scheduled", kind: "message", T: Timestamp },
+    { no: 2, name: "card_json_repr", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
   ],
 );
 

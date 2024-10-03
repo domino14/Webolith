@@ -110,7 +110,9 @@ const CardLoader: React.FC<CardLoaderProps> = ({
           Why not <Link to="/word-search">add some more?</Link>
         </Text>
       ) : (
-        <Button onClick={loadScheduledCards}>Load cards</Button>
+        <Button mt={16} onClick={loadScheduledCards}>
+          Load cards
+        </Button>
       )}
     </>
   );

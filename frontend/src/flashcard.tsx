@@ -10,6 +10,7 @@ import {
   Alert,
   useMantineTheme,
   Loader,
+  Popover,
 } from "@mantine/core";
 import {
   Score,
@@ -30,12 +31,13 @@ interface HistoryEntry {
   cardIndex: number;
   score: Score;
   nextScheduled: Timestamp;
+  cardRepr: { [key: string]: string };
 }
 
 const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
   const [flipped, setFlipped] = useState(false);
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [previousCard, setPreviousCard] = useState<HistoryEntry | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const theme = useMantineTheme();
   const wordvaultClient = useClient(WordVaultService);
@@ -70,14 +72,14 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
         setShowLoader(false);
       }
 
-      setHistory((prevHistory) => [
-        ...prevHistory,
-        {
-          cardIndex: currentCardIndex,
-          score,
-          nextScheduled: scoreResponse.nextScheduled!,
-        },
-      ]);
+      setPreviousCard({
+        cardIndex: currentCardIndex,
+        score,
+        nextScheduled: scoreResponse.nextScheduled!,
+        cardRepr: JSON.parse(
+          new TextDecoder().decode(scoreResponse.cardJsonRepr)
+        ),
+      });
       if (currentCardIndex < cards.length - 1) {
         setCurrentCardIndex((prevIndex) => prevIndex + 1);
         setFlipped(false);
@@ -89,13 +91,42 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
     [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
   );
 
-  const handleUndo = useCallback(() => {
-    if (history.length > 0 && currentCardIndex > 0) {
-      setHistory((prevHistory) => prevHistory.slice(0, -1));
-      setCurrentCardIndex((prevIndex) => prevIndex - 1);
-      setFlipped(false);
-    }
-  }, [history, currentCardIndex]);
+  const handleRescore = useCallback(
+    async (score: Score) => {
+      const card = cards[currentCardIndex - 1];
+      setShowLoader(true);
+      let scoreResponse: ScoreCardResponse;
+      try {
+        scoreResponse = await wordvaultClient.editLastScore(
+          {
+            newScore: score,
+            lexicon: lexicon,
+            alphagram: card.alphagram?.alphagram,
+            lastCardRepr: card.cardJsonRepr,
+          },
+          { headers: { Authorization: `Bearer ${jwt}` } }
+        );
+      } catch (e) {
+        notifications.show({
+          color: "red",
+          title: "Error",
+          message: String(e),
+        });
+        return;
+      } finally {
+        setShowLoader(false);
+      }
+      setPreviousCard({
+        cardIndex: currentCardIndex - 1,
+        score: score,
+        nextScheduled: scoreResponse.nextScheduled!,
+        cardRepr: JSON.parse(
+          new TextDecoder().decode(scoreResponse.cardJsonRepr)
+        ),
+      });
+    },
+    [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
+  );
 
   const card = cards[currentCardIndex];
 
@@ -124,9 +155,6 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
             break;
         }
       }
-      if (event.key.toLowerCase() === "u") {
-        handleUndo();
-      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -134,13 +162,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [flipped, handleScore, handleUndo]);
-
-  const previousCardEntry =
-    history.length > 0 ? history[history.length - 1] : null;
-  const previousCard = previousCardEntry
-    ? cards[previousCardEntry.cardIndex]
-    : null;
+  }, [flipped, handleScore]);
 
   return (
     <Center style={{ width: "100%", height: "100%", flexDirection: "column" }}>
@@ -169,7 +191,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
             <Group mt="md">
               <Button onClick={handleFlip} size="lg">
                 Show answer
-                <Text component="span" c="dimmed" size="sm">
+                <Text component="span" size="sm">
                   &nbsp; (F)
                 </Text>
               </Button>
@@ -262,46 +284,113 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
         </Text>
       </Center>
       {/* Previous card summary */}
-      {previousCardEntry && previousCard && (
-        <Alert
-          title="Previous Card"
-          color="dark"
-          style={{ maxWidth: 600, width: "100%", marginTop: "20px" }}
-          closeButtonLabel="Undo (U)"
-        >
-          <Group style={{ justifyContent: "space-between", width: "100%" }}>
-            <Stack gap={0}>
-              <Text size="md" fw={500}>
-                {previousCard.alphagram?.alphagram.toUpperCase()}
-              </Text>
-              <Text size="sm" c="dimmed">
-                Score:{" "}
-                <Text
-                  size="sm"
-                  span
-                  c={previousCardEntry.score === Score.AGAIN ? "red" : "green"}
-                >
-                  {Score[previousCardEntry.score]}
-                </Text>
-              </Text>
-              <Text size="sm" c="dimmed">
-                Next Due Date:{" "}
-                {previousCardEntry.nextScheduled.toDate().toLocaleDateString()}
-              </Text>
-              <Text size="sm" c="dimmed">
-                Times Solved: [Stub], Times Missed: [Stub]
-              </Text>
-            </Stack>
-            <Button onClick={handleUndo} size="xs">
-              Undo
-              <Text component="span" c="dimmed" size="sm">
-                &nbsp; (U)
-              </Text>
-            </Button>
-          </Group>
-        </Alert>
+      {previousCard && currentCardIndex > 0 && (
+        <PreviousCard
+          entry={previousCard}
+          alphagram={cards[currentCardIndex - 1].alphagram!.alphagram}
+          handleRescore={handleRescore}
+        />
       )}
     </Center>
+  );
+};
+
+interface PreviousCardProps {
+  entry: HistoryEntry;
+  alphagram: string;
+  handleRescore: (score: Score) => void;
+}
+
+const PreviousCard: React.FC<PreviousCardProps> = ({
+  entry,
+  alphagram,
+  handleRescore,
+}) => {
+  return (
+    <Alert
+      title="Previous Card"
+      color="dark"
+      style={{ maxWidth: 600, width: "100%", marginTop: "20px" }}
+    >
+      <Group style={{ justifyContent: "space-between", width: "100%" }}>
+        <Stack gap={0}>
+          <Text size="md" fw={500}>
+            {alphagram}
+          </Text>
+          <Text size="sm" c="dimmed">
+            Score:{" "}
+            <Text
+              size="sm"
+              span
+              c={entry.score === Score.AGAIN ? "red" : "green"}
+            >
+              {Score[entry.score] === "AGAIN" ? "MISSED" : Score[entry.score]}
+            </Text>
+          </Text>
+          <Text size="sm" c="dimmed">
+            Next Due Date: {entry.nextScheduled.toDate().toLocaleDateString()}
+          </Text>
+          <Text size="sm" c="dimmed">
+            Times Seen: {entry.cardRepr["Reps"]} Times Missed:
+            {entry.cardRepr["Lapses"]}
+          </Text>
+        </Stack>
+        <Popover trapFocus position="top" shadow="md">
+          <Popover.Target>
+            <Button size="xs">Undo</Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Text>Set new rating for this card ({alphagram})</Text>
+            <Group mt="sm">
+              <Button
+                color="red"
+                variant="light"
+                onClick={() => handleRescore(Score.AGAIN)}
+                size="xs"
+              >
+                Missed
+                <Text component="span" c="dimmed" size="sm">
+                  &nbsp; (1)
+                </Text>
+              </Button>
+              <Button
+                color="yellow"
+                variant="light"
+                onClick={() => handleRescore(Score.HARD)}
+                size="xs"
+              >
+                Hard
+                <Text component="span" c="dimmed" size="sm">
+                  &nbsp; (2)
+                </Text>
+              </Button>
+              <Button
+                color="green"
+                variant="light"
+                onClick={() => handleRescore(Score.GOOD)}
+                size="xs"
+              >
+                Good
+                <Text component="span" c="dimmed" size="sm">
+                  &nbsp; (3)
+                </Text>
+              </Button>
+              <Button
+                color="gray"
+                variant="light"
+                onClick={() => handleRescore(Score.EASY)}
+                size="xs"
+              >
+                Easy
+                <Text component="span" c="dimmed" size="sm">
+                  &nbsp; (4)
+                </Text>
+              </Button>
+            </Group>
+          </Popover.Dropdown>
+        </Popover>
+      </Group>
+    </Alert>
   );
 };
 
