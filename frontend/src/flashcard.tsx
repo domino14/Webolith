@@ -25,6 +25,7 @@ import { notifications } from "@mantine/notifications";
 
 interface FlashcardProps {
   cards: WordVaultCard[];
+  setFinishedCards: () => void;
 }
 
 interface HistoryEntry {
@@ -34,22 +35,32 @@ interface HistoryEntry {
   cardRepr: { [key: string]: string };
 }
 
-const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
+const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
   const [flipped, setFlipped] = useState(false);
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [previousCard, setPreviousCard] = useState<HistoryEntry | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const theme = useMantineTheme();
   const wordvaultClient = useClient(WordVaultService);
+  const [showLoadMoreLink, setShowLoadMoreLink] = useState(false);
   const { lexicon, jwt } = useContext(AppContext);
 
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
 
+  useEffect(() => {
+    if (currentCardIndex !== cards.length) {
+      setShowLoadMoreLink(false);
+    }
+  }, [currentCardIndex, cards.length]);
+
   const handleScore = useCallback(
     async (score: Score) => {
       const card = cards[currentCardIndex];
+      if (!card) {
+        return;
+      }
       setShowLoader(true);
       let scoreResponse: ScoreCardResponse;
       try {
@@ -80,12 +91,13 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
           new TextDecoder().decode(scoreResponse.cardJsonRepr)
         ),
       });
+      setCurrentCardIndex((prevIndex) => prevIndex + 1);
+
       if (currentCardIndex < cards.length - 1) {
-        setCurrentCardIndex((prevIndex) => prevIndex + 1);
         setFlipped(false);
       } else {
         // End of deck
-        console.log("End of deck");
+        setShowLoadMoreLink(true);
       }
     },
     [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
@@ -166,123 +178,127 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
 
   return (
     <Center style={{ width: "100%", height: "100%", flexDirection: "column" }}>
-      <Card
-        shadow="sm"
-        padding="lg"
-        radius="md"
-        withBorder
-        style={{
-          maxWidth: 600,
-          width: "100%",
-          backgroundColor: theme.colors.dark[8],
-        }}
-      >
-        {!flipped ? (
-          // Front side
-          <Stack align="center" gap="md">
-            <Text size="xl" fw={700} ta="center">
-              {card.alphagram?.alphagram.toUpperCase()}
-            </Text>
-            {card.alphagram?.words.length && (
-              <Text size="xl" c="dimmed" ta="center">
-                Words: {card.alphagram?.words.length}
-              </Text>
+      {card && (
+        <>
+          <Card
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+            style={{
+              maxWidth: 600,
+              width: "100%",
+              backgroundColor: theme.colors.dark[8],
+            }}
+          >
+            {!flipped ? (
+              // Front side
+              <Stack align="center" gap="md">
+                <Text size="xl" fw={700} ta="center">
+                  {card.alphagram?.alphagram.toUpperCase()}
+                </Text>
+                {card.alphagram?.words.length && (
+                  <Text size="xl" c="dimmed" ta="center">
+                    Words: {card.alphagram?.words.length}
+                  </Text>
+                )}
+                <Group mt="md">
+                  <Button onClick={handleFlip} size="lg">
+                    Show answer
+                    <Text component="span" size="sm">
+                      &nbsp; (F)
+                    </Text>
+                  </Button>
+                </Group>
+              </Stack>
+            ) : (
+              // Back side
+              <Stack align="center" gap="sm">
+                {card.alphagram?.words.map((word) => (
+                  <div key={word.word}>
+                    <Center>
+                      <Text span c="dimmed" size="md" fw={500} mr="xs">
+                        {word.frontHooks}
+                      </Text>
+                      <Text span c="dimmed" size="md" fw={500}>
+                        {word.innerFrontHook ? "·" : ""}
+                      </Text>
+                      <Text span size="md" fw={500}>
+                        {word.word}
+                      </Text>
+                      <Text span c="dimmed" size="md" fw={500}>
+                        {word.innerBackHook ? "·" : ""}
+                      </Text>
+                      <Text span c="dimmed" size="md" fw={500} ml="xs">
+                        {word.lexiconSymbols}
+                      </Text>
+                      <Text span c="dimmed" size="md" fw={500}>
+                        {word.backHooks}
+                      </Text>
+                    </Center>
+                    <Text size="md" c="dimmed">
+                      {word.definition}
+                    </Text>
+                  </div>
+                ))}
+                <Group mt="sm">
+                  <Button
+                    color="red"
+                    variant="light"
+                    onClick={() => handleScore(Score.AGAIN)}
+                    size="lg"
+                  >
+                    Missed
+                    <Text component="span" c="dimmed" size="sm">
+                      &nbsp; (1)
+                    </Text>
+                  </Button>
+                  <Button
+                    color="yellow"
+                    variant="light"
+                    onClick={() => handleScore(Score.HARD)}
+                    size="lg"
+                  >
+                    Hard
+                    <Text component="span" c="dimmed" size="sm">
+                      &nbsp; (2)
+                    </Text>
+                  </Button>
+                  <Button
+                    color="green"
+                    variant="light"
+                    onClick={() => handleScore(Score.GOOD)}
+                    size="lg"
+                  >
+                    Good
+                    <Text component="span" c="dimmed" size="sm">
+                      &nbsp; (3)
+                    </Text>
+                  </Button>
+                  <Button
+                    color="gray"
+                    variant="light"
+                    onClick={() => handleScore(Score.EASY)}
+                    size="lg"
+                  >
+                    Easy
+                    <Text component="span" c="dimmed" size="sm">
+                      &nbsp; (4)
+                    </Text>
+                  </Button>
+                </Group>
+                {showLoader ? <Loader color="blue" /> : null}
+              </Stack>
             )}
-            <Group mt="md">
-              <Button onClick={handleFlip} size="lg">
-                Show answer
-                <Text component="span" size="sm">
-                  &nbsp; (F)
-                </Text>
-              </Button>
-            </Group>
-          </Stack>
-        ) : (
-          // Back side
-          <Stack align="center" gap="sm">
-            {card.alphagram?.words.map((word) => (
-              <div key={word.word}>
-                <Center>
-                  <Text span c="dimmed" size="md" fw={500} mr="xs">
-                    {word.frontHooks}
-                  </Text>
-                  <Text span c="dimmed" size="md" fw={500}>
-                    {word.innerFrontHook ? "·" : ""}
-                  </Text>
-                  <Text span size="md" fw={500}>
-                    {word.word}
-                  </Text>
-                  <Text span c="dimmed" size="md" fw={500}>
-                    {word.innerBackHook ? "·" : ""}
-                  </Text>
-                  <Text span c="dimmed" size="md" fw={500} ml="xs">
-                    {word.lexiconSymbols}
-                  </Text>
-                  <Text span c="dimmed" size="md" fw={500}>
-                    {word.backHooks}
-                  </Text>
-                </Center>
-                <Text size="md" c="dimmed">
-                  {word.definition}
-                </Text>
-              </div>
-            ))}
-            <Group mt="sm">
-              <Button
-                color="red"
-                variant="light"
-                onClick={() => handleScore(Score.AGAIN)}
-                size="lg"
-              >
-                Missed
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (1)
-                </Text>
-              </Button>
-              <Button
-                color="yellow"
-                variant="light"
-                onClick={() => handleScore(Score.HARD)}
-                size="lg"
-              >
-                Hard
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (2)
-                </Text>
-              </Button>
-              <Button
-                color="green"
-                variant="light"
-                onClick={() => handleScore(Score.GOOD)}
-                size="lg"
-              >
-                Good
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (3)
-                </Text>
-              </Button>
-              <Button
-                color="gray"
-                variant="light"
-                onClick={() => handleScore(Score.EASY)}
-                size="lg"
-              >
-                Easy
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (4)
-                </Text>
-              </Button>
-            </Group>
-            {showLoader ? <Loader color="blue" /> : null}
-          </Stack>
-        )}
-      </Card>
-      {/* Progress summary */}
-      <Center style={{ marginTop: "20px" }}>
-        <Text size="md">
-          Card {currentCardIndex + 1} of {cards.length}
-        </Text>
-      </Center>
+          </Card>
+
+          <Center style={{ marginTop: "20px" }}>
+            <Text size="md">
+              Card {currentCardIndex + 1} of {cards.length}
+            </Text>
+          </Center>
+        </>
+      )}
       {/* Previous card summary */}
       {previousCard && currentCardIndex > 0 && (
         <PreviousCard
@@ -290,6 +306,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards }) => {
           alphagram={cards[currentCardIndex - 1].alphagram!.alphagram}
           handleRescore={handleRescore}
         />
+      )}
+      {showLoadMoreLink && (
+        <Button onClick={setFinishedCards}>Load more cards</Button>
       )}
     </Center>
   );

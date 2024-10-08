@@ -8,6 +8,8 @@ import { AppContext } from "./app_context";
 import { Card } from "./gen/rpc/wordvault/api_pb";
 import { notifications } from "@mantine/notifications";
 
+const LoadLimit = 500;
+
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
   const [cardsToLoad, setCardsToLoad] = useState<number | undefined>(undefined);
@@ -46,7 +48,10 @@ export default function LoadScheduledQuestions() {
   return (
     <div>
       {cardsOngoing ? (
-        <Flashcard cards={cards} />
+        <Flashcard
+          cards={cards}
+          setFinishedCards={() => setCardsOngoing(false)}
+        />
       ) : (
         <CardLoader
           jwt={jwt}
@@ -83,7 +88,7 @@ const CardLoader: React.FC<CardLoaderProps> = ({
   const loadScheduledCards = useCallback(async () => {
     try {
       const cards = await wordvaultClient.getNextScheduled(
-        { lexicon, limit: 250 },
+        { lexicon, limit: LoadLimit },
         { headers: { Authorization: `Bearer ${jwt}` } }
       );
       setCards(cards.cards);
@@ -111,7 +116,7 @@ const CardLoader: React.FC<CardLoaderProps> = ({
         </Text>
       ) : (
         <Button mt={16} onClick={loadScheduledCards}>
-          Load cards
+          Load {LoadLimit} cards
         </Button>
       )}
     </>
