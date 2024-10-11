@@ -93,7 +93,7 @@ jobs:
       # dir must be in the context of the build.
       STATIC_ROOT: /opt/webolith/static/webolith_static/
     docker:
-      - image: python:3
+      - image: python:3.12
     steps:
       - checkout
       - setup_remote_docker
