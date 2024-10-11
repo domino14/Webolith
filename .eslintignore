@@ -1,2 +1,4 @@
 djAerolith/flashcards/**/*.js
 djAerolith/wordwalls/static/js/wordwalls/gen/wordsearcher/*.js
+webpack.config-prod.babel.js
+webpack.config.babel.js

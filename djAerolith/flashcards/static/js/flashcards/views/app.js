@@ -8,14 +8,12 @@ define([
   '../router',
   './quiz',
   './quiz_selector',
-  './word_search_form.jsx'
+  './word_search_form.tsx'
 ], function(Backbone, _, $, React, ReactDOM, Router, Quiz,
   QuizSelector, WordSearchForm) {
   "use strict";
-  var App, NEW_QUIZ_URL, ADD_WORDVAULT_URL;
+  var App, NEW_QUIZ_URL;
   NEW_QUIZ_URL = '/cards/api/new_quiz';
-  // ADD_WORDVAULT_URL should maybe talk directly to the wordvault endpoint.
-  ADD_WORDVAULT_URL = '/cards/api/add_to_wordvault';
   App = Backbone.View.extend({
     initialize: function(options) {
       var router;
@@ -63,18 +61,6 @@ define([
       });
     },
 
-    addToWordVault: function(criteria) {
-      var toPost = JSON.stringify(criteria);
-      $.ajax({
-        url: ADD_WORDVAULT_URL,
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: toPost,
-        success: _.bind(this.successCallback, this),
-        error: _.bind(this.alertCallback, this)
-      });
-    },
     successCallback: function(jqXHR) {
       this.displaySpinner_(false);
       this.quiz.renderAlert(jqXHR.msg, true);
@@ -92,7 +78,6 @@ define([
       ReactDOM.render(
         React.createElement(WordSearchForm['default'], {
           loadWords: _.bind(this.loadWords, this),
-          addToWordVault: _.bind(this.addToWordVault, this),
         }),
         document.getElementById('card-setup'));
       this.$('#card-setup').show();

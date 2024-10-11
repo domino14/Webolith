@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { SearchTypesEnum, SearchCriterion } from 'wordvaultapp/search/types';
+import useSearchRows from 'wordvaultapp/search/use_search_rows';
 import BlankSearchDialog from '../search/dialog';
-import ContainerWithSearchRows from '../dialog_container_with_search_rows';
-
-import { SearchTypesEnum, SearchCriterion } from '../search/types';
 
 import WordwallsAPI from '../../wordwalls_api';
 
@@ -36,24 +35,33 @@ function pbToQuestions(pb) {
   return rawQs;
 }
 
-class BlanksDialogContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.searchSubmit = this.searchSubmit.bind(this);
-  }
+const initialCriteria = [
+  new SearchCriterion(SearchTypesEnum.FIXED_LENGTH, { value: 7 }),
+  new SearchCriterion(SearchTypesEnum.MAX_SOLUTIONS, { value: 5 }),
+  new SearchCriterion(SearchTypesEnum.NUM_TWO_BLANKS, { value: 4 }),
+];
 
-  // Return the NAME of the lexicon, rather than the number.
-  // word_db_server requires the lexicon name.
-  getLexiconName() {
-    return this.props.availableLexica.find((el) => el.id === this.props.lexicon).lexicon;
-  }
+function BlanksDialogContainer(props) {
+  const {
+    searchCriteria,
+    addSearchRow,
+    removeSearchRow,
+    searchParamChange,
+    searchTypeChange,
+  } = useSearchRows(initialCriteria, allowedSearchTypes);
 
-  searchSubmit() {
-    this.props.showSpinner();
+  const getLexiconName = () => {
+    const lexicon = props.availableLexica.find((el) => el.id === props.lexicon);
+    return lexicon ? lexicon.lexicon : '';
+  };
+
+  const searchSubmit = () => {
+    props.showSpinner();
     let wordLength;
     let maxSolutions;
     let num2Blanks;
-    this.props.searches.forEach((search) => {
+
+    searchCriteria.forEach((search) => {
       switch (search.searchType) {
         case SearchTypesEnum.FIXED_LENGTH:
           wordLength = search.options.value;
@@ -68,47 +76,52 @@ class BlanksDialogContainer extends React.Component {
           throw new Error('Unhandled search type');
       }
     });
+
     const reqObj = new BlankChallengeCreateRequest({
       wordLength,
-      numQuestions: this.props.questionsPerRound,
-      lexicon: this.getLexiconName(),
+      numQuestions: props.questionsPerRound,
+      lexicon: getLexiconName(),
       maxSolutions,
       numWith2Blanks: num2Blanks,
     });
 
-    this.props.wordServerRPC.blankChallengeCreator(reqObj)
-      .then((result) => this.props.api.call(RAW_QUESTIONS_URL, {
-        lexicon: this.props.lexicon,
-        rawQuestions: pbToQuestions(result),
-        desiredTime: this.props.desiredTime,
-        questionsPerRound: this.props.questionsPerRound,
-        tablenum: this.props.tablenum,
-      })
-        .then((data) => this.props.onLoadNewList(data))
-        .catch((error) => this.props.notifyError(error)))
+    props.wordServerRPC
+      .blankChallengeCreator(reqObj)
+      .then((result) => props.api
+        .call(RAW_QUESTIONS_URL, {
+          lexicon: props.lexicon,
+          rawQuestions: pbToQuestions(result),
+          desiredTime: props.desiredTime,
+          questionsPerRound: props.questionsPerRound,
+          tablenum: props.tablenum,
+        })
+        .then((data) => props.onLoadNewList(data))
+        .catch((error) => props.notifyError(error)))
       .catch((error) => {
         if (error.message.includes('timed out')) {
-          this.props.notifyError([
-            'Your query took too long; please try either fewer questions ',
-            'or a shorter word length.',
-          ].join(''));
+          props.notifyError(
+            'Your query took too long; please try either fewer questions or a shorter word length.',
+          );
         } else {
-          this.props.notifyError(error);
+          props.notifyError(error);
         }
       })
-      .finally(() => this.props.hideSpinner());
-  }
+      .finally(() => props.hideSpinner());
+  };
 
-  render() {
-    return (
-      <BlankSearchDialog
-        onSearchSubmit={this.searchSubmit}
-        flashcardAllowed={false}
-        allowedSearchTypes={allowedSearchTypes}
-        {...this.props}
-      />
-    );
-  }
+  return (
+    <BlankSearchDialog
+      onSearchSubmit={searchSubmit}
+      flashcardAllowed={false}
+      allowedSearchTypes={allowedSearchTypes}
+      searches={searchCriteria}
+      addSearchRow={addSearchRow}
+      removeSearchRow={removeSearchRow}
+      onSearchTypeChange={searchTypeChange}
+      onSearchParamChange={searchParamChange}
+      {...props}
+    />
+  );
 }
 
 BlanksDialogContainer.propTypes = {
@@ -134,20 +147,4 @@ BlanksDialogContainer.propTypes = {
   disabled: PropTypes.bool.isRequired,
 };
 
-const DialogContainer = ContainerWithSearchRows(
-  BlanksDialogContainer,
-  allowedSearchTypes,
-  [
-    new SearchCriterion(SearchTypesEnum.FIXED_LENGTH, {
-      value: 7,
-    }),
-    new SearchCriterion(SearchTypesEnum.MAX_SOLUTIONS, {
-      value: 5,
-    }),
-    new SearchCriterion(SearchTypesEnum.NUM_TWO_BLANKS, {
-      value: 4,
-    }),
-  ],
-);
-
-export default DialogContainer;
+export default BlanksDialogContainer;

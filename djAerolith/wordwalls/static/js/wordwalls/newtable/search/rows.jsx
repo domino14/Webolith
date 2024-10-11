@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { SearchTypesEnum, SearchCriterion } from 'wordvaultapp/search/types';
 import SearchRow from './row';
-import { SearchTypesEnum, SearchCriterion } from './types';
 
 function SearchRows(props) {
   return (
     <div>
       {props.searches.map((search, idx) => (
         <SearchRow
-        // To suppress idx warning we use idx + 0, ew. XXX
+          // To suppress idx warning we use idx + 0, ew. XXX
           key={`row${idx + 0}`}
           index={idx}
           searchType={search.searchType}

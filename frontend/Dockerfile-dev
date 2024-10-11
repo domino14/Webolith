@@ -1,0 +1,5 @@
+FROM node:latest
+
+USER node
+WORKDIR /opt/webolith-fe/
+ENV PATH /opt/webolith-fe/node_modules/.bin:$PATH

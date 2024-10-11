@@ -17,10 +17,16 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from django.urls import path, re_path
-from accounts.views import editProfile, viewProfile, set_default_lexicon
+from accounts.views import (
+    editProfile,
+    viewProfile,
+    set_default_lexicon,
+    default_lexicon,
+)
 
 urlpatterns = [
     re_path(r"^$", editProfile, name="accounts_edit_profile"),
     path(r"set_default_lexicon/", set_default_lexicon),
+    path(r"default_lexicon", default_lexicon),
     path(r"<str:username>/", viewProfile, name="accounts_view_profile"),
 ]

@@ -3,7 +3,6 @@
 gunicorn.log
 node_modules
 djAerolith/static/img/avatars/*
-*.sublime-workspace
 namedLists.json
 *.mo
 config/config.env
@@ -13,12 +12,6 @@ config/dev_config.env
 *.DS_Store
 npm-debug.log
 djAerolith/static/dist/*
-kubernetes/secrets-*.yaml
-kubernetes/webolith_static/*
-kubernetes/*.key
-kubernetes/*.crt
-kubernetes/deploy-configs/dev-*.yaml
-kubernetes/deploy-configs/prod-*.yaml
 .coverage
 djAerolith/htmlcov
 vars.sh
@@ -32,3 +25,4 @@ analysis/*.csv
 analysis/*.txt
 .ipynb_checkpoints
 djAerolith/venv
+frontend/*.tsbuildinfo

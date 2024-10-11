@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { SearchCriterion } from 'wordvaultapp/search/types';
 import SearchRows from './rows';
 import HelpText from './help_text';
-import { SearchCriterion } from './types';
 
 function PlayButton(props) {
   return (
@@ -83,7 +83,7 @@ function WordSearchDialog(props) {
 
 WordSearchDialog.defaultProps = {
   flashcardAllowed: true,
-  onFlashcardSubmit: () => {},
+  onFlashcardSubmit: () => { },
 };
 
 WordSearchDialog.propTypes = {

@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import sinon from 'sinon';
 
+import { SearchTypesEnum } from 'wordvaultapp/search/types';
 import SearchDialogContainer from '../../../newtable/search/dialog_container';
-import { SearchTypesEnum } from '../../../newtable/search/types';
 
 const props = {
   lexicon: 3,
