@@ -1,4 +1,5 @@
-FROM python:3
+FROM python:3.12
+# Before we update to python3.13 we need to update to psycopg3 (or just plain psycopg)
 LABEL maintainer="Cesar Del Solar <delsolar@gmail.com>"
 
 COPY . /opt/webolith/
