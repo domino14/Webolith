@@ -12,6 +12,7 @@ import LoadScheduledQuestions from "./load_scheduled_questions.tsx";
 import { AppContextProvider } from "./app_context.tsx";
 import "@mantine/notifications/styles.css";
 import { Notifications } from "@mantine/notifications";
+import WordSearch from "./search/word_search.tsx";
 
 const router = createBrowserRouter(
   [
@@ -37,7 +38,7 @@ const router = createBrowserRouter(
         },
         {
           path: "/word-search",
-          //   element: <WordSearch />,
+          element: <WordSearch />,
         },
       ],
     },

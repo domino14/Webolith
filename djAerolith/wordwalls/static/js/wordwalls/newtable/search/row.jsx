@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Select from '../../forms/select';
-import NumberInput from '../../forms/number_input';
-import TextInput from '../../forms/text_input';
-
 import {
   SearchTypesEnum,
   searchCriteriaOptions,
   SearchTypesInputs,
-} from './types';
+} from 'wordvaultapp/search/types';
+import Select from '../../forms/select';
+import NumberInput from '../../forms/number_input';
+import TextInput from '../../forms/text_input';
 
 const convertOptions = (options) => options.map((el) => ({
   value: el[0],

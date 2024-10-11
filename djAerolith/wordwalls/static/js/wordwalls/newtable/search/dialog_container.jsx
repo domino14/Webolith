@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { SearchTypesEnum, SearchCriterion } from 'wordvaultapp/search/types';
 import ContainerWithSearchRows from '../dialog_container_with_search_rows';
 import WordSearchDialog from './dialog';
 
-import { SearchTypesEnum, SearchCriterion } from './types';
 import WordwallsAPI from '../../wordwalls_api';
 
 const SEARCH_URL = '/wordwalls/api/new_search/';

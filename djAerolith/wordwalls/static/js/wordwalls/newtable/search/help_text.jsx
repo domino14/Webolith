@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { SearchTypesEnum, SearchTypesOrder } from './types';
+import { SearchTypesEnum, SearchTypesOrder } from 'wordvaultapp/search/types';
 
 function SingleHelpNode(props) {
   return (

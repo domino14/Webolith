@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-import { searchCriterionToAdd, SearchTypesEnum } from './search/types';
+import { searchCriterionToAdd, SearchTypesEnum } from 'wordvaultapp/search/types';
 
 const maybeReorderCriteria = (searchCriteria) => {
   // Matching anagram must always come last.
@@ -13,7 +13,7 @@ const maybeReorderCriteria = (searchCriteria) => {
   const toPushBack = [];
   searchCriteria.forEach((val) => {
     if (val.searchType === SearchTypesEnum.MATCHING_ANAGRAM
-        || val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
+      || val.searchType === SearchTypesEnum.PROBABILITY_LIMIT) {
       toPushBack.push(val);
     } else {
       arrCopy.push(val);
