@@ -70,7 +70,7 @@ jobs:
   build_js:
     working_directory: /opt/webolith
     docker:
-      - image: node:16-alpine
+      - image: node:18-alpine
     steps:
       - checkout
       - run: npm install
