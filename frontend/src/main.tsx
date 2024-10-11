@@ -11,8 +11,11 @@ import ErrorPage from "./error_page.tsx";
 import LoadScheduledQuestions from "./load_scheduled_questions.tsx";
 import { AppContextProvider } from "./app_context.tsx";
 import "@mantine/notifications/styles.css";
+import "@mantine/charts/styles.css";
+
 import { Notifications } from "@mantine/notifications";
 import WordSearch from "./search/word_search.tsx";
+import CardSchedule from "./schedule.tsx";
 
 const router = createBrowserRouter(
   [
@@ -34,7 +37,8 @@ const router = createBrowserRouter(
           element: <LoadScheduledQuestions />,
         },
         {
-          path: "/schedules",
+          path: "/card-schedules",
+          element: <CardSchedule />,
         },
         {
           path: "/word-search",

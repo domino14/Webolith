@@ -66,7 +66,7 @@ function App() {
             label="Load scheduled questions"
           />
           <NavLink href="word-search" label="Add to WordVault" />
-          <NavLink href="scheduling" label="Scheduling" />
+          <NavLink href="card-schedules" label="Scheduling" />
           <br />
         </AppShell.Section>
         <AppShell.Section>Settings</AppShell.Section>
@@ -86,4 +86,3 @@ function App() {
 }
 
 export default App;
-// console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
