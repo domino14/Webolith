@@ -93,6 +93,9 @@
     "setupFiles": [
       "./djAerolith/wordwalls/static/js/wordwalls/test/shim.js"
     ],
+    "moduleNameMapper": {
+      "^wordvaultapp/(.*)$": "<rootDir>/frontend/src/$1"
+    },
     "testEnvironment": "jsdom"
   }
 }
