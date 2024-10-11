@@ -1,6 +1,12 @@
 {
-  "extends": "airbnb",
-  "plugins": ["compat"],
+  "extends": [
+    "airbnb",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript"
+  ],
+  "plugins": ["compat", "import"],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
@@ -15,6 +21,27 @@
   "rules": {
     "compat/compat": 2,
     "react/destructuring-assignment": 0,
-    "react/jsx-props-no-spreading": 0
+    "react/jsx-props-no-spreading": 0,
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {},
+      "webpack": {
+        "config": "webpack.config.babel.js"
+      }
+    }
   }
 }
