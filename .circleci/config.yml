@@ -77,6 +77,8 @@ jobs:
       - run: npm run eslint
       - run: npm run jshint && npm run test && npm run prod:build
       - run: apk add --update ca-certificates openssl && update-ca-certificates
+      - run: cd frontend && npm install && npm run lint && npm run build
+      - run: mv frontend/dist/* djAerolith/static/dist/wordvault
       - persist_to_workspace:
           root: djAerolith/static
           paths:
