@@ -30,6 +30,7 @@ export const Card = /*@__PURE__*/ proto3.makeMessageType(
     { no: 2, name: "alphagram", kind: "message", T: Alphagram },
     { no: 3, name: "card_json_repr", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
     { no: 4, name: "retrievability", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 5, name: "review_log", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
   ],
 );
 

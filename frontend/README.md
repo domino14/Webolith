@@ -2,7 +2,7 @@ This is the folder where the "new" UI will live. New UI will be built with vite 
 
 Will not use collectstatic/similar but will try to be a SPA with little to no SSR.
 
-Start with the secret cards app.
+Start with the WordVault app.
 
 # React + TypeScript + Vite
 

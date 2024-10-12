@@ -64,6 +64,11 @@ export declare class Card extends Message<Card> {
    */
   retrievability: number;
 
+  /**
+   * @generated from field: bytes review_log = 5;
+   */
+  reviewLog: Uint8Array;
+
   constructor(data?: PartialMessage<Card>);
 
   static readonly runtime: typeof proto3;

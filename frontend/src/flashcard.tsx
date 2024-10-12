@@ -22,6 +22,7 @@ import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { AppContext } from "./app_context";
 import { Timestamp } from "@bufbuild/protobuf";
 import { notifications } from "@mantine/notifications";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface FlashcardProps {
   cards: WordVaultCard[];
@@ -44,7 +45,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
   const wordvaultClient = useClient(WordVaultService);
   const [showLoadMoreLink, setShowLoadMoreLink] = useState(false);
   const { lexicon, jwt } = useContext(AppContext);
-
+  const smallScreen = useMediaQuery("(max-width: 40em)");
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
@@ -246,45 +247,53 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                     color="red"
                     variant="light"
                     onClick={() => handleScore(Score.AGAIN)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Missed
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (1)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (1)
+                      </Text>
+                    )}
                   </Button>
                   <Button
                     color="yellow"
                     variant="light"
                     onClick={() => handleScore(Score.HARD)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Hard
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (2)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (2)
+                      </Text>
+                    )}
                   </Button>
                   <Button
                     color="green"
                     variant="light"
                     onClick={() => handleScore(Score.GOOD)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Good
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (3)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (3)
+                      </Text>
+                    )}
                   </Button>
                   <Button
                     color="gray"
                     variant="light"
                     onClick={() => handleScore(Score.EASY)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Easy
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (4)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (4)
+                      </Text>
+                    )}
                   </Button>
                 </Group>
                 {showLoader ? <Loader color="blue" /> : null}

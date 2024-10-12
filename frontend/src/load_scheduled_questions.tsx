@@ -116,7 +116,7 @@ const CardLoader: React.FC<CardLoaderProps> = ({
         </Text>
       ) : (
         <Button mt={16} onClick={loadScheduledCards}>
-          Study {LoadLimit} cards
+          Study {Math.min(LoadLimit, cardsToLoad)} cards
         </Button>
       )}
     </>

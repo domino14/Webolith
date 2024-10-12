@@ -16,6 +16,7 @@ import { Outlet } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { useContext, useEffect } from "react";
 import { LoginState } from "./constants";
+import { IconQuestionMark, IconUserQuestion } from "@tabler/icons-react";
 
 function App() {
   const [opened, { toggle }] = useDisclosure();
@@ -67,6 +68,16 @@ function App() {
           />
           <NavLink href="word-search" label="Add to WordVault" />
           <NavLink href="card-schedules" label="Scheduling" />
+          <NavLink href="card-stats" label="Card statistics" />
+          <NavLink
+            href="help"
+            label={
+              <>
+                <IconUserQuestion />
+                &nbsp; What is WordVault?
+              </>
+            }
+          />
           <br />
         </AppShell.Section>
         <AppShell.Section>Settings</AppShell.Section>
