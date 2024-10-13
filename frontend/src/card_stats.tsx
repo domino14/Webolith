@@ -11,6 +11,7 @@ import {
   TextInput,
   Timeline,
   Tooltip,
+  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -122,7 +123,8 @@ const CardInfo: React.FC<CardInfoProps> = ({
   alphagram,
 }) => {
   const theme = useMantineTheme();
-
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
   const dstr = (datestr: string) =>
     `${new Date(datestr).toLocaleDateString()} ${new Date(
       datestr
@@ -141,7 +143,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
         style={{
           maxWidth: 600,
           width: "100%",
-          backgroundColor: theme.colors.dark[7], // Slightly lighter for better contrast
+          backgroundColor: isDark ? theme.colors.dark[7] : theme.colors.gray[1],
         }}
       >
         <Stack align="center" gap="md">
@@ -150,7 +152,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
           </Text>
           <List spacing="xs">
             <List.Item>
-              <Text c={theme.colors.gray[4]}>
+              <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
                 Next due:{" "}
                 <Text component="span" fw={500}>
                   {dueDate}
@@ -158,7 +160,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Text>
             </List.Item>
             <List.Item>
-              <Text c={theme.colors.gray[4]}>
+              <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
                 Last seen:{" "}
                 <Text component="span" fw={500}>
                   {lastReview}
@@ -166,7 +168,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Text>
             </List.Item>
             <List.Item>
-              <Text c={theme.colors.gray[4]}>
+              <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
                 Number of times asked:{" "}
                 <Text component="span" fw={500}>
                   {fsrsCard.Reps}
@@ -174,7 +176,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Text>
             </List.Item>
             <List.Item>
-              <Text c={theme.colors.gray[4]}>
+              <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
                 Number of times forgotten:{" "}
                 <Text component="span" fw={500}>
                   {fsrsCard.Lapses}
@@ -183,13 +185,15 @@ const CardInfo: React.FC<CardInfoProps> = ({
             </List.Item>
           </List>
 
-          <Text size="lg" fw={700} mt="md" color={theme.colors.blue[4]}>
+          <Text size="lg" fw={700} mt="md" c={theme.colors.blue[4]}>
             FSRS values
           </Text>
 
           <Stack gap="xs">
             <Text>
               <Tooltip
+                multiline
+                w={450}
                 label="Stability refers to how long you can retain a word before needing a review. Specifically, it is the time, in days, required for Retrievability to decrease from 100% to 90%. "
                 withArrow
               >
@@ -197,12 +201,14 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Tooltip>
               Stability:{" "}
               <Text component="span" fw={500}>
-                {fsrsCard.Stability}
+                {fsrsCard.Stability.toFixed(2)}
               </Text>
             </Text>
 
             <Text>
               <Tooltip
+                multiline
+                w={450}
                 label="Retrievability is the probability that you can recall this alphagram at this given time. This value decreases with time."
                 withArrow
               >
@@ -210,12 +216,14 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Tooltip>
               Retrievability:{" "}
               <Text component="span" fw={500}>
-                {cardInfo.retrievability}
+                {(cardInfo.retrievability * 100).toFixed(2)}%
               </Text>
             </Text>
 
             <Text>
               <Tooltip
+                multiline
+                w={450}
                 label="Difficulty estimates how hard it is for you to remember the alphagram. It is a number between 0 and 10."
                 withArrow
               >
@@ -223,7 +231,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Tooltip>
               Difficulty:{" "}
               <Text component="span" fw={500}>
-                {fsrsCard.Difficulty}
+                {fsrsCard.Difficulty.toFixed(2)}
               </Text>
             </Text>
           </Stack>

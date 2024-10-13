@@ -11,6 +11,7 @@ import {
   useMantineTheme,
   Loader,
   Popover,
+  useMantineColorScheme,
 } from "@mantine/core";
 import {
   Score,
@@ -44,8 +45,11 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
   const theme = useMantineTheme();
   const wordvaultClient = useClient(WordVaultService);
   const [showLoadMoreLink, setShowLoadMoreLink] = useState(false);
-  const { lexicon, jwt } = useContext(AppContext);
+  const { lexicon } = useContext(AppContext);
   const smallScreen = useMediaQuery("(max-width: 40em)");
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
+
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
@@ -98,7 +102,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         setShowLoadMoreLink(true);
       }
     },
-    [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
+    [cards, currentCardIndex, lexicon, wordvaultClient]
   );
 
   const handleRescore = useCallback(
@@ -132,7 +136,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         ),
       });
     },
-    [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
+    [cards, currentCardIndex, lexicon, wordvaultClient]
   );
 
   const card = cards[currentCardIndex];
@@ -183,7 +187,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
             style={{
               maxWidth: 600,
               width: "100%",
-              backgroundColor: theme.colors.dark[8],
+              backgroundColor: isDark
+                ? theme.colors.dark[8]
+                : theme.colors.gray[0],
             }}
           >
             {!flipped ? (
@@ -241,7 +247,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                 <Group mt="sm">
                   <Button
                     color="red"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.AGAIN)}
                     size={smallScreen ? "xs" : "lg"}
                   >
@@ -254,7 +260,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                   </Button>
                   <Button
                     color="yellow"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.HARD)}
                     size={smallScreen ? "xs" : "lg"}
                   >
@@ -267,7 +273,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                   </Button>
                   <Button
                     color="green"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.GOOD)}
                     size={smallScreen ? "xs" : "lg"}
                   >
@@ -280,7 +286,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                   </Button>
                   <Button
                     color="gray"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.EASY)}
                     size={smallScreen ? "xs" : "lg"}
                   >

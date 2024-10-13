@@ -20,9 +20,8 @@ const SearchRows: React.FC<SearchRowsProps> = (props) => {
   return (
     <div>
       {props.criteria.map((criterion, idx) => (
-        <>
+        <React.Fragment key={`fragment${idx}`}>
           <SearchRow
-            key={`row${idx}`}
             index={idx}
             searchCriterion={criterion}
             minAllowedValue={
@@ -39,7 +38,7 @@ const SearchRows: React.FC<SearchRowsProps> = (props) => {
             allowedSearchTypes={props.allowedSearchTypes}
           />
           <Divider my="md" />
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
