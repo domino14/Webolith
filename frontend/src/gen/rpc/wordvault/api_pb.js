@@ -30,6 +30,7 @@ export const Card = /*@__PURE__*/ proto3.makeMessageType(
     { no: 2, name: "alphagram", kind: "message", T: Alphagram },
     { no: 3, name: "card_json_repr", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
     { no: 4, name: "retrievability", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 5, name: "review_log", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
   ],
 );
 
@@ -181,6 +182,27 @@ export const PostponeResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.PostponeResponse",
   () => [
     { no: 1, name: "num_postponed", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeleteRequest
+ */
+export const DeleteRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteRequest",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "only_new_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeleteResponse
+ */
+export const DeleteResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteResponse",
+  () => [
+    { no: 1, name: "num_deleted", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
   ],
 );
 

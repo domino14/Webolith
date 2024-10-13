@@ -11,6 +11,7 @@ import {
   useMantineTheme,
   Loader,
   Popover,
+  useMantineColorScheme,
 } from "@mantine/core";
 import {
   Score,
@@ -22,6 +23,7 @@ import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { AppContext } from "./app_context";
 import { Timestamp } from "@bufbuild/protobuf";
 import { notifications } from "@mantine/notifications";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface FlashcardProps {
   cards: WordVaultCard[];
@@ -43,7 +45,10 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
   const theme = useMantineTheme();
   const wordvaultClient = useClient(WordVaultService);
   const [showLoadMoreLink, setShowLoadMoreLink] = useState(false);
-  const { lexicon, jwt } = useContext(AppContext);
+  const { lexicon } = useContext(AppContext);
+  const smallScreen = useMediaQuery("(max-width: 40em)");
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
 
   const handleFlip = () => {
     setFlipped((prev) => !prev);
@@ -64,14 +69,11 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
       setShowLoader(true);
       let scoreResponse: ScoreCardResponse;
       try {
-        scoreResponse = await wordvaultClient.scoreCard(
-          {
-            score: score,
-            lexicon: lexicon,
-            alphagram: card.alphagram?.alphagram,
-          },
-          { headers: { Authorization: `Bearer ${jwt}` } }
-        );
+        scoreResponse = await wordvaultClient.scoreCard({
+          score: score,
+          lexicon: lexicon,
+          alphagram: card.alphagram?.alphagram,
+        });
       } catch (e) {
         notifications.show({
           color: "red",
@@ -100,7 +102,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         setShowLoadMoreLink(true);
       }
     },
-    [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
+    [cards, currentCardIndex, lexicon, wordvaultClient]
   );
 
   const handleRescore = useCallback(
@@ -109,15 +111,12 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
       setShowLoader(true);
       let scoreResponse: ScoreCardResponse;
       try {
-        scoreResponse = await wordvaultClient.editLastScore(
-          {
-            newScore: score,
-            lexicon: lexicon,
-            alphagram: card.alphagram?.alphagram,
-            lastCardRepr: card.cardJsonRepr,
-          },
-          { headers: { Authorization: `Bearer ${jwt}` } }
-        );
+        scoreResponse = await wordvaultClient.editLastScore({
+          newScore: score,
+          lexicon: lexicon,
+          alphagram: card.alphagram?.alphagram,
+          lastCardRepr: card.cardJsonRepr,
+        });
       } catch (e) {
         notifications.show({
           color: "red",
@@ -137,7 +136,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         ),
       });
     },
-    [cards, currentCardIndex, lexicon, jwt, wordvaultClient]
+    [cards, currentCardIndex, lexicon, wordvaultClient]
   );
 
   const card = cards[currentCardIndex];
@@ -188,7 +187,9 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
             style={{
               maxWidth: 600,
               width: "100%",
-              backgroundColor: theme.colors.dark[8],
+              backgroundColor: isDark
+                ? theme.colors.dark[8]
+                : theme.colors.gray[0],
             }}
           >
             {!flipped ? (
@@ -205,9 +206,11 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                 <Group mt="md">
                   <Button onClick={handleFlip} size="lg">
                     Show answer
-                    <Text component="span" size="sm">
-                      &nbsp; (F)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" size="sm">
+                        &nbsp; (F)
+                      </Text>
+                    )}
                   </Button>
                 </Group>
               </Stack>
@@ -244,47 +247,55 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                 <Group mt="sm">
                   <Button
                     color="red"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.AGAIN)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Missed
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (1)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (1)
+                      </Text>
+                    )}
                   </Button>
                   <Button
                     color="yellow"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.HARD)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Hard
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (2)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (2)
+                      </Text>
+                    )}
                   </Button>
                   <Button
                     color="green"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.GOOD)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Good
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (3)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (3)
+                      </Text>
+                    )}
                   </Button>
                   <Button
                     color="gray"
-                    variant="light"
+                    variant={isDark ? "light" : "outline"}
                     onClick={() => handleScore(Score.EASY)}
-                    size="lg"
+                    size={smallScreen ? "xs" : "lg"}
                   >
                     Easy
-                    <Text component="span" c="dimmed" size="sm">
-                      &nbsp; (4)
-                    </Text>
+                    {!smallScreen && (
+                      <Text component="span" c="dimmed" size="sm">
+                        &nbsp; (4)
+                      </Text>
+                    )}
                   </Button>
                 </Group>
                 {showLoader ? <Loader color="blue" /> : null}
@@ -325,6 +336,8 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
   alphagram,
   handleRescore,
 }) => {
+  const [editPopoverOpened, setEditPopoverOpened] = useState(false);
+
   return (
     <Alert
       title="Previous Card"
@@ -350,13 +363,21 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
             Next Due Date: {entry.nextScheduled.toDate().toLocaleDateString()}
           </Text>
           <Text size="sm" c="dimmed">
-            Times Seen: {entry.cardRepr["Reps"]} Times Missed:
-            {entry.cardRepr["Lapses"]}
+            Times Seen: {entry.cardRepr["Reps"]}
           </Text>
+          <Text>Times Forgotten: {entry.cardRepr["Lapses"]}</Text>
         </Stack>
-        <Popover trapFocus position="top" shadow="md">
+        <Popover
+          trapFocus
+          position="top"
+          shadow="md"
+          opened={editPopoverOpened}
+          onChange={setEditPopoverOpened}
+        >
           <Popover.Target>
-            <Button size="xs">Undo</Button>
+            <Button size="xs" onClick={() => setEditPopoverOpened(true)}>
+              Undo
+            </Button>
           </Popover.Target>
           <Popover.Dropdown>
             <Text>Set new rating for this card ({alphagram})</Text>
@@ -364,46 +385,46 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
               <Button
                 color="red"
                 variant="light"
-                onClick={() => handleRescore(Score.AGAIN)}
+                onClick={() => {
+                  handleRescore(Score.AGAIN);
+                  setEditPopoverOpened(false);
+                }}
                 size="xs"
               >
                 Missed
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (1)
-                </Text>
               </Button>
               <Button
                 color="yellow"
                 variant="light"
-                onClick={() => handleRescore(Score.HARD)}
+                onClick={() => {
+                  handleRescore(Score.HARD);
+                  setEditPopoverOpened(false);
+                }}
                 size="xs"
               >
                 Hard
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (2)
-                </Text>
               </Button>
               <Button
                 color="green"
                 variant="light"
-                onClick={() => handleRescore(Score.GOOD)}
+                onClick={() => {
+                  handleRescore(Score.GOOD);
+                  setEditPopoverOpened(false);
+                }}
                 size="xs"
               >
                 Good
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (3)
-                </Text>
               </Button>
               <Button
                 color="gray"
                 variant="light"
-                onClick={() => handleRescore(Score.EASY)}
+                onClick={() => {
+                  handleRescore(Score.EASY);
+                  setEditPopoverOpened(false);
+                }}
                 size="xs"
               >
                 Easy
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (4)
-                </Text>
               </Button>
             </Group>
           </Popover.Dropdown>

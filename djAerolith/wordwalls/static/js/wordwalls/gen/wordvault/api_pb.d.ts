@@ -64,6 +64,11 @@ export declare class Card extends Message<Card> {
    */
   retrievability: number;
 
+  /**
+   * @generated from field: bytes review_log = 5;
+   */
+  reviewLog: Uint8Array;
+
   constructor(data?: PartialMessage<Card>);
 
   static readonly runtime: typeof proto3;
@@ -473,5 +478,58 @@ export declare class PostponeResponse extends Message<PostponeResponse> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PostponeResponse;
 
   static equals(a: PostponeResponse | PlainMessage<PostponeResponse> | undefined, b: PostponeResponse | PlainMessage<PostponeResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeleteRequest
+ */
+export declare class DeleteRequest extends Message<DeleteRequest> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: bool only_new_questions = 2;
+   */
+  onlyNewQuestions: boolean;
+
+  constructor(data?: PartialMessage<DeleteRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteRequest;
+
+  static equals(a: DeleteRequest | PlainMessage<DeleteRequest> | undefined, b: DeleteRequest | PlainMessage<DeleteRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeleteResponse
+ */
+export declare class DeleteResponse extends Message<DeleteResponse> {
+  /**
+   * @generated from field: uint32 num_deleted = 1;
+   */
+  numDeleted: number;
+
+  constructor(data?: PartialMessage<DeleteResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteResponse;
+
+  static equals(a: DeleteResponse | PlainMessage<DeleteResponse> | undefined, b: DeleteResponse | PlainMessage<DeleteResponse> | undefined): boolean;
 }
 

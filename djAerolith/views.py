@@ -27,6 +27,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.views.decorators.http import require_GET
 import jwt
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 
@@ -99,6 +100,7 @@ def healthz(request):
     return response("Bad method.", StatusCode.BAD_REQUEST)
 
 
+@require_GET
 def jwt_req(request):
     if not request.user.is_authenticated:
         return response("Unauthenticated", StatusCode.UNAUTHORIZED)
@@ -122,6 +124,7 @@ def jwt_req(request):
 
 
 @csrf_exempt
+@require_GET
 def jwt_extend(request):
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):

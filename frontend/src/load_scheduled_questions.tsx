@@ -7,31 +7,30 @@ import { Link } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { Card } from "./gen/rpc/wordvault/api_pb";
 import { notifications } from "@mantine/notifications";
+import { LoginState } from "./constants";
+import { getTodaySeed, random, seed, shuffleArray } from "./random";
 
 const LoadLimit = 500;
 
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
   const [cardsToLoad, setCardsToLoad] = useState<number | undefined>(undefined);
-  const { jwt, lexicon } = useContext(AppContext);
+  const { lexicon, loggedIn } = useContext(AppContext);
   const wordvaultClient = useClient(WordVaultService);
 
   const [cards, setCards] = useState<Card[]>([]);
   useEffect(() => {
-    if (jwt === "" || lexicon === "" || cardsOngoing) {
+    if (lexicon === "" || cardsOngoing || loggedIn != LoginState.LoggedIn) {
       return;
     }
 
     // poll for how many cards there are
     const getDueCount = async () => {
       try {
-        const counts = await wordvaultClient.nextScheduledCount(
-          {
-            onlyOverdue: true,
-            lexicon,
-          },
-          { headers: { Authorization: `Bearer ${jwt}` } }
-        );
+        const counts = await wordvaultClient.nextScheduledCount({
+          onlyOverdue: true,
+          lexicon,
+        });
         setCardsToLoad(counts.breakdown["overdue"]);
       } catch (error) {
         notifications.show({
@@ -43,7 +42,7 @@ export default function LoadScheduledQuestions() {
     };
 
     getDueCount();
-  }, [jwt, cardsOngoing, lexicon, wordvaultClient]);
+  }, [cardsOngoing, lexicon, loggedIn, wordvaultClient]);
 
   return (
     <div>
@@ -54,7 +53,6 @@ export default function LoadScheduledQuestions() {
         />
       ) : (
         <CardLoader
-          jwt={jwt}
           cardsToLoad={cardsToLoad}
           lexicon={lexicon}
           setCards={(cards) => {
@@ -71,14 +69,12 @@ export default function LoadScheduledQuestions() {
 
 // Define the prop types
 interface CardLoaderProps {
-  jwt: string;
   lexicon: string;
   cardsToLoad: number | undefined;
   setCards: React.Dispatch<React.SetStateAction<Card[]>>;
 }
 
 const CardLoader: React.FC<CardLoaderProps> = ({
-  jwt,
   lexicon,
   cardsToLoad,
   setCards,
@@ -87,11 +83,15 @@ const CardLoader: React.FC<CardLoaderProps> = ({
 
   const loadScheduledCards = useCallback(async () => {
     try {
-      const cards = await wordvaultClient.getNextScheduled(
-        { lexicon, limit: LoadLimit },
-        { headers: { Authorization: `Bearer ${jwt}` } }
-      );
-      setCards(cards.cards);
+      const cards = await wordvaultClient.getNextScheduled({
+        lexicon,
+        limit: LoadLimit,
+      });
+
+      const todaySeed = getTodaySeed();
+      seed(todaySeed);
+      const shuffledCards = shuffleArray(cards.cards, random);
+      setCards(shuffledCards);
     } catch (error) {
       notifications.show({
         title: "error",
@@ -99,7 +99,7 @@ const CardLoader: React.FC<CardLoaderProps> = ({
         color: "red",
       });
     }
-  }, [wordvaultClient, lexicon, jwt, setCards]);
+  }, [wordvaultClient, lexicon, setCards]);
 
   if (cardsToLoad === undefined) {
     return <Loader type="bars" />;
@@ -116,7 +116,7 @@ const CardLoader: React.FC<CardLoaderProps> = ({
         </Text>
       ) : (
         <Button mt={16} onClick={loadScheduledCards}>
-          Study {LoadLimit} cards
+          Study {Math.min(LoadLimit, cardsToLoad)} cards
         </Button>
       )}
     </>

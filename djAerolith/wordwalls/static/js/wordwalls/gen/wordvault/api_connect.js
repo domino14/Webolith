@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetNextScheduledRequest, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetNextScheduledRequest, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -85,6 +85,15 @@ export const WordVaultService = {
       name: "Postpone",
       I: PostponeRequest,
       O: PostponeResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.Delete
+     */
+    delete: {
+      name: "Delete",
+      I: DeleteRequest,
+      O: DeleteResponse,
       kind: MethodKind.Unary,
     },
   }

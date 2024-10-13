@@ -250,7 +250,7 @@ const SearchRow: React.FC<SearchRowProps> = ({
 
   return (
     <Grid align="flex-start" justify="flex-start" className="search-row">
-      <Grid.Col span={{ base: 12, md: 9, lg: 6 }}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
         <Group wrap="nowrap" align="center">
           <Button
             variant="light"
@@ -281,8 +281,10 @@ const SearchRow: React.FC<SearchRowProps> = ({
               modifySearchType(index, parseInt(selectedValue || "0", 10));
             }}
           />
-          {specificForm}
         </Group>
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
+        <Group wrap="nowrap">{specificForm}</Group>
       </Grid.Col>
     </Grid>
   );

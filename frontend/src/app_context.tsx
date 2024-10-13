@@ -1,12 +1,21 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { LoginState } from "./constants";
 
 export interface AppContextType {
   jwt: string;
   username: string;
   lexicon: string;
+  defaultLexicon: string;
   setLexicon: (lex: string) => void;
+  setDefaultLexicon: (lex: string) => void;
   loggedIn: LoginState;
+  fetchJwt: () => Promise<string>;
 }
 
 const initialContext = {
@@ -14,7 +23,12 @@ const initialContext = {
   jwtExpiry: 0,
   username: "",
   lexicon: "",
+  defaultLexicon: "",
   setLexicon: () => {},
+  setDefaultLexicon: () => {},
+  fetchJwt: async (): Promise<string> => {
+    return "";
+  },
   loggedIn: LoginState.Unknown,
 };
 
@@ -57,79 +71,85 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [username, setUsername] = useState("");
   const [tokenExpiry, setTokenExpiry] = useState(0);
   const [lexicon, setLexicon] = useState("");
+  const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
 
-  useEffect(() => {
-    const renewJwt = async () => {
-      try {
-        const response = await fetch("/jwt_extend/", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setJwt(data.token);
-          const [usn, exp] = getUsnAndExp(data.token);
-          setUsername(usn ?? "");
-          setTokenExpiry(exp ?? 0);
-        } else {
-          console.error("Failed to renew JWT", response.status);
-          setLoginState(LoginState.NotLoggedIn); // Log the user out if JWT renewal fails
-        }
-      } catch (error) {
-        console.error("Error renewing JWT:", error);
+  const fetchJwt = useCallback(async () => {
+    console.log("Fetching JWT from backend");
+    let response;
+    try {
+      response = await fetch("/jwt");
+      if (response?.status === 401) {
+        setLoginState(LoginState.NotLoggedIn);
+        return "";
       }
-    };
-
-    const scheduleJwtRenewal = () => {
-      if (!jwt || tokenExpiry === 0) return;
-
-      const currentTime = Math.floor(Date.now() / 1000);
-      const timeUntilExpiry = tokenExpiry - currentTime;
-
-      if (timeUntilExpiry > 0) {
-        const renewalTime = timeUntilExpiry - 60 * JWTRenewalMinutes;
-        if (renewalTime > 0) {
-          console.log("Renewing JWT in", renewalTime, "seconds");
-          setTimeout(renewJwt, renewalTime * 1000);
-        } else {
-          // If it's already less than 3 minutes from expiry, renew immediately
-          renewJwt();
-        }
-      }
-    };
-
-    scheduleJwtRenewal(); // Call this when tokenExpiry or jwt changes
-  }, [jwt, tokenExpiry]);
-
-  useEffect(() => {
-    const fetchJwt = async () => {
-      let response;
-      try {
-        response = await fetch("/jwt");
-        if (response?.status === 401) {
-          setLoginState(LoginState.NotLoggedIn);
-          return;
-        }
-        const data = await response.json();
-        setJwt(data.token);
-        const [usn, exp] = getUsnAndExp(data.token);
-        setUsername(usn ?? "");
-        setTokenExpiry(exp ?? 0);
-        setLoginState(LoginState.LoggedIn);
-      } catch (error) {
-        console.error("Error fetching JWT:", error);
-      }
-    };
-
-    fetchJwt();
+      const data = await response.json();
+      setJwt(data.token);
+      const [usn, exp] = getUsnAndExp(data.token);
+      setUsername(usn ?? "");
+      setTokenExpiry(exp ?? 0);
+      setLoginState(LoginState.LoggedIn);
+      return data.token;
+    } catch (error) {
+      console.error("Error fetching JWT:", error);
+    }
+    return "";
   }, []);
+
+  const scheduleJwtRenewal = useCallback(() => {
+    if (!jwt || tokenExpiry === 0) return;
+    const currentTime = Math.floor(Date.now() / 1000);
+    const timeUntilExpiry = tokenExpiry - currentTime;
+    if (timeUntilExpiry > 0) {
+      const renewalTime = timeUntilExpiry - 60 * JWTRenewalMinutes;
+      if (renewalTime > 0) {
+        console.log("Renewing JWT in", renewalTime, "seconds");
+        setTimeout(fetchJwt, renewalTime * 1000);
+      } else {
+        // If it's already less than 3 minutes from expiry, renew right away.
+        setTimeout(fetchJwt, 1000);
+      }
+    }
+  }, [fetchJwt, jwt, tokenExpiry]);
+
+  useEffect(() => {
+    scheduleJwtRenewal();
+  }, [scheduleJwtRenewal]);
+
+  useEffect(() => {
+    fetchJwt();
+  }, [fetchJwt]);
+
+  // Fetch default lexicon on login
+  useEffect(() => {
+    const fetchDefaultLexicon = async () => {
+      try {
+        const response = await fetch("/accounts/profile/default_lexicon");
+        const data = await response.json();
+        setLexicon(data.defaultLexicon);
+        setDefaultLexicon(data.defaultLexicon);
+      } catch (error) {
+        console.error("Error fetching default lexicon:", error);
+      }
+    };
+
+    if (loginState === LoginState.LoggedIn) {
+      fetchDefaultLexicon();
+    }
+  }, [loginState]);
 
   return (
     <AppContext.Provider
-      value={{ jwt, username, lexicon, setLexicon, loggedIn: loginState }}
+      value={{
+        jwt,
+        username,
+        lexicon,
+        setLexicon,
+        setDefaultLexicon,
+        loggedIn: loginState,
+        fetchJwt,
+        defaultLexicon,
+      }}
     >
       {children}
     </AppContext.Provider>
