@@ -185,3 +185,24 @@ export const PostponeResponse = /*@__PURE__*/ proto3.makeMessageType(
   ],
 );
 
+/**
+ * @generated from message wordvault.DeleteRequest
+ */
+export const DeleteRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteRequest",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "only_new_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeleteResponse
+ */
+export const DeleteResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteResponse",
+  () => [
+    { no: 1, name: "num_deleted", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
