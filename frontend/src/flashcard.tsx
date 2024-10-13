@@ -357,9 +357,9 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
             Next Due Date: {entry.nextScheduled.toDate().toLocaleDateString()}
           </Text>
           <Text size="sm" c="dimmed">
-            Times Seen: {entry.cardRepr["Reps"]} Times Missed:
-            {entry.cardRepr["Lapses"]}
+            Times Seen: {entry.cardRepr["Reps"]}
           </Text>
+          <Text>Times Forgotten: {entry.cardRepr["Lapses"]}</Text>
         </Stack>
         <Popover
           trapFocus

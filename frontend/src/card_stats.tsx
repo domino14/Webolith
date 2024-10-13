@@ -10,6 +10,7 @@ import {
   Text,
   TextInput,
   Timeline,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -23,7 +24,7 @@ import {
 } from "@tabler/icons-react";
 
 const CardStats: React.FC = () => {
-  const { lexicon, jwt } = useContext(AppContext);
+  const { lexicon } = useContext(AppContext);
   const [lookup, setLookup] = useState("");
   const wordvaultClient = useClient(WordVaultService);
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
@@ -44,7 +45,7 @@ const CardStats: React.FC = () => {
         message: String(e),
       });
     }
-  }, [lexicon, lookup, wordvaultClient, jwt]);
+  }, [lexicon, lookup, wordvaultClient]);
 
   const fsrsCard = useMemo(
     () =>
@@ -130,10 +131,6 @@ const CardInfo: React.FC<CardInfoProps> = ({
   const dueDate = dstr(fsrsCard.Due);
   const lastReview = dstr(fsrsCard.LastReview);
 
-  const state = { 0: "New", 1: "Learning", 2: "Review", 3: "Relearning" }[
-    fsrsCard.State
-  ];
-
   return (
     <>
       <Card
@@ -144,57 +141,131 @@ const CardInfo: React.FC<CardInfoProps> = ({
         style={{
           maxWidth: 600,
           width: "100%",
-          backgroundColor: theme.colors.dark[8],
+          backgroundColor: theme.colors.dark[7], // Slightly lighter for better contrast
         }}
       >
         <Stack align="center" gap="md">
-          <Text size="xl" fw={700} ta="center">
+          <Text size="xl" fw={700} ta="center" color={theme.colors.blue[4]}>
             {alphagram.toUpperCase()}
           </Text>
-          <List>
-            <List.Item>Next due: {dueDate}</List.Item>
-            <List.Item>Last seen: {lastReview}</List.Item>
-
-            <List.Item>Number of times asked: {fsrsCard.Reps}</List.Item>
-            <List.Item>Number of times missed: {fsrsCard.Lapses}</List.Item>
-
-            <List.Item>Current state: {state}</List.Item>
+          <List spacing="xs">
+            <List.Item>
+              <Text c={theme.colors.gray[4]}>
+                Next due:{" "}
+                <Text component="span" fw={500}>
+                  {dueDate}
+                </Text>
+              </Text>
+            </List.Item>
+            <List.Item>
+              <Text c={theme.colors.gray[4]}>
+                Last seen:{" "}
+                <Text component="span" fw={500}>
+                  {lastReview}
+                </Text>
+              </Text>
+            </List.Item>
+            <List.Item>
+              <Text c={theme.colors.gray[4]}>
+                Number of times asked:{" "}
+                <Text component="span" fw={500}>
+                  {fsrsCard.Reps}
+                </Text>
+              </Text>
+            </List.Item>
+            <List.Item>
+              <Text c={theme.colors.gray[4]}>
+                Number of times forgotten:{" "}
+                <Text component="span" fw={500}>
+                  {fsrsCard.Lapses}
+                </Text>
+              </Text>
+            </List.Item>
           </List>
-          <Text mb="md">FSRS values</Text>
-          <IconHelp /> Stability: {fsrsCard.Stability}
-          <IconHelp />
-          Retrievability: {cardInfo.retrievability}
-          <IconHelp />
-          Difficulty: {fsrsCard.Difficulty}
+
+          <Text size="lg" fw={700} mt="md" color={theme.colors.blue[4]}>
+            FSRS values
+          </Text>
+
+          <Stack gap="xs">
+            <Text>
+              <Tooltip
+                label="Stability refers to how long you can retain a word before needing a review. Specifically, it is the time, in days, required for Retrievability to decrease from 100% to 90%. "
+                withArrow
+              >
+                <IconHelp size={18} style={{ marginRight: 8 }} />
+              </Tooltip>
+              Stability:{" "}
+              <Text component="span" fw={500}>
+                {fsrsCard.Stability}
+              </Text>
+            </Text>
+
+            <Text>
+              <Tooltip
+                label="Retrievability is the probability that you can recall this alphagram at this given time. This value decreases with time."
+                withArrow
+              >
+                <IconHelp size={18} style={{ marginRight: 8 }} />
+              </Tooltip>
+              Retrievability:{" "}
+              <Text component="span" fw={500}>
+                {cardInfo.retrievability}
+              </Text>
+            </Text>
+
+            <Text>
+              <Tooltip
+                label="Difficulty estimates how hard it is for you to remember the alphagram. It is a number between 0 and 10."
+                withArrow
+              >
+                <IconHelp size={18} style={{ marginRight: 8 }} />
+              </Tooltip>
+              Difficulty:{" "}
+              <Text component="span" fw={500}>
+                {fsrsCard.Difficulty}
+              </Text>
+            </Text>
+          </Stack>
         </Stack>
       </Card>
-      <Text fw={700} mb="lg" mt="lg">
+
+      <Text fw={700} mb="lg" mt="lg" size="lg" c={theme.colors.blue[4]}>
         Review History
       </Text>
-      <Timeline bulletSize={24} lineWidth={2}>
+
+      <Timeline
+        bulletSize={24}
+        lineWidth={2}
+        active={reviewLog.length}
+        color="blue"
+      >
         {reviewLog.map((rl) => {
           let bullet = null;
           switch (rl.Rating) {
             case 1:
-              bullet = <IconX />;
+              bullet = <IconX color={theme.colors.red[6]} />;
               break;
             case 2:
-              bullet = <IconAlertHexagon />;
+              bullet = <IconAlertHexagon color={theme.colors.yellow[6]} />;
               break;
             case 3:
-              bullet = <IconCheck />;
+              bullet = <IconCheck color={theme.colors.green[6]} />;
               break;
             case 4:
-              bullet = <IconBabyBottle />;
+              bullet = <IconBabyBottle color={theme.colors.pink[6]} />;
               break;
           }
+
           return (
             <Timeline.Item
               title={Score[rl.Rating]}
               key={rl.Review}
               bullet={bullet}
             >
-              <Text size="xs">{dstr(rl.Review)}</Text>
+              <Text size="xs" c={theme.colors.gray[6]}>
+                {dstr(rl.Review)}
+              </Text>
             </Timeline.Item>
           );
         })}
