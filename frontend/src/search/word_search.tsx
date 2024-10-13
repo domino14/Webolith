@@ -69,12 +69,14 @@ const WordSearchForm: React.FC = () => {
       notifications.show({
         color: "green",
         message: data.msg,
+        position: "bottom-center",
       });
     } catch (e) {
       notifications.show({
         color: "red",
         title: "Error",
         message: String(e),
+        position: "bottom-center",
       });
     }
   }, [lexicon, searchCriteria]);

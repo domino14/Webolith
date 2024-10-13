@@ -13,6 +13,7 @@ import { BarChart } from "@mantine/charts";
 import {
   Button,
   Center,
+  Group,
   Loader,
   Modal,
   NumberInput,
@@ -24,30 +25,27 @@ import { useDisclosure } from "@mantine/hooks";
 type scheduleBreakdown = { [key: string]: number };
 
 const CardSchedule: React.FC = () => {
-  const { lexicon, jwt } = useContext(AppContext);
+  const { lexicon } = useContext(AppContext);
   const [cardSchedule, setCardSchedule] = useState<scheduleBreakdown | null>(
     null
   );
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
-  const [modalOpened, modalHandlers] = useDisclosure();
+  const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
+  const [deleteModalOpened, deleteModalHandlers] = useDisclosure();
   const [showLoader, setShowLoader] = useState(false);
 
   const wordvaultClient = useClient(WordVaultService);
 
-  // Extract fetchDueQuestions outside of useEffect
   const fetchDueQuestions = useCallback(async () => {
-    if (!lexicon || !jwt) {
+    if (!lexicon) {
       return;
     }
     try {
       setShowLoader(true);
-      const resp = await wordvaultClient.nextScheduledCount(
-        {
-          lexicon,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        },
-        { headers: { Authorization: `Bearer ${jwt}` } }
-      );
+      const resp = await wordvaultClient.nextScheduledCount({
+        lexicon,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
       setCardSchedule(resp.breakdown);
     } catch (e) {
       notifications.show({
@@ -58,7 +56,7 @@ const CardSchedule: React.FC = () => {
     } finally {
       setShowLoader(false);
     }
-  }, [lexicon, jwt, wordvaultClient]);
+  }, [lexicon, wordvaultClient]);
 
   useEffect(() => {
     fetchDueQuestions();
@@ -126,7 +124,7 @@ const CardSchedule: React.FC = () => {
       const weekLabel = `${weekStart.toISOString().split("T")[0]}`;
 
       weeklyData.push({
-        week: weekLabel,
+        week: `Week of ${weekLabel}`,
         "Card Count": weekCount,
       });
     }
@@ -137,18 +135,15 @@ const CardSchedule: React.FC = () => {
   const sendPostponement = useCallback(async () => {
     try {
       setShowLoader(true);
-      const resp = await wordvaultClient.postpone(
-        {
-          lexicon,
-          numToPostpone: cardsToPostpone,
-        },
-        { headers: { Authorization: `Bearer ${jwt}` } }
-      );
+      const resp = await wordvaultClient.postpone({
+        lexicon,
+        numToPostpone: cardsToPostpone,
+      });
       notifications.show({
         color: "green",
         message: `Postponed ${resp.numPostponed} cards.`,
       });
-      modalHandlers.close();
+      postponeModalHandlers.close();
       // re-render graphs
       fetchDueQuestions();
     } catch (e) {
@@ -165,16 +160,40 @@ const CardSchedule: React.FC = () => {
     lexicon,
     fetchDueQuestions,
     wordvaultClient,
-    jwt,
-    modalHandlers,
+    postponeModalHandlers,
   ]);
+
+  const sendDelete = useCallback(async () => {
+    try {
+      setShowLoader(true);
+      const resp = await wordvaultClient.delete({
+        lexicon,
+        onlyNewQuestions: true,
+      });
+      notifications.show({
+        color: "green",
+        message: `Deleted ${resp.numDeleted} cards.`,
+      });
+      deleteModalHandlers.close();
+      // re-render graphs
+      fetchDueQuestions();
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        title: "Error",
+        message: String(e),
+      });
+    } finally {
+      setShowLoader(false);
+    }
+  }, [lexicon, fetchDueQuestions, wordvaultClient, deleteModalHandlers]);
 
   return (
     <div>
       {showLoader && <Loader type="bars"></Loader>}
       <Modal
-        opened={modalOpened}
-        onClose={modalHandlers.close}
+        opened={postponeModalOpened}
+        onClose={postponeModalHandlers.close}
         title="Postpone schedule"
       >
         <Text mb="xl">
@@ -208,6 +227,26 @@ const CardSchedule: React.FC = () => {
           </Text>
         )}
       </Modal>
+
+      <Modal
+        opened={deleteModalOpened}
+        onClose={deleteModalHandlers.close}
+        title="Delete new cards"
+      >
+        <Text mb="xl">
+          If you've accidentally added too many cards, you can delete the new
+          ones here. That is, the ones that you have not yet quizzed on.
+        </Text>
+        <Text mb="xl" fw={700} c="red">
+          This is not undoable. Make sure you want to delete these new cards!
+          You can always re-add them later.
+        </Text>
+
+        <Button color="pink" onClick={sendDelete}>
+          Delete new cards
+        </Button>
+      </Modal>
+
       <>
         {cardSchedule?.overdue && (
           <div>
@@ -215,7 +254,12 @@ const CardSchedule: React.FC = () => {
               Overdue cards:&nbsp;
               {cardSchedule.overdue}
             </Text>
-            <Button onClick={modalHandlers.open}>Postpone</Button>
+            <Group gap="xl">
+              <Button onClick={postponeModalHandlers.open}>Postpone</Button>
+              <Button onClick={deleteModalHandlers.open}>
+                Delete new cards
+              </Button>
+            </Group>
           </div>
         )}
       </>

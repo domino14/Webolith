@@ -80,7 +80,9 @@ const Help = () => {
         </List.Item>
         <Text fw={700}>
           Important note: Hard, Good, and Easy all mean you solved the question.
-          Don't click Hard if you missed it!
+          Don't click Hard if you missed it! Hard doesn't mean "I forgot", it
+          means the answer is correct but you took a long time or have doubts
+          about it.
         </Text>
       </List>
       <Text size="xl" mt="sm" fw={700}>
