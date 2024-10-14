@@ -57,6 +57,27 @@ export const GetNextScheduledRequest = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * @generated from message wordvault.GetSingleNextScheduledRequest
+ */
+export const GetSingleNextScheduledRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetSingleNextScheduledRequest",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetSingleNextScheduledResponse
+ */
+export const GetSingleNextScheduledResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetSingleNextScheduledResponse",
+  () => [
+    { no: 1, name: "card", kind: "message", T: Card },
+    { no: 2, name: "overdue_count", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
+/**
  * @generated from message wordvault.Cards
  */
 export const Cards = /*@__PURE__*/ proto3.makeMessageType(
