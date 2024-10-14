@@ -406,8 +406,8 @@ msgid ""
 msgstr "Remover el límite del número de alfagramas en sus listas de palabras."
 
 #: templates/support.html:24
-msgid "The membership cost is $19.99 per year."
-msgstr "El costo de la membresía es $19.99 por año."
+msgid "The membership cost is $49 per year."
+msgstr "El costo de la membresía es $49 por año."
 
 #: templates/support.html:33
 msgid ""
