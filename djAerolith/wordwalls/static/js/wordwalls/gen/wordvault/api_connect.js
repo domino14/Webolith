@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetNextScheduledRequest, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -39,6 +39,16 @@ export const WordVaultService = {
       name: "GetNextScheduled",
       I: GetNextScheduledRequest,
       O: Cards,
+      kind: MethodKind.Unary,
+      idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetSingleNextScheduled
+     */
+    getSingleNextScheduled: {
+      name: "GetSingleNextScheduled",
+      I: GetSingleNextScheduledRequest,
+      O: GetSingleNextScheduledResponse,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

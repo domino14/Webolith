@@ -7,10 +7,8 @@ import {
   Group,
   Center,
   Stack,
-  Alert,
   useMantineTheme,
   Loader,
-  Popover,
   useMantineColorScheme,
 } from "@mantine/core";
 import {
@@ -21,25 +19,16 @@ import {
 import { useClient } from "./use_client";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { AppContext } from "./app_context";
-import { Timestamp } from "@bufbuild/protobuf";
 import { notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
+import PreviousCard, { HistoryEntry } from "./previous_card";
 
 interface FlashcardProps {
-  cards: WordVaultCard[];
   setFinishedCards: () => void;
 }
 
-interface HistoryEntry {
-  cardIndex: number;
-  score: Score;
-  nextScheduled: Timestamp;
-  cardRepr: { [key: string]: string };
-}
-
-const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
+const Flashcard: React.FC<FlashcardProps> = ({ setFinishedCards }) => {
   const [flipped, setFlipped] = useState(false);
-  const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [previousCard, setPreviousCard] = useState<HistoryEntry | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const theme = useMantineTheme();
@@ -49,21 +38,52 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
   const smallScreen = useMediaQuery("(max-width: 40em)");
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
+  const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
+  const [overdueCount, setOverdueCount] = useState(0);
 
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
 
-  useEffect(() => {
-    if (currentCardIndex !== cards.length) {
-      setShowLoadMoreLink(false);
+  const loadNewCard = useCallback(async () => {
+    if (!lexicon || !wordvaultClient) {
+      return;
     }
-  }, [currentCardIndex, cards.length]);
+    // Load new card.
+    setShowLoader(true);
+    let nextCard;
+    try {
+      nextCard = await wordvaultClient.getSingleNextScheduled({
+        lexicon: lexicon,
+      });
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        title: "Error",
+        message: String(e),
+      });
+      return;
+    } finally {
+      setShowLoader(false);
+    }
+    if (nextCard.card) {
+      setCurrentCard(nextCard.card);
+      setFlipped(false);
+    } else {
+      setCurrentCard(null);
+      setShowLoadMoreLink(true);
+    }
+    setOverdueCount(nextCard.overdueCount);
+  }, [lexicon, wordvaultClient]);
+
+  // Load a card upon first render.
+  useEffect(() => {
+    loadNewCard();
+  }, [loadNewCard]);
 
   const handleScore = useCallback(
     async (score: Score) => {
-      const card = cards[currentCardIndex];
-      if (!card) {
+      if (!currentCard) {
         return;
       }
       setShowLoader(true);
@@ -72,7 +92,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         scoreResponse = await wordvaultClient.scoreCard({
           score: score,
           lexicon: lexicon,
-          alphagram: card.alphagram?.alphagram,
+          alphagram: currentCard.alphagram?.alphagram,
         });
       } catch (e) {
         notifications.show({
@@ -86,36 +106,37 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
       }
 
       setPreviousCard({
-        cardIndex: currentCardIndex,
         score,
+        alphagram: currentCard.alphagram?.alphagram ?? "",
         nextScheduled: scoreResponse.nextScheduled!,
         cardRepr: JSON.parse(
           new TextDecoder().decode(scoreResponse.cardJsonRepr)
         ),
+        previousCardRepr: JSON.parse(
+          new TextDecoder().decode(currentCard.cardJsonRepr)
+        ),
       });
-      setCurrentCardIndex((prevIndex) => prevIndex + 1);
 
-      if (currentCardIndex < cards.length - 1) {
-        setFlipped(false);
-      } else {
-        // End of deck
-        setShowLoadMoreLink(true);
-      }
+      loadNewCard();
     },
-    [cards, currentCardIndex, lexicon, wordvaultClient]
+    [currentCard, lexicon, loadNewCard, wordvaultClient]
   );
 
   const handleRescore = useCallback(
     async (score: Score) => {
-      const card = cards[currentCardIndex - 1];
+      if (!previousCard) {
+        return;
+      }
       setShowLoader(true);
       let scoreResponse: ScoreCardResponse;
       try {
         scoreResponse = await wordvaultClient.editLastScore({
           newScore: score,
           lexicon: lexicon,
-          alphagram: card.alphagram?.alphagram,
-          lastCardRepr: card.cardJsonRepr,
+          alphagram: previousCard.alphagram,
+          lastCardRepr: new TextEncoder().encode(
+            JSON.stringify(previousCard.previousCardRepr)
+          ),
         });
       } catch (e) {
         notifications.show({
@@ -128,7 +149,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         setShowLoader(false);
       }
       setPreviousCard({
-        cardIndex: currentCardIndex - 1,
+        ...previousCard,
         score: score,
         nextScheduled: scoreResponse.nextScheduled!,
         cardRepr: JSON.parse(
@@ -136,10 +157,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
         ),
       });
     },
-    [cards, currentCardIndex, lexicon, wordvaultClient]
+    [lexicon, wordvaultClient, previousCard]
   );
-
-  const card = cards[currentCardIndex];
 
   // Keyboard event handler
   useEffect(() => {
@@ -177,7 +196,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
 
   return (
     <Center style={{ width: "100%", height: "100%", flexDirection: "column" }}>
-      {card && (
+      {currentCard && (
         <>
           <Card
             shadow="sm"
@@ -196,11 +215,11 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
               // Front side
               <Stack align="center" gap="md">
                 <Text size="xl" fw={700} ta="center">
-                  {card.alphagram?.alphagram.toUpperCase()}
+                  {currentCard.alphagram?.alphagram.toUpperCase()}
                 </Text>
-                {card.alphagram?.words.length && (
+                {currentCard.alphagram?.words.length && (
                   <Text size="xl" c="dimmed" ta="center">
-                    Words: {card.alphagram?.words.length}
+                    Words: {currentCard.alphagram?.words.length}
                   </Text>
                 )}
                 <Group mt="md">
@@ -217,7 +236,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
             ) : (
               // Back side
               <Stack align="center" gap="sm">
-                {card.alphagram?.words.map((word) => (
+                {currentCard.alphagram?.words.map((word) => (
                   <div key={word.word}>
                     <Center>
                       <Text span c="dimmed" size="md" fw={500} mr="xs">
@@ -244,7 +263,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
                     </Text>
                   </div>
                 ))}
-                <Group mt="sm">
+                <Group mt="sm" justify="space-evenly">
                   <Button
                     color="red"
                     variant={isDark ? "light" : "outline"}
@@ -304,133 +323,18 @@ const Flashcard: React.FC<FlashcardProps> = ({ cards, setFinishedCards }) => {
           </Card>
 
           <Center style={{ marginTop: "20px" }}>
-            <Text size="md">
-              Card {currentCardIndex + 1} of {cards.length}
-            </Text>
+            <Text size="md">Cards left: {overdueCount}</Text>
           </Center>
         </>
       )}
       {/* Previous card summary */}
-      {previousCard && currentCardIndex > 0 && (
-        <PreviousCard
-          entry={previousCard}
-          alphagram={cards[currentCardIndex - 1].alphagram!.alphagram}
-          handleRescore={handleRescore}
-        />
+      {previousCard && (
+        <PreviousCard entry={previousCard} handleRescore={handleRescore} />
       )}
       {showLoadMoreLink && (
         <Button onClick={setFinishedCards}>Load more cards</Button>
       )}
     </Center>
-  );
-};
-
-interface PreviousCardProps {
-  entry: HistoryEntry;
-  alphagram: string;
-  handleRescore: (score: Score) => void;
-}
-
-const PreviousCard: React.FC<PreviousCardProps> = ({
-  entry,
-  alphagram,
-  handleRescore,
-}) => {
-  const [editPopoverOpened, setEditPopoverOpened] = useState(false);
-
-  return (
-    <Alert
-      title="Previous Card"
-      color="dark"
-      style={{ maxWidth: 600, width: "100%", marginTop: "20px" }}
-    >
-      <Group style={{ justifyContent: "space-between", width: "100%" }}>
-        <Stack gap={0}>
-          <Text size="md" fw={500}>
-            {alphagram}
-          </Text>
-          <Text size="sm" c="dimmed">
-            Score:{" "}
-            <Text
-              size="sm"
-              span
-              c={entry.score === Score.AGAIN ? "red" : "green"}
-            >
-              {Score[entry.score] === "AGAIN" ? "MISSED" : Score[entry.score]}
-            </Text>
-          </Text>
-          <Text size="sm" c="dimmed">
-            Next Due Date: {entry.nextScheduled.toDate().toLocaleDateString()}
-          </Text>
-          <Text size="sm" c="dimmed">
-            Times Seen: {entry.cardRepr["Reps"]}
-          </Text>
-          <Text>Times Forgotten: {entry.cardRepr["Lapses"]}</Text>
-        </Stack>
-        <Popover
-          trapFocus
-          position="top"
-          shadow="md"
-          opened={editPopoverOpened}
-          onChange={setEditPopoverOpened}
-        >
-          <Popover.Target>
-            <Button size="xs" onClick={() => setEditPopoverOpened(true)}>
-              Undo
-            </Button>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Text>Set new rating for this card ({alphagram})</Text>
-            <Group mt="sm">
-              <Button
-                color="red"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.AGAIN);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Missed
-              </Button>
-              <Button
-                color="yellow"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.HARD);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Hard
-              </Button>
-              <Button
-                color="green"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.GOOD);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Good
-              </Button>
-              <Button
-                color="gray"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.EASY);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Easy
-              </Button>
-            </Group>
-          </Popover.Dropdown>
-        </Popover>
-      </Group>
-    </Alert>
   );
 };
 

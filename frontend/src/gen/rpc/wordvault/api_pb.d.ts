@@ -143,6 +143,59 @@ export declare class GetNextScheduledRequest extends Message<GetNextScheduledReq
 }
 
 /**
+ * @generated from message wordvault.GetSingleNextScheduledRequest
+ */
+export declare class GetSingleNextScheduledRequest extends Message<GetSingleNextScheduledRequest> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  constructor(data?: PartialMessage<GetSingleNextScheduledRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetSingleNextScheduledRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSingleNextScheduledRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSingleNextScheduledRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSingleNextScheduledRequest;
+
+  static equals(a: GetSingleNextScheduledRequest | PlainMessage<GetSingleNextScheduledRequest> | undefined, b: GetSingleNextScheduledRequest | PlainMessage<GetSingleNextScheduledRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetSingleNextScheduledResponse
+ */
+export declare class GetSingleNextScheduledResponse extends Message<GetSingleNextScheduledResponse> {
+  /**
+   * @generated from field: wordvault.Card card = 1;
+   */
+  card?: Card;
+
+  /**
+   * @generated from field: uint32 overdue_count = 2;
+   */
+  overdueCount: number;
+
+  constructor(data?: PartialMessage<GetSingleNextScheduledResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetSingleNextScheduledResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSingleNextScheduledResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSingleNextScheduledResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSingleNextScheduledResponse;
+
+  static equals(a: GetSingleNextScheduledResponse | PlainMessage<GetSingleNextScheduledResponse> | undefined, b: GetSingleNextScheduledResponse | PlainMessage<GetSingleNextScheduledResponse> | undefined): boolean;
+}
+
+/**
  * @generated from message wordvault.Cards
  */
 export declare class Cards extends Message<Cards> {
