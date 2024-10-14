@@ -29,8 +29,8 @@
     {% endblock %}
 
     {% block bootstrap_js %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" 
-      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous"></script>
     {% endblock %}
 
@@ -126,6 +126,7 @@
         {% else %}
           {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
           <a href="wordwalls" class="btn btn-primary space-down">{% trans "Play WordWalls" %}</a><BR>
+          <a href="/wordvault" class="btn btn-primary space-down">{% trans "Learn with WordVault" %}</a><BR>
           <a href="/wordwalls/stats" class="btn btn-sm btn-info space-down">{% trans "See your WordWalls statistics" %}</a><BR>
           <a href="/wordwalls/leaderboard" class="btn btn-sm btn-info space-down">{% trans "See Hall of Fame" %}</a><BR>
           <a href="/accounts/profile/{{user}}" class="btn btn-sm btn-info space-down">{% trans "Edit your profile and preferences" %}</a><BR>
