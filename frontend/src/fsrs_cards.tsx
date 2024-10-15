@@ -10,7 +10,6 @@ import { useClient } from "./use_client";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { AppContext } from "./app_context";
 import { notifications } from "@mantine/notifications";
-import { useMediaQuery } from "@mantine/hooks";
 import PreviousCard, { HistoryEntry } from "./previous_card";
 import Flashcard from "./flashcard";
 
