@@ -18,6 +18,8 @@
 
 import logging
 import json
+import urllib
+
 from urllib.parse import urlencode
 
 from django.shortcuts import render
@@ -26,7 +28,12 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.http import (
+    JsonResponse,
+    HttpResponseRedirect,
+    HttpResponseBadRequest,
+    HttpResponse,
+)
 from django.views.decorators.http import require_GET
 import jwt
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
@@ -186,3 +193,37 @@ def slow_view(request):
 
     time.sleep(5)
     return response({"msg": "You go"})
+
+
+@csrf_exempt
+def paypal_ipn(request):
+    # Read the raw POST data from PayPal
+    raw_post_data = request.body.decode("utf-8")
+
+    # Send the data back to PayPal for verification
+    params = "cmd=_notify-validate&" + raw_post_data
+    verify_url = "https://ipnpb.paypal.com/cgi-bin/webscr"
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+    req = urllib.request.Request(
+        verify_url, data=params.encode("utf-8"), headers=headers
+    )
+    with urllib.request.urlopen(req) as response:
+        verification_response = response.read().decode("utf-8")
+
+    # If PayPal verifies the IPN message
+    if verification_response == "VERIFIED":
+        custom_field = request.POST.get("custom")
+        payment_status = request.POST.get("payment_status")
+        txn_id = request.POST.get("txn_id")
+        # You can extract more fields like payment_amount, payer_email, etc.
+        logger.info("ipn post verified; data is %s", request.POST)
+        if payment_status == "Completed":
+            # Payment is successful, tie the payment to the user (e.g., update database)
+            # Here, `custom_field` holds the username or user ID passed from your form
+            # Example: update user's payment status or log the transaction
+            # user = User.objects.get(username=custom_field)
+            # Store or process the transaction (txn_id, payment details, etc.)
+            pass
+
+    return HttpResponse(status=200)

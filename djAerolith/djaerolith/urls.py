@@ -39,6 +39,7 @@ from views import (
     jwt_req,
     jwt_extend,
     slow_view,
+    paypal_ipn,
 )
 from accounts.views import social, username_change
 from base.views import listmanager
@@ -55,6 +56,7 @@ urlpatterns = [
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     re_path(r"^$", TemplateView.as_view(template_name="base.html")),
+    re_path(r"^paypal-ipn", paypal_ipn),
     re_path(r"^old/", TemplateView.as_view(template_name="oldsite/index.html")),
     re_path(r"^health/", health),
     re_path(r"^jwt", jwt_req),
