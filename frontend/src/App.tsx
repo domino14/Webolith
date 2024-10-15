@@ -19,7 +19,15 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { useContext, useEffect, useState } from "react";
 import { LoginState } from "./constants";
-import { IconMoon, IconSun, IconUserQuestion } from "@tabler/icons-react";
+import {
+  IconBook,
+  IconCalendar,
+  IconCubePlus,
+  IconMoon,
+  IconSearch,
+  IconSun,
+  IconUserQuestion,
+} from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import Cookies from "js-cookie";
 
@@ -32,7 +40,8 @@ const lexMap = {
 };
 
 function App() {
-  const [opened, { toggle }] = useDisclosure();
+  const [openedBurger, { toggle: toggleBurger, close: closeBurger }] =
+    useDisclosure();
   const { lexicon, defaultLexicon, setLexicon, loggedIn, setDefaultLexicon } =
     useContext(AppContext);
   const [showChangeLexLink, setShowChangeLexLink] = useState(false);
@@ -79,7 +88,7 @@ function App() {
       navbar={{
         width: 300,
         breakpoint: "sm",
-        collapsed: { mobile: !opened },
+        collapsed: { mobile: !openedBurger },
       }}
       padding="md"
     >
@@ -87,8 +96,8 @@ function App() {
         <Group h="100%" px="md" justify="space-between">
           <Group>
             <Burger
-              opened={opened}
-              onClick={toggle}
+              opened={openedBurger}
+              onClick={toggleBurger}
               hiddenFrom="sm"
               size="sm"
             />
@@ -126,36 +135,103 @@ function App() {
           )}
 
           <NavLink
-            onClick={() => navigate("load-scheduled-questions")}
-            label="Load scheduled questions"
+            mt="md"
+            onClick={() => {
+              navigate("load-scheduled-questions");
+              closeBurger();
+            }}
+            label={
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                }}
+              >
+                <IconBook color="green" />
+                &nbsp; Load scheduled questions
+              </div>
+            }
             active={location.pathname === "/load-scheduled-questions"}
           />
           <NavLink
-            onClick={() => navigate("word-search")}
-            label="Add to WordVault"
+            onClick={() => {
+              navigate("word-search");
+              closeBurger();
+            }}
+            label={
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                }}
+              >
+                <IconCubePlus color="green" />
+                &nbsp; Add to WordVault
+              </div>
+            }
             active={location.pathname === "/word-search"}
           />
           <NavLink
-            onClick={() => navigate("card-schedules")}
-            label="Scheduling"
+            onClick={() => {
+              navigate("card-schedules");
+              closeBurger();
+            }}
+            label={
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                }}
+              >
+                <IconCalendar color="green" />
+                &nbsp; Scheduling
+              </div>
+            }
             active={location.pathname === "/card-schedules"}
           />
           <NavLink
-            onClick={() => navigate("card-stats")}
-            label="Card statistics"
+            onClick={() => {
+              navigate("card-stats");
+              closeBurger();
+            }}
+            label={
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                }}
+              >
+                <IconSearch color="green" />
+                &nbsp;Card statistics
+              </div>
+            }
             active={location.pathname === "/card-stats"}
           />
           <NavLink
-            onClick={() => navigate("help")}
+            onClick={() => {
+              navigate("help");
+              closeBurger();
+            }}
             label={
-              <>
-                <IconUserQuestion />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "5px 0",
+                }}
+              >
+                <IconUserQuestion color="green" />
                 &nbsp; What is WordVault?
-              </>
+              </div>
             }
             active={location.pathname === "/help"}
           />
           <br />
+          <NavLink href="/wordwalls" label={<>Aerolith WordWalls</>} />
         </AppShell.Section>
       </AppShell.Navbar>
 
