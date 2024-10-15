@@ -13,6 +13,7 @@ from lib.wdb_interface.wdb_helper import (
     word_search,
     add_to_wordvault as wdb_add_to_wordvault,
 )
+from lib.wdb_interface.exceptions import WDBError
 from lib.wdb_interface.word_searches import temporary_list_name
 from wordwalls.api import build_search_criteria
 from wordwalls.game import GameInitException
@@ -85,7 +86,10 @@ def add_to_wordvault(request):
     except GameInitException as e:
         return response(str(e), status=400)
 
-    questions = word_search(search_description, expand=False)
+    try:
+        questions = word_search(search_description, expand=False)
+    except WDBError as e:
+        return response(str(e), status=400)
     if questions.size() == 0:
         return response("No questions were found.", status=400)
 
