@@ -93,6 +93,8 @@ def add_to_wordvault(request):
     if questions.size() == 0:
         return response("No questions were found.", status=400)
 
+    # Shuffle before adding to avoid things like alphabetical order.
+    questions.shuffle()
     alphagrams = questions.alphagram_string_list()
     token = create_jwt(request.user)
     try:
