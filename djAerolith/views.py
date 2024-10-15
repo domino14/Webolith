@@ -196,7 +196,7 @@ def slow_view(request):
 
 
 @csrf_exempt
-def ipn(request):
+def paypal_ipn(request):
     # Read the raw POST data from PayPal
     raw_post_data = request.body.decode("utf-8")
 
