@@ -15,7 +15,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import wordvault from "./assets/wordvault.png";
 import { Text } from "@mantine/core";
-import { Outlet, useLocation, useMatch } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { useContext, useEffect, useState } from "react";
 import { LoginState } from "./constants";
@@ -39,6 +39,8 @@ function App() {
   const loginURL = `${window.location.protocol}//${window.location.host}/accounts/login?next=/wordvault`;
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (lexicon === "" || defaultLexicon === "") {
@@ -70,8 +72,6 @@ function App() {
       });
     }
   };
-  const location = useLocation();
-  const match = useMatch(location.pathname);
 
   return (
     <AppShell
@@ -116,7 +116,7 @@ function App() {
             value={lexicon}
             onChange={(val) => setLexicon(val ?? "")}
           />
-          {showChangeLexLink && (
+          {showChangeLexLink && lexicon && (
             <Button
               variant="transparent"
               onClick={() => changeDefaultLexicon(lexicon)}
@@ -126,34 +126,34 @@ function App() {
           )}
 
           <NavLink
-            href="load-scheduled-questions"
+            onClick={() => navigate("load-scheduled-questions")}
             label="Load scheduled questions"
-            active={match?.pathname === "/load-scheduled-questions"}
+            active={location.pathname === "/load-scheduled-questions"}
           />
           <NavLink
-            href="word-search"
+            onClick={() => navigate("word-search")}
             label="Add to WordVault"
-            active={match?.pathname === "/word-search"}
+            active={location.pathname === "/word-search"}
           />
           <NavLink
-            href="card-schedules"
+            onClick={() => navigate("card-schedules")}
             label="Scheduling"
-            active={match?.pathname === "/card-schedules"}
+            active={location.pathname === "/card-schedules"}
           />
           <NavLink
-            href="card-stats"
+            onClick={() => navigate("card-stats")}
             label="Card statistics"
-            active={match?.pathname === "/card-stats"}
+            active={location.pathname === "/card-stats"}
           />
           <NavLink
-            href="help"
+            onClick={() => navigate("help")}
             label={
               <>
                 <IconUserQuestion />
                 &nbsp; What is WordVault?
               </>
             }
-            active={match?.pathname === "/help"}
+            active={location.pathname === "/help"}
           />
           <br />
         </AppShell.Section>

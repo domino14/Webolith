@@ -2,7 +2,7 @@ import { Button, Text } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
 import { useClient } from "./use_client";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
-import Flashcard from "./flashcard";
+import FSRSCards from "./fsrs_cards";
 import { Link } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { notifications } from "@mantine/notifications";
@@ -42,7 +42,7 @@ export default function LoadScheduledQuestions() {
   return (
     <div>
       {cardsOngoing ? (
-        <Flashcard setFinishedCards={() => setCardsOngoing(false)} />
+        <FSRSCards setFinishedCards={() => setCardsOngoing(false)} />
       ) : (
         <>
           <Text>
