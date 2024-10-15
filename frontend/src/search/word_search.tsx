@@ -1,11 +1,10 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { SearchTypesEnum, SearchCriterion } from "./types";
 import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
 import Cookies from "js-cookie";
-import { notifications } from "@mantine/notifications";
 import SearchRows from "./rows";
-import { Button, Stack } from "@mantine/core";
+import { Alert, Button, Stack } from "@mantine/core";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -35,6 +34,11 @@ const AddWordvaultURL = "/cards/api/add_to_wordvault";
 
 const WordSearchForm: React.FC = () => {
   const { lexicon } = useContext(AppContext);
+  const [alert, setAlert] = useState({
+    shown: false,
+    color: "green",
+    text: "",
+  });
 
   const {
     searchCriteria,
@@ -46,6 +50,7 @@ const WordSearchForm: React.FC = () => {
 
   const addToWordVault = useCallback(async () => {
     try {
+      setAlert((prev) => ({ ...prev, shown: false }));
       const searchParams = {
         searchCriteria: searchCriteria.map((s) => s.toJSObj()),
         lexicon,
@@ -66,20 +71,19 @@ const WordSearchForm: React.FC = () => {
       if (!response.ok) {
         throw new Error(data.error || data);
       }
-      notifications.show({
+      setAlert({
         color: "green",
-        message: data.msg,
-        position: "bottom-center",
+        shown: true,
+        text: data.msg,
       });
     } catch (e) {
-      notifications.show({
+      setAlert({
         color: "red",
-        title: "Error",
-        message: String(e),
-        position: "bottom-center",
+        shown: true,
+        text: String(e),
       });
     }
-  }, [lexicon, searchCriteria]);
+  }, [lexicon, searchCriteria, setAlert]);
 
   return (
     <Stack>
@@ -100,6 +104,11 @@ const WordSearchForm: React.FC = () => {
       >
         Add to WordVault
       </Button>
+      {alert.shown && (
+        <Alert variant="light" color={alert.color}>
+          {alert.text}
+        </Alert>
+      )}
     </Stack>
   );
 };

@@ -29,6 +29,7 @@ const CardSchedule: React.FC = () => {
   const [cardSchedule, setCardSchedule] = useState<scheduleBreakdown | null>(
     null
   );
+  const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
   const [deleteModalOpened, deleteModalHandlers] = useDisclosure();
@@ -61,6 +62,29 @@ const CardSchedule: React.FC = () => {
   useEffect(() => {
     fetchDueQuestions();
   }, [fetchDueQuestions]);
+
+  const fetchTotalQuestions = useCallback(async () => {
+    if (!lexicon) {
+      return;
+    }
+    try {
+      setShowLoader(true);
+      const resp = await wordvaultClient.getCardCount({});
+      setNumCards(resp.numCards[lexicon]);
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        title: "Error",
+        message: String(e),
+      });
+    } finally {
+      setShowLoader(false);
+    }
+  }, [lexicon, wordvaultClient]);
+
+  useEffect(() => {
+    fetchTotalQuestions();
+  }, [fetchTotalQuestions]);
 
   const chartDataNext30Days = useMemo(() => {
     if (!cardSchedule) return [];
@@ -248,9 +272,12 @@ const CardSchedule: React.FC = () => {
       </Modal>
 
       <>
+        <Text mb="sm">
+          You have {numCards} cards in lexicon {lexicon}.
+        </Text>
         {cardSchedule?.overdue && (
           <div>
-            <Text c="red" fw={700}>
+            <Text c="red" fw={700} mb="sm">
               Overdue cards:&nbsp;
               {cardSchedule.overdue}
             </Text>
