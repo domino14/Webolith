@@ -543,9 +543,16 @@ export declare class DeleteRequest extends Message<DeleteRequest> {
   lexicon: string;
 
   /**
+   * The following two conditions are mutually exclusive.
+   *
    * @generated from field: bool only_new_questions = 2;
    */
   onlyNewQuestions: boolean;
+
+  /**
+   * @generated from field: repeated string alphagrams = 3;
+   */
+  alphagrams: string[];
 
   constructor(data?: PartialMessage<DeleteRequest>);
 
