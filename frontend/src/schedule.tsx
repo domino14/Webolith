@@ -91,11 +91,14 @@ const CardSchedule: React.FC = () => {
 
     const result = [];
     const today = new Date();
+    const localTimeOffset = today.getTimezoneOffset() * 60000; // Offset in milliseconds
 
     for (let i = 0; i < 30; i++) {
       const currentDate = new Date(today);
       currentDate.setDate(today.getDate() + i);
-      const dateString = currentDate.toISOString().split("T")[0]; // Format: 'YYYY-MM-DD'
+      // Adjust for the local timezone offset
+      const localDate = new Date(currentDate.getTime() - localTimeOffset); // Adjusted date
+      const dateString = localDate.toISOString().split("T")[0]; // Format: 'YYYY-MM-DD'
 
       const count = cardSchedule[dateString] || 0;
       result.push({ date: dateString, "Card Count": count });
@@ -107,11 +110,19 @@ const CardSchedule: React.FC = () => {
   const chartDataWeekly = useMemo(() => {
     if (!cardSchedule) return [];
 
+    // Helper function to create a date in the user's local timezone from 'YYYY-MM-DD'
+    // Note that the data that comes back from the API is in the user's local
+    // timezone.
+    const toLocalDate = (dateStr: string) => {
+      const [year, month, day] = dateStr.split("-").map(Number);
+      return new Date(year, month - 1, day); // month is 0-indexed in JavaScript Date
+    };
+
     // Extract date-count pairs from cardSchedule, excluding 'overdue'
     const dateCounts = Object.entries(cardSchedule)
       .filter(([dateStr]) => dateStr !== "overdue")
       .map(([dateStr, count]) => ({
-        date: new Date(dateStr),
+        date: toLocalDate(dateStr), // Adjust to local timezone
         "Card Count": count,
       }));
 
