@@ -49,6 +49,9 @@ const WordSearchForm: React.FC = () => {
   } = useSearchRows(initialCriteria, allowedSearchTypes);
 
   const addToWordVault = useCallback(async () => {
+    if (!lexicon) {
+      return;
+    }
     try {
       setAlert((prev) => ({ ...prev, shown: false }));
       const searchParams = {
