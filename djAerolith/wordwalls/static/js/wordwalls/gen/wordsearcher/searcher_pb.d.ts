@@ -238,6 +238,11 @@ export declare enum SearchRequest_Condition {
   NOT_IN_LEXICON = 11,
 
   /**
+   * @generated from enum value: UPLOADED_WORD_OR_ALPHAGRAM_LIST = 12;
+   */
+  UPLOADED_WORD_OR_ALPHAGRAM_LIST = 12,
+
+  /**
    * @generated from enum value: WORD_LIST = 13;
    */
   WORD_LIST = 13,

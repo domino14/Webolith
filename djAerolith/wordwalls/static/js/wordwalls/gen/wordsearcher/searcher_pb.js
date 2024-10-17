@@ -76,6 +76,7 @@ export const SearchRequest_Condition = /*@__PURE__*/ proto3.makeEnum(
     {no: 9, name: "MATCHING_ANAGRAM"},
     {no: 10, name: "ALPHAGRAM_LIST"},
     {no: 11, name: "NOT_IN_LEXICON"},
+    {no: 12, name: "UPLOADED_WORD_OR_ALPHAGRAM_LIST"},
     {no: 13, name: "WORD_LIST"},
     {no: 14, name: "SINGLE_VALUE_LENGTH"},
     {no: 15, name: "NUM_TWO_BLANKS"},

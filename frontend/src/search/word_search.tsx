@@ -4,7 +4,20 @@ import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
 import Cookies from "js-cookie";
 import SearchRows from "./rows";
-import { Alert, Button, Stack } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Divider,
+  FileInput,
+  Loader,
+  Stack,
+  Text,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useClient } from "../use_client";
+import { QuestionSearcher } from "../gen/rpc/wordsearcher/searcher_connect";
+import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
+import { WordVaultService } from "../gen/rpc/wordvault/api_connect";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -39,6 +52,68 @@ const WordSearchForm: React.FC = () => {
     color: "green",
     text: "",
   });
+  const [showLoader, setShowLoader] = useState(false);
+
+  const uploadForm = useForm({
+    initialValues: {
+      textfile: new Blob(),
+    },
+  });
+
+  const wordServerClient = useClient(QuestionSearcher);
+  const wordVaultClient = useClient(WordVaultService);
+
+  const processUploadedFile = useCallback(
+    async (uploadedList: string[]) => {
+      try {
+        setShowLoader(true);
+        const alphagramResp = await wordServerClient.search({
+          searchparams: [
+            {
+              condition: SearchRequest_Condition.LEXICON,
+              conditionparam: {
+                value: {
+                  value: lexicon,
+                },
+                case: "stringvalue",
+              },
+            },
+            {
+              condition:
+                SearchRequest_Condition.UPLOADED_WORD_OR_ALPHAGRAM_LIST,
+              conditionparam: {
+                value: {
+                  values: uploadedList,
+                },
+                case: "stringarray",
+              },
+            },
+          ],
+        });
+        if (alphagramResp.alphagrams.length === 0) {
+          throw new Error("Your uploaded list had no valid alphagrams.");
+        }
+        const wvResp = await wordVaultClient.addCards({
+          lexicon,
+          alphagrams: alphagramResp.alphagrams.map((a) => a.alphagram),
+        });
+        setAlert({
+          color: "green",
+          shown: true,
+          text: `Uploaded ${wvResp.numCardsAdded} cards to your WordVault`,
+        });
+      } catch (e) {
+        setAlert({
+          color: "red",
+          shown: true,
+          text: String(e),
+        });
+      } finally {
+        setShowLoader(false);
+      }
+    },
+    [wordServerClient, lexicon, wordVaultClient]
+  );
 
   const {
     searchCriteria,
@@ -53,6 +128,7 @@ const WordSearchForm: React.FC = () => {
       return;
     }
     try {
+      setShowLoader(true);
       setAlert((prev) => ({ ...prev, shown: false }));
       const searchParams = {
         searchCriteria: searchCriteria.map((s) => s.toJSObj()),
@@ -85,34 +161,92 @@ const WordSearchForm: React.FC = () => {
         shown: true,
         text: String(e),
       });
+    } finally {
+      setShowLoader(false);
     }
   }, [lexicon, searchCriteria, setAlert]);
 
   return (
-    <Stack>
-      <SearchRows
-        criteria={searchCriteria}
-        addSearchRow={addSearchRow}
-        removeSearchRow={removeSearchRow}
-        modifySearchType={searchTypeChange}
-        modifySearchParam={searchParamChange}
-        allowedSearchTypes={allowedSearchTypes}
-      />
+    <>
+      <Stack>
+        <SearchRows
+          criteria={searchCriteria}
+          addSearchRow={addSearchRow}
+          removeSearchRow={removeSearchRow}
+          modifySearchType={searchTypeChange}
+          modifySearchParam={searchParamChange}
+          allowedSearchTypes={allowedSearchTypes}
+        />
 
-      <Button
-        variant="light"
-        color="blue"
-        style={{ maxWidth: 200 }}
-        onClick={addToWordVault}
-      >
-        Add to WordVault
-      </Button>
-      {alert.shown && (
-        <Alert variant="light" color={alert.color}>
-          {alert.text}
-        </Alert>
-      )}
-    </Stack>
+        <Button
+          variant="light"
+          color="blue"
+          style={{ maxWidth: 200 }}
+          onClick={addToWordVault}
+        >
+          Add to WordVault
+        </Button>
+        {alert.shown && (
+          <Alert variant="light" color={alert.color}>
+            {alert.text}
+          </Alert>
+        )}
+        {showLoader ? <Loader color="blue" /> : null}
+      </Stack>
+      <Divider m="xl" />
+      <Text>Or, you can upload your own text file</Text>
+      <Stack>
+        <form
+          encType="multipart/form-data"
+          onSubmit={uploadForm.onSubmit((values) => {
+            console.log(values.textfile);
+            const reader = new FileReader();
+            reader.readAsText(values.textfile, "UTF-8");
+
+            reader.onload = function () {
+              // TypeScript safeguard: Ensure reader.result is a string
+              if (typeof reader.result === "string") {
+                const result = reader.result;
+                const lines = result.split("\n").map((line) => line.trim());
+                const nonEmptyLines = lines.filter((line) => line !== "");
+                processUploadedFile(nonEmptyLines);
+              } else {
+                setAlert({
+                  color: "red",
+                  shown: true,
+                  text: "File could not be read as text.",
+                });
+              }
+            };
+
+            reader.onerror = function () {
+              setAlert({
+                color: "red",
+                shown: true,
+                text: String(reader.error),
+              });
+            };
+          })}
+        >
+          <FileInput
+            {...uploadForm.getInputProps("textfile")}
+            label={`Upload a text file with words or alphagrams, one per line. These must be valid in ${lexicon}.`}
+            placeholder="Click to upload..."
+            maw={300}
+            m="sm"
+          />
+          <Button
+            variant="light"
+            color="blue"
+            type="submit"
+            style={{ maxWidth: 200 }}
+            m="sm"
+          >
+            Upload into WordVault
+          </Button>
+        </form>
+      </Stack>
+    </>
   );
 };
 
