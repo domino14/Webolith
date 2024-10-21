@@ -27,7 +27,7 @@
             "purpose": "maskable"
         }
     ],
-    "start_url": ".",
+    "start_url": "/",
     "scope": "/wordvault",
     "display": "fullscreen",
     "theme_color": "#000000",
