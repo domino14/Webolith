@@ -11,7 +11,7 @@ import { LoginState } from "./constants";
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
   const [cardsToLoad, setCardsToLoad] = useState<number | undefined>(undefined);
-  const { lexicon, loggedIn } = useContext(AppContext);
+  const { lexicon, loggedIn, username } = useContext(AppContext);
   const wordvaultClient = useClient(WordVaultService);
 
   useEffect(() => {
@@ -45,9 +45,10 @@ export default function LoadScheduledQuestions() {
         <FSRSCards setFinishedCards={() => setCardsOngoing(false)} />
       ) : (
         <>
+          <Text>Hi, {username}!</Text>
           <Text>
-            You have {cardsToLoad} cards that are now due in the lexicon{" "}
-            {lexicon}.
+            You have {cardsToLoad} card{cardsToLoad != 1 ? "s" : ""} that{" "}
+            {cardsToLoad != 1 ? "are" : "is"} now due in the lexicon {lexicon}.
           </Text>
           {cardsToLoad === 0 ? (
             <Text>

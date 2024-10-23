@@ -13,7 +13,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import wordvault from "./assets/wordvault.png";
+import wordvault from "./assets/wordvault-sm.png";
 import { Text } from "@mantine/core";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "./app_context";
@@ -102,7 +102,7 @@ function App() {
               size="sm"
             />
             <img src={wordvault} width={48} />
-            <Text size="xl">WordVault</Text>
+            <Text size="xl">Aerolith WordVault</Text>
           </Group>
 
           {/* Dark/Light mode toggle icon */}
@@ -137,7 +137,13 @@ function App() {
           <NavLink
             mt="md"
             onClick={() => {
-              navigate("load-scheduled-questions");
+              if (location.pathname === "/load-scheduled-questions") {
+                // Force reload the component by resetting the state or triggering a re-render
+                navigate("/load-scheduled-questions", { replace: true });
+                window.location.reload(); // This reloads the page completely
+              } else {
+                navigate("/load-scheduled-questions");
+              }
               closeBurger();
             }}
             label={

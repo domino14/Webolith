@@ -23,6 +23,7 @@ import {
   IconHelp,
   IconX,
 } from "@tabler/icons-react";
+import { LineChart } from "@mantine/charts";
 
 const CardStats: React.FC = () => {
   const { lexicon } = useContext(AppContext);
@@ -86,7 +87,6 @@ const CardStats: React.FC = () => {
           cardInfo={cardInfo}
           fsrsCard={fsrsCard}
           reviewLog={reviewLog}
-          alphagram={lookup}
         />
       )}
     </>
@@ -112,7 +112,6 @@ type reviewLogItem = {
 interface CardInfoProps {
   fsrsCard: fsrsCard;
   reviewLog: reviewLogItem[];
-  alphagram: string;
   cardInfo: WordVaultCard;
 }
 
@@ -120,18 +119,36 @@ const CardInfo: React.FC<CardInfoProps> = ({
   fsrsCard,
   reviewLog,
   cardInfo,
-  alphagram,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
-  const dstr = (datestr: string) =>
-    `${new Date(datestr).toLocaleDateString()} ${new Date(
-      datestr
-    ).toLocaleTimeString()}`;
+  const dstr = (datestr: string, showTime?: boolean) =>
+    `${new Date(datestr).toLocaleDateString()}${
+      showTime ? " " + new Date(datestr).toLocaleTimeString() : ""
+    }`;
 
-  const dueDate = dstr(fsrsCard.Due);
-  const lastReview = dstr(fsrsCard.LastReview);
+  const dueDate = dstr(fsrsCard.Due, true);
+  const lastReview = dstr(fsrsCard.LastReview, true);
+
+  const forgettingCurve = useMemo(() => {
+    // return math.Pow(1+factor*elapsedDays/stability, decay)
+    // 	var Decay = -0.5
+    // var Factor = math.Pow(0.9, 1/Decay) - 1
+    const curve = [];
+    const today = new Date();
+
+    // Get these from FSRS parameters once we make that configurable, if ever.
+    const decay = -0.5;
+    const factor = Math.pow(0.9, 1 / decay) - 1;
+    for (let i = 0; i < 365; i++) {
+      curve.push({
+        Recall: Math.pow(1 + (factor * i) / fsrsCard.Stability, decay) * 100,
+        date: new Date(today.getTime() + 86400000 * i).toLocaleDateString(),
+      });
+    }
+    return curve;
+  }, [fsrsCard.Stability]);
 
   return (
     <>
@@ -147,10 +164,10 @@ const CardInfo: React.FC<CardInfoProps> = ({
         }}
       >
         <Stack align="center" gap="md">
-          <Text size="xl" fw={700} ta="center" color={theme.colors.blue[4]}>
-            {alphagram.toUpperCase()}
+          <Text size="xl" fw={700} ta="center" c={theme.colors.blue[4]}>
+            {cardInfo.alphagram?.alphagram.toUpperCase()}
           </Text>
-          <List spacing="xs">
+          <List spacing="xs" withPadding>
             <List.Item>
               <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
                 Next due:{" "}
@@ -196,8 +213,12 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 w={450}
                 label="Stability refers to how long you can retain a word before needing a review. Specifically, it is the time, in days, required for Retrievability to decrease from 100% to 90%. "
                 withArrow
+                events={{ hover: true, focus: false, touch: true }}
               >
-                <IconHelp size={18} style={{ marginRight: 8 }} />
+                <IconHelp
+                  size={18}
+                  style={{ marginRight: 8, marginBottom: -3 }}
+                />
               </Tooltip>
               Stability:{" "}
               <Text component="span" fw={500}>
@@ -212,7 +233,10 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 label="Retrievability is the probability that you can recall this alphagram at this given time. This value decreases with time."
                 withArrow
               >
-                <IconHelp size={18} style={{ marginRight: 8 }} />
+                <IconHelp
+                  size={18}
+                  style={{ marginRight: 8, marginBottom: -3 }}
+                />
               </Tooltip>
               Retrievability:{" "}
               <Text component="span" fw={500}>
@@ -227,7 +251,10 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 label="Difficulty estimates how hard it is for you to remember the alphagram. It is a number between 0 and 10."
                 withArrow
               >
-                <IconHelp size={18} style={{ marginRight: 8 }} />
+                <IconHelp
+                  size={18}
+                  style={{ marginRight: 8, marginBottom: -3 }}
+                />
               </Tooltip>
               Difficulty:{" "}
               <Text component="span" fw={500}>
@@ -237,6 +264,30 @@ const CardInfo: React.FC<CardInfoProps> = ({
           </Stack>
         </Stack>
       </Card>
+
+      <Text size="lg" fw={700} mt="md" c={theme.colors.blue[4]} m="sm">
+        Forgetting Curve
+      </Text>
+      <Text size="sm">
+        This is your predicted recall of this card, as a percentage, plotted vs
+        time. This assumes you would never see the card again, which is
+        hopefully not the case.
+      </Text>
+      <LineChart
+        m="md"
+        pr="xl"
+        h={350}
+        data={forgettingCurve}
+        dataKey="date"
+        yAxisLabel="Recall"
+        series={[{ name: "Recall", color: "blue" }]}
+        referenceLines={[{ x: dstr(fsrsCard.Due), label: "Next review" }]}
+        yAxisProps={{ domain: [0, 100] }}
+        unit="%"
+        withDots={false}
+        valueFormatter={(value: number) => value.toFixed(1)}
+        tickLine="x"
+      />
 
       <Text fw={700} mb="lg" mt="lg" size="lg" c={theme.colors.blue[4]}>
         Review History
@@ -272,7 +323,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
               bullet={bullet}
             >
               <Text size="xs" c={theme.colors.gray[6]}>
-                {dstr(rl.Review)}
+                {dstr(rl.Review, true)}
               </Text>
             </Timeline.Item>
           );
