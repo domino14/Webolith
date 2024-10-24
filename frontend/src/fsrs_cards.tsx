@@ -324,8 +324,15 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
         />
       )}
 
-      <Text>
-        Type <Kbd>/</Kbd> to toggle typing mode.
+      <Text c="dimmed">
+        Type{" "}
+        <Kbd
+          style={{ cursor: "pointer" }}
+          onClick={() => setTypingMode((t) => !t)}
+        >
+          /
+        </Kbd>{" "}
+        to toggle typing mode.
       </Text>
 
       <Center style={{ marginTop: "20px" }}>
