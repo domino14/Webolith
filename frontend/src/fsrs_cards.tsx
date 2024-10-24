@@ -1,6 +1,20 @@
 // Flashcard.tsx
-import React, { useState, useEffect, useCallback, useContext } from "react";
-import { Button, Center, Text } from "@mantine/core";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react";
+import {
+  Badge,
+  Button,
+  Center,
+  Group,
+  Kbd,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import {
   Score,
   ScoreCardResponse,
@@ -22,8 +36,12 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
   const [previousCard, setPreviousCard] = useState<HistoryEntry | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const wordvaultClient = useClient(WordVaultService);
+  const [typingMode, setTypingMode] = useState(false);
+  const [typeInputValue, setTypeInputValue] = useState("");
   const [showLoadMoreLink, setShowLoadMoreLink] = useState(false);
   const { lexicon } = useContext(AppContext);
+  const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
+  const [displayAlphagram, setDisplayAlphagram] = useState("");
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
@@ -67,6 +85,14 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
   useEffect(() => {
     loadNewCard();
   }, [loadNewCard]);
+
+  useEffect(() => {
+    if (!currentCard || !currentCard.alphagram) {
+      return;
+    }
+    setCorrectGuesses(new Set<string>());
+    setDisplayAlphagram(currentCard.alphagram.alphagram);
+  }, [currentCard]);
 
   const handleScore = useCallback(
     async (score: Score) => {
@@ -147,25 +173,73 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
     [lexicon, wordvaultClient, previousCard]
   );
 
+  const shuffle = (letters: string[]): string => {
+    // Fisher-Yates shuffle
+    for (let i = letters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    return letters.join("");
+  };
+
+  const alphagramLetters = useMemo(() => {
+    if (!currentCard || !currentCard.alphagram) {
+      return [];
+    }
+    return currentCard.alphagram.alphagram.split("");
+  }, [currentCard]);
+
   // Keyboard event handler
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!currentCard || !currentCard.alphagram) {
+        return;
+      }
+      if (event.key === "/") {
+        event.preventDefault(); // Prevents the '/' from appearing in the input
+        setTypingMode((t) => !t);
+        return;
+      }
       if (!flipped) {
-        if (event.key.toLowerCase() === "f") {
-          handleFlip();
+        switch (event.key) {
+          case "0":
+            event.preventDefault();
+            handleFlip();
+            break;
+          case "f":
+          case "F":
+            if (!typingMode) {
+              event.preventDefault();
+              handleFlip();
+            }
+            break;
+
+          case "1":
+            event.preventDefault();
+
+            setDisplayAlphagram(shuffle(alphagramLetters));
+            break;
+          case "2":
+            event.preventDefault();
+            setDisplayAlphagram(currentCard.alphagram.alphagram);
+            break;
         }
       } else {
         switch (event.key) {
           case "1":
+            event.preventDefault();
             handleScore(Score.AGAIN);
             break;
           case "2":
+            event.preventDefault();
             handleScore(Score.HARD);
             break;
           case "3":
+            event.preventDefault();
             handleScore(Score.GOOD);
             break;
           case "4":
+            event.preventDefault();
             handleScore(Score.EASY);
             break;
           default:
@@ -179,10 +253,62 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [flipped, handleScore]);
+  }, [flipped, handleScore, typingMode, currentCard, alphagramLetters]);
+
+  const handleGuessEntered = useCallback(() => {
+    if (!currentCard || !currentCard.alphagram || flipped) {
+      return;
+    }
+    // Normalize input
+    const guess = typeInputValue.trim().toUpperCase();
+    let updatedCorrectGuesses;
+    // Check if the guess is correct and not already in the set
+    if (
+      currentCard.alphagram.words.some((wordObj) => wordObj.word === guess) &&
+      !correctGuesses.has(guess)
+    ) {
+      // Create a new Set and add the guess
+      updatedCorrectGuesses = new Set(correctGuesses).add(guess);
+      setCorrectGuesses(updatedCorrectGuesses);
+    }
+    // Clear the input
+    setTypeInputValue("");
+    if (updatedCorrectGuesses?.size === currentCard.alphagram.words.length) {
+      // we solved the card; flip it.
+      handleFlip();
+    }
+  }, [currentCard, correctGuesses, typeInputValue, flipped]);
+
+  const sortedGuesses = useMemo(() => {
+    return Array.from(correctGuesses).sort((a, b) => a.localeCompare(b));
+  }, [correctGuesses]);
 
   return (
     <Center style={{ width: "100%", height: "100%", flexDirection: "column" }}>
+      {typingMode && (
+        <>
+          <TextInput
+            m="md"
+            autoFocus
+            placeholder="Guess..."
+            onChange={(e) => setTypeInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleGuessEntered();
+              }
+            }}
+            value={typeInputValue}
+          />
+          <Group>
+            {sortedGuesses.length > 0 &&
+              sortedGuesses.map((guess) => (
+                <Badge variant="light" color="green" size="lg" key={guess}>
+                  {guess}
+                </Badge>
+              ))}
+          </Group>
+        </>
+      )}
       {currentCard && (
         <Flashcard
           flipped={flipped}
@@ -190,8 +316,17 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
           currentCard={currentCard}
           handleScore={handleScore}
           showLoader={showLoader}
+          displayAlphagram={displayAlphagram}
+          onShuffle={() => setDisplayAlphagram(shuffle(alphagramLetters))}
+          onAlphagram={() =>
+            setDisplayAlphagram(currentCard.alphagram?.alphagram ?? "")
+          }
         />
       )}
+
+      <Text>
+        Type <Kbd>/</Kbd> to toggle typing mode.
+      </Text>
 
       <Center style={{ marginTop: "20px" }}>
         <Text size="md">Cards left: {overdueCount}</Text>

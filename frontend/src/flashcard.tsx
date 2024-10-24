@@ -12,6 +12,7 @@ import {
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React from "react";
 import { useMediaQuery } from "@mantine/hooks";
+import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -19,6 +20,9 @@ interface FlashcardProps {
   handleFlip: () => void;
   handleScore: (score: Score) => Promise<void>;
   showLoader: boolean;
+  onShuffle: () => void;
+  onAlphagram: () => void;
+  displayAlphagram: string;
 }
 
 const Flashcard: React.FC<FlashcardProps> = ({
@@ -27,6 +31,9 @@ const Flashcard: React.FC<FlashcardProps> = ({
   currentCard,
   handleScore,
   showLoader,
+  onShuffle,
+  onAlphagram,
+  displayAlphagram,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -38,6 +45,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
       shadow="sm"
       padding="lg"
       radius="md"
+      m="md"
       withBorder
       style={{
         maxWidth: 600,
@@ -48,9 +56,32 @@ const Flashcard: React.FC<FlashcardProps> = ({
       {!flipped ? (
         // Front side
         <Stack align="center" gap="md">
-          <Text size="xl" fw={700} ta="center">
-            {currentCard.alphagram?.alphagram.toUpperCase()}
-          </Text>
+          <Group>
+            <Button
+              variant="transparent"
+              size="xs"
+              c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
+              onClick={onShuffle}
+            >
+              <IconArrowsShuffle />
+            </Button>
+            <Text
+              size="xl"
+              fw={700}
+              ta="center"
+              style={{ fontFamily: "monospace" }}
+            >
+              {displayAlphagram}
+            </Text>
+            <Button
+              variant="transparent"
+              size="xs"
+              c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
+              onClick={onAlphagram}
+            >
+              <IconArrowUp />
+            </Button>{" "}
+          </Group>
           {currentCard.alphagram?.words.length && (
             <Text size="xl" c="dimmed" ta="center">
               Words: {currentCard.alphagram?.words.length}
@@ -61,7 +92,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
               Show answer
               {!smallScreen && (
                 <Text component="span" size="sm">
-                  &nbsp; (F)
+                  &nbsp; (0)
                 </Text>
               )}
             </Button>
@@ -70,6 +101,15 @@ const Flashcard: React.FC<FlashcardProps> = ({
       ) : (
         // Back side
         <Stack align="center" gap="sm">
+          <Text
+            size="xl"
+            fw={700}
+            ta="center"
+            mb="md"
+            style={{ fontFamily: "monospace" }}
+          >
+            {currentCard.alphagram?.alphagram.toUpperCase()}
+          </Text>
           {currentCard.alphagram?.words.map((word) => (
             <div key={word.word}>
               <Center>
