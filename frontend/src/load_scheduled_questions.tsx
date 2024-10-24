@@ -43,7 +43,7 @@ export default function LoadScheduledQuestions() {
     <div>
       {cardsOngoing ? (
         <FSRSCards setFinishedCards={() => setCardsOngoing(false)} />
-      ) : (
+      ) : cardsToLoad != undefined ? (
         <>
           <Text>Hi, {username}!</Text>
           <Text>
@@ -60,7 +60,7 @@ export default function LoadScheduledQuestions() {
             </Button>
           )}
         </>
-      )}
+      ) : null}
     </div>
   );
 }
