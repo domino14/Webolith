@@ -22,8 +22,9 @@ interface FlashcardProps {
   handleScore: (score: Score) => Promise<void>;
   showLoader: boolean;
   onShuffle: () => void;
-  onAlphagram: () => void;
-  displayAlphagram: string;
+  onCustomArrange: () => void;
+  displayQuestion: string;
+  origDisplayQuestion: string;
 }
 
 const Flashcard: React.FC<FlashcardProps> = ({
@@ -33,8 +34,9 @@ const Flashcard: React.FC<FlashcardProps> = ({
   handleScore,
   showLoader,
   onShuffle,
-  onAlphagram,
-  displayAlphagram,
+  onCustomArrange,
+  displayQuestion,
+  origDisplayQuestion,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -73,13 +75,13 @@ const Flashcard: React.FC<FlashcardProps> = ({
               ta="center"
               style={{ fontFamily: displaySettings.fontStyle }}
             >
-              {displayAlphagram}
+              {displayQuestion}
             </Text>
             <Button
               variant="transparent"
               size="xs"
               c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
-              onClick={onAlphagram}
+              onClick={onCustomArrange}
             >
               <IconArrowUp />
             </Button>{" "}
@@ -111,7 +113,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
             mb="md"
             style={{ fontFamily: displaySettings.fontStyle }}
           >
-            {currentCard.alphagram?.alphagram.toUpperCase()}
+            {origDisplayQuestion}
           </Text>
           {currentCard.alphagram?.words.map((word) => (
             <div key={word.word}>

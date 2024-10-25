@@ -39,9 +39,9 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
   const [typingMode, setTypingMode] = useState(false);
   const [typeInputValue, setTypeInputValue] = useState("");
   const [showLoadMoreLink, setShowLoadMoreLink] = useState(false);
-  const { lexicon } = useContext(AppContext);
+  const { lexicon, displaySettings } = useContext(AppContext);
   const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
-  const [displayAlphagram, setDisplayAlphagram] = useState("");
+  const [displayQuestion, setDisplayQuestion] = useState("");
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
@@ -85,14 +85,6 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
   useEffect(() => {
     loadNewCard();
   }, [loadNewCard]);
-
-  useEffect(() => {
-    if (!currentCard || !currentCard.alphagram) {
-      return;
-    }
-    setCorrectGuesses(new Set<string>());
-    setDisplayAlphagram(currentCard.alphagram.alphagram);
-  }, [currentCard]);
 
   const handleScore = useCallback(
     async (score: Score) => {
@@ -173,6 +165,10 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
     [lexicon, wordvaultClient, previousCard]
   );
 
+  // Note: shuffle/customarrange/split/etc won't work for multi-rune
+  // character sets like Spanish/Catalan. We probably need to make a
+  // custom library for these like the alphabets FE code in liwords.
+
   const shuffle = (letters: string[]): string => {
     // Fisher-Yates shuffle
     for (let i = letters.length - 1; i > 0; i--) {
@@ -188,6 +184,47 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
     }
     return currentCard.alphagram.alphagram.split("");
   }, [currentCard]);
+
+  const customArrange = useCallback(
+    (letters: string[], origAlphagram: string): string => {
+      const customOrder = displaySettings.customOrder;
+
+      if (!customOrder) {
+        return origAlphagram;
+      }
+
+      // Create a priority map based on customOrder
+      const orderMap: { [key: string]: number } = {};
+      for (let i = 0; i < customOrder.length; i++) {
+        orderMap[customOrder[i]] = i; // Assign a priority based on customOrder index
+      }
+
+      // Sort letters based on custom order, then alphabetically
+      letters.sort((a, b) => {
+        const priorityA =
+          orderMap[a] !== undefined ? orderMap[a] : customOrder.length;
+        const priorityB =
+          orderMap[b] !== undefined ? orderMap[b] : customOrder.length;
+
+        if (priorityA !== priorityB) {
+          return priorityA - priorityB;
+        }
+        return a.localeCompare(b); // Alphabetical order for letters outside customOrder
+      });
+      return letters.join("");
+    },
+    [displaySettings.customOrder]
+  );
+
+  useEffect(() => {
+    if (!currentCard || !currentCard.alphagram) {
+      return;
+    }
+    setCorrectGuesses(new Set<string>());
+    setDisplayQuestion(
+      customArrange(alphagramLetters, currentCard.alphagram.alphagram)
+    );
+  }, [currentCard, alphagramLetters, customArrange]);
 
   // Keyboard event handler
   useEffect(() => {
@@ -216,12 +253,13 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
 
           case "1":
             event.preventDefault();
-
-            setDisplayAlphagram(shuffle(alphagramLetters));
+            setDisplayQuestion(shuffle(alphagramLetters));
             break;
           case "2":
             event.preventDefault();
-            setDisplayAlphagram(currentCard.alphagram.alphagram);
+            setDisplayQuestion(
+              customArrange(alphagramLetters, currentCard.alphagram.alphagram)
+            );
             break;
         }
       } else {
@@ -253,7 +291,14 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [flipped, handleScore, typingMode, currentCard, alphagramLetters]);
+  }, [
+    flipped,
+    handleScore,
+    typingMode,
+    currentCard,
+    alphagramLetters,
+    customArrange,
+  ]);
 
   const handleGuessEntered = useCallback(() => {
     if (!currentCard || !currentCard.alphagram || flipped) {
@@ -293,7 +338,10 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
             placeholder="Guess..."
             onChange={(e) => setTypeInputValue(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" || e.key === " ") {
+                if (e.key === " ") {
+                  e.preventDefault();
+                }
                 handleGuessEntered();
               }
             }}
@@ -316,10 +364,19 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
           currentCard={currentCard}
           handleScore={handleScore}
           showLoader={showLoader}
-          displayAlphagram={displayAlphagram}
-          onShuffle={() => setDisplayAlphagram(shuffle(alphagramLetters))}
-          onAlphagram={() =>
-            setDisplayAlphagram(currentCard.alphagram?.alphagram ?? "")
+          displayQuestion={displayQuestion}
+          origDisplayQuestion={customArrange(
+            alphagramLetters,
+            currentCard.alphagram?.alphagram ?? ""
+          )}
+          onShuffle={() => setDisplayQuestion(shuffle(alphagramLetters))}
+          onCustomArrange={() =>
+            setDisplayQuestion(
+              customArrange(
+                alphagramLetters,
+                currentCard.alphagram?.alphagram ?? ""
+              )
+            )
           }
         />
       )}

@@ -1,7 +1,7 @@
 import { useForm } from "@mantine/form";
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "./app_context";
-import { Button, Select, Switch, TextInput } from "@mantine/core";
+import { Button, Select, Switch, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 
 const Settings: React.FC = () => {
@@ -13,7 +13,7 @@ const Settings: React.FC = () => {
       customOrder: "",
     },
   });
-  const { displaySettings } = useContext(AppContext);
+  const { displaySettings, setDisplaySettings } = useContext(AppContext);
   const { setValues } = settingsForm;
   // When displaySettings change, update the form with the new values
   useEffect(() => {
@@ -24,6 +24,7 @@ const Settings: React.FC = () => {
 
   return (
     <div style={{ maxWidth: 400 }}>
+      <Text size="xl">Display Settings</Text>
       <form
         onSubmit={settingsForm.onSubmit(async (values) => {
           const response = await fetch("/accounts/profile/wordvault_settings", {
@@ -43,6 +44,7 @@ const Settings: React.FC = () => {
             color: "green",
             title: "Success",
           });
+          setDisplaySettings(values);
         })}
       >
         {/* Add form fields here, for example: */}
@@ -50,21 +52,22 @@ const Settings: React.FC = () => {
           data={["monospace", "sans-serif"]}
           label="Question display style"
           {...settingsForm.getInputProps("fontStyle")}
+          mt="lg"
         />
         <Switch
           checked={settingsForm.values.showNumAnagrams} // Bind to checked
           {...settingsForm.getInputProps("showNumAnagrams")}
-          mt="md"
+          mt="lg"
           label="Show number of words in cards"
         />
         <TextInput
           type="text"
           {...settingsForm.getInputProps("customOrder")}
-          label="Custom letter order. Leave blank to use alphabetical."
+          label="Custom letter order. Leave blank to use alphabetical. All letters not specified will be in alphabetical order."
           placeholder="AEIOU..."
-          mt="md"
+          mt="lg"
         />
-        <Button type="submit" mt="md">
+        <Button type="submit" mt="lg">
           Save
         </Button>
       </form>

@@ -24,6 +24,7 @@ export interface AppContextType {
   loggedIn: LoginState;
   fetchJwt: () => Promise<string>;
   displaySettings: DisplaySettings;
+  setDisplaySettings: (d: DisplaySettings) => void;
 }
 
 const initialContext = {
@@ -44,6 +45,7 @@ const initialContext = {
     showNumAnagrams: true,
     customOrder: "",
   },
+  setDisplaySettings: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(initialContext);
@@ -187,6 +189,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         fetchJwt,
         defaultLexicon,
         displaySettings,
+        setDisplaySettings,
       }}
     >
       {children}
