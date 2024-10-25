@@ -25,6 +25,7 @@ import {
   IconCubePlus,
   IconMoon,
   IconSearch,
+  IconSettings,
   IconSun,
   IconUserQuestion,
 } from "@tabler/icons-react";
@@ -124,6 +125,7 @@ function App() {
             data={["NWL23", "CSW21", "FRA24", "Deutsch"]}
             value={lexicon}
             onChange={(val) => setLexicon(val ?? "")}
+            mb="md"
           />
           {showChangeLexLink && lexicon && (
             <Button
@@ -133,109 +135,56 @@ function App() {
               Make default
             </Button>
           )}
+          <>
+            {[
+              [
+                "load-scheduled-questions",
+                <IconBook color="green" />,
+                "Study scheduled questions",
+              ],
+              [
+                "word-search",
+                <IconCubePlus color="green" />,
+                "Add to WordVault",
+              ],
+              ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
+              ["card-stats", <IconSearch color="green" />, "Card statistics"],
+              ["settings", <IconSettings color="green" />, "Settings"],
+              [
+                "help",
+                <IconUserQuestion color="green" />,
+                "What is WordVault?",
+              ],
+            ].map(([path, icon, label]) => (
+              <NavLink
+                key={path as string}
+                onClick={() => {
+                  if (location.pathname === `/${path}`) {
+                    // Force reload the component by resetting the state or triggering a re-render
+                    navigate(`/${path}`, { replace: true });
+                    window.location.reload(); // This reloads the page completely
+                  } else {
+                    navigate(`/${path}`);
+                  }
+                  closeBurger();
+                }}
+                label={
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "5px 0",
+                    }}
+                  >
+                    {icon}
+                    &nbsp; {label}
+                  </div>
+                }
+                active={location.pathname === `/${path}`}
+              />
+            ))}
+          </>
 
-          <NavLink
-            mt="md"
-            onClick={() => {
-              if (location.pathname === "/load-scheduled-questions") {
-                // Force reload the component by resetting the state or triggering a re-render
-                navigate("/load-scheduled-questions", { replace: true });
-                window.location.reload(); // This reloads the page completely
-              } else {
-                navigate("/load-scheduled-questions");
-              }
-              closeBurger();
-            }}
-            label={
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "5px 0",
-                }}
-              >
-                <IconBook color="green" />
-                &nbsp; Load scheduled questions
-              </div>
-            }
-            active={location.pathname === "/load-scheduled-questions"}
-          />
-          <NavLink
-            onClick={() => {
-              navigate("word-search");
-              closeBurger();
-            }}
-            label={
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "5px 0",
-                }}
-              >
-                <IconCubePlus color="green" />
-                &nbsp; Add to WordVault
-              </div>
-            }
-            active={location.pathname === "/word-search"}
-          />
-          <NavLink
-            onClick={() => {
-              navigate("card-schedules");
-              closeBurger();
-            }}
-            label={
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "5px 0",
-                }}
-              >
-                <IconCalendar color="green" />
-                &nbsp; Scheduling
-              </div>
-            }
-            active={location.pathname === "/card-schedules"}
-          />
-          <NavLink
-            onClick={() => {
-              navigate("card-stats");
-              closeBurger();
-            }}
-            label={
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "5px 0",
-                }}
-              >
-                <IconSearch color="green" />
-                &nbsp;Card statistics
-              </div>
-            }
-            active={location.pathname === "/card-stats"}
-          />
-          <NavLink
-            onClick={() => {
-              navigate("help");
-              closeBurger();
-            }}
-            label={
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "5px 0",
-                }}
-              >
-                <IconUserQuestion color="green" />
-                &nbsp; What is WordVault?
-              </div>
-            }
-            active={location.pathname === "/help"}
-          />
           <br />
           <NavLink href="/wordwalls" label={<>Aerolith WordWalls</>} />
         </AppShell.Section>
