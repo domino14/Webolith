@@ -10,9 +10,10 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
-import React from "react";
+import React, { useContext } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
+import { AppContext } from "./app_context";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -39,6 +40,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const smallScreen = useMediaQuery("(max-width: 40em)");
+  const { displaySettings } = useContext(AppContext);
 
   return (
     <Card
@@ -69,7 +71,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
               size="xl"
               fw={700}
               ta="center"
-              style={{ fontFamily: "monospace" }}
+              style={{ fontFamily: displaySettings.fontStyle }}
             >
               {displayAlphagram}
             </Text>
@@ -82,11 +84,12 @@ const Flashcard: React.FC<FlashcardProps> = ({
               <IconArrowUp />
             </Button>{" "}
           </Group>
-          {currentCard.alphagram?.words.length && (
-            <Text size="xl" c="dimmed" ta="center">
-              Words: {currentCard.alphagram?.words.length}
-            </Text>
-          )}
+          {currentCard.alphagram?.words.length &&
+            displaySettings.showNumAnagrams && (
+              <Text size="xl" c="dimmed" ta="center">
+                Words: {currentCard.alphagram?.words.length}
+              </Text>
+            )}
           <Group mt="md">
             <Button onClick={handleFlip} size="lg">
               Show answer
@@ -106,7 +109,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
             fw={700}
             ta="center"
             mb="md"
-            style={{ fontFamily: "monospace" }}
+            style={{ fontFamily: displaySettings.fontStyle }}
           >
             {currentCard.alphagram?.alphagram.toUpperCase()}
           </Text>

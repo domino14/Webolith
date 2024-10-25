@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 from accounts.models import AerolithProfile
 from accounts.forms import ProfileEditForm, UsernameEditForm
@@ -143,3 +144,17 @@ def username_change(request):
 @login_required
 def social(request):
     return render(request, "accounts/social.html")
+
+
+@login_required
+@csrf_exempt
+def wordvault_settings(request):
+    profile = AerolithProfile.objects.get(user=request.user)
+
+    if request.method == "GET":
+        return response(json.loads(profile.wordvault_settings))
+    elif request.method == "PUT":
+        settings = json.loads(request.body)
+        profile.wordvault_settings = json.dumps(settings)
+        profile.save()
+        return response("OK")

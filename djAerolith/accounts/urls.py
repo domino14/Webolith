@@ -22,6 +22,7 @@ from accounts.views import (
     viewProfile,
     set_default_lexicon,
     default_lexicon,
+    wordvault_settings,
 )
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     path(r"set_default_lexicon/", set_default_lexicon),
     path(r"default_lexicon", default_lexicon),
     path(r"<str:username>/", viewProfile, name="accounts_view_profile"),
+    path(r"wordvault_settings", wordvault_settings),
 ]

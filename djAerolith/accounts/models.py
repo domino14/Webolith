@@ -67,6 +67,8 @@ class AerolithProfile(models.Model):
     customWordwallsStyle = models.CharField(max_length=1000, blank=True)
     wordwallsSaveListSize = models.IntegerField(default=0)
 
+    wordvault_settings = models.TextField(default="{}", blank=True)
+
     # project-wide
     defaultLexicon = models.ForeignKey(
         Lexicon, default=getLexicon, on_delete=models.SET_DEFAULT

@@ -7,6 +7,13 @@ import {
 } from "react";
 import { LoginState } from "./constants";
 
+type DisplaySettings = {
+  fontStyle: string;
+  tileStyle: string;
+  showNumAnagrams: boolean;
+  customOrder: string;
+};
+
 export interface AppContextType {
   jwt: string;
   username: string;
@@ -16,6 +23,7 @@ export interface AppContextType {
   setDefaultLexicon: (lex: string) => void;
   loggedIn: LoginState;
   fetchJwt: () => Promise<string>;
+  displaySettings: DisplaySettings;
 }
 
 const initialContext = {
@@ -30,6 +38,12 @@ const initialContext = {
     return "";
   },
   loggedIn: LoginState.Unknown,
+  displaySettings: {
+    fontStyle: "monospace",
+    tileStyle: "",
+    showNumAnagrams: true,
+    customOrder: "",
+  },
 };
 
 export const AppContext = createContext<AppContextType>(initialContext);
@@ -73,6 +87,9 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [lexicon, setLexicon] = useState("");
   const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
+  const [displaySettings, setDisplaySettings] = useState(
+    initialContext.displaySettings
+  );
 
   const fetchJwt = useCallback(async () => {
     console.log("Fetching JWT from backend");
@@ -138,6 +155,26 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     }
   }, [loginState]);
 
+  // Fetch wordvault display settings on login, from the Aerolith API.
+  useEffect(() => {
+    const fetchDisplaySettings = async () => {
+      try {
+        const response = await fetch("/accounts/profile/wordvault_settings");
+        let data = await response.json();
+        if (!Object.keys(data).length) {
+          data = { ...initialContext.displaySettings };
+        }
+        setDisplaySettings(data);
+      } catch (error) {
+        console.error("Error fetching default lexicon:", error);
+      }
+    };
+
+    if (loginState === LoginState.LoggedIn) {
+      fetchDisplaySettings();
+    }
+  }, [loginState]);
+
   return (
     <AppContext.Provider
       value={{
@@ -149,6 +186,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         loggedIn: loginState,
         fetchJwt,
         defaultLexicon,
+        displaySettings,
       }}
     >
       {children}

@@ -18,6 +18,7 @@ import WordSearch from "./search/word_search.tsx";
 import CardSchedule from "./schedule.tsx";
 import Help from "./help.tsx";
 import CardStats from "./card_stats.tsx";
+import Settings from "./settings.tsx";
 
 const router = createBrowserRouter(
   [
@@ -49,6 +50,10 @@ const router = createBrowserRouter(
         {
           path: "/card-stats",
           element: <CardStats />,
+        },
+        {
+          path: "/settings",
+          element: <Settings />,
         },
         {
           path: "/help",
