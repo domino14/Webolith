@@ -200,13 +200,17 @@ def load_new_words(f):
         parsed_req["challenge"] = body.get("challenge")
         parsed_req["dt"] = body.get("date")
 
-        if "desiredTime" in body:
-            quiz_time_secs = int(round(body["desiredTime"] * 60))
-            if quiz_time_secs < 1 or quiz_time_secs > 3600:
-                return bad_request(
-                    "Desired time must be between 1 and 3600 " "seconds."
-                )
-            parsed_req["quiz_time_secs"] = quiz_time_secs
+        desired_time = body.get("desiredTime")
+        if desired_time is not None:
+            try:
+                quiz_time_secs = int(round(desired_time * 60))  # <-- line number 204
+                if quiz_time_secs < 1 or quiz_time_secs > 3600:
+                    return bad_request(
+                        "Desired time must be between 1 and 3600 seconds."
+                    )
+                parsed_req["quiz_time_secs"] = quiz_time_secs
+            except TypeError:
+                return bad_request("Invalid type for desiredTime. Must be a number.")
 
         parsed_req["questions_per_round"] = body.get("questionsPerRound", 50)
         if (
