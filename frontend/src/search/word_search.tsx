@@ -7,10 +7,12 @@ import SearchRows from "./rows";
 import {
   Alert,
   Button,
-  Divider,
+  Code,
+  Collapse,
   FileInput,
   Loader,
   Stack,
+  Tabs,
   Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -18,6 +20,7 @@ import { useClient } from "../use_client";
 import { QuestionSearcher } from "../gen/rpc/wordsearcher/searcher_connect";
 import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
 import { WordVaultService } from "../gen/rpc/wordvault/api_connect";
+import { useDisclosure } from "@mantine/hooks";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -53,6 +56,7 @@ const WordSearchForm: React.FC = () => {
     text: "",
   });
   const [showLoader, setShowLoader] = useState(false);
+  const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
 
   const uploadForm = useForm({
     initialValues: {
@@ -168,84 +172,150 @@ const WordSearchForm: React.FC = () => {
 
   return (
     <>
-      <Stack>
-        <SearchRows
-          criteria={searchCriteria}
-          addSearchRow={addSearchRow}
-          removeSearchRow={removeSearchRow}
-          modifySearchType={searchTypeChange}
-          modifySearchParam={searchParamChange}
-          allowedSearchTypes={allowedSearchTypes}
-        />
+      <Tabs variant="default" defaultValue="search">
+        <Tabs.List>
+          <Tabs.Tab value="search">Search</Tabs.Tab>
+          <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
+          <Tabs.Tab value="upload-cardbox" disabled>
+            Upload Zyzzyva Cardbox (Coming soon)
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="search">
+          <Stack mt="lg">
+            <SearchRows
+              criteria={searchCriteria}
+              addSearchRow={addSearchRow}
+              removeSearchRow={removeSearchRow}
+              modifySearchType={searchTypeChange}
+              modifySearchParam={searchParamChange}
+              allowedSearchTypes={allowedSearchTypes}
+            />
 
-        <Button
-          variant="light"
-          color="blue"
-          style={{ maxWidth: 200 }}
-          onClick={addToWordVault}
-        >
-          Add to WordVault
-        </Button>
-        {alert.shown && (
-          <Alert variant="light" color={alert.color}>
-            {alert.text}
-          </Alert>
-        )}
-        {showLoader ? <Loader color="blue" /> : null}
-      </Stack>
-      <Divider m="xl" />
-      <Text>Or, you can upload your own text file</Text>
-      <Stack>
-        <form
-          encType="multipart/form-data"
-          onSubmit={uploadForm.onSubmit((values) => {
-            console.log(values.textfile);
-            const reader = new FileReader();
-            reader.readAsText(values.textfile, "UTF-8");
+            <Button
+              variant="light"
+              color="blue"
+              style={{ maxWidth: 200 }}
+              onClick={addToWordVault}
+            >
+              Add to WordVault
+            </Button>
+            {alert.shown && (
+              <Alert variant="light" color={alert.color}>
+                {alert.text}
+              </Alert>
+            )}
+            {showLoader ? <Loader color="blue" /> : null}
+          </Stack>
+        </Tabs.Panel>
+        <Tabs.Panel value="upload-list">
+          <Stack mt="lg">
+            <form
+              encType="multipart/form-data"
+              onSubmit={uploadForm.onSubmit((values) => {
+                console.log(values.textfile);
+                const reader = new FileReader();
+                reader.readAsText(values.textfile, "UTF-8");
 
-            reader.onload = function () {
-              // TypeScript safeguard: Ensure reader.result is a string
-              if (typeof reader.result === "string") {
-                const result = reader.result;
-                const lines = result.split("\n").map((line) => line.trim());
-                const nonEmptyLines = lines.filter((line) => line !== "");
-                processUploadedFile(nonEmptyLines);
-              } else {
-                setAlert({
-                  color: "red",
-                  shown: true,
-                  text: "File could not be read as text.",
-                });
-              }
-            };
+                reader.onload = function () {
+                  // TypeScript safeguard: Ensure reader.result is a string
+                  if (typeof reader.result === "string") {
+                    const result = reader.result;
+                    const lines = result.split("\n").map((line) => line.trim());
+                    const nonEmptyLines = lines.filter((line) => line !== "");
+                    processUploadedFile(nonEmptyLines);
+                  } else {
+                    setAlert({
+                      color: "red",
+                      shown: true,
+                      text: "File could not be read as text.",
+                    });
+                  }
+                };
 
-            reader.onerror = function () {
-              setAlert({
-                color: "red",
-                shown: true,
-                text: String(reader.error),
-              });
-            };
-          })}
-        >
-          <FileInput
-            {...uploadForm.getInputProps("textfile")}
-            label={`Upload a text file with words or alphagrams, one per line. These must be valid in ${lexicon}.`}
-            placeholder="Click to upload..."
-            maw={300}
-            m="sm"
-          />
-          <Button
-            variant="light"
-            color="blue"
-            type="submit"
-            style={{ maxWidth: 200 }}
-            m="sm"
-          >
-            Upload into WordVault
+                reader.onerror = function () {
+                  setAlert({
+                    color: "red",
+                    shown: true,
+                    text: String(reader.error),
+                  });
+                };
+              })}
+            >
+              <FileInput
+                {...uploadForm.getInputProps("textfile")}
+                label={`Upload a text file with words or alphagrams, one per line. These must be valid in ${lexicon}.`}
+                placeholder="Click to upload..."
+                maw={300}
+                m="sm"
+              />
+              <Button
+                variant="light"
+                color="blue"
+                type="submit"
+                style={{ maxWidth: 200 }}
+                m="sm"
+              >
+                Upload into WordVault
+              </Button>
+            </form>
+          </Stack>
+        </Tabs.Panel>
+        <Tabs.Panel value="upload-cardbox">
+          <Text mt="lg">
+            You can also upload a Zyzzyva cardbox. Please read some more details
+            about how this works.
+          </Text>
+          <Button mt="lg" onClick={toggleInstr}>
+            About importing Zyzzyva cardboxes
           </Button>
-        </form>
-      </Stack>
+
+          <Collapse in={openedInstr}>
+            <Text mt="lg">
+              <a
+                href="https://www.scrabbleplayers.org/w/NASPA_Zyzzyva:_The_Last_Word_in_Word_Study"
+                target="_blank"
+              >
+                Zyzzyva
+              </a>{" "}
+              uses an older algorithm for spaced repetition called the Leitner
+              cardbox system. It is not directly compatible with WordVault's
+              algorithm (FSRS) and is significantly less efficient.
+            </Text>
+            <Text mt="lg">
+              However, we can apply some approximations. The main parameters
+              that FSRS needs in order to calculate intervals are S (Stability)
+              and D (Difficulty).
+            </Text>
+            <Text mt="lg">
+              <strong>Stability</strong> is defined as the number of days that
+              pass between recall for a particular card going from 100% to 90%.
+              Leitner doesn't use this parameter, but we are making the
+              assumption that the very last interval (i.e. the time difference
+              between the last time the question was asked, and the time that
+              the question is due) is a good proxy for stability.
+            </Text>
+            <Text mt="lg">
+              <strong>Difficulty</strong> is also a slightly arbitrary
+              parameter; it is a number that is clamped between 0 and 10. We
+              will use the following formula to calculate difficulty:
+            </Text>
+            <Code mt="lg">
+              Difficulty = ((5 + numTimesMissed) - (0.5 x
+              numTimesCorrect)).clamp(0, 10)
+            </Code>
+            <Text mt="lg">
+              After importing your cardbox, the schedules will change gradually
+              and become more optimized as the FSRS algorithm begins to be used.
+              The S and D parameters will be recalculated as you continue to
+              quiz, as well.
+            </Text>
+            <Text mt="lg">
+              Importing a cardbox will overwrite any of your existing cards that
+              are also in the cardbox. Make sure you want to do this!
+            </Text>
+          </Collapse>
+        </Tabs.Panel>
+      </Tabs>
     </>
   );
 };
