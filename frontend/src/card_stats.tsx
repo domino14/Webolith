@@ -72,13 +72,21 @@ const CardStats: React.FC = () => {
   return (
     <>
       <Text mb="md">
-        Enter an alphagram below to look it up in your WordVault:
+        Enter a word or alphagram below to look it up in your WordVault:
       </Text>
-      <Stack w={150} mb="xl">
+      <Stack w={200} mb="xl">
         <TextInput
           label="Alphagram"
           value={lookup}
-          onChange={(t) => setLookup(t.currentTarget.value.toLocaleUpperCase())}
+          onChange={(t) =>
+            setLookup(
+              t.currentTarget.value
+                .toLocaleUpperCase()
+                .split("")
+                .sort()
+                .join("")
+            )
+          }
         ></TextInput>
         <Button onClick={lookupAlphagram}>Look up</Button>
       </Stack>
