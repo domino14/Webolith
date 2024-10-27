@@ -21,6 +21,7 @@ import json
 import urllib
 
 from urllib.parse import urlencode
+from dateutil.relativedelta import relativedelta
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -35,12 +36,14 @@ from django.http import (
     HttpResponse,
 )
 from django.views.decorators.http import require_GET
+from django.utils import timezone
 import jwt
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 
 from django.contrib.auth.models import User
 from lib.auth import create_jwt
 from lib.response import response, StatusCode
+from accounts.models import AerolithProfile
 
 logger = logging.getLogger(__name__)
 
@@ -210,12 +213,12 @@ def paypal_ipn(request):
     )
     with urllib.request.urlopen(req) as response:
         verification_response = response.read().decode("utf-8")
+        print("Verification response:", repr(verification_response))
 
     # If PayPal verifies the IPN message
     if verification_response == "VERIFIED":
-        custom_field = request.POST.get("custom")
+        username = request.POST.get("custom")
         payment_status = request.POST.get("payment_status")
-        txn_id = request.POST.get("txn_id")
         # You can extract more fields like payment_amount, payer_email, etc.
         logger.info("ipn post verified; data is %s", request.POST)
         if payment_status == "Completed":
@@ -224,6 +227,32 @@ def paypal_ipn(request):
             # Example: update user's payment status or log the transaction
             # user = User.objects.get(username=custom_field)
             # Store or process the transaction (txn_id, payment details, etc.)
-            pass
+            profile = AerolithProfile.objects.get(user__username=username)
+            profile.member = True
+            profile.membershipType = AerolithProfile.GOLD_MTYPE
+            # If the user renews ahead of time, we want to credit them for
+            # the amount of time they have remaining.
+            now = timezone.now()
+            if profile.membershipExpiry and profile.membershipExpiry > now:
+                # Membership is active, extend expiry by one year from current expiry date
+                new_expiry = profile.membershipExpiry + relativedelta(years=1)
+            else:
+                # Membership is expired or non-existent, set expiry to one year from now
+                new_expiry = now + relativedelta(years=1)
 
+            new_expiry = timezone.localtime(new_expiry)
+            new_expiry = new_expiry.replace(
+                hour=23, minute=59, second=59, microsecond=0
+            )
+
+            profile.membershipExpiry = new_expiry
+            profile.save()
+
+            logger.info("member=%s Updated their membership", username)
+            send_mail(
+                f"Updated membership for {username}",
+                f"{username} signed up for a plan",
+                None,
+                [settings.ADMINS[0][1]],
+            )
     return HttpResponse(status=200)
