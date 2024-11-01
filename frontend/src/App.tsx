@@ -25,7 +25,6 @@ import {
   IconCubePlus,
   IconGraph,
   IconHeartDollar,
-  IconMedal,
   IconMedal2,
   IconMoon,
   IconSettings,
