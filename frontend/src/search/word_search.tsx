@@ -10,6 +10,7 @@ import {
   Code,
   Collapse,
   FileInput,
+  List,
   Loader,
   Stack,
   Tabs,
@@ -46,11 +47,17 @@ const initialCriteria = [
   }),
 ];
 
+type AlertValues = {
+  shown: boolean;
+  color?: string;
+  text?: string;
+};
+
 const AddWordvaultURL = "/cards/api/add_to_wordvault";
 
 const WordSearchForm: React.FC = () => {
-  const { lexicon } = useContext(AppContext);
-  const [alert, setAlert] = useState({
+  const { lexicon, jwt } = useContext(AppContext);
+  const [alert, setAlert] = useState<AlertValues>({
     shown: false,
     color: "green",
     text: "",
@@ -58,9 +65,15 @@ const WordSearchForm: React.FC = () => {
   const [showLoader, setShowLoader] = useState(false);
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
 
-  const uploadForm = useForm({
+  const uploadWordListForm = useForm({
     initialValues: {
       textfile: new Blob(),
+    },
+  });
+
+  const uploadCardboxForm = useForm({
+    initialValues: {
+      cardbox: new Blob(),
     },
   });
 
@@ -117,6 +130,61 @@ const WordSearchForm: React.FC = () => {
       }
     },
     [wordServerClient, lexicon, wordVaultClient]
+  );
+
+  const processUploadedCardbox = useCallback(
+    async (uploadedCardbox: ArrayBuffer) => {
+      try {
+        setShowLoader(true);
+        setAlert((prev) => ({ ...prev, shown: false }));
+
+        // Step 1: Convert ArrayBuffer to Blob
+        const blob = new Blob([uploadedCardbox], {
+          type: "application/octet-stream",
+        });
+
+        // Step 2: Create a FormData object and append the file
+        const formData = new FormData();
+        formData.append("file", blob, "cardbox.sqlite");
+        formData.append("lexicon", lexicon);
+
+        // Step 4: Use fetch to send a POST request
+        const response = await fetch("/word_db_server/import-cardbox/", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            // Note: Do not set the 'Content-Type' header when sending FormData with fetch
+            // The browser will automatically set it, including the correct boundary
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          // Handle HTTP errors
+          const errorText = await response.text();
+          throw new Error(
+            `HTTP error! Status: ${response.status}, Message: ${errorText}`
+          );
+        }
+
+        // Process the successful response
+        const result = await response.text();
+        setAlert({
+          color: "green",
+          shown: true,
+          text: result,
+        });
+      } catch (e) {
+        setAlert({
+          color: "red",
+          shown: true,
+          text: String(e),
+        });
+      } finally {
+        setShowLoader(false);
+      }
+    },
+    [jwt, lexicon]
   );
 
   const {
@@ -177,7 +245,10 @@ const WordSearchForm: React.FC = () => {
           <Tabs.Tab value="search">Search</Tabs.Tab>
           <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
           <Tabs.Tab value="upload-cardbox" disabled>
-            Upload Zyzzyva Cardbox (Coming soon)
+            Upload Zyzzyva Cardbox (Coming soon){" "}
+            {/* <Badge color="green" ml="md">
+              New
+            </Badge> */}
           </Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="search">
@@ -199,19 +270,14 @@ const WordSearchForm: React.FC = () => {
             >
               Add to WordVault
             </Button>
-            {alert.shown && (
-              <Alert variant="light" color={alert.color}>
-                {alert.text}
-              </Alert>
-            )}
-            {showLoader ? <Loader color="blue" /> : null}
+            {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
         </Tabs.Panel>
         <Tabs.Panel value="upload-list">
           <Stack mt="lg">
             <form
               encType="multipart/form-data"
-              onSubmit={uploadForm.onSubmit((values) => {
+              onSubmit={uploadWordListForm.onSubmit((values) => {
                 console.log(values.textfile);
                 const reader = new FileReader();
                 reader.readAsText(values.textfile, "UTF-8");
@@ -242,7 +308,7 @@ const WordSearchForm: React.FC = () => {
               })}
             >
               <FileInput
-                {...uploadForm.getInputProps("textfile")}
+                {...uploadWordListForm.getInputProps("textfile")}
                 label={`Upload a text file with words or alphagrams, one per line. These must be valid in ${lexicon}.`}
                 placeholder="Click to upload..."
                 maw={300}
@@ -258,6 +324,7 @@ const WordSearchForm: React.FC = () => {
                 Upload into WordVault
               </Button>
             </form>
+            {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
         </Tabs.Panel>
         <Tabs.Panel value="upload-cardbox">
@@ -265,7 +332,7 @@ const WordSearchForm: React.FC = () => {
             You can also upload a Zyzzyva cardbox. Please read some more details
             about how this works.
           </Text>
-          <Button mt="lg" onClick={toggleInstr}>
+          <Button mt="lg" onClick={toggleInstr} variant="subtle">
             About importing Zyzzyva cardboxes
           </Button>
 
@@ -291,8 +358,8 @@ const WordSearchForm: React.FC = () => {
               pass between recall for a particular card going from 100% to 90%.
               Leitner doesn't use this parameter, but we are making the
               assumption that the very last interval (i.e. the time difference
-              between the last time the question was asked, and the time that
-              the question is due) is a good proxy for stability.
+              between the last time the question was answered correctly, and the
+              time that the question is due) is a good proxy for stability.
             </Text>
             <Text mt="lg">
               <strong>Difficulty</strong> is also a slightly arbitrary
@@ -313,9 +380,70 @@ const WordSearchForm: React.FC = () => {
               Importing a cardbox will overwrite any of your existing cards that
               are also in the cardbox. Make sure you want to do this!
             </Text>
+            <Text mt="lg">A couple more important notes:</Text>
+            <List spacing="md" mt="lg" type="ordered">
+              <List.Item>
+                <Text>
+                  All of your cards in your cardbox will be imported, even those
+                  you haven't quizzed in a long time. WordVault will begin
+                  quizzing you on these if they are overdue. Please delete any
+                  cards you don't actually need, prior to import.
+                </Text>
+              </List.Item>
+              <List.Item>
+                <Text>Placeholdr.</Text>
+              </List.Item>
+            </List>
           </Collapse>
+
+          <Stack mt="lg">
+            <form
+              encType="multipart/form-data"
+              onSubmit={uploadCardboxForm.onSubmit((values) => {
+                console.log(values.cardbox);
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(values.cardbox);
+
+                reader.onload = function () {
+                  processUploadedCardbox(reader.result as ArrayBuffer);
+                };
+
+                reader.onerror = function () {
+                  setAlert({
+                    color: "red",
+                    shown: true,
+                    text: String(reader.error),
+                  });
+                };
+              })}
+            >
+              <FileInput
+                {...uploadCardboxForm.getInputProps("cardbox")}
+                label={`Upload your Anagrams.db file from Zyzzyva. This cardbox must consist of words that are valid in ${lexicon}.`}
+                placeholder="Click to upload..."
+                maw={300}
+                m="sm"
+              />
+              <Button
+                variant="light"
+                color="blue"
+                type="submit"
+                maw={450}
+                m="sm"
+                disabled={showLoader}
+              >
+                Import Cardbox into WordVault
+              </Button>
+            </form>
+            {showLoader ? <Loader color="blue" type="bars" /> : null}
+          </Stack>
         </Tabs.Panel>
       </Tabs>
+      {alert.shown && (
+        <Alert variant="light" color={alert.color} mt="lg">
+          {alert.text}
+        </Alert>
+      )}
     </>
   );
 };

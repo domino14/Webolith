@@ -25,6 +25,7 @@ interface FlashcardProps {
   onCustomArrange: () => void;
   displayQuestion: string;
   origDisplayQuestion: string;
+  isPaywalled: boolean;
 }
 
 const Flashcard: React.FC<FlashcardProps> = ({
@@ -43,6 +44,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const isDark = colorScheme === "dark";
   const smallScreen = useMediaQuery("(max-width: 40em)");
   const { displaySettings } = useContext(AppContext);
+  const backgroundColor = isDark ? theme.colors.dark[8] : theme.colors.gray[0];
 
   return (
     <Card
@@ -54,7 +56,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
       style={{
         maxWidth: 600,
         width: "100%",
-        backgroundColor: isDark ? theme.colors.dark[8] : theme.colors.gray[0],
+        backgroundColor: backgroundColor,
       }}
     >
       {!flipped ? (

@@ -23,8 +23,10 @@ import {
   IconBook,
   IconCalendar,
   IconCubePlus,
+  IconGraph,
+  IconHeartDollar,
+  IconMedal2,
   IconMoon,
-  IconSearch,
   IconSettings,
   IconSun,
   IconUserQuestion,
@@ -43,8 +45,14 @@ const lexMap = {
 function App() {
   const [openedBurger, { toggle: toggleBurger, close: closeBurger }] =
     useDisclosure();
-  const { lexicon, defaultLexicon, setLexicon, loggedIn, setDefaultLexicon } =
-    useContext(AppContext);
+  const {
+    lexicon,
+    defaultLexicon,
+    setLexicon,
+    loggedIn,
+    isMember,
+    setDefaultLexicon,
+  } = useContext(AppContext);
   const [showChangeLexLink, setShowChangeLexLink] = useState(false);
   const loginURL = `${window.location.protocol}//${window.location.host}/accounts/login?next=/wordvault`;
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -148,17 +156,28 @@ function App() {
                 "Add to WordVault",
               ],
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
-              ["card-stats", <IconSearch color="green" />, "Card statistics"],
+              ["stats", <IconGraph color="green" />, "Statistics"],
+              ["leaderboard", <IconMedal2 color="green" />, "Leaderboard"],
               ["settings", <IconSettings color="green" />, "Settings"],
+              [
+                "supporter",
+                <IconHeartDollar color="green" />,
+                isMember ? "Thank you for your support!" : "Become a supporter",
+                true,
+              ],
               [
                 "help",
                 <IconUserQuestion color="green" />,
                 "What is WordVault?",
               ],
-            ].map(([path, icon, label]) => (
+            ].map(([path, icon, label, absolute]) => (
               <NavLink
                 key={path as string}
                 onClick={() => {
+                  if (absolute) {
+                    window.location.assign("/supporter");
+                    return;
+                  }
                   if (location.pathname === `/${path}`) {
                     // Force reload the component by resetting the state or triggering a re-render
                     navigate(`/${path}`, { replace: true });

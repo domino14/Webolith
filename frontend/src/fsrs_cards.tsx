@@ -29,9 +29,13 @@ import Flashcard from "./flashcard";
 
 interface FSRSCardsProps {
   setFinishedCards: () => void;
+  isPaywalled: boolean;
 }
 
-const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
+const FSRSCards: React.FC<FSRSCardsProps> = ({
+  setFinishedCards,
+  isPaywalled,
+}) => {
   const [flipped, setFlipped] = useState(false);
   const [previousCard, setPreviousCard] = useState<HistoryEntry | null>(null);
   const [showLoader, setShowLoader] = useState(false);
@@ -359,6 +363,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({ setFinishedCards }) => {
       )}
       {currentCard && (
         <Flashcard
+          isPaywalled={isPaywalled}
           flipped={flipped}
           handleFlip={handleFlip}
           currentCard={currentCard}

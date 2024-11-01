@@ -228,3 +228,55 @@ export const DeleteResponse = /*@__PURE__*/ proto3.makeMessageType(
   ],
 );
 
+/**
+ * @generated from message wordvault.GetDailyProgressRequest
+ */
+export const GetDailyProgressRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyProgressRequest",
+  () => [
+    { no: 1, name: "timezone", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDailyProgressResponse
+ */
+export const GetDailyProgressResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyProgressResponse",
+  () => [
+    { no: 1, name: "progress_stats", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 5 /* ScalarType.INT32 */} },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDailyLeaderboardRequest
+ */
+export const GetDailyLeaderboardRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyLeaderboardRequest",
+  () => [
+    { no: 1, name: "timezone", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDailyLeaderboardResponse
+ */
+export const GetDailyLeaderboardResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyLeaderboardResponse",
+  () => [
+    { no: 1, name: "items", kind: "message", T: GetDailyLeaderboardResponse_LeaderboardItem, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDailyLeaderboardResponse.LeaderboardItem
+ */
+export const GetDailyLeaderboardResponse_LeaderboardItem = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyLeaderboardResponse.LeaderboardItem",
+  () => [
+    { no: 1, name: "user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "cards_studied", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ],
+  {localName: "GetDailyLeaderboardResponse_LeaderboardItem"},
+);
+
