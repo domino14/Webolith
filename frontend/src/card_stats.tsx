@@ -1,10 +1,17 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { AppContext } from "./app_context";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { useClient } from "./use_client";
 import {
   Button,
   Card,
+  Divider,
   List,
   Stack,
   Text,
@@ -20,16 +27,41 @@ import {
   IconAlertHexagon,
   IconBabyBottle,
   IconCheck,
+  IconDatabaseImport,
   IconHelp,
   IconX,
 } from "@tabler/icons-react";
-import { LineChart } from "@mantine/charts";
+import { BarChart, LineChart } from "@mantine/charts";
 
 const CardStats: React.FC = () => {
-  const { lexicon } = useContext(AppContext);
+  const { lexicon, jwt } = useContext(AppContext);
   const [lookup, setLookup] = useState("");
   const wordvaultClient = useClient(WordVaultService);
+  const [todayStats, setTodayStats] = useState<{
+    [key: string]: number;
+  }>({});
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
+
+  const fetchTodayStats = useCallback(async () => {
+    try {
+      const resp = await wordvaultClient.getDailyProgress({
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+      setTodayStats(resp.progressStats);
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        message: String(e),
+      });
+    }
+  }, [wordvaultClient]);
+
+  useEffect(() => {
+    if (!jwt) {
+      return;
+    }
+    fetchTodayStats();
+  }, [fetchTodayStats, jwt]);
 
   const lookupAlphagram = useCallback(async () => {
     try {
@@ -71,6 +103,9 @@ const CardStats: React.FC = () => {
 
   return (
     <>
+      {Object.keys(todayStats).length && <TodayStats stats={todayStats} />}
+
+      <Divider m="lg" />
       <Text mb="md">
         Enter a word or alphagram below to look it up in your WordVault:
       </Text>
@@ -111,10 +146,16 @@ type fsrsCard = {
   LastReview: string;
 };
 
+type importLog = {
+  ImportedDate: string;
+  CardboxAtImport: number;
+};
+
 type reviewLogItem = {
   Rating: number;
   Review: string; // time
   State: number;
+  ImportLog: importLog;
 };
 
 interface CardInfoProps {
@@ -309,35 +350,119 @@ const CardInfo: React.FC<CardInfoProps> = ({
       >
         {reviewLog.map((rl) => {
           let bullet = null;
-          switch (rl.Rating) {
-            case 1:
-              bullet = <IconX color={theme.colors.red[6]} />;
-              break;
-            case 2:
-              bullet = <IconAlertHexagon color={theme.colors.yellow[6]} />;
-              break;
-            case 3:
-              bullet = <IconCheck color={theme.colors.green[6]} />;
-              break;
-            case 4:
-              bullet = <IconBabyBottle color={theme.colors.pink[6]} />;
-              break;
-          }
 
-          return (
-            <Timeline.Item
-              title={Score[rl.Rating]}
-              key={rl.Review}
-              bullet={bullet}
-            >
-              <Text size="xs" c={theme.colors.gray[6]}>
-                {dstr(rl.Review, true)}
-              </Text>
-            </Timeline.Item>
-          );
+          if (rl.ImportLog) {
+            bullet = <IconDatabaseImport color={theme.colors.yellow[3]} />;
+            return (
+              <Timeline.Item title="Imported" key="import" bullet={bullet}>
+                <Text size="xs" c={theme.colors.gray[6]}>
+                  {`${dstr(rl.ImportLog.ImportedDate, true)} from cardbox ${
+                    rl.ImportLog.CardboxAtImport
+                  }`}
+                </Text>
+              </Timeline.Item>
+            );
+          } else {
+            switch (rl.Rating) {
+              case 1:
+                bullet = <IconX color={theme.colors.red[6]} />;
+                break;
+              case 2:
+                bullet = <IconAlertHexagon color={theme.colors.yellow[6]} />;
+                break;
+              case 3:
+                bullet = <IconCheck color={theme.colors.green[6]} />;
+                break;
+              case 4:
+                bullet = <IconBabyBottle color={theme.colors.pink[6]} />;
+                break;
+            }
+
+            return (
+              <Timeline.Item
+                title={Score[rl.Rating]}
+                key={rl.Review}
+                bullet={bullet}
+              >
+                <Text size="xs" c={theme.colors.gray[6]}>
+                  {dstr(rl.Review, true)}
+                </Text>
+              </Timeline.Item>
+            );
+          }
         })}
       </Timeline>
     </>
+  );
+};
+
+interface TodayStatsProps {
+  stats: { [key: string]: number };
+}
+
+const TodayStats: React.FC<TodayStatsProps> = ({ stats }) => {
+  return (
+    <Stack gap="md">
+      <Text>
+        New cards today:
+        <Text c="dimmed">
+          {stats.New}{" "}
+          {stats.New > 0
+            ? `(Get rate: ${(
+                ((stats.New - stats.NewMissed) / stats.New) *
+                100
+              ).toFixed(2)}%)`
+            : ""}{" "}
+        </Text>
+      </Text>
+      <Text>
+        Reviewed cards today:
+        <Text c="dimmed">
+          {stats.Reviewed}{" "}
+          {stats.Reviewed > 0
+            ? `(Recall rate: ${(
+                ((stats.Reviewed - stats.ReviewedMissed) / stats.Reviewed) *
+                100
+              ).toFixed(2)}%)`
+            : ""}
+        </Text>
+      </Text>
+      <Text>Score breakdown</Text>
+      <BarChart
+        h={300}
+        maw={1000}
+        orientation="vertical"
+        mt="lg"
+        data={[
+          {
+            rating: "Missed",
+            "New Cards": stats["NewMissed"],
+            "Reviewed Cards": stats["ReviewedMissed"],
+          },
+          {
+            rating: "Hard",
+            "New Cards": stats["NewHard"],
+            "Reviewed Cards": stats["ReviewedHard"],
+          },
+          {
+            rating: "Good",
+            "New Cards": stats["NewGood"],
+            "Reviewed Cards": stats["ReviewedGood"],
+          },
+          {
+            rating: "Easy",
+            "New Cards": stats["NewEasy"],
+            "Reviewed Cards": stats["ReviewedEasy"],
+          },
+        ]}
+        dataKey="rating"
+        series={[
+          { name: "New Cards", color: "violet.6" },
+          { name: "Reviewed Cards", color: "blue.6" },
+        ]}
+        tickLine="x"
+      />
+    </Stack>
   );
 };
 

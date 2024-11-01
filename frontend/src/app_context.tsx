@@ -17,6 +17,7 @@ type DisplaySettings = {
 export interface AppContextType {
   jwt: string;
   username: string;
+  isMember: boolean;
   lexicon: string;
   defaultLexicon: string;
   setLexicon: (lex: string) => void;
@@ -32,6 +33,7 @@ const initialContext = {
   jwtExpiry: 0,
   username: "",
   lexicon: "",
+  isMember: false,
   defaultLexicon: "",
   setLexicon: () => {},
   setDefaultLexicon: () => {},
@@ -56,7 +58,7 @@ interface AppProviderProps {
   children: ReactNode;
 }
 
-function getUsnAndExp(jwt: string): [string, number] {
+function getUsnAndExp(jwt: string): [string, number, boolean] {
   try {
     // Split the JWT into its parts
     const parts = jwt.split(".");
@@ -73,10 +75,14 @@ function getUsnAndExp(jwt: string): [string, number] {
     const payloadObject = JSON.parse(decodedPayload);
 
     // Extract the 'usn' claim
-    return [payloadObject.usn || "", payloadObject.exp || 0];
+    return [
+      payloadObject.usn || "",
+      payloadObject.exp || 0,
+      payloadObject.mbr || false,
+    ];
   } catch (error) {
     console.error("Error decoding JWT:", error);
-    return ["", 0];
+    return ["", 0, false];
   }
 }
 
@@ -86,6 +92,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [jwt, setJwt] = useState("");
   const [username, setUsername] = useState("");
   const [tokenExpiry, setTokenExpiry] = useState(0);
+  const [isMember, setIsMember] = useState(false);
   const [lexicon, setLexicon] = useState("");
   const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
@@ -104,9 +111,10 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
       }
       const data = await response.json();
       setJwt(data.token);
-      const [usn, exp] = getUsnAndExp(data.token);
+      const [usn, exp, mbr] = getUsnAndExp(data.token);
       setUsername(usn ?? "");
       setTokenExpiry(exp ?? 0);
+      setIsMember(mbr);
       setLoginState(LoginState.LoggedIn);
       return data.token;
     } catch (error) {
@@ -183,6 +191,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         jwt,
         username,
         lexicon,
+        isMember,
         setLexicon,
         setDefaultLexicon,
         loggedIn: loginState,

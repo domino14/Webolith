@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -105,6 +105,26 @@ export const WordVaultService = {
       I: DeleteRequest,
       O: DeleteResponse,
       kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetDailyProgress
+     */
+    getDailyProgress: {
+      name: "GetDailyProgress",
+      I: GetDailyProgressRequest,
+      O: GetDailyProgressResponse,
+      kind: MethodKind.Unary,
+      idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetDailyLeaderboard
+     */
+    getDailyLeaderboard: {
+      name: "GetDailyLeaderboard",
+      I: GetDailyLeaderboardRequest,
+      O: GetDailyLeaderboardResponse,
+      kind: MethodKind.Unary,
+      idempotency: MethodIdempotency.NoSideEffects,
     },
   }
 };

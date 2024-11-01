@@ -593,3 +593,128 @@ export declare class DeleteResponse extends Message<DeleteResponse> {
   static equals(a: DeleteResponse | PlainMessage<DeleteResponse> | undefined, b: DeleteResponse | PlainMessage<DeleteResponse> | undefined): boolean;
 }
 
+/**
+ * @generated from message wordvault.GetDailyProgressRequest
+ */
+export declare class GetDailyProgressRequest extends Message<GetDailyProgressRequest> {
+  /**
+   * @generated from field: string timezone = 1;
+   */
+  timezone: string;
+
+  constructor(data?: PartialMessage<GetDailyProgressRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyProgressRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyProgressRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyProgressRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyProgressRequest;
+
+  static equals(a: GetDailyProgressRequest | PlainMessage<GetDailyProgressRequest> | undefined, b: GetDailyProgressRequest | PlainMessage<GetDailyProgressRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDailyProgressResponse
+ */
+export declare class GetDailyProgressResponse extends Message<GetDailyProgressResponse> {
+  /**
+   * @generated from field: map<string, int32> progress_stats = 1;
+   */
+  progressStats: { [key: string]: number };
+
+  constructor(data?: PartialMessage<GetDailyProgressResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyProgressResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyProgressResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyProgressResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyProgressResponse;
+
+  static equals(a: GetDailyProgressResponse | PlainMessage<GetDailyProgressResponse> | undefined, b: GetDailyProgressResponse | PlainMessage<GetDailyProgressResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDailyLeaderboardRequest
+ */
+export declare class GetDailyLeaderboardRequest extends Message<GetDailyLeaderboardRequest> {
+  /**
+   * @generated from field: string timezone = 1;
+   */
+  timezone: string;
+
+  constructor(data?: PartialMessage<GetDailyLeaderboardRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyLeaderboardRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyLeaderboardRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyLeaderboardRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyLeaderboardRequest;
+
+  static equals(a: GetDailyLeaderboardRequest | PlainMessage<GetDailyLeaderboardRequest> | undefined, b: GetDailyLeaderboardRequest | PlainMessage<GetDailyLeaderboardRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDailyLeaderboardResponse
+ */
+export declare class GetDailyLeaderboardResponse extends Message<GetDailyLeaderboardResponse> {
+  /**
+   * @generated from field: repeated wordvault.GetDailyLeaderboardResponse.LeaderboardItem items = 1;
+   */
+  items: GetDailyLeaderboardResponse_LeaderboardItem[];
+
+  constructor(data?: PartialMessage<GetDailyLeaderboardResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyLeaderboardResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyLeaderboardResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyLeaderboardResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyLeaderboardResponse;
+
+  static equals(a: GetDailyLeaderboardResponse | PlainMessage<GetDailyLeaderboardResponse> | undefined, b: GetDailyLeaderboardResponse | PlainMessage<GetDailyLeaderboardResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDailyLeaderboardResponse.LeaderboardItem
+ */
+export declare class GetDailyLeaderboardResponse_LeaderboardItem extends Message<GetDailyLeaderboardResponse_LeaderboardItem> {
+  /**
+   * @generated from field: string user = 1;
+   */
+  user: string;
+
+  /**
+   * @generated from field: int32 cards_studied = 2;
+   */
+  cardsStudied: number;
+
+  constructor(data?: PartialMessage<GetDailyLeaderboardResponse_LeaderboardItem>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyLeaderboardResponse.LeaderboardItem";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyLeaderboardResponse_LeaderboardItem;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyLeaderboardResponse_LeaderboardItem;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyLeaderboardResponse_LeaderboardItem;
+
+  static equals(a: GetDailyLeaderboardResponse_LeaderboardItem | PlainMessage<GetDailyLeaderboardResponse_LeaderboardItem> | undefined, b: GetDailyLeaderboardResponse_LeaderboardItem | PlainMessage<GetDailyLeaderboardResponse_LeaderboardItem> | undefined): boolean;
+}
+
