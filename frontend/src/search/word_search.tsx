@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import SearchRows from "./rows";
 import {
   Alert,
+  Badge,
   Button,
   Center,
   Code,
@@ -339,10 +340,10 @@ const WordSearchForm: React.FC = () => {
           <Tabs.Tab value="search">Search</Tabs.Tab>
           <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
           <Tabs.Tab value="upload-cardbox" disabled>
-            Upload Zyzzyva Cardbox (Coming soon){" "}
-            {/* <Badge color="green" ml="md">
+            Upload Zyzzyva Cardbox
+            <Badge color="green" ml="md">
               New
-            </Badge> */}
+            </Badge>
           </Tabs.Tab>
           <Tabs.Tab value="delete-cards" c="red">
             Bulk card deletion
