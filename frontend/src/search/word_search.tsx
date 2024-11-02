@@ -6,7 +6,6 @@ import {
 } from "./types";
 import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
-import Cookies from "js-cookie";
 import SearchRows from "./rows";
 import {
   Alert,
@@ -15,7 +14,6 @@ import {
   Center,
   Code,
   Collapse,
-  Dialog,
   Divider,
   FileInput,
   Group,
@@ -30,10 +28,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useClient } from "../use_client";
 import { QuestionSearcher } from "../gen/rpc/wordsearcher/searcher_connect";
-import {
-  SearchRequest_Condition,
-  SearchRequest_SearchParam,
-} from "../gen/rpc/wordsearcher/searcher_pb";
+import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
 import { WordVaultService } from "../gen/rpc/wordvault/api_connect";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
