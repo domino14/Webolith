@@ -191,7 +191,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
 
   const customArrange = useCallback(
     (letters: string[], origAlphagram: string): string => {
-      const customOrder = displaySettings.customOrder;
+      const customOrder = displaySettings.customOrder?.toLocaleUpperCase();
 
       if (!customOrder) {
         return origAlphagram;

@@ -13,14 +13,12 @@ import { BarChart } from "@mantine/charts";
 import {
   Button,
   Center,
-  Divider,
   Group,
   Loader,
   Modal,
   NumberInput,
   Stack,
   Text,
-  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -34,9 +32,7 @@ const CardSchedule: React.FC = () => {
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
-  const [deleteModalOpened, deleteModalHandlers] = useDisclosure();
   const [showLoader, setShowLoader] = useState(false);
-  const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
 
   const wordvaultClient = useClient(WordVaultService);
 
@@ -201,34 +197,6 @@ const CardSchedule: React.FC = () => {
     postponeModalHandlers,
   ]);
 
-  const sendDelete = useCallback(
-    async (onlyNew: boolean) => {
-      try {
-        setShowLoader(true);
-        const resp = await wordvaultClient.delete({
-          lexicon,
-          onlyNewQuestions: onlyNew,
-        });
-        notifications.show({
-          color: "green",
-          message: `Deleted ${resp.numDeleted} cards.`,
-        });
-        deleteModalHandlers.close();
-        // re-render graphs
-        fetchDueQuestions();
-      } catch (e) {
-        notifications.show({
-          color: "red",
-          title: "Error",
-          message: String(e),
-        });
-      } finally {
-        setShowLoader(false);
-      }
-    },
-    [lexicon, fetchDueQuestions, wordvaultClient, deleteModalHandlers]
-  );
-
   return (
     <div>
       {showLoader && <Loader type="bars"></Loader>}
@@ -269,54 +237,6 @@ const CardSchedule: React.FC = () => {
         )}
       </Modal>
 
-      <Modal
-        opened={deleteModalOpened}
-        onClose={deleteModalHandlers.close}
-        title="Delete cards"
-      >
-        <Text mb="xl">
-          If you've accidentally added too many cards, you can delete the new
-          ones here. That is, the ones that you have not yet quizzed on.
-        </Text>
-        <Text mb="xl" fw={700} c="red">
-          This is not undoable. Make sure you want to delete these new cards!
-          You can always re-add them later.
-        </Text>
-
-        <Button color="pink" onClick={() => sendDelete(true)} mb="xl">
-          Delete new cards
-        </Button>
-
-        <Divider />
-
-        <Center>
-          <Text fw={700} m="xl" c="red">
-            DANGER ZONE
-          </Text>
-        </Center>
-        <Text mb="xl">
-          Maybe you wish to start over new? You can delete ALL your cards.
-        </Text>
-        <Text mb="xl" fw={700} c="red">
-          This is not undoable. You will lose all your history! Make sure you
-          actually want to delete all your cards!
-        </Text>
-        <Stack>
-          <TextInput
-            label="Type in DELETE ALL"
-            value={deleteAllTextInput}
-            onChange={(e) => setDeleteAllTextInput(e.target.value)}
-          />
-          <Button
-            color="red"
-            onClick={() => sendDelete(false)}
-            disabled={deleteAllTextInput !== "DELETE ALL"}
-          >
-            Delete ALL cards
-          </Button>
-        </Stack>
-      </Modal>
-
       <>
         <Text mb="sm">
           You have {numCards} cards in lexicon {lexicon}.
@@ -329,7 +249,6 @@ const CardSchedule: React.FC = () => {
             </Text>
             <Group gap="xl">
               <Button onClick={postponeModalHandlers.open}>Postpone</Button>
-              <Button onClick={deleteModalHandlers.open}>Delete cards</Button>
             </Group>
           </div>
         )}

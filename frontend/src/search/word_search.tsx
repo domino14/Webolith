@@ -1,5 +1,9 @@
 import { useCallback, useContext, useState } from "react";
-import { SearchTypesEnum, SearchCriterion } from "./types";
+import {
+  SearchTypesEnum,
+  SearchCriterion,
+  lexiconSearchCriterion,
+} from "./types";
 import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
 import Cookies from "js-cookie";
@@ -7,21 +11,31 @@ import SearchRows from "./rows";
 import {
   Alert,
   Button,
+  Center,
   Code,
   Collapse,
+  Dialog,
+  Divider,
   FileInput,
+  Group,
   List,
   Loader,
+  Modal,
   Stack,
   Tabs,
   Text,
+  TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useClient } from "../use_client";
 import { QuestionSearcher } from "../gen/rpc/wordsearcher/searcher_connect";
-import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
+import {
+  SearchRequest_Condition,
+  SearchRequest_SearchParam,
+} from "../gen/rpc/wordsearcher/searcher_pb";
 import { WordVaultService } from "../gen/rpc/wordvault/api_connect";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -53,8 +67,6 @@ type AlertValues = {
   text?: string;
 };
 
-const AddWordvaultURL = "/cards/api/add_to_wordvault";
-
 const WordSearchForm: React.FC = () => {
   const { lexicon, jwt } = useContext(AppContext);
   const [alert, setAlert] = useState<AlertValues>({
@@ -64,6 +76,11 @@ const WordSearchForm: React.FC = () => {
   });
   const [showLoader, setShowLoader] = useState(false);
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
+  const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
+  const [
+    openedSearchDelete,
+    { close: closeSearchDelete, open: openSearchDelete },
+  ] = useDisclosure(false);
 
   const uploadWordListForm = useForm({
     initialValues: {
@@ -187,6 +204,33 @@ const WordSearchForm: React.FC = () => {
     [jwt, lexicon]
   );
 
+  const sendDelete = useCallback(
+    async (onlyNew: boolean, allCards?: boolean, alphagramList?: string[]) => {
+      try {
+        setShowLoader(true);
+        const resp = await wordVaultClient.delete({
+          lexicon,
+          onlyNewQuestions: onlyNew,
+          allQuestions: allCards,
+          onlyAlphagrams: alphagramList,
+        });
+        notifications.show({
+          color: "green",
+          message: `Deleted ${resp.numDeleted} cards.`,
+        });
+      } catch (e) {
+        notifications.show({
+          color: "red",
+          title: "Error",
+          message: String(e),
+        });
+      } finally {
+        setShowLoader(false);
+      }
+    },
+    [lexicon, wordVaultClient]
+  );
+
   const {
     searchCriteria,
     addSearchRow,
@@ -202,30 +246,22 @@ const WordSearchForm: React.FC = () => {
     try {
       setShowLoader(true);
       setAlert((prev) => ({ ...prev, shown: false }));
-      const searchParams = {
-        searchCriteria: searchCriteria.map((s) => s.toJSObj()),
-        lexicon,
-      };
 
-      // XXX: consider just searching from word_db_server directly.
-      // This goes out to the aerolith API but shouldn't need to.
-      const response = await fetch(AddWordvaultURL, {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json",
-          "X-CSRFToken": Cookies.get("csrftoken") ?? "",
-        }),
-        credentials: "include",
-        body: JSON.stringify(searchParams),
+      const searchRequest = {
+        searchparams: searchCriteria.map((s) => s.toProtoObj()),
+      };
+      searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
+
+      const searchResponse = await wordServerClient.search(searchRequest);
+      const addResp = await wordVaultClient.addCards({
+        lexicon,
+        alphagrams: searchResponse.alphagrams.map((a) => a.alphagram),
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || data);
-      }
+
       setAlert({
         color: "green",
         shown: true,
-        text: data.msg,
+        text: `Added ${addResp.numCardsAdded} cards to WordVault.`,
       });
     } catch (e) {
       setAlert({
@@ -236,10 +272,68 @@ const WordSearchForm: React.FC = () => {
     } finally {
       setShowLoader(false);
     }
-  }, [lexicon, searchCriteria, setAlert]);
+  }, [lexicon, searchCriteria, wordServerClient, wordVaultClient, setAlert]);
+
+  const deleteFromWordVault = useCallback(async () => {
+    if (!lexicon) {
+      return;
+    }
+    try {
+      setShowLoader(true);
+      setAlert((prev) => ({ ...prev, shown: false }));
+
+      const searchRequest = {
+        searchparams: searchCriteria.map((s) => s.toProtoObj()),
+      };
+      searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
+
+      const searchResponse = await wordServerClient.search(searchRequest);
+
+      if (searchResponse.alphagrams.length === 0) {
+        throw new Error("No cards to delete.");
+      }
+      await sendDelete(
+        false,
+        false,
+        searchResponse.alphagrams.map((a) => a.alphagram)
+      );
+    } catch (e) {
+      setAlert({
+        color: "red",
+        shown: true,
+        text: String(e),
+      });
+    } finally {
+      setShowLoader(false);
+    }
+  }, [lexicon, sendDelete, searchCriteria, wordServerClient, setAlert]);
 
   return (
     <>
+      <Modal
+        opened={openedSearchDelete}
+        withCloseButton
+        onClose={closeSearchDelete}
+        title="Delete some cards?"
+      >
+        <Text size="lg" m="lg">
+          Are you sure? This will delete the cards matching your search criteria
+          from WordVault. This can't be undone!
+        </Text>
+        <Group gap="lg" m="lg">
+          <Button
+            onClick={() => {
+              deleteFromWordVault();
+              closeSearchDelete();
+            }}
+            color="pink"
+          >
+            Yes, delete matching cards
+          </Button>
+          <Button onClick={closeSearchDelete}>Nevermind</Button>
+        </Group>
+      </Modal>
+
       <Tabs variant="default" defaultValue="search">
         <Tabs.List>
           <Tabs.Tab value="search">Search</Tabs.Tab>
@@ -249,6 +343,9 @@ const WordSearchForm: React.FC = () => {
             {/* <Badge color="green" ml="md">
               New
             </Badge> */}
+          </Tabs.Tab>
+          <Tabs.Tab value="delete-cards" c="red">
+            Bulk card deletion
           </Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="search">
@@ -261,15 +358,24 @@ const WordSearchForm: React.FC = () => {
               modifySearchParam={searchParamChange}
               allowedSearchTypes={allowedSearchTypes}
             />
-
-            <Button
-              variant="light"
-              color="blue"
-              style={{ maxWidth: 200 }}
-              onClick={addToWordVault}
-            >
-              Add to WordVault
-            </Button>
+            <Group>
+              <Button
+                variant="light"
+                color="blue"
+                style={{ maxWidth: 200 }}
+                onClick={addToWordVault}
+              >
+                Add to WordVault
+              </Button>
+              <Button
+                variant="light"
+                color="red"
+                style={{ maxWidth: 200 }}
+                onClick={openSearchDelete}
+              >
+                Delete from WordVault
+              </Button>
+            </Group>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
         </Tabs.Panel>
@@ -435,6 +541,57 @@ const WordSearchForm: React.FC = () => {
                 Import Cardbox into WordVault
               </Button>
             </form>
+            {showLoader ? <Loader color="blue" type="bars" /> : null}
+          </Stack>
+        </Tabs.Panel>
+        <Tabs.Panel value="delete-cards">
+          <Text m="xl">
+            If you wish to delete a specific set of cards, click on Search above
+            and then the "Delete from WordVault" button.
+          </Text>
+          <Text m="xl">
+            If you've accidentally added too many cards, you can delete the new
+            ones here. That is, the ones that you have not yet quizzed on.
+          </Text>
+          <Text m="xl" fw={700} c="red">
+            This is not undoable. Make sure you want to delete these new cards!
+            You can always re-add them later.
+          </Text>
+
+          <Button color="pink" m="xl" onClick={() => sendDelete(true)}>
+            Delete new cards
+          </Button>
+
+          <Divider m="xl" />
+
+          <Center>
+            <Text fw={700} m="xl" c="red" size="xl">
+              DANGER ZONE
+            </Text>
+          </Center>
+          <Text m="xl">
+            Maybe you wish to start over new? You can delete ALL your cards.
+          </Text>
+          <Text m="xl" fw={700} c="red">
+            This is not undoable. You will lose all your history! Make sure you
+            actually want to delete all your cards!
+          </Text>
+          <Stack m="xl">
+            <TextInput
+              label="Type in DELETE ALL CARDS"
+              value={deleteAllTextInput}
+              onChange={(e) => setDeleteAllTextInput(e.target.value)}
+            />
+            <Button
+              color="red"
+              onClick={() => sendDelete(false, true)}
+              disabled={deleteAllTextInput !== "DELETE ALL CARDS"}
+            >
+              Delete ALL cards
+            </Button>
+            <Text c="dimmed" size="xs">
+              This is one doodle that can't be undid, home skillet.
+            </Text>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
         </Tabs.Panel>

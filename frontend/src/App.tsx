@@ -153,7 +153,7 @@ function App() {
               [
                 "word-search",
                 <IconCubePlus color="green" />,
-                "Add to WordVault",
+                "Manage WordVault cards",
               ],
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
               ["stats", <IconGraph color="green" />, "Statistics"],

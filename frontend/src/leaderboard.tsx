@@ -40,7 +40,6 @@ const Leaderboard: React.FC = () => {
       studied: v.cardsStudied,
     }));
   }, [leaderboard]);
-  console.log("data", data);
 
   return (
     <Stack gap="lg">
