@@ -4,7 +4,7 @@ import { AppContext } from "./app_context";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { GetDailyLeaderboardResponse_LeaderboardItem } from "./gen/rpc/wordvault/api_pb";
 import { notifications } from "@mantine/notifications";
-import { BarChart } from "@mantine/charts";
+import { Stack, Table, Text } from "@mantine/core";
 
 const Leaderboard: React.FC = () => {
   const { jwt } = useContext(AppContext);
@@ -16,7 +16,7 @@ const Leaderboard: React.FC = () => {
   const fetchLeaderboard = useCallback(async () => {
     try {
       const resp = await wordvaultClient.getDailyLeaderboard({
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezone: "America/Los_Angeles",
       });
       setLeaderboard(resp.items);
     } catch (e) {
@@ -37,22 +37,31 @@ const Leaderboard: React.FC = () => {
   const data = useMemo(() => {
     return leaderboard.map((v) => ({
       username: v.user,
-      Studied: v.cardsStudied,
+      studied: v.cardsStudied,
     }));
   }, [leaderboard]);
   console.log("data", data);
 
   return (
-    <BarChart
-      maw={1000}
-      h={1000}
-      orientation="vertical"
-      mt="lg"
-      data={data}
-      dataKey="username"
-      series={[{ name: "Studied", color: "blue.6" }]}
-      tickLine="x"
-    />
+    <Stack gap="lg">
+      <Text c="dimmed">Stats reset at midnight Aerolith time (US/Pacific)</Text>
+      <Table maw={600}>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Username</Table.Th>
+            <Table.Th>Cards studied today</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {data.map((datum) => (
+            <Table.Tr key={datum.username}>
+              <Table.Td>{datum.username}</Table.Td>
+              <Table.Td>{datum.studied}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </Stack>
   );
 };
 
