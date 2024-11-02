@@ -334,7 +334,7 @@ const WordSearchForm: React.FC = () => {
         <Tabs.List>
           <Tabs.Tab value="search">Search</Tabs.Tab>
           <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
-          <Tabs.Tab value="upload-cardbox">
+          <Tabs.Tab value="upload-cardbox" disabled>
             Upload Zyzzyva Cardbox
             <Badge color="green" ml="md">
               New
