@@ -214,7 +214,8 @@ export const DeleteRequest = /*@__PURE__*/ proto3.makeMessageType(
   () => [
     { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "only_new_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 3, name: "alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "only_alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 4, name: "all_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ],
 );
 

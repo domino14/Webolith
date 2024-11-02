@@ -1,4 +1,11 @@
-import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
+import {
+  SearchRequest_Condition,
+  SearchRequest_MinMax,
+  SearchRequest_NotInLexCondition,
+  SearchRequest_NumberValue,
+  SearchRequest_SearchParam,
+  SearchRequest_StringValue,
+} from "../gen/rpc/wordsearcher/searcher_pb";
 
 const cond = SearchRequest_Condition;
 export type optionType = number | string | undefined;
@@ -222,6 +229,18 @@ function searchCriteriaOptions(
   );
 }
 
+export const lexiconSearchCriterion = (lex: string) => {
+  return new SearchRequest_SearchParam({
+    condition: SearchRequest_Condition.LEXICON,
+    conditionparam: {
+      case: "stringvalue",
+      value: new SearchRequest_StringValue({
+        value: lex,
+      }),
+    },
+  });
+};
+
 class SearchCriterion {
   searchType: number;
   options: { [key: string]: optionType };
@@ -247,6 +266,58 @@ class SearchCriterion {
       searchType: SearchTypesEnum.properties[this.searchType].code,
       ...this.options,
     };
+  }
+
+  toProtoObj(): SearchRequest_SearchParam {
+    const obj = new SearchRequest_SearchParam({
+      condition: SearchTypesEnum.properties[this.searchType].code,
+    });
+
+    switch (this.inputType()) {
+      case SearchTypesInputs.ONE_NUMBER:
+        obj.conditionparam = {
+          case: "numbervalue",
+          value: new SearchRequest_NumberValue({
+            value: this.options.value as number,
+          }),
+        };
+        break;
+      case SearchTypesInputs.TWO_NUMBERS:
+        obj.conditionparam = {
+          case: "minmax",
+          value: new SearchRequest_MinMax({
+            min: this.options.minValue as number,
+            max: this.options.maxValue as number,
+          }),
+        };
+        break;
+      case SearchTypesInputs.ONE_STRING:
+        obj.conditionparam = {
+          case: "stringvalue",
+          value: new SearchRequest_StringValue({
+            value: this.options.value as string,
+          }),
+        };
+        break;
+      case SearchTypesInputs.SELECT:
+        // This is a special case; only used for NOT_IN_LEXICON,
+        // which is a number!
+        obj.conditionparam = {
+          case: "numbervalue",
+          value: new SearchRequest_NumberValue({
+            value:
+              this.options.value === "update"
+                ? SearchRequest_NotInLexCondition.PREVIOUS_VERSION
+                : this.options.value === "other_english"
+                ? SearchRequest_NotInLexCondition.OTHER_ENGLISH
+                : -1, // ?
+          }),
+        };
+        break;
+      default:
+        throw new Error("unhandled search type");
+    }
+    return obj;
   }
 
   /**

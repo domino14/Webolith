@@ -550,9 +550,14 @@ export declare class DeleteRequest extends Message<DeleteRequest> {
   onlyNewQuestions: boolean;
 
   /**
-   * @generated from field: repeated string alphagrams = 3;
+   * @generated from field: repeated string only_alphagrams = 3;
    */
-  alphagrams: string[];
+  onlyAlphagrams: string[];
+
+  /**
+   * @generated from field: bool all_questions = 4;
+   */
+  allQuestions: boolean;
 
   constructor(data?: PartialMessage<DeleteRequest>);
 
