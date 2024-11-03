@@ -334,7 +334,7 @@ const WordSearchForm: React.FC = () => {
         <Tabs.List>
           <Tabs.Tab value="search">Search</Tabs.Tab>
           <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
-          <Tabs.Tab value="upload-cardbox" disabled>
+          <Tabs.Tab value="upload-cardbox">
             Upload Zyzzyva Cardbox
             <Badge color="green" ml="md">
               New
@@ -354,24 +354,29 @@ const WordSearchForm: React.FC = () => {
               modifySearchParam={searchParamChange}
               allowedSearchTypes={allowedSearchTypes}
             />
-            <Group>
-              <Button
-                variant="light"
-                color="blue"
-                style={{ maxWidth: 200 }}
-                onClick={addToWordVault}
-              >
-                Add to WordVault
-              </Button>
-              <Button
-                variant="light"
-                color="red"
-                style={{ maxWidth: 200 }}
-                onClick={openSearchDelete}
-              >
-                Delete from WordVault
-              </Button>
-            </Group>
+            <Button
+              variant="light"
+              color="blue"
+              style={{ maxWidth: 200 }}
+              onClick={addToWordVault}
+              mb="lg"
+            >
+              Add to WordVault
+            </Button>
+
+            <Text size="lg" mb="lg">
+              OR
+            </Text>
+
+            <Button
+              variant="light"
+              color="red"
+              style={{ maxWidth: 200 }}
+              onClick={openSearchDelete}
+            >
+              Delete from WordVault
+            </Button>
+
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
         </Tabs.Panel>
