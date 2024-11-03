@@ -50,6 +50,7 @@ const SelectValue: React.FC<SelectValueProps> = ({
   <Select
     label={label}
     value={value}
+    size="lg"
     data={convertOptions(options)}
     onChange={(selectedValue) => {
       modifySearchParam(index, "value", selectedValue || "");
@@ -86,6 +87,7 @@ const NumberValue: React.FC<NumberValueProps> = ({
     value={defaultValue}
     min={minAllowed}
     max={maxAllowed}
+    size="lg"
     onChange={(value) => modifySearchParam(index, paramName, value ?? "")}
   />
 );
@@ -152,6 +154,7 @@ const StringValue: React.FC<StringValueProps> = ({
 }) => (
   <TextInput
     label="Value"
+    size="lg"
     value={value}
     onChange={(event) =>
       modifySearchParam(index, "value", event.currentTarget.value)
@@ -256,6 +259,7 @@ const SearchRow: React.FC<SearchRowProps> = ({
             variant="light"
             color="blue"
             onClick={addRow}
+            size="lg"
             style={{ marginTop: 25 }}
           >
             <IconPlus size={16} />
@@ -266,6 +270,7 @@ const SearchRow: React.FC<SearchRowProps> = ({
             color="blue"
             onClick={() => removeRow(index)}
             disabled={removeDisabled}
+            size="lg"
             style={{ marginTop: 25 }}
           >
             <IconMinus size={16} />
@@ -280,6 +285,7 @@ const SearchRow: React.FC<SearchRowProps> = ({
             onChange={(selectedValue) => {
               modifySearchType(index, parseInt(selectedValue || "0", 10));
             }}
+            size="lg"
           />
         </Group>
       </Grid.Col>

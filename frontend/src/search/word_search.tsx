@@ -357,9 +357,10 @@ const WordSearchForm: React.FC = () => {
             <Button
               variant="light"
               color="blue"
-              style={{ maxWidth: 200 }}
+              style={{ maxWidth: 250 }}
               onClick={addToWordVault}
               mb="lg"
+              size="lg"
             >
               Add to WordVault
             </Button>
@@ -371,7 +372,7 @@ const WordSearchForm: React.FC = () => {
             <Button
               variant="light"
               color="red"
-              style={{ maxWidth: 200 }}
+              style={{ maxWidth: 250 }}
               onClick={openSearchDelete}
             >
               Delete from WordVault
