@@ -485,8 +485,9 @@ const WordSearchForm: React.FC = () => {
               quiz, as well.
             </Text>
             <Text mt="lg">
-              Importing a cardbox will overwrite any of your existing cards that
-              are also in the cardbox. Make sure you want to do this!
+              If you have any cards already in your WordVault, they will NOT be
+              overwritten by your Zyzzyva Cardbox cards. Make sure this is what
+              you want!
             </Text>
             <Text mt="lg">A couple more important notes:</Text>
             <List spacing="md" mt="lg" type="ordered">
@@ -499,7 +500,10 @@ const WordSearchForm: React.FC = () => {
                 </Text>
               </List.Item>
               <List.Item>
-                <Text>Placeholdr.</Text>
+                <Text>
+                  You can't quiz on subsets of cards at this time; only your
+                  entire WordVault as its cards become due.
+                </Text>
               </List.Item>
             </List>
           </Collapse>
