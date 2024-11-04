@@ -249,6 +249,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
             break;
           case "f":
           case "F":
+          case " ":
             if (!typingMode) {
               event.preventDefault();
               handleFlip();
