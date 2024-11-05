@@ -339,7 +339,9 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
         <>
           <TextInput
             m="md"
+            size="lg"
             autoFocus
+            spellCheck="false"
             placeholder="Guess..."
             onChange={(e) => setTypeInputValue(e.target.value)}
             onKeyDown={(e) => {

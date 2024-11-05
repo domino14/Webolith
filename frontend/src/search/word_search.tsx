@@ -330,7 +330,11 @@ const WordSearchForm: React.FC = () => {
         </Group>
       </Modal>
 
-      <Tabs variant="default" defaultValue="search">
+      <Tabs
+        variant="default"
+        defaultValue="search"
+        onChange={() => setAlert((prev) => ({ ...prev, shown: false }))}
+      >
         <Tabs.List>
           <Tabs.Tab value="search">Search</Tabs.Tab>
           <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
@@ -364,6 +368,11 @@ const WordSearchForm: React.FC = () => {
             >
               Add to WordVault
             </Button>
+            {alert.shown && (
+              <Alert variant="light" color={alert.color} mt="lg">
+                {alert.text}
+              </Alert>
+            )}
 
             <Text size="lg" mb="lg">
               OR
@@ -434,6 +443,11 @@ const WordSearchForm: React.FC = () => {
             </form>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
+          {alert.shown && (
+            <Alert variant="light" color={alert.color} mt="lg">
+              {alert.text}
+            </Alert>
+          )}
         </Tabs.Panel>
         <Tabs.Panel value="upload-cardbox">
           <Text mt="lg">
@@ -549,6 +563,11 @@ const WordSearchForm: React.FC = () => {
             </form>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
+          {alert.shown && (
+            <Alert variant="light" color={alert.color} mt="lg">
+              {alert.text}
+            </Alert>
+          )}
         </Tabs.Panel>
         <Tabs.Panel value="delete-cards">
           <Text m="xl">
@@ -600,13 +619,13 @@ const WordSearchForm: React.FC = () => {
             </Text>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
+          {alert.shown && (
+            <Alert variant="light" color={alert.color} mt="lg">
+              {alert.text}
+            </Alert>
+          )}
         </Tabs.Panel>
       </Tabs>
-      {alert.shown && (
-        <Alert variant="light" color={alert.color} mt="lg">
-          {alert.text}
-        </Alert>
-      )}
     </>
   );
 };

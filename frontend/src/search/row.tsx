@@ -252,47 +252,44 @@ const SearchRow: React.FC<SearchRowProps> = ({
   }
 
   return (
-    <Grid align="flex-start" justify="flex-start" className="search-row">
-      <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
-        <Group wrap="nowrap" align="center">
-          <Button
-            variant="light"
-            color="blue"
-            onClick={addRow}
-            size="lg"
-            style={{ marginTop: 25 }}
-          >
-            <IconPlus size={16} />
-          </Button>
+    <Group>
+      <Group wrap="nowrap" align="center">
+        <Button
+          variant="light"
+          color="blue"
+          onClick={addRow}
+          size="lg"
+          style={{ marginTop: 25 }}
+        >
+          <IconPlus size="md" />
+        </Button>
 
-          <Button
-            variant="light"
-            color="blue"
-            onClick={() => removeRow(index)}
-            disabled={removeDisabled}
-            size="lg"
-            style={{ marginTop: 25 }}
-          >
-            <IconMinus size={16} />
-          </Button>
-          <Select
-            label="Search Criterion"
-            value={String(searchCriterion.searchType)}
-            data={searchCriteriaOptions(allowedSearchTypes).map((el) => ({
-              value: el.value,
-              label: el.displayValue,
-            }))}
-            onChange={(selectedValue) => {
-              modifySearchType(index, parseInt(selectedValue || "0", 10));
-            }}
-            size="lg"
-          />
-        </Group>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
-        <Group wrap="nowrap">{specificForm}</Group>
-      </Grid.Col>
-    </Grid>
+        <Button
+          variant="light"
+          color="blue"
+          onClick={() => removeRow(index)}
+          disabled={removeDisabled}
+          size="lg"
+          style={{ marginTop: 25 }}
+        >
+          <IconMinus size="md" />
+        </Button>
+        <Select
+          label="Search Criterion"
+          value={String(searchCriterion.searchType)}
+          data={searchCriteriaOptions(allowedSearchTypes).map((el) => ({
+            value: el.value,
+            label: el.displayValue,
+          }))}
+          onChange={(selectedValue) => {
+            modifySearchType(index, parseInt(selectedValue || "0", 10));
+          }}
+          size="lg"
+        />
+      </Group>
+
+      <Group wrap="nowrap">{specificForm}</Group>
+    </Group>
   );
 };
 
