@@ -1,14 +1,7 @@
 // SearchRow.tsx
 
 import React from "react";
-import {
-  Grid,
-  Select,
-  NumberInput,
-  TextInput,
-  Button,
-  Group,
-} from "@mantine/core";
+import { Select, NumberInput, TextInput, Button, Group } from "@mantine/core";
 import { IconPlus, IconMinus } from "@tabler/icons-react";
 import {
   SearchTypesEnum,
