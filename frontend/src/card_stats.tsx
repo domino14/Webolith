@@ -32,6 +32,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { BarChart, LineChart } from "@mantine/charts";
+import { getBrowserTimezone } from "./timezones";
 
 const CardStats: React.FC = () => {
   const { lexicon, jwt } = useContext(AppContext);
@@ -45,7 +46,7 @@ const CardStats: React.FC = () => {
   const fetchTodayStats = useCallback(async () => {
     try {
       const resp = await wordvaultClient.getDailyProgress({
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezone: getBrowserTimezone(),
       });
       setTodayStats(resp.progressStats);
     } catch (e) {

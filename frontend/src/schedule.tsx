@@ -21,6 +21,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { getBrowserTimezone } from "./timezones";
 
 type scheduleBreakdown = { [key: string]: number };
 
@@ -44,7 +45,7 @@ const CardSchedule: React.FC = () => {
       setShowLoader(true);
       const resp = await wordvaultClient.nextScheduledCount({
         lexicon,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezone: getBrowserTimezone(),
       });
       setCardSchedule(resp.breakdown);
     } catch (e) {
