@@ -7,8 +7,20 @@ import {
 } from "react";
 import { LoginState } from "./constants";
 
+export enum WordVaultFontStyle {
+  Monospace = "monospace",
+  SansSerif = "sans-serif",
+  Tiles = "tiles",
+}
+
 type DisplaySettings = {
-  fontStyle: string;
+  /**
+   * For WordVault: Controls the display of the question text on flash cards
+   */
+  fontStyle: WordVaultFontStyle;
+  /**
+   * For WordWalls: Controls the display of words in WordWalls
+   */
   tileStyle: string;
   showNumAnagrams: boolean;
   customOrder: string;
@@ -42,7 +54,7 @@ const initialContext = {
   },
   loggedIn: LoginState.Unknown,
   displaySettings: {
-    fontStyle: "monospace",
+    fontStyle: WordVaultFontStyle.Monospace,
     tileStyle: "",
     showNumAnagrams: true,
     customOrder: "",

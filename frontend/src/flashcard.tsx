@@ -13,12 +13,13 @@ import {
   Flex,
   PaperProps,
   rem,
+  MantineTheme,
 } from "@mantine/core";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
-import { AppContext } from "./app_context";
+import { AppContext, WordVaultFontStyle } from "./app_context";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -70,6 +71,47 @@ const TiledText: React.FC<TiledTextProps> = ({
       ))}
     </Group>
   );
+};
+
+type QuestionDisplayProps = {
+  displayQuestion: string;
+  isDark: boolean;
+  fontStyle: WordVaultFontStyle;
+  theme: MantineTheme;
+};
+
+const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
+  displayQuestion,
+  isDark,
+  fontStyle,
+  theme,
+}) => {
+  switch (fontStyle) {
+    case WordVaultFontStyle.Tiles: {
+      return (
+        <TiledText
+          size="xxl"
+          h={rem(40)}
+          w={rem(40)}
+          fw={700}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
+          c={isDark ? theme.colors.gray[0] : undefined}
+          text={displayQuestion}
+        />
+      );
+    }
+    case WordVaultFontStyle.Monospace:
+    case WordVaultFontStyle.SansSerif:
+    default: {
+      return (
+        <Text size="xl" fw={700} ta="center" ff={fontStyle}>
+          {displayQuestion}
+        </Text>
+      );
+    }
+  }
 };
 
 const Flashcard: React.FC<FlashcardProps> = ({
@@ -130,17 +172,11 @@ const Flashcard: React.FC<FlashcardProps> = ({
         <Stack align="center" gap="md">
           <Group>
             {!smallScreen && shuffleButton}
-            <TiledText
-              size="xxl"
-              h={rem(40)}
-              w={rem(40)}
-              fw={700}
-              withBorder={!isDark}
-              shadow={isDark ? "xs" : undefined}
-              ff={displaySettings.fontStyle}
-              bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
-              c={isDark ? theme.colors.gray[0] : undefined}
-              text={displayQuestion}
+            <QuestionDisplay
+              displayQuestion={displayQuestion}
+              isDark={isDark}
+              fontStyle={displaySettings.fontStyle}
+              theme={theme}
             />
             {!smallScreen && resetArrangementButton}
           </Group>
@@ -171,17 +207,11 @@ const Flashcard: React.FC<FlashcardProps> = ({
         // Back side
         <Stack align="center" gap="sm">
           <Flex mb="md">
-            <TiledText
-              size="xxl"
-              h={rem(40)}
-              w={rem(40)}
-              fw={700}
-              withBorder={!isDark}
-              shadow={isDark ? "xs" : undefined}
-              ff={displaySettings.fontStyle}
-              bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
-              c={isDark ? theme.colors.gray[0] : undefined}
-              text={origDisplayQuestion}
+            <QuestionDisplay
+              displayQuestion={displayQuestion}
+              isDark={isDark}
+              fontStyle={displaySettings.fontStyle}
+              theme={theme}
             />
           </Flex>
           {currentCard.alphagram?.words.map((word) => (

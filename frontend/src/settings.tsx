@@ -49,7 +49,7 @@ const Settings: React.FC = () => {
       >
         {/* Add form fields here, for example: */}
         <Select
-          data={["monospace", "sans-serif"]}
+          data={["monospace", "sans-serif", "tiles"]}
           label="Question display style"
           {...settingsForm.getInputProps("fontStyle")}
           mt="lg"
