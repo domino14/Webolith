@@ -106,7 +106,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     case WordVaultFontStyle.SansSerif:
     default: {
       return (
-        <Text size="xl" fw={700} ta="center" ff={fontStyle}>
+        <Text size="xxl" fw={700} ta="center" ff={fontStyle}>
           {displayQuestion}
         </Text>
       );
@@ -208,7 +208,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         <Stack align="center" gap="sm">
           <Flex mb="md">
             <QuestionDisplay
-              displayQuestion={displayQuestion}
+              displayQuestion={origDisplayQuestion}
               isDark={isDark}
               fontStyle={displaySettings.fontStyle}
               theme={theme}
