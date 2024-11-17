@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { createTheme, rem } from "@mantine/core";
 import App from "./App.tsx";
 import { MantineProvider } from "@mantine/core";
 import {
@@ -72,9 +73,22 @@ const router = createBrowserRouter(
   }
 );
 
+const theme = createTheme({
+  // Default font sizes with an additional XXL option
+  // https://mantine.dev/theming/typography/
+  fontSizes: {
+    xs: rem(12),
+    sm: rem(14),
+    md: rem(16),
+    lg: rem(18),
+    xl: rem(20),
+    xxl: rem(26),
+  },
+});
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <MantineProvider defaultColorScheme="dark">
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <Notifications position="top-center" />
       <RouterProvider router={router} />
     </MantineProvider>

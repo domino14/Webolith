@@ -12,6 +12,7 @@ import {
   TextProps,
   Flex,
   PaperProps,
+  rem,
 } from "@mantine/core";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext } from "react";
@@ -130,14 +131,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
           <Group>
             {!smallScreen && shuffleButton}
             <TiledText
-              size="xl"
-              h="3rem"
-              w="3rem"
+              size="xxl"
+              h={rem(40)}
+              w={rem(40)}
               fw={700}
               withBorder={!isDark}
               shadow={isDark ? "xs" : undefined}
               ff={displaySettings.fontStyle}
-              bg={isDark ? theme.colors.gray[9] : theme.colors.gray[4]}
+              bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
               c={isDark ? theme.colors.gray[0] : undefined}
               text={displayQuestion}
             />
@@ -171,14 +172,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
         <Stack align="center" gap="sm">
           <Flex mb="md">
             <TiledText
-              size="xl"
-              h="3rem"
-              w="3rem"
+              size="xxl"
+              h={rem(40)}
+              w={rem(40)}
               fw={700}
               withBorder={!isDark}
               shadow={isDark ? "xs" : undefined}
               ff={displaySettings.fontStyle}
-              bg={isDark ? theme.colors.gray[9] : theme.colors.gray[4]}
+              bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
               c={isDark ? theme.colors.gray[0] : undefined}
               text={origDisplayQuestion}
             />
