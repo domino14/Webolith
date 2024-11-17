@@ -49,7 +49,7 @@ const Settings: React.FC = () => {
       >
         {/* Add form fields here, for example: */}
         <Select
-          data={[Object.values(WordVaultFontStyle)]}
+          data={Object.values(WordVaultFontStyle)}
           label="Question display style"
           {...settingsForm.getInputProps("fontStyle")}
           mt="lg"
