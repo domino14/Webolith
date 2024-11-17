@@ -1,13 +1,13 @@
 import { useForm } from "@mantine/form";
 import React, { useContext, useEffect } from "react";
-import { AppContext } from "./app_context";
+import { AppContext, WordVaultFontStyle } from "./app_context";
 import { Button, Select, Switch, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 
 const Settings: React.FC = () => {
   const settingsForm = useForm({
     initialValues: {
-      fontStyle: "monospace",
+      fontStyle: WordVaultFontStyle.Monospace,
       tileStyle: "",
       showNumAnagrams: true,
       customOrder: "",
@@ -49,7 +49,7 @@ const Settings: React.FC = () => {
       >
         {/* Add form fields here, for example: */}
         <Select
-          data={["monospace", "sans-serif", "tiles"]}
+          data={[Object.values(WordVaultFontStyle)]}
           label="Question display style"
           {...settingsForm.getInputProps("fontStyle")}
           mt="lg"
