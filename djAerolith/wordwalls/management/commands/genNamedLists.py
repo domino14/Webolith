@@ -154,7 +154,7 @@ def create_wl_lists(i, lex):
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
-                SearchDescription.matching_anagram("[JQXZ]" + "?" * (i - 1)),
+                SearchDescription.matching_anagram("(JQXZ)" + "?" * (i - 1)),
             ]
         ).to_python()
 
@@ -172,7 +172,7 @@ def create_wl_lists(i, lex):
         qs = word_search(
             [
                 SearchDescription.lexicon(lex),
-                SearchDescription.matching_anagram("[AEIOU][AEIOU][AEIOU][AEIOU]???"),
+                SearchDescription.matching_anagram("(AEIOU)(AEIOU)(AEIOU)(AEIOU)???"),
             ]
         ).to_python()
         create_named_list(
@@ -189,7 +189,7 @@ def create_wl_lists(i, lex):
             [
                 SearchDescription.lexicon(lex),
                 SearchDescription.matching_anagram(
-                    "[AEIOU][AEIOU][AEIOU][AEIOU][AEIOU]???"
+                    "(AEIOU)(AEIOU)(AEIOU)(AEIOU)(AEIOU)???"
                 ),
             ]
         ).to_python()
@@ -299,7 +299,7 @@ def create_spanish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram("[JQXZ]" + "?" * (i - 1)),
+                    SearchDescription.matching_anagram("(JQXZ)" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -314,7 +314,7 @@ def create_spanish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram("[123Ñ]" + "?" * (i - 1)),
+                    SearchDescription.matching_anagram("(123Ñ)" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -332,7 +332,7 @@ def create_spanish_lists():
                 [
                     SearchDescription.lexicon(lex),
                     SearchDescription.matching_anagram(
-                        "[AEIOU][AEIOU][AEIOU][AEIOU]???"
+                        "(AEIOU)(AEIOU)(AEIOU)(AEIOU)???"
                     ),
                 ]
             ).to_python()
@@ -350,7 +350,7 @@ def create_spanish_lists():
                 [
                     SearchDescription.lexicon(lex),
                     SearchDescription.matching_anagram(
-                        "[AEIOU][AEIOU][AEIOU][AEIOU][AEIOU]???"
+                        "(AEIOU)(AEIOU)(AEIOU)(AEIOU)(AEIOU)???"
                     ),
                 ]
             ).to_python()
@@ -413,7 +413,7 @@ def create_polish_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram("[ĄĆĘŃÓŚŹŻ]" + "?" * (i - 1)),
+                    SearchDescription.matching_anagram("(ĄĆĘŃÓŚŹŻ)" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -476,7 +476,7 @@ def create_german_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram("[ÄJÖQÜVXY]" + "?" * (i - 1)),
+                    SearchDescription.matching_anagram("(ÄJÖQÜVXY)" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
@@ -522,7 +522,7 @@ def create_french_lists():
             qs = word_search(
                 [
                     SearchDescription.lexicon(lex),
-                    SearchDescription.matching_anagram("[JKQWXYZ]" + "?" * (i - 1)),
+                    SearchDescription.matching_anagram("(JKQWXYZ)" + "?" * (i - 1)),
                 ]
             ).to_python()
             create_named_list(
