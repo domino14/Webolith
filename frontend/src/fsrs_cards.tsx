@@ -325,8 +325,8 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       const guessAlphagram = guess.split("").sort().join("");
       setInputError(
         guessAlphagram === currentCard.alphagram.alphagram
-          ? "Word not in lexicon"
-          : "Guess does not match alphagram"
+          ? `"${guess}" not in lexicon`
+          : `"${guess}" does not match alphagram`
       );
     }
     // Clear the input
