@@ -40,8 +40,6 @@ const Settings: React.FC = () => {
             body: JSON.stringify(values),
           });
 
-          console.log("values!!", values);
-
           if (!response.ok) {
             throw new Error("Failed to save settings.");
           }
