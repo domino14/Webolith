@@ -1,14 +1,19 @@
 import { useForm } from "@mantine/form";
 import React, { useContext, useEffect } from "react";
-import { AppContext, WordVaultFontStyle } from "./app_context";
+import {
+  AppContext,
+  FontStyle,
+  DisplaySettings,
+  TileStyle,
+} from "./app_context";
 import { Button, Select, Switch, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 
 const Settings: React.FC = () => {
-  const settingsForm = useForm({
+  const settingsForm = useForm<DisplaySettings>({
     initialValues: {
-      fontStyle: WordVaultFontStyle.Monospace,
-      tileStyle: "",
+      fontStyle: FontStyle.Monospace,
+      tileStyle: TileStyle.None,
       showNumAnagrams: true,
       customOrder: "",
     },
@@ -35,6 +40,8 @@ const Settings: React.FC = () => {
             body: JSON.stringify(values),
           });
 
+          console.log("values!!", values);
+
           if (!response.ok) {
             throw new Error("Failed to save settings.");
           }
@@ -49,9 +56,33 @@ const Settings: React.FC = () => {
       >
         {/* Add form fields here, for example: */}
         <Select
-          data={Object.values(WordVaultFontStyle)}
-          label="Question display style"
+          data={[
+            {
+              value: FontStyle.Monospace,
+              label: "Monospace",
+            },
+            {
+              value: FontStyle.SansSerif,
+              label: "Sans-serif",
+            },
+          ]}
+          label="Question font style"
           {...settingsForm.getInputProps("fontStyle")}
+          mt="lg"
+        />
+        <Select
+          data={[
+            {
+              value: TileStyle.None,
+              label: "None",
+            },
+            {
+              value: TileStyle.MatchDisplay,
+              label: "Match dark/light mode",
+            },
+          ]}
+          label="Question tile style"
+          {...settingsForm.getInputProps("tileStyle")}
           mt="lg"
         />
         <Switch

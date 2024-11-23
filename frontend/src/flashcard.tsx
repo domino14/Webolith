@@ -19,7 +19,7 @@ import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
-import { AppContext, WordVaultFontStyle } from "./app_context";
+import { AppContext, FontStyle, TileStyle } from "./app_context";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -76,7 +76,8 @@ const TiledText: React.FC<TiledTextProps> = ({
 type QuestionDisplayProps = {
   displayQuestion: string;
   isDark: boolean;
-  fontStyle: WordVaultFontStyle;
+  fontStyle: FontStyle;
+  tileStyle: TileStyle;
   theme: MantineTheme;
 };
 
@@ -84,16 +85,19 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   displayQuestion,
   isDark,
   fontStyle,
+  tileStyle,
   theme,
 }) => {
-  switch (fontStyle) {
-    case WordVaultFontStyle.Tiles: {
+  console.log("tileStyle", { tileStyle, fontStyle });
+  switch (tileStyle) {
+    case TileStyle.MatchDisplay: {
       return (
         <TiledText
           size="xxl"
           h={rem(40)}
           w={rem(40)}
           fw={700}
+          ff={fontStyle}
           withBorder={!isDark}
           shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
@@ -102,8 +106,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         />
       );
     }
-    case WordVaultFontStyle.Monospace:
-    case WordVaultFontStyle.SansSerif:
+    case TileStyle.None:
     default: {
       return (
         <Text size="xxl" fw={700} ta="center" ff={fontStyle}>
@@ -175,6 +178,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
             <QuestionDisplay
               displayQuestion={displayQuestion}
               isDark={isDark}
+              tileStyle={displaySettings.tileStyle}
               fontStyle={displaySettings.fontStyle}
               theme={theme}
             />
@@ -210,6 +214,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
             <QuestionDisplay
               displayQuestion={origDisplayQuestion}
               isDark={isDark}
+              tileStyle={displaySettings.tileStyle}
               fontStyle={displaySettings.fontStyle}
               theme={theme}
             />

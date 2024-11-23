@@ -7,21 +7,37 @@ import {
 } from "react";
 import { LoginState } from "./constants";
 
-export enum WordVaultFontStyle {
+export enum FontStyle {
   Monospace = "monospace",
   SansSerif = "sans-serif",
-  Tiles = "tiles",
 }
 
-type DisplaySettings = {
+/**
+ * Control the display of the tiles on flashcards, if enabled. Currently only
+ * one format is supported but can be extended to allow for more customization
+ * in the future.
+ */
+export enum TileStyle {
   /**
-   * For WordVault: Controls the display of the question text on flash cards
+   * Don't render tiles at all -- render as free text
    */
-  fontStyle: WordVaultFontStyle;
+  None = "none",
   /**
-   * For WordWalls: Controls the display of words in WordWalls
+   * Match the dark/light mode display setting by default
    */
-  tileStyle: string;
+  MatchDisplay = "match-display",
+}
+
+export type DisplaySettings = {
+  /**
+   * Controls the display of the question text on flash cards
+   */
+  fontStyle: FontStyle;
+  /**
+   * If non-null, controls the display of styles according to
+   * TileStyle. If null, card will not be rendered as tiles at all.
+   */
+  tileStyle: TileStyle;
   showNumAnagrams: boolean;
   customOrder: string;
 };
@@ -54,8 +70,8 @@ const initialContext = {
   },
   loggedIn: LoginState.Unknown,
   displaySettings: {
-    fontStyle: WordVaultFontStyle.Monospace,
-    tileStyle: "",
+    fontStyle: FontStyle.Monospace,
+    tileStyle: TileStyle.None,
     showNumAnagrams: true,
     customOrder: "",
   },
@@ -108,7 +124,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [lexicon, setLexicon] = useState("");
   const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
-  const [displaySettings, setDisplaySettings] = useState(
+  const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(
     initialContext.displaySettings
   );
 
@@ -184,7 +200,21 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         const response = await fetch("/accounts/profile/wordvault_settings");
         let data = await response.json();
         if (!Object.keys(data).length) {
-          data = { ...initialContext.displaySettings };
+          data = {
+            ...initialContext.displaySettings,
+          };
+        } else {
+          data = {
+            ...data,
+            // Coerce tile/display style into correct defaults if the existing
+            // value is invalid
+            tileStyle: Object.values(TileStyle).includes(data.tileStyle)
+              ? data.tileStyle
+              : initialContext.displaySettings.tileStyle,
+            fontStyle: Object.values(FontStyle).includes(data.fontStyle)
+              ? data.fontStyle
+              : initialContext.displaySettings.fontStyle,
+          };
         }
         setDisplaySettings(data);
       } catch (error) {
