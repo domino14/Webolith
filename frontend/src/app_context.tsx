@@ -12,11 +12,6 @@ export enum FontStyle {
   SansSerif = "sans-serif",
 }
 
-/**
- * Control the display of the tiles on flashcards, if enabled. Currently only
- * one format is supported but can be extended to allow for more customization
- * in the future.
- */
 export enum TileStyle {
   /**
    * Don't render tiles at all -- render as free text
@@ -29,14 +24,7 @@ export enum TileStyle {
 }
 
 export type DisplaySettings = {
-  /**
-   * Controls the display of the question text on flash cards
-   */
   fontStyle: FontStyle;
-  /**
-   * If non-null, controls the display of styles according to
-   * TileStyle. If null, card will not be rendered as tiles at all.
-   */
   tileStyle: TileStyle;
   showNumAnagrams: boolean;
   customOrder: string;
