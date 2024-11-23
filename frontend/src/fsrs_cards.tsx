@@ -46,7 +46,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
   const { lexicon, displaySettings } = useContext(AppContext);
   const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
   const [displayQuestion, setDisplayQuestion] = useState("");
-  const [inputError, setInputError] = useState<string | null>(false);
+  const [inputError, setInputError] = useState<string | null>(null);
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
