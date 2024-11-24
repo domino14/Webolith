@@ -348,7 +348,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     return `${remainingWords} ${
       remainingWords === 1 ? "word" : "words"
     } remaining…`;
-  }, [currentCard, correctGuesses]);
+  }, [currentCard, correctGuesses, flipped]);
 
   const missedWords: Set<string> | undefined = useMemo(() => {
     if (!typingMode || !currentCard || !currentCard.alphagram) {
