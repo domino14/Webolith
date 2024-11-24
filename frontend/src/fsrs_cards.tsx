@@ -334,6 +334,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
 
   const placeholder = useMemo(() => {
     if (
+      !displaySettings.showNumAnagrams ||
       !currentCard ||
       !currentCard.alphagram ||
       correctGuesses.size === 0 ||
