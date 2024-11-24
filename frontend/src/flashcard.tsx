@@ -121,7 +121,10 @@ const Flashcard: React.FC<FlashcardProps> = ({
           </Text>
           {currentCard.alphagram?.words.map((word) => {
             const highlightAsMissed =
-              missedWords !== undefined && missedWords.has(word.word);
+              missedWords !== undefined &&
+              currentCard.alphagram?.words &&
+              missedWords.size < currentCard.alphagram.words.length &&
+              missedWords.has(word.word);
 
             return (
               <div key={word.word}>
