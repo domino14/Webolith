@@ -1,7 +1,8 @@
 import React from "react";
 import { SearchTypesEnum, SearchCriterion, optionType } from "./types";
 import SearchRow from "./row";
-import { Divider } from "@mantine/core";
+import { Button, Divider, Group, Stack } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
 
 interface SearchRowsProps {
   criteria: SearchCriterion[];
@@ -18,7 +19,7 @@ interface SearchRowsProps {
 
 const SearchRows: React.FC<SearchRowsProps> = (props) => {
   return (
-    <div>
+    <Stack>
       {props.criteria.map((criterion, idx) => (
         <React.Fragment key={`fragment${idx}`}>
           <SearchRow
@@ -30,17 +31,29 @@ const SearchRows: React.FC<SearchRowsProps> = (props) => {
             maxAllowedValue={
               SearchTypesEnum.properties[criterion.searchType].maxAllowed
             }
-            addRow={props.addSearchRow}
             removeRow={props.removeSearchRow}
             removeDisabled={idx === 0 && props.criteria.length === 1}
             modifySearchType={props.modifySearchType}
             modifySearchParam={props.modifySearchParam}
             allowedSearchTypes={props.allowedSearchTypes}
           />
-          <Divider my="md" />
         </React.Fragment>
       ))}
-    </div>
+
+      <Group>
+        <Button
+          variant="transparent"
+          onClick={props.addSearchRow}
+          color="gray"
+          size="compact-lg"
+          leftSection={<IconPlus />}
+        >
+          Add Criteria
+        </Button>
+      </Group>
+
+      <Divider my="md" />
+    </Stack>
   );
 };
 
