@@ -3,17 +3,23 @@ import {
   Stack,
   Group,
   Button,
+  Paper,
   Center,
   Loader,
   Text,
   useMantineTheme,
   useMantineColorScheme,
+  TextProps,
+  Flex,
+  PaperProps,
+  rem,
+  MantineTheme,
 } from "@mantine/core";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
-import { AppContext } from "./app_context";
+import { AppContext, FontStyle, TileStyle } from "./app_context";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -27,6 +33,89 @@ interface FlashcardProps {
   origDisplayQuestion: string;
   isPaywalled: boolean;
 }
+
+type TiledTextProps = {
+  text: string;
+} & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
+  Pick<TextProps, "size" | "fw" | "ff">;
+
+const TiledText: React.FC<TiledTextProps> = ({
+  text,
+  bg,
+  c,
+  h,
+  w,
+  fw,
+  ff,
+  size,
+  withBorder,
+  shadow,
+}) => {
+  return (
+    <Group gap="xs" wrap="wrap">
+      {text.split("").map((char, index) => (
+        <Paper
+          h={h}
+          w={w}
+          key={index}
+          shadow={shadow}
+          bg={bg}
+          withBorder={withBorder}
+        >
+          <Center w="100%" h="100%">
+            <Text c={c} size={size} fw={fw} ff={ff} ta="center">
+              {char}
+            </Text>
+          </Center>
+        </Paper>
+      ))}
+    </Group>
+  );
+};
+
+type QuestionDisplayProps = {
+  displayQuestion: string;
+  isDark: boolean;
+  fontStyle: FontStyle;
+  tileStyle: TileStyle;
+  theme: MantineTheme;
+};
+
+const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
+  displayQuestion,
+  isDark,
+  fontStyle,
+  tileStyle,
+  theme,
+}) => {
+  console.log("tileStyle", { tileStyle, fontStyle });
+  switch (tileStyle) {
+    case TileStyle.MatchDisplay: {
+      return (
+        <TiledText
+          size="xxl"
+          h={rem(40)}
+          w={rem(40)}
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
+          c={isDark ? theme.colors.gray[0] : undefined}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.None:
+    default: {
+      return (
+        <Text size="xxl" fw={700} ta="center" ff={fontStyle}>
+          {displayQuestion}
+        </Text>
+      );
+    }
+  }
+};
 
 const Flashcard: React.FC<FlashcardProps> = ({
   flipped,
@@ -46,6 +135,28 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const { displaySettings } = useContext(AppContext);
   const backgroundColor = isDark ? theme.colors.dark[8] : theme.colors.gray[0];
 
+  const shuffleButton = (
+    <Button
+      variant="transparent"
+      size="xs"
+      c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
+      onClick={onShuffle}
+    >
+      <IconArrowsShuffle />
+    </Button>
+  );
+
+  const resetArrangementButton = (
+    <Button
+      variant="transparent"
+      size="xs"
+      c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
+      onClick={onCustomArrange}
+    >
+      <IconArrowUp />
+    </Button>
+  );
+
   return (
     <Card
       shadow="sm"
@@ -63,31 +174,22 @@ const Flashcard: React.FC<FlashcardProps> = ({
         // Front side
         <Stack align="center" gap="md">
           <Group>
-            <Button
-              variant="transparent"
-              size="xs"
-              c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
-              onClick={onShuffle}
-            >
-              <IconArrowsShuffle />
-            </Button>
-            <Text
-              size="xl"
-              fw={700}
-              ta="center"
-              style={{ fontFamily: displaySettings.fontStyle }}
-            >
-              {displayQuestion}
-            </Text>
-            <Button
-              variant="transparent"
-              size="xs"
-              c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
-              onClick={onCustomArrange}
-            >
-              <IconArrowUp />
-            </Button>{" "}
+            {!smallScreen && shuffleButton}
+            <QuestionDisplay
+              displayQuestion={displayQuestion}
+              isDark={isDark}
+              tileStyle={displaySettings.tileStyle}
+              fontStyle={displaySettings.fontStyle}
+              theme={theme}
+            />
+            {!smallScreen && resetArrangementButton}
           </Group>
+          {smallScreen && (
+            <Group gap="xs">
+              {shuffleButton}
+              {resetArrangementButton}
+            </Group>
+          )}
           {currentCard.alphagram?.words.length &&
             displaySettings.showNumAnagrams && (
               <Text size="xl" c="dimmed" ta="center">
@@ -108,15 +210,15 @@ const Flashcard: React.FC<FlashcardProps> = ({
       ) : (
         // Back side
         <Stack align="center" gap="sm">
-          <Text
-            size="xl"
-            fw={700}
-            ta="center"
-            mb="md"
-            style={{ fontFamily: displaySettings.fontStyle }}
-          >
-            {origDisplayQuestion}
-          </Text>
+          <Flex mb="md">
+            <QuestionDisplay
+              displayQuestion={origDisplayQuestion}
+              isDark={isDark}
+              tileStyle={displaySettings.tileStyle}
+              fontStyle={displaySettings.fontStyle}
+              theme={theme}
+            />
+          </Flex>
           {currentCard.alphagram?.words.map((word) => (
             <div key={word.word}>
               <Center>
