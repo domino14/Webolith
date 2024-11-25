@@ -46,6 +46,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
   const { lexicon, displaySettings } = useContext(AppContext);
   const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
   const [displayQuestion, setDisplayQuestion] = useState("");
+  const [inputError, setInputError] = useState<string | null>(null);
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
@@ -320,6 +321,13 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       // Create a new Set and add the guess
       updatedCorrectGuesses = new Set(correctGuesses).add(guess);
       setCorrectGuesses(updatedCorrectGuesses);
+    } else {
+      const guessAlphagram = guess.split("").sort().join("");
+      setInputError(
+        guessAlphagram === currentCard.alphagram.alphagram
+          ? `"${guess}" not in lexicon`
+          : `"${guess}" does not match alphagram`
+      );
     }
     // Clear the input
     setTypeInputValue("");
@@ -350,8 +358,11 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
                   e.preventDefault();
                 }
                 handleGuessEntered();
+              } else {
+                setInputError(null);
               }
             }}
+            error={inputError}
             value={typeInputValue}
           />
           <Group>
