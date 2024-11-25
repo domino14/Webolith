@@ -48,7 +48,7 @@ const SearchRows: React.FC<SearchRowsProps> = (props) => {
           size="compact-lg"
           leftSection={<IconPlus />}
         >
-          Add Criteria
+          Add Criterion
         </Button>
       </Group>
 
