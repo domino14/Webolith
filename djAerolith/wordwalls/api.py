@@ -2,11 +2,13 @@ import json
 from datetime import datetime
 import logging
 from typing import List
+from functools import wraps
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_GET, require_POST
 from django.utils import timezone
+
 
 from wordwalls.models import (
     DailyChallengeName,
@@ -174,6 +176,7 @@ def special_challenges(request):
 
 
 def load_new_words(f):
+    @wraps(f)
     def wrap(request, *args, **kwargs):
         """A decorator for all the functions that load new words."""
         try:

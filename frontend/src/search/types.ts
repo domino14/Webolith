@@ -158,7 +158,9 @@ const propertiesObject: { [key: number]: SearchTypeProperty } = {
     default: "AEINST??",
     description: `Provide an initial list of words to search with an anagram
     search. You can use up to 8 blank characters (use a ? character to
-    represent a blank).`,
+    represent a blank). If you wish to provide a range of letters, use the ()
+    symbols. For example, you can search for all JQXZ 4s with the following
+    search: (JQXZ)???`,
   },
   [cond.DIFFICULTY_RANGE]: {
     code: cond.DIFFICULTY_RANGE,

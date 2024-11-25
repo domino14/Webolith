@@ -7,9 +7,25 @@ import {
 } from "react";
 import { LoginState } from "./constants";
 
-type DisplaySettings = {
-  fontStyle: string;
-  tileStyle: string;
+export enum FontStyle {
+  Monospace = "monospace",
+  SansSerif = "sans-serif",
+}
+
+export enum TileStyle {
+  /**
+   * Don't render tiles at all -- render as free text
+   */
+  None = "none",
+  /**
+   * Match the dark/light mode display setting by default
+   */
+  MatchDisplay = "match-display",
+}
+
+export type DisplaySettings = {
+  fontStyle: FontStyle;
+  tileStyle: TileStyle;
   showNumAnagrams: boolean;
   customOrder: string;
 };
@@ -42,8 +58,8 @@ const initialContext = {
   },
   loggedIn: LoginState.Unknown,
   displaySettings: {
-    fontStyle: "monospace",
-    tileStyle: "",
+    fontStyle: FontStyle.Monospace,
+    tileStyle: TileStyle.None,
     showNumAnagrams: true,
     customOrder: "",
   },
@@ -96,7 +112,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [lexicon, setLexicon] = useState("");
   const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
-  const [displaySettings, setDisplaySettings] = useState(
+  const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(
     initialContext.displaySettings
   );
 
@@ -172,7 +188,21 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         const response = await fetch("/accounts/profile/wordvault_settings");
         let data = await response.json();
         if (!Object.keys(data).length) {
-          data = { ...initialContext.displaySettings };
+          data = {
+            ...initialContext.displaySettings,
+          };
+        } else {
+          data = {
+            ...data,
+            // Coerce tile/display style into correct defaults if the existing
+            // value is invalid
+            tileStyle: Object.values(TileStyle).includes(data.tileStyle)
+              ? data.tileStyle
+              : initialContext.displaySettings.tileStyle,
+            fontStyle: Object.values(FontStyle).includes(data.fontStyle)
+              ? data.fontStyle
+              : initialContext.displaySettings.fontStyle,
+          };
         }
         setDisplaySettings(data);
       } catch (error) {

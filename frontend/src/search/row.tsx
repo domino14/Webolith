@@ -1,8 +1,11 @@
-// SearchRow.tsx
-
 import React from "react";
-import { Select, NumberInput, TextInput, Button, Group } from "@mantine/core";
-import { IconPlus, IconMinus } from "@tabler/icons-react";
+import {
+  Select,
+  NumberInput,
+  TextInput,
+  Group,
+  CloseButton,
+} from "@mantine/core";
 import {
   SearchTypesEnum,
   searchCriteriaOptions,
@@ -161,7 +164,6 @@ interface SearchRowProps {
   searchCriterion: SearchCriterion;
   minAllowedValue?: number;
   maxAllowedValue?: number;
-  addRow: () => void;
   removeRow: (index: number) => void;
   removeDisabled: boolean;
   modifySearchType: (index: number, value: number) => void;
@@ -178,7 +180,6 @@ const SearchRow: React.FC<SearchRowProps> = ({
   searchCriterion,
   minAllowedValue = 1,
   maxAllowedValue = 100,
-  addRow,
   removeRow,
   removeDisabled,
   modifySearchType,
@@ -246,28 +247,9 @@ const SearchRow: React.FC<SearchRowProps> = ({
 
   return (
     <Group>
-      <Group wrap="nowrap" align="center">
-        <Button
-          variant="light"
-          color="blue"
-          onClick={addRow}
-          size="lg"
-          style={{ marginTop: 25 }}
-        >
-          <IconPlus size="md" />
-        </Button>
-
-        <Button
-          variant="light"
-          color="blue"
-          onClick={() => removeRow(index)}
-          disabled={removeDisabled}
-          size="lg"
-          style={{ marginTop: 25 }}
-        >
-          <IconMinus size="md" />
-        </Button>
+      <Group wrap="nowrap">
         <Select
+          w="100%"
           label="Search Criterion"
           value={String(searchCriterion.searchType)}
           data={searchCriteriaOptions(allowedSearchTypes).map((el) => ({
@@ -280,8 +262,16 @@ const SearchRow: React.FC<SearchRowProps> = ({
           size="lg"
         />
       </Group>
-
-      <Group wrap="nowrap">{specificForm}</Group>
+      <Group wrap="nowrap" align="center">
+        {specificForm}
+        <CloseButton
+          variant=""
+          onClick={() => removeRow(index)}
+          disabled={removeDisabled}
+          mt={25}
+          size="lg"
+        />
+      </Group>
     </Group>
   );
 };
