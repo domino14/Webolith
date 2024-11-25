@@ -258,26 +258,6 @@ const Flashcard: React.FC<FlashcardProps> = ({
                 </Center>
                 <Text size="md" c="dimmed">
                   {word.definition}
-          {currentCard.alphagram?.words.map((word) => (
-            <div key={word.word}>
-              <Center>
-                <Text span c="dimmed" size="md" fw={500} mr="xs">
-                  {word.frontHooks}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500}>
-                  {word.innerFrontHook ? "·" : ""}
-                </Text>
-                <Text span size="md" fw={500}>
-                  {word.word}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500}>
-                  {word.innerBackHook ? "·" : ""}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500} ml="xs">
-                  {word.lexiconSymbols}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500}>
-                  {word.backHooks}
                 </Text>
               </div>
             );
