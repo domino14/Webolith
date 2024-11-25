@@ -336,10 +336,40 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       handleFlip();
     }
   }, [currentCard, correctGuesses, typeInputValue, flipped]);
-
   const sortedGuesses = useMemo(() => {
     return Array.from(correctGuesses).sort((a, b) => a.localeCompare(b));
   }, [correctGuesses]);
+
+  const placeholder = useMemo(() => {
+    if (
+      !displaySettings.showNumAnagrams ||
+      !currentCard ||
+      !currentCard.alphagram ||
+      correctGuesses.size === 0 ||
+      flipped
+    ) {
+      return "Guess…";
+    }
+
+    const remainingWords =
+      currentCard.alphagram.words.length - correctGuesses.size;
+
+    return `${remainingWords} ${
+      remainingWords === 1 ? "word" : "words"
+    } remaining…`;
+  }, [currentCard, correctGuesses, flipped]);
+
+  const missedWords: Set<string> | undefined = useMemo(() => {
+    if (!typingMode || !currentCard || !currentCard.alphagram) {
+      return undefined;
+    }
+
+    return new Set(
+      currentCard.alphagram.words
+        .map((word) => word.word)
+        .filter((word) => !correctGuesses.has(word))
+    );
+  }, [correctGuesses, typingMode, currentCard]);
 
   return (
     <Center style={{ width: "100%", height: "100%", flexDirection: "column" }}>
@@ -350,7 +380,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
             size="lg"
             autoFocus
             spellCheck="false"
-            placeholder="Guess..."
+            placeholder={placeholder}
             onChange={(e) => setTypeInputValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -381,6 +411,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
           flipped={flipped}
           handleFlip={handleFlip}
           currentCard={currentCard}
+          missedWords={missedWords}
           handleScore={handleScore}
           showLoader={showLoader}
           displayQuestion={displayQuestion}

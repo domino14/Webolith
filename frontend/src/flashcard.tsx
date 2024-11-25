@@ -32,6 +32,7 @@ interface FlashcardProps {
   displayQuestion: string;
   origDisplayQuestion: string;
   isPaywalled: boolean;
+  missedWords?: Set<string>;
 }
 
 type TiledTextProps = {
@@ -127,6 +128,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   onCustomArrange,
   displayQuestion,
   origDisplayQuestion,
+  missedWords,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -219,33 +221,47 @@ const Flashcard: React.FC<FlashcardProps> = ({
               theme={theme}
             />
           </Flex>
-          {currentCard.alphagram?.words.map((word) => (
-            <div key={word.word}>
-              <Center>
-                <Text span c="dimmed" size="md" fw={500} mr="xs">
-                  {word.frontHooks}
+          {currentCard.alphagram?.words.map((word) => {
+            const highlightAsMissed =
+              missedWords !== undefined &&
+              currentCard.alphagram?.words &&
+              missedWords.size < currentCard.alphagram.words.length &&
+              missedWords.has(word.word);
+
+            return (
+              <div key={word.word}>
+                <Center>
+                  <Text span c="dimmed" size="md" fw={500} mr="xs">
+                    {word.frontHooks}
+                  </Text>
+                  <Text span c="dimmed" size="md" fw={500}>
+                    {word.innerFrontHook ? "·" : ""}
+                  </Text>
+                  <Text
+                    span
+                    size="md"
+                    c={highlightAsMissed ? "red" : undefined}
+                    fw={highlightAsMissed ? 700 : 500}
+                    td={highlightAsMissed ? "underline" : undefined}
+                  >
+                    {word.word}
+                  </Text>
+                  <Text span c="dimmed" size="md" fw={500}>
+                    {word.innerBackHook ? "·" : ""}
+                  </Text>
+                  <Text span c="dimmed" size="md" fw={500} ml="xs">
+                    {word.lexiconSymbols}
+                  </Text>
+                  <Text span c="dimmed" size="md" fw={500}>
+                    {word.backHooks}
+                  </Text>
+                </Center>
+                <Text size="md" c="dimmed">
+                  {word.definition}
                 </Text>
-                <Text span c="dimmed" size="md" fw={500}>
-                  {word.innerFrontHook ? "·" : ""}
-                </Text>
-                <Text span size="md" fw={500}>
-                  {word.word}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500}>
-                  {word.innerBackHook ? "·" : ""}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500} ml="xs">
-                  {word.lexiconSymbols}
-                </Text>
-                <Text span c="dimmed" size="md" fw={500}>
-                  {word.backHooks}
-                </Text>
-              </Center>
-              <Text size="md" c="dimmed">
-                {word.definition}
-              </Text>
-            </div>
-          ))}
+              </div>
+            );
+          })}
           <Group mt="sm" justify="space-evenly">
             <Button
               color="red"
