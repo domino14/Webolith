@@ -6,7 +6,7 @@ jobs:
     machine:
       image: ubuntu-2004:202111-02
     environment:
-      DOCKER_WDB_SERVER: domino14/word_db_server:latest
+      DOCKER_WDB_SERVER: ghcr.io/domino14/word-db-server:latest
     steps:
       - checkout
 
