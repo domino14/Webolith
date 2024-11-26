@@ -17,9 +17,9 @@ import {
 } from "@mantine/core";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext } from "react";
-import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
+import { useIsSmallScreen } from "./use_is_small_screen";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -53,7 +53,7 @@ const TiledText: React.FC<TiledTextProps> = ({
   shadow,
 }) => {
   return (
-    <Group gap="xs" wrap="wrap">
+    <Group gap={3} wrap="wrap">
       {text.split("").map((char, index) => (
         <Paper
           h={h}
@@ -89,14 +89,15 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   tileStyle,
   theme,
 }) => {
-  console.log("tileStyle", { tileStyle, fontStyle });
+  const isSmallScreen = useIsSmallScreen();
+
   switch (tileStyle) {
     case TileStyle.MatchDisplay: {
       return (
         <TiledText
-          size="xxl"
-          h={rem(40)}
-          w={rem(40)}
+          size={isSmallScreen ? rem(22) : "xxl"}
+          h={rem(isSmallScreen ? 32 : 40)}
+          w={rem(isSmallScreen ? 32 : 40)}
           fw={700}
           ff={fontStyle}
           withBorder={!isDark}
@@ -133,7 +134,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
-  const smallScreen = useMediaQuery("(max-width: 40em)");
+  const smallScreen = useIsSmallScreen();
   const { displaySettings } = useContext(AppContext);
   const backgroundColor = isDark ? theme.colors.dark[8] : theme.colors.gray[0];
 
