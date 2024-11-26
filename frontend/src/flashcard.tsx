@@ -53,7 +53,7 @@ const TiledText: React.FC<TiledTextProps> = ({
   shadow,
 }) => {
   return (
-    <Group gap={3} wrap="wrap">
+    <Group gap={rem(3)} wrap="wrap">
       {text.split("").map((char, index) => (
         <Paper
           h={h}
