@@ -1,7 +1,6 @@
 .responsiveTileText {
   font-size: var(--mantine-font-size-xl);
   line-height: var(--mantine-line-height-xl);
-  letter-spacing: -0.01em;
 }
 
 .responsiveTilePaper {
@@ -13,7 +12,6 @@
   .responsiveTileText {
     font-size: var(--mantine-font-size-xxl);
     line-height: var(--mantine-line-height-xxl);
-    letter-spacing: -0.02em;
   }
 
   .responsiveTilePaper {
