@@ -143,6 +143,28 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const { displaySettings } = useContext(AppContext);
   const backgroundColor = isDark ? theme.colors.dark[8] : theme.colors.gray[0];
 
+  const shuffleButton = (
+    <Button
+      variant="transparent"
+      size="xs"
+      c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
+      onClick={onShuffle}
+    >
+      <IconArrowsShuffle />
+    </Button>
+  );
+
+  const resetArrangementButton = (
+    <Button
+      variant="transparent"
+      size="xs"
+      c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
+      onClick={onCustomArrange}
+    >
+      <IconArrowUp />
+    </Button>
+  );
+
   return (
     <Card
       shadow="sm"
@@ -160,14 +182,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         // Front side
         <Stack align="center" gap="md">
           <Group gap="xs">
-            <Button
-              variant="transparent"
-              size={smallScreen ? "compact-xs" : "xs"}
-              c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
-              onClick={onShuffle}
-            >
-              <IconArrowsShuffle />
-            </Button>
+            {!smallScreen && shuffleButton}
             <QuestionDisplay
               displayQuestion={displayQuestion}
               isDark={isDark}
@@ -175,15 +190,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
               fontStyle={displaySettings.fontStyle}
               theme={theme}
             />
-            <Button
-              variant="transparent"
-              size={smallScreen ? "compact-xs" : "xs"}
-              c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
-              onClick={onCustomArrange}
-            >
-              <IconArrowUp />
-            </Button>
+            {!smallScreen && resetArrangementButton}
           </Group>
+          {smallScreen && (
+            <Group gap="xs">
+              {shuffleButton}
+              {resetArrangementButton}
+            </Group>
+          )}
           {currentCard.alphagram?.words.length &&
             displaySettings.showNumAnagrams && (
               <Text size="xl" c="dimmed" ta="center">
