@@ -321,7 +321,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       // Create a new Set and add the guess
       updatedCorrectGuesses = new Set(correctGuesses).add(guess);
       setCorrectGuesses(updatedCorrectGuesses);
-    } else {
+    } else if (!correctGuesses.has(guess)) {
       const guessAlphagram = guess.split("").sort().join("");
       setInputError(
         guessAlphagram === currentCard.alphagram.alphagram
