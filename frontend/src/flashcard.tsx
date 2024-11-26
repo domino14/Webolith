@@ -20,6 +20,7 @@ import React, { useContext } from "react";
 import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
 import { useIsSmallScreen } from "./use_is_small_screen";
+import classes from "./flashcard.module.css";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -36,19 +37,23 @@ interface FlashcardProps {
 }
 
 type TiledTextProps = {
+  classNames: {
+    text: string;
+    tile: string;
+  };
   text: string;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
   Pick<TextProps, "size" | "fw" | "ff">;
 
 const TiledText: React.FC<TiledTextProps> = ({
   text,
+  classNames,
   bg,
-  c,
   h,
   w,
   fw,
   ff,
-  size,
+  c,
   withBorder,
   shadow,
 }) => {
@@ -62,9 +67,10 @@ const TiledText: React.FC<TiledTextProps> = ({
           shadow={shadow}
           bg={bg}
           withBorder={withBorder}
+          className={classNames.tile}
         >
           <Center w="100%" h="100%">
-            <Text c={c} size={size} fw={fw} ff={ff} ta="center">
+            <Text className={classNames.text} c={c} fw={fw} ff={ff} ta="center">
               {char}
             </Text>
           </Center>
@@ -89,21 +95,20 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   tileStyle,
   theme,
 }) => {
-  const isSmallScreen = useIsSmallScreen();
-
   switch (tileStyle) {
     case TileStyle.MatchDisplay: {
       return (
         <TiledText
-          size={isSmallScreen ? rem(22) : "xxl"}
-          h={rem(isSmallScreen ? 32 : 40)}
-          w={rem(isSmallScreen ? 32 : 40)}
           fw={700}
           ff={fontStyle}
           withBorder={!isDark}
           shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
           c={isDark ? theme.colors.gray[0] : undefined}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
           text={displayQuestion}
         />
       );
@@ -176,7 +181,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
       {!flipped ? (
         // Front side
         <Stack align="center" gap="md">
-          <Group>
+          <Group gap="xs">
             {!smallScreen && shuffleButton}
             <QuestionDisplay
               displayQuestion={displayQuestion}
