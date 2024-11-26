@@ -43,7 +43,7 @@ type TiledTextProps = {
   };
   text: string;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
-  Pick<TextProps, "size" | "fw" | "ff" | "style">;
+  Pick<TextProps, "size" | "fw" | "ff">;
 
 const TiledText: React.FC<TiledTextProps> = ({
   text,
