@@ -252,6 +252,22 @@ def create_wl_lists(i, lex):
             "CSW24 {} not in NWL23".format(friendly_number_map[i]),
         )
 
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
+        create_named_list(
+            lex,
+            len(qs),
+            i,
+            False,
+            json.dumps(qs),
+            "CSW24 {} not in CSW21".format(friendly_number_map[i]),
+        )
+
 
 def createNamedLists(lex):
     """Create the lists for every word length, given a lexicon."""
