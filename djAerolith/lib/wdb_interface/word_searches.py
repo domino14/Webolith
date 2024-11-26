@@ -209,8 +209,8 @@ def temporary_list_name(
                 sd.numbervalue.value == pb.SearchRequest.NotInLexCondition.OTHER_ENGLISH
             ):  # noqa
                 if lexicon_name == "NWL23":
-                    desc = "CSW21"
-                elif lexicon_name == "CSW21":
+                    desc = "CSW24"
+                elif lexicon_name == "CSW24":
                     desc = "NWL23"
             elif (
                 sd.numbervalue.value
@@ -218,8 +218,8 @@ def temporary_list_name(
             ):  # noqa
                 if lexicon_name == "NWL23":
                     desc = "NWL20"
-                elif lexicon_name == "CSW21":
-                    desc = "CSW19"
+                elif lexicon_name == "CSW24":
+                    desc = "CSW21"
                 elif lexicon_name == "FISE2":
                     desc = "FISE09"
                 elif lexicon_name == "OSPS49":
