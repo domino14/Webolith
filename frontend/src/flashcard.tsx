@@ -113,6 +113,58 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         />
       );
     }
+    case TileStyle.Yellow: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={theme.colors.yellow[4]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Orange: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={theme.colors.orange[4]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Blue: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={theme.colors.blue[8]}
+          c={theme.colors.gray[0]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+
     case TileStyle.None:
     default: {
       return (

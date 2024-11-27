@@ -78,6 +78,18 @@ const Settings: React.FC = () => {
               value: TileStyle.MatchDisplay,
               label: "Match dark/light mode",
             },
+            {
+              value: TileStyle.Blue,
+              label: "Blue",
+            },
+            {
+              value: TileStyle.Orange,
+              label: "Orange",
+            },
+            {
+              value: TileStyle.Yellow,
+              label: "Yellow",
+            },
           ]}
           label="Question tile style"
           {...settingsForm.getInputProps("tileStyle")}
