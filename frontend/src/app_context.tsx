@@ -21,6 +21,10 @@ export enum TileStyle {
    * Match the dark/light mode display setting by default
    */
   MatchDisplay = "match-display",
+
+  Blue = "blue",
+  Orange = "orange",
+  Yellow = "yellow",
 }
 
 export type DisplaySettings = {

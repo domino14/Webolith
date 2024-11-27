@@ -1,6 +1,6 @@
 .responsiveTileText {
-  font-size: var(--mantine-font-size-xl);
-  line-height: var(--mantine-line-height-xl);
+  font-size: var(--mantine-font-size-xxl);
+  line-height: var(--mantine-line-height-xxl);
 }
 
 .responsiveTilePaper {
