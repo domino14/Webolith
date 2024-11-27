@@ -24,63 +24,52 @@ def main(request):
 def get_stats(request, lexicon, type_of_challenge_id):
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
-    lexicon = Lexicon.objects.get(id=lexicon)
 
-    american_lexica = ["OWL2", "America", "NWL18", "NWL20", "NWL23"]
-    world_english_lexica = ["CSW12", "CSW15", "CSW19", "CSW21"]
-    polish_lexica = [
-        "OSPS40",
-        "OSPS41",
-        "OSPS42",
-        "OSPS44",
-        "OSPS46",
-        "OSPS48",
-        "OSPS49",
-    ]
-    french_lexica = ["FRA20", "FRA24"]
+    try:
+        lexicon = Lexicon.objects.get(id=lexicon)
+    except Lexicon.DoesNotExist:
+        return response({"error": "Lexicon not found"}, status=404)
 
-    if lexicon.lexiconName in american_lexica:
-        lexica = american_lexica
-    elif lexicon.lexiconName in world_english_lexica:
-        lexica = world_english_lexica
-    elif lexicon.lexiconName in polish_lexica:
-        lexica = polish_lexica
-    elif lexicon.lexiconName in french_lexica:
-        lexica = french_lexica
-    else:
-        lexica = [lexicon.lexiconName]
+    lexica_map = {
+        "american": ["OWL2", "America", "NWL18", "NWL20", "NWL23"],
+        "world_english": ["CSW12", "CSW15", "CSW19", "CSW21"],
+        "polish": ["OSPS40", "OSPS41", "OSPS42", "OSPS44", "OSPS46", "OSPS48", "OSPS49"],
+        "french": ["FRA20", "FRA24"]
+    }
 
-    name = DailyChallengeName.objects.get(id=type_of_challenge_id)
+    lexica = next((v for k, v in lexica_map.items() if lexicon.lexiconName in v), [lexicon.lexiconName])
+
+    try:
+        name = DailyChallengeName.objects.get(id=type_of_challenge_id)
+    except DailyChallengeName.DoesNotExist:
+        return response({"error": "Challenge name not found"}, status=404)
+
     challenges = DailyChallenge.objects.filter(
         name=name, lexicon__lexiconName__in=lexica
     )
 
-    if not start_date and not end_date:
-        pass
-
-    elif not start_date:
-        challenges = challenges.filter(date__lte=end_date)
-
-    elif not end_date:
-        challenges = challenges.filter(date__gte=start_date)
-
-    else:
-        challenges = challenges.filter(date__range=(start_date, end_date))
+    if start_date or end_date:
+        date_filter = {}
+        if start_date:
+            date_filter['date__gte'] = start_date
+        if end_date:
+            date_filter['date__lte'] = end_date
+        challenges = challenges.filter(**date_filter)
 
     leaderboards = DailyChallengeLeaderboard.objects.filter(challenge__in=challenges)
     entries = DailyChallengeLeaderboardEntry.objects.filter(
         user=request.user, board__in=leaderboards
-    )
+    ).select_related('board__challenge')
 
-    info_we_want = []
-
-    for entry in entries:
-        entry_info = {}
-        entry_info["Score"] = entry.score
-        entry_info["maxScore"] = entry.board.maxScore
-        entry_info["timeRemaining"] = entry.timeRemaining
-        entry_info["Date"] = entry.board.challenge.date.strftime("%Y-%m-%d")
-        info_we_want.append(entry_info)
+    info_we_want = [
+        {
+            "Score": entry.score,
+            "maxScore": entry.board.maxScore,
+            "timeRemaining": entry.timeRemaining,
+            "Date": entry.board.challenge.date.strftime("%Y-%m-%d")
+        }
+        for entry in entries
+    ]
 
     return response(info_we_want)
 
