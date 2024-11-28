@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext } from "react";
-import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
+import { IconArrowsShuffle, IconArrowUp, IconSpace } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
 import { useIsSmallScreen } from "./use_is_small_screen";
 import classes from "./flashcard.module.css";
@@ -260,8 +260,9 @@ const Flashcard: React.FC<FlashcardProps> = ({
             <Button onClick={handleFlip} size="lg">
               Show answer
               {!smallScreen && (
-                <Text component="span" size="sm">
-                  &nbsp; (0)
+                <Text c="dimmed" mt="md">
+                  &nbsp;
+                  <IconSpace />
                 </Text>
               )}
             </Button>

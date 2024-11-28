@@ -107,6 +107,7 @@ const Settings: React.FC = () => {
           label="Custom letter order. Leave blank to use alphabetical. All letters not specified will be in alphabetical order."
           placeholder="AEIOU..."
           mt="lg"
+          size="lg"
         />
         <Button type="submit" mt="lg">
           Save

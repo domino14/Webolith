@@ -114,6 +114,7 @@ const CardStats: React.FC = () => {
         <TextInput
           label="Alphagram"
           value={lookup}
+          size="lg"
           onChange={(t) =>
             setLookup(
               t.currentTarget.value
