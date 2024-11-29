@@ -53,6 +53,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
 
   const handleFlip = () => {
     setFlipped((prev) => !prev);
+    setInputError(null);
   };
 
   const loadNewCard = useCallback(async () => {
