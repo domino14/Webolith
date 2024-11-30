@@ -37,7 +37,7 @@ import Cookies from "js-cookie";
 // this can come from the backend later in some other way.
 const lexMap = {
   NWL23: 24,
-  CSW21: 18,
+  CSW24: 25,
   FRA24: 23,
   Deutsch: 17,
 };
@@ -130,7 +130,7 @@ function App() {
         <AppShell.Section grow component={ScrollArea}>
           <Select
             label="Lexicon"
-            data={["NWL23", "CSW21", "FRA24", "Deutsch"]}
+            data={["NWL23", "CSW24", "FRA24", "Deutsch"]}
             value={lexicon}
             onChange={(val) => setLexicon(val ?? "")}
             mb="md"

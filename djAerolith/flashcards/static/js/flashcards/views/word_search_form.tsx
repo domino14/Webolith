@@ -19,7 +19,7 @@ const allowedSearchTypes = new Set<number>([
 
 const lexOptions = [
   { value: "NWL23", displayValue: "NWL23" },
-  { value: "CSW21", displayValue: "CSW21" },
+  { value: "CSW24", displayValue: "CSW24" },
 ];
 
 const initialCriteria = [

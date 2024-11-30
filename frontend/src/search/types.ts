@@ -132,9 +132,9 @@ const propertiesObject: { [key: number]: SearchTypeProperty } = {
       ["other_english", "Other English-language lexicon"],
     ],
     description: `Only looks for words that are NOT in the selected lexicon.
-    The "other English-language lexicon" refers to CSW21 if you are currently
+    The "other English-language lexicon" refers to CSW24 if you are currently
     using the NWL23 lexicon, and NWL23 if you are currently using the
-    CSW21 lexicon. CSW21 has no new words compared to CSW19.`,
+    CSW24 lexicon.`,
   },
   [cond.PROBABILITY_LIMIT]: {
     code: cond.PROBABILITY_LIMIT,
@@ -171,9 +171,8 @@ const propertiesObject: { [key: number]: SearchTypeProperty } = {
     minAllowed: 1,
     maxAllowed: 100,
     description: `Difficulty range is only applicable to 7 and 8 letter words
-    in NWL20 and CSW21 currently. These words were
-    split into 100 equal-size groups by difficulty, ranging from 1 (easiest)
-    to 100 (hardest).`,
+    in NWL23 and CSW24 currently. These words were split into 100 equal-size groups
+    by difficulty, ranging from 1 (easiest) to 100 (hardest).`,
   },
   [cond.DELETED_WORD]: {
     code: cond.DELETED_WORD,

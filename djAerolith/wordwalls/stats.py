@@ -27,7 +27,7 @@ def get_stats(request, lexicon, type_of_challenge_id):
     lexicon = Lexicon.objects.get(id=lexicon)
 
     american_lexica = ["OWL2", "America", "NWL18", "NWL20", "NWL23"]
-    world_english_lexica = ["CSW12", "CSW15", "CSW19", "CSW21"]
+    world_english_lexica = ["CSW12", "CSW15", "CSW19", "CSW21", "CSW24"]
     polish_lexica = [
         "OSPS40",
         "OSPS41",

@@ -16,7 +16,7 @@ function getLexiconName(availableLexica, lexicon) {
   return '';
 }
 
-const ALL_TIME_TOUGHIE_LEXICA = ['CSW21', 'NWL23'];
+const ALL_TIME_TOUGHIE_LEXICA = ['CSW24', 'NWL23'];
 
 function ChallengeDialog(props) {
   // For the different order priorities, make different buttons.

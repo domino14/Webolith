@@ -26,3 +26,4 @@ analysis/*.txt
 .ipynb_checkpoints
 djAerolith/venv
 frontend/*.tsbuildinfo
+frontend/.vite
