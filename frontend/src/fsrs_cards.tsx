@@ -429,6 +429,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
               )
             )
           }
+          typingMode={typingMode}
         />
       )}
 

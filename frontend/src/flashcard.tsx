@@ -33,6 +33,7 @@ interface FlashcardProps {
   displayQuestion: string;
   origDisplayQuestion: string;
   isPaywalled: boolean;
+  typingMode: boolean;
   missedWords?: Set<string>;
 }
 
@@ -187,6 +188,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   displayQuestion,
   origDisplayQuestion,
   missedWords,
+  typingMode,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -259,12 +261,15 @@ const Flashcard: React.FC<FlashcardProps> = ({
           <Group mt="md">
             <Button onClick={handleFlip} size="lg">
               Show answer
-              {!smallScreen && (
-                <Text c="dimmed" mt="md">
-                  &nbsp;
-                  <IconSpace />
-                </Text>
-              )}
+              {!smallScreen &&
+                (typingMode ? (
+                  <Text c="dimmed">&nbsp;(0)</Text>
+                ) : (
+                  <Text c="dimmed" mt="md">
+                    &nbsp;
+                    <IconSpace />
+                  </Text>
+                ))}
             </Button>
           </Group>
         </Stack>
