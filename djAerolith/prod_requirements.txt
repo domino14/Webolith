@@ -22,3 +22,5 @@ mock
 # wagtail
 protobuf
 python-dateutil
+sentry-sdk[django]
+

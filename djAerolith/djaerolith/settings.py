@@ -19,6 +19,11 @@
 # Django settings for djAerolith project.
 import os
 import sys
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://3289118bcbd3706040fad9c77c80489f@o1370052.ingest.us.sentry.io/4508405466005504",
+)
 
 from pathlib import Path
 
