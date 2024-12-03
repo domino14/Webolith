@@ -121,7 +121,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           ff={fontStyle}
           withBorder={!isDark}
           shadow={isDark ? "xs" : undefined}
-          bg={theme.colors.yellow[4]}
+          bg={isDark ? theme.colors.yellow[4] : theme.colors.yellow[2]}
           c={theme.colors.gray[9]}
           classNames={{
             text: classes.responsiveTileText,
@@ -138,7 +138,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           ff={fontStyle}
           withBorder={!isDark}
           shadow={isDark ? "xs" : undefined}
-          bg={theme.colors.orange[4]}
+          bg={isDark ? theme.colors.orange[4] : theme.colors.orange[2]}
           c={theme.colors.gray[9]}
           classNames={{
             text: classes.responsiveTileText,
@@ -155,8 +155,8 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           ff={fontStyle}
           withBorder={!isDark}
           shadow={isDark ? "xs" : undefined}
-          bg={theme.colors.blue[8]}
-          c={theme.colors.gray[0]}
+          bg={isDark ? theme.colors.blue[8] : theme.colors.blue[3]}
+          c={isDark ? theme.colors.gray[0] : theme.colors.gray[9]}
           classNames={{
             text: classes.responsiveTileText,
             tile: classes.responsiveTilePaper,
@@ -165,7 +165,40 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         />
       );
     }
-
+    case TileStyle.Green: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.green[4] : theme.colors.green[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Pink: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.pink[4] : theme.colors.pink[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
     case TileStyle.None:
     default: {
       return (

@@ -25,6 +25,8 @@ export enum TileStyle {
   Blue = "blue",
   Orange = "orange",
   Yellow = "yellow",
+  Green = "green",
+  Pink = "pink",
 }
 
 export type DisplaySettings = {

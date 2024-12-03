@@ -90,6 +90,14 @@ const Settings: React.FC = () => {
               value: TileStyle.Yellow,
               label: "Yellow",
             },
+            {
+              value: TileStyle.Green,
+              label: "Green",
+            },
+            {
+              value: TileStyle.Pink,
+              label: "Pink",
+            },
           ]}
           label="Question tile style"
           {...settingsForm.getInputProps("tileStyle")}
