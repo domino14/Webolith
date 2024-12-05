@@ -198,6 +198,7 @@ def slow_view(request):
     return response({"msg": "You go"})
 
 
+@csrf_exempt
 def paypal_ipn(request):
     # Read the raw POST data from PayPal
     raw_post_data = request.body.decode("utf-8")
@@ -252,5 +253,8 @@ def paypal_ipn(request):
                 )
             except AerolithProfile.DoesNotExist:
                 logger.error("AerolithProfile does not exist for username=%s", username)
-                return HttpResponse(status=404)
+                # Don't return a 404 because paypal is complaining to me and keeps retrying it.
+                # This seems to be happening because it sends me IPN messages when regular people 
+                # send me money.
+                return HttpResponse(status=200)
     return HttpResponse(status=200)
