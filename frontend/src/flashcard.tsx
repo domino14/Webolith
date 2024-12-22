@@ -202,7 +202,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     case TileStyle.None:
     default: {
       return (
-        <Text size="xxl" fw={700} ta="center" ff={fontStyle}>
+        <Text size="xxxl" fw={700} ta="center" ff={fontStyle}>
           {displayQuestion}
         </Text>
       );
