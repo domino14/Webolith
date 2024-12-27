@@ -31,14 +31,6 @@ from lib.wdb_interface.word_searches import SearchDescription
 
 logger = logging.getLogger(__name__)
 
-# try:
-#     COMMON_SHORT_NAMED_LIST = NamedList.objects.get(
-#           name=FRIENDLY_COMMON_SHORT)
-#     COMMON_LONG_NAMED_LIST = NamedList.objects.get(name=FRIENDLY_COMMON_LONG)
-# except NamedList.DoesNotExist:
-#     COMMON_SHORT_NAMED_LIST = None
-#     COMMON_LONG_NAMED_LIST = None
-
 
 def generate_dc_questions(challenge_name, lex, challenge_date):
     """
