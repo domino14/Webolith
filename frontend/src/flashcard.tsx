@@ -110,7 +110,6 @@ const TiledText: React.FC<TiledTextProps> = ({
   return (
     <DragDropContext
       onDragEnd={({ destination, source }) => {
-        console.log("reorder", source.index, destination?.index || 0);
         handlers.reorder({ from: source.index, to: destination?.index || 0 });
       }}
     >
