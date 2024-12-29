@@ -15,11 +15,13 @@ import {
   rem,
   MantineTheme,
 } from "@mantine/core";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { IconArrowsShuffle, IconArrowUp, IconSpace } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
 import { useIsSmallScreen } from "./use_is_small_screen";
+import { useListState } from "@mantine/hooks";
 import classes from "./flashcard.module.css";
 
 interface FlashcardProps {
@@ -43,6 +45,7 @@ type TiledTextProps = {
     tile: string;
   };
   text: string;
+  reorderable: boolean;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
   Pick<TextProps, "size" | "fw" | "ff">;
 
@@ -57,27 +60,77 @@ const TiledText: React.FC<TiledTextProps> = ({
   c,
   withBorder,
   shadow,
+  reorderable,
 }) => {
+  const tileData = useMemo(() => {
+    return text.split("").map((letter, index) => ({
+      letter,
+      originalIndex: index,
+    }));
+  }, [text]);
+
+  const [letters, handlers] = useListState(tileData);
+
+  useEffect(() => {
+    handlers.setState(tileData);
+  }, [tileData]);
+
+  const items = useMemo(() => {
+    return letters.map(({ letter, originalIndex }, index) => (
+      <Draggable
+        key={originalIndex}
+        index={index}
+        draggableId={originalIndex.toString()}
+        isDragDisabled={!reorderable}
+      >
+        {(provided) => (
+          <div
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+            style={{
+              ...provided.draggableProps.style,
+              cursor: reorderable ? "grab" : "default",
+            }}
+          >
+            <Paper
+              h={h}
+              w={w}
+              key={index}
+              shadow={shadow}
+              bg={bg}
+              withBorder={withBorder}  
+              className={classNames.tile}
+            >
+              <Center w="100%" h="100%">
+                <Text c={c} size={size} fw={fw} ff={ff} ta="center">
+                  {letter}
+                </Text>
+              </Center>
+            </Paper>
+          </div>
+        )}
+      </Draggable>
+    ));
+  }, [letters, reorderable]);
+
   return (
-    <Group gap={rem(3)} wrap="wrap">
-      {text.split("").map((char, index) => (
-        <Paper
-          h={h}
-          w={w}
-          key={index}
-          shadow={shadow}
-          bg={bg}
-          withBorder={withBorder}
-          className={classNames.tile}
-        >
-          <Center w="100%" h="100%">
-            <Text className={classNames.text} c={c} fw={fw} ff={ff} ta="center">
-              {char}
-            </Text>
-          </Center>
-        </Paper>
-      ))}
-    </Group>
+    <DragDropContext
+      onDragEnd={({ destination, source }) => {
+        handlers.reorder({ from: source.index, to: destination?.index || 0 });
+      }}
+    >
+      <Droppable droppableId="dnd-list" direction="horizontal">
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            <Group gap={rem(3)} wrap="wrap">
+              {items}
+              {provided.placeholder}
+            </Group>
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };
 
@@ -87,6 +140,7 @@ type QuestionDisplayProps = {
   fontStyle: FontStyle;
   tileStyle: TileStyle;
   theme: MantineTheme;
+  side: "front" | "back";
 };
 
 const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
@@ -95,6 +149,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   fontStyle,
   tileStyle,
   theme,
+  side,
 }) => {
   switch (tileStyle) {
     case TileStyle.MatchDisplay: {
@@ -196,6 +251,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -276,6 +332,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
               tileStyle={displaySettings.tileStyle}
               fontStyle={displaySettings.fontStyle}
               theme={theme}
+              side="front"
             />
             {!smallScreen && resetArrangementButton}
           </Group>
@@ -316,6 +373,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
               tileStyle={displaySettings.tileStyle}
               fontStyle={displaySettings.fontStyle}
               theme={theme}
+              side="back"
             />
           </Flex>
           {currentCard.alphagram?.words.map((word) => {
