@@ -78,6 +78,26 @@ const Settings: React.FC = () => {
               value: TileStyle.MatchDisplay,
               label: "Match dark/light mode",
             },
+            {
+              value: TileStyle.Blue,
+              label: "Blue",
+            },
+            {
+              value: TileStyle.Orange,
+              label: "Orange",
+            },
+            {
+              value: TileStyle.Yellow,
+              label: "Yellow",
+            },
+            {
+              value: TileStyle.Green,
+              label: "Green",
+            },
+            {
+              value: TileStyle.Pink,
+              label: "Pink",
+            },
           ]}
           label="Question tile style"
           {...settingsForm.getInputProps("tileStyle")}
@@ -95,6 +115,7 @@ const Settings: React.FC = () => {
           label="Custom letter order. Leave blank to use alphabetical. All letters not specified will be in alphabetical order."
           placeholder="AEIOU..."
           mt="lg"
+          size="lg"
         />
         <Button type="submit" mt="lg">
           Save

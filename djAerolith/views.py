@@ -220,39 +220,41 @@ def paypal_ipn(request):
         username = request.POST.get("custom")
         payment_status = request.POST.get("payment_status")
         # You can extract more fields like payment_amount, payer_email, etc.
-        logger.info("ipn post verified; data is %s", request.POST)
+        logger.info("IPN post verified; username=%s, payment_status=%s", username, payment_status)
         if payment_status == "Completed":
-            # Payment is successful, tie the payment to the user (e.g., update database)
-            # Here, `custom_field` holds the username or user ID passed from your form
-            # Example: update user's payment status or log the transaction
-            # user = User.objects.get(username=custom_field)
-            # Store or process the transaction (txn_id, payment details, etc.)
-            profile = AerolithProfile.objects.get(user__username=username)
-            profile.member = True
-            profile.membershipType = AerolithProfile.GOLD_MTYPE
-            # If the user renews ahead of time, we want to credit them for
-            # the amount of time they have remaining.
-            now = timezone.now()
-            if profile.membershipExpiry and profile.membershipExpiry > now:
-                # Membership is active, extend expiry by one year from current expiry date
-                new_expiry = profile.membershipExpiry + relativedelta(years=1)
-            else:
-                # Membership is expired or non-existent, set expiry to one year from now
-                new_expiry = now + relativedelta(years=1)
+            try:
+                profile = AerolithProfile.objects.get(user__username=username)
+                profile.member = True
+                profile.membershipType = AerolithProfile.GOLD_MTYPE
+                # If the user renews ahead of time, we want to credit them for
+                # the amount of time they have remaining.
+                now = timezone.now()
+                if profile.membershipExpiry and profile.membershipExpiry > now:
+                    # Membership is active, extend expiry by one year from current expiry date
+                    new_expiry = profile.membershipExpiry + relativedelta(years=1)
+                else:
+                    # Membership is expired or non-existent, set expiry to one year from now
+                    new_expiry = now + relativedelta(years=1)
 
-            new_expiry = timezone.localtime(new_expiry)
-            new_expiry = new_expiry.replace(
-                hour=23, minute=59, second=59, microsecond=0
-            )
+                new_expiry = timezone.localtime(new_expiry)
+                new_expiry = new_expiry.replace(
+                    hour=23, minute=59, second=59, microsecond=0
+                )
 
-            profile.membershipExpiry = new_expiry
-            profile.save()
+                profile.membershipExpiry = new_expiry
+                profile.save()
 
-            logger.info("member=%s Updated their membership", username)
-            send_mail(
-                f"Updated membership for {username}",
-                f"{username} signed up for a plan",
-                None,
-                [settings.ADMINS[0][1]],
-            )
+                logger.info("member=%s Updated their membership", username)
+                send_mail(
+                    f"Updated membership for {username}",
+                    f"{username} signed up for a plan",
+                    None,
+                    [settings.ADMINS[0][1]],
+                )
+            except AerolithProfile.DoesNotExist:
+                logger.error("AerolithProfile does not exist for username=%s", username)
+                # Don't return a 404 because paypal is complaining to me and keeps retrying it.
+                # This seems to be happening because it sends me IPN messages when regular people 
+                # send me money.
+                return HttpResponse(status=200)
     return HttpResponse(status=200)

@@ -40,7 +40,7 @@ const NO_LOAD_WHILE_PLAYING = (
 const NWL23_LEX_ID = 24;
 const FISE2_LEX_ID = 10;
 const OSPS_LEX_ID = 22;
-const COLLINS_21_LEX_ID = 18;
+const COLLINS_24_LEX_ID = 25;
 const DEUTSCH_LEX_ID = 17;
 
 const COLLINS_LICENSE_TEXT = 'Published under license with Collins, an imprint of HarperCollins Publishers Limited';
@@ -328,7 +328,7 @@ const TableCreator = React.forwardRef((props, ref) => {
 
   const renderLicenseText = () => {
     switch (currentLexicon) {
-      case COLLINS_21_LEX_ID:
+      case COLLINS_24_LEX_ID:
         return (<span>{COLLINS_LICENSE_TEXT}</span>);
       case NWL23_LEX_ID:
         return (<span><a href="https://www.scrabbleplayers.org/landing/aerolith/" target="_blank" rel="noreferrer">{NASPA_LICENSE_TEXT}</a></span>);

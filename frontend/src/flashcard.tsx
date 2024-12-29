@@ -18,10 +18,11 @@ import {
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useContext, useEffect, useMemo } from "react";
-import { IconArrowsShuffle, IconArrowUp } from "@tabler/icons-react";
+import { IconArrowsShuffle, IconArrowUp, IconSpace } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
 import { useIsSmallScreen } from "./use_is_small_screen";
 import { useListState } from "@mantine/hooks";
+import classes from "./flashcard.module.css";
 
 interface FlashcardProps {
   flipped: boolean;
@@ -34,10 +35,15 @@ interface FlashcardProps {
   displayQuestion: string;
   origDisplayQuestion: string;
   isPaywalled: boolean;
+  typingMode: boolean;
   missedWords?: Set<string>;
 }
 
 type TiledTextProps = {
+  classNames: {
+    text: string;
+    tile: string;
+  };
   text: string;
   reorderable: boolean;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
@@ -45,13 +51,13 @@ type TiledTextProps = {
 
 const TiledText: React.FC<TiledTextProps> = ({
   text,
+  classNames,
   bg,
-  c,
   h,
   w,
   fw,
   ff,
-  size,
+  c,
   withBorder,
   shadow,
   reorderable,
@@ -93,7 +99,8 @@ const TiledText: React.FC<TiledTextProps> = ({
               key={index}
               shadow={shadow}
               bg={bg}
-              withBorder={withBorder}
+              withBorder={withBorder}  
+              className={classNames.tile}
             >
               <Center w="100%" h="100%">
                 <Text c={c} size={size} fw={fw} ff={ff} ta="center">
@@ -144,21 +151,105 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   theme,
   side,
 }) => {
-  const isSmallScreen = useIsSmallScreen();
-
   switch (tileStyle) {
     case TileStyle.MatchDisplay: {
       return (
         <TiledText
-          size={isSmallScreen ? rem(22) : "xxl"}
-          h={rem(isSmallScreen ? 32 : 40)}
-          w={rem(isSmallScreen ? 32 : 40)}
           fw={700}
           ff={fontStyle}
           withBorder={!isDark}
           shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
           c={isDark ? theme.colors.gray[0] : undefined}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Yellow: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.yellow[4] : theme.colors.yellow[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Orange: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.orange[4] : theme.colors.orange[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Blue: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.blue[8] : theme.colors.blue[3]}
+          c={isDark ? theme.colors.gray[0] : theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Green: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.green[4] : theme.colors.green[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+        />
+      );
+    }
+    case TileStyle.Pink: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          withBorder={!isDark}
+          shadow={isDark ? "xs" : undefined}
+          bg={isDark ? theme.colors.pink[4] : theme.colors.pink[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
           text={displayQuestion}
           reorderable={side === "front"}
         />
@@ -167,7 +258,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     case TileStyle.None:
     default: {
       return (
-        <Text size="xxl" fw={700} ta="center" ff={fontStyle}>
+        <Text size="xxxl" fw={700} ta="center" ff={fontStyle}>
           {displayQuestion}
         </Text>
       );
@@ -186,6 +277,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   displayQuestion,
   origDisplayQuestion,
   missedWords,
+  typingMode,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -232,7 +324,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
       {!flipped ? (
         // Front side
         <Stack align="center" gap="md">
-          <Group>
+          <Group gap="xs">
             {!smallScreen && shuffleButton}
             <QuestionDisplay
               displayQuestion={displayQuestion}
@@ -259,11 +351,15 @@ const Flashcard: React.FC<FlashcardProps> = ({
           <Group mt="md">
             <Button onClick={handleFlip} size="lg">
               Show answer
-              {!smallScreen && (
-                <Text component="span" size="sm">
-                  &nbsp; (0)
-                </Text>
-              )}
+              {!smallScreen &&
+                (typingMode ? (
+                  <Text c="dimmed">&nbsp;(0)</Text>
+                ) : (
+                  <Text c="dimmed" mt="md">
+                    &nbsp;
+                    <IconSpace />
+                  </Text>
+                ))}
             </Button>
           </Group>
         </Stack>

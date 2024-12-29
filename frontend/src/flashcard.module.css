@@ -1,0 +1,21 @@
+.responsiveTileText {
+  font-size: var(--mantine-font-size-xxxl);
+  line-height: var(--mantine-line-height-xxxl);
+}
+
+.responsiveTilePaper {
+  width: calc(2.2rem * var(--mantine-scale));
+  height: calc(2.2rem * var(--mantine-scale));
+}
+
+@media (min-width: 48em) {
+  .responsiveTileText {
+    font-size: var(--mantine-font-size-xxxl);
+    line-height: var(--mantine-line-height-xxxl);
+  }
+
+  .responsiveTilePaper {
+    width: calc(2.5rem * var(--mantine-scale));
+    height: calc(2.5rem * var(--mantine-scale));
+  }
+}

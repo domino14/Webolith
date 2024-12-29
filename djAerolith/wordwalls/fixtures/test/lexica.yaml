@@ -130,4 +130,9 @@
     lexiconName: NWL23
   model: base.lexicon
   pk: 24
-
+- fields:
+    lengthCounts: '{"10":35637,"11":28398,"12":20775,"13":14304,"14":9373,"15":5919,"2":93,"3":883,"4":3503,"5":8710,"6":17142,"7":27660,"8":36693,"9":39572}'
+    lexiconDescription: Collins 2024 International English Word List
+    lexiconName: CSW24
+  model: base.lexicon
+  pk: 25
