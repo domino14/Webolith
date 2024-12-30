@@ -47,7 +47,7 @@ type TiledTextProps = {
   text: string;
   reorderable: boolean;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
-  Pick<TextProps, "size" | "fw" | "ff">;
+  Pick<TextProps, "fw" | "ff">;
 
 const TiledText: React.FC<TiledTextProps> = ({
   text,
@@ -61,7 +61,6 @@ const TiledText: React.FC<TiledTextProps> = ({
   withBorder,
   shadow,
   reorderable,
-  size,
 }) => {
   const tileData = useMemo(() => {
     return text.split("").map((letter, index) => ({
@@ -104,7 +103,7 @@ const TiledText: React.FC<TiledTextProps> = ({
               className={classNames.tile}
             >
               <Center w="100%" h="100%">
-                <Text c={c} size={size} fw={fw} ff={ff} ta="center">
+                <Text c={c} fw={fw} ff={ff} ta="center">
                   {letter}
                 </Text>
               </Center>
@@ -119,7 +118,6 @@ const TiledText: React.FC<TiledTextProps> = ({
     fw,
     ff,
     c,
-    size,
     bg,
     h,
     w,
@@ -180,6 +178,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -197,6 +196,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -214,6 +214,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -230,6 +231,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             text: classes.responsiveTileText,
             tile: classes.responsiveTilePaper,
           }}
+          reorderable={side === "front"}
           text={displayQuestion}
         />
       );
@@ -248,6 +250,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
