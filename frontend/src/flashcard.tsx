@@ -71,7 +71,7 @@ const TiledText: React.FC<TiledTextProps> = ({
 
   const [letters, handlers] = useListState(tileData);
 
-  // Re-set the list state when the text changes, otherwise `letters` holds
+  // Reset the list state when the text changes, otherwise `letters` holds
   // a references to the previous card (or a totally empty list).
   //
   // `handlers` is excluded from the dependency array as it changes even when
