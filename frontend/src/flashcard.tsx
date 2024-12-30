@@ -61,6 +61,7 @@ const TiledText: React.FC<TiledTextProps> = ({
   withBorder,
   shadow,
   reorderable,
+  size,
 }) => {
   const tileData = useMemo(() => {
     return text.split("").map((letter, index) => ({
@@ -73,7 +74,7 @@ const TiledText: React.FC<TiledTextProps> = ({
 
   useEffect(() => {
     handlers.setState(tileData);
-  }, [tileData]);
+  }, [tileData, handlers]);
 
   const items = useMemo(() => {
     return letters.map(({ letter, originalIndex }, index) => (
@@ -99,7 +100,7 @@ const TiledText: React.FC<TiledTextProps> = ({
               key={index}
               shadow={shadow}
               bg={bg}
-              withBorder={withBorder}  
+              withBorder={withBorder}
               className={classNames.tile}
             >
               <Center w="100%" h="100%">
@@ -112,7 +113,20 @@ const TiledText: React.FC<TiledTextProps> = ({
         )}
       </Draggable>
     ));
-  }, [letters, reorderable]);
+  }, [
+    letters,
+    reorderable,
+    fw,
+    ff,
+    c,
+    size,
+    bg,
+    h,
+    w,
+    withBorder,
+    shadow,
+    classNames.tile,
+  ]);
 
   return (
     <DragDropContext
