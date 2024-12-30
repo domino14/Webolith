@@ -71,9 +71,14 @@ const TiledText: React.FC<TiledTextProps> = ({
 
   const [letters, handlers] = useListState(tileData);
 
+  // Reset the list state when the text changes, otherwise `letters` holds
+  // a references to the previous card (or a totally empty list).
+  //
+  // `handlers` is excluded from the dependency array as it changes even when
+  // the text doesn't, causing re-orders to be incorrectly over-written
   useEffect(() => {
     handlers.setState(tileData);
-  }, [tileData, handlers]);
+  }, [tileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const items = useMemo(() => {
     return letters.map(({ letter, originalIndex }, index) => (
@@ -103,7 +108,13 @@ const TiledText: React.FC<TiledTextProps> = ({
               className={classNames.tile}
             >
               <Center w="100%" h="100%">
-                <Text c={c} fw={fw} ff={ff} ta="center">
+                <Text
+                  className={classNames.text}
+                  c={c}
+                  fw={fw}
+                  ff={ff}
+                  ta="center"
+                >
                   {letter}
                 </Text>
               </Center>
@@ -124,12 +135,17 @@ const TiledText: React.FC<TiledTextProps> = ({
     withBorder,
     shadow,
     classNames.tile,
+    classNames.text,
   ]);
 
   return (
     <DragDropContext
       onDragEnd={({ destination, source }) => {
-        handlers.reorder({ from: source.index, to: destination?.index || 0 });
+        if (!destination) {
+          return;
+        }
+
+        handlers.reorder({ from: source.index, to: destination.index });
       }}
     >
       <Droppable droppableId="dnd-list" direction="horizontal">
