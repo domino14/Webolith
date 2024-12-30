@@ -47,7 +47,7 @@ type TiledTextProps = {
   text: string;
   reorderable: boolean;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
-  Pick<TextProps, "size" | "fw" | "ff">;
+  Pick<TextProps, "fw" | "ff">;
 
 const TiledText: React.FC<TiledTextProps> = ({
   text,
@@ -73,7 +73,7 @@ const TiledText: React.FC<TiledTextProps> = ({
 
   useEffect(() => {
     handlers.setState(tileData);
-  }, [tileData]);
+  }, [tileData, handlers]);
 
   const items = useMemo(() => {
     return letters.map(({ letter, originalIndex }, index) => (
@@ -99,11 +99,11 @@ const TiledText: React.FC<TiledTextProps> = ({
               key={index}
               shadow={shadow}
               bg={bg}
-              withBorder={withBorder}  
+              withBorder={withBorder}
               className={classNames.tile}
             >
               <Center w="100%" h="100%">
-                <Text c={c} size={size} fw={fw} ff={ff} ta="center">
+                <Text c={c} fw={fw} ff={ff} ta="center">
                   {letter}
                 </Text>
               </Center>
@@ -112,7 +112,19 @@ const TiledText: React.FC<TiledTextProps> = ({
         )}
       </Draggable>
     ));
-  }, [letters, reorderable]);
+  }, [
+    letters,
+    reorderable,
+    fw,
+    ff,
+    c,
+    bg,
+    h,
+    w,
+    withBorder,
+    shadow,
+    classNames.tile,
+  ]);
 
   return (
     <DragDropContext
@@ -166,6 +178,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -183,6 +196,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -200,6 +214,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
@@ -216,6 +231,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             text: classes.responsiveTileText,
             tile: classes.responsiveTilePaper,
           }}
+          reorderable={side === "front"}
           text={displayQuestion}
         />
       );
@@ -234,6 +250,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             tile: classes.responsiveTilePaper,
           }}
           text={displayQuestion}
+          reorderable={side === "front"}
         />
       );
     }
