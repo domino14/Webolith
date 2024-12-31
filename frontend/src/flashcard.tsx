@@ -352,6 +352,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         maxWidth: 600,
         width: "100%",
         backgroundColor: backgroundColor,
+        touchAction: "none",
       }}
     >
       {!flipped ? (
