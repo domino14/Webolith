@@ -222,6 +222,15 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     [displaySettings.customOrder]
   );
 
+  const moveLetter = useCallback(
+    (from: number, to: number) => {
+      const letters = displayQuestion.split("");
+      const [letter] = letters.splice(from, 1);
+      return [...letters.slice(0, to), letter, ...letters.slice(to)].join("");
+    },
+    [displayQuestion]
+  );
+
   useEffect(() => {
     if (!currentCard || !currentCard.alphagram) {
       return;
@@ -421,7 +430,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
             currentCard.alphagram?.alphagram ?? ""
           )}
           onShuffle={() => setDisplayQuestion(shuffle(alphagramLetters))}
-          onCustomArrange={() =>
+          onResetOrder={() =>
             setDisplayQuestion(
               customArrange(
                 alphagramLetters,
@@ -429,6 +438,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
               )
             )
           }
+          onMoveLetter={(from, to) => setDisplayQuestion(moveLetter(from, to))}
           typingMode={typingMode}
         />
       )}
