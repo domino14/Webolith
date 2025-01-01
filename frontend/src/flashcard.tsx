@@ -17,11 +17,10 @@ import {
 } from "@mantine/core";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card as WordVaultCard, Score } from "./gen/rpc/wordvault/api_pb";
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { IconArrowsShuffle, IconArrowUp, IconSpace } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
 import { useIsSmallScreen } from "./use_is_small_screen";
-import { useListState } from "@mantine/hooks";
 import classes from "./flashcard.module.css";
 
 interface FlashcardProps {
@@ -31,7 +30,8 @@ interface FlashcardProps {
   handleScore: (score: Score) => Promise<void>;
   showLoader: boolean;
   onShuffle: () => void;
-  onCustomArrange: () => void;
+  onResetOrder: () => void;
+  onMoveLetter: (from: number, to: number) => void;
   displayQuestion: string;
   origDisplayQuestion: string;
   isPaywalled: boolean;
@@ -46,6 +46,7 @@ type TiledTextProps = {
   };
   text: string;
   reorderable: boolean;
+  onMoveLetter: (from: number, to: number) => void;
 } & Pick<PaperProps, "bg" | "c" | "h" | "w" | "withBorder" | "shadow"> &
   Pick<TextProps, "fw" | "ff">;
 
@@ -61,24 +62,14 @@ const TiledText: React.FC<TiledTextProps> = ({
   withBorder,
   shadow,
   reorderable,
+  onMoveLetter,
 }) => {
-  const tileData = useMemo(() => {
+  const letters = useMemo(() => {
     return text.split("").map((letter, index) => ({
       letter,
       originalIndex: index,
     }));
   }, [text]);
-
-  const [letters, handlers] = useListState(tileData);
-
-  // Reset the list state when the text changes, otherwise `letters` holds
-  // a references to the previous card (or a totally empty list).
-  //
-  // `handlers` is excluded from the dependency array as it changes even when
-  // the text doesn't, causing re-orders to be incorrectly over-written
-  useEffect(() => {
-    handlers.setState(tileData);
-  }, [tileData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const items = useMemo(() => {
     return letters.map(({ letter, originalIndex }, index) => (
@@ -145,7 +136,7 @@ const TiledText: React.FC<TiledTextProps> = ({
           return;
         }
 
-        handlers.reorder({ from: source.index, to: destination.index });
+        onMoveLetter(source.index, destination.index);
       }}
     >
       <Droppable droppableId="dnd-list" direction="horizontal">
@@ -169,6 +160,7 @@ type QuestionDisplayProps = {
   tileStyle: TileStyle;
   theme: MantineTheme;
   side: "front" | "back";
+  onMoveLetter: (from: number, to: number) => void;
 };
 
 const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
@@ -178,6 +170,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   tileStyle,
   theme,
   side,
+  onMoveLetter,
 }) => {
   switch (tileStyle) {
     case TileStyle.MatchDisplay: {
@@ -195,6 +188,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           }}
           text={displayQuestion}
           reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
         />
       );
     }
@@ -213,6 +207,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           }}
           text={displayQuestion}
           reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
         />
       );
     }
@@ -231,6 +226,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           }}
           text={displayQuestion}
           reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
         />
       );
     }
@@ -249,6 +245,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           }}
           reorderable={side === "front"}
           text={displayQuestion}
+          onMoveLetter={onMoveLetter}
         />
       );
     }
@@ -267,6 +264,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           }}
           text={displayQuestion}
           reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
         />
       );
     }
@@ -285,6 +283,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           }}
           text={displayQuestion}
           reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
         />
       );
     }
@@ -306,7 +305,8 @@ const Flashcard: React.FC<FlashcardProps> = ({
   handleScore,
   showLoader,
   onShuffle,
-  onCustomArrange,
+  onResetOrder,
+  onMoveLetter,
   displayQuestion,
   origDisplayQuestion,
   missedWords,
@@ -335,7 +335,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
       variant="transparent"
       size="xs"
       c={isDark ? theme.colors.gray[8] : theme.colors.gray[5]}
-      onClick={onCustomArrange}
+      onClick={onResetOrder}
     >
       <IconArrowUp />
     </Button>
@@ -352,6 +352,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         maxWidth: 600,
         width: "100%",
         backgroundColor: backgroundColor,
+        touchAction: "none",
       }}
     >
       {!flipped ? (
@@ -365,6 +366,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
               tileStyle={displaySettings.tileStyle}
               fontStyle={displaySettings.fontStyle}
               theme={theme}
+              onMoveLetter={onMoveLetter}
               side="front"
             />
             {!smallScreen && resetArrangementButton}
@@ -401,6 +403,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         <Stack align="center" gap="sm">
           <Flex mb="md">
             <QuestionDisplay
+              onMoveLetter={onMoveLetter}
               displayQuestion={origDisplayQuestion}
               isDark={isDark}
               tileStyle={displaySettings.tileStyle}
