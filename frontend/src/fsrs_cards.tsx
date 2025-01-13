@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  useRef,
 } from "react";
 import {
   Badge,
@@ -47,6 +48,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
   const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
   const [displayQuestion, setDisplayQuestion] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
@@ -79,13 +81,16 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     }
     if (nextCard.card) {
       setCurrentCard(nextCard.card);
+      if (typingMode && inputRef.current) {
+        inputRef.current.focus();
+      }
       setFlipped(false);
     } else {
       setCurrentCard(null);
       setShowLoadMoreLink(true);
     }
     setOverdueCount(nextCard.overdueCount);
-  }, [lexicon, wordvaultClient]);
+  }, [lexicon, wordvaultClient, typingMode]);
 
   // Load a card upon first render.
   useEffect(() => {
@@ -121,16 +126,17 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
         alphagram: currentCard.alphagram?.alphagram ?? "",
         nextScheduled: scoreResponse.nextScheduled!,
         cardRepr: JSON.parse(
-          new TextDecoder().decode(scoreResponse.cardJsonRepr)
+          new TextDecoder().decode(scoreResponse.cardJsonRepr),
         ),
         previousCardRepr: JSON.parse(
-          new TextDecoder().decode(currentCard.cardJsonRepr)
+          new TextDecoder().decode(currentCard.cardJsonRepr),
         ),
       });
 
+      setTypeInputValue("");
       loadNewCard();
     },
-    [currentCard, lexicon, loadNewCard, wordvaultClient]
+    [currentCard, lexicon, loadNewCard, wordvaultClient],
   );
 
   const handleRescore = useCallback(
@@ -146,7 +152,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
           lexicon: lexicon,
           alphagram: previousCard.alphagram,
           lastCardRepr: new TextEncoder().encode(
-            JSON.stringify(previousCard.previousCardRepr)
+            JSON.stringify(previousCard.previousCardRepr),
           ),
         });
       } catch (e) {
@@ -164,11 +170,11 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
         score: score,
         nextScheduled: scoreResponse.nextScheduled!,
         cardRepr: JSON.parse(
-          new TextDecoder().decode(scoreResponse.cardJsonRepr)
+          new TextDecoder().decode(scoreResponse.cardJsonRepr),
         ),
       });
     },
-    [lexicon, wordvaultClient, previousCard]
+    [lexicon, wordvaultClient, previousCard],
   );
 
   // Note: shuffle/customarrange/split/etc won't work for multi-rune
@@ -219,7 +225,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       });
       return letters.join("");
     },
-    [displaySettings.customOrder]
+    [displaySettings.customOrder],
   );
 
   const moveLetter = useCallback(
@@ -228,7 +234,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       const [letter] = letters.splice(from, 1);
       return [...letters.slice(0, to), letter, ...letters.slice(to)].join("");
     },
-    [displayQuestion]
+    [displayQuestion],
   );
 
   useEffect(() => {
@@ -237,7 +243,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     }
     setCorrectGuesses(new Set<string>());
     setDisplayQuestion(
-      customArrange(alphagramLetters, currentCard.alphagram.alphagram)
+      customArrange(alphagramLetters, currentCard.alphagram.alphagram),
     );
   }, [currentCard, alphagramLetters, customArrange]);
 
@@ -274,7 +280,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
           case "2":
             event.preventDefault();
             setDisplayQuestion(
-              customArrange(alphagramLetters, currentCard.alphagram.alphagram)
+              customArrange(alphagramLetters, currentCard.alphagram.alphagram),
             );
             break;
         }
@@ -336,7 +342,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       setInputError(
         guessAlphagram === currentCard.alphagram.alphagram
           ? `"${guess}" not in lexicon`
-          : `"${guess}" does not match alphagram`
+          : `"${guess}" does not match alphagram`,
       );
     }
     // Clear the input
@@ -377,7 +383,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     return new Set(
       currentCard.alphagram.words
         .map((word) => word.word)
-        .filter((word) => !correctGuesses.has(word))
+        .filter((word) => !correctGuesses.has(word)),
     );
   }, [correctGuesses, typingMode, currentCard]);
 
@@ -386,6 +392,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       {typingMode && (
         <>
           <TextInput
+            ref={inputRef}
             m="md"
             size="lg"
             autoFocus
@@ -427,15 +434,15 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
           displayQuestion={displayQuestion}
           origDisplayQuestion={customArrange(
             alphagramLetters,
-            currentCard.alphagram?.alphagram ?? ""
+            currentCard.alphagram?.alphagram ?? "",
           )}
           onShuffle={() => setDisplayQuestion(shuffle(alphagramLetters))}
           onResetOrder={() =>
             setDisplayQuestion(
               customArrange(
                 alphagramLetters,
-                currentCard.alphagram?.alphagram ?? ""
-              )
+                currentCard.alphagram?.alphagram ?? "",
+              ),
             )
           }
           onMoveLetter={(from, to) => setDisplayQuestion(moveLetter(from, to))}
