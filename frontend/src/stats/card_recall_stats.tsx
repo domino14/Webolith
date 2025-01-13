@@ -19,7 +19,7 @@ export function CardRecallStats({
 }: CardRecallStatsProps) {
   // The first time a card is incorrectly answered is not logged as a
   // lapse, so we exclude that from the calculation of recall rate.
-  const timesRecalled = Math.min(card.Reps - 1, card.Reps - 1 - card.Lapses);
+  const timesRecalled = card.Reps - 1 - card.Lapses;
 
   let recallPercentageDisplay: string = "N/A";
   if (card.Reps > 1) {
