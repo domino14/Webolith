@@ -6,7 +6,6 @@ import React, {
   useContext,
   useMemo,
   useRef,
-  LegacyRef,
 } from "react";
 import {
   Badge,
@@ -49,7 +48,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
   const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
   const [displayQuestion, setDisplayQuestion] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
-  const inputRef = useRef<LegacyRef<HTMLInputElement>>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
