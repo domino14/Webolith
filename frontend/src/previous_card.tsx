@@ -2,7 +2,7 @@ import { Timestamp } from "@bufbuild/protobuf";
 import { Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useState } from "react";
 import { Alert, Button, Group, Popover, Stack, Text } from "@mantine/core";
-import { CardStats } from "./stats/card_recall_stats";
+import { CardRecallStats } from "./stats/card_recall_stats";
 import { CardRecallStat, ParsedFsrsCardStats } from "./stats/types";
 
 export interface HistoryEntry {
@@ -35,7 +35,7 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
           <Text size="md" fw={500}>
             {entry.alphagram}
           </Text>
-          <CardStats
+          <CardRecallStats
             card={entry.cardRepr}
             textProps={{
               size: "sm",

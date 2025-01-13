@@ -33,7 +33,7 @@ import {
 import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "../timezones";
 import { ParsedFsrsCardStats } from "./types";
-import { CardRecallStats } from "./stats/card_recall_stats";
+import { CardRecallStats } from "./card_recall_stats";
 import { dateString } from "../date_string";
 
 const StatisticsPage: React.FC = () => {
