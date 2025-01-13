@@ -12,8 +12,6 @@ import {
   Button,
   Card,
   Divider,
-  Group,
-  List,
   Stack,
   Text,
   TextInput,
@@ -34,8 +32,9 @@ import {
 } from "@tabler/icons-react";
 import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "./timezones";
-import { FsrsCardJson } from "./types";
+import { ParsedFsrsCard } from "./types";
 import { CardStats } from "./card_stats";
+import { dateString } from "./date_string";
 
 const StatisticsPage: React.FC = () => {
   const { lexicon, jwt } = useContext(AppContext);
@@ -90,7 +89,7 @@ const StatisticsPage: React.FC = () => {
       cardInfo
         ? (JSON.parse(
             new TextDecoder().decode(cardInfo?.cardJsonRepr),
-          ) as FsrsCardJson)
+          ) as ParsedFsrsCard)
         : null,
     [cardInfo],
   );
@@ -154,7 +153,7 @@ type reviewLogItem = {
 };
 
 interface CardInfoProps {
-  fsrsCard: FsrsCardJson;
+  fsrsCard: ParsedFsrsCard;
   reviewLog: reviewLogItem[];
   cardInfo: WordVaultCard;
 }
@@ -167,13 +166,6 @@ const CardInfo: React.FC<CardInfoProps> = ({
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
-  const dstr = (datestr: string, showTime?: boolean) =>
-    `${new Date(datestr).toLocaleDateString()}${
-      showTime ? " " + new Date(datestr).toLocaleTimeString() : ""
-    }`;
-
-  const dueDate = dstr(fsrsCard.Due, true);
-  const lastReview = dstr(fsrsCard.LastReview, true);
 
   const forgettingCurve = useMemo(() => {
     // return math.Pow(1+factor*elapsedDays/stability, decay)
@@ -213,7 +205,12 @@ const CardInfo: React.FC<CardInfoProps> = ({
           </Text>
 
           <Stack gap="xs">
-            <CardStats card={fsrsCard} textProps={{ size: "lg" }} />
+            <CardStats
+              card={fsrsCard}
+              textProps={{ size: "lg" }}
+              valueProps={{ fw: 500 }}
+              showTime
+            />
 
             <Text size="lg" fw={700} mt="md" c={theme.colors.blue[4]}>
               FSRS values
@@ -293,7 +290,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
         dataKey="date"
         yAxisLabel="Recall"
         series={[{ name: "Recall", color: "blue" }]}
-        referenceLines={[{ x: dstr(fsrsCard.Due), label: "Next review" }]}
+        referenceLines={[{ x: dateString(fsrsCard.Due), label: "Next review" }]}
         yAxisProps={{ domain: [0, 100] }}
         unit="%"
         withDots={false}
@@ -319,7 +316,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
             return (
               <Timeline.Item title="Imported" key="import" bullet={bullet}>
                 <Text size="xs" c={theme.colors.gray[6]}>
-                  {`${dstr(rl.ImportLog.ImportedDate, true)} from cardbox ${
+                  {`${dateString(rl.ImportLog.ImportedDate, true)} from cardbox ${
                     rl.ImportLog.CardboxAtImport
                   }`}
                 </Text>
@@ -348,7 +345,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 bullet={bullet}
               >
                 <Text size="xs" c={theme.colors.gray[6]}>
-                  {dstr(rl.Review, true)}
+                  {dateString(rl.Review, true)}
                 </Text>
               </Timeline.Item>
             );

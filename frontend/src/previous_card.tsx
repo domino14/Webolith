@@ -2,13 +2,15 @@ import { Timestamp } from "@bufbuild/protobuf";
 import { Score } from "./gen/rpc/wordvault/api_pb";
 import React, { useState } from "react";
 import { Alert, Button, Group, Popover, Stack, Text } from "@mantine/core";
+import { CardStats } from "./card_stats";
+import { CardStat, ParsedFsrsCard } from "./types";
 
 export interface HistoryEntry {
   score: Score;
   alphagram: string;
   nextScheduled: Timestamp;
-  cardRepr: { [key: string]: string };
-  previousCardRepr: { [key: string]: string };
+  cardRepr: ParsedFsrsCard;
+  previousCardRepr: ParsedFsrsCard;
 }
 
 interface PreviousCardProps {
@@ -33,6 +35,14 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
           <Text size="md" fw={500}>
             {entry.alphagram}
           </Text>
+          <CardStats
+            card={entry.cardRepr}
+            textProps={{
+              size: "sm",
+              c: "dimmed",
+            }}
+            excludeStats={new Set([CardStat.LAST_SEEN])}
+          />
           <Text size="sm" c="dimmed">
             Score:{" "}
             <Text

@@ -1,11 +1,13 @@
-export type FsrsCardJson = {
-  Due: string;
-  Stability: number;
+export type ParsedFsrsCard = {
   Difficulty: number;
-  Reps: number;
+  Due: string;
+  ElapsedDays: number;
   Lapses: number;
-  State: number;
   LastReview: string;
+  Reps: number;
+  ScheduledDays: number;
+  Stability: number;
+  State: number;
 };
 
 export enum CardStat {

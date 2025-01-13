@@ -1,18 +1,21 @@
-import { CardStat, FsrsCardJson } from "./types";
+import { dateString } from "./date_string";
+import { CardStat, ParsedFsrsCard } from "./types";
 import { Text, TextProps } from "@mantine/core";
 
 export interface CardStatsProps {
-  card: FsrsCardJson;
-  labelProps: TextProps;
-  valueProps: TextProps;
+  card: ParsedFsrsCard;
+  showTime?: boolean;
+  textProps?: Exclude<TextProps, "component">;
+  valueProps?: Exclude<TextProps, "component">;
   excludeStats?: Set<CardStat>;
 }
 
 export function CardStats({
   card,
-  labelProps,
+  textProps,
   valueProps,
   excludeStats = new Set(),
+  showTime = false,
 }: CardStatsProps) {
   // The first time a card is incorrectly answered is not logged as a
   // lapse, so we exclude that from the calculation of recall rate.
@@ -28,28 +31,39 @@ export function CardStats({
       }) + "%";
   }
 
-  const dueDate = new Date(card.Due);
-  const lastReview = new Date(card.LastReview);
-
   return (
     <>
       {!excludeStats.has(CardStat.DUE_DATE) && (
         <Text {...textProps}>
-          Next Due Date: {dueDate.toLocaleDateString()}{" "}
-          {dueDate.toLocaleTimeString()}
+          Next Due Date:{" "}
+          <Text component="span" {...valueProps}>
+            {dateString(card.Due, showTime)}
+          </Text>
         </Text>
       )}
       {!excludeStats.has(CardStat.LAST_SEEN) && (
         <Text {...textProps}>
-          Last Seen: {lastReview.toLocaleDateString()}{" "}
-          {lastReview.toLocaleTimeString()}
+          Last Seen:{" "}
+          <Text component="span" {...valueProps}>
+            {dateString(card.LastReview, showTime)}
+          </Text>
         </Text>
       )}
       {!excludeStats.has(CardStat.TIMES_SEEN) && (
-        <Text {...textProps}>Times Seen: {card.Reps}</Text>
+        <Text {...textProps}>
+          Times Seen:{" "}
+          <Text component="span" {...valueProps}>
+            {card.Reps}
+          </Text>
+        </Text>
       )}
       {!excludeStats.has(CardStat.RECALL_RATE) && (
-        <Text {...textProps}>Recall Rate: {recallPercentageDisplay}</Text>
+        <Text {...textProps}>
+          Recall Rate:{" "}
+          <Text component="span" {...valueProps}>
+            {recallPercentageDisplay}
+          </Text>
+        </Text>
       )}
     </>
   );
