@@ -43,13 +43,6 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
               {Score[entry.score] === "AGAIN" ? "MISSED" : Score[entry.score]}
             </Text>
           </Text>
-          <Text size="sm" c="dimmed">
-            Next Due Date: {entry.nextScheduled.toDate().toLocaleDateString()}
-          </Text>
-          <Text size="sm" c="dimmed">
-            Times Seen: {entry.cardRepr["Reps"]}
-          </Text>
-          <Text>Times Forgotten: {entry.cardRepr["Lapses"]}</Text>
         </Stack>
         <Popover
           trapFocus
