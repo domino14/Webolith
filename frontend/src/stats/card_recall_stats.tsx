@@ -1,22 +1,22 @@
-import { dateString } from "./date_string";
-import { CardStat, ParsedFsrsCard } from "./types";
+import { dateString } from "../date_string";
+import { CardRecallStat, ParsedFsrsCardStats } from "./types";
 import { Text, TextProps } from "@mantine/core";
 
-export interface CardStatsProps {
-  card: ParsedFsrsCard;
+export interface CardRecallStatsProps {
+  card: ParsedFsrsCardStats;
   showTime?: boolean;
   textProps?: Exclude<TextProps, "component">;
   valueProps?: Exclude<TextProps, "component">;
-  excludeStats?: Set<CardStat>;
+  excludeStats?: Set<CardRecallStat>;
 }
 
-export function CardStats({
+export function CardRecallStats({
   card,
   textProps,
   valueProps,
   excludeStats = new Set(),
   showTime = false,
-}: CardStatsProps) {
+}: CardRecallStatsProps) {
   // The first time a card is incorrectly answered is not logged as a
   // lapse, so we exclude that from the calculation of recall rate.
   const timesRecalled = Math.min(card.Reps - 1, card.Reps - 1 - card.Lapses);
@@ -33,7 +33,7 @@ export function CardStats({
 
   return (
     <>
-      {!excludeStats.has(CardStat.DUE_DATE) && (
+      {!excludeStats.has(CardRecallStat.DUE_DATE) && (
         <Text {...textProps}>
           Next Due Date:{" "}
           <Text component="span" {...valueProps}>
@@ -41,7 +41,7 @@ export function CardStats({
           </Text>
         </Text>
       )}
-      {!excludeStats.has(CardStat.LAST_SEEN) && (
+      {!excludeStats.has(CardRecallStat.LAST_SEEN) && (
         <Text {...textProps}>
           Last Seen:{" "}
           <Text component="span" {...valueProps}>
@@ -49,7 +49,7 @@ export function CardStats({
           </Text>
         </Text>
       )}
-      {!excludeStats.has(CardStat.TIMES_SEEN) && (
+      {!excludeStats.has(CardRecallStat.TIMES_SEEN) && (
         <Text {...textProps}>
           Times Seen:{" "}
           <Text component="span" {...valueProps}>
@@ -57,7 +57,7 @@ export function CardStats({
           </Text>
         </Text>
       )}
-      {!excludeStats.has(CardStat.RECALL_RATE) && (
+      {!excludeStats.has(CardRecallStat.RECALL_RATE) && (
         <Text {...textProps}>
           Recall Rate:{" "}
           <Text component="span" {...valueProps}>

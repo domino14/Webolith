@@ -18,7 +18,7 @@ import { Notifications } from "@mantine/notifications";
 import WordSearch from "./search/word_search.tsx";
 import CardSchedule from "./schedule.tsx";
 import Help from "./help.tsx";
-import Statistics from "./statistics.tsx";
+import Statistics from "./stats/statistics_page.tsx";
 import Settings from "./settings.tsx";
 import Leaderboard from "./leaderboard.tsx";
 

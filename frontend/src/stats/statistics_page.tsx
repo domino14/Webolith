@@ -5,9 +5,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { AppContext } from "./app_context";
-import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
-import { useClient } from "./use_client";
+import { AppContext } from "../app_context";
+import { WordVaultService } from "../gen/rpc/wordvault/api_connect";
+import { useClient } from "../use_client";
 import {
   Button,
   Card,
@@ -21,7 +21,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { Score, Card as WordVaultCard } from "./gen/rpc/wordvault/api_pb";
+import { Score, Card as WordVaultCard } from "../gen/rpc/wordvault/api_pb";
 import {
   IconAlertHexagon,
   IconBabyBottle,
@@ -31,10 +31,10 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { BarChart, LineChart } from "@mantine/charts";
-import { getBrowserTimezone } from "./timezones";
-import { ParsedFsrsCard } from "./types";
-import { CardStats } from "./card_stats";
-import { dateString } from "./date_string";
+import { getBrowserTimezone } from "../timezones";
+import { ParsedFsrsCardStats } from "./types";
+import { CardRecallStats } from "./stats/card_recall_stats";
+import { dateString } from "../date_string";
 
 const StatisticsPage: React.FC = () => {
   const { lexicon, jwt } = useContext(AppContext);
@@ -89,7 +89,7 @@ const StatisticsPage: React.FC = () => {
       cardInfo
         ? (JSON.parse(
             new TextDecoder().decode(cardInfo?.cardJsonRepr),
-          ) as ParsedFsrsCard)
+          ) as ParsedFsrsCardStats)
         : null,
     [cardInfo],
   );
@@ -153,7 +153,7 @@ type reviewLogItem = {
 };
 
 interface CardInfoProps {
-  fsrsCard: ParsedFsrsCard;
+  fsrsCard: ParsedFsrsCardStats;
   reviewLog: reviewLogItem[];
   cardInfo: WordVaultCard;
 }
@@ -205,7 +205,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
           </Text>
 
           <Stack gap="xs">
-            <CardStats
+            <CardRecallStats
               card={fsrsCard}
               textProps={{ size: "lg" }}
               valueProps={{ fw: 500 }}

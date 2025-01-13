@@ -1,4 +1,4 @@
-export type ParsedFsrsCard = {
+export type ParsedFsrsCardStats = {
   Difficulty: number;
   Due: string;
   ElapsedDays: number;
@@ -10,7 +10,7 @@ export type ParsedFsrsCard = {
   State: number;
 };
 
-export enum CardStat {
+export enum CardRecallStat {
   DUE_DATE,
   TIMES_SEEN,
   RECALL_RATE,
