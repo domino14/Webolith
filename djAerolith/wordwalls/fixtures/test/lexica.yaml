@@ -136,3 +136,9 @@
     lexiconName: CSW24
   model: base.lexicon
   pk: 25
+- fields:
+    lengthCounts: '{"10":316845,"11":364837,"12":378329,"13":360925,"14":321124,"15":263235,"2":103,"3":1135,"4":5324,"5":18537,"6":45609,"7":95387,"8":165945,"9":246140}'
+    lexiconDescription: Polska Federacja Scrabble - Update 50
+    lexiconName: OSPS50
+  model: base.lexicon
+  pk: 26

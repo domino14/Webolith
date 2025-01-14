@@ -43,6 +43,7 @@ EXCLUDED_LEXICA = [
     "OSPS44",
     "OSPS46",
     "OSPS48",
+    "OSPS49",
     "FRA20",
     "NWL20",
     "CSW21",
