@@ -55,12 +55,17 @@ def words_from_pb(pbw):
 
 class Alphagram:
     def __init__(
-        self, alphagram: str, probability: int = None, combinations: int = None
+        self,
+        alphagram: str,
+        probability: int = None,
+        combinations: int = None,
+        difficulty: int = None,
     ):
         self.alphagram = alphagram
         self.probability = probability
         self.length = len(alphagram)
         self.combinations = combinations
+        self.difficulty = difficulty
 
     def __eq__(self, other):
         return self.alphagram == other.alphagram
@@ -96,6 +101,7 @@ class Question:
             "question": self.alphagram.alphagram,
             "probability": self.alphagram.probability,
             "answers": [],
+            "difficulty": self.alphagram.difficulty,
         }
         for a in self.answers:
             q["answers"].append(
@@ -201,6 +207,7 @@ class Questions:
                     alphagram.alphagram,
                     alphagram.probability,
                     alphagram.combinations,
+                    alphagram.difficulty,
                 ),
                 answers=words_from_pb(alphagram.words),
             )
