@@ -222,8 +222,8 @@ def temporary_list_name(
                     desc = "CSW21"
                 elif lexicon_name == "FISE2":
                     desc = "FISE09"
-                elif lexicon_name == "OSPS49":
-                    desc = "OSPS48"
+                elif lexicon_name == "OSPS50":
+                    desc = "OSPS49"
                 elif lexicon_name == "FRA24":
                     desc = "FRA20"
             tokens.append(f"not in {desc}")
