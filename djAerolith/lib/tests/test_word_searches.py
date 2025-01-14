@@ -91,6 +91,7 @@ class TagSearchCase(TestCase):
                         "b_inner": False,
                     }
                 ],
+                "difficulty": 0,  # fix later or something.
             },
         )
 
