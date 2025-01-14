@@ -41,9 +41,46 @@ const Leaderboard: React.FC = () => {
     }));
   }, [leaderboard]);
 
+  const totalStats = useMemo(() => {
+    return [
+      leaderboard.length,
+      leaderboard.reduce((total, user) => total + user.cardsStudied, 0),
+    ];
+  }, [leaderboard]);
+
+  const randomSaying = useMemo(() => {
+    const sayings = [
+      "Knowledge is power, but spaced repetition is the fuel!",
+      "Study like a champion, review like a pro.",
+      "Brains in motion stay in motion—keep studying!",
+      "Cards today, brilliance tomorrow!",
+      "Every card counts—you're closer than you think!",
+      "Turning flashcards into flash victories!",
+      "Consistency beats intensity—you're doing great!",
+      "Keep calm and study on.",
+      "Stack by stack, you're building an empire of knowledge!",
+      "Cards don't study themselves, but you're doing awesome!",
+      "Your future self is high-fiving you right now!",
+      "Little steps lead to giant leaps in learning.",
+      "Studying cards now—flexing brain muscles later.",
+      "Every card mastered is a win for your brain.",
+      "You're not just studying; you're leveling up!",
+      "Don't stop till your brain drops (knowledge, that is)!",
+      "Persistence beats resistance—crush those cards!",
+      "Flashcards are temporary, but wisdom is forever.",
+      "You're studying like a pro and slaying like a hero!",
+      "The deck isn't stacked against you—it's stacked for you!",
+    ];
+    return sayings[Math.floor(Math.random() * sayings.length)];
+  }, []);
+
   return (
     <Stack gap="lg">
       <Text c="dimmed">Stats reset at midnight Aerolith time (US/Pacific)</Text>
+      <Text c="dimmed">
+        {totalStats[0]} users have studied {totalStats[1]} cards today.{" "}
+        {randomSaying}
+      </Text>
       <Table maw={600}>
         <Table.Thead>
           <Table.Tr>

@@ -142,7 +142,7 @@ const TiledText: React.FC<TiledTextProps> = ({
       <Droppable droppableId="dnd-list" direction="horizontal">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            <Group gap={rem(3)} wrap="wrap">
+            <Group gap={rem(2)} wrap="wrap">
               {items}
               {provided.placeholder}
             </Group>
@@ -178,8 +178,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <TiledText
           fw={700}
           ff={fontStyle}
-          withBorder={!isDark}
-          shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.gray[8] : theme.colors.gray[4]}
           c={isDark ? theme.colors.gray[0] : undefined}
           classNames={{
@@ -197,8 +195,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <TiledText
           fw={700}
           ff={fontStyle}
-          withBorder={!isDark}
-          shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.yellow[4] : theme.colors.yellow[2]}
           c={theme.colors.gray[9]}
           classNames={{
@@ -216,8 +212,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <TiledText
           fw={700}
           ff={fontStyle}
-          withBorder={!isDark}
-          shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.orange[4] : theme.colors.orange[2]}
           c={theme.colors.gray[9]}
           classNames={{
@@ -235,8 +229,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <TiledText
           fw={700}
           ff={fontStyle}
-          withBorder={!isDark}
-          shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.blue[8] : theme.colors.blue[3]}
           c={isDark ? theme.colors.gray[0] : theme.colors.gray[9]}
           classNames={{
@@ -254,8 +246,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <TiledText
           fw={700}
           ff={fontStyle}
-          withBorder={!isDark}
-          shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.green[4] : theme.colors.green[2]}
           c={theme.colors.gray[9]}
           classNames={{
@@ -273,9 +263,41 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <TiledText
           fw={700}
           ff={fontStyle}
-          withBorder={!isDark}
-          shadow={isDark ? "xs" : undefined}
           bg={isDark ? theme.colors.pink[4] : theme.colors.pink[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
+    case TileStyle.Violet: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.violet[4] : theme.colors.violet[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
+    case TileStyle.Red: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.red[6] : theme.colors.red[3]}
           c={theme.colors.gray[9]}
           classNames={{
             text: classes.responsiveTileText,
