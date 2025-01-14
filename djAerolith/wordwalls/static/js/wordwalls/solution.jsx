@@ -57,10 +57,15 @@ class Solution extends React.Component {
       <tr>
         <td style={rowStyle}>
           {
-          this.props.wordPos === 0 ? this.props.probability : ''
-}
+            this.props.wordPos === 0 ? this.props.probability : ''
+          }
         </td>
-        {this.props.difficulty ? <td className={this.props.difficulty > 80 ? 'text-danger' : ''} style={rowStyle}>{this.props.wordPos === 0 ? this.props.difficulty: ''}</td> : null}
+        {this.props.difficulty
+          ? (
+            <td className={this.props.difficulty > 80 ? 'text-danger' : ''} style={rowStyle}>
+              {this.props.wordPos === 0 ? this.props.difficulty : ''}
+            </td>
+          ) : null}
         <td
           style={rowStyle}
           className={qTdClass}
