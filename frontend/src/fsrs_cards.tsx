@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   useMemo,
+  useRef,
 } from "react";
 import {
   Badge,
@@ -44,6 +45,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
   const [correctGuesses, setCorrectGuesses] = useState(new Set<string>());
   const [displayQuestion, setDisplayQuestion] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [currentCard, setCurrentCard] = useState<WordVaultCard | null>(null);
   const [overdueCount, setOverdueCount] = useState(0);
@@ -76,13 +78,16 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     }
     if (nextCard.card) {
       setCurrentCard(nextCard.card);
+      if (typingMode && inputRef.current) {
+        inputRef.current.focus();
+      }
       setFlipped(false);
     } else {
       setCurrentCard(null);
       setShowLoadMoreLink(true);
     }
     setOverdueCount(nextCard.overdueCount);
-  }, [lexicon, wordVaultClient]);
+  }, [lexicon, wordVaultClient, typingMode]);
 
   // Load a card upon first render.
   useEffect(() => {
@@ -125,6 +130,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
         ),
       });
 
+      setTypeInputValue("");
       loadNewCard();
     },
     [currentCard, lexicon, loadNewCard, wordVaultClient],
@@ -383,6 +389,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       {typingMode && (
         <>
           <TextInput
+            ref={inputRef}
             m="md"
             size="lg"
             autoFocus

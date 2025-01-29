@@ -638,6 +638,7 @@ class WordwallsGame(object):
                     "a": alphagram_str,
                     "ws": words,
                     "p": q.alphagram.probability,
+                    "df": q.alphagram.difficulty,
                     "idx": i,
                 }
             )
