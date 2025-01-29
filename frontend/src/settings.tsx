@@ -218,7 +218,7 @@ const Settings: React.FC = () => {
         />
         <Switch
           label="Use short-term scheduler"
-          description="Priotize rapid study of recently-missed words"
+          description="Prioritize rapid study of recently-missed words"
           checked={settingsForm.values.enableShortTerm}
           {...settingsForm.getInputProps("enableShortTerm")}
           mt="lg"
