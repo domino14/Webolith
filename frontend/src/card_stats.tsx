@@ -6,8 +6,6 @@ import React, {
   useState,
 } from "react";
 import { AppContext } from "./app_context";
-import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
-import { useClient } from "./use_client";
 import {
   Button,
   Card,
@@ -35,17 +33,19 @@ import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "./timezones";
 
 const CardStats: React.FC = () => {
-  const { lexicon, jwt } = useContext(AppContext);
+  const { lexicon, jwt, wordVaultClient } = useContext(AppContext);
   const [lookup, setLookup] = useState("");
-  const wordvaultClient = useClient(WordVaultService);
   const [todayStats, setTodayStats] = useState<{
     [key: string]: number;
   }>({});
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
 
   const fetchTodayStats = useCallback(async () => {
+    if (!wordVaultClient) {
+      return;
+    }
     try {
-      const resp = await wordvaultClient.getDailyProgress({
+      const resp = await wordVaultClient.getDailyProgress({
         timezone: getBrowserTimezone(),
       });
       setTodayStats(resp.progressStats);
@@ -55,7 +55,7 @@ const CardStats: React.FC = () => {
         message: String(e),
       });
     }
-  }, [wordvaultClient]);
+  }, [wordVaultClient]);
 
   useEffect(() => {
     if (!jwt) {
@@ -65,8 +65,11 @@ const CardStats: React.FC = () => {
   }, [fetchTodayStats, jwt]);
 
   const lookupAlphagram = useCallback(async () => {
+    if (!wordVaultClient) {
+      return;
+    }
     try {
-      const resp = await wordvaultClient.getCardInformation({
+      const resp = await wordVaultClient.getCardInformation({
         lexicon,
         alphagrams: [lookup],
       });
@@ -80,26 +83,26 @@ const CardStats: React.FC = () => {
         message: String(e),
       });
     }
-  }, [lexicon, lookup, wordvaultClient]);
+  }, [lexicon, lookup, wordVaultClient]);
 
   const fsrsCard = useMemo(
     () =>
       cardInfo
         ? (JSON.parse(
-            new TextDecoder().decode(cardInfo?.cardJsonRepr)
+            new TextDecoder().decode(cardInfo?.cardJsonRepr),
           ) as fsrsCard)
         : null,
-    [cardInfo]
+    [cardInfo],
   );
 
   const reviewLog = useMemo(
     () =>
       cardInfo
         ? (JSON.parse(
-            new TextDecoder().decode(cardInfo?.reviewLog)
+            new TextDecoder().decode(cardInfo?.reviewLog),
           ) as reviewLogItem[])
         : null,
-    [cardInfo]
+    [cardInfo],
   );
 
   return (
@@ -121,7 +124,7 @@ const CardStats: React.FC = () => {
                 .toLocaleUpperCase()
                 .split("")
                 .sort()
-                .join("")
+                .join(""),
             )
           }
         ></TextInput>

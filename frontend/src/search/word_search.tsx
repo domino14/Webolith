@@ -26,10 +26,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useClient } from "../use_client";
-import { QuestionSearcher } from "../gen/rpc/wordsearcher/searcher_connect";
 import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
-import { WordVaultService } from "../gen/rpc/wordvault/api_connect";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 
@@ -64,7 +61,8 @@ type AlertValues = {
 };
 
 const WordSearchForm: React.FC = () => {
-  const { lexicon, jwt } = useContext(AppContext);
+  const { lexicon, jwt, wordVaultClient, wordServerClient } =
+    useContext(AppContext);
   const [alert, setAlert] = useState<AlertValues>({
     shown: false,
     color: "green",
@@ -90,11 +88,17 @@ const WordSearchForm: React.FC = () => {
     },
   });
 
-  const wordServerClient = useClient(QuestionSearcher);
-  const wordVaultClient = useClient(WordVaultService);
-
   const processUploadedFile = useCallback(
     async (uploadedList: string[]) => {
+      if (!wordVaultClient || !wordServerClient) {
+        setAlert({
+          color: "red",
+          shown: true,
+          text: "Word database connection not available, try refreshing",
+        });
+        return;
+      }
+
       try {
         setShowLoader(true);
         const alphagramResp = await wordServerClient.search({
@@ -142,7 +146,7 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [wordServerClient, lexicon, wordVaultClient]
+    [wordServerClient, lexicon, wordVaultClient],
   );
 
   const processUploadedCardbox = useCallback(
@@ -176,7 +180,7 @@ const WordSearchForm: React.FC = () => {
           // Handle HTTP errors
           const errorText = await response.text();
           throw new Error(
-            `HTTP error! Status: ${response.status}, Message: ${errorText}`
+            `HTTP error! Status: ${response.status}, Message: ${errorText}`,
           );
         }
 
@@ -197,11 +201,14 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [jwt, lexicon]
+    [jwt, lexicon],
   );
 
   const sendDelete = useCallback(
     async (onlyNew: boolean, allCards?: boolean, alphagramList?: string[]) => {
+      if (!wordVaultClient) {
+        return;
+      }
       try {
         setShowLoader(true);
         const resp = await wordVaultClient.delete({
@@ -224,7 +231,7 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [lexicon, wordVaultClient]
+    [lexicon, wordVaultClient],
   );
 
   const {
@@ -236,7 +243,7 @@ const WordSearchForm: React.FC = () => {
   } = useSearchRows(initialCriteria, allowedSearchTypes);
 
   const addToWordVault = useCallback(async () => {
-    if (!lexicon) {
+    if (!lexicon || !wordServerClient || !wordVaultClient) {
       return;
     }
     try {
@@ -271,7 +278,7 @@ const WordSearchForm: React.FC = () => {
   }, [lexicon, searchCriteria, wordServerClient, wordVaultClient, setAlert]);
 
   const deleteFromWordVault = useCallback(async () => {
-    if (!lexicon) {
+    if (!lexicon || !wordServerClient) {
       return;
     }
     try {
@@ -291,7 +298,7 @@ const WordSearchForm: React.FC = () => {
       await sendDelete(
         false,
         false,
-        searchResponse.alphagrams.map((a) => a.alphagram)
+        searchResponse.alphagrams.map((a) => a.alphagram),
       );
     } catch (e) {
       setAlert({

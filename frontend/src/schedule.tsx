@@ -5,8 +5,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useClient } from "./use_client";
-import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { AppContext } from "./app_context";
 import { notifications } from "@mantine/notifications";
 import { BarChart } from "@mantine/charts";
@@ -26,24 +24,22 @@ import { getBrowserTimezone } from "./timezones";
 type scheduleBreakdown = { [key: string]: number };
 
 const CardSchedule: React.FC = () => {
-  const { lexicon } = useContext(AppContext);
+  const { lexicon, wordVaultClient } = useContext(AppContext);
   const [cardSchedule, setCardSchedule] = useState<scheduleBreakdown | null>(
-    null
+    null,
   );
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
   const [showLoader, setShowLoader] = useState(false);
 
-  const wordvaultClient = useClient(WordVaultService);
-
   const fetchDueQuestions = useCallback(async () => {
-    if (!lexicon) {
+    if (!lexicon || !wordVaultClient) {
       return;
     }
     try {
       setShowLoader(true);
-      const resp = await wordvaultClient.nextScheduledCount({
+      const resp = await wordVaultClient.nextScheduledCount({
         lexicon,
         timezone: getBrowserTimezone(),
       });
@@ -57,19 +53,19 @@ const CardSchedule: React.FC = () => {
     } finally {
       setShowLoader(false);
     }
-  }, [lexicon, wordvaultClient]);
+  }, [lexicon, wordVaultClient]);
 
   useEffect(() => {
     fetchDueQuestions();
   }, [fetchDueQuestions]);
 
   const fetchTotalQuestions = useCallback(async () => {
-    if (!lexicon) {
+    if (!lexicon || !wordVaultClient) {
       return;
     }
     try {
       setShowLoader(true);
-      const resp = await wordvaultClient.getCardCount({});
+      const resp = await wordVaultClient.getCardCount({});
       setNumCards(resp.numCards[lexicon] ?? 0);
     } catch (e) {
       notifications.show({
@@ -80,7 +76,7 @@ const CardSchedule: React.FC = () => {
     } finally {
       setShowLoader(false);
     }
-  }, [lexicon, wordvaultClient]);
+  }, [lexicon, wordVaultClient]);
 
   useEffect(() => {
     fetchTotalQuestions();
@@ -142,7 +138,7 @@ const CardSchedule: React.FC = () => {
 
     const oneWeekMs = 7 * 24 * 60 * 60 * 1000; // Milliseconds in one week
     const totalWeeks = Math.ceil(
-      (endOfWeek.getTime() - startOfWeek.getTime()) / oneWeekMs
+      (endOfWeek.getTime() - startOfWeek.getTime()) / oneWeekMs,
     );
 
     const weeklyData = [];
@@ -168,9 +164,12 @@ const CardSchedule: React.FC = () => {
   }, [cardSchedule]);
 
   const sendPostponement = useCallback(async () => {
+    if (!wordVaultClient) {
+      return;
+    }
     try {
       setShowLoader(true);
-      const resp = await wordvaultClient.postpone({
+      const resp = await wordVaultClient.postpone({
         lexicon,
         numToPostpone: cardsToPostpone,
       });
@@ -194,7 +193,7 @@ const CardSchedule: React.FC = () => {
     cardsToPostpone,
     lexicon,
     fetchDueQuestions,
-    wordvaultClient,
+    wordVaultClient,
     postponeModalHandlers,
   ]);
 
@@ -231,7 +230,7 @@ const CardSchedule: React.FC = () => {
             After postponement, you would have{" "}
             {Math.min(
               Math.max((cardSchedule?.overdue ?? 0) - cardsToPostpone, 0),
-              cardSchedule?.overdue ?? 0
+              cardSchedule?.overdue ?? 0,
             )}{" "}
             cards due.{" "}
           </Text>

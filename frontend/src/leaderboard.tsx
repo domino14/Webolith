@@ -1,21 +1,21 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useClient } from "./use_client";
 import { AppContext } from "./app_context";
-import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { GetDailyLeaderboardResponse_LeaderboardItem } from "./gen/rpc/wordvault/api_pb";
 import { notifications } from "@mantine/notifications";
 import { Stack, Table, Text } from "@mantine/core";
 
 const Leaderboard: React.FC = () => {
-  const { jwt } = useContext(AppContext);
-  const wordvaultClient = useClient(WordVaultService);
+  const { jwt, wordVaultClient } = useContext(AppContext);
   const [leaderboard, setLeaderboard] = useState<
     GetDailyLeaderboardResponse_LeaderboardItem[]
   >([]);
 
   const fetchLeaderboard = useCallback(async () => {
+    if (!wordVaultClient) {
+      return;
+    }
     try {
-      const resp = await wordvaultClient.getDailyLeaderboard({
+      const resp = await wordVaultClient.getDailyLeaderboard({
         timezone: "America/Los_Angeles",
       });
       setLeaderboard(resp.items);
@@ -25,7 +25,7 @@ const Leaderboard: React.FC = () => {
         message: String(e),
       });
     }
-  }, [wordvaultClient]);
+  }, [wordVaultClient]);
 
   useEffect(() => {
     if (!jwt) {

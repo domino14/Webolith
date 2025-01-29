@@ -9,8 +9,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { useClient } from "./use_client";
-import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import FSRSCards from "./fsrs_cards";
 import { Link } from "react-router-dom";
 import { AppContext } from "./app_context";
@@ -22,11 +20,11 @@ import { useDisclosure } from "@mantine/hooks";
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
   const [cardsToLoad, setCardsToLoad] = useState<number | undefined>(undefined);
-  const { lexicon, loggedIn, username, isMember } = useContext(AppContext);
+  const { lexicon, loggedIn, username, isMember, wordVaultClient } =
+    useContext(AppContext);
   const [totalCardCount, setTotalCardCount] = useState<number | undefined>(
-    undefined
+    undefined,
   );
-  const wordvaultClient = useClient(WordVaultService);
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
   const theme = useMantineTheme();
 
@@ -37,13 +35,16 @@ export default function LoadScheduledQuestions() {
 
     // poll for how many cards there are
     const getDueCount = async () => {
+      if (!wordVaultClient) {
+        return;
+      }
       try {
-        const counts = await wordvaultClient.nextScheduledCount({
+        const counts = await wordVaultClient.nextScheduledCount({
           onlyOverdue: true,
           lexicon,
         });
         setCardsToLoad(counts.breakdown["overdue"]);
-        const totalCount = await wordvaultClient.getCardCount({});
+        const totalCount = await wordVaultClient.getCardCount({});
         setTotalCardCount(totalCount.totalCards);
       } catch (error) {
         notifications.show({
@@ -55,7 +56,7 @@ export default function LoadScheduledQuestions() {
     };
 
     getDueCount();
-  }, [cardsOngoing, lexicon, loggedIn, wordvaultClient]);
+  }, [cardsOngoing, lexicon, loggedIn, wordVaultClient]);
 
   const isPaywalled = useMemo(() => {
     return (
