@@ -58,7 +58,7 @@ export type SchedulerSettings = {
 const loc = window.location;
 const apiEndpoint = loc.host;
 
-export const baseURL = `${loc.protocol}//${apiEndpoint}`;
+const baseURL = `${loc.protocol}//${apiEndpoint}`;
 
 const authInterceptor = (
   resolveJwt: () => string,
