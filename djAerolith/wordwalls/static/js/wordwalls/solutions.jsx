@@ -8,6 +8,7 @@ import Solution from './solution';
 function Solutions(props) {
   const tableRows = [];
   let wordIdx = 0;
+  let hasDifficulty = false;
   const { showLexiconSymbols, markMissed } = props;
   props.questions.forEach((question) => {
     question.get('ws').forEach((word, wordPos) => {
@@ -27,9 +28,13 @@ function Solutions(props) {
         wordSolved={word.get('solved', false)}
         correct={question.get('solved', false)}
         wrongGuess={question.get('wrongGuess', false)}
+        difficulty={question.get('df', 0)}
         markMissed={markMissed}
       />);
       wordIdx += 1;
+      if (!hasDifficulty && question.get('df', 0)) {
+        hasDifficulty = true;
+      }
     });
   });
 
@@ -58,6 +63,7 @@ function Solutions(props) {
             <thead>
               <tr>
                 <th>Probability</th>
+                {hasDifficulty && <th>Difficulty</th>}
                 <th>Alphagram</th>
                 <th>&lt;</th>
                 <th>Word</th>

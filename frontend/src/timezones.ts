@@ -5,6 +5,9 @@ export const getBrowserTimezone = () => {
     case "America/Indianapolis":
       tz = "America/Indiana/Indianapolis";
       break;
+    case "Asia/Calcutta":
+      tz = "Asia/Kolkata";
+      break;
     default:
     // Do not change it.
   }

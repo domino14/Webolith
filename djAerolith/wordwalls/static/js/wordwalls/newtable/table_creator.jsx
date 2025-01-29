@@ -39,7 +39,7 @@ const NO_LOAD_WHILE_PLAYING = (
 
 const NWL23_LEX_ID = 24;
 const FISE2_LEX_ID = 10;
-const OSPS_LEX_ID = 22;
+const OSPS_LEX_ID = 26;
 const COLLINS_24_LEX_ID = 25;
 const DEUTSCH_LEX_ID = 17;
 

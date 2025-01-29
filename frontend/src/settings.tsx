@@ -171,6 +171,14 @@ const Settings: React.FC = () => {
               value: TileStyle.Pink,
               label: "Pink",
             },
+            {
+              value: TileStyle.Violet,
+              label: "Violet",
+            },
+            {
+              value: TileStyle.Red,
+              label: "Red",
+            },
           ]}
           label="Question tile style"
           {...settingsForm.getInputProps("tileStyle")}
