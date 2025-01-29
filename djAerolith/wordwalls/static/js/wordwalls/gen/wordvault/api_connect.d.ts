@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -125,6 +125,25 @@ export declare const WordVaultService: {
       readonly O: typeof GetDailyLeaderboardResponse,
       readonly kind: MethodKind.Unary,
       readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetFsrsParameters
+     */
+    readonly getFsrsParameters: {
+      readonly name: "GetFsrsParameters",
+      readonly I: typeof GetFsrsParametersRequest,
+      readonly O: typeof GetFsrsParametersResponse,
+      readonly kind: MethodKind.Unary,
+      readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.EditFsrsParameters
+     */
+    readonly editFsrsParameters: {
+      readonly name: "EditFsrsParameters",
+      readonly I: typeof EditFsrsParametersRequest,
+      readonly O: typeof EditFsrsParametersResponse,
+      readonly kind: MethodKind.Unary,
     },
   }
 };

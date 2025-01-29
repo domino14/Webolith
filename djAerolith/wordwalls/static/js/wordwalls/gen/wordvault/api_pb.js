@@ -21,6 +21,18 @@ export const Score = /*@__PURE__*/ proto3.makeEnum(
 );
 
 /**
+ * @generated from enum wordvault.FsrsScheduler
+ */
+export const FsrsScheduler = /*@__PURE__*/ proto3.makeEnum(
+  "wordvault.FsrsScheduler",
+  [
+    {no: 0, name: "FSRS_SCHEDULER_NONE", localName: "NONE"},
+    {no: 1, name: "FSRS_SCHEDULER_LONG_TERM", localName: "LONG_TERM"},
+    {no: 2, name: "FSRS_SCHEDULER_SHORT_TERM", localName: "SHORT_TERM"},
+  ],
+);
+
+/**
  * @generated from message wordvault.Card
  */
 export const Card = /*@__PURE__*/ proto3.makeMessageType(
@@ -279,5 +291,52 @@ export const GetDailyLeaderboardResponse_LeaderboardItem = /*@__PURE__*/ proto3.
     { no: 2, name: "cards_studied", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ],
   {localName: "GetDailyLeaderboardResponse_LeaderboardItem"},
+);
+
+/**
+ * @generated from message wordvault.FsrsParameters
+ */
+export const FsrsParameters = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.FsrsParameters",
+  () => [
+    { no: 1, name: "scheduler", kind: "enum", T: proto3.getEnumType(FsrsScheduler) },
+    { no: 2, name: "request_retention", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetFsrsParametersRequest
+ */
+export const GetFsrsParametersRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetFsrsParametersRequest",
+  [],
+);
+
+/**
+ * @generated from message wordvault.GetFsrsParametersResponse
+ */
+export const GetFsrsParametersResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetFsrsParametersResponse",
+  () => [
+    { no: 1, name: "parameters", kind: "message", T: FsrsParameters },
+  ],
+);
+
+/**
+ * @generated from message wordvault.EditFsrsParametersRequest
+ */
+export const EditFsrsParametersRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditFsrsParametersRequest",
+  () => [
+    { no: 1, name: "parameters", kind: "message", T: FsrsParameters },
+  ],
+);
+
+/**
+ * @generated from message wordvault.EditFsrsParametersResponse
+ */
+export const EditFsrsParametersResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditFsrsParametersResponse",
+  [],
 );
 

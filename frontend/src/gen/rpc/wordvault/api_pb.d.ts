@@ -38,6 +38,26 @@ export declare enum Score {
 }
 
 /**
+ * @generated from enum wordvault.FsrsScheduler
+ */
+export declare enum FsrsScheduler {
+  /**
+   * @generated from enum value: FSRS_SCHEDULER_NONE = 0;
+   */
+  NONE = 0,
+
+  /**
+   * @generated from enum value: FSRS_SCHEDULER_LONG_TERM = 1;
+   */
+  LONG_TERM = 1,
+
+  /**
+   * @generated from enum value: FSRS_SCHEDULER_SHORT_TERM = 2;
+   */
+  SHORT_TERM = 2,
+}
+
+/**
  * @generated from message wordvault.Card
  */
 export declare class Card extends Message<Card> {
@@ -721,5 +741,120 @@ export declare class GetDailyLeaderboardResponse_LeaderboardItem extends Message
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyLeaderboardResponse_LeaderboardItem;
 
   static equals(a: GetDailyLeaderboardResponse_LeaderboardItem | PlainMessage<GetDailyLeaderboardResponse_LeaderboardItem> | undefined, b: GetDailyLeaderboardResponse_LeaderboardItem | PlainMessage<GetDailyLeaderboardResponse_LeaderboardItem> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.FsrsParameters
+ */
+export declare class FsrsParameters extends Message<FsrsParameters> {
+  /**
+   * @generated from field: wordvault.FsrsScheduler scheduler = 1;
+   */
+  scheduler: FsrsScheduler;
+
+  /**
+   * @generated from field: double request_retention = 2;
+   */
+  requestRetention: number;
+
+  constructor(data?: PartialMessage<FsrsParameters>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.FsrsParameters";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FsrsParameters;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FsrsParameters;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FsrsParameters;
+
+  static equals(a: FsrsParameters | PlainMessage<FsrsParameters> | undefined, b: FsrsParameters | PlainMessage<FsrsParameters> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetFsrsParametersRequest
+ */
+export declare class GetFsrsParametersRequest extends Message<GetFsrsParametersRequest> {
+  constructor(data?: PartialMessage<GetFsrsParametersRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetFsrsParametersRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetFsrsParametersRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetFsrsParametersRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetFsrsParametersRequest;
+
+  static equals(a: GetFsrsParametersRequest | PlainMessage<GetFsrsParametersRequest> | undefined, b: GetFsrsParametersRequest | PlainMessage<GetFsrsParametersRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetFsrsParametersResponse
+ */
+export declare class GetFsrsParametersResponse extends Message<GetFsrsParametersResponse> {
+  /**
+   * @generated from field: wordvault.FsrsParameters parameters = 1;
+   */
+  parameters?: FsrsParameters;
+
+  constructor(data?: PartialMessage<GetFsrsParametersResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetFsrsParametersResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetFsrsParametersResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetFsrsParametersResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetFsrsParametersResponse;
+
+  static equals(a: GetFsrsParametersResponse | PlainMessage<GetFsrsParametersResponse> | undefined, b: GetFsrsParametersResponse | PlainMessage<GetFsrsParametersResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.EditFsrsParametersRequest
+ */
+export declare class EditFsrsParametersRequest extends Message<EditFsrsParametersRequest> {
+  /**
+   * @generated from field: wordvault.FsrsParameters parameters = 1;
+   */
+  parameters?: FsrsParameters;
+
+  constructor(data?: PartialMessage<EditFsrsParametersRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditFsrsParametersRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditFsrsParametersRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditFsrsParametersRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditFsrsParametersRequest;
+
+  static equals(a: EditFsrsParametersRequest | PlainMessage<EditFsrsParametersRequest> | undefined, b: EditFsrsParametersRequest | PlainMessage<EditFsrsParametersRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.EditFsrsParametersResponse
+ */
+export declare class EditFsrsParametersResponse extends Message<EditFsrsParametersResponse> {
+  constructor(data?: PartialMessage<EditFsrsParametersResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditFsrsParametersResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditFsrsParametersResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditFsrsParametersResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditFsrsParametersResponse;
+
+  static equals(a: EditFsrsParametersResponse | PlainMessage<EditFsrsParametersResponse> | undefined, b: EditFsrsParametersResponse | PlainMessage<EditFsrsParametersResponse> | undefined): boolean;
 }
 
