@@ -211,12 +211,14 @@ def load_new_words(f):
                 )
             parsed_req["quiz_time_secs"] = quiz_time_secs
 
-        parsed_req["questions_per_round"] = body.get("questionsPerRound", 50)
-        if (
-            parsed_req["questions_per_round"] > 200
-            or parsed_req["questions_per_round"] < 10
-        ):
+        # Validate questions_per_round
+        questions_per_round = body.get("questionsPerRound", 50)
+        if not isinstance(questions_per_round, int):
+            return bad_request("Questions per round must be an integer.")
+        if questions_per_round > 200 or questions_per_round < 10:
             return bad_request("Questions per round must be between 10 and 200.")
+        parsed_req["questions_per_round"] = questions_per_round
+
         parsed_req["search_criteria"] = body.get("searchCriteria", [])
         parsed_req["list_option"] = body.get("listOption")
         parsed_req["selectedList"] = body.get("selectedList")
