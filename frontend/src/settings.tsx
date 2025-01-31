@@ -48,7 +48,7 @@ const Settings: React.FC = () => {
       showNumAnagrams: true,
       customOrder: "",
       enableShortTerm: false,
-      retentionPercent: 95,
+      retentionPercent: 90,
     },
     validate: {
       retentionPercent: (value) => {
@@ -207,7 +207,7 @@ const Settings: React.FC = () => {
 
         <NumberInput
           label="Desired retention rate"
-          description="The percentage of words you want to remember. Choose from 70% to 97%."
+          description="Target probability of recalling a word during review. The scheduling adjusts to maintain this rate. Choose 70%–97% (default: 90%)"
           placeholder="95%"
           suffix="%"
           min={70}
