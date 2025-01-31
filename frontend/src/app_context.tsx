@@ -3,9 +3,23 @@ import {
   ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
+
+import { createConnectTransport } from "@connectrpc/connect-web";
 import { LoginState } from "./constants";
+import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
+import {
+  Code,
+  ConnectError,
+  createPromiseClient,
+  Interceptor,
+  PromiseClient,
+} from "@connectrpc/connect";
+import { QuestionSearcher } from "./gen/rpc/wordsearcher/searcher_connect";
+import { ServiceType } from "@bufbuild/protobuf";
+import { FsrsScheduler } from "./gen/rpc/wordvault/api_pb";
 
 export enum FontStyle {
   Monospace = "monospace",
@@ -38,8 +52,76 @@ export type DisplaySettings = {
   customOrder: string;
 };
 
+export type SchedulerSettings = {
+  retentionPercent: number;
+  enableShortTerm: boolean;
+};
+
+const loc = window.location;
+const apiEndpoint = loc.host;
+
+const baseURL = `${loc.protocol}//${apiEndpoint}`;
+
+const authInterceptor = (
+  resolveJwt: () => string,
+  fetchJwt: () => Promise<string>,
+): Interceptor => {
+  return (next) => async (request) => {
+    let jwt = resolveJwt();
+    // Set the Authorization header directly on request.header
+    if (jwt) {
+      request.header.set("Authorization", `Bearer ${jwt}`);
+    }
+
+    let retried = false;
+
+    const makeRequest = async () => {
+      try {
+        return await next(request);
+      } catch (err) {
+        if (
+          err instanceof ConnectError &&
+          err.code === Code.Unauthenticated &&
+          !retried
+        ) {
+          retried = true;
+          jwt = await fetchJwt(); // Refresh the JWT
+          if (jwt) {
+            request.header.set("Authorization", `Bearer ${jwt}`);
+          }
+          return await next(request); // Retry the request
+        } else {
+          throw err;
+        }
+      }
+    };
+
+    return await makeRequest();
+  };
+};
+
+function useClient<T extends ServiceType>(
+  service: T,
+  jwt: string,
+  fetchJwt: () => Promise<string>,
+  binary = false,
+): PromiseClient<T> {
+  const tf = useMemo(() => {
+    const transportOptions = {
+      baseUrl: `${baseURL}/word_db_server/api`,
+      interceptors: [authInterceptor(() => jwt, fetchJwt)],
+      useBinaryFormat: binary,
+    };
+    return createConnectTransport(transportOptions);
+  }, [jwt, binary, fetchJwt]);
+
+  return useMemo(() => createPromiseClient(service, tf), [service, tf]);
+}
+
 export interface AppContextType {
   jwt: string;
+  wordVaultClient: PromiseClient<typeof WordVaultService> | null;
+  wordServerClient: PromiseClient<typeof QuestionSearcher> | null;
   username: string;
   isMember: boolean;
   lexicon: string;
@@ -50,11 +132,12 @@ export interface AppContextType {
   fetchJwt: () => Promise<string>;
   displaySettings: DisplaySettings;
   setDisplaySettings: (d: DisplaySettings) => void;
+  schedulerSettings: SchedulerSettings;
+  setSchedulerSettings: (s: SchedulerSettings) => void;
 }
 
-const initialContext = {
+const initialContext: AppContextType = {
   jwt: "",
-  jwtExpiry: 0,
   username: "",
   lexicon: "",
   isMember: false,
@@ -72,6 +155,13 @@ const initialContext = {
     customOrder: "",
   },
   setDisplaySettings: () => {},
+  schedulerSettings: {
+    retentionPercent: 95,
+    enableShortTerm: false,
+  },
+  setSchedulerSettings: () => {},
+  wordVaultClient: null,
+  wordServerClient: null,
 };
 
 export const AppContext = createContext<AppContextType>(initialContext);
@@ -92,7 +182,7 @@ function getUsnAndExp(jwt: string): [string, number, boolean] {
 
     // Decode the Base64URL encoded payload
     const decodedPayload = window.atob(
-      payload.replace(/-/g, "+").replace(/_/g, "/")
+      payload.replace(/-/g, "+").replace(/_/g, "/"),
     );
 
     // Parse the JSON payload
@@ -121,7 +211,10 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
   const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(
-    initialContext.displaySettings
+    initialContext.displaySettings,
+  );
+  const [schedulerSettings, setSchedulerSettings] = useState<SchedulerSettings>(
+    initialContext.schedulerSettings,
   );
 
   const fetchJwt = useCallback(async () => {
@@ -146,6 +239,9 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     }
     return "";
   }, []);
+
+  const wordVaultClient = useClient(WordVaultService, jwt, fetchJwt);
+  const wordServerClient = useClient(QuestionSearcher, jwt, fetchJwt);
 
   const scheduleJwtRenewal = useCallback(() => {
     if (!jwt || tokenExpiry === 0) return;
@@ -223,6 +319,28 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     }
   }, [loginState]);
 
+  useEffect(() => {
+    const fetchSchedulerSettings = async () => {
+      try {
+        const response = await wordVaultClient.getFsrsParameters({});
+        if (response.parameters) {
+          setSchedulerSettings({
+            // Back-end uses 0-1 for retention, but we want to display as 0-100
+            retentionPercent: response.parameters.requestRetention * 100,
+            enableShortTerm:
+              response.parameters.scheduler === FsrsScheduler.SHORT_TERM,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching scheduler settings:", error);
+      }
+    };
+
+    if (loginState === LoginState.LoggedIn) {
+      fetchSchedulerSettings();
+    }
+  }, [loginState, wordVaultClient]);
+
   return (
     <AppContext.Provider
       value={{
@@ -237,6 +355,10 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         defaultLexicon,
         displaySettings,
         setDisplaySettings,
+        setSchedulerSettings,
+        schedulerSettings,
+        wordVaultClient,
+        wordServerClient,
       }}
     >
       {children}

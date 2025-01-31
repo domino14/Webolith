@@ -5,42 +5,104 @@ import {
   FontStyle,
   DisplaySettings,
   TileStyle,
+  SchedulerSettings,
 } from "./app_context";
-import { Button, Select, Switch, Text, TextInput } from "@mantine/core";
+import {
+  Button,
+  Divider,
+  NumberInput,
+  Select,
+  Switch,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { FsrsScheduler } from "./gen/rpc/wordvault/api_pb";
+import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
+import { PromiseClient } from "@connectrpc/connect";
+
+const _submitFsrsSettingsAsync = async (
+  wordVaultClient: PromiseClient<typeof WordVaultService>,
+  values: SchedulerSettings,
+): Promise<boolean> => {
+  try {
+    await wordVaultClient.editFsrsParameters({
+      parameters: {
+        requestRetention: values.retentionPercent / 100,
+        scheduler: values.enableShortTerm
+          ? FsrsScheduler.SHORT_TERM
+          : FsrsScheduler.LONG_TERM,
+      },
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 const Settings: React.FC = () => {
-  const settingsForm = useForm<DisplaySettings>({
+  const settingsForm = useForm<DisplaySettings & SchedulerSettings>({
     initialValues: {
       fontStyle: FontStyle.Monospace,
       tileStyle: TileStyle.None,
       showNumAnagrams: true,
       customOrder: "",
+      enableShortTerm: false,
+      retentionPercent: 90,
+    },
+    validate: {
+      retentionPercent: (value) => {
+        if (value < 70 || value > 97) {
+          return "Retention rate must be between 70% and 97%";
+        }
+      },
     },
   });
-  const { displaySettings, setDisplaySettings } = useContext(AppContext);
+
+  const {
+    displaySettings,
+    setDisplaySettings,
+    schedulerSettings,
+    setSchedulerSettings,
+    wordVaultClient,
+  } = useContext(AppContext);
   const { setValues } = settingsForm;
+
   // When displaySettings change, update the form with the new values
   useEffect(() => {
-    if (displaySettings) {
-      setValues(displaySettings);
+    if (displaySettings || schedulerSettings) {
+      setValues((values) => {
+        return { ...values, ...displaySettings, ...schedulerSettings };
+      });
     }
-  }, [displaySettings, setValues]);
+  }, [displaySettings, schedulerSettings, setValues]);
 
   return (
     <div style={{ maxWidth: 400 }}>
-      <Text size="xl">Display Settings</Text>
       <form
         onSubmit={settingsForm.onSubmit(async (values) => {
-          const response = await fetch("/accounts/profile/wordvault_settings", {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          });
+          if (!wordVaultClient) {
+            return;
+          }
 
-          if (!response.ok) {
+          const [displaySettingsResponse, schedulerSettingsResponseOk] =
+            await Promise.all([
+              fetch("/accounts/profile/wordvault_settings", {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  fontStyle: values.fontStyle,
+                  tileStyle: values.tileStyle,
+                  showNumAnagrams: values.showNumAnagrams,
+                  customOrder: values.customOrder,
+                }),
+              }),
+              _submitFsrsSettingsAsync(wordVaultClient, values),
+            ]);
+
+          if (!displaySettingsResponse.ok || !schedulerSettingsResponseOk) {
             throw new Error("Failed to save settings.");
           }
 
@@ -49,10 +111,21 @@ const Settings: React.FC = () => {
             color: "green",
             title: "Success",
           });
-          setDisplaySettings(values);
+          setDisplaySettings({
+            fontStyle: values.fontStyle,
+            tileStyle: values.tileStyle,
+            showNumAnagrams: values.showNumAnagrams,
+            customOrder: values.customOrder,
+          });
+          setSchedulerSettings({
+            enableShortTerm: values.enableShortTerm,
+            retentionPercent: values.retentionPercent,
+          });
         })}
       >
         {/* Add form fields here, for example: */}
+        <Text size="xl">Display Settings</Text>
+
         <Select
           data={[
             {
@@ -120,11 +193,37 @@ const Settings: React.FC = () => {
         <TextInput
           type="text"
           {...settingsForm.getInputProps("customOrder")}
-          label="Custom letter order. Leave blank to use alphabetical. All letters not specified will be in alphabetical order."
+          label="Custom letter order"
+          description="Leave blank to use alphabetical. All letters not specified will be in alphabetical order."
           placeholder="AEIOU..."
           mt="lg"
-          size="lg"
         />
+
+        <Divider mt="lg" />
+
+        <Text size="xl" mt="lg">
+          Scheduling Settings
+        </Text>
+
+        <NumberInput
+          label="Desired retention rate"
+          description="Target probability of recalling a word during review. The scheduling adjusts to maintain this rate. Choose 70%–97% (default: 90%)"
+          placeholder="95%"
+          suffix="%"
+          min={70}
+          max={97}
+          decimalScale={2}
+          {...settingsForm.getInputProps("retentionPercent")}
+          mt="lg"
+        />
+        <Switch
+          label="Use short-term scheduler"
+          description="Prioritize rapid study of recently-missed words"
+          checked={settingsForm.values.enableShortTerm}
+          {...settingsForm.getInputProps("enableShortTerm")}
+          mt="lg"
+        />
+
         <Button type="submit" mt="lg">
           Save
         </Button>
