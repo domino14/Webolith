@@ -322,6 +322,28 @@ const WordSearchForm: React.FC = () => {
     }
   }, [lexicon, sendDelete, searchCriteria, wordServerClient, setAlert]);
 
+  const deckIdSelect =
+    decksById.size >= 1 ? (
+      <Select
+        value={deckId?.toString() ?? ""}
+        onChange={(value) =>
+          setDeckId(
+            value == "" || value == null ? null : BigInt(parseInt(value)),
+          )
+        }
+        data={[
+          { value: "", label: "Default Deck" },
+          ...[...decksById.values()].map((deck) => ({
+            value: deck.id.toString(),
+            label: deck.name,
+          })),
+        ]}
+        style={{ minWidth: 200 }}
+        placeholder="Select deck"
+        size="lg"
+      />
+    ) : null;
+
   return (
     <>
       <Modal
@@ -377,28 +399,7 @@ const WordSearchForm: React.FC = () => {
               allowedSearchTypes={allowedSearchTypes}
             />
             <Group mb="lg">
-              {decksById.size >= 1 && (
-                <Select
-                  value={deckId?.toString() ?? ""}
-                  onChange={(value) =>
-                    setDeckId(
-                      value == "" || value == null
-                        ? null
-                        : BigInt(parseInt(value)),
-                    )
-                  }
-                  data={[
-                    { value: "", label: "Default Deck" },
-                    ...[...decksById.values()].map((deck) => ({
-                      value: deck.id.toString(),
-                      label: deck.name,
-                    })),
-                  ]}
-                  style={{ minWidth: 200 }}
-                  placeholder="Select deck"
-                  size="lg"
-                />
-              )}
+              {deckIdSelect}
               <Button
                 variant="light"
                 color="blue"
@@ -467,20 +468,25 @@ const WordSearchForm: React.FC = () => {
             >
               <FileInput
                 {...uploadWordListForm.getInputProps("textfile")}
-                label={`Upload a text file with words or alphagrams, one per line. These must be valid in ${lexicon}.`}
+                label="Select a file"
+                description={`File must be plain text, with one word or alphagram per line. These must be valid in ${lexicon}.`}
                 placeholder="Click to upload..."
-                maw={300}
-                m="sm"
+                size="lg"
+                maw={500}
+                m="md"
               />
-              <Button
-                variant="light"
-                color="blue"
-                type="submit"
-                style={{ maxWidth: 200 }}
-                m="sm"
-              >
-                Upload into WordVault
-              </Button>
+              <Group m="md">
+                {deckIdSelect}
+                <Button
+                  variant="light"
+                  color="blue"
+                  type="submit"
+                  style={{ maxWidth: 250 }}
+                  size="lg"
+                >
+                  Upload into WordVault
+                </Button>
+              </Group>
             </form>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
@@ -586,21 +592,25 @@ const WordSearchForm: React.FC = () => {
             >
               <FileInput
                 {...uploadCardboxForm.getInputProps("cardbox")}
-                label={`Upload your Anagrams.db file from Zyzzyva. This cardbox must consist of words that are valid in ${lexicon}.`}
+                label="Select a file"
+                description={`Upload your Anagrams.db file from Zyzzyva. This cardbox must consist of words that are valid in ${lexicon}.`}
                 placeholder="Click to upload..."
-                maw={300}
-                m="sm"
+                maw={500}
+                size="lg"
+                m="md"
               />
-              <Button
-                variant="light"
-                color="blue"
-                type="submit"
-                maw={450}
-                m="sm"
-                disabled={showLoader}
-              >
-                Import Cardbox into WordVault
-              </Button>
+              <Group m="md">
+                {deckIdSelect}
+                <Button
+                  variant="light"
+                  color="blue"
+                  type="submit"
+                  disabled={showLoader}
+                  size="lg"
+                >
+                  Import Cardbox into WordVault
+                </Button>
+              </Group>
             </form>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
