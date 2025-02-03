@@ -62,7 +62,7 @@ type AlertValues = {
 };
 
 const WordSearchForm: React.FC = () => {
-  const { lexicon, jwt, wordVaultClient, wordServerClient, decks } =
+  const { lexicon, jwt, wordVaultClient, wordServerClient, decksById } =
     useContext(AppContext);
   const [alert, setAlert] = useState<AlertValues>({
     shown: false,
@@ -377,7 +377,7 @@ const WordSearchForm: React.FC = () => {
               allowedSearchTypes={allowedSearchTypes}
             />
             <Group mb="lg">
-              {decks.length >= 1 && (
+              {decksById.size >= 1 && (
                 <Select
                   value={deckId?.toString() ?? ""}
                   onChange={(value) =>
@@ -389,7 +389,7 @@ const WordSearchForm: React.FC = () => {
                   }
                   data={[
                     { value: "", label: "Default Deck" },
-                    ...decks.map((deck) => ({
+                    ...[...decksById.values()].map((deck) => ({
                       value: deck.id.toString(),
                       label: deck.name,
                     })),

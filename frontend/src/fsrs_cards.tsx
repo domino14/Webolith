@@ -29,11 +29,13 @@ import Flashcard from "./flashcard";
 interface FSRSCardsProps {
   setFinishedCards: () => void;
   isPaywalled: boolean;
+  deckId: bigint | null;
 }
 
 const FSRSCards: React.FC<FSRSCardsProps> = ({
   setFinishedCards,
   isPaywalled,
+  deckId,
 }) => {
   const [flipped, setFlipped] = useState(false);
   const [previousCard, setPreviousCard] = useState<HistoryEntry | null>(null);
@@ -65,6 +67,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     try {
       nextCard = await wordVaultClient.getSingleNextScheduled({
         lexicon: lexicon,
+        deckId: deckId ?? undefined,
       });
     } catch (e) {
       notifications.show({
@@ -87,7 +90,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       setShowLoadMoreLink(true);
     }
     setOverdueCount(nextCard.overdueCount);
-  }, [lexicon, wordVaultClient, typingMode]);
+  }, [lexicon, wordVaultClient, deckId, typingMode]);
 
   // Load a card upon first render.
   useEffect(() => {

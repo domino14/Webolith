@@ -5,6 +5,7 @@ import {
   Group,
   Image,
   List,
+  Select,
   Text,
   useMantineTheme,
 } from "@mantine/core";
@@ -17,11 +18,18 @@ import { LoginState, MaxNonmemberCards } from "./constants";
 import { IconAlertCircleFilled, IconDatabaseDollar } from "@tabler/icons-react";
 import addCardsImg from "./assets/wordvault-adding-new-words.png";
 import { useDisclosure } from "@mantine/hooks";
+
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
-  const [cardsToLoad, setCardsToLoad] = useState<number | undefined>(undefined);
-  const { lexicon, loggedIn, username, isMember, wordVaultClient } =
+
+  const [overdueCountByDeckId, setOverdueCountByDeckID] = useState<
+    Map<bigint | null, number> | undefined
+  >(undefined);
+
+  const { lexicon, loggedIn, username, isMember, wordVaultClient, decksById } =
     useContext(AppContext);
+
+  const [deckId, setDeckId] = useState<bigint | null>(null);
   const [totalCardCount, setTotalCardCount] = useState<number | undefined>(
     undefined,
   );
@@ -34,16 +42,25 @@ export default function LoadScheduledQuestions() {
     }
 
     // poll for how many cards there are
-    const getDueCount = async () => {
+    const getDueCounts = async () => {
       if (!wordVaultClient) {
         return;
       }
       try {
-        const counts = await wordVaultClient.nextScheduledCount({
+        const { breakdowns } = await wordVaultClient.nextScheduledCountByDeck({
           onlyOverdue: true,
           lexicon,
         });
-        setCardsToLoad(counts.breakdown["overdue"]);
+
+        setOverdueCountByDeckID(
+          new Map(
+            breakdowns?.map((c) => [
+              c.deckId ?? null,
+              c.breakdown["overdue"] ?? 0,
+            ]),
+          ),
+        );
+
         const totalCount = await wordVaultClient.getCardCount({});
         setTotalCardCount(totalCount.totalCards);
       } catch (error) {
@@ -55,8 +72,18 @@ export default function LoadScheduledQuestions() {
       }
     };
 
-    getDueCount();
+    getDueCounts();
   }, [cardsOngoing, lexicon, loggedIn, wordVaultClient]);
+
+  const totalOverdueCount = useMemo(() => {
+    let totalOverdueCount = 0;
+
+    for (const [, count] of overdueCountByDeckId ?? []) {
+      totalOverdueCount += count;
+    }
+
+    return totalOverdueCount;
+  }, [overdueCountByDeckId]);
 
   const isPaywalled = useMemo(() => {
     return (
@@ -82,26 +109,68 @@ export default function LoadScheduledQuestions() {
           <Text mt="lg">We really appreciate your support.</Text>
         </Alert>
       )}
+
       {cardsOngoing ? (
         <FSRSCards
           isPaywalled={isPaywalled}
           setFinishedCards={() => setCardsOngoing(false)}
+          deckId={deckId}
         />
-      ) : cardsToLoad != undefined ? (
+      ) : overdueCountByDeckId != undefined ? (
         <>
           <Text>Hi, {username}!</Text>
           <Text>
-            You have {cardsToLoad} card{cardsToLoad != 1 ? "s" : ""} that{" "}
-            {cardsToLoad != 1 ? "are" : "is"} now due in the lexicon {lexicon}.
+            You have {totalOverdueCount} card
+            {totalOverdueCount != 1 ? "s" : ""} that{" "}
+            {totalOverdueCount != 1 ? "are" : "is"} now due in the lexicon{" "}
+            {lexicon}.
           </Text>
-          {cardsToLoad === 0 ? (
+
+          {totalOverdueCount !== 0 && (
+            <Group mt="lg">
+              {decksById.size > 0 && (
+                <Select
+                  data={[
+                    {
+                      value: "",
+                      label: "Default Deck",
+                    },
+                    ...Array.from(decksById.entries()).map(([id, deck]) => ({
+                      value: id.toString(),
+                      label: deck.name,
+                    })),
+                  ]}
+                  renderOption={({ option }) => {
+                    const overdueCount =
+                      overdueCountByDeckId?.get(
+                        option.value === "" ? null : BigInt(option.value),
+                      ) ?? 0;
+                    return (
+                      <Group>
+                        <Text>
+                          {option.label}
+                          <Text size="sm" c="dimmed">
+                            ({overdueCount} due)
+                          </Text>
+                        </Text>
+                      </Group>
+                    );
+                  }}
+                  value={deckId?.toString() ?? ""}
+                  onChange={(value) => setDeckId(value ? BigInt(value) : null)}
+                />
+              )}
+
+              <Button onClick={() => setCardsOngoing(true)}>
+                Start studying
+              </Button>
+            </Group>
+          )}
+
+          {totalOverdueCount === 0 && (
             <Text>
               Why not <Link to="/word-search">add some more?</Link>
             </Text>
-          ) : (
-            <Button mt={16} onClick={() => setCardsOngoing(true)}>
-              Start studying
-            </Button>
           )}
         </>
       ) : null}

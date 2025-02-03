@@ -134,7 +134,7 @@ export interface AppContextType {
   setDisplaySettings: (d: DisplaySettings) => void;
   schedulerSettings: SchedulerSettings;
   setSchedulerSettings: (s: SchedulerSettings) => void;
-  decks: Deck[];
+  decksById: Map<bigint, Deck>;
   addDeck: (d: Deck) => void;
   updateDeck: (d: Deck) => void;
 }
@@ -165,7 +165,7 @@ const initialContext: AppContextType = {
   setSchedulerSettings: () => {},
   wordVaultClient: null,
   wordServerClient: null,
-  decks: [],
+  decksById: new Map(),
   addDeck: () => {},
   updateDeck: () => {},
 };
@@ -366,8 +366,10 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     }
   }, [loginState, wordVaultClient]);
 
-  const filteredDecks = useMemo(() => {
-    return decks.filter((d) => d.lexicon === lexicon);
+  const filteredDecksById = useMemo(() => {
+    return new Map(
+      decks.filter((d) => d.lexicon === lexicon).map((d) => [d.id, d]),
+    );
   }, [decks, lexicon]);
 
   const addDeck = useCallback(
@@ -411,7 +413,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         schedulerSettings,
         wordVaultClient,
         wordServerClient,
-        decks: filteredDecks,
+        decksById: filteredDecksById,
         addDeck,
         updateDeck,
       }}
