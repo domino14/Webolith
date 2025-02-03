@@ -89,6 +89,11 @@ export declare class Card extends Message<Card> {
    */
   reviewLog: Uint8Array;
 
+  /**
+   * @generated from field: optional uint64 deck_id = 6;
+   */
+  deckId?: bigint;
+
   constructor(data?: PartialMessage<Card>);
 
   static readonly runtime: typeof proto3;
@@ -102,6 +107,40 @@ export declare class Card extends Message<Card> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Card;
 
   static equals(a: Card | PlainMessage<Card> | undefined, b: Card | PlainMessage<Card> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.CardPreview
+ */
+export declare class CardPreview extends Message<CardPreview> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: string alphagram = 2;
+   */
+  alphagram: string;
+
+  /**
+   * @generated from field: optional uint64 deck_id = 5;
+   */
+  deckId?: bigint;
+
+  constructor(data?: PartialMessage<CardPreview>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.CardPreview";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CardPreview;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CardPreview;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CardPreview;
+
+  static equals(a: CardPreview | PlainMessage<CardPreview> | undefined, b: CardPreview | PlainMessage<CardPreview> | undefined): boolean;
 }
 
 /**
@@ -147,6 +186,11 @@ export declare class GetNextScheduledRequest extends Message<GetNextScheduledReq
    */
   limit: number;
 
+  /**
+   * @generated from field: optional uint64 deck_id = 3;
+   */
+  deckId?: bigint;
+
   constructor(data?: PartialMessage<GetNextScheduledRequest>);
 
   static readonly runtime: typeof proto3;
@@ -170,6 +214,11 @@ export declare class GetSingleNextScheduledRequest extends Message<GetSingleNext
    * @generated from field: string lexicon = 1;
    */
   lexicon: string;
+
+  /**
+   * @generated from field: optional uint64 deck_id = 2;
+   */
+  deckId?: bigint;
 
   constructor(data?: PartialMessage<GetSingleNextScheduledRequest>);
 
@@ -316,6 +365,11 @@ export declare class AddCardsRequest extends Message<AddCardsRequest> {
    */
   alphagrams: string[];
 
+  /**
+   * @generated from field: optional uint64 deck_id = 3;
+   */
+  deckId?: bigint;
+
   constructor(data?: PartialMessage<AddCardsRequest>);
 
   static readonly runtime: typeof proto3;
@@ -340,6 +394,16 @@ export declare class AddCardsResponse extends Message<AddCardsResponse> {
    */
   numCardsAdded: number;
 
+  /**
+   * @generated from field: uint32 num_cards_in_other_decks = 2;
+   */
+  numCardsInOtherDecks: number;
+
+  /**
+   * @generated from field: repeated wordvault.CardPreview cards_in_other_decks_preview = 3;
+   */
+  cardsInOtherDecksPreview: CardPreview[];
+
   constructor(data?: PartialMessage<AddCardsResponse>);
 
   static readonly runtime: typeof proto3;
@@ -353,6 +417,64 @@ export declare class AddCardsResponse extends Message<AddCardsResponse> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddCardsResponse;
 
   static equals(a: AddCardsResponse | PlainMessage<AddCardsResponse> | undefined, b: AddCardsResponse | PlainMessage<AddCardsResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.MoveCardsRequest
+ */
+export declare class MoveCardsRequest extends Message<MoveCardsRequest> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: repeated string alphagrams = 2;
+   */
+  alphagrams: string[];
+
+  /**
+   * @generated from field: optional uint64 deck_id = 3;
+   */
+  deckId?: bigint;
+
+  constructor(data?: PartialMessage<MoveCardsRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.MoveCardsRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): MoveCardsRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): MoveCardsRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): MoveCardsRequest;
+
+  static equals(a: MoveCardsRequest | PlainMessage<MoveCardsRequest> | undefined, b: MoveCardsRequest | PlainMessage<MoveCardsRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.MoveCardsResponse
+ */
+export declare class MoveCardsResponse extends Message<MoveCardsResponse> {
+  /**
+   * @generated from field: uint32 num_cards_moved = 1;
+   */
+  numCardsMoved: number;
+
+  constructor(data?: PartialMessage<MoveCardsResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.MoveCardsResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): MoveCardsResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): MoveCardsResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): MoveCardsResponse;
+
+  static equals(a: MoveCardsResponse | PlainMessage<MoveCardsResponse> | undefined, b: MoveCardsResponse | PlainMessage<MoveCardsResponse> | undefined): boolean;
 }
 
 /**
@@ -501,6 +623,96 @@ export declare class NextScheduledBreakdown extends Message<NextScheduledBreakdo
 }
 
 /**
+ * @generated from message wordvault.NextScheduledCountByDeckRequest
+ */
+export declare class NextScheduledCountByDeckRequest extends Message<NextScheduledCountByDeckRequest> {
+  /**
+   * @generated from field: bool only_overdue = 1;
+   */
+  onlyOverdue: boolean;
+
+  /**
+   * @generated from field: string timezone = 2;
+   */
+  timezone: string;
+
+  /**
+   * @generated from field: string lexicon = 3;
+   */
+  lexicon: string;
+
+  constructor(data?: PartialMessage<NextScheduledCountByDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.NextScheduledCountByDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): NextScheduledCountByDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): NextScheduledCountByDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): NextScheduledCountByDeckRequest;
+
+  static equals(a: NextScheduledCountByDeckRequest | PlainMessage<NextScheduledCountByDeckRequest> | undefined, b: NextScheduledCountByDeckRequest | PlainMessage<NextScheduledCountByDeckRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeckBreakdown
+ */
+export declare class DeckBreakdown extends Message<DeckBreakdown> {
+  /**
+   * @generated from field: optional uint64 deck_id = 1;
+   */
+  deckId?: bigint;
+
+  /**
+   * @generated from field: map<string, uint32> breakdown = 2;
+   */
+  breakdown: { [key: string]: number };
+
+  constructor(data?: PartialMessage<DeckBreakdown>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeckBreakdown";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeckBreakdown;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeckBreakdown;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeckBreakdown;
+
+  static equals(a: DeckBreakdown | PlainMessage<DeckBreakdown> | undefined, b: DeckBreakdown | PlainMessage<DeckBreakdown> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.NextScheduledCountByDeckResponse
+ */
+export declare class NextScheduledCountByDeckResponse extends Message<NextScheduledCountByDeckResponse> {
+  /**
+   * @generated from field: repeated wordvault.DeckBreakdown breakdowns = 1;
+   */
+  breakdowns: DeckBreakdown[];
+
+  constructor(data?: PartialMessage<NextScheduledCountByDeckResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.NextScheduledCountByDeckResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): NextScheduledCountByDeckResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): NextScheduledCountByDeckResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): NextScheduledCountByDeckResponse;
+
+  static equals(a: NextScheduledCountByDeckResponse | PlainMessage<NextScheduledCountByDeckResponse> | undefined, b: NextScheduledCountByDeckResponse | PlainMessage<NextScheduledCountByDeckResponse> | undefined): boolean;
+}
+
+/**
+ * TODO: make this deck-aware with a mutually exclusive all_decks/deck_id
+ * parameter
+ *
  * @generated from message wordvault.PostponeRequest
  */
 export declare class PostponeRequest extends Message<PostponeRequest> {
@@ -554,6 +766,8 @@ export declare class PostponeResponse extends Message<PostponeResponse> {
 }
 
 /**
+ * TODO: make this deck-aware
+ *
  * @generated from message wordvault.DeleteRequest
  */
 export declare class DeleteRequest extends Message<DeleteRequest> {
@@ -837,6 +1051,189 @@ export declare class EditFsrsParametersRequest extends Message<EditFsrsParameter
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditFsrsParametersRequest;
 
   static equals(a: EditFsrsParametersRequest | PlainMessage<EditFsrsParametersRequest> | undefined, b: EditFsrsParametersRequest | PlainMessage<EditFsrsParametersRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.Deck
+ */
+export declare class Deck extends Message<Deck> {
+  /**
+   * @generated from field: int64 id = 1;
+   */
+  id: bigint;
+
+  /**
+   * @generated from field: string lexicon = 2;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: string name = 3;
+   */
+  name: string;
+
+  constructor(data?: PartialMessage<Deck>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.Deck";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Deck;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Deck;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Deck;
+
+  static equals(a: Deck | PlainMessage<Deck> | undefined, b: Deck | PlainMessage<Deck> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.AddDeckRequest
+ */
+export declare class AddDeckRequest extends Message<AddDeckRequest> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string lexicon = 2;
+   */
+  lexicon: string;
+
+  constructor(data?: PartialMessage<AddDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.AddDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddDeckRequest;
+
+  static equals(a: AddDeckRequest | PlainMessage<AddDeckRequest> | undefined, b: AddDeckRequest | PlainMessage<AddDeckRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.AddDeckResponse
+ */
+export declare class AddDeckResponse extends Message<AddDeckResponse> {
+  /**
+   * @generated from field: wordvault.Deck deck = 1;
+   */
+  deck?: Deck;
+
+  constructor(data?: PartialMessage<AddDeckResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.AddDeckResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddDeckResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddDeckResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddDeckResponse;
+
+  static equals(a: AddDeckResponse | PlainMessage<AddDeckResponse> | undefined, b: AddDeckResponse | PlainMessage<AddDeckResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDecksRequest
+ */
+export declare class GetDecksRequest extends Message<GetDecksRequest> {
+  constructor(data?: PartialMessage<GetDecksRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDecksRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDecksRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDecksRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDecksRequest;
+
+  static equals(a: GetDecksRequest | PlainMessage<GetDecksRequest> | undefined, b: GetDecksRequest | PlainMessage<GetDecksRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDecksResponse
+ */
+export declare class GetDecksResponse extends Message<GetDecksResponse> {
+  /**
+   * @generated from field: repeated wordvault.Deck decks = 1;
+   */
+  decks: Deck[];
+
+  constructor(data?: PartialMessage<GetDecksResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDecksResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDecksResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDecksResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDecksResponse;
+
+  static equals(a: GetDecksResponse | PlainMessage<GetDecksResponse> | undefined, b: GetDecksResponse | PlainMessage<GetDecksResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.EditDeckRequest
+ */
+export declare class EditDeckRequest extends Message<EditDeckRequest> {
+  /**
+   * @generated from field: int64 id = 1;
+   */
+  id: bigint;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  constructor(data?: PartialMessage<EditDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditDeckRequest;
+
+  static equals(a: EditDeckRequest | PlainMessage<EditDeckRequest> | undefined, b: EditDeckRequest | PlainMessage<EditDeckRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.EditDeckResponse
+ */
+export declare class EditDeckResponse extends Message<EditDeckResponse> {
+  /**
+   * @generated from field: wordvault.Deck deck = 1;
+   */
+  deck?: Deck;
+
+  constructor(data?: PartialMessage<EditDeckResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditDeckResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditDeckResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditDeckResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditDeckResponse;
+
+  static equals(a: EditDeckResponse | PlainMessage<EditDeckResponse> | undefined, b: EditDeckResponse | PlainMessage<EditDeckResponse> | undefined): boolean;
 }
 
 /**

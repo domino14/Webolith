@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -62,6 +62,15 @@ export declare const WordVaultService: {
       readonly kind: MethodKind.Unary,
     },
     /**
+     * @generated from rpc wordvault.WordVaultService.NextScheduledCountByDeck
+     */
+    readonly nextScheduledCountByDeck: {
+      readonly name: "NextScheduledCountByDeck",
+      readonly I: typeof NextScheduledCountByDeckRequest,
+      readonly O: typeof NextScheduledCountByDeckResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
      * @generated from rpc wordvault.WordVaultService.ScoreCard
      */
     readonly scoreCard: {
@@ -86,6 +95,15 @@ export declare const WordVaultService: {
       readonly name: "AddCards",
       readonly I: typeof AddCardsRequest,
       readonly O: typeof AddCardsResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.MoveCards
+     */
+    readonly moveCards: {
+      readonly name: "MoveCards",
+      readonly I: typeof MoveCardsRequest,
+      readonly O: typeof MoveCardsResponse,
       readonly kind: MethodKind.Unary,
     },
     /**
@@ -143,6 +161,33 @@ export declare const WordVaultService: {
       readonly name: "EditFsrsParameters",
       readonly I: typeof EditFsrsParametersRequest,
       readonly O: typeof EditFsrsParametersResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.AddDeck
+     */
+    readonly addDeck: {
+      readonly name: "AddDeck",
+      readonly I: typeof AddDeckRequest,
+      readonly O: typeof AddDeckResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetDecks
+     */
+    readonly getDecks: {
+      readonly name: "GetDecks",
+      readonly I: typeof GetDecksRequest,
+      readonly O: typeof GetDecksResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.EditDeck
+     */
+    readonly editDeck: {
+      readonly name: "EditDeck",
+      readonly I: typeof EditDeckRequest,
+      readonly O: typeof EditDeckResponse,
       readonly kind: MethodKind.Unary,
     },
   }
