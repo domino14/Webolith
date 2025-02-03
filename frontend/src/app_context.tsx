@@ -366,6 +366,10 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     }
   }, [loginState, wordVaultClient]);
 
+  const filteredDecks = useMemo(() => {
+    return decks.filter((d) => d.lexicon === lexicon);
+  }, [decks, lexicon]);
+
   const addDeck = useCallback(
     (deck: Deck) => {
       setDecks((decks) => {
@@ -407,7 +411,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         schedulerSettings,
         wordVaultClient,
         wordServerClient,
-        decks,
+        decks: filteredDecks,
         addDeck,
         updateDeck,
       }}

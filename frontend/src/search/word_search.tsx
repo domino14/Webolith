@@ -20,6 +20,7 @@ import {
   List,
   Loader,
   Modal,
+  Select,
   Stack,
   Tabs,
   Text,
@@ -61,7 +62,7 @@ type AlertValues = {
 };
 
 const WordSearchForm: React.FC = () => {
-  const { lexicon, jwt, wordVaultClient, wordServerClient } =
+  const { lexicon, jwt, wordVaultClient, wordServerClient, decks } =
     useContext(AppContext);
   const [alert, setAlert] = useState<AlertValues>({
     shown: false,
@@ -69,6 +70,7 @@ const WordSearchForm: React.FC = () => {
     text: "",
   });
   const [showLoader, setShowLoader] = useState(false);
+  const [deckId, setDeckId] = useState<bigint | null>(null);
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
   const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
   const [
@@ -256,8 +258,10 @@ const WordSearchForm: React.FC = () => {
       searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
 
       const searchResponse = await wordServerClient.search(searchRequest);
+      console.log("Adding cards!!", { deckId });
       const addResp = await wordVaultClient.addCards({
         lexicon,
+        deckId: deckId ?? undefined,
         alphagrams: searchResponse.alphagrams.map((a) => a.alphagram),
       });
 
@@ -275,7 +279,14 @@ const WordSearchForm: React.FC = () => {
     } finally {
       setShowLoader(false);
     }
-  }, [lexicon, searchCriteria, wordServerClient, wordVaultClient, setAlert]);
+  }, [
+    lexicon,
+    searchCriteria,
+    wordServerClient,
+    wordVaultClient,
+    setAlert,
+    deckId,
+  ]);
 
   const deleteFromWordVault = useCallback(async () => {
     if (!lexicon || !wordServerClient) {
@@ -365,16 +376,39 @@ const WordSearchForm: React.FC = () => {
               modifySearchParam={searchParamChange}
               allowedSearchTypes={allowedSearchTypes}
             />
-            <Button
-              variant="light"
-              color="blue"
-              style={{ maxWidth: 250 }}
-              onClick={addToWordVault}
-              mb="lg"
-              size="lg"
-            >
-              Add to WordVault
-            </Button>
+            <Group mb="lg">
+              {decks.length >= 1 && (
+                <Select
+                  value={deckId?.toString() ?? ""}
+                  onChange={(value) =>
+                    setDeckId(
+                      value == "" || value == null
+                        ? null
+                        : BigInt(parseInt(value)),
+                    )
+                  }
+                  data={[
+                    { value: "", label: "Default Deck" },
+                    ...decks.map((deck) => ({
+                      value: deck.id.toString(),
+                      label: deck.name,
+                    })),
+                  ]}
+                  style={{ minWidth: 200 }}
+                  placeholder="Select deck"
+                  size="lg"
+                />
+              )}
+              <Button
+                variant="light"
+                color="blue"
+                style={{ maxWidth: 250 }}
+                onClick={addToWordVault}
+                size="lg"
+              >
+                Add to WordVault
+              </Button>
+            </Group>
             {alert.shown && (
               <Alert variant="light" color={alert.color} mt="lg">
                 {alert.text}
