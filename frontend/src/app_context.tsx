@@ -19,7 +19,7 @@ import {
 } from "@connectrpc/connect";
 import { QuestionSearcher } from "./gen/rpc/wordsearcher/searcher_connect";
 import { ServiceType } from "@bufbuild/protobuf";
-import { FsrsScheduler } from "./gen/rpc/wordvault/api_pb";
+import { Deck, FsrsScheduler } from "./gen/rpc/wordvault/api_pb";
 
 export enum FontStyle {
   Monospace = "monospace",
@@ -134,6 +134,9 @@ export interface AppContextType {
   setDisplaySettings: (d: DisplaySettings) => void;
   schedulerSettings: SchedulerSettings;
   setSchedulerSettings: (s: SchedulerSettings) => void;
+  decks: Deck[];
+  addDeck: (d: Deck) => void;
+  updateDeck: (d: Deck) => void;
 }
 
 const initialContext: AppContextType = {
@@ -162,6 +165,9 @@ const initialContext: AppContextType = {
   setSchedulerSettings: () => {},
   wordVaultClient: null,
   wordServerClient: null,
+  decks: [],
+  addDeck: () => {},
+  updateDeck: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(initialContext);
@@ -216,6 +222,8 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [schedulerSettings, setSchedulerSettings] = useState<SchedulerSettings>(
     initialContext.schedulerSettings,
   );
+
+  const [decks, setDecks] = useState<Deck[]>([]);
 
   const fetchJwt = useCallback(async () => {
     console.log("Fetching JWT from backend");
@@ -341,6 +349,46 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     }
   }, [loginState, wordVaultClient]);
 
+  useEffect(() => {
+    const fetchDecks = async () => {
+      try {
+        const response = await wordVaultClient.getDecks({});
+        if (response.decks) {
+          setDecks(response.decks);
+        }
+      } catch (error) {
+        console.error("Error fetching decks:", error);
+      }
+    };
+
+    if (loginState === LoginState.LoggedIn) {
+      fetchDecks();
+    }
+  }, [loginState, wordVaultClient]);
+
+  const addDeck = useCallback(
+    (deck: Deck) => {
+      setDecks((decks) => {
+        return [...decks, deck];
+      });
+    },
+    [setDecks],
+  );
+
+  const updateDeck = useCallback(
+    (deck: Deck) => {
+      setDecks((decks) => {
+        return [
+          ...decks.filter(
+            (d) => deck.id !== d.id || deck.lexicon !== d.lexicon,
+          ),
+          deck,
+        ];
+      });
+    },
+    [setDecks],
+  );
+
   return (
     <AppContext.Provider
       value={{
@@ -359,6 +407,9 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         schedulerSettings,
         wordVaultClient,
         wordServerClient,
+        decks,
+        addDeck,
+        updateDeck,
       }}
     >
       {children}
