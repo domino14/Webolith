@@ -21,6 +21,7 @@ import Help from "./help.tsx";
 import CardStats from "./card_stats.tsx";
 import Settings from "./settings.tsx";
 import Leaderboard from "./leaderboard.tsx";
+import Decks from "./decks.tsx";
 
 const router = createBrowserRouter(
   [
@@ -50,6 +51,10 @@ const router = createBrowserRouter(
           element: <WordSearch />,
         },
         {
+          path: "/decks",
+          element: <Decks />,
+        },
+        {
           path: "/stats",
           element: <CardStats />,
         },
@@ -70,7 +75,7 @@ const router = createBrowserRouter(
   ],
   {
     basename: "/wordvault",
-  }
+  },
 );
 
 const theme = createTheme({
@@ -93,5 +98,5 @@ createRoot(document.getElementById("root")!).render(
       <Notifications position="top-center" />
       <RouterProvider router={router} />
     </MantineProvider>
-  </StrictMode>
+  </StrictMode>,
 );
