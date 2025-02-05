@@ -23,6 +23,7 @@ import {
   IconBook,
   IconCalendar,
   IconCubePlus,
+  IconFolders,
   IconGraph,
   IconHeartDollar,
   IconMedal2,
@@ -53,6 +54,7 @@ function App() {
     loggedIn,
     isMember,
     setDefaultLexicon,
+    decksById,
   } = useContext(AppContext);
   const [showChangeLexLink, setShowChangeLexLink] = useState(false);
   const loginURL = `${window.location.protocol}//${window.location.host}/accounts/login?next=/wordvault`;
@@ -156,6 +158,9 @@ function App() {
                 <IconCubePlus color="green" />,
                 "Manage WordVault cards",
               ],
+              decksById.size > 0
+                ? ["decks", <IconFolders color="green" />, "Decks"]
+                : null,
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
               ["stats", <IconGraph color="green" />, "Statistics"],
               ["leaderboard", <IconMedal2 color="green" />, "Leaderboard"],
@@ -171,38 +176,40 @@ function App() {
                 <IconUserQuestion color="green" />,
                 "What is WordVault?",
               ],
-            ].map(([path, icon, label, absolute]) => (
-              <NavLink
-                key={path as string}
-                onClick={() => {
-                  if (absolute) {
-                    window.location.assign("/supporter");
-                    return;
+            ]
+              .filter((val) => val !== null)
+              .map(([path, icon, label, absolute]) => (
+                <NavLink
+                  key={path as string}
+                  onClick={() => {
+                    if (absolute) {
+                      window.location.assign("/supporter");
+                      return;
+                    }
+                    if (location.pathname === `/${path}`) {
+                      // Force reload the component by resetting the state or triggering a re-render
+                      navigate(`/${path}`, { replace: true });
+                      window.location.reload(); // This reloads the page completely
+                    } else {
+                      navigate(`/${path}`);
+                    }
+                    closeBurger();
+                  }}
+                  label={
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "5px 0",
+                      }}
+                    >
+                      {icon}
+                      &nbsp; {label}
+                    </div>
                   }
-                  if (location.pathname === `/${path}`) {
-                    // Force reload the component by resetting the state or triggering a re-render
-                    navigate(`/${path}`, { replace: true });
-                    window.location.reload(); // This reloads the page completely
-                  } else {
-                    navigate(`/${path}`);
-                  }
-                  closeBurger();
-                }}
-                label={
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "5px 0",
-                    }}
-                  >
-                    {icon}
-                    &nbsp; {label}
-                  </div>
-                }
-                active={location.pathname === `/${path}`}
-              />
-            ))}
+                  active={location.pathname === `/${path}`}
+                />
+              ))}
           </>
 
           <br />
