@@ -20,13 +20,14 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { getBrowserTimezone } from "./timezones";
+import { useNavigate } from "react-router-dom";
 
 type scheduleBreakdown = { [key: string]: number };
 
 const CardSchedule: React.FC = () => {
   const { lexicon, wordVaultClient } = useContext(AppContext);
   const [cardSchedule, setCardSchedule] = useState<scheduleBreakdown | null>(
-    null,
+    null
   );
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
@@ -138,7 +139,7 @@ const CardSchedule: React.FC = () => {
 
     const oneWeekMs = 7 * 24 * 60 * 60 * 1000; // Milliseconds in one week
     const totalWeeks = Math.ceil(
-      (endOfWeek.getTime() - startOfWeek.getTime()) / oneWeekMs,
+      (endOfWeek.getTime() - startOfWeek.getTime()) / oneWeekMs
     );
 
     const weeklyData = [];
@@ -197,6 +198,8 @@ const CardSchedule: React.FC = () => {
     postponeModalHandlers,
   ]);
 
+  const navigate = useNavigate();
+
   return (
     <div>
       {showLoader && <Loader type="bars"></Loader>}
@@ -230,7 +233,7 @@ const CardSchedule: React.FC = () => {
             After postponement, you would have{" "}
             {Math.min(
               Math.max((cardSchedule?.overdue ?? 0) - cardsToPostpone, 0),
-              cardSchedule?.overdue ?? 0,
+              cardSchedule?.overdue ?? 0
             )}{" "}
             cards due.{" "}
           </Text>
@@ -244,11 +247,20 @@ const CardSchedule: React.FC = () => {
         {cardSchedule?.overdue && (
           <div>
             <Text c="red" fw={700} mb="sm">
-              Overdue cards:&nbsp;
+              Cards currently due:&nbsp;
               {cardSchedule.overdue}
             </Text>
             <Group gap="xl">
-              <Button onClick={postponeModalHandlers.open}>Postpone</Button>
+              <Button onClick={() => navigate("/load-scheduled-questions")}>
+                Study
+              </Button>
+              <Button
+                variant="light"
+                color="red"
+                onClick={postponeModalHandlers.open}
+              >
+                Postpone
+              </Button>
             </Group>
           </div>
         )}
