@@ -78,6 +78,9 @@ class GuessBox extends React.Component {
             spellCheck="false"
             onChange={this.handleGuessChange}
             value={this.state.guessText}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
             onKeyPress={this.handleKeyPress}
             // onBlur={this.props.onBlur}
             ref={(ib) => {
