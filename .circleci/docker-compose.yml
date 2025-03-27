@@ -28,7 +28,6 @@ services:
       - INTERCOM_APP_SECRET_KEY=abcdefghijklmnopqrstuvwxyz
       # Just some random secret key
       - SECRET_KEY=csw*nc9gznwuz)(w9&u#h_b2dp1%hzf_w#)%yrzwas%+v8ck_q
-      - SENTRY_ENVIRONMENT=ci
     build: .
     working_dir: /opt/webolith/djAerolith
     depends_on:
