@@ -173,10 +173,20 @@ def search(request, lex_id, paramsb64):
     elif request.method == "POST":
         action = request.POST["action"]
         lex = Lexicon.objects.get(pk=lex_id)
+
+        if not lex.is_supported:
+            return response(
+                {"error": "The selected lexicon is not supported. Please choose a valid lexicon."},
+                status=400,
+            )
+
         search_params = build_search_criteria(
             request.user, lex, search_criteria_from_b64(paramsb64)
         )
-        questions = word_search(search_params, expand=True)
+        try:
+            questions = word_search(search_params, expand=True)
+        except WDBError as e:
+            return response({"error": str(e)}, status=500)
 
         if action == "getInitialSet":
             data = getQuizChunkByQuestions(lex, questions, 0, is_q_obj=True)
@@ -190,10 +200,9 @@ def search(request, lex_id, paramsb64):
             )
 
         elif action == "getNextSet":
-            # minP and maxP are more like indices now.
             minP = int(request.POST["minP"])
 
-            if minP == -1:  # quiz is over
+            if minP == -1:
                 return response({"data": []})
 
             maxP = int(request.POST["maxP"])

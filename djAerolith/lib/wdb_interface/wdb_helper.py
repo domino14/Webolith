@@ -40,16 +40,6 @@ def make_pb_request(
     expected_pb_response_obj,
     auth_token: str = "",
 ):
-    """
-    Sends a Protobuf object as JSON to a given API endpoint and returns the response as a Protobuf object.
-
-    :param pb_obj: The Protobuf object to be sent in the request.
-    :param endpoint_service: The service name (e.g. wordsearcher.QuestionSearcher)
-    :param endpoint_name: The specific API endpoint to be called (e.g., "Expand").
-    :param expected_pb_response: An instantiated pb object that is of the expected
-    response type.
-    :return: The Protobuf response object.
-    """
     wdb_addr = settings.WORD_DB_SERVER_ADDRESS
 
     try:
@@ -66,9 +56,20 @@ def make_pb_request(
 
         resp_pb = ParseDict(r.json(), expected_pb_response_obj)
     except HTTPError as exc:
-        resp = exc.response.json()
-        raise WDBError(resp.get("message"))
+        logger.error(
+            "HTTPError in make_pb_request: %s. Request payload: %s. Response: %s",
+            exc,
+            MessageToDict(pb_obj),
+            exc.response.text if exc.response else "No response",
+        )
+        if exc.response and exc.response.status_code == 500:
+            resp = exc.response.json()
+            error_message = resp.get("message", "Unknown error")
+            if "not supported" in error_message:
+                raise WDBError("The selected lexicon is not supported. Please choose a valid lexicon.")
+        raise WDBError(f"HTTP error occurred: {exc}")
     except Exception as e:
+        logger.error("Unknown error in make_pb_request: %s", e)
         raise WDBError(f"Unknown error: {e}")
 
     return resp_pb
