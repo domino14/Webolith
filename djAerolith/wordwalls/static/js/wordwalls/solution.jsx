@@ -60,7 +60,7 @@ class Solution extends React.Component {
             this.props.wordPos === 0 ? this.props.probability : ''
           }
         </td>
-        {this.props.difficulty
+        {this.props.showDifficulty
           ? (
             <td className={this.props.difficulty > 80 ? 'text-danger' : ''} style={rowStyle}>
               {this.props.wordPos === 0 ? this.props.difficulty : ''}
@@ -119,6 +119,7 @@ Solution.propTypes = {
   backHooks: PropTypes.string.isRequired,
   definition: PropTypes.string.isRequired,
   difficulty: PropTypes.number.isRequired,
+  showDifficulty: PropTypes.bool.isRequired,
 };
 
 export default Solution;

@@ -10,6 +10,14 @@ function Solutions(props) {
   let wordIdx = 0;
   let hasDifficulty = false;
   const { showLexiconSymbols, markMissed } = props;
+
+  props.questions.forEach((question) => {
+    if (!hasDifficulty && question.get('df', 0)) {
+      hasDifficulty = true;
+      return false; // break early from the loop
+    }
+  });
+
   props.questions.forEach((question) => {
     question.get('ws').forEach((word, wordPos) => {
       tableRows.push(<Solution
@@ -28,15 +36,14 @@ function Solutions(props) {
         wordSolved={word.get('solved', false)}
         correct={question.get('solved', false)}
         wrongGuess={question.get('wrongGuess', false)}
-        difficulty={question.get('df', 0)}
+        difficulty={question.get('df', '-') || '-'}
+        showDifficulty={hasDifficulty}
         markMissed={markMissed}
       />);
       wordIdx += 1;
-      if (!hasDifficulty && question.get('df', 0)) {
-        hasDifficulty = true;
-      }
     });
   });
+
 
   let statsStr;
 
