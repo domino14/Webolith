@@ -16,6 +16,7 @@ function Solutions(props) {
       hasDifficulty = true;
       return false; // break early from the loop
     }
+    return true;
   });
 
   props.questions.forEach((question) => {
@@ -44,7 +45,6 @@ function Solutions(props) {
     });
   });
 
-
   let statsStr;
 
   if (props.totalWords > 0) {
@@ -61,10 +61,13 @@ function Solutions(props) {
       }}
     >
       <div className="row">
-        <div className="col-lg-12 solutions-stats" style={{
-          padding: '10px 15px',
-          backgroundColor: 'white', // Light mode background
-        }}>
+        <div
+          className="col-lg-12 solutions-stats"
+          style={{
+            padding: '10px 15px',
+            backgroundColor: 'white', // Light mode background
+          }}
+        >
           {statsStr}
         </div>
       </div>

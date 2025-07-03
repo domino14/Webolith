@@ -55,28 +55,6 @@ class App {
       }, 100);
     }
 
-    // Set up listener for system preference changes
-    const removeListener = addDarkModeChangeListener((isDark) => {
-      // Only auto-switch if the user hasn't explicitly set a preference in the database
-      const currentStyle = document.querySelector('.wordwalls-app-container')?.dataset.displayStyle;
-      if (currentStyle) {
-        const parsedStyle = JSON.parse(currentStyle);
-        // If darkMode isn't explicitly set in database-saved user preferences, follow system
-        if (parsedStyle.bc.darkMode === undefined) {
-          if (isDark) {
-            document.body.classList.add('dark-mode');
-            // Apply dark mode to existing modals and set up observer for new ones
-            setTimeout(() => {
-              applyDarkModeToExistingModals();
-              setupDarkModeModalObserver();
-            }, 100);
-          } else {
-            document.body.classList.remove('dark-mode');
-          }
-        }
-      }
-    });
-
     // Get the list name from one of two places.
     if (options.addlParams.saveName) {
       listName = options.addlParams.saveName;

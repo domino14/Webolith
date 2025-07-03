@@ -710,7 +710,10 @@ class WordwallsAppContainer extends React.Component {
     const containerClasses = `wordwalls-app-container${this.state.displayStyle.darkMode ? ' dark-mode-container' : ''}`;
 
     return (
-      <div className={containerClasses} data-display-style={JSON.stringify(this.state.displayStyle)}>
+      <div
+        className={containerClasses}
+        data-display-style={JSON.stringify(this.state.displayStyle)}
+       >
         <Spinner
           visible={this.state.loadingData}
         />

@@ -68,7 +68,7 @@ class WordwallsSettings extends React.Component {
       }, {
         value: 'moroccan_flower_dark',
         displayValue: 'Moroccan Flower Dark (subtlepatterns.com, CC BY-SA 3.0)',
-      }
+      },
     ];
   }
 

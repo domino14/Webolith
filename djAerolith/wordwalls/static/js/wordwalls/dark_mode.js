@@ -24,7 +24,8 @@ function addDarkModeChangeListener(callback) {
   if (mediaQuery.addEventListener) {
     mediaQuery.addEventListener('change', listener);
     return () => mediaQuery.removeEventListener('change', listener);
-  } else if (mediaQuery.addListener) {
+  }
+  if (mediaQuery.addListener) {
     // Older browsers
     mediaQuery.addListener(listener);
     return () => mediaQuery.removeListener(listener);

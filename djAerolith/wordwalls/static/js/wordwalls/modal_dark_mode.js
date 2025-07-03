@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /**
  * Utility functions to ensure dark mode is applied to dynamically created modals
  */
@@ -35,7 +36,7 @@ function applyDarkModeToModal(modalElement) {
 
     // Ensure text elements are visible
     const textElements = modalBody.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, li, td, th');
-    textElements.forEach(el => {
+    textElements.forEach((el) => {
       if (el.classList && !el.classList.contains('btn')) {
         el.style.color = '#e0e0e0';
       }
@@ -43,7 +44,7 @@ function applyDarkModeToModal(modalElement) {
 
     // Make headings stand out
     const headings = modalBody.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headings.forEach(heading => {
+    headings.forEach((heading) => {
       heading.style.color = '#ffffff';
       heading.style.textShadow = '1px 1px 2px rgba(0, 0, 0, 0.5)';
     });
@@ -90,7 +91,7 @@ function removeDarkModeFromModal(modalElement) {
 
     // Reset text elements
     const textElements = modalBody.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, li, td, th');
-    textElements.forEach(el => {
+    textElements.forEach((el) => {
       if (el.classList && !el.classList.contains('btn')) {
         el.style.color = '';
       }
@@ -98,7 +99,7 @@ function removeDarkModeFromModal(modalElement) {
 
     // Reset headings
     const headings = modalBody.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headings.forEach(heading => {
+    headings.forEach((heading) => {
       heading.style.color = '';
       heading.style.textShadow = '';
     });
@@ -119,23 +120,23 @@ function setupDarkModeModalObserver() {
   if (!document.body.classList.contains('dark-mode')) return;
 
   // Create an observer instance
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(mutation => {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-        for (let i = 0; i < mutation.addedNodes.length; i++) {
+        for (let i = 0; i < mutation.addedNodes.length; i += 1) {
           const node = mutation.addedNodes[i];
 
           // Check if the added node is a modal or contains a modal
           if (node.nodeType === 1) { // Element node
             if (node.classList && (
-              node.classList.contains('modal') ||
-              node.classList.contains('solutions-modal')
+              node.classList.contains('modal')
+              || node.classList.contains('solutions-modal')
             )) {
               applyDarkModeToModal(node);
             } else {
               // Check for modals inside the added node
               const modals = node.querySelectorAll('.modal, .solutions-modal');
-              modals.forEach(modal => applyDarkModeToModal(modal));
+              modals.forEach((modal) => applyDarkModeToModal(modal));
             }
           }
         }
@@ -146,6 +147,7 @@ function setupDarkModeModalObserver() {
   // Start observing
   observer.observe(document.body, { childList: true, subtree: true });
 
+  // eslint-disable-next-line consistent-return
   return observer;
 }
 
@@ -154,7 +156,7 @@ function applyDarkModeToExistingModals() {
   if (!document.body.classList.contains('dark-mode')) return;
 
   const modals = document.querySelectorAll('.modal, .solutions-modal');
-  modals.forEach(modal => applyDarkModeToModal(modal));
+  modals.forEach((modal) => applyDarkModeToModal(modal));
 }
 
 /**
@@ -162,7 +164,13 @@ function applyDarkModeToExistingModals() {
  */
 function removeDarkModeFromExistingModals() {
   const modals = document.querySelectorAll('.modal, .solutions-modal');
-  modals.forEach(modal => removeDarkModeFromModal(modal));
+  modals.forEach((modal) => removeDarkModeFromModal(modal));
 }
 
-export { applyDarkModeToModal, setupDarkModeModalObserver, applyDarkModeToExistingModals, removeDarkModeFromModal, removeDarkModeFromExistingModals };
+export {
+  applyDarkModeToModal,
+  setupDarkModeModalObserver,
+  applyDarkModeToExistingModals,
+  removeDarkModeFromModal,
+  removeDarkModeFromExistingModals,
+};
