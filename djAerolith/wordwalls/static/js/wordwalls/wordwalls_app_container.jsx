@@ -713,7 +713,7 @@ class WordwallsAppContainer extends React.Component {
       <div
         className={containerClasses}
         data-display-style={JSON.stringify(this.state.displayStyle)}
-       >
+      >
         <Spinner
           visible={this.state.loadingData}
         />

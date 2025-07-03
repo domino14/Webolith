@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import Styling from './style';
 import WordwallsAppContainer from './wordwalls_app_container';
 import { getAppropriateBackground } from './background';
-import { detectDarkModePreference, addDarkModeChangeListener } from './dark_mode';
+import { detectDarkModePreference } from './dark_mode';
 import { setupDarkModeModalObserver, applyDarkModeToExistingModals } from './modal_dark_mode';
 
 class App {
