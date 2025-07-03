@@ -54,19 +54,23 @@ function Solutions(props) {
 
   return (
     <div
+      className="solutions-content"
       style={{
-        backgroundColor: 'white',
         overflowX: 'hidden',
+        backgroundColor: 'white', // Light mode background
       }}
     >
       <div className="row">
-        <div className="col-lg-12">
+        <div className="col-lg-12 solutions-stats" style={{
+          padding: '10px 15px',
+          backgroundColor: 'white', // Light mode background
+        }}>
           {statsStr}
         </div>
       </div>
       <div className="row">
         <div className="col-lg-12 table-responsive">
-          <table className="table table-condensed">
+          <table className="table table-condensed solutions-table">
             <thead>
               <tr>
                 <th>Probability</th>

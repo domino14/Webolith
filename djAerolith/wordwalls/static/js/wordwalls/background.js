@@ -15,11 +15,13 @@ function backgroundURL(option) {
       cork_wallet: '/static/img/aerolith/cork-wallet.png',
       hexellence: '/static/img/aerolith/hexellence.png',
       black_linen: '/static/img/wordwalls/black-Linen.png',
+      double_bubble_dark: '/static/img/wordwalls/double-bubble-dark.png',
+      moroccan_flower_dark: '/static/img/wordwalls/moroccan-flower-dark.png',
     }[option];
   }
   return `url("${backgroundImageUrl}")`;
 }
-const darkBackgrounds = new Set(['black_linen']);
+const darkBackgrounds = new Set(['black_linen', 'double_bubble_dark', 'moroccan_flower_dark']);
 
 /**
  * Get a suitable background for the current mode

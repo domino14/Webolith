@@ -531,3 +531,75 @@ body.dark-mode .modal h4, body.dark-mode .modal h5, body.dark-mode .modal h6,
   color: #ffffff !important;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
+
+/* Solutions modal specific styles */
+body.dark-mode .solutions-content,
+.dark-mode-container .solutions-content,
+.dark-mode-modal .solutions-content {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .solutions-stats,
+.dark-mode-container .solutions-stats,
+.dark-mode-modal .solutions-stats {
+  color: #e0e0e0 !important;
+  background-color: #2d2d2d !important;
+}
+
+/* Solutions table styling */
+body.dark-mode .solutions-table,
+.dark-mode-container .solutions-table,
+.dark-mode-modal .solutions-table {
+  color: #e0e0e0 !important;
+  background-color: #333 !important;
+}
+
+body.dark-mode .solutions-table th,
+.dark-mode-container .solutions-table th,
+.dark-mode-modal .solutions-table th {
+  background-color: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .solutions-table td,
+.dark-mode-container .solutions-table td,
+.dark-mode-modal .solutions-table td {
+  border-color: #444 !important;
+}
+
+/* Adjust the danger (missed words) background color to be darker */
+body.dark-mode .danger,
+.dark-mode-container .danger,
+.dark-mode-modal .danger,
+body.dark-mode td.danger,
+.dark-mode-container td.danger,
+.dark-mode-modal td.danger {
+  background-color: #422 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Adjust the warning background color */
+body.dark-mode .warning,
+.dark-mode-container .warning,
+.dark-mode-modal .warning,
+body.dark-mode td.warning,
+.dark-mode-container td.warning,
+.dark-mode-modal td.warning {
+  background-color: #553300 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Make sure text is visible on dark backgrounds */
+body.dark-mode .solutions-table .text-info,
+.dark-mode-container .solutions-table .text-info,
+.dark-mode-modal .solutions-table .text-info {
+  color: #5bc0de !important;
+}
+
+body.dark-mode .solutions-table .text-danger,
+.dark-mode-container .solutions-table .text-danger,
+.dark-mode-modal .solutions-table .text-danger {
+  color: #ff6666 !important;
+}

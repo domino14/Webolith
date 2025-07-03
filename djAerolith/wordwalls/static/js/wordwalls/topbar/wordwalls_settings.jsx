@@ -62,7 +62,13 @@ class WordwallsSettings extends React.Component {
       }, {
         value: 'black_linen',
         displayValue: 'Black Linen (subtlepatterns.com, CC BY-SA 3.0)',
-      },
+      }, {
+        value: 'double_bubble_dark',
+        displayValue: 'Double Bubble Dark (subtlepatterns.com, CC BY-SA 3.0)',
+      }, {
+        value: 'moroccan_flower_dark',
+        displayValue: 'Moroccan Flower Dark (subtlepatterns.com, CC BY-SA 3.0)',
+      }
     ];
   }
 
@@ -371,7 +377,7 @@ class WordwallsSettings extends React.Component {
                     name="showErrors"
                     label="Hide Errors"
                     helpText="Hide number of errors instead of showing them."
-                    checked={this.props.displayStyle.hideErrors}
+                    on={this.props.displayStyle.hideErrors}
                     onChange={
                       (e) => this.props.onOptionsModify('hideErrors', e.target.checked)
                     }
@@ -384,7 +390,7 @@ class WordwallsSettings extends React.Component {
                     name="darkMode"
                     label="Dark Mode"
                     helpText="Enable dark mode for better night-time viewing"
-                    checked={this.props.displayStyle.darkMode}
+                    on={this.props.displayStyle.darkMode}
                     onChange={
                       (e) => this.props.onOptionsModify('darkMode', e.target.checked)
                     }
