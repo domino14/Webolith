@@ -9,6 +9,8 @@
 {% block content %}
 <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+<!-- Add date adapter for Chart.js time scale -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <!-- Add regression.js for trend line -->
 <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
 <script src="/static/lib/bootstrap-datepicker.js"></script>
@@ -160,7 +162,8 @@ $( "#dropdown-button" ).click(function() {
     // Check if chart exists so another chart isn't populated
     // on top of it
     if (combinedChartObj) {
-        combinedChartObj.destroy()
+        combinedChartObj.destroy();
+        combinedChartObj = null;
     }
 
     // Reset our data objects
@@ -283,21 +286,39 @@ function createCombinedChart() {
     var regressionLine = calculateRegressionLine(sortedDates, combinedScoresSorted);
 
     // Get the canvas element
-    var ctx = document.getElementById("combinedChart");
+    var ctx = document.getElementById("combinedChart").getContext('2d');
+
+    // Convert date strings to JavaScript Date objects for proper time scale
+    const dateObjects = sortedDates.map(dateStr => new Date(dateStr));
+
+    // Re-calculate regression line for time-based x values
+    // Convert dates to timestamps for regression calculation
+    const timeDataPoints = combinedScoresSorted.map((score, index) => {
+        return [dateObjects[index].getTime(), parseFloat(score)];
+    });
+
+    const timeRegression = regression.linear(timeDataPoints);
+    const timeRegressionPoints = timeRegression.points.map(point => {
+        return {
+            x: new Date(point[0]),
+            y: point[1]
+        };
+    });
+
+    // No zoom configuration needed
 
     // Create the chart
     combinedChartObj = new Chart(ctx, {
         type: 'scatter',
         data: {
-            labels: sortedDates,
             datasets: [
                 {
                     type: 'scatter',
                     label: 'Combined Score',
                     data: combinedScoresSorted.map((score, index) => ({
-                        x: index,
+                        x: new Date(sortedDates[index]),
                         y: parseFloat(score),
-                        date: sortedDates[index]
+                        originalDate: sortedDates[index]
                     })),
                     backgroundColor: 'rgba(75, 192, 192, 1)',
                     borderColor: 'rgba(75, 192, 192, 1)',
@@ -311,7 +332,7 @@ function createCombinedChart() {
                 {
                     type: 'line',
                     label: 'Trend Line',
-                    data: regressionLine.map((y, x) => ({ x, y })),
+                    data: timeRegressionPoints,
                     borderColor: 'rgba(255, 99, 132, 0.8)',
                     borderWidth: 2,
                     pointRadius: 0,
@@ -323,7 +344,7 @@ function createCombinedChart() {
                     type: 'line',
                     label: 'Data Points Connection',
                     data: combinedScoresSorted.map((score, index) => ({
-                        x: index,
+                        x: new Date(sortedDates[index]),
                         y: parseFloat(score)
                     })),
                     borderColor: 'rgba(75, 192, 192, 0.2)',
@@ -341,13 +362,15 @@ function createCombinedChart() {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    type: 'linear',
+                    type: 'time',
                     position: 'bottom',
+                    time: {
+                        unit: 'day',
+                        displayFormats: {
+                            day: 'yyyy-MM-dd'
+                        }
+                    },
                     ticks: {
-                        callback: function(value) {
-                            // Display the actual dates on x-axis
-                            return sortedDates[value] || '';
-                        },
                         maxRotation: 45,
                         minRotation: 45
                     },
@@ -370,12 +393,16 @@ function createCombinedChart() {
                         title: function(tooltipItems) {
                             // Show date in tooltip title
                             const item = tooltipItems[0];
-                            const date = sortedDates[item.parsed.x];
+                            // Format the date to YYYY-MM-DD
+                            const date = item.raw.originalDate ||
+                                new Date(item.raw.x).toISOString().split('T')[0];
                             return `Date: ${date}`;
                         },
                         label: function(context) {
-                            const date = sortedDates[context.parsed.x];
-                            const data = originalDataByDate[date];
+                            const dateObj = context.raw.x;
+                            const formattedDate = context.raw.originalDate ||
+                                new Date(dateObj).toISOString().split('T')[0];
+                            const data = originalDataByDate[formattedDate];
 
                             return [
                                 `Combined Score: ${data.combinedScore}`,
@@ -391,11 +418,11 @@ function createCombinedChart() {
             }
         }
     });
+
+    // No zoom handlers needed
 }
 });
 
 </script>
-
-<p class="mt-4">Stats feature originally coded by <a href="http://www.emilydowgialo.com" target="_blank">Emily Dowgialo</a>. Thanks!</p>
 
 {% endblock %}
