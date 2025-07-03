@@ -41,6 +41,7 @@ class Styling {
       }
       style.bc.requireOctothorp = style.bc.requireOctothorp || false;
       style.bc.hideErrors = style.bc.hideErrors || false;
+      style.bc.darkMode = style.bc.darkMode || false;
     } else {
       // Default style.
       style = {
@@ -63,6 +64,7 @@ class Styling {
           upscaleWithWindowSize: 'small',
           requireOctothorp: false,
           hideErrors: false,
+          darkMode: false,
         },
       };
     }
@@ -140,6 +142,10 @@ class Styling {
     return this.style.getIn(['bc', 'hideErrors']);
   }
 
+  get darkMode() {
+    return this.style.getIn(['bc', 'darkMode']);
+  }
+
   // get randomTileOrientation() {
   //   return this.style.getIn(['tc', 'randomTileOrientation']);
   // }
@@ -169,6 +175,7 @@ class Styling {
       upscaleWithWindowSize: ['bc', 'upscaleWithWindowSize'],
       requireOctothorp: ['bc', 'requireOctothorp'],
       hideErrors: ['bc', 'hideErrors'],
+      darkMode: ['bc', 'darkMode'],
     };
     if (!treeKeys[key]) {
       throw new Error(`The key ${key} was not found in the tree.`);

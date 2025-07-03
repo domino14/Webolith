@@ -11,13 +11,14 @@ import $ from 'jquery';
 import _ from 'underscore';
 import Immutable from 'immutable';
 
-import backgroundURL from './background';
+import backgroundURL, { darkBackgrounds, getAppropriateBackground } from './background';
 import Styling from './style';
 import Presence from './presence';
 import WordwallsGame from './wordwalls_game';
 import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
+import { applyDarkModeToExistingModals, setupDarkModeModalObserver } from './modal_dark_mode';
 import GuessEnum from './guess';
 import WordwallsAPI from './wordwalls_api';
 import WordwallsRPC from './wordwalls_rpc';
@@ -106,6 +107,13 @@ class WordwallsAppContainer extends React.Component {
       'background-image': backgroundURL(this.props.displayStyle.bodyBackground),
     });
 
+    // Apply dark mode if needed
+    if (this.props.displayStyle.darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+
     // Finally, show table creation modal if tablenum is 0. This whole
     // thing is a bit of an anti-pattern because of our modals/Bootstrap/etc
     // Maybe there's a better way to hide/show modals using more React
@@ -113,6 +121,13 @@ class WordwallsAppContainer extends React.Component {
     if (this.state.tablenum === 0) {
       this.myTableCreator.showModal();
       this.myTableCreator.resetDialog();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    // Update data attribute when display style changes
+    if (prevProps.displayStyle !== this.props.displayStyle) {
+      $('.wordwalls-app-container').attr('data-display-style', JSON.stringify(this.state.displayStyle));
     }
   }
 
@@ -414,6 +429,42 @@ class WordwallsAppContainer extends React.Component {
    * @param {Styling} style
    */
   setDisplayStyle(style) {
+    // Check if dark mode changed
+    const darkModeChanged = this.state.displayStyle.darkMode !== style.darkMode;
+
+    // If dark mode changed, update the body class and adjust backgrounds if needed
+    if (darkModeChanged) {
+      if (style.darkMode) {
+        document.body.classList.add('dark-mode');
+        // Set appropriate backgrounds for dark mode if we're not already using dark backgrounds
+        if (!darkBackgrounds.has(style.background)) {
+          style.setStyleKey('background', getAppropriateBackground(style.background, true));
+        }
+        if (!darkBackgrounds.has(style.bodyBackground)) {
+          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true));
+        }
+      } else {
+        document.body.classList.remove('dark-mode');
+        // If we were using dark backgrounds, switch to light ones
+        if (darkBackgrounds.has(style.background)) {
+          style.setStyleKey('background', getAppropriateBackground(style.background, false));
+        }
+        if (darkBackgrounds.has(style.bodyBackground)) {
+          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, false));
+        }
+      }
+
+      // Dark mode preference is stored in the database via the AJAX call below
+
+      // Apply dark mode to existing modals and set up observer for new ones
+      if (style.darkMode) {
+        setTimeout(() => {
+          applyDarkModeToExistingModals();
+          setupDarkModeModalObserver();
+        }, 100);
+      }
+    }
+
     this.setState({
       displayStyle: style,
     });
@@ -650,8 +701,11 @@ class WordwallsAppContainer extends React.Component {
     const boardWidth = questionWidth * boardGridWidth;
     const boardHeight = questionHeight * boardGridHeight;
     game.setMaxOnScreenQuestions(boardGridWidth * boardGridHeight);
+    // Add dark-mode class to container if dark mode is enabled
+    const containerClasses = `wordwalls-app-container${this.state.displayStyle.darkMode ? ' dark-mode-container' : ''}`;
+
     return (
-      <div>
+      <div className={containerClasses} data-display-style={JSON.stringify(this.state.displayStyle)}>
         <Spinner
           visible={this.state.loadingData}
         />

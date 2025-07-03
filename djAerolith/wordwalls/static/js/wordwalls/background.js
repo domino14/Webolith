@@ -21,6 +21,24 @@ function backgroundURL(option) {
 }
 const darkBackgrounds = new Set(['black_linen']);
 
+/**
+ * Get a suitable background for the current mode
+ * @param {string} currentBackground The currently selected background
+ * @param {boolean} darkMode Whether dark mode is enabled
+ * @returns {string} The background to use
+ */
+function getAppropriateBackground(currentBackground, darkMode) {
+  if (darkMode && !darkBackgrounds.has(currentBackground)) {
+    // Switch to a dark background when dark mode is enabled
+    return 'black_linen';
+  }
+  if (!darkMode && darkBackgrounds.has(currentBackground)) {
+    // Switch to a light background when dark mode is disabled
+    return 'hexellence';
+  }
+  return currentBackground;
+}
+
 export default backgroundURL;
 
-export { darkBackgrounds };
+export { darkBackgrounds, getAppropriateBackground };

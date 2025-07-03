@@ -365,31 +365,29 @@ class WordwallsSettings extends React.Component {
               </div>
 
               <div className="row">
-                <div className="col-lg-8">
+                <div className="col-xs-12 col-sm-6">
                   <Checkbox
-                    on={this.props.displayStyle.hideErrors}
-                    onChange={(event) => {
-                      this.props.onOptionsModify(
-                        'hideErrors',
-                        event.target.checked,
-                      );
-                    }}
-                    label="Hide error display completely"
+                    id="showErrors"
+                    name="showErrors"
+                    label="Hide Errors"
+                    helpText="Hide number of errors instead of showing them."
+                    checked={this.props.displayStyle.hideErrors}
+                    onChange={
+                      (e) => this.props.onOptionsModify('hideErrors', e.target.checked)
+                    }
                   />
                 </div>
-              </div>
 
-              <div className="row">
-                <div className="col-lg-8">
+                <div className="col-xs-12 col-sm-6">
                   <Checkbox
-                    on={this.props.displayStyle.requireOctothorp}
-                    onChange={(event) => {
-                      this.props.onOptionsModify(
-                        'requireOctothorp',
-                        event.target.checked,
-                      );
-                    }}
-                    label="Require # symbol to be entered for CSW-only words in non-challenges"
+                    id="darkMode"
+                    name="darkMode"
+                    label="Dark Mode"
+                    helpText="Enable dark mode for better night-time viewing"
+                    checked={this.props.displayStyle.darkMode}
+                    onChange={
+                      (e) => this.props.onOptionsModify('darkMode', e.target.checked)
+                    }
                   />
                 </div>
               </div>
