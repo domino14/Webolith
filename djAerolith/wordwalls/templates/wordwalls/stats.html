@@ -301,11 +301,12 @@ function createCombinedChart() {
                     })),
                     backgroundColor: 'rgba(75, 192, 192, 1)',
                     borderColor: 'rgba(75, 192, 192, 1)',
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    pointBorderWidth: 2,
-                    pointHoverBorderWidth: 3,
-                    pointStyle: 'circle'
+                    pointRadius: 2,
+                    pointHoverRadius: 6,
+                    pointBorderWidth: 1,
+                    pointHoverBorderWidth: 2,
+                    pointStyle: 'circle',
+                    order: 2  // Higher number means render earlier (below other elements)
                 },
                 {
                     type: 'line',
@@ -315,7 +316,8 @@ function createCombinedChart() {
                     borderWidth: 2,
                     pointRadius: 0,
                     fill: false,
-                    tension: 0
+                    tension: 0,
+                    order: 1  // Lower number means render later (on top of other elements)
                 },
                 {
                     type: 'line',
@@ -324,12 +326,13 @@ function createCombinedChart() {
                         x: index,
                         y: parseFloat(score)
                     })),
-                    borderColor: 'rgba(75, 192, 192, 0.3)',
-                    borderWidth: 1,
-                    borderDash: [5, 5],
+                    borderColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 0.5,
+                    borderDash: [3, 3],
                     pointRadius: 0,
                     fill: false,
-                    tension: 0
+                    tension: 0,
+                    order: 3  // Will be rendered at the bottom
                 }
             ]
         },
