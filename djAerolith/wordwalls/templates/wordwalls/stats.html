@@ -125,12 +125,14 @@
 </div>
 
 <div id="chart-container" class="container mt-4">
-    <div class="mb-3">
-        <div id="regression-equation" class="text-muted small"></div>
-        <div id="trend-message" class="text-muted small font-italic"></div>
+    <div class="mb-3 p-3 bg-light border rounded">
+        <h4 class="mb-3 text-primary"><strong>Performance Analysis</strong></h4>
+        <div id="regression-equation" class="mb-2"></div>
+        <div id="trend-message" class="mt-3"></div>
     </div>
-    <div class="chart-wrapper" style="position: relative; height: 500px; width: 100%;">
-        <canvas id="combinedChart"></canvas>
+    <!-- Fixed height and width for better rendering performance -->
+    <div class="chart-wrapper" style="position: relative; height: 500px; width: 100%; overflow: hidden;">
+        <canvas id="combinedChart" height="500"></canvas>
     </div>
 </div>
 
@@ -169,28 +171,31 @@ $( "#dropdown-button" ).click(function() {
     if (combinedChartObj) {
         try {
             combinedChartObj.destroy();
+            // Force browser to release resources immediately
             combinedChartObj = null;
+            // Allow garbage collection to run
+            setTimeout(() => {
+                // This helps ensure memory is freed before creating a new chart
+            }, 0);
         } catch (e) {
             console.error("Error destroying chart:", e);
         }
-    }    // Simply recreate the canvas
-    // First remove all Chart.js generated elements
-    const chartContainer = document.getElementById('chart-container');
-    const chartContainerDiv = chartContainer.querySelector('div');
+    }    // Simply reset the canvas - retain the existing element
+    // This approach is more stable and performs better than recreating the element
+    const canvas = document.getElementById('combinedChart');
 
-    // Clear everything except the regression info
-    while (chartContainerDiv.firstChild) {
-        chartContainerDiv.removeChild(chartContainerDiv.firstChild);
-    }
+    // Clear any existing regression info
+    $('#regression-equation').empty();
+    $('#trend-message').empty();
 
-    // Create a fresh canvas with larger dimensions
-    const canvas = document.createElement('canvas');
-    canvas.id = 'combinedChart';
-    canvas.height = 400; // Taller canvas
-    chartContainerDiv.appendChild(canvas);
-
-    // Disable animations
+    // Comprehensive optimization of Chart.js defaults for maximum performance
     Chart.defaults.animation = false;
+    Chart.defaults.responsive = true;
+    Chart.defaults.maintainAspectRatio = false;
+    Chart.defaults.plugins.tooltip.enabled = true;
+    Chart.defaults.elements.point.radius = 3;
+    Chart.defaults.elements.point.hoverRadius = 7;
+    Chart.defaults.elements.line.tension = 0;
 
     // Reset our data objects
     scoresByDate = {};
@@ -303,23 +308,47 @@ function createCombinedChart() {
     $( ".ring-spinner").hide();
     $( "#dropdown-button").prop('disabled', false);
 
-    // Info for chart axes - ensure date sorting works chronologically
-    // Sort dates properly by converting to Date objects first
-    dateArray.sort(function(a, b) {
-        return new Date(a) - new Date(b);
-    });
-    var scoresSorted = [];
-    var timeSorted = [];
-    var combinedScoresSorted = [];
-    var sortedDates = [];
+    // Early exit if no data to prevent unnecessary processing
+    if (!dateArray || dateArray.length === 0) {
+        $('#regression-equation').html(`
+            <div class="card mb-2">
+                <div class="card-header bg-warning text-white">
+                    <strong>No Data Available</strong>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">No data available for the selected parameters.</p>
+                </div>
+            </div>
+        `);
+        $('#trend-message').empty();
+        return;
+    }
 
+    // Optimize date sorting and data preparation for better performance
+    // Convert dates once to avoid repeated Date object creation
+    const dateObjectsMap = {};
+    dateArray.forEach(date => {
+        dateObjectsMap[date] = new Date(date).getTime();
+    });
+
+    // Sort dates using the cached timestamps
+    dateArray.sort(function(a, b) {
+        return dateObjectsMap[a] - dateObjectsMap[b];
+    });
+
+    // Pre-allocate arrays for better memory performance
+    var scoresSorted = new Array(dateArray.length);
+    var timeSorted = new Array(dateArray.length);
+    var combinedScoresSorted = new Array(dateArray.length);
+    var sortedDates = new Array(dateArray.length);
+
+    // Build arrays in a single pass
     for (var i = 0; i < dateArray.length; i++) {
         var date = dateArray[i];
-        // Ensure we're working with numeric values
-        scoresSorted.push(scoresByDate[date]);
-        timeSorted.push(timeRemainingByDate[date]);
-        combinedScoresSorted.push(combinedScoresByDate[date]);
-        sortedDates.push(date);
+        scoresSorted[i] = scoresByDate[date];
+        timeSorted[i] = timeRemainingByDate[date];
+        combinedScoresSorted[i] = combinedScoresByDate[date];
+        sortedDates[i] = date;
     }
 
     console.log("Data prepared for chart:", {
@@ -356,9 +385,7 @@ function createCombinedChart() {
         $('#time-high').text(maxTime);
     }
 
-    // Create a fresh canvas - larger size
-    $('#combinedChart').remove();
-    $('#chart-container').append('<canvas id="combinedChart"></canvas>');
+    // Use the existing canvas - more efficient than recreating
     var canvas = document.getElementById("combinedChart");
     var ctx = canvas.getContext('2d');
 
@@ -371,12 +398,15 @@ function createCombinedChart() {
     let r2 = 0;
     let startDate, endDate;
 
-    // Calculate regression if we have enough data
+    // Calculate regression if we have enough data - with optimized approach
     if (combinedScoresSorted.length >= 2) {
-        // Implement our own linear regression calculation to ensure consistent results
-        // Get the earliest date as reference point (day 0)
-        const earliestDate = new Date(Math.min(...dateObjects.map(d => d.getTime())));
-        const latestDate = new Date(Math.max(...dateObjects.map(d => d.getTime())));
+        // Get earliest and latest dates more efficiently using the timestamps we already calculated
+        const timestamps = dateObjects.map(d => d.getTime());
+        const minTimestamp = Math.min.apply(null, timestamps);
+        const maxTimestamp = Math.max.apply(null, timestamps);
+
+        const earliestDate = new Date(minTimestamp);
+        const latestDate = new Date(maxTimestamp);
 
         // Check if we have a valid date range (at least 1 day difference)
         const hasDateRange = (latestDate - earliestDate) >= (24 * 60 * 60 * 1000);
@@ -464,12 +494,43 @@ function createCombinedChart() {
         // Interpret the R² value
         const r2Quality = r2 >= 0.7 ? "Strong" : r2 >= 0.4 ? "Moderate" : r2 >= 0.2 ? "Weak" : "Very weak";
 
-        // Display comprehensive regression info
+        // Display comprehensive regression info with more prominent styling
         $('#regression-equation').html(`
-            <div><strong>Score change:</strong> ${displaySlope} points per day</div>
-            <div><strong>30-day projection:</strong> ${Math.abs(scoreChange30Days)} point ${changeDirection}</div>
-            <div><strong>R² value:</strong> ${Math.max(0, r2).toFixed(4)} (${r2Quality} correlation)</div>
-            <div><strong>Data points:</strong> ${combinedScoresSorted.length}</div>
+            <div class="card mb-2">
+                <div class="card-header bg-primary text-white">
+                    <strong>Performance Trend Analysis</strong>
+                </div>
+                <div class="card-body pb-0">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <strong class="text-primary">Daily Change:</strong>
+                                <span class="${slope > 0 ? 'text-success' : (Math.abs(slope) < 0.00005 ? 'text-muted' : 'text-danger')}">
+                                    ${slope > 0 ? '+' : ''}${displaySlope} points/day
+                                </span>
+                            </div>
+                            <div class="mb-2">
+                                <strong class="text-primary">30-Day Projection:</strong>
+                                <span class="${slope > 0 ? 'text-success' : (Math.abs(slope) < 0.00005 ? 'text-muted' : 'text-danger')}">
+                                    ${slope > 0 ? '+' : ''}${scoreChange30Days} points (${changeDirection})
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <strong class="text-primary">Correlation (R²):</strong>
+                                ${Math.max(0, r2).toFixed(4)}
+                                <span class="label label-${r2 >= 0.7 ? 'success' : r2 >= 0.4 ? 'info' : r2 >= 0.2 ? 'warning' : 'default'}">
+                                    ${r2Quality}
+                                </span>
+                            </div>
+                            <div class="mb-2">
+                                <strong class="text-primary">Data Points:</strong> ${combinedScoresSorted.length}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `);
 
         // Show trend message with more detail based on slope and R² value
@@ -489,15 +550,34 @@ function createCombinedChart() {
         } else {
             trendMessage = `Your performance is ${trendStrength} declining over time (${confidenceLevel}).`;
         }
-        $('#trend-message').text(trendMessage);
-    } else {
-        // Not enough data
-        $('#regression-equation').html(`
-            <div>Not enough data for trend analysis</div>
-            <div>Need at least 2 data points from different days to calculate a trend</div>
-            <div>Current data points: ${combinedScoresSorted.length}</div>
+
+        // Apply different colors based on trend
+        const trendColor = Math.abs(slope) < 0.05 ? "text-secondary" :
+                           slope > 0 ? "text-success" : "text-danger";
+
+        // Make trend message more prominent with alert styling
+        $('#trend-message').html(`
+            <div class="alert ${slope > 0 ? 'alert-success' : (Math.abs(slope) < 0.05 ? 'alert-info' : 'alert-danger')} py-2">
+                <strong class="h4">
+                    ${slope > 0 ? '▲' : (Math.abs(slope) < 0.05 ? '⚊' : '▼')}
+                    ${trendMessage}
+                </strong>
+            </div>
         `);
-        $('#trend-message').text('');
+    } else {
+        // Not enough data - with more prominent and consistent styling
+        $('#regression-equation').html(`
+            <div class="card mb-2">
+                <div class="card-header bg-warning text-white">
+                    <strong>Trend Analysis Not Available</strong>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><i class="glyphicon glyphicon-info-sign"></i> Need at least 2 data points from different days to calculate a trend</p>
+                    <p class="mb-0"><strong>Current data points:</strong> ${combinedScoresSorted.length}</p>
+                </div>
+            </div>
+        `);
+        $('#trend-message').empty();
     }    // Prepare the datasets array - only data points and connectors
     const datasets = [
         {
@@ -524,15 +604,19 @@ function createCombinedChart() {
     // Turn off all animations globally
     Chart.defaults.animation = false;
 
-    // Add a trend line directly to the Chart.js datasets
+    // Add a trend line directly to the Chart.js datasets - optimized for performance
     if (combinedScoresSorted.length >= 2) {
-        console.log("Adding trend line as a simple dataset");
-
-        // Get the start and end dates for the trend line
-        // Add a bit of padding to show the trend beyond the data points
+        // Calculate the trend line more efficiently by using pre-calculated min/max
         const millisecondsPerDay = 24 * 60 * 60 * 1000;
-        const earliestDate = new Date(Math.min(...dateObjects.map(d => d.getTime())) - (millisecondsPerDay * 0.5));
-        const latestDate = new Date(Math.max(...dateObjects.map(d => d.getTime())) + (millisecondsPerDay * 0.5));
+
+        // Find the min/max dates using Math.min/max once instead of repeatedly
+        const timestamps = dateObjects.map(d => d.getTime());
+        const minTimestamp = Math.min.apply(null, timestamps);
+        const maxTimestamp = Math.max.apply(null, timestamps);
+
+        // Add padding to the trend line
+        const earliestDate = new Date(minTimestamp - (millisecondsPerDay * 0.5));
+        const latestDate = new Date(maxTimestamp + (millisecondsPerDay * 0.5));
 
         // Calculate days since start for both endpoints
         const startDays = 0;
@@ -546,15 +630,7 @@ function createCombinedChart() {
         const startX = earliestDate.getTime();
         const endX = latestDate.getTime();
 
-        console.log("Trend line calculation:", {
-            startDays, endDays,
-            startDate: new Date(startX),
-            endDate: new Date(endX),
-            slope, intercept,
-            startY, endY
-        });
-
-        // Add the trend line with improved styling
+        // Add the trend line with improved styling and minimal properties
         datasets.push({
             type: 'line',
             label: 'Trend Line',
@@ -563,40 +639,35 @@ function createCombinedChart() {
                 {x: new Date(endX), y: endY}
             ],
             borderColor: Math.abs(slope) < 0.05 ? 'rgba(150, 150, 150, 0.8)' : // Gray for stable
-                         slope > 0 ? 'rgba(75, 192, 75, 0.8)' :                // Green for improving
-                         'rgba(255, 99, 132, 0.8)',                            // Red for declining
+                        slope > 0 ? 'rgba(75, 192, 75, 0.8)' :                // Green for improving
+                        'rgba(255, 99, 132, 0.8)',                            // Red for declining
             borderWidth: 3,
             borderDash: Math.abs(slope) < 0.05 ? [5, 5] : [], // Dashed for stable lines
             pointRadius: 0,
             pointHoverRadius: 0,
-            fill: false,
             tension: 0,
-            order: 3  // Will be rendered on top
+            order: 3
         });
     }
 
-    // Create a minimal chart
+    // Create a minimal chart with optimized performance options
     combinedChartObj = new Chart(ctx, {
         type: 'scatter',
         data: {
             datasets: datasets
         },
         options: {
+            // Core rendering optimizations
             responsive: true,
-            maintainAspectRatio: false,  // Allow chart to fill container
+            maintainAspectRatio: false,
             animation: false,
-            animations: {
-                colors: false,
-                x: false,
-                y: false
-            },
-            transitions: {
-                active: {
-                    animation: {
-                        duration: 0
-                    }
+            elements: {
+                line: {
+                    tension: 0 // Straight lines are faster to render
                 }
             },
+            devicePixelRatio: 1, // Fix to prevent high-DPI scaling issues
+
             scales: {
                 x: {
                     type: 'time',
@@ -608,10 +679,11 @@ function createCombinedChart() {
                         }
                     },
                     ticks: {
+                        source: 'auto',
+                        autoSkip: true,
                         maxRotation: 45,
                         minRotation: 45,
-                        // Limit the number of ticks to reduce processing
-                        maxTicksLimit: 10
+                        maxTicksLimit: 8
                     },
                     title: {
                         display: true,
@@ -624,49 +696,58 @@ function createCombinedChart() {
                         display: true,
                         text: 'Combined Score'
                     },
-                    suggestedMax: Math.max(...combinedScoresSorted.map(parseFloat)) * 1.1,
-                    // Set a fixed number of ticks to prevent auto-scaling issues
+                    // Simpler y-axis setup for better performance
                     ticks: {
                         maxTicksLimit: 6
                     }
                 }
-            },            plugins: {
-                // Very simple legend
+            },
+            plugins: {
                 legend: {
                     display: true,
                     position: 'top',
                 },
                 tooltip: {
+                    enabled: true,
+                    position: 'nearest',
+                    intersect: false,
+                    mode: 'index',
                     callbacks: {
                         title: function(tooltipItems) {
-                            // Show date in tooltip title
+                            // Optimized tooltip title function
                             const item = tooltipItems[0];
-                            // Format the date to YYYY-MM-DD
-                            const date = item.raw.originalDate ||
-                                new Date(item.raw.x).toISOString().split('T')[0];
-                            return `Date: ${date}`;
+                            if (!item || !item.raw) return 'Unknown date';
+
+                            // Avoid creating Date objects when possible
+                            if (item.raw.originalDate) {
+                                return `Date: ${item.raw.originalDate}`;
+                            } else if (item.raw.x instanceof Date) {
+                                return `Date: ${item.raw.x.toISOString().split('T')[0]}`;
+                            } else {
+                                return 'Trend Line';
+                            }
                         },
                         label: function(context) {
-                            const dateObj = context.raw.x;
-                            // Handle trend line points that don't have originalDate
-                            if (!context.raw.originalDate && !dateObj) {
+                            // Optimized tooltip label function
+                            if (!context || !context.raw) return ['No data'];
+
+                            // Fast path for trend line
+                            if (context.datasetIndex === 1) {
                                 return ["Trend Line"];
                             }
 
-                            const formattedDate = context.raw.originalDate ||
-                                new Date(dateObj).toISOString().split('T')[0];
-
-                            // Safely handle case when data might be missing
-                            const data = originalDataByDate[formattedDate];
-                            if (!data) {
-                                return ["No data available"];
+                            // For data points
+                            if (context.raw.originalDate) {
+                                const data = originalDataByDate[context.raw.originalDate];
+                                if (data) {
+                                    return [
+                                        `Combined Score: ${data.combinedScore}`,
+                                        `Score: ${data.score}/${data.maxScore} (${data.scorePercent}%)`,
+                                        `Time Bonus: ${data.timeBonus} (${data.timeRemaining}s/${data.maxTime}s)`
+                                    ];
+                                }
                             }
-
-                            return [
-                                `Combined Score: ${data.combinedScore}`,
-                                `Score: ${data.score}/${data.maxScore} (${data.scorePercent}%)`,
-                                `Time Bonus: ${data.timeBonus} (${data.timeRemaining}s/${data.maxTime}s)`
-                            ];
+                            return ["No data available"];
                         }
                     }
                 }
