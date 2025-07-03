@@ -9,6 +9,7 @@ import Checkbox from '../forms/checkbox';
 import TextInput from '../forms/text_input';
 import Select from '../forms/select';
 import Styling from '../style';
+import { getBackgroundsByMode } from '../background';
 
 class WordwallsSettings extends React.Component {
   /**
@@ -34,42 +35,12 @@ class WordwallsSettings extends React.Component {
   }
 
   /**
-   * Get background options.
+   * Get background options based on the current mode.
+   * @param {boolean} darkMode - Whether dark mode is active
+   * @param {boolean} [isBodyBackground=false] - Whether this is for the body background
    */
-  static getBackgroundOptions() {
-    return [
-      {
-        value: '',
-        displayValue: 'None',
-      }, {
-        value: 'pool_table',
-        displayValue: 'Green table',
-      }, {
-        value: 'pink_rice',
-        displayValue: 'Pink rice (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'scribble_light',
-        displayValue: 'Scribble light (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'canvas',
-        displayValue: 'Canvas (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'cork_wallet',
-        displayValue: 'Cork wallet (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'hexellence',
-        displayValue: 'Hexellence (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'black_linen',
-        displayValue: 'Black Linen (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'double_bubble_dark',
-        displayValue: 'Double Bubble Dark (subtlepatterns.com, CC BY-SA 3.0)',
-      }, {
-        value: 'moroccan_flower_dark',
-        displayValue: 'Moroccan Flower Dark (subtlepatterns.com, CC BY-SA 3.0)',
-      },
-    ];
+  static getBackgroundOptions(darkMode, isBodyBackground = false) {
+    return getBackgroundsByMode(darkMode, isBodyBackground);
   }
 
   static getUpscaleOptions() {
@@ -301,7 +272,9 @@ class WordwallsSettings extends React.Component {
                     onChange={(event) => {
                       this.props.onOptionsModify('background', event.target.value);
                     }}
-                    options={WordwallsSettings.getBackgroundOptions()}
+                    options={
+                      WordwallsSettings.getBackgroundOptions(this.props.displayStyle.darkMode)
+                    }
                   />
                 </div>
                 <div className="col-lg-6">
@@ -312,7 +285,9 @@ class WordwallsSettings extends React.Component {
                     onChange={(event) => {
                       this.props.onOptionsModify('bodyBackground', event.target.value);
                     }}
-                    options={WordwallsSettings.getBackgroundOptions()}
+                    options={
+                      WordwallsSettings.getBackgroundOptions(this.props.displayStyle.darkMode, true)
+                    }
                   />
                 </div>
               </div>

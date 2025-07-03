@@ -32,37 +32,101 @@ class SettingsModal extends React.Component {
    * which will update the state accordingly.
    */
   onWordwallsOptionsModify(stateKey, value) {
-    this.setState((state) => {
-      state.style.setStyleKey(stateKey, value);
+    // Create a copy of the current style
+    const updatedStyle = this.state.style.copy();
+    updatedStyle.setStyleKey(stateKey, value);
 
-      // If dark mode is toggled, apply it immediately
-      if (stateKey === 'darkMode') {
-        // Apply dark mode immediately without saving
-        if (value) {
-          document.body.classList.add('dark-mode');
+    // If dark mode is toggled, apply it immediately
+    if (stateKey === 'darkMode') {
+      // Apply dark mode immediately without saving
+      if (value) {
+        document.body.classList.add('dark-mode');
 
-          // Also apply dark mode to any existing modals
-          import('../modal_dark_mode')
-            .then(({ applyDarkModeToExistingModals, setupDarkModeModalObserver }) => {
-              setTimeout(() => {
-                applyDarkModeToExistingModals();
-                setupDarkModeModalObserver();
-              }, 100);
-            });
-        } else {
-          document.body.classList.remove('dark-mode');
-          // Explicitly remove dark mode from modals when switching to light mode
-          import('../modal_dark_mode')
-            .then(({ removeDarkModeFromExistingModals }) => {
-              setTimeout(() => {
-                removeDarkModeFromExistingModals();
-              }, 100);
-            });
-        }
+        // Update backgrounds to appropriate ones for dark mode
+        import('../background')
+          .then(({ getAppropriateBackground }) => {
+            // Only update if the current background isn't suitable for dark mode
+            const newBackground = getAppropriateBackground(updatedStyle.background, true, false);
+            // eslint-disable-next-line max-len
+            const newBodyBackground = getAppropriateBackground(updatedStyle.bodyBackground, true, true);
+
+            if (newBackground !== updatedStyle.background) {
+              updatedStyle.setStyleKey('background', newBackground);
+            }
+            if (newBodyBackground !== updatedStyle.bodyBackground) {
+              updatedStyle.setStyleKey('bodyBackground', newBodyBackground);
+            }
+
+            // Update state with new style to refresh the UI
+            this.setState({ style: updatedStyle });
+          });
+
+        // Also apply dark mode to any existing modals
+        import('../modal_dark_mode')
+          .then(({ applyDarkModeToExistingModals, setupDarkModeModalObserver }) => {
+            setTimeout(() => {
+              applyDarkModeToExistingModals();
+              setupDarkModeModalObserver();
+            }, 100);
+          });
+      } else {
+        document.body.classList.remove('dark-mode');
+
+        // Update backgrounds to appropriate ones for light mode
+        import('../background')
+          .then(({ getAppropriateBackground }) => {
+            // Get current backgrounds for logging
+            const currentBackground = updatedStyle.background;
+            const currentBodyBackground = updatedStyle.bodyBackground;
+
+            // Only update if the current background isn't suitable for light mode
+            let newBackground = getAppropriateBackground(currentBackground, false, false);
+            // eslint-disable-next-line max-len
+            let newBodyBackground = getAppropriateBackground(currentBodyBackground, false, true);
+
+            // eslint-disable-next-line max-len, no-console
+            console.log('Background transition:', currentBackground, '->', newBackground, 'Body:', currentBodyBackground, '->', newBodyBackground);
+
+            // eslint-disable-next-line max-len
+            // Make sure we don't default to empty background ('None') when switching to light mode unless that was the explicit choice before
+            if (newBackground === '' && currentBackground !== '') {
+              // Default to 'pool_table' for the main background if coming from a dark background
+              newBackground = 'pool_table';
+              // eslint-disable-next-line no-console
+              console.log('Correcting empty background to pool_table');
+            }
+
+            if (newBodyBackground === '' && currentBodyBackground !== '') {
+              // Default to 'hexellence' for the body background if coming from a dark background
+              newBodyBackground = 'hexellence';
+              // eslint-disable-next-line no-console
+              console.log('Correcting empty body background to hexellence');
+            }
+
+            // Then set the background values
+            if (newBackground !== updatedStyle.background) {
+              updatedStyle.setStyleKey('background', newBackground);
+            }
+            if (newBodyBackground !== updatedStyle.bodyBackground) {
+              updatedStyle.setStyleKey('bodyBackground', newBodyBackground);
+            }
+
+            // Update state with new style to refresh the UI
+            this.setState({ style: updatedStyle });
+          });
+
+        // Explicitly remove dark mode from modals when switching to light mode
+        import('../modal_dark_mode')
+          .then(({ removeDarkModeFromExistingModals }) => {
+            setTimeout(() => {
+              removeDarkModeFromExistingModals();
+            }, 100);
+          });
       }
-
-      return { style: state.style };
-    });
+    } else {
+      // For all other options, just update the state
+      this.setState({ style: updatedStyle });
+    }
   }
 
   reset(displayStyle) {
