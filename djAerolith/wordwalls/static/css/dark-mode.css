@@ -116,39 +116,112 @@ body.dark-mode .btn-default:focus {
   border-color: #666;
 }
 
-/* Primary buttons with better contrast */
+/* Primary buttons with better contrast and dimmed for dark mode */
 body.dark-mode .btn-primary {
-  background-color: #0d6efd;
-  border-color: #0a58ca;
+  background-color: #084298;
+  border-color: #073984;
+  filter: brightness(0.85);
 }
 
 body.dark-mode .btn-primary:hover,
 body.dark-mode .btn-primary:focus {
-  background-color: #0b5ed7;
+  background-color: #0a58ca;
   border-color: #0a58ca;
+  filter: brightness(0.9);
 }
 
-/* Other button types */
+/* Other button types - dimmed for dark mode */
 body.dark-mode .btn-success {
+  background-color: #146c43;
+  border-color: #105835;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-success:hover,
+body.dark-mode .btn-success:focus {
   background-color: #198754;
   border-color: #146c43;
+  filter: brightness(0.9);
 }
 
 body.dark-mode .btn-info {
+  background-color: #087990;
+  border-color: #066e81;
+  color: #f8f9fa;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-info:hover,
+body.dark-mode .btn-info:focus {
   background-color: #0dcaf0;
   border-color: #0aa2c0;
   color: #212529;
+  filter: brightness(0.9);
 }
 
 body.dark-mode .btn-warning {
+  background-color: #cc9a06;
+  border-color: #b38705;
+  color: #212529;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-warning:hover,
+body.dark-mode .btn-warning:focus {
   background-color: #ffc107;
   border-color: #cc9a06;
   color: #212529;
+  filter: brightness(0.9);
 }
 
 body.dark-mode .btn-danger {
+  background-color: #b02a37;
+  border-color: #9a2530;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-danger:hover,
+body.dark-mode .btn-danger:focus {
   background-color: #dc3545;
   border-color: #b02a37;
+  filter: brightness(0.9);
+}
+
+/* Additional rules for specific buttons used in the app */
+body.dark-mode .btn-lg,
+body.dark-mode .btn-sm,
+body.dark-mode .btn-xs {
+  filter: brightness(0.85);
+}
+
+/* Ensure the buttons on the main game page are properly dimmed */
+body.dark-mode .jumbotron .btn,
+body.dark-mode .hero-unit .btn {
+  filter: brightness(0.85);
+}
+
+/* Specifically target the shuffle/alphagram buttons (1/2/3) */
+body.dark-mode .btn-info.btn-xs {
+  background-color: #087990;
+  color: #f8f9fa;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-info.btn-xs:hover,
+body.dark-mode .btn-info.btn-xs:focus {
+  background-color: #0aa2c0;
+  filter: brightness(0.9);
+}
+
+/* Target buttons in the solutions modal */
+body.dark-mode .solutions-modal .btn,
+body.dark-mode .modal-content .btn {
+  filter: brightness(0.85);
+}
+
+/* Dropdown buttons */
+body.dark-mode .dropdown-toggle {
+  filter: brightness(0.85);
 }
 
 /* Tables */
