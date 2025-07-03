@@ -18,6 +18,15 @@ class SettingsModal extends React.Component {
     this.reset = this.reset.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    // If displayStyle prop changes (like after saving), update the internal state
+    if (prevProps.displayStyle !== this.props.displayStyle) {
+      this.setState({
+        style: this.props.displayStyle.copy(),
+      });
+    }
+  }
+
   /**
    * When an option in the modal changes, this function will get called,
    * which will update the state accordingly.
@@ -25,13 +34,49 @@ class SettingsModal extends React.Component {
   onWordwallsOptionsModify(stateKey, value) {
     this.setState((state) => {
       state.style.setStyleKey(stateKey, value);
+
+      // If dark mode is toggled, apply it immediately
+      if (stateKey === 'darkMode') {
+        // Apply dark mode immediately without saving
+        if (value) {
+          document.body.classList.add('dark-mode');
+
+          // Also apply dark mode to any existing modals
+          import('../modal_dark_mode')
+            .then(({ applyDarkModeToExistingModals, setupDarkModeModalObserver }) => {
+              setTimeout(() => {
+                applyDarkModeToExistingModals();
+                setupDarkModeModalObserver();
+              }, 100);
+            });
+        } else {
+          document.body.classList.remove('dark-mode');
+          // Explicitly remove dark mode from modals when switching to light mode
+          import('../modal_dark_mode')
+            .then(({ removeDarkModeFromExistingModals }) => {
+              setTimeout(() => {
+                removeDarkModeFromExistingModals();
+              }, 100);
+            });
+        }
+      }
+
       return { style: state.style };
     });
   }
 
   reset(displayStyle) {
+    const newStyle = displayStyle.copy();
+
+    // Make sure dark mode class matches the current style
+    if (newStyle.darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+
     this.setState({
-      style: displayStyle.copy(),
+      style: newStyle,
     });
   }
 

@@ -1,0 +1,942 @@
+/* Dark mode styles for Aerolith Wordwalls */
+
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Navigation and header elements */
+body.dark-mode .navbar,
+body.dark-mode .navbar-default {
+  background-color: #1f1f1f;
+  border-color: #333;
+}
+
+body.dark-mode .navbar-default .navbar-nav > li > a,
+body.dark-mode .navbar-default .navbar-brand {
+  color: #e0e0e0;
+}
+
+body.dark-mode .navbar-default .navbar-nav > li > a:hover,
+body.dark-mode .navbar-default .navbar-brand:hover {
+  color: #ffffff;
+}
+
+/* Modal dialogs */
+body.dark-mode .modal-content {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #444;
+}
+
+body.dark-mode .close {
+  color: #e0e0e0;
+  opacity: 0.7;
+}
+
+body.dark-mode .close:hover {
+  opacity: 1;
+}
+
+/* Welcome message and modal content */
+body.dark-mode .modal-title,
+body.dark-mode .modal-body h1,
+body.dark-mode .modal-body h2,
+body.dark-mode .modal-body h3,
+body.dark-mode .modal-body h4,
+body.dark-mode .modal-body p,
+body.dark-mode .modal-body label,
+body.dark-mode .modal-body .text-center {
+  color: #e0e0e0 !important;
+}
+
+/* Ensure all text in modals is properly visible */
+body.dark-mode .modal-body {
+  color: #e0e0e0 !important;
+  background-color: #2d2d2d !important;
+}
+
+/* Add contrast to modal panels */
+body.dark-mode .panel {
+  background-color: #333 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-heading {
+  background-color: #3d3d3d !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Forms and inputs */
+body.dark-mode .form-control {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+body.dark-mode .input-group-addon {
+  background-color: #444;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+body.dark-mode select.form-control option {
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+body.dark-mode label {
+  color: #e0e0e0;
+}
+
+/* Help text and hints */
+body.dark-mode .help-block,
+body.dark-mode .form-text,
+body.dark-mode small {
+  color: #aaa !important;
+}
+
+/* Buttons */
+body.dark-mode .btn-default {
+  background-color: #444;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+body.dark-mode .btn-default:hover,
+body.dark-mode .btn-default:focus {
+  background-color: #555;
+  color: #ffffff;
+  border-color: #666;
+}
+
+/* Primary buttons with better contrast and dimmed for dark mode */
+body.dark-mode .btn-primary {
+  background-color: #084298;
+  border-color: #073984;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-primary:hover,
+body.dark-mode .btn-primary:focus {
+  background-color: #0a58ca;
+  border-color: #0a58ca;
+  filter: brightness(0.9);
+}
+
+/* Other button types - dimmed for dark mode */
+body.dark-mode .btn-success {
+  background-color: #146c43;
+  border-color: #105835;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-success:hover,
+body.dark-mode .btn-success:focus {
+  background-color: #198754;
+  border-color: #146c43;
+  filter: brightness(0.9);
+}
+
+body.dark-mode .btn-info {
+  background-color: #087990;
+  border-color: #066e81;
+  color: #f8f9fa;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-info:hover,
+body.dark-mode .btn-info:focus {
+  background-color: #0dcaf0;
+  border-color: #0aa2c0;
+  color: #212529;
+  filter: brightness(0.9);
+}
+
+body.dark-mode .btn-warning {
+  background-color: #cc9a06;
+  border-color: #b38705;
+  color: #212529;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-warning:hover,
+body.dark-mode .btn-warning:focus {
+  background-color: #ffc107;
+  border-color: #cc9a06;
+  color: #212529;
+  filter: brightness(0.9);
+}
+
+body.dark-mode .btn-danger {
+  background-color: #b02a37;
+  border-color: #9a2530;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-danger:hover,
+body.dark-mode .btn-danger:focus {
+  background-color: #dc3545;
+  border-color: #b02a37;
+  filter: brightness(0.9);
+}
+
+/* Additional rules for specific buttons used in the app */
+body.dark-mode .btn-lg,
+body.dark-mode .btn-sm,
+body.dark-mode .btn-xs {
+  filter: brightness(0.85);
+}
+
+/* Ensure the buttons on the main game page are properly dimmed */
+body.dark-mode .jumbotron .btn,
+body.dark-mode .hero-unit .btn {
+  filter: brightness(0.85);
+}
+
+/* Specifically target the shuffle/alphagram buttons (1/2/3) */
+body.dark-mode .btn-info.btn-xs {
+  background-color: #087990;
+  color: #f8f9fa;
+  filter: brightness(0.85);
+}
+
+body.dark-mode .btn-info.btn-xs:hover,
+body.dark-mode .btn-info.btn-xs:focus {
+  background-color: #0aa2c0;
+  filter: brightness(0.9);
+}
+
+/* Target buttons in the solutions modal */
+body.dark-mode .solutions-modal .btn,
+body.dark-mode .modal-content .btn {
+  filter: brightness(0.85);
+}
+
+/* Dropdown buttons */
+body.dark-mode .dropdown-toggle {
+  filter: brightness(0.85);
+}
+
+/* Tables */
+body.dark-mode .table {
+  color: #e0e0e0;
+}
+
+body.dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .table-hover > tbody > tr:hover {
+  background-color: #3a3a3a;
+}
+
+/* Game board */
+body.dark-mode .game-question-div {
+  background-color: rgba(35, 35, 35, 0.7) !important;
+  color: #e0e0e0;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .game-table {
+  background-color: rgba(15, 15, 15, 0.8) !important;
+}
+
+body.dark-mode .list-group-item {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .panel {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .panel-default {
+  border-color: #444;
+}
+
+body.dark-mode .panel-default > .panel-heading {
+  background-color: #3d3d3d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+/* Chat box */
+body.dark-mode .chat-message {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+/* Tooltips */
+body.dark-mode .tooltip-inner {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* SVG elements */
+body.dark-mode text.svg-text {
+  fill: #e0e0e0;
+}
+
+/* Alphabet tile adjustments for dark mode */
+body.dark-mode .alphabet-color {
+  filter: brightness(0.8);
+}
+
+/* Specific styles for TableCreator and welcome message */
+body.dark-mode .table-modal .modal-body {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .table-modal .text-center {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .table-modal h3,
+body.dark-mode .table-modal h4 {
+  color: #f0f0f0 !important;
+}
+
+/* Improve contrast of links in dark mode */
+body.dark-mode a {
+  color: #8ab4f8;
+}
+
+body.dark-mode a:hover,
+body.dark-mode a:focus {
+  color: #aecbfa;
+}
+
+/* Make tabs visible in dark mode */
+body.dark-mode .nav-tabs {
+  border-bottom-color: #444;
+}
+
+body.dark-mode .nav-tabs > li > a {
+  color: #e0e0e0;
+  background-color: #333;
+  border-color: #444;
+}
+
+body.dark-mode .nav-tabs > li.active > a,
+body.dark-mode .nav-tabs > li.active > a:hover,
+body.dark-mode .nav-tabs > li.active > a:focus {
+  color: #fff;
+  background-color: #444;
+  border-color: #555 #555 transparent;
+}
+
+body.dark-mode .nav-tabs > li > a:hover {
+  border-color: #555;
+  background-color: #3a3a3a;
+}
+
+/* Nav pills styling for dark mode - with more specific selectors to avoid affecting jumbotron */
+body.dark-mode .table-modal .nav-pills > li > a,
+body.dark-mode .modal-content .nav-pills > li > a {
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+body.dark-mode .table-modal .nav-pills > li > a:hover,
+body.dark-mode .table-modal .nav-pills > li > a:focus,
+body.dark-mode .modal-content .nav-pills > li > a:hover,
+body.dark-mode .modal-content .nav-pills > li > a:focus {
+  background-color: #444;
+  color: #ffffff;
+}
+
+body.dark-mode .table-modal .nav-pills > li.active > a,
+body.dark-mode .table-modal .nav-pills > li.active > a:hover,
+body.dark-mode .table-modal .nav-pills > li.active > a:focus,
+body.dark-mode .modal-content .nav-pills > li.active > a,
+body.dark-mode .modal-content .nav-pills > li.active > a:hover,
+body.dark-mode .modal-content .nav-pills > li.active > a:focus {
+  background-color: #084298;
+  color: #ffffff;
+  filter: brightness(0.85);
+}
+
+/* Stacked pills specific styling */
+body.dark-mode .table-modal .nav-pills.nav-stacked > li > a,
+body.dark-mode .modal-content .nav-pills.nav-stacked > li > a {
+  border-color: #444;
+}
+
+body.dark-mode .table-modal .nav-pills.nav-stacked > li > a:hover,
+body.dark-mode .table-modal .nav-pills.nav-stacked > li > a:focus,
+body.dark-mode .modal-content .nav-pills.nav-stacked > li > a:hover,
+body.dark-mode .modal-content .nav-pills.nav-stacked > li > a:focus {
+  border-color: #555;
+}
+
+/* Game specific styles */
+body.dark-mode .game-container {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .game-header,
+body.dark-mode .game-footer {
+  background-color: #1f1f1f;
+  border-color: #333;
+}
+
+body.dark-mode .game-title {
+  color: #ffffff;
+}
+
+body.dark-mode .score-display {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .timer {
+  color: #e0e0e0;
+}
+
+/* Specific adjustments for the game board */
+body.dark-mode .board-row {
+  background-color: #1f1f1f;
+}
+
+body.dark-mode .board-cell {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .board-cell:hover {
+  background-color: #333;
+}
+
+/* End game overlay */
+body.dark-mode .end-game-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #e0e0e0;
+}
+
+body.dark-mode .end-game-title {
+  color: #ffffff;
+}
+
+body.dark-mode .end-game-score {
+  color: #4caf50;
+}
+
+body.dark-mode .end-game-buttons .btn {
+  background-color: #084298;
+  color: #ffffff;
+  border-color: #073984;
+}
+
+body.dark-mode .end-game-buttons .btn:hover,
+body.dark-mode .end-game-buttons .btn:focus {
+  background-color: #0a58ca;
+  border-color: #0a58ca;
+}
+
+/* Accessibility improvements */
+body.dark-mode {
+  caret-color: #ffffff;
+}
+
+body.dark-mode ::selection {
+  background-color: #084298;
+  color: #ffffff;
+}
+
+body.dark-mode .highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Miscellaneous adjustments */
+body.dark-mode hr {
+  border-top-color: #444;
+}
+
+body.dark-mode .badge,
+body.dark-mode .label {
+  background-color: #555;
+  color: #ffffff;
+}
+
+body.dark-mode blockquote {
+  border-left-color: #084298;
+}
+
+body.dark-mode .alert {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .alert-heading {
+  color: #ffffff;
+}
+
+body.dark-mode .progress {
+  background-color: #444;
+}
+
+body.dark-mode .progress-bar {
+  background-color: #084298;
+}
+
+/* Custom scrollbar for dark mode */
+body.dark-mode ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background-color: #084298;
+  border-radius: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background-color: #0a58ca;
+}
+
+/* Animation and transition adjustments */
+body.dark-mode .fade {
+  transition: opacity 0.3s ease;
+}
+
+body.dark-mode .collapse {
+  transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+/* Override any specific component styles as needed */
+body.dark-mode .component-class {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+/* Ensure dark mode is properly applied to the container and its children */
+.dark-mode-container .modal-content {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.dark-mode-container .modal-header,
+.dark-mode-container .modal-footer {
+  border-color: #444;
+}
+
+.dark-mode-container .modal-title,
+.dark-mode-container .modal-body h1,
+.dark-mode-container .modal-body h2,
+.dark-mode-container .modal-body h3,
+.dark-mode-container .modal-body h4,
+.dark-mode-container .modal-body p,
+.dark-mode-container .modal-body label,
+.dark-mode-container .modal-body .text-center {
+  color: #e0e0e0 !important;
+}
+
+/* Stronger selector for welcome message */
+body.dark-mode .modal-body > .text-center,
+.dark-mode-container .modal-body > .text-center,
+body.dark-mode .table-modal .modal-body > .text-center,
+.dark-mode-container .table-modal .modal-body > .text-center {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+/* Force all modal backgrounds to dark */
+body.dark-mode .modal,
+body.dark-mode .modal-dialog,
+.dark-mode-container .modal,
+.dark-mode-container .modal-dialog {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Critical UI elements with very high contrast */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+.dark-mode-container h1,
+.dark-mode-container h2,
+.dark-mode-container h3,
+.dark-mode-container h4,
+.dark-mode-container h5,
+.dark-mode-container h6 {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Welcome message with highest contrast */
+body.dark-mode .welcome-message,
+.dark-mode-container .welcome-message,
+body.dark-mode .modal-body > h3:first-child,
+.dark-mode-container .modal-body > h3:first-child,
+body.dark-mode .modal-body > .text-center:first-child,
+.dark-mode-container .modal-body > .text-center:first-child {
+  color: #ffffff !important;
+  font-weight: bold;
+  font-size: 24px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  margin-bottom: 20px;
+}
+
+/* Additional styles for panels in the table creator */
+body.dark-mode .table-modal .panel,
+.dark-mode-container .table-modal .panel {
+  background-color: #333 !important;
+  border: 1px solid #555 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .table-modal .panel-heading,
+.dark-mode-container .table-modal .panel-heading {
+  background-color: #444 !important;
+  border-bottom: 1px solid #555 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .table-modal .panel-body,
+.dark-mode-container .table-modal .panel-body {
+  background-color: #333 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Fix any remaining light text on light backgrounds */
+body.dark-mode .modal-body *:not(.btn):not(a):not(.form-control):not(option),
+.dark-mode-container .modal-body *:not(.btn):not(a):not(.form-control):not(option) {
+  color: #e0e0e0 !important;
+}
+
+/* Solutions Modal - Specific Styling */
+body.dark-mode .solutions-modal .modal-content,
+.dark-mode-container .solutions-modal .modal-content {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .solutions-modal .modal-header,
+.dark-mode-container .solutions-modal .modal-header {
+  border-bottom-color: #444 !important;
+  background-color: #333 !important;
+}
+
+body.dark-mode .solutions-modal .modal-title,
+.dark-mode-container .solutions-modal .modal-title {
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+body.dark-mode .solutions-modal .modal-body,
+.dark-mode-container .solutions-modal .modal-body {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .solutions-modal .modal-footer,
+.dark-mode-container .solutions-modal .modal-footer {
+  border-top-color: #444 !important;
+  background-color: #333 !important;
+}
+
+/* Ensure solution lists are readable */
+body.dark-mode .solutions-modal .list-group-item,
+.dark-mode-container .solutions-modal .list-group-item {
+  background-color: #333 !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Solution text elements */
+body.dark-mode .solutions-modal .alphagram-solutions,
+.dark-mode-container .solutions-modal .alphagram-solutions,
+body.dark-mode .solutions-modal .solution-text,
+.dark-mode-container .solutions-modal .solution-text {
+  color: #ffffff !important;
+}
+
+/* Any tables in the solutions modal */
+body.dark-mode .solutions-modal table,
+.dark-mode-container .solutions-modal table {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .solutions-modal table th,
+.dark-mode-container .solutions-modal table th {
+  background-color: #3d3d3d !important;
+  color: #ffffff !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .solutions-modal table td,
+.dark-mode-container .solutions-modal table td {
+  border-color: #444 !important;
+}
+
+body.dark-mode .solutions-modal table tr:nth-child(odd),
+.dark-mode-container .solutions-modal table tr:nth-child(odd) {
+  background-color: #2d2d2d !important;
+}
+
+body.dark-mode .solutions-modal table tr:nth-child(even),
+.dark-mode-container .solutions-modal table tr:nth-child(even) {
+  background-color: #333 !important;
+}
+
+/* Any badges or labels in solutions */
+body.dark-mode .solutions-modal .badge,
+.dark-mode-container .solutions-modal .badge,
+body.dark-mode .solutions-modal .label,
+.dark-mode-container .solutions-modal .label {
+  background-color: #555 !important;
+  color: #ffffff !important;
+}
+
+/* Code blocks and preformatted text in solutions and other modals */
+body.dark-mode .modal pre,
+.dark-mode-container .modal pre,
+body.dark-mode .modal code,
+.dark-mode-container .modal code {
+  background-color: #1e1e1e !important;
+  border: 1px solid #444 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Scrollable content in modals */
+body.dark-mode .modal .scrollable-content,
+.dark-mode-container .modal .scrollable-content,
+body.dark-mode .modal .pre-scrollable,
+.dark-mode-container .modal .pre-scrollable {
+  background-color: #232323 !important;
+  border: 1px solid #444 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Special handling for solution words and alphagrams */
+body.dark-mode .modal .solution-word,
+.dark-mode-container .modal .solution-word,
+body.dark-mode .modal .alphagram,
+.dark-mode-container .modal .alphagram {
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+/* General enhancement for all modals to catch any we might have missed */
+body.dark-mode .modal .modal-content,
+.dark-mode-container .modal .modal-content {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .modal .modal-header,
+.dark-mode-container .modal .modal-header,
+body.dark-mode .modal .modal-footer,
+.dark-mode-container .modal .modal-footer {
+  background-color: #333 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .modal .modal-body,
+.dark-mode-container .modal .modal-body {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+/* Force all text in modals to be visible - strongest selector */
+body.dark-mode .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea),
+.dark-mode-container .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea) {
+  color: #e0e0e0 !important;
+}
+
+/* Special handling for modal titles and headings */
+body.dark-mode .modal .modal-title,
+.dark-mode-container .modal .modal-title,
+body.dark-mode .modal h1, body.dark-mode .modal h2, body.dark-mode .modal h3,
+body.dark-mode .modal h4, body.dark-mode .modal h5, body.dark-mode .modal h6,
+.dark-mode-container .modal h1, .dark-mode-container .modal h2, .dark-mode-container .modal h3,
+.dark-mode-container .modal h4, .dark-mode-container .modal h5, .dark-mode-container .modal h6 {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Solutions modal specific styles */
+body.dark-mode .solutions-content,
+.dark-mode-container .solutions-content,
+.dark-mode-modal .solutions-content {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .solutions-stats,
+.dark-mode-container .solutions-stats,
+.dark-mode-modal .solutions-stats {
+  color: #e0e0e0 !important;
+  background-color: #2d2d2d !important;
+}
+
+/* Solutions table styling */
+body.dark-mode .solutions-table,
+.dark-mode-container .solutions-table,
+.dark-mode-modal .solutions-table {
+  color: #e0e0e0 !important;
+  background-color: #333 !important;
+}
+
+body.dark-mode .solutions-table th,
+.dark-mode-container .solutions-table th,
+.dark-mode-modal .solutions-table th {
+  background-color: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .solutions-table td,
+.dark-mode-container .solutions-table td,
+.dark-mode-modal .solutions-table td {
+  border-color: #444 !important;
+}
+
+/* Adjust the danger (missed words) background color to be darker */
+body.dark-mode .danger,
+.dark-mode-container .danger,
+.dark-mode-modal .danger,
+body.dark-mode td.danger,
+.dark-mode-container td.danger,
+.dark-mode-modal td.danger {
+  background-color: #422 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Adjust the warning background color */
+body.dark-mode .warning,
+.dark-mode-container .warning,
+.dark-mode-modal .warning,
+body.dark-mode td.warning,
+.dark-mode-container td.warning,
+.dark-mode-modal td.warning {
+  background-color: #553300 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Make sure text is visible on dark backgrounds */
+body.dark-mode .solutions-table .text-info,
+.dark-mode-container .solutions-table .text-info,
+.dark-mode-modal .solutions-table .text-info {
+  color: #5bc0de !important;
+}
+
+body.dark-mode .solutions-table .text-danger,
+.dark-mode-container .solutions-table .text-danger,
+.dark-mode-modal .solutions-table .text-danger {
+  color: #ff6666 !important;
+}
+
+/* User Box (score display) dark mode styling */
+body.dark-mode .panel-default,
+.dark-mode-container .panel-default {
+  background-color: #2d2d2d !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-default > .panel-heading,
+.dark-mode-container .panel-default > .panel-heading {
+  background-color: #333 !important;
+  color: #ffffff !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-default > .panel-body,
+.dark-mode-container .panel-default > .panel-body {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-default > .panel-footer,
+.dark-mode-container .panel-default > .panel-footer {
+  background-color: #333 !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+
+/* Ensure all text is visible in user box */
+body.dark-mode .panel-default .text-success,
+.dark-mode-container .panel-default .text-success {
+  color: #4caf50 !important; /* Brighter green for better visibility */
+}
+
+body.dark-mode .panel-default .text-danger,
+.dark-mode-container .panel-default .text-danger {
+  color: #ff6666 !important; /* Brighter red for better visibility */
+}
+
+body.dark-mode .panel-default .text-info,
+.dark-mode-container .panel-default .text-info {
+  color: #5bc0de !important;
+}
+
+/* Tone down bg-success in dark mode */
+body.dark-mode .bg-success {
+  background-color: #175c2f !important; /* Darker green that's easier on the eyes */
+  color: #e0e0e0 !important;
+}
+
+/* Dropzone styling for dark mode */
+body.dark-mode .dropzone {
+  background-color: #2d2d2d !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .dropzone:hover,
+body.dark-mode .dropzone:focus {
+  background-color: #333 !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .dropzone p {
+  color: #e0e0e0 !important;
+}
+
+/* If dropzone has an active state when dragging over */
+body.dark-mode .dropzone.active,
+body.dark-mode .dropzone:active {
+  border-color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.1) !important;
+}
+
+/* Ensure jumbotron looks good in dark mode */
+body.dark-mode .jumbotron {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .jumbotron h1,
+body.dark-mode .jumbotron .h1,
+body.dark-mode .jumbotron h2,
+body.dark-mode .jumbotron h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .jumbotron p {
+  color: #e0e0e0 !important;
+}
