@@ -341,17 +341,189 @@ body.dark-mode .nav-tabs > li > a:hover {
   background-color: #3a3a3a;
 }
 
-/* Improve visibility of radio buttons and checkboxes */
-body.dark-mode .radio label,
-body.dark-mode .checkbox label {
+/* Nav pills styling for dark mode - with more specific selectors to avoid affecting jumbotron */
+body.dark-mode .table-modal .nav-pills > li > a,
+body.dark-mode .modal-content .nav-pills > li > a {
+  background-color: #333;
   color: #e0e0e0;
 }
 
-/* Additional styles for any jumbotron or welcome containers */
-body.dark-mode .jumbotron,
-body.dark-mode .well {
-  background-color: #333;
+body.dark-mode .table-modal .nav-pills > li > a:hover,
+body.dark-mode .table-modal .nav-pills > li > a:focus,
+body.dark-mode .modal-content .nav-pills > li > a:hover,
+body.dark-mode .modal-content .nav-pills > li > a:focus {
+  background-color: #444;
+  color: #ffffff;
+}
+
+body.dark-mode .table-modal .nav-pills > li.active > a,
+body.dark-mode .table-modal .nav-pills > li.active > a:hover,
+body.dark-mode .table-modal .nav-pills > li.active > a:focus,
+body.dark-mode .modal-content .nav-pills > li.active > a,
+body.dark-mode .modal-content .nav-pills > li.active > a:hover,
+body.dark-mode .modal-content .nav-pills > li.active > a:focus {
+  background-color: #084298;
+  color: #ffffff;
+  filter: brightness(0.85);
+}
+
+/* Stacked pills specific styling */
+body.dark-mode .table-modal .nav-pills.nav-stacked > li > a,
+body.dark-mode .modal-content .nav-pills.nav-stacked > li > a {
   border-color: #444;
+}
+
+body.dark-mode .table-modal .nav-pills.nav-stacked > li > a:hover,
+body.dark-mode .table-modal .nav-pills.nav-stacked > li > a:focus,
+body.dark-mode .modal-content .nav-pills.nav-stacked > li > a:hover,
+body.dark-mode .modal-content .nav-pills.nav-stacked > li > a:focus {
+  border-color: #555;
+}
+
+/* Game specific styles */
+body.dark-mode .game-container {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .game-header,
+body.dark-mode .game-footer {
+  background-color: #1f1f1f;
+  border-color: #333;
+}
+
+body.dark-mode .game-title {
+  color: #ffffff;
+}
+
+body.dark-mode .score-display {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .timer {
+  color: #e0e0e0;
+}
+
+/* Specific adjustments for the game board */
+body.dark-mode .board-row {
+  background-color: #1f1f1f;
+}
+
+body.dark-mode .board-cell {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .board-cell:hover {
+  background-color: #333;
+}
+
+/* End game overlay */
+body.dark-mode .end-game-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #e0e0e0;
+}
+
+body.dark-mode .end-game-title {
+  color: #ffffff;
+}
+
+body.dark-mode .end-game-score {
+  color: #4caf50;
+}
+
+body.dark-mode .end-game-buttons .btn {
+  background-color: #084298;
+  color: #ffffff;
+  border-color: #073984;
+}
+
+body.dark-mode .end-game-buttons .btn:hover,
+body.dark-mode .end-game-buttons .btn:focus {
+  background-color: #0a58ca;
+  border-color: #0a58ca;
+}
+
+/* Accessibility improvements */
+body.dark-mode {
+  caret-color: #ffffff;
+}
+
+body.dark-mode ::selection {
+  background-color: #084298;
+  color: #ffffff;
+}
+
+body.dark-mode .highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Miscellaneous adjustments */
+body.dark-mode hr {
+  border-top-color: #444;
+}
+
+body.dark-mode .badge,
+body.dark-mode .label {
+  background-color: #555;
+  color: #ffffff;
+}
+
+body.dark-mode blockquote {
+  border-left-color: #084298;
+}
+
+body.dark-mode .alert {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .alert-heading {
+  color: #ffffff;
+}
+
+body.dark-mode .progress {
+  background-color: #444;
+}
+
+body.dark-mode .progress-bar {
+  background-color: #084298;
+}
+
+/* Custom scrollbar for dark mode */
+body.dark-mode ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background-color: #084298;
+  border-radius: 10px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background-color: #0a58ca;
+}
+
+/* Animation and transition adjustments */
+body.dark-mode .fade {
+  transition: opacity 0.3s ease;
+}
+
+body.dark-mode .collapse {
+  transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+/* Override any specific component styles as needed */
+body.dark-mode .component-class {
+  background-color: #2d2d2d;
   color: #e0e0e0;
 }
 
@@ -719,4 +891,52 @@ body.dark-mode .panel-default .text-danger,
 body.dark-mode .panel-default .text-info,
 .dark-mode-container .panel-default .text-info {
   color: #5bc0de !important;
+}
+
+/* Tone down bg-success in dark mode */
+body.dark-mode .bg-success {
+  background-color: #175c2f !important; /* Darker green that's easier on the eyes */
+  color: #e0e0e0 !important;
+}
+
+/* Dropzone styling for dark mode */
+body.dark-mode .dropzone {
+  background-color: #2d2d2d !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .dropzone:hover,
+body.dark-mode .dropzone:focus {
+  background-color: #333 !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .dropzone p {
+  color: #e0e0e0 !important;
+}
+
+/* If dropzone has an active state when dragging over */
+body.dark-mode .dropzone.active,
+body.dark-mode .dropzone:active {
+  border-color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.1) !important;
+}
+
+/* Ensure jumbotron looks good in dark mode */
+body.dark-mode .jumbotron {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+body.dark-mode .jumbotron h1,
+body.dark-mode .jumbotron .h1,
+body.dark-mode .jumbotron h2,
+body.dark-mode .jumbotron h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .jumbotron p {
+  color: #e0e0e0 !important;
 }
