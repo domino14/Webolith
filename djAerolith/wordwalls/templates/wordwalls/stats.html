@@ -125,7 +125,13 @@
 </div>
 
 <div id="chart-container" class="container mt-4">
-    <canvas id="combinedChart" width="800" height="300"></canvas>
+    <div class="mb-3">
+        <div id="regression-equation" class="text-muted small"></div>
+        <div id="trend-message" class="text-muted small font-italic"></div>
+    </div>
+    <div class="chart-wrapper" style="position: relative; height: 500px; width: 100%;">
+        <canvas id="combinedChart"></canvas>
+    </div>
 </div>
 
 </p>
@@ -159,12 +165,32 @@ $( "#dropdown-button" ).click(function() {
     $( ".ring-spinner").show();
     $( "#dropdown-button").prop('disabled', true);
 
-    // Check if chart exists so another chart isn't populated
-    // on top of it
+    // Properly destroy the chart to prevent memory leaks
     if (combinedChartObj) {
-        combinedChartObj.destroy();
-        combinedChartObj = null;
+        try {
+            combinedChartObj.destroy();
+            combinedChartObj = null;
+        } catch (e) {
+            console.error("Error destroying chart:", e);
+        }
+    }    // Simply recreate the canvas
+    // First remove all Chart.js generated elements
+    const chartContainer = document.getElementById('chart-container');
+    const chartContainerDiv = chartContainer.querySelector('div');
+
+    // Clear everything except the regression info
+    while (chartContainerDiv.firstChild) {
+        chartContainerDiv.removeChild(chartContainerDiv.firstChild);
     }
+
+    // Create a fresh canvas with larger dimensions
+    const canvas = document.createElement('canvas');
+    canvas.id = 'combinedChart';
+    canvas.height = 400; // Taller canvas
+    chartContainerDiv.appendChild(canvas);
+
+    // Disable animations
+    Chart.defaults.animation = false;
 
     // Reset our data objects
     scoresByDate = {};
@@ -245,17 +271,32 @@ function getAverage(array, idToUpdate) {
     averageElement.html(avgString);
 }
 
+function formatRegression(equation) {
+    const slope = equation[0];
+    const intercept = equation[1];
+
+    // Format slope to show score change per day
+    // Multiply by milliseconds per day to get daily change
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const slopePerDay = slope * millisecondsPerDay;
+
+    let formattedSlopePerDay = slopePerDay.toFixed(4);
+    // Remove trailing zeros and decimal point if necessary
+    formattedSlopePerDay = parseFloat(formattedSlopePerDay).toString();
+
+    // Format intercept - add + sign if positive
+    let formattedIntercept = intercept.toFixed(2);
+    formattedIntercept = parseFloat(formattedIntercept).toString();
+    const interceptSign = intercept >= 0 ? '+' : '';
+
+    // Return a more human-readable form showing change per day
+    return `Score change per day: ${formattedSlopePerDay} points`;
+}
+
+// This function is no longer used as we calculate the regression directly in the chart setup
 function calculateRegressionLine(dates, scores) {
-    // Create data points for regression [index, score]
-    const dataPoints = scores.map((score, index) => [index, parseFloat(score)]);
-
-    // Calculate the regression line
-    const result = regression.linear(dataPoints);
-
-    // Generate points for the regression line
-    const regressionPoints = result.points.map(point => point[1]);
-
-    return regressionPoints;
+    // This function is kept for reference but is no longer used
+    return [];
 }
 
 function createCombinedChart() {
@@ -282,84 +323,180 @@ function createCombinedChart() {
     getAverage(timeSorted, 'time');
     getAverage(combinedScoresSorted, 'combined-scores');
 
-    // Calculate regression line
-    var regressionLine = calculateRegressionLine(sortedDates, combinedScoresSorted);
+    // Calculate min/max values for all scores
+    if (combinedScoresSorted.length > 0) {
+        // Combined scores
+        const combinedScoresNumbers = combinedScoresSorted.map(parseFloat);
+        const minCombined = Math.min(...combinedScoresNumbers).toFixed(2);
+        const maxCombined = Math.max(...combinedScoresNumbers).toFixed(2);
+        $('#combined-scores-low').text(minCombined);
+        $('#combined-scores-high').text(maxCombined);
 
-    // Get the canvas element
-    var ctx = document.getElementById("combinedChart").getContext('2d');
+        // Regular scores
+        const scoresNumbers = scoresSorted.map(parseFloat);
+        const minScore = Math.min(...scoresNumbers).toFixed(2);
+        const maxScore = Math.max(...scoresNumbers).toFixed(2);
+        $('#scores-low').text(minScore);
+        $('#scores-high').text(maxScore);
 
-    // Convert date strings to JavaScript Date objects for proper time scale
+        // Time remaining
+        const timeNumbers = timeSorted.map(parseFloat);
+        const minTime = Math.min(...timeNumbers).toFixed(2);
+        const maxTime = Math.max(...timeNumbers).toFixed(2);
+        $('#time-low').text(minTime);
+        $('#time-high').text(maxTime);
+    }
+
+    // Create a fresh canvas - larger size
+    $('#combinedChart').remove();
+    $('#chart-container').append('<canvas id="combinedChart"></canvas>');
+    var canvas = document.getElementById("combinedChart");
+    var ctx = canvas.getContext('2d');
+
+    // Convert dates to JavaScript Date objects
     const dateObjects = sortedDates.map(dateStr => new Date(dateStr));
 
-    // Re-calculate regression line for time-based x values
-    // Convert dates to timestamps for regression calculation
-    const timeDataPoints = combinedScoresSorted.map((score, index) => {
-        return [dateObjects[index].getTime(), parseFloat(score)];
-    });
+    // Variables for regression
+    let slope = 0;
+    let intercept = 0;
+    let r2 = 0;
+    let startDate, endDate;
 
-    const timeRegression = regression.linear(timeDataPoints);
-    const timeRegressionPoints = timeRegression.points.map(point => {
-        return {
-            x: new Date(point[0]),
-            y: point[1]
-        };
-    });
+    // Calculate regression if we have enough data
+    if (combinedScoresSorted.length >= 2) {
+        // Create data points as [timestamp, score]
+        const points = combinedScoresSorted.map((score, index) => {
+            return [dateObjects[index].getTime(), parseFloat(score)];
+        });
 
-    // No zoom configuration needed
+        // Calculate linear regression
+        const result = regression.linear(points);
+        slope = result.equation[0];
+        intercept = result.equation[1];
+        r2 = result.r2;
 
-    // Create the chart
+        // Find the date range for drawing the trend line
+        startDate = new Date(Math.min(...dateObjects.map(d => d.getTime())));
+        endDate = new Date(Math.max(...dateObjects.map(d => d.getTime())));
+
+        // Calculate daily change for message
+        const millisecondsPerDay = 24 * 60 * 60 * 1000;
+        const slopePerDay = slope * millisecondsPerDay;
+
+        // Format the regression equation
+        const formattedSlope = (slopePerDay).toFixed(4);
+
+        // Display regression info
+        $('#regression-equation').html(`Score change per day: ${formattedSlope} points (R² = ${r2.toFixed(4)})`);
+
+        // Show trend message
+        let trendMessage = "";
+        if (Math.abs(slopePerDay) < 0.01) {
+            trendMessage = "Your performance is stable over time.";
+        } else if (slopePerDay > 0) {
+            trendMessage = "Your performance is improving over time.";
+        } else {
+            trendMessage = "Your performance is declining over time.";
+        }
+        $('#trend-message').text(trendMessage);
+    } else {
+        // Not enough data
+        $('#regression-equation').html('Not enough data for trend analysis');
+        $('#trend-message').text('');
+    }    // Prepare the datasets array - only data points and connectors
+    const datasets = [
+        {
+            type: 'scatter',
+            label: 'Combined Score',
+            data: combinedScoresSorted.map((score, index) => ({
+                x: new Date(sortedDates[index]),
+                y: parseFloat(score),
+                originalDate: sortedDates[index]
+            })),
+            backgroundColor: 'rgba(75, 192, 192, 1)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            pointRadius: 3,
+            pointHoverRadius: 8,
+            pointBorderWidth: 1,
+            pointHoverBorderWidth: 2,
+            pointStyle: 'circle',
+            order: 1
+        }
+    ];
+
+    // Only add connection line if we have data points
+    if (combinedScoresSorted.length > 0) {
+        datasets.push({
+            type: 'line',
+            label: 'Data Points Connection',
+            data: combinedScoresSorted.map((score, index) => ({
+                x: new Date(sortedDates[index]),
+                y: parseFloat(score)
+            })),
+            borderColor: 'rgba(75, 192, 192, 0.2)',
+            borderWidth: 0.5,
+            borderDash: [3, 3],
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+            order: 2  // Will be rendered below the scatter points
+        });
+    }
+     // Simplest chart options possible
+    // Turn off all animations globally
+    Chart.defaults.animation = false;
+
+    // Add a trend line directly to the Chart.js datasets
+    if (combinedScoresSorted.length >= 2) {
+        console.log("Adding trend line as a simple dataset");
+
+        // Calculate the regression line points
+        const startX = startDate.getTime();
+        const endX = endDate.getTime();
+
+        const startY = slope * startX + intercept;
+        const endY = slope * endX + intercept;
+
+        // Add the trend line as a simple line dataset
+        datasets.push({
+            type: 'line',
+            label: 'Trend Line',
+            data: [
+                {x: new Date(startX), y: startY},
+                {x: new Date(endX), y: endY}
+            ],
+            borderColor: 'rgba(255, 99, 132, 0.8)',
+            borderWidth: 3,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            fill: false,
+            tension: 0,
+            order: 3  // Will be rendered on top
+        });
+    }
+
+    // Create a minimal chart
     combinedChartObj = new Chart(ctx, {
         type: 'scatter',
         data: {
-            datasets: [
-                {
-                    type: 'scatter',
-                    label: 'Combined Score',
-                    data: combinedScoresSorted.map((score, index) => ({
-                        x: new Date(sortedDates[index]),
-                        y: parseFloat(score),
-                        originalDate: sortedDates[index]
-                    })),
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    pointRadius: 2,
-                    pointHoverRadius: 6,
-                    pointBorderWidth: 1,
-                    pointHoverBorderWidth: 2,
-                    pointStyle: 'circle',
-                    order: 2  // Higher number means render earlier (below other elements)
-                },
-                {
-                    type: 'line',
-                    label: 'Trend Line',
-                    data: timeRegressionPoints,
-                    borderColor: 'rgba(255, 99, 132, 0.8)',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    order: 1  // Lower number means render later (on top of other elements)
-                },
-                {
-                    type: 'line',
-                    label: 'Data Points Connection',
-                    data: combinedScoresSorted.map((score, index) => ({
-                        x: new Date(sortedDates[index]),
-                        y: parseFloat(score)
-                    })),
-                    borderColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 0.5,
-                    borderDash: [3, 3],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    order: 3  // Will be rendered at the bottom
-                }
-            ]
+            datasets: datasets
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: false,  // Allow chart to fill container
+            animation: false,
+            animations: {
+                colors: false,
+                x: false,
+                y: false
+            },
+            transitions: {
+                active: {
+                    animation: {
+                        duration: 0
+                    }
+                }
+            },
             scales: {
                 x: {
                     type: 'time',
@@ -372,7 +509,9 @@ function createCombinedChart() {
                     },
                     ticks: {
                         maxRotation: 45,
-                        minRotation: 45
+                        minRotation: 45,
+                        // Limit the number of ticks to reduce processing
+                        maxTicksLimit: 10
                     },
                     title: {
                         display: true,
@@ -384,10 +523,19 @@ function createCombinedChart() {
                     title: {
                         display: true,
                         text: 'Combined Score'
+                    },
+                    suggestedMax: Math.max(...combinedScoresSorted.map(parseFloat)) * 1.1,
+                    // Set a fixed number of ticks to prevent auto-scaling issues
+                    ticks: {
+                        maxTicksLimit: 6
                     }
                 }
-            },
-            plugins: {
+            },            plugins: {
+                // Very simple legend
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
                 tooltip: {
                     callbacks: {
                         title: function(tooltipItems) {
@@ -400,9 +548,19 @@ function createCombinedChart() {
                         },
                         label: function(context) {
                             const dateObj = context.raw.x;
+                            // Handle trend line points that don't have originalDate
+                            if (!context.raw.originalDate && !dateObj) {
+                                return ["Trend Line"];
+                            }
+
                             const formattedDate = context.raw.originalDate ||
                                 new Date(dateObj).toISOString().split('T')[0];
+
+                            // Safely handle case when data might be missing
                             const data = originalDataByDate[formattedDate];
+                            if (!data) {
+                                return ["No data available"];
+                            }
 
                             return [
                                 `Combined Score: ${data.combinedScore}`,
@@ -411,16 +569,12 @@ function createCombinedChart() {
                             ];
                         }
                     }
-                },
-                legend: {
-                    position: 'top',
                 }
             }
         }
     });
-
-    // No zoom handlers needed
 }
+
 });
 
 </script>
