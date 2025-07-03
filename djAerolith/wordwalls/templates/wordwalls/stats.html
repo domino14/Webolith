@@ -373,7 +373,7 @@ function createCombinedChart() {
 
     // Calculate regression if we have enough data
     if (combinedScoresSorted.length >= 2) {
-        // Use day numbers instead of timestamps to avoid precision issues with large numbers
+        // Implement our own linear regression calculation to ensure consistent results
         // Get the earliest date as reference point (day 0)
         const earliestDate = new Date(Math.min(...dateObjects.map(d => d.getTime())));
         const latestDate = new Date(Math.max(...dateObjects.map(d => d.getTime())));
@@ -381,39 +381,66 @@ function createCombinedChart() {
         // Check if we have a valid date range (at least 1 day difference)
         const hasDateRange = (latestDate - earliestDate) >= (24 * 60 * 60 * 1000);
 
-        // Create data points as [days since earliest date, score]
-        const points = [];
+        // Create arrays for days and scores
+        const days = [];
+        const scores = [];
 
-        // Only proceed with regression if we have a valid date range
-        if (hasDateRange) {
-            for (let i = 0; i < combinedScoresSorted.length; i++) {
-                // Calculate days since earliest date (using integers instead of huge timestamps)
-                const daysSinceStart = Math.round((dateObjects[i] - earliestDate) / (24 * 60 * 60 * 1000));
-                const score = parseFloat(combinedScoresSorted[i]);
-                points.push([daysSinceStart, score]);
-            }
+        // Calculate days since earliest date for each point
+        for (let i = 0; i < combinedScoresSorted.length; i++) {
+            // Calculate days since earliest date (using float for more precision)
+            const daysSinceStart = (dateObjects[i] - earliestDate) / (24 * 60 * 60 * 1000);
+            const score = parseFloat(combinedScoresSorted[i]);
 
-            console.log("Date range in days:", (latestDate - earliestDate) / (24 * 60 * 60 * 1000));
-        } else {
-            console.log("All data points are from the same day - can't calculate trend");
-            // Add artificial points to create a horizontal line
-            points.push([0, parseFloat(combinedScoresSorted[0])]);
-            points.push([1, parseFloat(combinedScoresSorted[0])]);
+            days.push(daysSinceStart);
+            scores.push(score);
         }
 
-        console.log("Regression points (days):", points);
+        // Calculate our own linear regression
+        // If we have at least two distinct days
+        if (hasDateRange) {
+            // Calculate means
+            const n = days.length;
+            const meanDays = days.reduce((sum, day) => sum + day, 0) / n;
+            const meanScore = scores.reduce((sum, score) => sum + score, 0) / n;
 
-        // Calculate linear regression using days since start
-        const result = regression.linear(points);
-        // This is now slope in score points per day
-        slope = result.equation[0];
-        intercept = result.equation[1];
-        r2 = result.r2;
+            // Calculate slope using covariance and variance
+            let numerator = 0;
+            let denominator = 0;
 
-        console.log("Regression result:", {
-            equation: result.equation,
-            r2: result.r2,
-            string: result.string,
+            for (let i = 0; i < n; i++) {
+                numerator += (days[i] - meanDays) * (scores[i] - meanScore);
+                denominator += (days[i] - meanDays) * (days[i] - meanDays);
+            }
+
+            // Calculate slope and intercept
+            slope = denominator !== 0 ? numerator / denominator : 0;
+            intercept = meanScore - (slope * meanDays);
+
+            // Calculate R-squared
+            const totalSumSquares = scores.reduce((sum, score) => sum + Math.pow(score - meanScore, 2), 0);
+            const predictedScores = days.map(day => slope * day + intercept);
+            const residualSumSquares = scores.reduce((sum, score, i) => sum + Math.pow(score - predictedScores[i], 2), 0);
+            r2 = 1 - (residualSumSquares / totalSumSquares);
+
+            console.log("Custom regression calculation:", {
+                slope, intercept, r2,
+                meanDays, meanScore,
+                numerator, denominator
+            });
+
+        } else {
+            // If all points are on the same day, create a horizontal line
+            slope = 0;
+            intercept = parseFloat(combinedScoresSorted[0]);
+            r2 = 1.0; // Perfect fit for a horizontal line
+
+            console.log("All data points are from the same day - using horizontal line");
+        }
+
+        console.log("Regression details:", {
+            slope,
+            intercept,
+            r2,
             slopePerDay: slope
         });
 
@@ -421,29 +448,55 @@ function createCombinedChart() {
         startDate = new Date(Math.min(...dateObjects.map(d => d.getTime())));
         endDate = new Date(Math.max(...dateObjects.map(d => d.getTime())));
 
-        // Store the slope directly as points per day (no need for milliseconds conversion)
-        const millisecondsPerDay = 24 * 60 * 60 * 1000;
-        const slopePerDay = slope; // Already in points per day
+        // The slope is already in points per day
+        const slopePerDay = slope;
 
-        // Format the regression equation - slope is already in points per day
-        const formattedSlope = slope.toFixed(4);
+        // Format the regression equation with more precision
+        const formattedSlope = slopePerDay.toFixed(4);
 
-        // Display regression info
-        $('#regression-equation').html(`Score change per day: ${formattedSlope} points (R² = ${r2.toFixed(4)})`);
+        // Make sure we don't show -0.0000 as the slope
+        const displaySlope = Math.abs(slopePerDay) < 0.00005 ? "0.0000" : formattedSlope;
 
-        // Show trend message
+        // Calculate how much the score would change over 30 days with this trend
+        const scoreChange30Days = (slope * 30).toFixed(2);
+        const changeDirection = slope > 0 ? "increase" : slope < 0 ? "decrease" : "change";
+
+        // Interpret the R² value
+        const r2Quality = r2 >= 0.7 ? "Strong" : r2 >= 0.4 ? "Moderate" : r2 >= 0.2 ? "Weak" : "Very weak";
+
+        // Display comprehensive regression info
+        $('#regression-equation').html(`
+            <div><strong>Score change:</strong> ${displaySlope} points per day</div>
+            <div><strong>30-day projection:</strong> ${Math.abs(scoreChange30Days)} point ${changeDirection}</div>
+            <div><strong>R² value:</strong> ${Math.max(0, r2).toFixed(4)} (${r2Quality} correlation)</div>
+            <div><strong>Data points:</strong> ${combinedScoresSorted.length}</div>
+        `);
+
+        // Show trend message with more detail based on slope and R² value
         let trendMessage = "";
-        if (Math.abs(slope) < 0.1) {
-            trendMessage = "Your performance is stable over time.";
+        const trendStrength = Math.abs(slope) < 0.05 ? "stable" :
+                              Math.abs(slope) < 0.2 ? "slightly" :
+                              Math.abs(slope) < 0.5 ? "moderately" : "significantly";
+
+        const confidenceLevel = r2 >= 0.7 ? "high confidence" :
+                               r2 >= 0.4 ? "moderate confidence" :
+                               "low confidence";
+
+        if (Math.abs(slope) < 0.05) {
+            trendMessage = `Your performance is stable over time (${confidenceLevel}).`;
         } else if (slope > 0) {
-            trendMessage = "Your performance is improving over time.";
+            trendMessage = `Your performance is ${trendStrength} improving over time (${confidenceLevel}).`;
         } else {
-            trendMessage = "Your performance is declining over time.";
+            trendMessage = `Your performance is ${trendStrength} declining over time (${confidenceLevel}).`;
         }
         $('#trend-message').text(trendMessage);
     } else {
         // Not enough data
-        $('#regression-equation').html('Not enough data for trend analysis');
+        $('#regression-equation').html(`
+            <div>Not enough data for trend analysis</div>
+            <div>Need at least 2 data points from different days to calculate a trend</div>
+            <div>Current data points: ${combinedScoresSorted.length}</div>
+        `);
         $('#trend-message').text('');
     }    // Prepare the datasets array - only data points and connectors
     const datasets = [
@@ -466,24 +519,7 @@ function createCombinedChart() {
         }
     ];
 
-    // Only add connection line if we have data points
-    if (combinedScoresSorted.length > 0) {
-        datasets.push({
-            type: 'line',
-            label: 'Data Points Connection',
-            data: combinedScoresSorted.map((score, index) => ({
-                x: new Date(sortedDates[index]),
-                y: parseFloat(score)
-            })),
-            borderColor: 'rgba(75, 192, 192, 0.2)',
-            borderWidth: 0.5,
-            borderDash: [3, 3],
-            pointRadius: 0,
-            fill: false,
-            tension: 0,
-            order: 2  // Will be rendered below the scatter points
-        });
-    }
+    // Data points connection removed - not needed
      // Simplest chart options possible
     // Turn off all animations globally
     Chart.defaults.animation = false;
@@ -492,29 +528,33 @@ function createCombinedChart() {
     if (combinedScoresSorted.length >= 2) {
         console.log("Adding trend line as a simple dataset");
 
-        // Calculate days since start for both start and end points
-        const earliestDate = new Date(Math.min(...dateObjects.map(d => d.getTime())));
-        const startDays = 0; // Start at day 0
-        const endDays = Math.round((endDate - earliestDate) / (24 * 60 * 60 * 1000));
+        // Get the start and end dates for the trend line
+        // Add a bit of padding to show the trend beyond the data points
+        const millisecondsPerDay = 24 * 60 * 60 * 1000;
+        const earliestDate = new Date(Math.min(...dateObjects.map(d => d.getTime())) - (millisecondsPerDay * 0.5));
+        const latestDate = new Date(Math.max(...dateObjects.map(d => d.getTime())) + (millisecondsPerDay * 0.5));
 
-        // Apply the regression formula: y = mx + b where x is days since start
+        // Calculate days since start for both endpoints
+        const startDays = 0;
+        const endDays = (latestDate - earliestDate) / millisecondsPerDay;
+
+        // Calculate y values using our regression formula
         const startY = slope * startDays + intercept;
         const endY = slope * endDays + intercept;
 
-        // Convert back to actual dates for the chart
+        // Use these dates for the chart
         const startX = earliestDate.getTime();
-        const endX = endDate.getTime();
+        const endX = latestDate.getTime();
 
-        console.log("Regression line details:", {
+        console.log("Trend line calculation:", {
             startDays, endDays,
             startDate: new Date(startX),
             endDate: new Date(endX),
-            slope, intercept, // slope is now in score points per day
-            startY, endY,
-            slopePerDay: slope
+            slope, intercept,
+            startY, endY
         });
 
-        // Add the trend line as a simple line dataset
+        // Add the trend line with improved styling
         datasets.push({
             type: 'line',
             label: 'Trend Line',
@@ -522,8 +562,11 @@ function createCombinedChart() {
                 {x: new Date(startX), y: startY},
                 {x: new Date(endX), y: endY}
             ],
-            borderColor: 'rgba(255, 99, 132, 0.8)',
+            borderColor: Math.abs(slope) < 0.05 ? 'rgba(150, 150, 150, 0.8)' : // Gray for stable
+                         slope > 0 ? 'rgba(75, 192, 75, 0.8)' :                // Green for improving
+                         'rgba(255, 99, 132, 0.8)',                            // Red for declining
             borderWidth: 3,
+            borderDash: Math.abs(slope) < 0.05 ? [5, 5] : [], // Dashed for stable lines
             pointRadius: 0,
             pointHoverRadius: 0,
             fill: false,
