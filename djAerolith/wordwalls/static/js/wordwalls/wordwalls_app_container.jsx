@@ -438,19 +438,19 @@ class WordwallsAppContainer extends React.Component {
         document.body.classList.add('dark-mode');
         // Set appropriate backgrounds for dark mode if we're not already using dark backgrounds
         if (!darkBackgrounds.has(style.background)) {
-          style.setStyleKey('background', getAppropriateBackground(style.background, true));
+          style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
         }
         if (!darkBackgrounds.has(style.bodyBackground)) {
-          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true));
+          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
         }
       } else {
         document.body.classList.remove('dark-mode');
         // If we were using dark backgrounds, switch to light ones
         if (darkBackgrounds.has(style.background)) {
-          style.setStyleKey('background', getAppropriateBackground(style.background, false));
+          style.setStyleKey('background', getAppropriateBackground(style.background, false, false));
         }
         if (darkBackgrounds.has(style.bodyBackground)) {
-          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, false));
+          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, false, true));
         }
       }
 

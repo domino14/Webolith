@@ -45,8 +45,8 @@ class App {
       }
 
       // Make sure we have an appropriate background for dark mode
-      style.setStyleKey('background', getAppropriateBackground(style.background, true));
-      style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true));
+      style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
+      style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
 
       // Apply dark mode to existing modals and set up observer for new ones
       setTimeout(() => {
