@@ -8,7 +8,9 @@
 
 {% block content %}
 <script src="/static/lib/bootstrap/js/bootstrap.min.js"></script>
-<script src="/static/js/aerolith/Chart.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+<!-- Add regression.js for trend line -->
+<script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
 <script src="/static/lib/bootstrap-datepicker.js"></script>
 
 <div class="container">
@@ -107,6 +109,12 @@
               <td><span id="scores-low"></span></td>
               <td><span id="scores-high"></span></td>
             </tr>
+            <tr>
+              <th scope="row">Combined Score</th>
+              <td><span id="combined-scores"></span></td>
+              <td><span id="combined-scores-low"></span></td>
+              <td><span id="combined-scores-high"></span></td>
+            </tr>
           </tbody>
         </table>
 
@@ -114,25 +122,13 @@
 
 </div>
 
-
-<div id="div1">
-
-    <canvas id="scoresChart" width="400" height="100"></canvas>
-
-</div>
-
-<p>
-
-<div id="div2">
-
-    <canvas id="timeChart" width="400" height="100"></canvas>
-
+<div id="chart-container" class="container mt-4">
+    <canvas id="combinedChart" width="800" height="300"></canvas>
 </div>
 
 </p>
 
 <img src="/static/img/aerolith/blue_spinner.gif" style="display: none; position: fixed; left: 600px; top: 100px;" class="ring-spinner">
-<p>Stats feature coded by <a href="http://www.emilydowgialo.com" target="_blank">Emily Dowgialo</a>. Thanks!</p>
 
 <script>
 
@@ -144,36 +140,43 @@ $('.date-picker').datepicker({
 var scoresByDate = {};
 var dateArray = [];
 var timeRemainingByDate = {};
+var maxTimeByDate = {};
+var maxScoreByDate = {};
+var combinedScoresByDate = {};
+var originalDataByDate = {};
 
-// Defining the charts as global - destroy the charts should the user
+// Beta value for the combined score calculation
+const BETA = 50;
+
+// Defining the chart as global - destroy the chart should the user
 // select another option to view
-var scoresChartObj;
-var timeChartObj;
+var combinedChartObj;
 
 $( "#dropdown-button" ).click(function() {
 
     $( ".ring-spinner").show();
     $( "#dropdown-button").prop('disabled', true);
 
-    // Check if charts exist so another chart isn't populated
+    // Check if chart exists so another chart isn't populated
     // on top of it
-    if (scoresChartObj) {
-        scoresChartObj.destroy()
+    if (combinedChartObj) {
+        combinedChartObj.destroy()
     }
 
-    if (timeChartObj) {
-        timeChartObj.destroy()
-    }
-
+    // Reset our data objects
     scoresByDate = {};
     dateArray = [];
     timeRemainingByDate = {};
+    maxTimeByDate = {};
+    maxScoreByDate = {};
+    combinedScoresByDate = {};
+    originalDataByDate = {};
+
     // This is the info we want
     var lexicon = $('#lexicon').val()
     var challenge = $('#challenge').val()
     var startDate = $('#start-date').val()
     var endDate = $('#end-date').val()
-
 
     // Call the API, receive JSON
     $.ajax({
@@ -188,33 +191,47 @@ $( "#dropdown-button" ).click(function() {
             for (var i = 0; i < msg.length; i++) {
                 var value = msg[i];
                 var dateString = value.Date;
-                var dateYearOnly = dateString.slice(0, 4);
                 var scoreShortened = (Number(value.Score) / Number(value.maxScore)) * 100;
+                var timeScore = (Number(value.timeRemaining) / Number(value.maxTime)) * BETA;
 
+                // Calculate the combined score
+                var combinedScore = scoreShortened + timeScore;
+
+                // Store all values by date
                 scoresByDate[value.Date] = scoreShortened.toFixed(2);
                 timeRemainingByDate[value.Date] = value.timeRemaining;
+                maxTimeByDate[value.Date] = value.maxTime;
+                maxScoreByDate[value.Date] = value.maxScore;
+                combinedScoresByDate[value.Date] = combinedScore.toFixed(2);
 
-                // dateArray.push(dateYearOnly);
+                // Store original data for tooltip
+                originalDataByDate[value.Date] = {
+                    score: value.Score,
+                    maxScore: value.maxScore,
+                    timeRemaining: value.timeRemaining,
+                    maxTime: value.maxTime,
+                    scorePercent: scoreShortened.toFixed(2),
+                    timeBonus: timeScore.toFixed(2),
+                    combinedScore: combinedScore.toFixed(2)
+                };
+
                 dateArray.push(value.Date);
-
             }
 
-            // Call the charts function to generate the charts on the page
-            charts();
+            // Call the charts function to generate the chart on the page
+            createCombinedChart();
         });
 
-function getAverage (array, idToUpdate) {
-
+function getAverage(array, idToUpdate) {
     var count = 0;
     var total = array.length;
 
     for (var i = 0; i < array.length; i++) {
-        num = parseInt(array[i], 10);
+        num = parseFloat(array[i]);
         count += num;
     }
 
     var avg = (count / total).toFixed(2);
-
     var avgString = avg.toString();
 
     if (avgString === 'NaN') {
@@ -222,13 +239,23 @@ function getAverage (array, idToUpdate) {
     }
 
     var averageElement = $('#' + idToUpdate);
-
     averageElement.html(avgString);
-
 }
 
-function charts () {
+function calculateRegressionLine(dates, scores) {
+    // Create data points for regression [index, score]
+    const dataPoints = scores.map((score, index) => [index, parseFloat(score)]);
 
+    // Calculate the regression line
+    const result = regression.linear(dataPoints);
+
+    // Generate points for the regression line
+    const regressionPoints = result.points.map(point => point[1]);
+
+    return regressionPoints;
+}
+
+function createCombinedChart() {
     $( ".ring-spinner").hide();
     $( "#dropdown-button").prop('disabled', false);
 
@@ -236,137 +263,136 @@ function charts () {
     dateArray.sort();
     var scoresSorted = [];
     var timeSorted = [];
+    var combinedScoresSorted = [];
+    var sortedDates = [];
 
     for (var i = 0; i < dateArray.length; i++) {
-        scoresSorted[i] = scoresByDate[dateArray[i]];
-        timeSorted[i] = timeRemainingByDate[dateArray[i]];
+        var date = dateArray[i];
+        scoresSorted.push(scoresByDate[date]);
+        timeSorted.push(timeRemainingByDate[date]);
+        combinedScoresSorted.push(combinedScoresByDate[date]);
+        sortedDates.push(date);
     }
 
+    // Calculate averages
     getAverage(scoresSorted, 'scores');
     getAverage(timeSorted, 'time');
+    getAverage(combinedScoresSorted, 'combined-scores');
 
+    // Calculate regression line
+    var regressionLine = calculateRegressionLine(sortedDates, combinedScoresSorted);
 
-    // Scores line graph
-    var ctx = document.getElementById("scoresChart");
+    // Get the canvas element
+    var ctx = document.getElementById("combinedChart");
 
-    scoresChartObj = new Chart(ctx, {
-        type: 'line',
+    // Create the chart
+    combinedChartObj = new Chart(ctx, {
+        type: 'scatter',
         data: {
-            labels: dateArray,
-
-            datasets: [{
-                label: 'Score',
-                data: scoresSorted,
-
-                // Point color
-                pointBorderColor: "rgba(75,192,192,1)",
-                pointBackgroundColor: "#fff",
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                pointHoverBorderColor: "rgba(220,220,220,1)",
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-                backgroundColor: [
-                    // Fill color under line
-                    'rgba(75,192,192,0.2)'
-                ],
-                borderColor: [
-                    // Line
-                    'rgba(75,192,192,0.5)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 0
-            }]
+            labels: sortedDates,
+            datasets: [
+                {
+                    type: 'scatter',
+                    label: 'Combined Score',
+                    data: combinedScoresSorted.map((score, index) => ({
+                        x: index,
+                        y: parseFloat(score),
+                        date: sortedDates[index]
+                    })),
+                    backgroundColor: 'rgba(75, 192, 192, 1)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBorderWidth: 2,
+                    pointHoverBorderWidth: 3,
+                    pointStyle: 'circle'
+                },
+                {
+                    type: 'line',
+                    label: 'Trend Line',
+                    data: regressionLine.map((y, x) => ({ x, y })),
+                    borderColor: 'rgba(255, 99, 132, 0.8)',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0
+                },
+                {
+                    type: 'line',
+                    label: 'Data Points Connection',
+                    data: combinedScoresSorted.map((score, index) => ({
+                        x: index,
+                        y: parseFloat(score)
+                    })),
+                    borderColor: 'rgba(75, 192, 192, 0.3)',
+                    borderWidth: 1,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0
+                }
+            ]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
-                yAxes: [{
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
                     ticks: {
-                        beginAtZero:true
+                        callback: function(value) {
+                            // Display the actual dates on x-axis
+                            return sortedDates[value] || '';
+                        },
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    title: {
+                        display: true,
+                        text: 'Date'
                     }
-                }],
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                    displayFormats: {
-                        quarter: 'MMM YYYY'
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Combined Score'
                     }
                 }
-                }]
-            }
-        }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            // Show date in tooltip title
+                            const item = tooltipItems[0];
+                            const date = sortedDates[item.parsed.x];
+                            return `Date: ${date}`;
+                        },
+                        label: function(context) {
+                            const date = sortedDates[context.parsed.x];
+                            const data = originalDataByDate[date];
 
-    });
-
-    // Time remaining line graph
-    var ntx = document.getElementById("timeChart");
-
-    timeChartObj = new Chart(ntx, {
-        type: 'line',
-        data: {
-            labels: dateArray,
-
-            datasets: [{
-                label: 'Time Remaining',
-                data: timeSorted,
-
-                // Point color
-                pointBorderColor: "rgba(255, 99, 132, 1)",
-                pointBackgroundColor: "#fff",
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: "rgba(255,99,132, 1)",
-                pointHoverBorderColor: "rgba(255,99,132, 0.5)",
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-
-                backgroundColor: [
-                    // Fill color under line
-                    'rgba(255, 99, 132, 0.2)'
-                ],
-                borderColor: [
-                    // Line
-                    'rgba(255,99,132, 0.5)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
+                            return [
+                                `Combined Score: ${data.combinedScore}`,
+                                `Score: ${data.score}/${data.maxScore} (${data.scorePercent}%)`,
+                                `Time Bonus: ${data.timeBonus} (${data.timeRemaining}s/${data.maxTime}s)`
+                            ];
+                        }
                     }
-                }],
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                    displayFormats: {
-                        quarter: 'MMM YYYY'
-                    }
+                },
+                legend: {
+                    position: 'top',
                 }
-                }]
             }
         }
-
     });
-
 }
 });
 
 </script>
 
+<p class="mt-4">Stats feature originally coded by <a href="http://www.emilydowgialo.com" target="_blank">Emily Dowgialo</a>. Thanks!</p>
 
 {% endblock %}

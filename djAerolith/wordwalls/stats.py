@@ -80,6 +80,7 @@ def get_stats(request, lexicon, type_of_challenge_id):
         entry_info["Score"] = entry.score
         entry_info["maxScore"] = entry.board.maxScore
         entry_info["timeRemaining"] = entry.timeRemaining
+        entry_info["maxTime"] = entry.board.challenge.seconds
         entry_info["Date"] = entry.board.challenge.date.strftime("%Y-%m-%d")
         info_we_want.append(entry_info)
 
