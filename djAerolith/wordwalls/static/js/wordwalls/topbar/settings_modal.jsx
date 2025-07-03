@@ -51,7 +51,13 @@ class SettingsModal extends React.Component {
             });
         } else {
           document.body.classList.remove('dark-mode');
-          // No need to handle removing dark mode from modals as the CSS will take care of it
+          // Explicitly remove dark mode from modals when switching to light mode
+          import('../modal_dark_mode')
+            .then(({ removeDarkModeFromExistingModals }) => {
+              setTimeout(() => {
+                removeDarkModeFromExistingModals();
+              }, 100);
+            });
         }
       }
 

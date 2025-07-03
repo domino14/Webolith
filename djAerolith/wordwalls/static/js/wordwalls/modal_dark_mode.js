@@ -58,6 +58,61 @@ function applyDarkModeToModal(modalElement) {
 }
 
 /**
+ * Remove dark mode from a modal element
+ * @param {HTMLElement} modalElement The modal element to remove dark mode from
+ */
+function removeDarkModeFromModal(modalElement) {
+  if (!modalElement) return;
+
+  // Remove dark-mode class from the modal
+  modalElement.classList.remove('dark-mode-modal');
+
+  // Reset modal content styles
+  const modalContent = modalElement.querySelector('.modal-content');
+  if (modalContent) {
+    modalContent.style.backgroundColor = '';
+    modalContent.style.color = '';
+    modalContent.style.borderColor = '';
+  }
+
+  // Reset modal header
+  const modalHeader = modalElement.querySelector('.modal-header');
+  if (modalHeader) {
+    modalHeader.style.backgroundColor = '';
+    modalHeader.style.borderBottomColor = '';
+  }
+
+  // Reset modal body
+  const modalBody = modalElement.querySelector('.modal-body');
+  if (modalBody) {
+    modalBody.style.backgroundColor = '';
+    modalBody.style.color = '';
+
+    // Reset text elements
+    const textElements = modalBody.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6, li, td, th');
+    textElements.forEach(el => {
+      if (el.classList && !el.classList.contains('btn')) {
+        el.style.color = '';
+      }
+    });
+
+    // Reset headings
+    const headings = modalBody.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headings.forEach(heading => {
+      heading.style.color = '';
+      heading.style.textShadow = '';
+    });
+  }
+
+  // Reset modal footer
+  const modalFooter = modalElement.querySelector('.modal-footer');
+  if (modalFooter) {
+    modalFooter.style.backgroundColor = '';
+    modalFooter.style.borderTopColor = '';
+  }
+}
+
+/**
  * Set up mutation observer to detect new modals and apply dark mode to them
  */
 function setupDarkModeModalObserver() {
@@ -102,4 +157,12 @@ function applyDarkModeToExistingModals() {
   modals.forEach(modal => applyDarkModeToModal(modal));
 }
 
-export { applyDarkModeToModal, setupDarkModeModalObserver, applyDarkModeToExistingModals };
+/**
+ * Remove dark mode from all existing modals
+ */
+function removeDarkModeFromExistingModals() {
+  const modals = document.querySelectorAll('.modal, .solutions-modal');
+  modals.forEach(modal => removeDarkModeFromModal(modal));
+}
+
+export { applyDarkModeToModal, setupDarkModeModalObserver, applyDarkModeToExistingModals, removeDarkModeFromModal, removeDarkModeFromExistingModals };

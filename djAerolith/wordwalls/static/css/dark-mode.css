@@ -603,3 +603,47 @@ body.dark-mode .solutions-table .text-danger,
 .dark-mode-modal .solutions-table .text-danger {
   color: #ff6666 !important;
 }
+
+/* User Box (score display) dark mode styling */
+body.dark-mode .panel-default,
+.dark-mode-container .panel-default {
+  background-color: #2d2d2d !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-default > .panel-heading,
+.dark-mode-container .panel-default > .panel-heading {
+  background-color: #333 !important;
+  color: #ffffff !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-default > .panel-body,
+.dark-mode-container .panel-default > .panel-body {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .panel-default > .panel-footer,
+.dark-mode-container .panel-default > .panel-footer {
+  background-color: #333 !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+
+/* Ensure all text is visible in user box */
+body.dark-mode .panel-default .text-success,
+.dark-mode-container .panel-default .text-success {
+  color: #4caf50 !important; /* Brighter green for better visibility */
+}
+
+body.dark-mode .panel-default .text-danger,
+.dark-mode-container .panel-default .text-danger {
+  color: #ff6666 !important; /* Brighter red for better visibility */
+}
+
+body.dark-mode .panel-default .text-info,
+.dark-mode-container .panel-default .text-info {
+  color: #5bc0de !important;
+}

@@ -18,7 +18,7 @@ import WordwallsGame from './wordwalls_game';
 import WordwallsApp from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
-import { applyDarkModeToExistingModals, setupDarkModeModalObserver } from './modal_dark_mode';
+import { applyDarkModeToExistingModals, setupDarkModeModalObserver, removeDarkModeFromExistingModals } from './modal_dark_mode';
 import GuessEnum from './guess';
 import WordwallsAPI from './wordwalls_api';
 import WordwallsRPC from './wordwalls_rpc';
@@ -456,11 +456,16 @@ class WordwallsAppContainer extends React.Component {
 
       // Dark mode preference is stored in the database via the AJAX call below
 
-      // Apply dark mode to existing modals and set up observer for new ones
+      // Apply or remove dark mode for modals
       if (style.darkMode) {
         setTimeout(() => {
           applyDarkModeToExistingModals();
           setupDarkModeModalObserver();
+        }, 100);
+      } else {
+        // When switching back to light mode, explicitly remove dark mode from modals
+        setTimeout(() => {
+          removeDarkModeFromExistingModals();
         }, 100);
       }
     }
