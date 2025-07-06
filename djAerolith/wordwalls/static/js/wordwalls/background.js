@@ -21,8 +21,8 @@ function backgroundURL(option) {
   }
   return `url("${backgroundImageUrl}")`;
 }
-const darkBackgrounds = new Set(['', 'black_linen', 'double_bubble_dark', 'moroccan_flower_dark']);
-const lightBackgrounds = new Set(['', 'pool_table', 'canvas', 'pink_rice', 'scribble_light', 'cork_wallet', 'hexellence']);
+const darkBackgrounds = new Set(['black_linen', 'double_bubble_dark', 'moroccan_flower_dark']);
+const lightBackgrounds = new Set(['pool_table', 'canvas', 'pink_rice', 'scribble_light', 'cork_wallet', 'hexellence']);
 const allBackgrounds = new Set([
   ...darkBackgrounds,
   ...lightBackgrounds,
@@ -79,6 +79,7 @@ function getBackgroundsByMode(darkMode, isBodyBackground = false) {
   // Use the appropriate set of backgrounds
   if (!isBodyBackground) {
     const backgroundList = Array.from(allBackgrounds);
+    backgroundList.unshift(''); // Add empty option for no background
     return backgroundList.map((bg) => ({
       value: bg,
       displayValue: getBackgroundDisplayName(bg),
@@ -86,6 +87,7 @@ function getBackgroundsByMode(darkMode, isBodyBackground = false) {
   }
   const availableBackgrounds = darkMode ? darkBackgrounds : lightBackgrounds;
   const backgroundList = Array.from(availableBackgrounds);
+  // see question_test.jsx for the reason we don't add an empty option here
   return backgroundList.map((bg) => ({
     value: bg,
     displayValue: getBackgroundDisplayName(bg),
