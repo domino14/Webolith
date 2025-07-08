@@ -14,7 +14,7 @@ function progressString(questionIndex, totalQuestions) {
 function SavedListRow(props) {
   return (
     <tr
-      className={`list-table-row ${props.list.goneThruOnce ? 'success' : ''}`}
+      className={`list-table-row ${props.list.goneThruOnce ? 'bg-success' : ''}`}
     >
       <td>
         <PlayButton
