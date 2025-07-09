@@ -12,9 +12,11 @@ import { useContext, useEffect, useState } from "react";
 import { Deck, DeckBreakdown } from "./gen/rpc/wordvault/api_pb";
 import { IconPlus } from "@tabler/icons-react";
 
-function DefaultDeckDisplay({
+function DeckDisplay({
   breakdown,
+  name,
 }: {
+  name: string;
   breakdown: DeckBreakdown | null;
 }) {
   const overdue = breakdown?.breakdown["overdue"] ?? 0;
@@ -26,38 +28,31 @@ function DefaultDeckDisplay({
   return (
     <Card withBorder>
       <Stack>
-        <Text fw={500}>Default Deck</Text>
+        <Text fw={500}>{name}</Text>
         <Text c="dimmed">
-          {overdue} cards due || {total} total cards
+          {overdue} {overdue === 1 ? "card" : "cards"} due • {total} total
         </Text>
       </Stack>
     </Card>
   );
 }
 
-function DeckDisplay({
+function DefaultDeckDisplay({
+  breakdown,
+}: {
+  breakdown: DeckBreakdown | null;
+}) {
+  return <DeckDisplay name="Default Deck" breakdown={breakdown} />;
+}
+
+function NonDefaultDeckDisplay({
   deck,
   breakdown,
 }: {
   deck: Deck;
   breakdown: DeckBreakdown | null;
 }) {
-  const overdue = breakdown?.breakdown["overdue"] ?? 0;
-  const total = Object.values(breakdown?.breakdown ?? {}).reduce(
-    (a, b) => a + b,
-    0,
-  );
-
-  return (
-    <Card withBorder>
-      <Stack>
-        <Text fw={500}>{deck.name}</Text>
-        <Text c="dimmed">
-          {overdue} cards due || {total} total cards
-        </Text>
-      </Stack>
-    </Card>
-  );
+  return <DeckDisplay name={deck.name} breakdown={breakdown} />;
 }
 
 function ManageDecks() {
@@ -102,12 +97,12 @@ function ManageDecks() {
           Add Deck
         </Button>
       </Group>
-      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
+      <SimpleGrid cols={{ base: 1, md: 2 }} maw={1000} spacing="lg">
         <DefaultDeckDisplay
           breakdown={deckBreakdownsByDeckId.get(null) ?? null}
         />
         {[...decksById.values()].map((deck) => (
-          <DeckDisplay
+          <NonDefaultDeckDisplay
             deck={deck}
             key={deck.id}
             breakdown={deckBreakdownsByDeckId.get(deck.id) ?? null}
