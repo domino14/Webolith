@@ -620,8 +620,8 @@ body.dark-mode .table-modal .panel-body,
 }
 
 /* Fix any remaining light text on light backgrounds */
-body.dark-mode .modal-body *:not(.btn):not(a):not(.form-control):not(option),
-.dark-mode-container .modal-body *:not(.btn):not(a):not(.form-control):not(option) {
+body.dark-mode .modal-body *:not(.btn):not(a):not(.form-control):not(option):not(.text-danger):not(.text-success):not(.text-info):not(.text-warning),
+.dark-mode-container .modal-body *:not(.btn):not(a):not(.form-control):not(option):not(.text-danger):not(.text-success):not(.text-info):not(.text-warning) {
   color: #e0e0e0 !important;
 }
 
@@ -761,8 +761,8 @@ body.dark-mode .modal .modal-body,
 }
 
 /* Force all text in modals to be visible - strongest selector */
-body.dark-mode .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea):not(.text-danger):not(.text-success):not(.text-info),
-.dark-mode-container .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea):not(.text-danger):not(.text-success):not(.text-info) {
+body.dark-mode .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea):not(.text-danger):not(.text-success):not(.text-info):not(.text-warning),
+.dark-mode-container .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea):not(.text-danger):not(.text-success):not(.text-info):not(.text-warning) {
   color: #e0e0e0 !important;
 }
 
