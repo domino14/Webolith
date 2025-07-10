@@ -761,8 +761,8 @@ body.dark-mode .modal .modal-body,
 }
 
 /* Force all text in modals to be visible - strongest selector */
-body.dark-mode .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea),
-.dark-mode-container .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea) {
+body.dark-mode .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea):not(.text-danger):not(.text-success):not(.text-info),
+.dark-mode-container .modal .modal-body *:not(.btn):not(a):not(input):not(select):not(textarea):not(.text-danger):not(.text-success):not(.text-info) {
   color: #e0e0e0 !important;
 }
 
