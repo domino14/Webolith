@@ -1,0 +1,11 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+## Development Rules
+
+- **Do not run migrations or start the dev server directly**
+- The development environment runs via docker-compose in a separate directory
+- Database and server are containerized and managed externally

@@ -1,0 +1,49 @@
+# Webolith
+
+Webolith is the front-end and application server for a handful of tools
+for word-study in scrabble-style word games.
+
+The projects include:
+
+- `djAerolith/`: A django-based application for rapid and competitive
+  quizzing of anagrams, word lists, etc.
+- `frontend/`: Contains the front-end of a PWA application called WordVault
+  used for spaced repetition study of alphagram cards. Has a separate dependency
+  list and build process.
+
+This document largely covers the design and context of the `frontend/` WordVault
+app.
+
+## Technical Architecture
+
+- Uses Connect RPC to talk to a back-end Go server (with the source in a different repository)
+- Authenticated via JWT through the main Aerolith application
+- Typescript, React, and Mantine are the core front-end technologies
+
+## Core Data Models
+
+**Alphagram:**
+
+- Alphabetically sorted letters that can form one or more words
+- Each word must use exactly the letters provided (including duplicates)
+- Example: "NRU" creates words "RUN" and "URN"
+- Belongs to a specific lexicon (dictionary/language ruleset)
+- Same alphagram may have different valid words across lexicons
+
+**Word:**
+
+- Single valid word that can be formed from an alphagram
+- Contains lexicon symbols indicating word status (new, collins-only, etc.)
+- Lexicon symbols show word metadata, not lexicon membership
+
+**Card (WordVault-specific):**
+
+- Base unit for spaced repetition study
+- User and lexicon specific (same alphagram = different cards per user)
+- Tracks study progress and schedules reviews based on performance
+
+**Deck (WordVault-specific):**
+
+- Optional grouping mechanism for cards
+- Allows different study strategies and scheduling parameters
+- Example: separate deck for longer words with different retention targets
