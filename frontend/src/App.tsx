@@ -34,6 +34,7 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import Cookies from "js-cookie";
+import { useIsDecksEnabled } from "./use_is_decks_enabled";
 
 // this can come from the backend later in some other way.
 const lexMap = {
@@ -56,6 +57,8 @@ function App() {
     setDefaultLexicon,
     decksById,
   } = useContext(AppContext);
+  const isDecksEnabled = useIsDecksEnabled();
+
   const [showChangeLexLink, setShowChangeLexLink] = useState(false);
   const loginURL = `${window.location.protocol}//${window.location.host}/accounts/login?next=/wordvault`;
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -158,7 +161,7 @@ function App() {
                 <IconCubePlus color="green" />,
                 "Manage WordVault cards",
               ],
-              decksById.size > 0
+              isDecksEnabled
                 ? ["decks", <IconFolders color="green" />, "Decks"]
                 : null,
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
