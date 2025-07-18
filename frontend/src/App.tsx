@@ -55,7 +55,6 @@ function App() {
     loggedIn,
     isMember,
     setDefaultLexicon,
-    decksById,
   } = useContext(AppContext);
   const isDecksEnabled = useIsDecksEnabled();
 
@@ -162,7 +161,7 @@ function App() {
                 "Manage WordVault cards",
               ],
               isDecksEnabled
-                ? ["decks", <IconFolders color="green" />, "Decks"]
+                ? ["decks", <IconFolders color="green" />, "Decks (BETA)"]
                 : null,
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
               ["stats", <IconGraph color="green" />, "Statistics"],

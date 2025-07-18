@@ -36,7 +36,7 @@ function DeckFormModal({
 
   const form = useForm({
     initialValues: {
-      name: deck?.name || "",
+      name: "",
     },
     validate: {
       name: (value) => {
@@ -46,7 +46,7 @@ function DeckFormModal({
         if (value.trim().length < 2) {
           return "Deck name must be at least 2 characters";
         }
-        // When editing, allow keeping the same name
+
         if (
           !isEditing ||
           value.trim().toLowerCase() !== deck?.name.toLowerCase()
@@ -59,6 +59,13 @@ function DeckFormModal({
       },
     },
   });
+
+  useEffect(() => {
+    form.setInitialValues({
+      name: deck?.name || "",
+    });
+    form.reset();
+  }, [deck]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (values: { name: string }) => {
     await onSubmit(values.name.trim(), deck || undefined);
@@ -210,7 +217,6 @@ function ManageDecks() {
 
     try {
       if (deck) {
-        // Edit existing deck
         const response = await wordVaultClient.editDeck({
           id: deck.id,
           name: name,
@@ -224,7 +230,6 @@ function ManageDecks() {
           });
         }
       } else {
-        // Create new deck
         const response = await wordVaultClient.addDeck({
           name: name,
           lexicon,
