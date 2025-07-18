@@ -62,8 +62,15 @@ def api_challengers(request):
     ch_id = request.GET.get("challenge")
     ch_date = date_from_request_dict(request.GET)
     tiebreaker = request.GET.get("tiebreaker", "errors")
+
+    # Validate lexicon ID is an integer
     try:
-        lex = Lexicon.objects.get(pk=lex)
+        lex_id = int(lex)
+    except (ValueError, TypeError):
+        return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
+    try:
+        lex = Lexicon.objects.get(pk=lex_id)
         ch_name = DailyChallengeName.objects.get(pk=ch_id)
     except (ObjectDoesNotExist, ValueError, TypeError):
         return bad_request("Bad lexicon or challenge.")
@@ -105,8 +112,15 @@ def challenges_played(request):
 
     lex = request.GET.get("lexicon")
     ch_date = date_from_request_dict(request.GET)
+
+    # Validate lexicon ID is an integer
     try:
-        lex = Lexicon.objects.get(pk=lex)
+        lex_id = int(lex)
+    except (ValueError, TypeError):
+        return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
+    try:
+        lex = Lexicon.objects.get(pk=lex_id)
     except Lexicon.DoesNotExist:
         return bad_request("Bad lexicon.")
 
@@ -147,8 +161,15 @@ def challenges_played(request):
 def special_challenges(request):
     lex = request.GET.get("lexicon")
     ch_date = date_from_request_dict(request.GET)
+
+    # Validate lexicon ID is an integer
     try:
-        lex = Lexicon.objects.get(pk=lex)
+        lex_id = int(lex)
+    except (ValueError, TypeError):
+        return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
+    try:
+        lex = Lexicon.objects.get(pk=lex_id)
     except Lexicon.DoesNotExist:
         return bad_request("Bad lexicon.")
 
@@ -195,6 +216,13 @@ def load_new_words(f):
         }
 
         lex_id = body.get("lexicon")
+
+        # Validate lexicon ID is an integer
+        try:
+            lex_id = int(lex_id)
+        except (ValueError, TypeError):
+            return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
         try:
             lexicon = Lexicon.objects.get(pk=lex_id)
         except Lexicon.DoesNotExist:
@@ -426,6 +454,13 @@ def load_raw_questions(request, parsed_req_body):
 @require_GET
 def default_lists(request):
     lex_id = request.GET.get("lexicon")
+
+    # Validate lexicon ID is an integer
+    try:
+        lex_id = int(lex_id)
+    except (ValueError, TypeError):
+        return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
     try:
         lex = Lexicon.objects.get(pk=lex_id)
     except Lexicon.DoesNotExist:

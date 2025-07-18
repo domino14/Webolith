@@ -46,8 +46,15 @@ def set_default_lexicon(request):
 
     body = json.loads(request.body)
     lex = body.get("defaultLexicon", -1)
+
+    # Validate lexicon ID is an integer
     try:
-        lexicon = Lexicon.objects.get(pk=lex)
+        lex_id = int(lex)
+    except (ValueError, TypeError):
+        return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
+    try:
+        lexicon = Lexicon.objects.get(pk=lex_id)
     except Lexicon.DoesNotExist:
         return bad_request("Lexicon not found")
     profile.defaultLexicon = lexicon

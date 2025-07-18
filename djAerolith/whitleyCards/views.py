@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
-from lib.response import response
+from lib.response import response, bad_request
 from lib.wdb_interface.wdb_helper import (
     word_search,
     questions_from_alpha_dicts,
@@ -172,7 +172,18 @@ def search(request, lex_id, paramsb64):
         return render(request, "whitleyCards/quiz.html")
     elif request.method == "POST":
         action = request.POST["action"]
-        lex = Lexicon.objects.get(pk=lex_id)
+
+        # Validate lexicon ID is an integer
+        try:
+            lex_id = int(lex_id)
+        except (ValueError, TypeError):
+            return bad_request("Invalid lexicon ID. Must be a valid integer.")
+
+        try:
+            lex = Lexicon.objects.get(pk=lex_id)
+        except Lexicon.DoesNotExist:
+            return bad_request("Bad lexicon.")
+
         search_params = build_search_criteria(
             request.user, lex, search_criteria_from_b64(paramsb64)
         )
