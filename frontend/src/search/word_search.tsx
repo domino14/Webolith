@@ -20,6 +20,7 @@ import {
   List,
   Loader,
   Modal,
+  Select,
   Stack,
   Tabs,
   Text,
@@ -61,7 +62,7 @@ type AlertValues = {
 };
 
 const WordSearchForm: React.FC = () => {
-  const { lexicon, jwt, wordVaultClient, wordServerClient } =
+  const { lexicon, jwt, wordVaultClient, wordServerClient, decksById } =
     useContext(AppContext);
   const [alert, setAlert] = useState<AlertValues>({
     shown: false,
@@ -69,6 +70,7 @@ const WordSearchForm: React.FC = () => {
     text: "",
   });
   const [showLoader, setShowLoader] = useState(false);
+  const [deckId, setDeckId] = useState<bigint | null>(null);
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
   const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
   const [
@@ -256,8 +258,10 @@ const WordSearchForm: React.FC = () => {
       searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
 
       const searchResponse = await wordServerClient.search(searchRequest);
+      console.log("Adding cards!!", { deckId });
       const addResp = await wordVaultClient.addCards({
         lexicon,
+        deckId: deckId ?? undefined,
         alphagrams: searchResponse.alphagrams.map((a) => a.alphagram),
       });
 
@@ -275,7 +279,14 @@ const WordSearchForm: React.FC = () => {
     } finally {
       setShowLoader(false);
     }
-  }, [lexicon, searchCriteria, wordServerClient, wordVaultClient, setAlert]);
+  }, [
+    lexicon,
+    searchCriteria,
+    wordServerClient,
+    wordVaultClient,
+    setAlert,
+    deckId,
+  ]);
 
   const deleteFromWordVault = useCallback(async () => {
     if (!lexicon || !wordServerClient) {
@@ -310,6 +321,28 @@ const WordSearchForm: React.FC = () => {
       setShowLoader(false);
     }
   }, [lexicon, sendDelete, searchCriteria, wordServerClient, setAlert]);
+
+  const deckIdSelect =
+    decksById.size >= 1 ? (
+      <Select
+        value={deckId?.toString() ?? ""}
+        onChange={(value) =>
+          setDeckId(
+            value == "" || value == null ? null : BigInt(parseInt(value)),
+          )
+        }
+        data={[
+          { value: "", label: "Default Deck" },
+          ...[...decksById.values()].map((deck) => ({
+            value: deck.id.toString(),
+            label: deck.name,
+          })),
+        ]}
+        style={{ minWidth: 200 }}
+        placeholder="Select deck"
+        size="lg"
+      />
+    ) : null;
 
   return (
     <>
@@ -365,16 +398,18 @@ const WordSearchForm: React.FC = () => {
               modifySearchParam={searchParamChange}
               allowedSearchTypes={allowedSearchTypes}
             />
-            <Button
-              variant="light"
-              color="blue"
-              style={{ maxWidth: 250 }}
-              onClick={addToWordVault}
-              mb="lg"
-              size="lg"
-            >
-              Add to WordVault
-            </Button>
+            <Group mb="lg">
+              {deckIdSelect}
+              <Button
+                variant="light"
+                color="blue"
+                style={{ maxWidth: 250 }}
+                onClick={addToWordVault}
+                size="lg"
+              >
+                Add to WordVault
+              </Button>
+            </Group>
             {alert.shown && (
               <Alert variant="light" color={alert.color} mt="lg">
                 {alert.text}
@@ -433,20 +468,25 @@ const WordSearchForm: React.FC = () => {
             >
               <FileInput
                 {...uploadWordListForm.getInputProps("textfile")}
-                label={`Upload a text file with words or alphagrams, one per line. These must be valid in ${lexicon}.`}
+                label="Select a file"
+                description={`File must be plain text, with one word or alphagram per line. These must be valid in ${lexicon}.`}
                 placeholder="Click to upload..."
-                maw={300}
-                m="sm"
+                size="lg"
+                maw={500}
+                m="md"
               />
-              <Button
-                variant="light"
-                color="blue"
-                type="submit"
-                style={{ maxWidth: 200 }}
-                m="sm"
-              >
-                Upload into WordVault
-              </Button>
+              <Group m="md">
+                {deckIdSelect}
+                <Button
+                  variant="light"
+                  color="blue"
+                  type="submit"
+                  style={{ maxWidth: 250 }}
+                  size="lg"
+                >
+                  Upload into WordVault
+                </Button>
+              </Group>
             </form>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
@@ -552,21 +592,25 @@ const WordSearchForm: React.FC = () => {
             >
               <FileInput
                 {...uploadCardboxForm.getInputProps("cardbox")}
-                label={`Upload your Anagrams.db file from Zyzzyva. This cardbox must consist of words that are valid in ${lexicon}.`}
+                label="Select a file"
+                description={`Upload your Anagrams.db file from Zyzzyva. This cardbox must consist of words that are valid in ${lexicon}.`}
                 placeholder="Click to upload..."
-                maw={300}
-                m="sm"
+                maw={500}
+                size="lg"
+                m="md"
               />
-              <Button
-                variant="light"
-                color="blue"
-                type="submit"
-                maw={450}
-                m="sm"
-                disabled={showLoader}
-              >
-                Import Cardbox into WordVault
-              </Button>
+              <Group m="md">
+                {deckIdSelect}
+                <Button
+                  variant="light"
+                  color="blue"
+                  type="submit"
+                  disabled={showLoader}
+                  size="lg"
+                >
+                  Import Cardbox into WordVault
+                </Button>
+              </Group>
             </form>
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>

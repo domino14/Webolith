@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, NextScheduledBreakdown, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -62,6 +62,15 @@ export const WordVaultService = {
       kind: MethodKind.Unary,
     },
     /**
+     * @generated from rpc wordvault.WordVaultService.NextScheduledCountByDeck
+     */
+    nextScheduledCountByDeck: {
+      name: "NextScheduledCountByDeck",
+      I: NextScheduledCountByDeckRequest,
+      O: NextScheduledCountByDeckResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
      * @generated from rpc wordvault.WordVaultService.ScoreCard
      */
     scoreCard: {
@@ -86,6 +95,15 @@ export const WordVaultService = {
       name: "AddCards",
       I: AddCardsRequest,
       O: AddCardsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.MoveCards
+     */
+    moveCards: {
+      name: "MoveCards",
+      I: MoveCardsRequest,
+      O: MoveCardsResponse,
       kind: MethodKind.Unary,
     },
     /**
@@ -143,6 +161,33 @@ export const WordVaultService = {
       name: "EditFsrsParameters",
       I: EditFsrsParametersRequest,
       O: EditFsrsParametersResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.AddDeck
+     */
+    addDeck: {
+      name: "AddDeck",
+      I: AddDeckRequest,
+      O: AddDeckResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetDecks
+     */
+    getDecks: {
+      name: "GetDecks",
+      I: GetDecksRequest,
+      O: GetDecksResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.EditDeck
+     */
+    editDeck: {
+      name: "EditDeck",
+      I: EditDeckRequest,
+      O: EditDeckResponse,
       kind: MethodKind.Unary,
     },
   }

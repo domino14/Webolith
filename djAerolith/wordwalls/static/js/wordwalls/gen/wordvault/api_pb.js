@@ -43,6 +43,19 @@ export const Card = /*@__PURE__*/ proto3.makeMessageType(
     { no: 3, name: "card_json_repr", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
     { no: 4, name: "retrievability", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
     { no: 5, name: "review_log", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
+    { no: 6, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.CardPreview
+ */
+export const CardPreview = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.CardPreview",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "alphagram", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
   ],
 );
 
@@ -65,6 +78,7 @@ export const GetNextScheduledRequest = /*@__PURE__*/ proto3.makeMessageType(
   () => [
     { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "limit", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
   ],
 );
 
@@ -75,6 +89,7 @@ export const GetSingleNextScheduledRequest = /*@__PURE__*/ proto3.makeMessageTyp
   "wordvault.GetSingleNextScheduledRequest",
   () => [
     { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
   ],
 );
 
@@ -130,6 +145,7 @@ export const AddCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
   () => [
     { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
   ],
 );
 
@@ -140,6 +156,30 @@ export const AddCardsResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.AddCardsResponse",
   () => [
     { no: 1, name: "num_cards_added", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "num_cards_in_other_decks", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "cards_in_other_decks_preview", kind: "message", T: CardPreview, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.MoveCardsRequest
+ */
+export const MoveCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.MoveCardsRequest",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.MoveCardsResponse
+ */
+export const MoveCardsResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.MoveCardsResponse",
+  () => [
+    { no: 1, name: "num_cards_moved", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
   ],
 );
 
@@ -198,6 +238,42 @@ export const NextScheduledBreakdown = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * @generated from message wordvault.NextScheduledCountByDeckRequest
+ */
+export const NextScheduledCountByDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.NextScheduledCountByDeckRequest",
+  () => [
+    { no: 1, name: "only_overdue", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 2, name: "timezone", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeckBreakdown
+ */
+export const DeckBreakdown = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeckBreakdown",
+  () => [
+    { no: 1, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */, opt: true },
+    { no: 2, name: "breakdown", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 13 /* ScalarType.UINT32 */} },
+  ],
+);
+
+/**
+ * @generated from message wordvault.NextScheduledCountByDeckResponse
+ */
+export const NextScheduledCountByDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.NextScheduledCountByDeckResponse",
+  () => [
+    { no: 1, name: "breakdowns", kind: "message", T: DeckBreakdown, repeated: true },
+  ],
+);
+
+/**
+ * TODO: make this deck-aware with a mutually exclusive all_decks/deck_id
+ * parameter
+ *
  * @generated from message wordvault.PostponeRequest
  */
 export const PostponeRequest = /*@__PURE__*/ proto3.makeMessageType(
@@ -219,6 +295,8 @@ export const PostponeResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * TODO: make this deck-aware
+ *
  * @generated from message wordvault.DeleteRequest
  */
 export const DeleteRequest = /*@__PURE__*/ proto3.makeMessageType(
@@ -329,6 +407,78 @@ export const EditFsrsParametersRequest = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.EditFsrsParametersRequest",
   () => [
     { no: 1, name: "parameters", kind: "message", T: FsrsParameters },
+  ],
+);
+
+/**
+ * @generated from message wordvault.Deck
+ */
+export const Deck = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.Deck",
+  () => [
+    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.AddDeckRequest
+ */
+export const AddDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.AddDeckRequest",
+  () => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.AddDeckResponse
+ */
+export const AddDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.AddDeckResponse",
+  () => [
+    { no: 1, name: "deck", kind: "message", T: Deck },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDecksRequest
+ */
+export const GetDecksRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDecksRequest",
+  [],
+);
+
+/**
+ * @generated from message wordvault.GetDecksResponse
+ */
+export const GetDecksResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDecksResponse",
+  () => [
+    { no: 1, name: "decks", kind: "message", T: Deck, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.EditDeckRequest
+ */
+export const EditDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditDeckRequest",
+  () => [
+    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.EditDeckResponse
+ */
+export const EditDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditDeckResponse",
+  () => [
+    { no: 1, name: "deck", kind: "message", T: Deck },
   ],
 );
 
