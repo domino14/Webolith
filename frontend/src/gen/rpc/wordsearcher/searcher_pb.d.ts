@@ -282,6 +282,18 @@ export declare enum SearchRequest_Condition {
    * @generated from enum value: DELETED_WORD = 19;
    */
   DELETED_WORD = 19,
+
+  /**
+   * Word-level searches (return alphagrams containing matching words)
+   *
+   * @generated from enum value: CONTAINS_HOOKS = 20;
+   */
+  CONTAINS_HOOKS = 20,
+
+  /**
+   * @generated from enum value: DEFINITION_CONTAINS = 21;
+   */
+  DEFINITION_CONTAINS = 21,
 }
 
 /**
@@ -297,6 +309,26 @@ export declare enum SearchRequest_NotInLexCondition {
    * @generated from enum value: PREVIOUS_VERSION = 1;
    */
   PREVIOUS_VERSION = 1,
+}
+
+/**
+ * @generated from enum wordsearcher.SearchRequest.HookType
+ */
+export declare enum SearchRequest_HookType {
+  /**
+   * @generated from enum value: FRONT_HOOKS = 0;
+   */
+  FRONT_HOOKS = 0,
+
+  /**
+   * @generated from enum value: BACK_HOOKS = 1;
+   */
+  BACK_HOOKS = 1,
+
+  /**
+   * @generated from enum value: INNER_HOOKS = 2;
+   */
+  INNER_HOOKS = 2,
 }
 
 /**
@@ -434,6 +466,42 @@ export declare class SearchRequest_NumberValue extends Message<SearchRequest_Num
 }
 
 /**
+ * @generated from message wordsearcher.SearchRequest.HooksParam
+ */
+export declare class SearchRequest_HooksParam extends Message<SearchRequest_HooksParam> {
+  /**
+   * @generated from field: wordsearcher.SearchRequest.HookType hook_type = 1;
+   */
+  hookType: SearchRequest_HookType;
+
+  /**
+   * @generated from field: string hooks = 2;
+   */
+  hooks: string;
+
+  /**
+   * if true, search for words that do NOT contain these hooks
+   *
+   * @generated from field: bool not_condition = 3;
+   */
+  notCondition: boolean;
+
+  constructor(data?: PartialMessage<SearchRequest_HooksParam>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordsearcher.SearchRequest.HooksParam";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SearchRequest_HooksParam;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SearchRequest_HooksParam;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SearchRequest_HooksParam;
+
+  static equals(a: SearchRequest_HooksParam | PlainMessage<SearchRequest_HooksParam> | undefined, b: SearchRequest_HooksParam | PlainMessage<SearchRequest_HooksParam> | undefined): boolean;
+}
+
+/**
  * @generated from message wordsearcher.SearchRequest.SearchParam
  */
 export declare class SearchRequest_SearchParam extends Message<SearchRequest_SearchParam> {
@@ -475,6 +543,12 @@ export declare class SearchRequest_SearchParam extends Message<SearchRequest_Sea
      */
     value: SearchRequest_NumberValue;
     case: "numbervalue";
+  } | {
+    /**
+     * @generated from field: wordsearcher.SearchRequest.HooksParam hooksparam = 7;
+     */
+    value: SearchRequest_HooksParam;
+    case: "hooksparam";
   } | { case: undefined; value?: undefined };
 
   constructor(data?: PartialMessage<SearchRequest_SearchParam>);

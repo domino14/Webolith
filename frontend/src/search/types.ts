@@ -5,10 +5,12 @@ import {
   SearchRequest_NumberValue,
   SearchRequest_SearchParam,
   SearchRequest_StringValue,
+  SearchRequest_HooksParam,
+  SearchRequest_HookType,
 } from "../gen/rpc/wordsearcher/searcher_pb";
 
 const cond = SearchRequest_Condition;
-export type optionType = number | string | undefined;
+export type optionType = number | string | boolean | undefined;
 
 enum SearchTypesInputs {
   TWO_NUMBERS = 1,
@@ -16,6 +18,7 @@ enum SearchTypesInputs {
   ONE_STRING = 3,
   SELECT = 4,
   NONE = 5,
+  HOOKS = 6,
 }
 
 interface SearchTypeProperty {
@@ -182,6 +185,21 @@ const propertiesObject: { [key: number]: SearchTypeProperty } = {
     in the previous version of this lexicon. At the moment, this only works with English lexica.
     The only filter you can use with this search is the word length filter.`,
   },
+  [cond.CONTAINS_HOOKS]: {
+    code: cond.CONTAINS_HOOKS,
+    displayName: "Contains Hooks",
+    inputType: SearchTypesInputs.HOOKS,
+    description: `Search for words containing specific hooks. Select hook type,
+    enter the letters, and optionally check NOT to exclude matches.`,
+  },
+  [cond.DEFINITION_CONTAINS]: {
+    code: cond.DEFINITION_CONTAINS,
+    displayName: "Definition Contains",
+    inputType: SearchTypesInputs.ONE_STRING,
+    default: "",
+    description: `Search for words whose definitions contain specific text.
+    Enter the text you want to search for in the definitions.`,
+  },
 };
 
 const SearchTypesEnum = {
@@ -199,6 +217,8 @@ const SearchTypesEnum = {
   MATCHING_ANAGRAM: cond.MATCHING_ANAGRAM,
   DIFFICULTY_RANGE: cond.DIFFICULTY_RANGE,
   DELETED_WORD: cond.DELETED_WORD,
+  CONTAINS_HOOKS: cond.CONTAINS_HOOKS,
+  DEFINITION_CONTAINS: cond.DEFINITION_CONTAINS,
   properties: propertiesObject,
 };
 
@@ -217,6 +237,8 @@ const SearchTypesOrder: number[] = [
   SearchTypesEnum.MAX_SOLUTIONS,
   SearchTypesEnum.PROBABILITY_LIMIT,
   SearchTypesEnum.DELETED_WORD,
+  SearchTypesEnum.CONTAINS_HOOKS,
+  SearchTypesEnum.DEFINITION_CONTAINS,
 ];
 
 function searchCriteriaOptions(
@@ -315,6 +337,16 @@ class SearchCriterion {
           }),
         };
         break;
+      case SearchTypesInputs.HOOKS:
+        obj.conditionparam = {
+          case: "hooksparam",
+          value: new SearchRequest_HooksParam({
+            hookType: this.options.hookType as number,
+            hooks: this.options.hooks as string,
+            notCondition: this.options.notCondition as boolean,
+          }),
+        };
+        break;
       default:
         throw new Error("unhandled search type");
     }
@@ -338,6 +370,15 @@ class SearchCriterion {
           return val;
         case SearchTypesInputs.NONE:
           return "";
+        case SearchTypesInputs.HOOKS:
+          if (optionName === "hookType") {
+            return parseInt(val as string, 10) || 0;
+          } else if (optionName === "hooks") {
+            return (val as string).trim();
+          } else if (optionName === "notCondition") {
+            return Boolean(val);
+          }
+          return val;
         default:
           throw new Error("Unsupported option name");
       }
@@ -365,6 +406,13 @@ class SearchCriterion {
       case SearchTypesInputs.SELECT:
         this.setOptions({
           value: typeProps.default,
+        });
+        break;
+      case SearchTypesInputs.HOOKS:
+        this.setOptions({
+          hookType: SearchRequest_HookType.FRONT_HOOKS,
+          hooks: "",
+          notCondition: false,
         });
         break;
       default:
@@ -413,6 +461,12 @@ function searchCriterionToAdd(
       });
     case SearchTypesInputs.NONE:
       return new SearchCriterion(newtypeId, {});
+    case SearchTypesInputs.HOOKS:
+      return new SearchCriterion(newtypeId, {
+        hookType: SearchRequest_HookType.FRONT_HOOKS,
+        hooks: "",
+        notCondition: false,
+      });
     default:
       break;
   }

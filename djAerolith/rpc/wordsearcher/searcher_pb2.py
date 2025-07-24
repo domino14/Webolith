@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\xf5\x01\n\tAlphagram\x12\x1c\n\talphagram\x18\x01 \x01(\tR\talphagram\x12(\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.WordR\x05words\x12\"\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08R\x0c\x65xpandedRepr\x12\x16\n\x06length\x18\x04 \x01(\x05R\x06length\x12 \n\x0bprobability\x18\x05 \x01(\x05R\x0bprobability\x12\"\n\x0c\x63ombinations\x18\x06 \x01(\x03R\x0c\x63ombinations\x12\x1e\n\ndifficulty\x18\x07 \x01(\x05R\ndifficulty\"\x93\x02\n\x04Word\x12\x12\n\x04word\x18\x01 \x01(\tR\x04word\x12\x1c\n\talphagram\x18\x02 \x01(\tR\talphagram\x12\x1e\n\ndefinition\x18\x03 \x01(\tR\ndefinition\x12\x1f\n\x0b\x66ront_hooks\x18\x04 \x01(\tR\nfrontHooks\x12\x1d\n\nback_hooks\x18\x05 \x01(\tR\tbackHooks\x12\'\n\x0flexicon_symbols\x18\x06 \x01(\tR\x0elexiconSymbols\x12(\n\x10inner_front_hook\x18\x07 \x01(\x08R\x0einnerFrontHook\x12&\n\x0finner_back_hook\x18\x08 \x01(\x08R\rinnerBackHook\"\xfa\t\n\rSearchRequest\x12K\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParamR\x0csearchparams\x12\x16\n\x06\x65xpand\x18\x02 \x01(\x08R\x06\x65xpand\x1a,\n\x06MinMax\x12\x10\n\x03min\x18\x01 \x01(\x05R\x03min\x12\x10\n\x03max\x18\x02 \x01(\x05R\x03max\x1a#\n\x0bStringValue\x12\x14\n\x05value\x18\x01 \x01(\tR\x05value\x1a%\n\x0bStringArray\x12\x16\n\x06values\x18\x01 \x03(\tR\x06values\x1a%\n\x0bNumberArray\x12\x16\n\x06values\x18\x01 \x03(\x05R\x06values\x1a#\n\x0bNumberValue\x12\x14\n\x05value\x18\x01 \x01(\x05R\x05value\x1a\xd6\x03\n\x0bSearchParam\x12\x43\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.ConditionR\tcondition\x12<\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00R\x06minmax\x12K\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00R\x0bstringvalue\x12K\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00R\x0bstringarray\x12K\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00R\x0bnumberarray\x12K\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00R\x0bnumbervalueB\x10\n\x0e\x63onditionparam\"\xa6\x03\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12#\n\x1fUPLOADED_WORD_OR_ALPHAGRAM_LIST\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\x12\x14\n\x10\x44IFFICULTY_RANGE\x10\x11\x12\x15\n\x11PLAYABILITY_RANGE\x10\x12\x12\x10\n\x0c\x44\x45LETED_WORD\x10\x13\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"c\n\x0eSearchResponse\x12\x37\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.AlphagramR\nalphagrams\x12\x18\n\x07lexicon\x18\x02 \x01(\tR\x07lexicon\"\xbc\x01\n\x0e\x41nagramRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12\x18\n\x07letters\x18\x02 \x01(\tR\x07letters\x12\x35\n\x04mode\x18\x03 \x01(\x0e\x32!.wordsearcher.AnagramRequest.ModeR\x04mode\x12\x16\n\x06\x65xpand\x18\x04 \x01(\x08R\x06\x65xpand\"\'\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\x12\t\n\x05SUPER\x10\x02\"X\n\x0f\x41nagramResponse\x12(\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.WordR\x05words\x12\x1b\n\tnum_words\x18\x02 \x01(\x05R\x08numWords\"\xcd\x01\n\x1b\x42lankChallengeCreateRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12#\n\rnum_questions\x18\x02 \x01(\x05R\x0cnumQuestions\x12#\n\rmax_solutions\x18\x03 \x01(\x05R\x0cmaxSolutions\x12)\n\x11num_with_2_blanks\x18\x04 \x01(\x05R\x0enumWith2Blanks\x12\x1f\n\x0bword_length\x18\x05 \x01(\x05R\nwordLength\"\xf7\x01\n\x1b\x42uildChallengeCreateRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12#\n\rmin_solutions\x18\x02 \x01(\x05R\x0cminSolutions\x12#\n\rmax_solutions\x18\x03 \x01(\x05R\x0cmaxSolutions\x12\x1d\n\nmin_length\x18\x04 \x01(\x05R\tminLength\x12\x1d\n\nmax_length\x18\x05 \x01(\x05R\tmaxLength\x12\x36\n\x17require_length_solution\x18\x06 \x01(\x08R\x15requireLengthSolution\"`\n\x11WordSearchRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12\x12\n\x04glob\x18\x02 \x01(\tR\x04glob\x12\x1d\n\napplies_to\x18\x03 \x01(\tR\tappliesTo\"=\n\rDefineRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12\x12\n\x04word\x18\x02 \x01(\tR\x04word\">\n\x12WordSearchResponse\x12(\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.WordR\x05words2\xa7\x01\n\x10QuestionSearcher\x12H\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x12I\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x32\xa7\x02\n\nAnagrammer\x12K\n\x07\x41nagram\x12\x1c.wordsearcher.AnagramRequest\x1a\x1d.wordsearcher.AnagramResponse\"\x03\x90\x02\x01\x12\x65\n\x15\x42lankChallengeCreator\x12).wordsearcher.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x12\x65\n\x15\x42uildChallengeCreator\x12).wordsearcher.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x32\xbe\x01\n\x0cWordSearcher\x12X\n\x12GetWordInformation\x12\x1b.wordsearcher.DefineRequest\x1a .wordsearcher.WordSearchResponse\"\x03\x90\x02\x01\x12T\n\nWordSearch\x12\x1f.wordsearcher.WordSearchRequest\x1a .wordsearcher.WordSearchResponse\"\x03\x90\x02\x01\x42\xaa\x01\n\x10\x63om.wordsearcherB\rSearcherProtoP\x01Z7github.com/domino14/word_db_server/api/rpc/wordsearcher\xa2\x02\x03WXX\xaa\x02\x0cWordsearcher\xca\x02\x0cWordsearcher\xe2\x02\x18Wordsearcher\\GPBMetadata\xea\x02\x0cWordsearcherb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1frpc/wordsearcher/searcher.proto\x12\x0cwordsearcher\"\xf5\x01\n\tAlphagram\x12\x1c\n\talphagram\x18\x01 \x01(\tR\talphagram\x12(\n\x05words\x18\x02 \x03(\x0b\x32\x12.wordsearcher.WordR\x05words\x12\"\n\x0c\x65xpandedRepr\x18\x03 \x01(\x08R\x0c\x65xpandedRepr\x12\x16\n\x06length\x18\x04 \x01(\x05R\x06length\x12 \n\x0bprobability\x18\x05 \x01(\x05R\x0bprobability\x12\"\n\x0c\x63ombinations\x18\x06 \x01(\x03R\x0c\x63ombinations\x12\x1e\n\ndifficulty\x18\x07 \x01(\x05R\ndifficulty\"\x93\x02\n\x04Word\x12\x12\n\x04word\x18\x01 \x01(\tR\x04word\x12\x1c\n\talphagram\x18\x02 \x01(\tR\talphagram\x12\x1e\n\ndefinition\x18\x03 \x01(\tR\ndefinition\x12\x1f\n\x0b\x66ront_hooks\x18\x04 \x01(\tR\nfrontHooks\x12\x1d\n\nback_hooks\x18\x05 \x01(\tR\tbackHooks\x12\'\n\x0flexicon_symbols\x18\x06 \x01(\tR\x0elexiconSymbols\x12(\n\x10inner_front_hook\x18\x07 \x01(\x08R\x0einnerFrontHook\x12&\n\x0finner_back_hook\x18\x08 \x01(\x08R\rinnerBackHook\"\xbc\x0c\n\rSearchRequest\x12K\n\x0csearchparams\x18\x01 \x03(\x0b\x32\'.wordsearcher.SearchRequest.SearchParamR\x0csearchparams\x12\x16\n\x06\x65xpand\x18\x02 \x01(\x08R\x06\x65xpand\x1a,\n\x06MinMax\x12\x10\n\x03min\x18\x01 \x01(\x05R\x03min\x12\x10\n\x03max\x18\x02 \x01(\x05R\x03max\x1a#\n\x0bStringValue\x12\x14\n\x05value\x18\x01 \x01(\tR\x05value\x1a%\n\x0bStringArray\x12\x16\n\x06values\x18\x01 \x03(\tR\x06values\x1a%\n\x0bNumberArray\x12\x16\n\x06values\x18\x01 \x03(\x05R\x06values\x1a#\n\x0bNumberValue\x12\x14\n\x05value\x18\x01 \x01(\x05R\x05value\x1a\x8a\x01\n\nHooksParam\x12\x41\n\thook_type\x18\x01 \x01(\x0e\x32$.wordsearcher.SearchRequest.HookTypeR\x08hookType\x12\x14\n\x05hooks\x18\x02 \x01(\tR\x05hooks\x12#\n\rnot_condition\x18\x03 \x01(\x08R\x0cnotCondition\x1a\xa0\x04\n\x0bSearchParam\x12\x43\n\tcondition\x18\x01 \x01(\x0e\x32%.wordsearcher.SearchRequest.ConditionR\tcondition\x12<\n\x06minmax\x18\x02 \x01(\x0b\x32\".wordsearcher.SearchRequest.MinMaxH\x00R\x06minmax\x12K\n\x0bstringvalue\x18\x03 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringValueH\x00R\x0bstringvalue\x12K\n\x0bstringarray\x18\x04 \x01(\x0b\x32\'.wordsearcher.SearchRequest.StringArrayH\x00R\x0bstringarray\x12K\n\x0bnumberarray\x18\x05 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberArrayH\x00R\x0bnumberarray\x12K\n\x0bnumbervalue\x18\x06 \x01(\x0b\x32\'.wordsearcher.SearchRequest.NumberValueH\x00R\x0bnumbervalue\x12H\n\nhooksparam\x18\x07 \x01(\x0b\x32&.wordsearcher.SearchRequest.HooksParamH\x00R\nhooksparamB\x10\n\x0e\x63onditionparam\"\xd3\x03\n\tCondition\x12\x0b\n\x07LEXICON\x10\x00\x12\n\n\x06LENGTH\x10\x01\x12\x15\n\x11PROBABILITY_RANGE\x10\x02\x12\x14\n\x10PROBABILITY_LIST\x10\x03\x12\x15\n\x11PROBABILITY_LIMIT\x10\x04\x12\x16\n\x12NUMBER_OF_ANAGRAMS\x10\x05\x12\x14\n\x10NUMBER_OF_VOWELS\x10\x06\x12\x0c\n\x08HAS_TAGS\x10\x07\x12\x0f\n\x0bPOINT_VALUE\x10\x08\x12\x14\n\x10MATCHING_ANAGRAM\x10\t\x12\x12\n\x0e\x41LPHAGRAM_LIST\x10\n\x12\x12\n\x0eNOT_IN_LEXICON\x10\x0b\x12#\n\x1fUPLOADED_WORD_OR_ALPHAGRAM_LIST\x10\x0c\x12\r\n\tWORD_LIST\x10\r\x12\x17\n\x13SINGLE_VALUE_LENGTH\x10\x0e\x12\x12\n\x0eNUM_TWO_BLANKS\x10\x0f\x12\x11\n\rMAX_SOLUTIONS\x10\x10\x12\x14\n\x10\x44IFFICULTY_RANGE\x10\x11\x12\x15\n\x11PLAYABILITY_RANGE\x10\x12\x12\x10\n\x0c\x44\x45LETED_WORD\x10\x13\x12\x12\n\x0e\x43ONTAINS_HOOKS\x10\x14\x12\x17\n\x13\x44\x45\x46INITION_CONTAINS\x10\x15\"<\n\x11NotInLexCondition\x12\x11\n\rOTHER_ENGLISH\x10\x00\x12\x14\n\x10PREVIOUS_VERSION\x10\x01\"<\n\x08HookType\x12\x0f\n\x0b\x46RONT_HOOKS\x10\x00\x12\x0e\n\nBACK_HOOKS\x10\x01\x12\x0f\n\x0bINNER_HOOKS\x10\x02\"c\n\x0eSearchResponse\x12\x37\n\nalphagrams\x18\x01 \x03(\x0b\x32\x17.wordsearcher.AlphagramR\nalphagrams\x12\x18\n\x07lexicon\x18\x02 \x01(\tR\x07lexicon\"\xbc\x01\n\x0e\x41nagramRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12\x18\n\x07letters\x18\x02 \x01(\tR\x07letters\x12\x35\n\x04mode\x18\x03 \x01(\x0e\x32!.wordsearcher.AnagramRequest.ModeR\x04mode\x12\x16\n\x06\x65xpand\x18\x04 \x01(\x08R\x06\x65xpand\"\'\n\x04Mode\x12\t\n\x05\x45XACT\x10\x00\x12\t\n\x05\x42UILD\x10\x01\x12\t\n\x05SUPER\x10\x02\"X\n\x0f\x41nagramResponse\x12(\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.WordR\x05words\x12\x1b\n\tnum_words\x18\x02 \x01(\x05R\x08numWords\"\xcd\x01\n\x1b\x42lankChallengeCreateRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12#\n\rnum_questions\x18\x02 \x01(\x05R\x0cnumQuestions\x12#\n\rmax_solutions\x18\x03 \x01(\x05R\x0cmaxSolutions\x12)\n\x11num_with_2_blanks\x18\x04 \x01(\x05R\x0enumWith2Blanks\x12\x1f\n\x0bword_length\x18\x05 \x01(\x05R\nwordLength\"\xf7\x01\n\x1b\x42uildChallengeCreateRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12#\n\rmin_solutions\x18\x02 \x01(\x05R\x0cminSolutions\x12#\n\rmax_solutions\x18\x03 \x01(\x05R\x0cmaxSolutions\x12\x1d\n\nmin_length\x18\x04 \x01(\x05R\tminLength\x12\x1d\n\nmax_length\x18\x05 \x01(\x05R\tmaxLength\x12\x36\n\x17require_length_solution\x18\x06 \x01(\x08R\x15requireLengthSolution\"`\n\x11WordSearchRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12\x12\n\x04glob\x18\x02 \x01(\tR\x04glob\x12\x1d\n\napplies_to\x18\x03 \x01(\tR\tappliesTo\"=\n\rDefineRequest\x12\x18\n\x07lexicon\x18\x01 \x01(\tR\x07lexicon\x12\x12\n\x04word\x18\x02 \x01(\tR\x04word\">\n\x12WordSearchResponse\x12(\n\x05words\x18\x01 \x03(\x0b\x32\x12.wordsearcher.WordR\x05words2\xa7\x01\n\x10QuestionSearcher\x12H\n\x06Search\x12\x1b.wordsearcher.SearchRequest\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x12I\n\x06\x45xpand\x12\x1c.wordsearcher.SearchResponse\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x32\xa7\x02\n\nAnagrammer\x12K\n\x07\x41nagram\x12\x1c.wordsearcher.AnagramRequest\x1a\x1d.wordsearcher.AnagramResponse\"\x03\x90\x02\x01\x12\x65\n\x15\x42lankChallengeCreator\x12).wordsearcher.BlankChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x12\x65\n\x15\x42uildChallengeCreator\x12).wordsearcher.BuildChallengeCreateRequest\x1a\x1c.wordsearcher.SearchResponse\"\x03\x90\x02\x01\x32\xbe\x01\n\x0cWordSearcher\x12X\n\x12GetWordInformation\x12\x1b.wordsearcher.DefineRequest\x1a .wordsearcher.WordSearchResponse\"\x03\x90\x02\x01\x12T\n\nWordSearch\x12\x1f.wordsearcher.WordSearchRequest\x1a .wordsearcher.WordSearchResponse\"\x03\x90\x02\x01\x42\xaa\x01\n\x10\x63om.wordsearcherB\rSearcherProtoP\x01Z7github.com/domino14/word_db_server/api/rpc/wordsearcher\xa2\x02\x03WXX\xaa\x02\x0cWordsearcher\xca\x02\x0cWordsearcher\xe2\x02\x18Wordsearcher\\GPBMetadata\xea\x02\x0cWordsearcherb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -51,7 +51,7 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_WORD']._serialized_start=298
   _globals['_WORD']._serialized_end=573
   _globals['_SEARCHREQUEST']._serialized_start=576
-  _globals['_SEARCHREQUEST']._serialized_end=1850
+  _globals['_SEARCHREQUEST']._serialized_end=2172
   _globals['_SEARCHREQUEST_MINMAX']._serialized_start=694
   _globals['_SEARCHREQUEST_MINMAX']._serialized_end=738
   _globals['_SEARCHREQUEST_STRINGVALUE']._serialized_start=740
@@ -62,34 +62,38 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_SEARCHREQUEST_NUMBERARRAY']._serialized_end=853
   _globals['_SEARCHREQUEST_NUMBERVALUE']._serialized_start=855
   _globals['_SEARCHREQUEST_NUMBERVALUE']._serialized_end=890
-  _globals['_SEARCHREQUEST_SEARCHPARAM']._serialized_start=893
-  _globals['_SEARCHREQUEST_SEARCHPARAM']._serialized_end=1363
-  _globals['_SEARCHREQUEST_CONDITION']._serialized_start=1366
-  _globals['_SEARCHREQUEST_CONDITION']._serialized_end=1788
-  _globals['_SEARCHREQUEST_NOTINLEXCONDITION']._serialized_start=1790
-  _globals['_SEARCHREQUEST_NOTINLEXCONDITION']._serialized_end=1850
-  _globals['_SEARCHRESPONSE']._serialized_start=1852
-  _globals['_SEARCHRESPONSE']._serialized_end=1951
-  _globals['_ANAGRAMREQUEST']._serialized_start=1954
-  _globals['_ANAGRAMREQUEST']._serialized_end=2142
-  _globals['_ANAGRAMREQUEST_MODE']._serialized_start=2103
-  _globals['_ANAGRAMREQUEST_MODE']._serialized_end=2142
-  _globals['_ANAGRAMRESPONSE']._serialized_start=2144
-  _globals['_ANAGRAMRESPONSE']._serialized_end=2232
-  _globals['_BLANKCHALLENGECREATEREQUEST']._serialized_start=2235
-  _globals['_BLANKCHALLENGECREATEREQUEST']._serialized_end=2440
-  _globals['_BUILDCHALLENGECREATEREQUEST']._serialized_start=2443
-  _globals['_BUILDCHALLENGECREATEREQUEST']._serialized_end=2690
-  _globals['_WORDSEARCHREQUEST']._serialized_start=2692
-  _globals['_WORDSEARCHREQUEST']._serialized_end=2788
-  _globals['_DEFINEREQUEST']._serialized_start=2790
-  _globals['_DEFINEREQUEST']._serialized_end=2851
-  _globals['_WORDSEARCHRESPONSE']._serialized_start=2853
-  _globals['_WORDSEARCHRESPONSE']._serialized_end=2915
-  _globals['_QUESTIONSEARCHER']._serialized_start=2918
-  _globals['_QUESTIONSEARCHER']._serialized_end=3085
-  _globals['_ANAGRAMMER']._serialized_start=3088
-  _globals['_ANAGRAMMER']._serialized_end=3383
-  _globals['_WORDSEARCHER']._serialized_start=3386
-  _globals['_WORDSEARCHER']._serialized_end=3576
+  _globals['_SEARCHREQUEST_HOOKSPARAM']._serialized_start=893
+  _globals['_SEARCHREQUEST_HOOKSPARAM']._serialized_end=1031
+  _globals['_SEARCHREQUEST_SEARCHPARAM']._serialized_start=1034
+  _globals['_SEARCHREQUEST_SEARCHPARAM']._serialized_end=1578
+  _globals['_SEARCHREQUEST_CONDITION']._serialized_start=1581
+  _globals['_SEARCHREQUEST_CONDITION']._serialized_end=2048
+  _globals['_SEARCHREQUEST_NOTINLEXCONDITION']._serialized_start=2050
+  _globals['_SEARCHREQUEST_NOTINLEXCONDITION']._serialized_end=2110
+  _globals['_SEARCHREQUEST_HOOKTYPE']._serialized_start=2112
+  _globals['_SEARCHREQUEST_HOOKTYPE']._serialized_end=2172
+  _globals['_SEARCHRESPONSE']._serialized_start=2174
+  _globals['_SEARCHRESPONSE']._serialized_end=2273
+  _globals['_ANAGRAMREQUEST']._serialized_start=2276
+  _globals['_ANAGRAMREQUEST']._serialized_end=2464
+  _globals['_ANAGRAMREQUEST_MODE']._serialized_start=2425
+  _globals['_ANAGRAMREQUEST_MODE']._serialized_end=2464
+  _globals['_ANAGRAMRESPONSE']._serialized_start=2466
+  _globals['_ANAGRAMRESPONSE']._serialized_end=2554
+  _globals['_BLANKCHALLENGECREATEREQUEST']._serialized_start=2557
+  _globals['_BLANKCHALLENGECREATEREQUEST']._serialized_end=2762
+  _globals['_BUILDCHALLENGECREATEREQUEST']._serialized_start=2765
+  _globals['_BUILDCHALLENGECREATEREQUEST']._serialized_end=3012
+  _globals['_WORDSEARCHREQUEST']._serialized_start=3014
+  _globals['_WORDSEARCHREQUEST']._serialized_end=3110
+  _globals['_DEFINEREQUEST']._serialized_start=3112
+  _globals['_DEFINEREQUEST']._serialized_end=3173
+  _globals['_WORDSEARCHRESPONSE']._serialized_start=3175
+  _globals['_WORDSEARCHRESPONSE']._serialized_end=3237
+  _globals['_QUESTIONSEARCHER']._serialized_start=3240
+  _globals['_QUESTIONSEARCHER']._serialized_end=3407
+  _globals['_ANAGRAMMER']._serialized_start=3410
+  _globals['_ANAGRAMMER']._serialized_end=3705
+  _globals['_WORDSEARCHER']._serialized_start=3708
+  _globals['_WORDSEARCHER']._serialized_end=3898
 # @@protoc_insertion_point(module_scope)

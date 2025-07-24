@@ -15,6 +15,8 @@ const allowedSearchTypes = new Set<number>([
   SearchTypesEnum.DIFFICULTY_RANGE,
   SearchTypesEnum.PROBABILITY_LIMIT,
   SearchTypesEnum.MATCHING_ANAGRAM,
+  SearchTypesEnum.CONTAINS_HOOKS,
+  SearchTypesEnum.DEFINITION_CONTAINS,
 ]);
 
 const lexOptions = [

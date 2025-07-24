@@ -118,6 +118,24 @@ class SearchDescription(object):
             condition=pb.SearchRequest.Condition.DELETED_WORD
         )
 
+    @staticmethod
+    def contains_hooks(
+        hook_type: int, hooks: str, not_condition: bool = False
+    ) -> pb.SearchRequest.SearchParam:
+        return pb.SearchRequest.SearchParam(
+            condition=pb.SearchRequest.Condition.CONTAINS_HOOKS,
+            hooksparam=pb.SearchRequest.HooksParam(
+                hook_type=hook_type, hooks=hooks, not_condition=not_condition
+            ),
+        )
+
+    @staticmethod
+    def definition_contains(text: str) -> pb.SearchRequest.SearchParam:
+        return pb.SearchRequest.SearchParam(
+            condition=pb.SearchRequest.Condition.DEFINITION_CONTAINS,
+            stringvalue=pb.SearchRequest.StringValue(value=text),
+        )
+
 
 def SearchCriterionFn(searchType: int):
     """
@@ -147,6 +165,11 @@ SINGLE_NUMBER_DESCRIPTIONS = [
 
 SINGLE_STRING_DESCRIPTIONS = [
     pb.SearchRequest.Condition.MATCHING_ANAGRAM,
+    pb.SearchRequest.Condition.DEFINITION_CONTAINS,
+]
+
+HOOKS_DESCRIPTIONS = [
+    pb.SearchRequest.Condition.CONTAINS_HOOKS,
 ]
 
 
@@ -233,4 +256,11 @@ def temporary_list_name(
             tokens.append(f"(difficulty {sd.minmax.min} - {sd.minmax.max})")
         elif sd.condition == pb.SearchRequest.Condition.DELETED_WORD:
             tokens.append("deleted words")
+        elif sd.condition == pb.SearchRequest.Condition.CONTAINS_HOOKS:
+            hook_type_names = ["front", "back", "inner"]
+            hook_type_name = hook_type_names[sd.hooksparam.hook_type] if sd.hooksparam.hook_type < 3 else "unknown"
+            not_text = "NOT " if sd.hooksparam.not_condition else ""
+            tokens.append(f"{not_text}{hook_type_name} hooks: {sd.hooksparam.hooks}")
+        elif sd.condition == pb.SearchRequest.Condition.DEFINITION_CONTAINS:
+            tokens.append(f'definition contains: "{sd.stringvalue.value}"')
     return " ".join(tokens)

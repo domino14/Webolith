@@ -5,6 +5,7 @@ import {
   TextInput,
   Group,
   CloseButton,
+  Checkbox,
 } from "@mantine/core";
 import {
   SearchTypesEnum,
@@ -13,6 +14,7 @@ import {
   optionType,
   SearchCriterion,
 } from "./types";
+import { SearchRequest_HookType } from "../gen/rpc/wordsearcher/searcher_pb";
 
 // Utility function to convert options
 const convertOptions = (
@@ -158,6 +160,62 @@ const StringValue: React.FC<StringValueProps> = ({
   />
 );
 
+// HooksValue Component
+interface HooksValueProps {
+  index: number;
+  hookType: number;
+  hooks: string;
+  notCondition: boolean;
+  modifySearchParam: (
+    index: number,
+    paramName: string,
+    paramValue: optionType
+  ) => void;
+}
+
+const HooksValue: React.FC<HooksValueProps> = ({
+  index,
+  hookType,
+  hooks,
+  notCondition,
+  modifySearchParam,
+}) => {
+  const hookTypeOptions = [
+    { value: String(SearchRequest_HookType.FRONT_HOOKS), label: "Front Hooks" },
+    { value: String(SearchRequest_HookType.BACK_HOOKS), label: "Back Hooks" },
+  ];
+
+  return (
+    <Group>
+      <Select
+        label="Hook Type"
+        value={String(hookType)}
+        size="lg"
+        data={hookTypeOptions}
+        onChange={(selectedValue) => {
+          modifySearchParam(index, "hookType", selectedValue || "0");
+        }}
+      />
+      <TextInput
+        label="Hooks"
+        size="lg"
+        value={hooks}
+        onChange={(event) =>
+          modifySearchParam(index, "hooks", event.currentTarget.value)
+        }
+      />
+      <Checkbox
+        label="NOT"
+        checked={notCondition}
+        onChange={(event) =>
+          modifySearchParam(index, "notCondition", event.currentTarget.checked)
+        }
+        mt={25}
+      />
+    </Group>
+  );
+};
+
 // SearchRow Component
 interface SearchRowProps {
   index: number;
@@ -235,6 +293,17 @@ const SearchRow: React.FC<SearchRowProps> = ({
               string
             ][]
           }
+          modifySearchParam={modifySearchParam}
+        />
+      );
+      break;
+    case SearchTypesInputs.HOOKS:
+      specificForm = (
+        <HooksValue
+          index={index}
+          hookType={searchCriterion.options.hookType as number}
+          hooks={searchCriterion.options.hooks as string}
+          notCondition={searchCriterion.options.notCondition as boolean}
           modifySearchParam={modifySearchParam}
         />
       );

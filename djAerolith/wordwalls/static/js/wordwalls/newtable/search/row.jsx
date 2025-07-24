@@ -9,6 +9,7 @@ import {
 import Select from '../../forms/select';
 import NumberInput from '../../forms/number_input';
 import TextInput from '../../forms/text_input';
+import Checkbox from '../../forms/checkbox';
 
 const convertOptions = (options) => options.map((el) => ({
   value: el[0],
@@ -125,6 +126,61 @@ StringValue.propTypes = {
   modifySearchParam: PropTypes.func.isRequired,
 };
 
+function HooksValue(props) {
+  const hookTypeOptions = [
+    ['0', 'Front Hooks'],
+    ['1', 'Back Hooks'],
+  ];
+
+  return (
+    <>
+      <div className="col-xs-2">
+        <Select
+          colSize={12}
+          label="Hook Type"
+          selectedValue={String(props.hookType)}
+          options={convertOptions(hookTypeOptions)}
+          onChange={(event) => {
+            props.modifySearchParam(props.index, 'hookType', event.target.value);
+          }}
+        />
+      </div>
+      <div className="col-xs-3">
+        <TextInput
+          colSize={12}
+          label="Hooks"
+          value={props.hooks}
+          onChange={(event) => props.modifySearchParam(
+            props.index,
+            'hooks',
+            event.target.value,
+          )}
+        />
+      </div>
+      <div className="col-xs-1" style={{ marginTop: '25px' }}>
+        <Checkbox
+          colSize={12}
+          label="NOT"
+          checked={props.notCondition}
+          onChange={(event) => props.modifySearchParam(
+            props.index,
+            'notCondition',
+            event.target.checked,
+          )}
+        />
+      </div>
+    </>
+  );
+}
+
+HooksValue.propTypes = {
+  hookType: PropTypes.number.isRequired,
+  hooks: PropTypes.string.isRequired,
+  notCondition: PropTypes.bool.isRequired,
+  index: PropTypes.number.isRequired,
+  modifySearchParam: PropTypes.func.isRequired,
+};
+
 function SearchRow(props) {
   let specificForm;
 
@@ -171,6 +227,17 @@ function SearchRow(props) {
           index={props.index}
           modifySearchParam={props.modifySearchParam}
           options={SearchTypesEnum.properties[props.searchType].options}
+        />
+      );
+      break;
+    case SearchTypesInputs.HOOKS:
+      specificForm = (
+        <HooksValue
+          hookType={props.searchCriterion.hookType}
+          hooks={props.searchCriterion.hooks}
+          notCondition={props.searchCriterion.notCondition}
+          index={props.index}
+          modifySearchParam={props.modifySearchParam}
         />
       );
       break;

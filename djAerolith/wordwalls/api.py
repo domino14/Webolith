@@ -25,6 +25,7 @@ from lib.wdb_interface.word_searches import (
     SINGLE_NUMBER_DESCRIPTIONS,
     SINGLE_STRING_DESCRIPTIONS,
     TAGS_DESCRIPTION,
+    HOOKS_DESCRIPTIONS,
     SearchCriterionFn,
 )
 from wordwalls.views import (
@@ -340,6 +341,14 @@ def build_search_criteria(
             hold_until_end = criterion_fn(new_tags, user, lexicon)
         elif criterion["searchType"] in SINGLE_STRING_DESCRIPTIONS:
             search.append(criterion_fn(criterion["value"].strip()))
+        elif criterion["searchType"] in HOOKS_DESCRIPTIONS:
+            search.append(
+                criterion_fn(
+                    criterion["hookType"],
+                    criterion["hooks"].strip(),
+                    criterion.get("notCondition", False),
+                )
+            )
         else:
             # No value, this criterion must not be associated with a specific
             # filter value.
