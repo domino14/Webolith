@@ -90,9 +90,9 @@ export declare class Card extends Message<Card> {
   reviewLog: Uint8Array;
 
   /**
-   * @generated from field: optional uint64 deck_id = 6;
+   * @generated from field: uint64 deck_id = 6;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   constructor(data?: PartialMessage<Card>);
 
@@ -124,9 +124,9 @@ export declare class CardPreview extends Message<CardPreview> {
   alphagram: string;
 
   /**
-   * @generated from field: optional uint64 deck_id = 5;
+   * @generated from field: uint64 deck_id = 5;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   constructor(data?: PartialMessage<CardPreview>);
 
@@ -187,9 +187,9 @@ export declare class GetNextScheduledRequest extends Message<GetNextScheduledReq
   limit: number;
 
   /**
-   * @generated from field: optional uint64 deck_id = 3;
+   * @generated from field: uint64 deck_id = 3;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   constructor(data?: PartialMessage<GetNextScheduledRequest>);
 
@@ -216,9 +216,9 @@ export declare class GetSingleNextScheduledRequest extends Message<GetSingleNext
   lexicon: string;
 
   /**
-   * @generated from field: optional uint64 deck_id = 2;
+   * @generated from field: uint64 deck_id = 2;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   constructor(data?: PartialMessage<GetSingleNextScheduledRequest>);
 
@@ -366,9 +366,9 @@ export declare class AddCardsRequest extends Message<AddCardsRequest> {
   alphagrams: string[];
 
   /**
-   * @generated from field: optional uint64 deck_id = 3;
+   * @generated from field: uint64 deck_id = 3;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   constructor(data?: PartialMessage<AddCardsRequest>);
 
@@ -434,9 +434,9 @@ export declare class MoveCardsRequest extends Message<MoveCardsRequest> {
   alphagrams: string[];
 
   /**
-   * @generated from field: optional uint64 deck_id = 3;
+   * @generated from field: uint64 deck_id = 3;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   constructor(data?: PartialMessage<MoveCardsRequest>);
 
@@ -661,9 +661,9 @@ export declare class NextScheduledCountByDeckRequest extends Message<NextSchedul
  */
 export declare class DeckBreakdown extends Message<DeckBreakdown> {
   /**
-   * @generated from field: optional uint64 deck_id = 1;
+   * @generated from field: uint64 deck_id = 1;
    */
-  deckId?: bigint;
+  deckId: bigint;
 
   /**
    * @generated from field: map<string, uint32> breakdown = 2;

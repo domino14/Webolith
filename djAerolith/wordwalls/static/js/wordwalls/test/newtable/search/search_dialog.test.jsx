@@ -116,9 +116,10 @@ describe('<SearchDialogContainer />', () => {
       // Click 'add' a whole bunch of times.
       fireEvent.click(screen.getAllByRole('button')[0]);
     }
-    expect(screen.getAllByText('Search Criterion').length).toBe(11);
+    expect(screen.getAllByText('Search Criterion').length).toBe(13);
     // And search specifically that fixed length wasn't rendered.
-    expect(screen.getAllByTestId(`searchrow-${SearchTypesEnum.LENGTH}`).length).toBe(11);
+    // There's an extra searchrow from the hooks search dropdown.
+    expect(screen.getAllByTestId(`searchrow-${SearchTypesEnum.LENGTH}`).length).toBe(14);
     expect(screen.findAllByTestId(`searchrow-${SearchTypesEnum.FIXED_LENGTH}`).length).toBe(undefined);
   });
 });

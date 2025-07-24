@@ -84,6 +84,8 @@ export const SearchRequest_Condition = /*@__PURE__*/ proto3.makeEnum(
     {no: 17, name: "DIFFICULTY_RANGE"},
     {no: 18, name: "PLAYABILITY_RANGE"},
     {no: 19, name: "DELETED_WORD"},
+    {no: 20, name: "CONTAINS_HOOKS"},
+    {no: 21, name: "DEFINITION_CONTAINS"},
   ],
 );
 
@@ -95,6 +97,18 @@ export const SearchRequest_NotInLexCondition = /*@__PURE__*/ proto3.makeEnum(
   [
     {no: 0, name: "OTHER_ENGLISH"},
     {no: 1, name: "PREVIOUS_VERSION"},
+  ],
+);
+
+/**
+ * @generated from enum wordsearcher.SearchRequest.HookType
+ */
+export const SearchRequest_HookType = /*@__PURE__*/ proto3.makeEnum(
+  "wordsearcher.SearchRequest.HookType",
+  [
+    {no: 0, name: "FRONT_HOOKS"},
+    {no: 1, name: "BACK_HOOKS"},
+    {no: 2, name: "INNER_HOOKS"},
   ],
 );
 
@@ -155,6 +169,19 @@ export const SearchRequest_NumberValue = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * @generated from message wordsearcher.SearchRequest.HooksParam
+ */
+export const SearchRequest_HooksParam = /*@__PURE__*/ proto3.makeMessageType(
+  "wordsearcher.SearchRequest.HooksParam",
+  () => [
+    { no: 1, name: "hook_type", kind: "enum", T: proto3.getEnumType(SearchRequest_HookType) },
+    { no: 2, name: "hooks", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "not_condition", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ],
+  {localName: "SearchRequest_HooksParam"},
+);
+
+/**
  * @generated from message wordsearcher.SearchRequest.SearchParam
  */
 export const SearchRequest_SearchParam = /*@__PURE__*/ proto3.makeMessageType(
@@ -166,6 +193,7 @@ export const SearchRequest_SearchParam = /*@__PURE__*/ proto3.makeMessageType(
     { no: 4, name: "stringarray", kind: "message", T: SearchRequest_StringArray, oneof: "conditionparam" },
     { no: 5, name: "numberarray", kind: "message", T: SearchRequest_NumberArray, oneof: "conditionparam" },
     { no: 6, name: "numbervalue", kind: "message", T: SearchRequest_NumberValue, oneof: "conditionparam" },
+    { no: 7, name: "hooksparam", kind: "message", T: SearchRequest_HooksParam, oneof: "conditionparam" },
   ],
   {localName: "SearchRequest_SearchParam"},
 );
