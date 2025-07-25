@@ -16,7 +16,7 @@
     "test": "jest --coverage --verbose",
     "dev:wds": "webpack-dev-server",
     "jshint": "jshint djAerolith/flashcards/static/js/flashcards",
-    "eslint": "eslint djAerolith/wordwalls/static/js/wordwalls --ext .js,.jsx",
+    "eslint": "cd djAerolith/wordwalls && eslint static/js/wordwalls --ext .js,.jsx,.ts,.tsx",
     "prod:build": "rimraf djAerolith/static/dist && webpack --progress --config webpack.config-prod.babel.js"
   },
   "devDependencies": {
@@ -30,6 +30,12 @@
     "@babel/register": "^7.25.7",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
+    "@types/bootstrap": "^5.2.10",
+    "@types/immutable": "^3.8.6",
+    "@types/jquery": "^3.5.32",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@types/underscore": "^1.13.0",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
     "babel-loader": "^8.2.5",
