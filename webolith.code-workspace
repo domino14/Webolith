@@ -1,0 +1,39 @@
+{
+    "folders": [
+        {
+            "name": "Frontend (WordVault)",
+            "path": "./frontend"
+        },
+        {
+            "name": "Wordwalls (Legacy)",
+            "path": "./djAerolith/wordwalls"
+        },
+        {
+            "name": "Root",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "typescript.preferences.includePackageJsonAutoImports": "on",
+        "typescript.validate.enable": true,
+        "typescript.format.enable": true,
+        "typescript.suggest.autoImports": true,
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.tsc.autoDetect": "on",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "files.associations": {
+            "*.tsx": "typescriptreact",
+            "*.ts": "typescript"
+        },
+        "eslint.workingDirectories": [
+            "./djAerolith/wordwalls",
+            "./frontend"
+        ]
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.vscode-typescript-next",
+            "dbaeumer.vscode-eslint"
+        ]
+    }
+}
