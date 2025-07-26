@@ -176,7 +176,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
   }, [props.setLoadingData]);
 
   const loadSavedListInfo = useCallback(() => {
-    showSpinner();
+    // Show spinner via beforeSend to avoid state updates during render
     $.ajax({
       url: '/base/api/saved_lists/',
       data: {
@@ -186,6 +186,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         last_saved: 'human',
       },
       method: 'GET',
+      beforeSend: () => showSpinner(),
     })
       .done((data) => setSavedLists(data))
       .always(() => hideSpinner());
@@ -303,13 +304,14 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
   };
 
   const loadAerolithListInfo = useCallback(() => {
-    showSpinner();
+    // Show spinner via beforeSend to avoid state updates during render
     $.ajax({
       url: '/wordwalls/api/default_lists/',
       data: {
         lexicon: currentLexicon,
       },
       method: 'GET',
+      beforeSend: () => showSpinner(),
     })
       .done((data) => {
         setAerolithLists(data);
@@ -365,6 +367,24 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         break;
     }
   }, [loadSavedListInfo, loadAerolithListInfo]);
+
+  const handlePillClick = useCallback((option: string) => {
+    setActiveListType(option);
+    if (option !== LIST_TYPE_CHALLENGE) {
+      // Reset the time back to the defaults.
+      if (option !== LIST_TYPE_BLANKS) {
+        setDesiredTime(DEFAULT_TIME_PER_QUIZ);
+        setQuestionsPerRound(50);
+      } else {
+        setDesiredTime(DEFAULT_TIME_PER_BLANK_QUIZ);
+        setQuestionsPerRound(50);
+      }
+    }
+  }, []);
+
+  const handleGameTypeChange = useCallback((option: string) => {
+    setActiveGameType(option);
+  }, []);
 
   const challengeDialogContainerRef = useRef<ChallengeDialogContainerRef>(null);
 
@@ -505,20 +525,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
             LIST_TYPE_SAVED_LIST,
           ]}
           activePill={activeListType}
-          onPillClick={(option) => () => {
-            setActiveListType(option);
-            if (option !== LIST_TYPE_CHALLENGE) {
-              // Reset the time back to the defaults.
-              if (option !== LIST_TYPE_BLANKS) {
-                setDesiredTime(DEFAULT_TIME_PER_QUIZ);
-                setQuestionsPerRound(50);
-              } else {
-                setDesiredTime(DEFAULT_TIME_PER_BLANK_QUIZ);
-                setQuestionsPerRound(50);
-              }
-            }
-            // loadInfoForListType will be called by useEffect when activeListType changes
-          }}
+          onPillClick={handlePillClick}
         />
         {selectedQuizSearchDialog}
       </div>
@@ -538,7 +545,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
             <Sidebar
               gameTypes={[GAME_TYPE_NEW]}
               activeGameType={activeGameType}
-              setGameType={(option) => setActiveGameType(option)}
+              setGameType={handleGameTypeChange}
               currentLexicon={currentLexicon}
               defaultLexicon={props.defaultLexicon}
               availableLexica={props.availableLexica}

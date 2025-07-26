@@ -1,12 +1,4 @@
-// Simple bootbox typing for our use case
-declare const bootbox: {
-  alert: (options: { size: string; title: string; message: string }) => void;
-  confirm: (options: {
-    title: string;
-    message: string;
-    callback: (confirmed: boolean) => void;
-  }) => void;
-};
+import * as bootbox from 'bootbox';
 
 type AlertSize = 'small' | 'large' | 'extra-large';
 

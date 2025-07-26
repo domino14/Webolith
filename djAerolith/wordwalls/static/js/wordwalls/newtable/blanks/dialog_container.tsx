@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { SearchTypesEnum, SearchCriterion } from 'wordvaultapp/search/types';
 import useSearchRows from 'wordvaultapp/search/use_search_rows';
@@ -36,11 +36,7 @@ function pbToQuestions(
   return rawQs;
 }
 
-const initialCriteria = [
-  new SearchCriterion(SearchTypesEnum.FIXED_LENGTH, { value: 7 }),
-  new SearchCriterion(SearchTypesEnum.MAX_SOLUTIONS, { value: 5 }),
-  new SearchCriterion(SearchTypesEnum.NUM_TWO_BLANKS, { value: 4 }),
-];
+// Moved inside component to prevent shared mutable state
 
 interface Lexicon {
   id: number;
@@ -83,13 +79,19 @@ function BlanksDialogContainer({
   notifyError,
   ...restProps
 }: BlanksDialogContainerProps) {
+  // Memoize initial search criteria to prevent new objects on every render
+  const initialCriteria = useMemo(() => [
+    new SearchCriterion(SearchTypesEnum.FIXED_LENGTH, { value: 8 }),
+    new SearchCriterion(SearchTypesEnum.MAX_SOLUTIONS, { value: 5 }),
+  ], []);
+
   const {
     searchCriteria,
     addSearchRow,
     removeSearchRow,
     searchParamChange,
     searchTypeChange,
-  } = useSearchRows(allowedSearchTypes, initialCriteria);
+  } = useSearchRows(initialCriteria, allowedSearchTypes);
 
   const getLexiconName = () => {
     const lexiconObj = availableLexica.find((el) => el.id === lexicon);

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { SearchTypesEnum, SearchCriterion } from 'wordvaultapp/search/types';
-import useSearchRows from '../use_search_rows';
+import useSearchRows from 'wordvaultapp/search/use_search_rows';
 import WordSearchDialog from './dialog';
 
 import WordwallsAPI from '../../wordwalls_api';
@@ -52,13 +52,8 @@ function SearchDialogContainer({
   api,
   disabled,
 }: SearchDialogContainerProps) {
-  const {
-    searchCriteria,
-    addSearchRow,
-    removeSearchRow,
-    searchParamChange,
-    searchTypeChange,
-  } = useSearchRows(allowedSearchTypes, [
+  // Memoize initial search criteria to prevent new objects on every render
+  const initialSearchCriteria = useMemo(() => [
     new SearchCriterion(SearchTypesEnum.LENGTH, {
       minValue: 7,
       maxValue: 7,
@@ -67,7 +62,15 @@ function SearchDialogContainer({
       minValue: 1,
       maxValue: 200,
     }),
-  ]);
+  ], []);
+
+  const {
+    searchCriteria,
+    addSearchRow,
+    removeSearchRow,
+    searchParamChange,
+    searchTypeChange,
+  } = useSearchRows(initialSearchCriteria, allowedSearchTypes);
 
   const searchSubmit = () => {
     showSpinner();

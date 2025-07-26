@@ -72,6 +72,10 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
     case GuessEnum.INCORRECT_LEXICON_SYMBOL:
       guessClass = 'text-primary';
       break;
+    case GuessEnum.PENDING:
+      // Waiting for server response - should be gray
+      guessClass = 'text-muted';
+      break;
     default:
       guessClass = 'text-muted';
   }

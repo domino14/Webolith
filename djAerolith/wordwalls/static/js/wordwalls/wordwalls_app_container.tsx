@@ -4,6 +4,7 @@
  * be as dumb as possible.
  */
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
+/* eslint-disable import/no-import-module-exports */
 import React, {
   useState, useRef, useEffect, useCallback,
 } from 'react';
@@ -75,6 +76,13 @@ interface WordwallsAppContainerProps {
   availableLexica: AvailableLexicon[];
 }
 
+// TypeScript declaration for Webpack Hot Module Replacement
+declare const module: {
+  hot?: {
+    dispose: (callback: () => void) => void;
+  };
+};
+
 // Create game and presence instances
 const game = new WordwallsGame();
 const presence = new Presence();
@@ -104,6 +112,14 @@ function WordwallsAppContainer({
   const [answeredBy, setAnsweredBy] = useState(game.getAnsweredBy());
   const [lastGuess, setLastGuess] = useState('');
   const [lastGuessCorrectness, setLastGuessCorrectness] = useState(GuessEnum.NONE);
+
+  // Use refs to track current values for callbacks to avoid stale closures
+  const lastGuessRef = useRef(lastGuess);
+  const lastGuessCorrectnessRef = useRef(lastGuessCorrectness);
+
+  // Keep refs in sync with state
+  lastGuessRef.current = lastGuess;
+  lastGuessCorrectnessRef.current = lastGuessCorrectness;
   const [challengeData, setChallengeData] = useState<ChallengeData>({});
   const [displayStyle, setDisplayStyleState] = useState(initialDisplayStyle);
   const [defaultLexicon, setDefaultLexiconState] = useState(initialDefaultLexicon);
@@ -260,13 +276,18 @@ function WordwallsAppContainer({
     setOrigQuestions(game.getOriginalQuestionState());
     setAnsweredBy(game.getAnsweredBy());
 
-    if (lastGuessCorrectness === GuessEnum.PENDING) {
+    // Use refs to get current state values instead of stale closure values
+    const currentLastGuess = lastGuessRef.current;
+    const currentLastGuessCorrectness = lastGuessCorrectnessRef.current;
+
+    if (currentLastGuessCorrectness === GuessEnum.PENDING) {
       if (data.s === username) {
         setLastGuessCorrectness(GuessEnum.CORRECT);
-      } else if (lastGuess === data.w) {
+      } else if (currentLastGuess === data.w) {
         setLastGuessCorrectness(GuessEnum.ALREADYGUESSED);
+      } else {
+        setLastGuessCorrectness(GuessEnum.NONE);
       }
-      // XXX: Otherwise keep it pending?
     }
     if (endQuiz) {
       processGameEnded();
@@ -569,6 +590,13 @@ function WordwallsAppContainer({
   useEffect(() => {
     // Set up beforeUnloadEventHandler here.
     window.onbeforeunload = beforeUnload;
+
+    // Handle hot reload in development - resign game when code changes
+    if (process.env.NODE_ENV === 'development' && module.hot) {
+      module.hot.dispose(() => {
+        beforeUnload();
+      });
+    }
     // Disallow backspace to go back to previous page.
     const handleKeydown = (e: JQuery.KeyDownEvent) => {
       if (e.which === 8) {

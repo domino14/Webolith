@@ -23,12 +23,12 @@ interface SavedList {
 
 interface SavedListRowProps {
   list: SavedList;
-  continueList: (listID: number) => () => void;
-  playFirstMissed: (listID: number) => () => void;
-  resetStartOver: (listID: number) => () => void;
-  flashcardList: (listID: number) => () => void;
-  flashcardFirstMissed: (listID: number) => () => void;
-  deleteList: (listID: number) => () => void;
+  continueList: (listID: number) => void;
+  playFirstMissed: (listID: number) => void;
+  resetStartOver: (listID: number) => void;
+  flashcardList: (listID: number) => void;
+  flashcardFirstMissed: (listID: number) => void;
+  deleteList: (listID: number) => void;
 }
 
 function SavedListRow({

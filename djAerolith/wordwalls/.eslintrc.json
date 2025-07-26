@@ -45,6 +45,7 @@
   "overrides": [
     {
       "files": ["**/*.ts", "**/*.tsx"],
+      "excludedFiles": ["**/*.test.ts", "**/*.test.tsx"],
       "parser": "@typescript-eslint/parser",
       "parserOptions": {
         "ecmaVersion": 2018,
@@ -67,6 +68,32 @@
         ],
         "@typescript-eslint/no-unused-vars": ["error"],
         "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      },
+      "rules": {
+        "quotes": ["error", "single"],
+        "jsx-quotes": ["error", "prefer-double"],
+        "react/prop-types": "off",
+        "react/require-default-props": "off",
+        "react/jsx-filename-extension": [
+          "error",
+          {
+            "extensions": [".tsx"]
+          }
+        ],
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "no-unused-vars": "off",
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
       }
     }
   ],

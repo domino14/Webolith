@@ -50,7 +50,7 @@ function SavedListDialog({
 }: SavedListDialogProps) {
   useEffect(() => {
     $('.hovertip').tooltip({ placement: 'auto' });
-  });
+  }, []); // Run only once on mount
 
   const onDrop = useCallback((files: File[], rejected: FileRejection[]) => {
     if (rejected.length > 0) {

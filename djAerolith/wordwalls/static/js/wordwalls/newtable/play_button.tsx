@@ -2,17 +2,17 @@
 jsx-a11y/click-events-have-key-events,jsx-a11y/anchor-is-valid,
 jsx-a11y/interactive-supports-focus */ // goddamn a11y
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 import $ from 'jquery';
 
 interface PlayButtonProps {
-  continueList: (listID: number) => () => void;
-  playFirstMissed: (listID: number) => () => void;
-  resetStartOver: (listID: number) => () => void;
-  deleteList: (listID: number) => () => void;
-  flashcardList: (listID: number) => () => void;
-  flashcardFirstMissed: (listID: number) => () => void;
+  continueList: (listID: number) => void;
+  playFirstMissed: (listID: number) => void;
+  resetStartOver: (listID: number) => void;
+  deleteList: (listID: number) => void;
+  flashcardList: (listID: number) => void;
+  flashcardFirstMissed: (listID: number) => void;
   listID: number;
   goneThruOnce: boolean;
 }
@@ -28,6 +28,31 @@ function PlayButton({
   goneThruOnce,
 }: PlayButtonProps) {
   const btnGroupNodeRef = useRef<HTMLDivElement>(null);
+
+  // Create curried click handlers
+  const handleContinueList = useCallback(() => {
+    continueList(listID);
+  }, [continueList, listID]);
+
+  const handlePlayFirstMissed = useCallback(() => {
+    playFirstMissed(listID);
+  }, [playFirstMissed, listID]);
+
+  const handleResetStartOver = useCallback(() => {
+    resetStartOver(listID);
+  }, [resetStartOver, listID]);
+
+  const handleDeleteList = useCallback(() => {
+    deleteList(listID);
+  }, [deleteList, listID]);
+
+  const handleFlashcardList = useCallback(() => {
+    flashcardList(listID);
+  }, [flashcardList, listID]);
+
+  const handleFlashcardFirstMissed = useCallback(() => {
+    flashcardFirstMissed(listID);
+  }, [flashcardFirstMissed, listID]);
 
   useEffect(() => {
     const btnGroupNode = btnGroupNodeRef.current;
@@ -73,7 +98,7 @@ function PlayButton({
       <button
         type="button"
         className="btn btn-primary btn-xs"
-        onClick={continueList(listID)}
+        onClick={handleContinueList}
       >
         Continue
       </button>
@@ -91,14 +116,14 @@ function PlayButton({
 
         {goneThruOnce ? (
           <li>
-            <a role="button" onClick={playFirstMissed(listID)}>
+            <a role="button" onClick={handlePlayFirstMissed}>
               Play first missed
             </a>
           </li>
         ) : null}
 
         <li>
-          <a role="button" onClick={resetStartOver(listID)}>
+          <a role="button" onClick={handleResetStartOver}>
             Reset and start over
           </a>
         </li>
@@ -106,14 +131,14 @@ function PlayButton({
         <li role="separator" className="divider" />
 
         <li>
-          <a role="button" onClick={flashcardList(listID)}>
+          <a role="button" onClick={handleFlashcardList}>
             Flashcard entire list
           </a>
         </li>
 
         {goneThruOnce ? (
           <li>
-            <a role="button" onClick={flashcardFirstMissed(listID)}>
+            <a role="button" onClick={handleFlashcardFirstMissed}>
               Flashcard first missed
             </a>
           </li>
@@ -122,7 +147,7 @@ function PlayButton({
         <li role="separator" className="divider" />
 
         <li>
-          <a role="button" onClick={deleteList(listID)}>
+          <a role="button" onClick={handleDeleteList}>
             <span className="text-danger">Delete</span>
           </a>
         </li>

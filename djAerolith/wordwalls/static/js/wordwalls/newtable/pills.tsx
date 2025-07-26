@@ -21,7 +21,7 @@ interface PillsProps {
   activePill: string;
   stacked?: boolean;
   options: string[];
-  onPillClick: (option: string) => () => void;
+  onPillClick: (option: string) => void;
 }
 
 function Pills({
@@ -37,7 +37,7 @@ function Pills({
   const pills = options.map((option) => (
     <Pill
       active={activePill === option}
-      onPillClick={onPillClick(option)}
+      onPillClick={() => onPillClick(option)}
       name={option}
       key={option}
     />
