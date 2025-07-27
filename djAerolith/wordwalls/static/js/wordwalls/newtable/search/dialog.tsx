@@ -55,6 +55,7 @@ interface WordSearchDialogProps {
   flashcardAllowed?: boolean;
   disabled: boolean;
   allowedSearchTypes: Set<SearchTypesEnum>;
+  darkMode?: boolean;
 }
 
 function WordSearchDialog({
@@ -68,6 +69,7 @@ function WordSearchDialog({
   flashcardAllowed = true,
   disabled,
   allowedSearchTypes,
+  darkMode = false,
 }: WordSearchDialogProps) {
   const flashcardButton = flashcardAllowed ? (
     <FlashcardButton
@@ -99,6 +101,7 @@ function WordSearchDialog({
       >
         <HelpText
           allowedSearchTypes={allowedSearchTypes}
+          darkMode={darkMode}
         />
       </div>
     </div>

@@ -37,6 +37,7 @@ interface SearchDialogContainerProps {
   hideSpinner: () => void;
   api: WordwallsAPI;
   disabled: boolean;
+  darkMode?: boolean;
 }
 
 function SearchDialogContainer({
@@ -51,6 +52,7 @@ function SearchDialogContainer({
   hideSpinner,
   api,
   disabled,
+  darkMode = false,
 }: SearchDialogContainerProps) {
   // Memoize initial search criteria to prevent new objects on every render
   const initialSearchCriteria = useMemo(() => [
@@ -124,6 +126,7 @@ function SearchDialogContainer({
       hideSpinner={hideSpinner}
       api={api}
       disabled={disabled}
+      darkMode={darkMode}
     />
   );
 }

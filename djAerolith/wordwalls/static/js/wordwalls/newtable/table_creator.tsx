@@ -16,6 +16,7 @@ import Pills from './pills';
 import Notifications from '../notifications';
 import Sidebar from './sidebar';
 import WordwallsAPI from '../wordwalls_api';
+import Styling from '../style';
 
 import ChallengeDialogContainer from './challenges/dialog_container';
 import BlankSearchDialogContainer from './blanks/dialog_container';
@@ -105,6 +106,7 @@ interface TableCreatorProps {
   gameGoing: boolean;
   setLoadingData: (loading: boolean) => void;
   hideErrors: boolean;
+  displayStyle: Styling;
 }
 
 export interface TableCreatorRef {
@@ -462,6 +464,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
             redirectUrl={redirectUrl}
             api={api}
             disabled={props.gameGoing}
+            darkMode={props.displayStyle.darkMode}
           />
         );
 

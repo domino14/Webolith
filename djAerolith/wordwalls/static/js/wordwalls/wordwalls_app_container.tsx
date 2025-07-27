@@ -691,6 +691,7 @@ function WordwallsAppContainer({
         setLoadingData={setLoadingData}
         username={username}
         hideErrors={displayStyle.hideErrors}
+        displayStyle={displayStyle}
       />
       <WordwallsApp
         boardWidth={boardWidth}

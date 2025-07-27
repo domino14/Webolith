@@ -4,9 +4,10 @@ import { SearchTypesEnum, SearchTypesOrder } from 'wordvaultapp/search/types';
 
 interface SingleHelpNodeProps {
   searchType: number;
+  darkMode?: boolean;
 }
 
-function SingleHelpNode({ searchType }: SingleHelpNodeProps) {
+function SingleHelpNode({ searchType, darkMode = false }: SingleHelpNodeProps) {
   const searchTypeInfo = SearchTypesEnum.properties[searchType];
   const isHooks = searchTypeInfo.displayName === 'Contains Hooks';
   const isDefinition = searchTypeInfo.displayName === 'Definition Contains';
@@ -17,7 +18,7 @@ function SingleHelpNode({ searchType }: SingleHelpNodeProps) {
       <div style={{ lineHeight: '1.5' }}>{searchTypeInfo.description}</div>
 
       {isHooks && (
-        <div style={{ marginTop: '10px', paddingLeft: '10px', borderLeft: '3px solid #ddd' }}>
+        <div style={{ marginTop: '10px', paddingLeft: '10px', borderLeft: `3px solid ${darkMode ? '#7f8c8d' : '#ddd'}` }}>
           <strong>Hook Types:</strong>
           <ul style={{ marginTop: '5px' }}>
             <li>
@@ -38,7 +39,7 @@ function SingleHelpNode({ searchType }: SingleHelpNodeProps) {
       )}
 
       {isDefinition && (
-        <div style={{ marginTop: '10px', paddingLeft: '10px', borderLeft: '3px solid #ddd' }}>
+        <div style={{ marginTop: '10px', paddingLeft: '10px', borderLeft: `3px solid ${darkMode ? '#7f8c8d' : '#ddd'}` }}>
           <strong>How it works:</strong>
           <ul style={{ marginTop: '5px' }}>
             <li>Searches are case-insensitive</li>
@@ -56,9 +57,10 @@ function SingleHelpNode({ searchType }: SingleHelpNodeProps) {
 
 interface HelpTextProps {
   allowedSearchTypes: Set<number>;
+  darkMode?: boolean;
 }
 
-function HelpText({ allowedSearchTypes }: HelpTextProps) {
+function HelpText({ allowedSearchTypes, darkMode = false }: HelpTextProps) {
   const [showingText, setShowingText] = useState(false);
 
   const toggleShow = () => {
@@ -74,7 +76,7 @@ function HelpText({ allowedSearchTypes }: HelpTextProps) {
       if (!allowedSearchTypes.has(st)) {
         return null;
       }
-      return <SingleHelpNode key={st} searchType={st} />;
+      return <SingleHelpNode key={st} searchType={st} darkMode={darkMode} />;
     });
   };
 
@@ -101,7 +103,8 @@ function HelpText({ allowedSearchTypes }: HelpTextProps) {
       </button>
       {showingText && (
         <div style={{
-          backgroundColor: '#f8f9fa',
+          backgroundColor: darkMode ? '#2c3e50' : '#f8f9fa',
+          color: darkMode ? '#ecf0f1' : '#2c3e50',
           padding: '15px',
           borderRadius: '5px',
           marginTop: '10px',
