@@ -102,10 +102,7 @@
       "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
-      "typescript": {},
-      "webpack": {
-        "config": "../../webpack.config.babel.js"
-      }
+      "typescript": {}
     }
   }
 }

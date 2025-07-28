@@ -5,21 +5,26 @@
  */
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 /* eslint-disable import/no-import-module-exports */
-import React, {
-  useState, useRef, useEffect, useCallback,
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import $ from 'jquery';
 import _ from 'underscore';
 import Immutable from 'immutable';
 
-import backgroundURL, { darkBackgrounds, getAppropriateBackground } from './background';
+import backgroundURL, {
+  darkBackgrounds,
+  getAppropriateBackground,
+} from './background';
 import Styling from './style';
 import Presence from './presence';
 import WordwallsGame from './wordwalls_game';
 import WordwallsApp, { type WordwallsAppRef } from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
-import { applyDarkModeToExistingModals, setupDarkModeModalObserver, removeDarkModeFromExistingModals } from './modal_dark_mode';
+import {
+  applyDarkModeToExistingModals,
+  setupDarkModeModalObserver,
+  removeDarkModeFromExistingModals,
+} from './modal_dark_mode';
 import GuessEnum from './guess';
 import WordwallsAPI from './wordwalls_api';
 import WordwallsRPC from './wordwalls_rpc';
@@ -76,13 +81,6 @@ interface WordwallsAppContainerProps {
   availableLexica: AvailableLexicon[];
 }
 
-// TypeScript declaration for Webpack Hot Module Replacement
-declare const module: {
-  hot?: {
-    dispose: (callback: () => void) => void;
-  };
-};
-
 // Create game and presence instances
 const game = new WordwallsGame();
 const presence = new Presence();
@@ -101,7 +99,9 @@ function WordwallsAppContainer({
 }: WordwallsAppContainerProps) {
   const [gameGoing, setGameGoing] = useState(false);
   const [initialGameTime, setInitialGameTime] = useState(0);
-  const [origQuestions, setOrigQuestions] = useState(game.getOriginalQuestionState());
+  const [origQuestions, setOrigQuestions] = useState(
+    game.getOriginalQuestionState()
+  );
   const [curQuestions, setCurQuestions] = useState(game.getQuestionState());
   const [messages, setMessages] = useState(presence.getMessages());
   const [isChallenge, setIsChallenge] = useState(false);
@@ -111,7 +111,9 @@ function WordwallsAppContainer({
   const [wrongAnswers, setWrongAnswers] = useState(0);
   const [answeredBy, setAnsweredBy] = useState(game.getAnsweredBy());
   const [lastGuess, setLastGuess] = useState('');
-  const [lastGuessCorrectness, setLastGuessCorrectness] = useState(GuessEnum.NONE);
+  const [lastGuessCorrectness, setLastGuessCorrectness] = useState(
+    GuessEnum.NONE
+  );
 
   // Use refs to track current values for callbacks to avoid stale closures
   const lastGuessRef = useRef(lastGuess);
@@ -122,7 +124,9 @@ function WordwallsAppContainer({
   lastGuessCorrectnessRef.current = lastGuessCorrectness;
   const [challengeData, setChallengeData] = useState<ChallengeData>({});
   const [displayStyle, setDisplayStyleState] = useState(initialDisplayStyle);
-  const [defaultLexicon, setDefaultLexiconState] = useState(initialDefaultLexicon);
+  const [defaultLexicon, setDefaultLexiconState] = useState(
+    initialDefaultLexicon
+  );
   const [numberOfRounds, setNumberOfRounds] = useState(0);
   const [listName, setListNameState] = useState(initialListName);
   const [autoSave, setAutoSaveState] = useState(initialAutoSave);
@@ -133,7 +137,10 @@ function WordwallsAppContainer({
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const wwAppRef = useRef<WordwallsAppRef>(null);
-  const myTableCreatorRef = useRef<{ showModal:() => void; resetDialog: () => void }>(null);
+  const myTableCreatorRef = useRef<{
+    showModal: () => void;
+    resetDialog: () => void;
+  }>(null);
   const apiRef = useRef(new WordwallsAPI());
   const rpcRef = useRef(new WordwallsRPC(initialTablenum));
 
@@ -141,10 +148,13 @@ function WordwallsAppContainer({
     setWindowWidth(window.innerWidth);
   }, []);
 
-  const tableUrl = useCallback((optTablenum?: number): string => {
-    const currentTablenum = optTablenum || tablenum;
-    return `/wordwalls/table/${currentTablenum}/`;
-  }, [tablenum]);
+  const tableUrl = useCallback(
+    (optTablenum?: number): string => {
+      const currentTablenum = optTablenum || tablenum;
+      return `/wordwalls/table/${currentTablenum}/`;
+    },
+    [tablenum]
+  );
 
   const beforeUnload = useCallback(() => {
     if (gameGoing) {
@@ -162,43 +172,52 @@ function WordwallsAppContainer({
     }
   }, [gameGoing, autoSave, listName, tableUrl]);
 
-  const addMessage = useCallback((serverMsg: string, optType?: string, optSender?: string) => {
-    const message: TableMessage = {
-      author: optSender || '',
-      id: _.uniqueId('msg_'),
-      content: serverMsg,
-      type: optType || 'server',
-    };
-    presence.addMessage(message, false);
-    setMessages(presence.getMessages());
-  }, []);
+  const addMessage = useCallback(
+    (serverMsg: string, optType?: string, optSender?: string) => {
+      const message: TableMessage = {
+        author: optSender || '',
+        id: _.uniqueId('msg_'),
+        content: serverMsg,
+        type: optType || 'server',
+      };
+      presence.addMessage(message, false);
+      setMessages(presence.getMessages());
+    },
+    []
+  );
 
-  const maybeModifyGuess = useCallback((guess: string): string => {
-    // Strip whitespace from guess.
-    let newGuess = guess.replace(/\s/g, '');
+  const maybeModifyGuess = useCallback(
+    (guess: string): string => {
+      // Strip whitespace from guess.
+      let newGuess = guess.replace(/\s/g, '');
 
-    if (lexicon !== 'FISE2') {
+      if (lexicon !== 'FISE2') {
+        return newGuess;
+      }
+      // Replace.
+      newGuess = newGuess
+        .replace(/CH/g, '1')
+        .replace(/LL/g, '2')
+        .replace(/RR/g, '3');
       return newGuess;
-    }
-    // Replace.
-    newGuess = newGuess
-      .replace(/CH/g, '1')
-      .replace(/LL/g, '2')
-      .replace(/RR/g, '3');
-    return newGuess;
-  }, [lexicon]);
+    },
+    [lexicon]
+  );
 
-  const showAutosaveMessage = useCallback((autosaveEnabled: boolean) => {
-    if (autosaveEnabled) {
-      addMessage(
-        `Autosave is now on! Aerolith will save your
+  const showAutosaveMessage = useCallback(
+    (autosaveEnabled: boolean) => {
+      if (autosaveEnabled) {
+        addMessage(
+          `Autosave is now on! Aerolith will save your
         list progress to ${listName} at the end of every round.`,
-        'info',
-      );
-    } else {
-      addMessage('Autosave is off.', 'error');
-    }
-  }, [addMessage, listName]);
+          'info'
+        );
+      } else {
+        addMessage('Autosave is off.', 'error');
+      }
+    },
+    [addMessage, listName]
+  );
 
   const saveGame = useCallback(() => {
     if (listName === '') {
@@ -214,7 +233,7 @@ function WordwallsAppContainer({
       },
       dataType: 'json',
     })
-      .done((data) => {
+      .done(data => {
         if (data.success === true) {
           addMessage(`Saved as ${data.listname}`, 'info');
         }
@@ -222,7 +241,9 @@ function WordwallsAppContainer({
           addMessage(data.info);
         }
       })
-      .fail((jqXHR) => addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error'));
+      .fail(jqXHR =>
+        addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error')
+      );
   }, [listName, tableUrl, addMessage]);
 
   const processGameEnded = useCallback(() => {
@@ -235,134 +256,154 @@ function WordwallsAppContainer({
     }
     if (numberOfRounds === 1 && isChallenge) {
       // XXX: Kind of ugly, breaks encapsulation.
-      apiRef.current.call('/wordwalls/api/challengers_by_tablenum/', {
-        tablenum,
-        tiebreaker: displayStyle.hideErrors ? 'time' : 'errors',
-      }, 'GET').then((data) => setChallengeData(data))
-        .catch((error) => addMessage(error.message));
+      apiRef.current
+        .call(
+          '/wordwalls/api/challengers_by_tablenum/',
+          {
+            tablenum,
+            tiebreaker: displayStyle.hideErrors ? 'time' : 'errors',
+          },
+          'GET'
+        )
+        .then(data => setChallengeData(data))
+        .catch(error => addMessage(error.message));
     }
   }, [
-    gameGoing, autoSave, saveGame, numberOfRounds, isChallenge, tablenum,
-    displayStyle.hideErrors, addMessage,
+    gameGoing,
+    autoSave,
+    saveGame,
+    numberOfRounds,
+    isChallenge,
+    tablenum,
+    displayStyle.hideErrors,
+    addMessage,
   ]);
 
-  const handleGuessResponse = useCallback((data: {
-    g?: boolean;
-    C?: string;
-    w?: string;
-    s?: string;
-  }) => {
-    let endQuiz = false;
-    if (data.g === false) {
-      // The quiz has ended
-      endQuiz = true;
-    }
-    if (!_.has(data, 'C') || data.C === '') {
-      if (endQuiz) {
-        processGameEnded();
+  const handleGuessResponse = useCallback(
+    (data: { g?: boolean; C?: string; w?: string; s?: string }) => {
+      let endQuiz = false;
+      if (data.g === false) {
+        // The quiz has ended
+        endQuiz = true;
       }
-      return;
-    }
-    // guessTimer.removeTimer(data.reqId);
-    // data.C contains the alphagram.
-    const solved = game.solve(data.w!, data.C!, data.s!);
-    if (!solved) {
-      if (endQuiz) {
-        processGameEnded();
+      if (!_.has(data, 'C') || data.C === '') {
+        if (endQuiz) {
+          processGameEnded();
+        }
+        return;
       }
-      return;
-    }
-    setCurQuestions(game.getQuestionState());
-    setOrigQuestions(game.getOriginalQuestionState());
-    setAnsweredBy(game.getAnsweredBy());
-
-    // Use refs to get current state values instead of stale closure values
-    const currentLastGuess = lastGuessRef.current;
-    const currentLastGuessCorrectness = lastGuessCorrectnessRef.current;
-
-    if (currentLastGuessCorrectness === GuessEnum.PENDING) {
-      if (data.s === username) {
-        setLastGuessCorrectness(GuessEnum.CORRECT);
-      } else if (currentLastGuess === data.w) {
-        setLastGuessCorrectness(GuessEnum.ALREADYGUESSED);
-      } else {
-        setLastGuessCorrectness(GuessEnum.NONE);
+      // guessTimer.removeTimer(data.reqId);
+      // data.C contains the alphagram.
+      const solved = game.solve(data.w!, data.C!, data.s!);
+      if (!solved) {
+        if (endQuiz) {
+          processGameEnded();
+        }
+        return;
       }
-    }
-    if (endQuiz) {
-      processGameEnded();
-    }
-  }, [processGameEnded, lastGuessCorrectness, lastGuess, username]);
-
-  const submitGuess = useCallback((guess: string) => {
-    rpcRef.current.guess(guess, wrongAnswers)
-      .then((result) => handleGuessResponse(result))
-      .catch((error) => {
-        addMessage(error.message);
-      });
-  }, [wrongAnswers, handleGuessResponse, addMessage]);
-
-  const handleStartReceived = useCallback((data: {
-    serverMsg?: string;
-    questions?: unknown;
-    gameType?: string;
-    time?: number;
-  }) => {
-    if (gameGoing) {
-      return;
-    }
-    if (_.has(data, 'serverMsg')) {
-      addMessage(data.serverMsg!);
-    }
-    if (_.has(data, 'questions')) {
-      game.init(data.questions, data.gameType);
-      setNumberOfRounds((prev) => prev + 1);
-      setOrigQuestions(game.getOriginalQuestionState());
       setCurQuestions(game.getQuestionState());
+      setOrigQuestions(game.getOriginalQuestionState());
       setAnsweredBy(game.getAnsweredBy());
-      setTotalWords(game.getTotalNumWords());
-      setWrongAnswers(0);
 
-      wwAppRef.current?.setGuessBoxFocus();
-      window.Intercom('trackEvent', 'started-game', {
-        isChallenge: data.gameType && data.gameType.includes('challenge'),
-        listname: listName,
-        multiplayer: false,
-      });
-    }
+      // Use refs to get current state values instead of stale closure values
+      const currentLastGuess = lastGuessRef.current;
+      const currentLastGuessCorrectness = lastGuessCorrectnessRef.current;
 
-    if (_.has(data, 'time')) {
-      // Convert time to milliseconds.
-      setInitialGameTime(data.time! * 1000);
-      setGameGoing(true);
-    }
-    if (_.has(data, 'gameType')) {
-      setIsChallenge(data.gameType!.includes('challenge'));
-      setIsBuild(data.gameType!.includes('build'));
-      setIsTyping(data.gameType!.includes('typing'));
-    }
-  }, [gameGoing, addMessage, listName]);
+      if (currentLastGuessCorrectness === GuessEnum.PENDING) {
+        if (data.s === username) {
+          setLastGuessCorrectness(GuessEnum.CORRECT);
+        } else if (currentLastGuess === data.w) {
+          setLastGuessCorrectness(GuessEnum.ALREADYGUESSED);
+        } else {
+          setLastGuessCorrectness(GuessEnum.NONE);
+        }
+      }
+      if (endQuiz) {
+        processGameEnded();
+      }
+    },
+    [processGameEnded, lastGuessCorrectness, lastGuess, username]
+  );
+
+  const submitGuess = useCallback(
+    (guess: string) => {
+      rpcRef.current
+        .guess(guess, wrongAnswers)
+        .then(result => handleGuessResponse(result))
+        .catch(error => {
+          addMessage(error.message);
+        });
+    },
+    [wrongAnswers, handleGuessResponse, addMessage]
+  );
+
+  const handleStartReceived = useCallback(
+    (data: {
+      serverMsg?: string;
+      questions?: unknown;
+      gameType?: string;
+      time?: number;
+    }) => {
+      if (gameGoing) {
+        return;
+      }
+      if (_.has(data, 'serverMsg')) {
+        addMessage(data.serverMsg!);
+      }
+      if (_.has(data, 'questions')) {
+        game.init(data.questions, data.gameType);
+        setNumberOfRounds(prev => prev + 1);
+        setOrigQuestions(game.getOriginalQuestionState());
+        setCurQuestions(game.getQuestionState());
+        setAnsweredBy(game.getAnsweredBy());
+        setTotalWords(game.getTotalNumWords());
+        setWrongAnswers(0);
+
+        wwAppRef.current?.setGuessBoxFocus();
+        window.Intercom('trackEvent', 'started-game', {
+          isChallenge: data.gameType && data.gameType.includes('challenge'),
+          listname: listName,
+          multiplayer: false,
+        });
+      }
+
+      if (_.has(data, 'time')) {
+        // Convert time to milliseconds.
+        setInitialGameTime(data.time! * 1000);
+        setGameGoing(true);
+      }
+      if (_.has(data, 'gameType')) {
+        setIsChallenge(data.gameType!.includes('challenge'));
+        setIsBuild(data.gameType!.includes('build'));
+        setIsTyping(data.gameType!.includes('typing'));
+      }
+    },
+    [gameGoing, addMessage, listName]
+  );
 
   const timerRanOut = useCallback(() => {
-    rpcRef.current.timerRanOut()
+    rpcRef.current
+      .timerRanOut()
       .then(() => processGameEnded())
-      .catch((error) => {
+      .catch(error => {
         addMessage(error.message);
       });
   }, [processGameEnded, addMessage]);
 
   const handleStart = useCallback(() => {
-    rpcRef.current.startGame()
-      .then((result) => handleStartReceived(result))
-      .catch((error) => {
+    rpcRef.current
+      .startGame()
+      .then(result => handleStartReceived(result))
+      .catch(error => {
         addMessage(error.message);
       });
   }, [handleStartReceived, addMessage]);
 
   const handleGiveup = useCallback(() => {
-    rpcRef.current.giveUp()
+    rpcRef.current
+      .giveUp()
       .then(() => processGameEnded())
-      .catch((error) => {
+      .catch(error => {
         addMessage(error.message);
       });
   }, [processGameEnded, addMessage]);
@@ -372,7 +413,7 @@ function WordwallsAppContainer({
   }, []);
 
   const handleAutoSaveToggle = useCallback(() => {
-    setAutoSaveState((prevAutoSave) => {
+    setAutoSaveState(prevAutoSave => {
       const newAutoSave = !prevAutoSave;
       if (newAutoSave && !listName) {
         return false; // There is no list name, don't toggle the checkbox.
@@ -407,181 +448,218 @@ function WordwallsAppContainer({
     wwAppRef.current?.setGuessBoxFocus();
   }, [displayStyle.customTileOrder]);
 
-  const handleLoadNewList = useCallback((data: {
-    tablenum: number;
-    list_name: string;
-    lexicon: string;
-    autosave: boolean;
-    multiplayer: boolean;
-  }) => {
-    let changeUrl = false;
-    const oldTablenum = tablenum;
-    if (data.tablenum !== oldTablenum) {
-      changeUrl = true;
-    }
-    setListNameState(data.list_name);
-    setLexiconState(data.lexicon);
-    setAutoSaveState(data.autosave && !data.multiplayer);
-    setTablenumState(data.tablenum);
-    setNumberOfRounds(0);
-    setCurQuestions(Immutable.List());
-
-    addMessage(`Loaded new list: ${data.list_name}`, 'info');
-    showAutosaveMessage(data.autosave);
-
-    if (changeUrl) {
-      window.history.replaceState(
-        {},
-        `Table ${data.tablenum}`,
-        tableUrl(data.tablenum),
-      );
-      rpcRef.current.setTablenum(data.tablenum);
-      document.title = `Wordwalls - table ${data.tablenum}`;
-    }
-    window.Intercom('trackEvent', 'loaded-new-list', {
-      listName: data.list_name,
-      multiplayer: false,
-    });
-  }, [tablenum, addMessage, showAutosaveMessage, tableUrl]);
-
-  const onGuessSubmit = useCallback((guess: string) => {
-    const modifiedGuess = maybeModifyGuess(guess);
-    if (!gameGoing) {
-      // Don't bother submitting guess if the game is over.
-      return;
-    }
-    const hadOctothorp = modifiedGuess.endsWith('#');
-    setLastGuess(guess);
-    setLastGuessCorrectness(GuessEnum.PENDING);
-
-    let finalGuess = modifiedGuess;
-    if (hadOctothorp) {
-      // Remove the octothorp.
-      finalGuess = modifiedGuess.substr(0, modifiedGuess.length - 1);
-    }
-
-    if (!game.answerExists(finalGuess)) {
-      // If the guess wasn't valid, don't bother submitting it to
-      // the server.
-      if (game.originalAnswerExists(finalGuess)) {
-        setLastGuessCorrectness(GuessEnum.ALREADYGUESSED);
-      } else {
-        if (game.markPotentialIncorrectGuess(finalGuess)) {
-          setWrongAnswers((prev) => prev + 1);
-        }
-        setLastGuessCorrectness(GuessEnum.INCORRECT);
+  const handleLoadNewList = useCallback(
+    (data: {
+      tablenum: number;
+      list_name: string;
+      lexicon: string;
+      autosave: boolean;
+      multiplayer: boolean;
+    }) => {
+      let changeUrl = false;
+      const oldTablenum = tablenum;
+      if (data.tablenum !== oldTablenum) {
+        changeUrl = true;
       }
-      return;
-    }
+      setListNameState(data.list_name);
+      setLexiconState(data.lexicon);
+      setAutoSaveState(data.autosave && !data.multiplayer);
+      setTablenumState(data.tablenum);
+      setNumberOfRounds(0);
+      setCurQuestions(Immutable.List());
 
-    if (displayStyle.requireOctothorp && !isChallenge) {
-      const isCSW = game.isCSW(finalGuess);
-      if ((isCSW && !hadOctothorp) || (!isCSW && hadOctothorp)) {
-        // If the word the user guessed is CSW but doesn't include an
-        // octothorp, and the user's settings require an octothorp,
-        // mark it zero, dude. (Or, the other way around).
-        setLastGuessCorrectness(GuessEnum.INCORRECT_LEXICON_SYMBOL);
+      addMessage(`Loaded new list: ${data.list_name}`, 'info');
+      showAutosaveMessage(data.autosave);
+
+      if (changeUrl) {
+        window.history.replaceState(
+          {},
+          `Table ${data.tablenum}`,
+          tableUrl(data.tablenum)
+        );
+        rpcRef.current.setTablenum(data.tablenum);
+        document.title = `Wordwalls - table ${data.tablenum}`;
+      }
+      window.Intercom('trackEvent', 'loaded-new-list', {
+        listName: data.list_name,
+        multiplayer: false,
+      });
+    },
+    [tablenum, addMessage, showAutosaveMessage, tableUrl]
+  );
+
+  const onGuessSubmit = useCallback(
+    (guess: string) => {
+      const modifiedGuess = maybeModifyGuess(guess);
+      if (!gameGoing) {
+        // Don't bother submitting guess if the game is over.
         return;
       }
-    }
-    submitGuess(finalGuess);
-  }, [maybeModifyGuess, gameGoing, displayStyle.requireOctothorp, isChallenge, submitGuess]);
+      const hadOctothorp = modifiedGuess.endsWith('#');
+      setLastGuess(guess);
+      setLastGuessCorrectness(GuessEnum.PENDING);
 
-  const onHotKey = useCallback((key: string) => {
-    // Hot key map.
-    const fnMap: Record<string, () => void> = {
-      1: handleShuffleAll,
-      2: handleAlphagram,
-      3: handleCustomOrder,
-    };
-    fnMap[key]?.();
-  }, [handleShuffleAll, handleAlphagram, handleCustomOrder]);
+      let finalGuess = modifiedGuess;
+      if (hadOctothorp) {
+        // Remove the octothorp.
+        finalGuess = modifiedGuess.substr(0, modifiedGuess.length - 1);
+      }
+
+      if (!game.answerExists(finalGuess)) {
+        // If the guess wasn't valid, don't bother submitting it to
+        // the server.
+        if (game.originalAnswerExists(finalGuess)) {
+          setLastGuessCorrectness(GuessEnum.ALREADYGUESSED);
+        } else {
+          if (game.markPotentialIncorrectGuess(finalGuess)) {
+            setWrongAnswers(prev => prev + 1);
+          }
+          setLastGuessCorrectness(GuessEnum.INCORRECT);
+        }
+        return;
+      }
+
+      if (displayStyle.requireOctothorp && !isChallenge) {
+        const isCSW = game.isCSW(finalGuess);
+        if ((isCSW && !hadOctothorp) || (!isCSW && hadOctothorp)) {
+          // If the word the user guessed is CSW but doesn't include an
+          // octothorp, and the user's settings require an octothorp,
+          // mark it zero, dude. (Or, the other way around).
+          setLastGuessCorrectness(GuessEnum.INCORRECT_LEXICON_SYMBOL);
+          return;
+        }
+      }
+      submitGuess(finalGuess);
+    },
+    [
+      maybeModifyGuess,
+      gameGoing,
+      displayStyle.requireOctothorp,
+      isChallenge,
+      submitGuess,
+    ]
+  );
+
+  const onHotKey = useCallback(
+    (key: string) => {
+      // Hot key map.
+      const fnMap: Record<string, () => void> = {
+        1: handleShuffleAll,
+        2: handleAlphagram,
+        3: handleCustomOrder,
+      };
+      fnMap[key]?.();
+    },
+    [handleShuffleAll, handleAlphagram, handleCustomOrder]
+  );
 
   const onShuffleQuestion = useCallback((idx: number) => {
     game.shuffle(idx);
     setCurQuestions(game.getQuestionState());
   }, []);
 
-  const setDisplayStyle = useCallback((style: Styling) => {
-    // Check if dark mode changed
-    const darkModeChanged = displayStyle.darkMode !== style.darkMode;
+  const setDisplayStyle = useCallback(
+    (style: Styling) => {
+      // Check if dark mode changed
+      const darkModeChanged = displayStyle.darkMode !== style.darkMode;
 
-    // If dark mode changed, update the body class and adjust backgrounds if needed
-    if (darkModeChanged) {
-      if (style.darkMode) {
-        document.body.classList.add('dark-mode');
-        // Set appropriate backgrounds for dark mode if we're not already using dark backgrounds
-        if (!darkBackgrounds.has(style.background)) {
-          style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
+      // If dark mode changed, update the body class and adjust backgrounds if needed
+      if (darkModeChanged) {
+        if (style.darkMode) {
+          document.body.classList.add('dark-mode');
+          // Set appropriate backgrounds for dark mode if we're not already using dark backgrounds
+          if (!darkBackgrounds.has(style.background)) {
+            style.setStyleKey(
+              'background',
+              getAppropriateBackground(style.background, true, false)
+            );
+          }
+          if (!darkBackgrounds.has(style.bodyBackground)) {
+            style.setStyleKey(
+              'bodyBackground',
+              getAppropriateBackground(style.bodyBackground, true, true)
+            );
+          }
+        } else {
+          document.body.classList.remove('dark-mode');
+          // If we were using dark backgrounds, switch to light ones
+          if (darkBackgrounds.has(style.background)) {
+            style.setStyleKey(
+              'background',
+              getAppropriateBackground(style.background, false, false)
+            );
+          }
+          if (darkBackgrounds.has(style.bodyBackground)) {
+            style.setStyleKey(
+              'bodyBackground',
+              getAppropriateBackground(style.bodyBackground, false, true)
+            );
+          }
         }
-        if (!darkBackgrounds.has(style.bodyBackground)) {
-          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
-        }
-      } else {
-        document.body.classList.remove('dark-mode');
-        // If we were using dark backgrounds, switch to light ones
-        if (darkBackgrounds.has(style.background)) {
-          style.setStyleKey('background', getAppropriateBackground(style.background, false, false));
-        }
-        if (darkBackgrounds.has(style.bodyBackground)) {
-          style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, false, true));
+
+        // Dark mode preference is stored in the database via the AJAX call below
+
+        // Apply or remove dark mode for modals
+        if (style.darkMode) {
+          setTimeout(() => {
+            applyDarkModeToExistingModals();
+            setupDarkModeModalObserver();
+          }, 100);
+        } else {
+          // When switching back to light mode, explicitly remove dark mode from modals
+          setTimeout(() => {
+            removeDarkModeFromExistingModals();
+          }, 100);
         }
       }
 
-      // Dark mode preference is stored in the database via the AJAX call below
+      setDisplayStyleState(style);
+      // Also persist to the backend.
+      $.ajax({
+        url: '/wordwalls/api/configure/',
+        method: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(style),
+        contentType: 'application/json; charset=utf-8',
+      });
+      $('body').css({
+        'background-image': backgroundURL(style.bodyBackground),
+      });
+    },
+    [displayStyle.darkMode]
+  );
 
-      // Apply or remove dark mode for modals
-      if (style.darkMode) {
-        setTimeout(() => {
-          applyDarkModeToExistingModals();
-          setupDarkModeModalObserver();
-        }, 100);
-      } else {
-        // When switching back to light mode, explicitly remove dark mode from modals
-        setTimeout(() => {
-          removeDarkModeFromExistingModals();
-        }, 100);
-      }
-    }
+  const setDefaultLexicon = useCallback(
+    (lexID: number) => {
+      apiRef.current
+        .call('/accounts/profile/set_default_lexicon/', {
+          defaultLexicon: lexID,
+        })
+        .then(() => setDefaultLexiconState(lexID))
+        .catch(error => addMessage(error.message));
+    },
+    [addMessage]
+  );
 
-    setDisplayStyleState(style);
-    // Also persist to the backend.
-    $.ajax({
-      url: '/wordwalls/api/configure/',
-      method: 'POST',
-      dataType: 'json',
-      data: JSON.stringify(style),
-      contentType: 'application/json; charset=utf-8',
-    });
-    $('body').css({
-      'background-image': backgroundURL(style.bodyBackground),
-    });
-  }, [displayStyle.darkMode]);
-
-  const setDefaultLexicon = useCallback((lexID: number) => {
-    apiRef.current.call('/accounts/profile/set_default_lexicon/', {
-      defaultLexicon: lexID,
-    }).then(() => setDefaultLexiconState(lexID))
-      .catch((error) => addMessage(error.message));
-  }, [addMessage]);
-
-  const markMissed = useCallback((alphaIdx: number, alphagram: string) => {
-    // Mark the alphagram missed.
-    $.ajax({
-      url: `${tableUrl()}missed/`,
-      method: 'POST',
-      dataType: 'json',
-      data: {
-        idx: alphaIdx,
-      },
-    })
-      .done((data) => {
+  const markMissed = useCallback(
+    (alphaIdx: number, alphagram: string) => {
+      // Mark the alphagram missed.
+      $.ajax({
+        url: `${tableUrl()}missed/`,
+        method: 'POST',
+        dataType: 'json',
+        data: {
+          idx: alphaIdx,
+        },
+      }).done(data => {
         if (data.success === true) {
           game.miss(alphagram);
           setOrigQuestions(game.getOriginalQuestionState());
         }
       });
-  }, [tableUrl]);
+    },
+    [tableUrl]
+  );
 
   const resetTableCreator = useCallback(() => {
     myTableCreatorRef.current?.resetDialog();
@@ -601,7 +679,11 @@ function WordwallsAppContainer({
     const handleKeydown = (e: JQuery.KeyDownEvent) => {
       if (e.which === 8) {
         // 8 == backspace
-        if (e.target.tagName !== 'INPUT' || e.target.disabled || e.target.readOnly) {
+        if (
+          e.target.tagName !== 'INPUT' ||
+          e.target.disabled ||
+          e.target.readOnly
+        ) {
           e.preventDefault();
         }
       }
@@ -638,7 +720,13 @@ function WordwallsAppContainer({
       window.removeEventListener('resize', handleResize);
       $(document).unbind('keydown keypress', handleKeydown);
     };
-  }, [beforeUnload, handleResize, displayStyle.bodyBackground, displayStyle.darkMode, tablenum]);
+  }, [
+    beforeUnload,
+    handleResize,
+    displayStyle.bodyBackground,
+    displayStyle.darkMode,
+    tablenum,
+  ]);
 
   // Calculate board width, height, grid dimensions from window
   // dimensions.
@@ -666,16 +754,16 @@ function WordwallsAppContainer({
   const boardHeight = questionHeight * boardGridHeight;
   game.setMaxOnScreenQuestions(boardGridWidth * boardGridHeight);
   // Add dark-mode class to container if dark mode is enabled
-  const containerClasses = `wordwalls-app-container${displayStyle.darkMode ? ' dark-mode-container' : ''}`;
+  const containerClasses = `wordwalls-app-container${
+    displayStyle.darkMode ? ' dark-mode-container' : ''
+  }`;
 
   return (
     <div
       className={containerClasses}
       data-display-style={JSON.stringify(displayStyle)}
     >
-      <Spinner
-        visible={loadingData}
-      />
+      <Spinner visible={loadingData} />
       <TableCreator
         // Normally this is invisible. It is shown by the
         // new-button modal or other conditions (route).
@@ -733,7 +821,9 @@ function WordwallsAppContainer({
         handleShuffleAll={handleShuffleAll}
         handleAlphagram={handleAlphagram}
         handleCustomOrder={handleCustomOrder}
-        tableMessages={messages.get('table', Immutable.List()).toJS() as TableMessage[]}
+        tableMessages={
+          messages.get('table', Immutable.List()).toJS() as TableMessage[]
+        }
         ref={wwAppRef}
       />
     </div>

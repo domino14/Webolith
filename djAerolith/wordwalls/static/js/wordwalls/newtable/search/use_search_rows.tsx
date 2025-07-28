@@ -1,10 +1,10 @@
-import * as React from "react";
+import React from 'react';
 import {
   optionType,
   SearchCriterion,
   searchCriterionToAdd,
   SearchTypesEnum,
-} from "./types";
+} from 'wordvaultapp/search/types';
 
 const maybeReorderCriteria = (searchCriteria: SearchCriterion[]) => {
   // Matching anagram must always come last.
@@ -12,8 +12,8 @@ const maybeReorderCriteria = (searchCriteria: SearchCriterion[]) => {
   const toPushBack: SearchCriterion[] = [];
   searchCriteria.forEach((val) => {
     if (
-      val.searchType === SearchTypesEnum.MATCHING_ANAGRAM ||
-      val.searchType === SearchTypesEnum.PROBABILITY_LIMIT
+      val.searchType === SearchTypesEnum.MATCHING_ANAGRAM
+      || val.searchType === SearchTypesEnum.PROBABILITY_LIMIT
     ) {
       toPushBack.push(val);
     } else {
@@ -25,10 +25,10 @@ const maybeReorderCriteria = (searchCriteria: SearchCriterion[]) => {
 
 function useSearchRows(
   initialCriteria: SearchCriterion[],
-  allowedSearchTypes: Set<number>
+  allowedSearchTypes: Set<number>,
 ) {
   const [searchCriteria, setSearchCriteria] = React.useState(
-    initialCriteria.map((sc) => sc.deepCopy())
+    initialCriteria.map((sc) => sc.deepCopy()),
   );
 
   const addSearchRow = () => {
@@ -42,7 +42,7 @@ function useSearchRows(
 
   const removeSearchRow = (criteriaIndex: number) => {
     const newCriteria = searchCriteria.filter(
-      (_, index) => index !== criteriaIndex
+      (_, index) => index !== criteriaIndex,
     );
     setSearchCriteria(newCriteria);
   };
@@ -50,7 +50,7 @@ function useSearchRows(
   const searchParamChange = (
     index: number,
     paramName: string,
-    paramValue: optionType
+    paramValue: optionType,
   ) => {
     const updatedCriteria = searchCriteria.map((criterion, idx) => {
       if (idx === index) {

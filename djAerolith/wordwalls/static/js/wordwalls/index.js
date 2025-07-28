@@ -1,3 +1,4 @@
+import './jquery-setup.js'; // Set up jQuery first
 import 'bootstrap'; // Needed by the app, so load it here.
 
 import App from './app';
