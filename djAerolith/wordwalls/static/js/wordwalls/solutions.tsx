@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import Solution from './solution';
 import { type ImmutableWord, type ImmutableQuestion } from './immutable-types';

@@ -1,11 +1,8 @@
-import $ from 'jquery';
+import { ajaxUtils } from './ajax_utils';
 
 const log = (obj: unknown): void => {
-  $.ajax({
-    url: '/wordwalls/log/',
-    data: JSON.stringify(obj),
-    method: 'POST',
-    contentType: 'application/json; charset=utf-8',
+  ajaxUtils.postJson('/wordwalls/log/', { data: obj }).catch(() => {
+    // Ignore logging errors
   });
 };
 

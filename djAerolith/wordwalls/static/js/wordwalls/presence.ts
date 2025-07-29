@@ -2,7 +2,7 @@
  * @fileOverview Helper class for dealing with Presence inside game tables,
  * the lobby, etc.
  */
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 const MAX_MESSAGES = 200;
 

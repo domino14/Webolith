@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 import _ from 'underscore';
 
 import SVGBoard from '../svg_board';
@@ -175,7 +175,7 @@ function WordwallsSettings({
     letRem = (
       <span className="text-success">
         <i
-          className="glyphicon glyphicon-ok"
+          className="bi bi-check"
           aria-hidden="true"
         />
       </span>
@@ -325,7 +325,7 @@ function WordwallsSettings({
             </div>
 
             <div className="row">
-              <div className="col-xs-12 col-sm-6">
+              <div className="col-12 col-sm-6">
                 <Checkbox
                   id="showErrors"
                   name="showErrors"
@@ -336,7 +336,7 @@ function WordwallsSettings({
                 />
               </div>
 
-              <div className="col-xs-12 col-sm-6">
+              <div className="col-12 col-sm-6">
                 <Checkbox
                   id="darkMode"
                   name="darkMode"

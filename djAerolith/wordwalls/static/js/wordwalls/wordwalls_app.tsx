@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import ListSaveBar from './topbar/save_list';
 import SettingsCog from './topbar/settings_cog';
@@ -135,7 +135,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
 
   const renderTopNav = () => (
     <div className="row">
-      <div className="col-xs-6 col-sm-5 col-md-5 col-lg-5">
+      <div className="col-6 col-sm-5 col-md-5 col-lg-5">
         <ListSaveBar
           listName={listName}
           autoSave={autoSave}
@@ -145,7 +145,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
         />
       </div>
       <div
-        className="col-xs-1 col-sm-1 col-md-1 col-lg-1"
+        className="col-1 col-sm-1 col-md-1 col-lg-1"
         style={{
           marginTop: '-4px',
         }}
@@ -156,8 +156,8 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
         />
       </div>
       <div
-        className="col-xs-4 col-sm-4 col-sm-offset-2 col-md-3
-          col-md-offset-3 col-lg-2"
+        className="col-4 col-sm-4 offset-sm-2 col-md-3
+          offset-md-3 col-lg-2"
         style={{ whiteSpace: 'nowrap' }}
       >
         <GiveUpButton
@@ -176,7 +176,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
   const renderLeftSide = () => (
     <div>
       <div className="row">
-        <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div className="col-12 col-sm-12 col-md-12 col-lg-12">
           <GameArea
             numberOfRounds={numberOfRounds}
             isChallenge={isChallenge}
@@ -212,7 +212,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
           marginTop: '4px',
         }}
       >
-        <div className="col-xs-7 col-sm-6 col-md-6 col-lg-5">
+        <div className="col-7 col-sm-6 col-md-6 col-lg-5">
           <GuessBox
             onGuessSubmit={onGuessSubmit}
             lastGuess={lastGuess}
@@ -222,7 +222,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
           />
         </div>
         <div
-          className="col-xs-5 col-sm-6 col-md-6 col-lg-7"
+          className="col-5 col-sm-6 col-md-6 col-lg-7"
           style={{
             marginTop: '-3px',
           }}
@@ -236,7 +236,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
       </div>
 
       <div className="row" style={{ marginTop: '4px' }}>
-        <div className="col-xs-12">
+        <div className="col-12">
           <ChatBox messages={tableMessages} />
         </div>
       </div>
@@ -264,21 +264,21 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
   return (
     <div>
       <div className="row">
-        <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+        <div className="col-12 col-sm-9 col-md-9 col-lg-9">
           {renderTopNav()}
         </div>
       </div>
       <div className="row">
-        <div className="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+        <div className="col-12 col-sm-9 col-md-9 col-lg-9">
           {renderLeftSide()}
         </div>
-        <div className="hidden-xs col-sm-3 col-md-3 col-lg-2">
+        <div className="d-none d-sm-block col-sm-3 col-md-3 col-lg-2">
           {renderRightSide()}
         </div>
       </div>
 
-      <div className="row visible-xs-block">
-        <div className="col-xs-12">
+      <div className="row d-block d-sm-none">
+        <div className="col-12">
           <ReducedUserBox
             numCorrect={getNumCorrectAnswers()}
             wrongAnswers={wrongAnswers}

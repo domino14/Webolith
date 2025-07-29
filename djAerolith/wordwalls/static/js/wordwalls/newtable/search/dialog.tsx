@@ -16,7 +16,7 @@ function PlayButton({ onSearchSubmit, disabled }: PlayButtonProps) {
       className="btn btn-primary submit-word-search"
       style={{ marginTop: '0.75em' }}
       onClick={onSearchSubmit}
-      data-dismiss="modal"
+      data-bs-dismiss="modal"
       disabled={disabled}
     >
       Play!
@@ -36,7 +36,7 @@ function FlashcardButton({ onFlashcardSubmit, disabled }: FlashcardButtonProps) 
       className="btn btn-info"
       style={{ marginTop: '0.75em', marginLeft: '1em' }}
       onClick={onFlashcardSubmit}
-      data-dismiss="modal"
+      data-bs-dismiss="modal"
       disabled={disabled}
     >
       Flashcard

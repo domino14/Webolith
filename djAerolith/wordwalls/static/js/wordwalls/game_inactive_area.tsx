@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import SolutionsModal from './solutions_modal';
 import ChallengeResultsModal from './challenge_results_modal';

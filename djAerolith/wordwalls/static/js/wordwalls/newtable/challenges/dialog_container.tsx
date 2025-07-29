@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback, useMemo,
+  useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef,
 } from 'react';
 import moment from 'moment';
 
@@ -41,7 +41,11 @@ interface ChallengeDialogContainerProps {
   notifyError: (error: Error | string) => void;
 }
 
-function ChallengeDialogContainer({
+export interface ChallengeDialogContainerRef {
+  refreshData: () => void;
+}
+
+const ChallengeDialogContainer = forwardRef<ChallengeDialogContainerRef, ChallengeDialogContainerProps>(({
   challengeInfo,
   availableLexica,
   showSpinner,
@@ -54,9 +58,9 @@ function ChallengeDialogContainer({
   lexicon,
   preSubmitHook,
   notifyError,
-}: ChallengeDialogContainerProps) {
+}, ref) => {
   const [currentDate, setCurrentDate] = useState(() => moment());
-  const [challengesDoneAtDate, setChallengesDoneAtDate] = useState<unknown[]>([]);
+  const [challengesDoneAtDate, setChallengesDoneAtDate] = useState<{challengeID: number}[]>([]);
   const [currentChallenge, setCurrentChallenge] = useState<number>(0);
   const [challengeLeaderboardData, setChallengeLeaderboardData] = useState<object>({});
   const [specialChallengeInfo, setSpecialChallengeInfo] = useState<ChallengeInfo[]>([]);
@@ -151,6 +155,14 @@ function ChallengeDialogContainer({
 
   const handleChallengeSelected = (challID: number) => () => onChallengeSelected(challID);
 
+  useImperativeHandle(ref, () => ({
+    refreshData: () => {
+      loadChallengePlayedInfo();
+      loadSpecialChallenges();
+      loadChallengeLeaderboardData();
+    },
+  }));
+
   return (
     <ChallengeDialog
       challengeInfo={challengeInfo}
@@ -168,6 +180,8 @@ function ChallengeDialogContainer({
       availableLexica={availableLexica}
     />
   );
-}
+});
+
+ChallengeDialogContainer.displayName = 'ChallengeDialogContainer';
 
 export default ChallengeDialogContainer;

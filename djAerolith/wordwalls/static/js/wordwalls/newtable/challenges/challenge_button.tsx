@@ -15,6 +15,7 @@ interface ChallengeButtonProps {
   onClick: (challengeId: number) => () => void;
   solvedChallenges: number[];
   selectedChallenge: number;
+  size?: ButtonSize;
 }
 
 function ChallengeButton({
@@ -22,8 +23,10 @@ function ChallengeButton({
   onClick,
   solvedChallenges,
   selectedChallenge,
+  size,
 }: ChallengeButtonProps) {
   let extraClassName = '';
+  let customStyle: React.CSSProperties = {};
   const challengeName = challenge.name;
   let displayName = challengeName;
   const matches = TODAY_REGEX.exec(challengeName);
@@ -36,15 +39,25 @@ function ChallengeButton({
   if (selectedChallenge === challenge.id) {
     extraClassName = 'btn-info';
   } else if (solvedChallenges.includes(challenge.id)) {
-    extraClassName = 'btn-link';
+    extraClassName = 'btn-outline-primary';
+    customStyle = {
+      backgroundColor: '#f8f9fa',
+      borderColor: '#dee2e6',
+      color: '#495057',
+      opacity: 0.8,
+    };
   } else {
-    extraClassName = 'btn-default';
+    extraClassName = 'btn-outline-primary';
   }
-  const btnClassName = `btn ${extraClassName}`;
+  let btnClassName = `btn ${extraClassName}`;
+  if (size === 'xs' || size === 'sm') {
+    btnClassName += ' btn-sm';
+  }
   return (
     <button
       type="button"
       className={btnClassName}
+      style={customStyle}
       onClick={onClick(challenge.id)}
     >
       {displayName}
@@ -72,8 +85,11 @@ function ChallengeButtonRow({
   selectedChallenge,
 }: ChallengeButtonRowProps) {
   let groupClassName = 'btn-group';
-  if (size !== 'md') {
-    groupClassName += ` btn-group-${size}`;
+  // Bootstrap 5 removed btn-group-xs, we'll use btn-group-sm for xs
+  if (size === 'xs' || size === 'sm') {
+    groupClassName += ' btn-group-sm';
+  } else if (size === 'lg') {
+    groupClassName += ' btn-group-lg';
   }
   // Create button row.
   const buttons: React.ReactElement[] = [];
@@ -85,6 +101,7 @@ function ChallengeButtonRow({
       onClick={onChallengeClick}
       solvedChallenges={solvedChallenges}
       selectedChallenge={selectedChallenge}
+      size={size}
     />);
   });
 
@@ -93,7 +110,7 @@ function ChallengeButtonRow({
       <div className="col-sm-12">
         <div className="row">
           <div className="col-sm-12">
-            <span className="label label-default">{title}</span>
+            <span className="badge bg-secondary">{title}</span>
           </div>
         </div>
 

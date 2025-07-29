@@ -54,7 +54,7 @@ function ListSaveBar({
   let inputStyle: React.CSSProperties;
   let pencilStyle: React.CSSProperties;
   let saveStyle: React.CSSProperties;
-  let saveClass = 'hovertip hidden-md hidden-lg';
+  let saveClass = 'hovertip d-none d-lg-block';
   let listNameContainerClass: string = '';
   let saveContainerClass: string = '';
 
@@ -89,12 +89,12 @@ function ListSaveBar({
     inputStyle = {
       display: 'none',
     };
-    listNameContainerClass = 'col-xs-10 col-md-8';
-    saveContainerClass = 'col-xs-2 col-md-4';
+    listNameContainerClass = 'col-10 col-md-8';
+    saveContainerClass = 'col-2 col-md-4';
   }
 
   if (autoSave) {
-    saveClass = 'text-success hovertip hidden-md hidden-lg';
+    saveClass = 'text-success hovertip d-none d-lg-block';
   }
 
   if (disableEditing) {
@@ -105,7 +105,7 @@ function ListSaveBar({
       display: 'none',
     };
     listNameTitle = 'You cannot change or save a list in a multiplayer table.';
-    listNameContainerClass = 'col-xs-12 col-md-12';
+    listNameContainerClass = 'col-12 col-md-12';
     saveContainerClass = 'hidden';
   } else {
     listNameTitle = `This is the name of the word list. You can click the
@@ -121,16 +121,16 @@ function ListSaveBar({
         <div
           style={listNameStyle}
           className="hovertip"
-          data-toggle="tooltip"
+          data-bs-toggle="tooltip"
           title={listNameTitle}
         >
           {listName}
         </div>
         <div
-          className="glyphicon glyphicon-pencil hovertip"
+          className="bi bi-pencil hovertip"
           aria-hidden="true"
           style={pencilStyle}
-          data-toggle="tooltip"
+          data-bs-toggle="tooltip"
           title="Edit the list name"
           onClick={handleEdit}
         />
@@ -140,17 +140,17 @@ function ListSaveBar({
         <div
           className={saveClass}
           style={saveStyle}
-          data-toggle="tooltip"
+          data-bs-toggle="tooltip"
           title="Click to toggle autosave at the end of each round."
           onClick={handleAutoSaveToggle}
         >
           <span
-            className="glyphicon glyphicon-hdd"
+            className="bi bi-hdd"
           />
         </div>
         <div>
           <label
-            className="checkbox-inline hidden-xs hidden-sm"
+            className="checkbox-inline d-none d-md-inline-block"
             style={saveStyle}
             htmlFor="auto-save-checkbox"
           >
@@ -167,7 +167,7 @@ function ListSaveBar({
         </div>
       </div>
 
-      <div className="col-xs-12">
+      <div className="col-12">
         <input
           type="text"
           className="form-control input-sm"

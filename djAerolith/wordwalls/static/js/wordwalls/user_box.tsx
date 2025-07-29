@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import WordPartDisplay from './word_part_display';
 import { type ImmutableWordAnswer } from './immutable-types';
@@ -36,7 +36,7 @@ function UserBox({
     const wordEl = (
       <div
         key={word.get('w')}
-        data-toggle="tooltip"
+        data-bs-toggle="tooltip"
         data-placement="left"
         title={word.get('d')}
       >
@@ -73,12 +73,12 @@ function UserBox({
   ) : null;
 
   return (
-    <div className="panel panel-default">
-      <div className="panel-heading">
+    <div className="card">
+      <div className="card-header">
         <span>{username}</span>
       </div>
       <div
-        className="panel-body"
+        className="card-body"
         style={{
           height: 200,
           overflow: 'auto',
@@ -87,14 +87,14 @@ function UserBox({
       >
         {answerElements}
       </div>
-      <div className="panel-footer">
+      <div className="card-footer">
         <div className="row">
           <div className="col-sm-4 col-md-4">
             <span style={{ fontSize: '1.5em' }} className="text text-success">
               {`${percentScore}%`}
             </span>
           </div>
-          <div className="col-sm-8 col-md-6 col-md-offset-2">
+          <div className="col-sm-8 col-md-6 offset-md-2">
             <div className="row">
               <div className="col-sm-12">
                 <div

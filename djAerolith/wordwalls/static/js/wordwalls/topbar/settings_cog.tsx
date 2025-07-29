@@ -24,17 +24,17 @@ function SettingsCog({ displayStyle, onSave }: SettingsCogProps) {
   return (
     <div>
       <div
-        data-toggle="modal"
+        data-bs-toggle="modal"
         title="Settings"
         onClick={resetSettings}
-        data-target=".settings-modal"
+        data-bs-target=".settings-modal"
       >
         <i
-          className="glyphicon glyphicon-cog hovertip"
+          className="bi bi-gear hovertip"
           style={{ fontSize: '175%' }}
           aria-hidden="true"
           title="Settings"
-          data-toggle="tooltip"
+          data-bs-toggle="tooltip"
         />
       </div>
       <SettingsModal

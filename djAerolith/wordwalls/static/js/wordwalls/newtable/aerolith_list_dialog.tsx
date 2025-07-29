@@ -56,7 +56,7 @@ function AerolithListDialog({
           className="btn btn-primary"
           style={{ marginTop: '0.75em' }}
           onClick={onListSubmit}
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           type="button"
         >
           Play!
@@ -65,7 +65,7 @@ function AerolithListDialog({
           className="btn btn-info"
           style={{ marginTop: '0.75em', marginLeft: '1em' }}
           onClick={onFlashcardSubmit}
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           type="button"
         >
           Flashcard

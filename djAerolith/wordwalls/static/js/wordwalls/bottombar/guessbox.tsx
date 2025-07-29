@@ -82,7 +82,7 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
 
   return (
     <div className="row">
-      <div className="col-xs-7 col-sm-6">
+      <div className="col-7 col-sm-6">
         <input
           className="form-control"
           type="text"
@@ -100,14 +100,14 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
           }}
         />
       </div>
-      <div className="hidden-xs col-sm-6">
+      <div className="d-none d-sm-block col-sm-6">
         <span className="text-muted">
           Last:
         </span>
         {' '}
         <strong className={guessClass}>{lastGuess}</strong>
       </div>
-      <div className="col-xs-5 visible-xs-inline-block">
+      <div className="col-5 d-inline-block d-sm-none">
         <strong className={guessClass}>
           {lastGuess}
         </strong>

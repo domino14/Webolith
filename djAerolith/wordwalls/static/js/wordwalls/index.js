@@ -1,12 +1,12 @@
-import './jquery-setup.js'; // Set up jQuery first
-import 'bootstrap'; // Needed by the app, so load it here.
+// Import Bootstrap 5 CSS and JS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// Import Bootstrap Icons
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import App from './app';
-import Utils from './utils';
 
 const user = JSON.parse(window.TableGlobals.user);
-
-Utils.setupCsrfAjax();
 
 App.initialize({
   lexicon: window.TableGlobals.lexicon,

@@ -80,8 +80,8 @@ function SettingsModalBody({
       <div className="modal-footer">
         <button
           type="button"
-          className="btn btn-default"
-          data-dismiss="modal"
+          className="btn btn-secondary"
+          data-bs-dismiss="modal"
         >
           Close
         </button>
@@ -89,7 +89,7 @@ function SettingsModalBody({
           type="button"
           className={savebtnClass}
           onClick={saveWordwallsChanges}
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
         >
           Save changes
         </button>

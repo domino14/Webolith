@@ -5,7 +5,7 @@
  *
  * We also use this as a sort of state store for the questions.
  */
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 import _ from 'underscore';
 
 const LETTER_SORT_MAP = {};

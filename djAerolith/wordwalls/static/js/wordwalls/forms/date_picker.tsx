@@ -1,12 +1,10 @@
 /**
- * @fileOverview A Bootstrap-based datepicker component.
+ * @fileOverview A native HTML5 date input component.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 import moment from 'moment';
-import $ from 'jquery';
-import 'bootstrap-datepicker';
 
 interface DatePickerProps {
   id: string;
@@ -23,61 +21,36 @@ function DatePicker({
   onDateChange,
   startDate,
 }: DatePickerProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+    onDateChange(selectedDate);
+  };
 
-  useEffect(() => {
-    if (inputRef.current) {
-      $(inputRef.current).datepicker({
-        startDate,
-        todayBtn: 'linked',
-        todayHighlight: true,
-        autoclose: true,
-        endDate: new Date(),
-        format: {
-          // datepicker stores dates in utc internally, so we need to show them
-          // correctly.
-          toDisplay: (date: Date) => moment.utc(date).format('ddd MMM DD YYYY'),
-          toValue: (date: string) => new Date(date),
-        },
-      })
-        .on('changeDate', (e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-          // We must manually trigger the `onChange` event of the input,
-          // because it won't be triggered automatically.
-          // XXX: We should not be doing this; instead we should find a
-          // React datepicker and use bootstrap-react, etc. But this will do
-          // for now.
-          onDateChange(new Date(e.date));
-        });
-    }
+  // Format dates for HTML5 date input (YYYY-MM-DD)
+  const formatDateForInput = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
 
-    // Cleanup function
-    return () => {
-      if (inputRef.current) {
-        $(inputRef.current).datepicker('destroy');
-      }
-    };
-  }, [startDate, onDateChange]);
+  const today = new Date();
 
   return (
     <div>
-      <label // eslint-disable-line jsx-a11y/label-has-for
+      <label 
         htmlFor={id}
         style={{ marginTop: '0.75em' }}
       >
         {label}
       </label>
-      <div className="input-group date col-sm-6">
+      <div className="col-sm-6">
         <input
-          type="text"
+          type="date"
           className="form-control"
           id={id}
-          value={value.toDate().toDateString()}
-          onChange={() => {}} // Controlled by datepicker
-          ref={inputRef}
+          value={formatDateForInput(value.toDate())}
+          onChange={handleDateChange}
+          min={formatDateForInput(startDate)}
+          max={formatDateForInput(today)}
         />
-        <div className="input-group-addon">
-          <span className="glyphicon glyphicon-th" />
-        </div>
       </div>
     </div>
   );

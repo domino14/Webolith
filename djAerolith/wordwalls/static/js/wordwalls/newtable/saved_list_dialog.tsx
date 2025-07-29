@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
+import { Tooltip } from 'bootstrap';
 
-import $ from 'jquery';
 import Dropzone, { FileRejection } from 'react-dropzone';
 
 import Notifications from '../notifications';
@@ -49,7 +49,11 @@ function SavedListDialog({
   onListUpload,
 }: SavedListDialogProps) {
   useEffect(() => {
-    $('.hovertip').tooltip({ placement: 'auto' });
+    // Initialize tooltips for Bootstrap 5
+    const tooltipElements = document.querySelectorAll('.hovertip');
+    tooltipElements.forEach(element => {
+      new Tooltip(element, { placement: 'auto' });
+    });
   }, []); // Run only once on mount
 
   const onDrop = useCallback((files: File[], rejected: FileRejection[]) => {

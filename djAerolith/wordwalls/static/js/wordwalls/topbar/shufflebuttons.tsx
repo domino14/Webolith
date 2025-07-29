@@ -12,9 +12,9 @@ function ShuffleButton({
 }: ShuffleButtonProps) {
   return (
     <div style={{ display: 'inline-block' }}>
-      <div className="hidden-xs hidden-sm col-md-3 col-lg-3">
+      <div className="d-none d-md-block col-md-3 col-lg-3">
         <button
-          className="btn btn-info btn-xs"
+          className="btn btn-info btn-sm"
           style={{
             width: 105,
           }}
@@ -22,7 +22,7 @@ function ShuffleButton({
           onClick={trigger}
         >
           <span
-            className="badge"
+            className="badge bg-light text-dark"
           >
             {hotKey}
           </span>
@@ -30,9 +30,9 @@ function ShuffleButton({
           {buttonText}
         </button>
       </div>
-      <div className="visible-xs-inline-block visible-sm-inline-block">
+      <div className="d-inline-block d-md-none">
         <button
-          className="btn btn-info btn-xs"
+          className="btn btn-info btn-sm"
           type="button"
           style={{
             marginLeft: '0.5em',
@@ -40,12 +40,12 @@ function ShuffleButton({
           onClick={trigger}
         >
           <span
-            className="badge"
+            className="badge bg-light text-dark"
           >
             {hotKey}
           </span>
           <i
-            className={`glyphicon ${glyphIcon}`}
+            className={glyphIcon}
             style={{ marginLeft: '0.5em' }}
           />
         </button>
@@ -70,19 +70,19 @@ function ShuffleButtons({ shuffle, alphagram, customOrder }: ShuffleButtonsProps
         trigger={shuffle}
         hotKey="1"
         buttonText="Shuffle"
-        glyphIcon="glyphicon-random"
+        glyphIcon="bi bi-shuffle"
       />
       <ShuffleButton
         trigger={alphagram}
         hotKey="2"
         buttonText="Alphagram"
-        glyphIcon="glyphicon-sort-by-alphabet"
+        glyphIcon="bi bi-sort-alpha-down"
       />
       <ShuffleButton
         trigger={customOrder}
         hotKey="3"
         buttonText="Custom"
-        glyphIcon="glyphicon-sort"
+        glyphIcon="bi bi-sort-down"
       />
     </div>
   );

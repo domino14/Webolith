@@ -29,8 +29,6 @@ To contact the author, please email delsolar at gmail dot com
   <title>{% if tablenum %}WordWalls - table {{tablenum}}{% else %}Wordwalls - Create Table{% endif %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0,  maximum-scale=1, user-scalable=no">
 
-  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/lib/bootstrap-datepicker-1.6.4.min.css" rel="stylesheet">
   <style>
   @media (min-width: 768px) {
     .modal .modal-xl {
@@ -118,6 +116,13 @@ To contact the author, please email delsolar at gmail dot com
 <div id="infoDialog" title=""></div>
 
 {% if DEBUG %}
+  <script type="module">
+    import RefreshRuntime from '/static/js/wordwalls/@react-refresh'
+    RefreshRuntime.injectIntoGlobalHook(window)
+    window.$RefreshReg$ = () => {}
+    window.$RefreshSig$ = () => (type) => type
+    window.__vite_plugin_react_preamble_installed__ = true
+  </script>
   <script type="module" src="/static/js/wordwalls/@vite/client"></script>
   <script type="module" src="/static/js/wordwalls/index.js"></script>
 {% else %}

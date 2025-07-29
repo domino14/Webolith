@@ -6,9 +6,9 @@
 /* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
 /* eslint-disable import/no-import-module-exports */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import $ from 'jquery';
 import _ from 'underscore';
-import Immutable from 'immutable';
+import { ajaxUtils } from './ajax_utils';
+import * as Immutable from 'immutable';
 
 import backgroundURL, {
   darkBackgrounds,
@@ -158,17 +158,25 @@ function WordwallsAppContainer({
 
   const beforeUnload = useCallback(() => {
     if (gameGoing) {
-      $.ajax({
-        url: tableUrl(),
-        async: false,
-        data: {
-          action: 'giveUpAndSave',
-          // Fool the endpoint; if autosave is not on, don't actually
-          // save with a listname.
-          listname: autoSave ? listName : '',
-        },
-        method: 'POST',
+      // Use navigator.sendBeacon for unload events when possible
+      const data = new URLSearchParams({
+        action: 'giveUpAndSave',
+        // Fool the endpoint; if autosave is not on, don't actually
+        // save with a listname.
+        listname: autoSave ? listName : '',
       });
+      
+      // Try sendBeacon first, fallback to sync fetch
+      if (!navigator.sendBeacon(tableUrl(), data)) {
+        // Fallback to fetch (this may not complete if page is unloading)
+        fetch(tableUrl(), {
+          method: 'POST',
+          body: data,
+          keepalive: true,
+        }).catch(() => {
+          // Ignore errors during unload
+        });
+      }
     }
   }, [gameGoing, autoSave, listName, tableUrl]);
 
@@ -219,31 +227,34 @@ function WordwallsAppContainer({
     [addMessage, listName]
   );
 
-  const saveGame = useCallback(() => {
+  const saveGame = useCallback(async () => {
     if (listName === '') {
       addMessage('You must enter a list name for saving!', 'error');
       return;
     }
-    $.ajax({
-      url: tableUrl(),
-      method: 'POST',
-      data: {
+    
+    try {
+      const response = await ajaxUtils.post(tableUrl(), {
         action: 'save',
         listname: listName,
-      },
-      dataType: 'json',
-    })
-      .done(data => {
-        if (data.success === true) {
-          addMessage(`Saved as ${data.listname}`, 'info');
-        }
-        if (data.info) {
-          addMessage(data.info);
-        }
-      })
-      .fail(jqXHR =>
-        addMessage(`Error saving: ${jqXHR.responseJSON.error}`, 'error')
-      );
+      });
+      
+      const data = response.data;
+      if (data.success === true) {
+        addMessage(`Saved as ${data.listname}`, 'info');
+      }
+      if (data.info) {
+        addMessage(data.info);
+      }
+    } catch (error: any) {
+      let errorMessage = 'Error saving';
+      if (error.response?.data?.error) {
+        errorMessage += `: ${error.response.data.error}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      addMessage(errorMessage, 'error');
+    }
   }, [listName, tableUrl, addMessage]);
 
   const processGameEnded = useCallback(() => {
@@ -615,16 +626,11 @@ function WordwallsAppContainer({
 
       setDisplayStyleState(style);
       // Also persist to the backend.
-      $.ajax({
-        url: '/wordwalls/api/configure/',
-        method: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(style),
-        contentType: 'application/json; charset=utf-8',
+      ajaxUtils.postJson('/wordwalls/api/configure/', style).catch(() => {
+        // Ignore errors for style persistence
       });
-      $('body').css({
-        'background-image': backgroundURL(style.bodyBackground),
-      });
+      
+      document.body.style.setProperty('background-image', backgroundURL(style.bodyBackground));
     },
     [displayStyle.darkMode]
   );
@@ -642,21 +648,20 @@ function WordwallsAppContainer({
   );
 
   const markMissed = useCallback(
-    (alphaIdx: number, alphagram: string) => {
+    async (alphaIdx: number, alphagram: string) => {
       // Mark the alphagram missed.
-      $.ajax({
-        url: `${tableUrl()}missed/`,
-        method: 'POST',
-        dataType: 'json',
-        data: {
+      try {
+        const response = await ajaxUtils.post(`${tableUrl()}missed/`, {
           idx: alphaIdx,
-        },
-      }).done(data => {
-        if (data.success === true) {
+        });
+        
+        if (response.data.success === true) {
           game.miss(alphagram);
           setOrigQuestions(game.getOriginalQuestionState());
         }
-      });
+      } catch (error) {
+        // Ignore errors for mark missed
+      }
     },
     [tableUrl]
   );
@@ -669,36 +674,33 @@ function WordwallsAppContainer({
     // Set up beforeUnloadEventHandler here.
     window.onbeforeunload = beforeUnload;
 
-    // Handle hot reload in development - resign game when code changes
-    if (process.env.NODE_ENV === 'development' && module.hot) {
-      module.hot.dispose(() => {
-        beforeUnload();
-      });
-    }
+    // Note: Vite handles hot reload automatically, no manual HMR code needed
     // Disallow backspace to go back to previous page.
-    const handleKeydown = (e: JQuery.KeyDownEvent) => {
-      if (e.which === 8) {
-        // 8 == backspace
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace') {
+        const target = e.target as HTMLElement;
         if (
-          e.target.tagName !== 'INPUT' ||
-          e.target.disabled ||
-          e.target.readOnly
+          target.tagName !== 'INPUT' ||
+          (target as HTMLInputElement).disabled ||
+          (target as HTMLInputElement).readOnly
         ) {
           e.preventDefault();
         }
       }
     };
-    $(document).bind('keydown keypress', handleKeydown);
+    document.addEventListener('keydown', handleKeydown);
+    document.addEventListener('keypress', handleKeydown);
 
     window.addEventListener('resize', handleResize);
-    // Tooltip.
-    $('.hovertip').tooltip({
-      placement: 'bottom',
+    
+    // Initialize tooltips (will be replaced with Bootstrap 5 later)
+    const tooltipElements = document.querySelectorAll('.hovertip');
+    tooltipElements.forEach(element => {
+      element.setAttribute('data-bs-toggle', 'tooltip');
+      element.setAttribute('data-bs-placement', 'bottom');
     });
 
-    $('body').css({
-      'background-image': backgroundURL(displayStyle.bodyBackground),
-    });
+    document.body.style.setProperty('background-image', backgroundURL(displayStyle.bodyBackground));
 
     // Apply dark mode if needed
     if (displayStyle.darkMode) {
@@ -718,7 +720,8 @@ function WordwallsAppContainer({
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      $(document).unbind('keydown keypress', handleKeydown);
+      document.removeEventListener('keydown', handleKeydown);
+      document.removeEventListener('keypress', handleKeydown);
     };
   }, [
     beforeUnload,

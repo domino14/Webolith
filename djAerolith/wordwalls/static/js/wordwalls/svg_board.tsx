@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 import Styling from './style';
 
 import WordwallsQuestion from './wordwalls_question';

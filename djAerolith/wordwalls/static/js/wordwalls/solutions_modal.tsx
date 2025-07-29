@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import Solutions from './solutions';
 import ModalSkeleton from './modal_skeleton';

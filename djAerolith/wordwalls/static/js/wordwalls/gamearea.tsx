@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import Immutable from 'immutable';
-import $ from 'jquery';
+import * as Immutable from 'immutable';
+import { Modal } from 'bootstrap';
 
 import GameInactiveArea from './game_inactive_area';
 import Styling from './style';
@@ -77,7 +77,13 @@ function GameArea({
   useEffect(() => {
     // Hide any modals when a game starts
     if (gameGoing) {
-      $('.modal').modal('hide');
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(modal => {
+        const bootstrapModal = Modal.getInstance(modal);
+        if (bootstrapModal) {
+          bootstrapModal.hide();
+        }
+      });
     }
   }, [gameGoing]);
 

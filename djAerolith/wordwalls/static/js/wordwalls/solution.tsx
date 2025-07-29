@@ -92,13 +92,13 @@ function Solution({
       <td style={rowStyle} className={qTdClass}>
         {alphagramDisplay}
       </td>
-      <td style={rowStyle} className="text-right">
+      <td style={rowStyle} className="text-end">
         <WordPartDisplay classes="text-info small" text={frontHooks} />
       </td>
       <td className={wTdClass} style={rowStyle}>
         <WordPartDisplay text={wordDisplay} />
       </td>
-      <td className="text-left" style={rowStyle}>
+      <td className="text-start" style={rowStyle}>
         <WordPartDisplay classes="text-info small" text={backHooks} />
       </td>
       <td style={{ ...rowStyle, ...{ whiteSpace: 'pre-wrap' } }}>

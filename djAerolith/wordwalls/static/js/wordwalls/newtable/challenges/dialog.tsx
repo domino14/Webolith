@@ -196,7 +196,7 @@ function ChallengeDialog({
           className="btn btn-primary"
           style={{ marginTop: '0.75em' }}
           onClick={onChallengeSubmit}
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           disabled={disabled}
           type="button"
         >

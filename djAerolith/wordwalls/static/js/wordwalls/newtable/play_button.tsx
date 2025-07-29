@@ -4,8 +4,6 @@ jsx-a11y/interactive-supports-focus */ // goddamn a11y
 
 import React, { useEffect, useRef, useCallback } from 'react';
 
-import $ from 'jquery';
-
 interface PlayButtonProps {
   continueList: (listID: number) => void;
   playFirstMissed: (listID: number) => void;
@@ -58,35 +56,44 @@ function PlayButton({
     const btnGroupNode = btnGroupNodeRef.current;
     if (!btnGroupNode) return undefined;
 
-    // This is a bit of a hack to make sure the dropdown turns into
-    // a dropup if there is no space. Adapted from a StackOverflow answer.
-    const $tableScroller = $(btnGroupNode).parents('.table-scroller');
-    $(btnGroupNode).on('shown.bs.dropdown', function checkDropdown() {
-      // calculate the required sizes, spaces
-      const $ul = $(this).children('.dropdown-menu');
-      const $button = $(this).children('.dropdown-toggle');
-      // Ugh, the position of the <tr>, plus the offset of the UL relative
-      // to the dropdown toggle button.
-      const ulOffsetTop = $ul.parents('.list-table-row').position().top
-        + $ul.position().top;
-      // how much space would be left on the top if the dropdown opened that
-      // direction
-      const spaceUp = ulOffsetTop - $button.height() - $ul.height();
-      // how much space is left at the bottom
-      const spaceDown = $tableScroller.height() - (ulOffsetTop + $ul.height());
-      // switch to dropup only if there is no space at the bottom
-      // AND there is space at the top, or there isn't either but it
-      // would be still better fit
-      if (spaceDown < 0 && (spaceUp >= 0 || spaceUp > spaceDown)) {
-        $(this).addClass('dropup');
+    // Use Bootstrap 5 dropdown events for positioning logic
+    const handleDropdownShow = () => {
+      const tableScroller = btnGroupNode.closest('.table-scroller');
+      const dropdownMenu = btnGroupNode.querySelector('.dropdown-menu');
+      const dropdownButton = btnGroupNode.querySelector('.dropdown-toggle');
+      const listTableRow = btnGroupNode.closest('.list-table-row');
+      
+      if (!tableScroller || !dropdownMenu || !dropdownButton || !listTableRow) {
+        return;
       }
-    }).on('hidden.bs.dropdown', '.dropdown', function hhidden() {
-      // always reset after close
-      $(this).removeClass('dropup');
-    });
+
+      // Calculate positions using getBoundingClientRect for more reliable measurements
+      const tableScrollerRect = tableScroller.getBoundingClientRect();
+      const listTableRowRect = listTableRow.getBoundingClientRect();
+      const dropdownMenuRect = dropdownMenu.getBoundingClientRect();
+      const dropdownButtonRect = dropdownButton.getBoundingClientRect();
+
+      const ulOffsetTop = listTableRowRect.top - tableScrollerRect.top + 
+                         (dropdownMenuRect.top - listTableRowRect.top);
+      const spaceUp = ulOffsetTop - dropdownButtonRect.height - dropdownMenuRect.height;
+      const spaceDown = tableScrollerRect.height - (ulOffsetTop + dropdownMenuRect.height);
+
+      if (spaceDown < 0 && (spaceUp >= 0 || spaceUp > spaceDown)) {
+        btnGroupNode.classList.add('dropup');
+      }
+    };
+
+    const handleDropdownHide = () => {
+      btnGroupNode.classList.remove('dropup');
+    };
+
+    // Add Bootstrap 5 event listeners
+    btnGroupNode.addEventListener('show.bs.dropdown', handleDropdownShow);
+    btnGroupNode.addEventListener('hidden.bs.dropdown', handleDropdownHide);
 
     return () => {
-      $(btnGroupNode).off();
+      btnGroupNode.removeEventListener('show.bs.dropdown', handleDropdownShow);
+      btnGroupNode.removeEventListener('hidden.bs.dropdown', handleDropdownHide);
     };
   }, []);
 
@@ -97,15 +104,15 @@ function PlayButton({
     >
       <button
         type="button"
-        className="btn btn-primary btn-xs"
+        className="btn btn-primary btn-sm"
         onClick={handleContinueList}
       >
         Continue
       </button>
       <button
         type="button"
-        className="btn btn-primary dropdown-toggle btn-xs"
-        data-toggle="dropdown"
+        className="btn btn-primary dropdown-toggle btn-sm"
+        data-bs-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false"
       >

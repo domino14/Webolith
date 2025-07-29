@@ -11,8 +11,14 @@ interface PillProps {
 
 function Pill({ active, onPillClick, name }: PillProps) {
   return (
-    <li role="presentation" className={active ? 'active' : ''}>
-      <a onClick={onPillClick}>{name}</a>
+    <li className="nav-item">
+      <a 
+        className={`nav-link ${active ? 'active' : ''}`}
+        onClick={onPillClick}
+        style={{ cursor: 'pointer' }}
+      >
+        {name}
+      </a>
     </li>
   );
 }
@@ -29,7 +35,7 @@ function Pills({
 }: PillsProps) {
   let className: string;
   if (stacked) {
-    className = 'nav nav-pills nav-stacked';
+    className = 'nav nav-pills flex-column';
   } else {
     className = 'nav nav-pills';
   }

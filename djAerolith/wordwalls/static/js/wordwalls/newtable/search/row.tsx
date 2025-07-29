@@ -36,7 +36,7 @@ function SelectValue({
   modifySearchParam,
 }: SelectValueProps) {
   return (
-    <div className="col-xs-6">
+    <div className="col-6">
       <Select
         colSize={12}
         label={label}
@@ -70,7 +70,7 @@ function NumberValue({
   label,
 }: NumberValueProps) {
   return (
-    <div className="col-xs-3">
+    <div className="col-3">
       <NumberInput
         colSize={12}
         label={label}
@@ -136,7 +136,7 @@ interface StringValueProps {
 
 function StringValue({ value, index, modifySearchParam }: StringValueProps) {
   return (
-    <div className="col-xs-4 col-sm-6" style={{ marginTop: '2px' }}>
+    <div className="col-4 col-sm-6" style={{ marginTop: '2px' }}>
       <TextInput
         colSize={12}
         label="Value"
@@ -173,7 +173,7 @@ function HooksValue({
 
   return (
     <>
-      <div className="col-xs-2">
+      <div className="col-2">
         <Select
           colSize={12}
           label="Hook Type"
@@ -184,7 +184,7 @@ function HooksValue({
           }}
         />
       </div>
-      <div className="col-xs-3">
+      <div className="col-3">
         <TextInput
           colSize={12}
           label="Hooks"
@@ -196,7 +196,7 @@ function HooksValue({
           )}
         />
       </div>
-      <div className="col-xs-1" style={{ marginTop: '25px' }}>
+      <div className="col-1" style={{ marginTop: '25px' }}>
         <Checkbox
           label="NOT"
           on={notCondition}
@@ -316,26 +316,26 @@ function SearchRow({
 
   return (
     <div className="row search-row">
-      <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
+      <div className="col-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
           type="button"
-          className="btn btn-info btn-xs btn-add-search-row"
+          className="btn btn-info btn-sm btn-add-search-row"
           onClick={addRow}
         >
-          <span className="glyphicon glyphicon-plus" aria-hidden="true" />
+          <span className="bi bi-plus" aria-hidden="true" />
         </button>
       </div>
-      <div className="col-xs-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
+      <div className="col-1" style={{ marginTop: '33px', marginBottom: '5px' }}>
         <button
           type="button"
-          className="btn btn-info btn-xs btn-remove-search-row"
+          className="btn btn-info btn-sm btn-remove-search-row"
           onClick={() => removeRow(index)}
           disabled={removeDisabled}
         >
-          <span className="glyphicon glyphicon-minus" aria-hidden="true" />
+          <span className="bi bi-dash" aria-hidden="true" />
         </button>
       </div>
-      <div className="col-xs-4">
+      <div className="col-4">
         <Select
           colSize={12}
           label="Search Criterion"

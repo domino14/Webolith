@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 import WordPartDisplay from './word_part_display';
 import { type ImmutableWordAnswer } from './immutable-types';
@@ -68,9 +68,9 @@ function Leaderboard({ answerers, showLexiconSymbols }: LeaderboardProps) {
   });
 
   return (
-    <div className="panel panel-default">
+    <div className="card">
       <div
-        className="panel-body"
+        className="card-body"
         style={{
           height: 300,
           overflow: 'auto',

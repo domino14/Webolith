@@ -33,7 +33,7 @@ function Select({
 
   let badgeElement: React.ReactElement | null = null;
   if (badge) {
-    badgeElement = (<span className="label label-success">{badge}</span>);
+    badgeElement = (<span className="badge bg-success">{badge}</span>);
   }
 
   const optionElements = options.map((element) => (
@@ -54,10 +54,10 @@ function Select({
   }
 
   return (
-    <div className="form-group">
+    <div className="mb-3">
       <div className="row">
         <div className={inputColSizeClass}>
-          <label style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+          <label className="form-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
             {label}
             {' '}
             {badgeElement}
@@ -65,7 +65,7 @@ function Select({
           <select
             value={selectedValue}
             onChange={onChange}
-            className="form-control"
+            className="form-select"
             {...additionalSelectProps}
           >
             {optionElements}

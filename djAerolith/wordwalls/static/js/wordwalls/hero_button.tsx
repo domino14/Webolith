@@ -19,8 +19,8 @@ function HeroButton({
         type="button"
         className={`btn btn-lg ${addlButtonClass}`}
         onClick={onClick}
-        data-toggle="modal"
-        {...(modalSelector && { 'data-target': modalSelector })}
+        data-bs-toggle="modal"
+        {...(modalSelector && { 'data-bs-target': modalSelector })}
       >
         {buttonText}
       </button>

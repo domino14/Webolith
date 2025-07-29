@@ -27,11 +27,11 @@ function ChatBox({ messages, height = 100 }: ChatBoxProps) {
 
   return (
     <div
-      className="panel panel-default"
+      className="card"
       style={{ marginBottom: '2px' }}
     >
       <div
-        className="panel-body"
+        className="card-body"
         style={{
           height,
           overflow: 'auto',

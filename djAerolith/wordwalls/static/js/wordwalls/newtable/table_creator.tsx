@@ -9,8 +9,7 @@ import React, {
   forwardRef,
 } from 'react';
 
-import $ from 'jquery';
-
+import { ajaxUtils } from '../ajax_utils';
 import ModalSkeleton from '../modal_skeleton';
 import Pills from './pills';
 import Notifications from '../notifications';
@@ -18,7 +17,7 @@ import Sidebar from './sidebar';
 import WordwallsAPI from '../wordwalls_api';
 import Styling from '../style';
 
-import ChallengeDialogContainer from './challenges/dialog_container';
+import ChallengeDialogContainer, { ChallengeDialogContainerRef } from './challenges/dialog_container';
 import BlankSearchDialogContainer from './blanks/dialog_container';
 import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
@@ -177,117 +176,122 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
     props.setLoadingData(false);
   }, [props.setLoadingData]);
 
-  const loadSavedListInfo = useCallback(() => {
-    // Show spinner via beforeSend to avoid state updates during render
-    $.ajax({
-      url: '/base/api/saved_lists/',
-      data: {
+  const loadSavedListInfo = useCallback(async () => {
+    showSpinner();
+    try {
+      const response = await ajaxUtils.get('/base/api/saved_lists/', {
         lexicon_id: currentLexicon,
         order_by: 'modified',
         temp: 0,
         last_saved: 'human',
-      },
-      method: 'GET',
-      beforeSend: () => showSpinner(),
-    })
-      .done((data) => setSavedLists(data))
-      .always(() => hideSpinner());
+      });
+      setSavedLists(response.data);
+    } catch (error) {
+      console.error('Error loading saved lists:', error);
+    } finally {
+      hideSpinner();
+    }
   }, [currentLexicon, showSpinner, hideSpinner]);
 
   const selectedListChange = (listId: string) => {
     setSelectedList(listId);
   };
 
-  const aerolithListSubmit = () => {
+  const aerolithListSubmit = async () => {
     showSpinner();
-    $.ajax({
-      url: '/wordwalls/api/load_aerolith_list/',
-      data: JSON.stringify({
+    try {
+      const response = await ajaxUtils.postJson('/wordwalls/api/load_aerolith_list/', {
         lexicon: currentLexicon,
         desiredTime: parseFloat(desiredTime),
         questionsPerRound,
         selectedList,
         tablenum: props.tablenum,
-      }),
-      contentType: 'application/json; charset=utf-8',
-      method: 'POST',
-    })
-      .done((data) => props.onLoadNewList(data))
-      .fail((jqXHR) => Notifications.alert(
-        'Error',
-        `Failed to load list: ${jqXHR.responseJSON}`,
-      ))
-      .always(() => hideSpinner());
+      });
+      props.onLoadNewList(response.data);
+    } catch (error: any) {
+      let errorMessage = 'Failed to load list';
+      if (error.response?.data) {
+        errorMessage += `: ${error.response.data}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      Notifications.alert('Error', errorMessage);
+    } finally {
+      hideSpinner();
+    }
   };
 
-  const flashcardAerolithListSubmit = () => {
+  const flashcardAerolithListSubmit = async () => {
     showSpinner();
-    $.ajax({
-      url: FLASHCARD_URL,
-      method: 'POST',
-      data: {
+    try {
+      const response = await ajaxUtils.post(FLASHCARD_URL, {
         action: 'namedListsFlashcard',
         lexicon: currentLexicon,
         namedList: selectedList,
-      },
-    })
-      .done((data) => redirectUrl(data.url))
-      .fail((jqXHR) => Notifications.alert(
-        'Error',
-        `Failed to process: ${jqXHR.responseJSON.error}`,
-      ))
-      .always(() => hideSpinner());
+      });
+      redirectUrl(response.data.url);
+    } catch (error: any) {
+      let errorMessage = 'Failed to process';
+      if (error.response?.data?.error) {
+        errorMessage += `: ${error.response.data.error}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      Notifications.alert('Error', errorMessage);
+    } finally {
+      hideSpinner();
+    }
   };
 
-  const savedListSubmit = (listID: number, action: string) => {
+  const savedListSubmit = async (listID: number, action: string) => {
     showSpinner();
     if (action === PlayOptions.PLAY_DELETE) {
-      $.ajax({
-        url: `/base/api/saved_list/${listID}`,
-        method: 'DELETE',
-      })
+      try {
+        await fetch(`/base/api/saved_list/${listID}`, { method: 'DELETE' });
         // XXX: Probably should do smart updating instead of reloading
         // from the server.
-        .done(() => loadSavedListInfo()) // This will hide when it's over.
-        .fail((jqXHR) => {
-          Notifications.alert(
-            'Error',
-            `Failed to delete list: ${jqXHR.responseJSON}`,
-          );
-          hideSpinner();
-        });
+        loadSavedListInfo(); // This will hide when it's over.
+      } catch (error: any) {
+        let errorMessage = 'Failed to delete list';
+        if (error.response?.data) {
+          errorMessage += `: ${error.response.data}`;
+        } else if (error.message) {
+          errorMessage += `: ${error.message}`;
+        }
+        Notifications.alert('Error', errorMessage);
+        hideSpinner();
+      }
       return;
     }
-    $.ajax({
-      url: '/wordwalls/api/load_saved_list/',
-      data: JSON.stringify({
+    
+    try {
+      const response = await ajaxUtils.postJson('/wordwalls/api/load_saved_list/', {
         lexicon: currentLexicon,
         desiredTime: parseFloat(desiredTime),
         questionsPerRound,
         selectedList: listID,
         tablenum: props.tablenum,
         listOption: action,
-      }),
-      contentType: 'application/json; charset=utf-8',
-      method: 'POST',
-    })
-      .done((data) => {
-        props.onLoadNewList(data);
-        modalRef.current?.dismiss();
-      })
-      .fail((jqXHR) => Notifications.alert(
-        'Error',
-        `Failed to load list: ${jqXHR.responseJSON}`,
-      ))
-      .always(() => hideSpinner());
+      });
+      props.onLoadNewList(response.data);
+      modalRef.current?.dismiss();
+    } catch (error: any) {
+      let errorMessage = 'Failed to load list';
+      if (error.response?.data) {
+        errorMessage += `: ${error.response.data}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      Notifications.alert('Error', errorMessage);
+    } finally {
+      hideSpinner();
+    }
   };
 
-  const flashcardSavedListSubmit = (listID: number, action: string) => {
+  const flashcardSavedListSubmit = async (listID: number, action: string) => {
     showSpinner();
-    $.ajax({
-      url: FLASHCARD_URL,
-      method: 'POST',
-      data: {
+    try {
+      const response = await ajaxUtils.post(FLASHCARD_URL, {
         action,
         lexicon: currentLexicon,
         wordList: listID,
@@ -295,51 +299,73 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         // This variable has no effect.
         // XXX: This flashcard app is a legacy app and we
         // will hopefully replace it soon.
-      },
-    })
-      .done((data) => redirectUrl(data.url))
-      .fail((jqXHR) => Notifications.alert(
-        'Error',
-        `Failed to process: ${jqXHR.responseJSON.error}`,
-      ))
-      .always(() => hideSpinner());
+      });
+      redirectUrl(response.data.url);
+    } catch (error: any) {
+      let errorMessage = 'Failed to process';
+      if (error.response?.data?.error) {
+        errorMessage += `: ${error.response.data.error}`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      Notifications.alert('Error', errorMessage);
+    } finally {
+      hideSpinner();
+    }
   };
 
-  const loadAerolithListInfo = useCallback(() => {
-    // Show spinner via beforeSend to avoid state updates during render
-    $.ajax({
-      url: '/wordwalls/api/default_lists/',
-      data: {
+  const loadAerolithListInfo = useCallback(async () => {
+    showSpinner();
+    try {
+      const response = await ajaxUtils.get('/wordwalls/api/default_lists/', {
         lexicon: currentLexicon,
-      },
-      method: 'GET',
-      beforeSend: () => showSpinner(),
-    })
-      .done((data) => {
-        setAerolithLists(data);
-        setSelectedList(data[0] ? String(data[0].id) : '');
-      })
-      .always(() => hideSpinner());
+      });
+      const data = response.data;
+      setAerolithLists(data);
+      setSelectedList(data[0] ? String(data[0].id) : '');
+    } catch (error) {
+      console.error('Error loading aerolith lists:', error);
+    } finally {
+      hideSpinner();
+    }
   }, [currentLexicon, showSpinner, hideSpinner]);
 
-  const listUpload = (files: File[]) => {
+  const listUpload = async (files: File[]) => {
     const data = new FormData();
     data.append('file', files[0]);
     data.append('lexicon', String(currentLexicon));
     showSpinner();
-    $.ajax({
-      url: '/wordwalls/ajax_upload/',
-      method: 'POST',
-      data,
-      processData: false,
-      contentType: false,
-    })
-      .done(() => loadSavedListInfo())
-      .fail((jqXHR) => Notifications.alert(
-        'Error',
-        `Failed to upload list: ${jqXHR.responseJSON}`,
-      ))
-      .always(() => hideSpinner());
+    
+    try {
+      // Get CSRF token for the request
+      const csrfToken = document.cookie
+        .split(';')
+        .find(cookie => cookie.trim().startsWith('csrftoken='))
+        ?.split('=')[1];
+      
+      const response = await fetch('/wordwalls/ajax_upload/', {
+        method: 'POST',
+        body: data,
+        headers: {
+          'X-CSRFToken': csrfToken || '',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData || `HTTP ${response.status}`);
+      }
+      
+      await loadSavedListInfo();
+    } catch (error: any) {
+      let errorMessage = 'Failed to upload list';
+      if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      Notifications.alert('Error', errorMessage);
+    } finally {
+      hideSpinner();
+    }
   };
 
   const preSubmitHook = (callback: () => void) => {
@@ -390,14 +416,20 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
 
   const challengeDialogContainerRef = useRef<ChallengeDialogContainerRef>(null);
 
+  const handleModalShown = useCallback(() => {
+    // Refresh challenge data when modal is shown and we're on the challenges tab
+    if (activeListType === LIST_TYPE_CHALLENGE && challengeDialogContainerRef.current) {
+      challengeDialogContainerRef.current.refreshData();
+    }
+  }, [activeListType]);
+
   useImperativeHandle(ref, () => ({
     resetDialog() {
       loadInfoForListType(activeListType);
       if (challengeDialogContainerRef.current) {
         // XXX: This is an anti-pattern, but modals and React don't play
         // 100% well together.
-        challengeDialogContainerRef.current.loadChallengePlayedInfo();
-        challengeDialogContainerRef.current.loadChallengeLeaderboardData();
+        challengeDialogContainerRef.current.refreshData();
       }
     },
     showModal() {
@@ -435,6 +467,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
       case LIST_TYPE_CHALLENGE:
         selectedQuizSearchDialog = (
           <ChallengeDialogContainer
+            ref={challengeDialogContainerRef}
             tablenum={props.tablenum}
             onLoadNewList={props.onLoadNewList}
             challengeInfo={props.challengeInfo}
@@ -541,6 +574,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
       modalClass="table-modal"
       ref={modalRef}
       size="modal-xl"
+      onShown={handleModalShown}
     >
       <div className="modal-body">
         <div className="row">

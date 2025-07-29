@@ -3,7 +3,7 @@
  * used across the wordwalls application.
  */
 
-import Immutable from 'immutable';
+import * as Immutable from 'immutable';
 
 export interface ImmutableWord extends Immutable.Map<string, unknown> {
   get(key: 'fh'): string;
