@@ -3,13 +3,14 @@
 import path from 'path';
 
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 export default {
   mode: 'development',
   output: {
-    path: path.resolve(__dirname, 'djAerolith/static/dist/'),
+    path: path.resolve(__dirname, '../../static/dist/'),
     filename: '[name].js',
-    publicPath: '/static/dist/',
+    publicPath: '/',
   },
   devtool: 'source-map',
   module: {
@@ -28,32 +29,17 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      wordvaultapp: path.resolve(__dirname, './frontend/src/'),
-      wordwallsapp: path.resolve(__dirname, './djAerolith/wordwalls/static/js/wordwalls/'),
-      // For the legacy app, make "react" resolve to a single
-      // node_modules. This is important for hook usage. The "frontend"
-      // directory, with a newer TS app + Vite, has its own React.
-      // The legacy app imports some code from this frontend directory
-      // (see "wordvaultapp" imports in the legacy app). We want
-      // them to share the same React.
+      wordvaultapp: path.resolve(__dirname, '../../frontend/src/'),
+      wordwallsapp: path.resolve(__dirname, '../wordwalls/static/js/wordwalls/'),
+      // For the legacy app, make "react" resolve to the flashcards
+      // node_modules for consistent React usage.
       react: path.resolve(__dirname, './node_modules/react'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      jquery: path.resolve(__dirname, './node_modules/jquery'),
     },
-    // alias: {
-    //   // this alias is needed for the auto-generated RPC file import.
-    //   './rpc/wordsearcher': path.resolve(
-    //     __dirname,
-    //     './djAerolith/wordwalls/static/js/wordwalls/gen/rpc/wordsearcher',
-    //   ),
-    // },
   },
   entry: {
-    wordwallsapp: [
-      '@babel/polyfill',
-      'promise-polyfill',
-      'whatwg-fetch',
-      './djAerolith/wordwalls/static/js/wordwalls/index',
-    ],
-    flashcardsapp: ['./djAerolith/flashcards/static/js/flashcards/main'],
+    flashcardsapp: ['./static/js/flashcards/main'],
   },
   optimization: {
     splitChunks: {
@@ -72,16 +58,26 @@ export default {
       $: 'jquery',
       jQuery: 'jquery',
     }),
+    // For flashcards app dev mode:
+    new HtmlWebpackPlugin({
+      filename: path.resolve(__dirname, '../../static/dist/templates/flashcards_dynamic/flashcards_dev_include.html'),
+      inject: false,
+      template: path.resolve(__dirname, 'flashcards_include_template.html'),
+    }),
   ],
   devServer: {
-    port: 7000,
+    port: 8089,
     host: '0.0.0.0',
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
     allowedHosts: ['aerolith.localhost'],
-    client: {
-      webSocketURL: 'ws://aerolith.localhost/ws',
+    hot: false,
+    liveReload: false,
+    client: false,
+    static: false,
+    devMiddleware: {
+      publicPath: '/',
     },
   },
   watchOptions: {
@@ -89,5 +85,3 @@ export default {
     poll: 5000,
   },
 };
-
-// https://medium.com/@andyccs/webpack-and-docker-for-development-and-deployment-ae0e73243db4

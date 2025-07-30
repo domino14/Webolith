@@ -11,46 +11,41 @@ function ShuffleButton({
   trigger, hotKey, buttonText, glyphIcon,
 }: ShuffleButtonProps) {
   return (
-    <div style={{ display: 'inline-block' }}>
-      <div className="d-none d-md-block col-md-3 col-lg-3">
+    <>
+      {/* Desktop version */}
+      <div className="d-none d-md-block">
         <button
-          className="btn btn-info btn-sm"
+          className="btn btn-info btn-sm me-2"
           style={{
-            width: 105,
+            minWidth: 105,
           }}
           type="button"
           onClick={trigger}
         >
           <span
-            className="badge bg-light text-dark"
+            className="badge bg-light text-dark me-1"
           >
             {hotKey}
           </span>
-          {' '}
           {buttonText}
         </button>
       </div>
-      <div className="d-inline-block d-md-none">
+      {/* Mobile version */}
+      <div className="d-block d-md-none">
         <button
-          className="btn btn-info btn-sm"
+          className="btn btn-info btn-sm me-2"
           type="button"
-          style={{
-            marginLeft: '0.5em',
-          }}
           onClick={trigger}
         >
           <span
-            className="badge bg-light text-dark"
+            className="badge bg-light text-dark me-1"
           >
             {hotKey}
           </span>
-          <i
-            className={glyphIcon}
-            style={{ marginLeft: '0.5em' }}
-          />
+          <i className={glyphIcon} />
         </button>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -62,10 +57,7 @@ interface ShuffleButtonsProps {
 
 function ShuffleButtons({ shuffle, alphagram, customOrder }: ShuffleButtonsProps) {
   return (
-    <div
-      className="row"
-      style={{ whiteSpace: 'nowrap' }}
-    >
+    <div className="d-flex flex-wrap align-items-center">
       <ShuffleButton
         trigger={shuffle}
         hotKey="1"

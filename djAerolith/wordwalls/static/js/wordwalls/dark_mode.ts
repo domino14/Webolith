@@ -1,4 +1,4 @@
-// This file provides utilities for dark mode preference detection
+// Bootstrap 5 Native Dark Mode Utilities
 
 /**
  * Detects if the user's system prefers dark mode
@@ -31,4 +31,35 @@ function addDarkModeChangeListener(callback: (isDark: boolean) => void): () => v
   return () => {};
 }
 
-export { detectDarkModePreference, addDarkModeChangeListener };
+/**
+ * Sets the theme using Bootstrap 5's native data-bs-theme attribute
+ */
+function setTheme(theme: 'light' | 'dark'): void {
+  document.documentElement.setAttribute('data-bs-theme', theme);
+}
+
+/**
+ * Gets the current theme from the data-bs-theme attribute
+ */
+function getCurrentTheme(): 'light' | 'dark' {
+  const theme = document.documentElement.getAttribute('data-bs-theme');
+  return theme === 'dark' ? 'dark' : 'light';
+}
+
+/**
+ * Toggles between light and dark themes
+ */
+function toggleTheme(): 'light' | 'dark' {
+  const currentTheme = getCurrentTheme();
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  setTheme(newTheme);
+  return newTheme;
+}
+
+export { 
+  detectDarkModePreference, 
+  addDarkModeChangeListener,
+  setTheme,
+  getCurrentTheme,
+  toggleTheme
+};

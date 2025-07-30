@@ -1,5 +1,5 @@
 <% for (var jsfile in htmlWebpackPlugin.files.js) { %>
     <% if (htmlWebpackPlugin.files.js[jsfile].indexOf('flashcardsapp') !== -1 || htmlWebpackPlugin.files.js[jsfile].indexOf('vendors') !== -1) { %>
-    <script src="{{STATIC_SRV}}<%= htmlWebpackPlugin.files.js[jsfile] %>"></script>
+    <script src="<%= htmlWebpackPlugin.files.js[jsfile] %>"></script>
     <% } %>
 <% } %>

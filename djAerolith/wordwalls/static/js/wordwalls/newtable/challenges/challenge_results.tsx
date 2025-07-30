@@ -119,7 +119,7 @@ function ChallengeResults({
         height,
       }}
     >
-      <table className="table table-condensed" style={tableLayoutStyle}>
+      <table className="table table-sm" style={tableLayoutStyle}>
         <thead>
           <tr>
             <th>#</th>

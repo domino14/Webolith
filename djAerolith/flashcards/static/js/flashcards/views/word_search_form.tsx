@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { SearchTypesEnum, SearchCriterion } from "wordvaultapp/search/types";
-import SearchRows from "wordwallsapp/newtable/search/rows";
-import Select from "wordwallsapp/forms/select";
-import useSearchRows from "wordvaultapp/search/use_search_rows";
+import { SearchTypesEnum, SearchCriterion } from "../shared/search/types";
+import SearchRows from "../shared/search/rows";
+import Select from "../shared/forms/select";
+import useSearchRows from "../shared/search/use_search_rows";
 
 const allowedSearchTypes = new Set<number>([
   SearchTypesEnum.PROBABILITY,

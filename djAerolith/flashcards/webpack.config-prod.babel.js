@@ -14,7 +14,7 @@ const prodConfig = _.defaults({
   mode: 'production',
   output: {
     filename: '[name].[contenthash].js',
-    path: path.resolve(__dirname, 'djAerolith/static/dist/'),
+    path: path.resolve(__dirname, '../../static/dist/'),
     publicPath: '/static/dist/',
   },
   plugins: [
@@ -30,15 +30,9 @@ const prodConfig = _.defaults({
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new CompressionPlugin(),
-    // For wordwalls app:
-    new HtmlWebpackPlugin({
-      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/wordwalls_dynamic/wordwalls_include.html'),
-      inject: false,
-      template: path.resolve(__dirname, 'wordwalls_include_template.html'),
-    }),
     // For flashcards app:
     new HtmlWebpackPlugin({
-      filename: path.resolve(__dirname, 'djAerolith/static/dist/templates/flashcards_dynamic/flashcards_include.html'),
+      filename: path.resolve(__dirname, '../../static/dist/templates/flashcards_dynamic/flashcards_include.html'),
       inject: false,
       template: path.resolve(__dirname, 'flashcards_include_template.html'),
     }),

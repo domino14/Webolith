@@ -54,7 +54,7 @@ function ListSaveBar({
   let inputStyle: React.CSSProperties;
   let pencilStyle: React.CSSProperties;
   let saveStyle: React.CSSProperties;
-  let saveClass = 'hovertip d-none d-lg-block';
+  let saveClass = 'hovertip d-block d-md-none';
   let listNameContainerClass: string = '';
   let saveContainerClass: string = '';
 
@@ -80,8 +80,10 @@ function ListSaveBar({
     };
     pencilStyle = {
       marginLeft: '5px',
-      top: '-4px',
       display: 'inline-block',
+      verticalAlign: 'top',
+      position: 'relative',
+      top: '2px',
     };
     saveStyle = {
       display: 'inline-block',
@@ -89,12 +91,12 @@ function ListSaveBar({
     inputStyle = {
       display: 'none',
     };
-    listNameContainerClass = 'col-10 col-md-8';
-    saveContainerClass = 'col-2 col-md-4';
+    listNameContainerClass = 'col-8 col-md-9';
+    saveContainerClass = 'col-4 col-md-3';
   }
 
   if (autoSave) {
-    saveClass = 'text-success hovertip d-none d-lg-block';
+    saveClass = 'text-success hovertip d-block d-md-none';
   }
 
   if (disableEditing) {
@@ -105,8 +107,8 @@ function ListSaveBar({
       display: 'none',
     };
     listNameTitle = 'You cannot change or save a list in a multiplayer table.';
-    listNameContainerClass = 'col-12 col-md-12';
-    saveContainerClass = 'hidden';
+    listNameContainerClass = 'col-12';
+    saveContainerClass = 'd-none';
   } else {
     listNameTitle = `This is the name of the word list. You can click the
             pencil to change the name, or the disk icon to toggle autosave.`;

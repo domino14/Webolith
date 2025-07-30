@@ -26,7 +26,6 @@ function ChallengeButton({
   size,
 }: ChallengeButtonProps) {
   let extraClassName = '';
-  let customStyle: React.CSSProperties = {};
   const challengeName = challenge.name;
   let displayName = challengeName;
   const matches = TODAY_REGEX.exec(challengeName);
@@ -39,13 +38,7 @@ function ChallengeButton({
   if (selectedChallenge === challenge.id) {
     extraClassName = 'btn-info';
   } else if (solvedChallenges.includes(challenge.id)) {
-    extraClassName = 'btn-outline-primary';
-    customStyle = {
-      backgroundColor: '#f8f9fa',
-      borderColor: '#dee2e6',
-      color: '#495057',
-      opacity: 0.8,
-    };
+    extraClassName = 'btn-outline-primary challenge-solved';
   } else {
     extraClassName = 'btn-outline-primary';
   }
@@ -57,7 +50,6 @@ function ChallengeButton({
     <button
       type="button"
       className={btnClassName}
-      style={customStyle}
       onClick={onClick(challenge.id)}
     >
       {displayName}

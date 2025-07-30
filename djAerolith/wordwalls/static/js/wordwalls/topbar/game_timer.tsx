@@ -129,15 +129,15 @@ function GameTimer({
 
   let cn: string;
   if (timeRemaining <= warningCountdown) {
-    cn = 'label label-warning';
+    cn = 'badge bg-warning text-dark';
   } else {
-    cn = 'label label-info';
+    cn = 'badge bg-info';
   }
 
   return (
     <span
       className={cn}
-      style={{ fontSize: '1.3em', marginLeft: '2px' }}
+      style={{ fontSize: '0.875rem', lineHeight: '1.5' }}
     >
       {getFormattedTime(timeRemaining)}
     </span>

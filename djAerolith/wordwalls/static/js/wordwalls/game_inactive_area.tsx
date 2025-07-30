@@ -172,7 +172,7 @@ function GameInactiveArea({
   );
 
   return (
-    <div className="jumbotron">
+    <div className="bg-body-tertiary p-5 rounded-3 mb-4">
       {renderJumbotronHeader()}
       {renderTableManagementButtons()}
       {renderModals()}

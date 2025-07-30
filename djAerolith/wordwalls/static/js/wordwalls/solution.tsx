@@ -51,12 +51,12 @@ function Solution({
   let rowStyle: React.CSSProperties = {};
 
   if (!correct) {
-    qTdClass = 'danger';
+    qTdClass = 'table-danger';
   } else if (wrongGuess) {
-    qTdClass = 'warning';
+    qTdClass = 'table-warning';
   }
   if (!wordSolved) {
-    wTdClass += ' danger';
+    wTdClass += ' table-danger';
   }
   const wordDisplay = (innerFrontHook ? '･' : '') + word + (innerBackHook ? '･' : '') + lexiconSymbols;
 

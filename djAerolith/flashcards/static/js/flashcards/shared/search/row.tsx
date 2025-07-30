@@ -4,11 +4,11 @@ import {
   SearchTypesEnum,
   searchCriteriaOptions,
   SearchTypesInputs,
-} from 'wordvaultapp/search/types';
-import Select from '../../forms/select';
-import NumberInput from '../../forms/number_input';
-import TextInput from '../../forms/text_input';
-import Checkbox from '../../forms/checkbox';
+} from './types';
+import Select from '../forms/select';
+import NumberInput from '../forms/number_input';
+import TextInput from '../forms/text_input';
+import Checkbox from '../forms/checkbox';
 
 interface Option {
   value: string;

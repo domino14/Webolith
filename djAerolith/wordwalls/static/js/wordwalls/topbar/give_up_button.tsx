@@ -65,7 +65,7 @@ function GiveUpButton({ gameGoing, handleGiveup }: GiveUpButtonProps) {
       className={buttonClass}
       onClick={handleButtonClick}
       style={{
-        marginTop: '-6px',
+        marginRight: '8px',
       }}
       type="button"
     >

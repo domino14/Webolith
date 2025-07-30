@@ -12,7 +12,7 @@ interface PillProps {
 function Pill({ active, onPillClick, name }: PillProps) {
   return (
     <li className="nav-item">
-      <a 
+      <a
         className={`nav-link ${active ? 'active' : ''}`}
         onClick={onPillClick}
         style={{ cursor: 'pointer' }}
@@ -31,7 +31,10 @@ interface PillsProps {
 }
 
 function Pills({
-  activePill, stacked = false, options, onPillClick,
+  activePill,
+  stacked = false,
+  options,
+  onPillClick,
 }: PillsProps) {
   let className: string;
   if (stacked) {
@@ -40,7 +43,7 @@ function Pills({
     className = 'nav nav-pills';
   }
   // For every option, create a pill.
-  const pills = options.map((option) => (
+  const pills = options.map(option => (
     <Pill
       active={activePill === option}
       onPillClick={() => onPillClick(option)}
@@ -48,11 +51,7 @@ function Pills({
       key={option}
     />
   ));
-  return (
-    <ul className={className}>
-      {pills}
-    </ul>
-  );
+  return <ul className={className}>{pills}</ul>;
 }
 
 export default Pills;

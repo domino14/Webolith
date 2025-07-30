@@ -49,7 +49,7 @@ function SavedListTable({
   ));
 
   return (
-    <table className="table table-condensed word-list-table">
+    <table className="table table-sm word-list-table">
       <thead>
         <tr>
           <th>Action</th>

@@ -1,8 +1,9 @@
-// Import Bootstrap 5 CSS and JS
+// Import Bootstrap 5 CSS only (JS components imported individually where needed)
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // Import Bootstrap Icons
 import 'bootstrap-icons/font/bootstrap-icons.css';
+// Import theme enhancements for Bootstrap dark mode
+import '../../css/theme-enhancements.css';
 
 import App from './app';
 

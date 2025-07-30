@@ -134,8 +134,8 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
   const getNumCorrectAnswers = (): number => answeredBy.get(username, Immutable.List()).size;
 
   const renderTopNav = () => (
-    <div className="row">
-      <div className="col-6 col-sm-5 col-md-5 col-lg-5">
+    <div className="d-flex flex-nowrap align-items-center justify-content-between mb-1">
+      <div className="flex-grow-1 me-3" style={{ minWidth: '120px', maxWidth: '60%' }}>
         <ListSaveBar
           listName={listName}
           autoSave={autoSave}
@@ -144,22 +144,13 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
           disableEditing={false}
         />
       </div>
-      <div
-        className="col-1 col-sm-1 col-md-1 col-lg-1"
-        style={{
-          marginTop: '-4px',
-        }}
-      >
+      <div className="me-3 flex-shrink-0">
         <SettingsCog
           displayStyle={displayStyle}
           onSave={setDisplayStyle}
         />
       </div>
-      <div
-        className="col-4 col-sm-4 offset-sm-2 col-md-3
-          offset-md-3 col-lg-2"
-        style={{ whiteSpace: 'nowrap' }}
-      >
+      <div className="d-flex align-items-center flex-shrink-0" style={{ whiteSpace: 'nowrap' }}>
         <GiveUpButton
           handleGiveup={handleGiveup}
           gameGoing={gameGoing}

@@ -111,55 +111,44 @@ function PlayButton({
       </button>
       <button
         type="button"
-        className="btn btn-primary dropdown-toggle btn-sm"
+        className="btn btn-primary dropdown-toggle dropdown-toggle-split btn-sm"
         data-bs-toggle="dropdown"
-        aria-haspopup="true"
         aria-expanded="false"
       >
-        <span className="caret" />
+        <span className="visually-hidden">Toggle Dropdown</span>
       </button>
 
-      <ul className="dropdown-menu">
+      <div className="dropdown-menu">
 
         {goneThruOnce ? (
-          <li>
-            <a role="button" onClick={handlePlayFirstMissed}>
-              Play first missed
-            </a>
-          </li>
+          <a className="dropdown-item" role="button" onClick={handlePlayFirstMissed}>
+            Play first missed
+          </a>
         ) : null}
 
-        <li>
-          <a role="button" onClick={handleResetStartOver}>
-            Reset and start over
-          </a>
-        </li>
+        <a className="dropdown-item" role="button" onClick={handleResetStartOver}>
+          Reset and start over
+        </a>
 
-        <li role="separator" className="divider" />
+        <hr className="dropdown-divider" />
 
-        <li>
-          <a role="button" onClick={handleFlashcardList}>
-            Flashcard entire list
-          </a>
-        </li>
+        <a className="dropdown-item" role="button" onClick={handleFlashcardList}>
+          Flashcard entire list
+        </a>
 
         {goneThruOnce ? (
-          <li>
-            <a role="button" onClick={handleFlashcardFirstMissed}>
-              Flashcard first missed
-            </a>
-          </li>
+          <a className="dropdown-item" role="button" onClick={handleFlashcardFirstMissed}>
+            Flashcard first missed
+          </a>
         ) : null}
 
-        <li role="separator" className="divider" />
+        <hr className="dropdown-divider" />
 
-        <li>
-          <a role="button" onClick={handleDeleteList}>
-            <span className="text-danger">Delete</span>
-          </a>
-        </li>
+        <a className="dropdown-item" role="button" onClick={handleDeleteList}>
+          <span className="text-danger">Delete</span>
+        </a>
 
-      </ul>
+      </div>
     </div>
   );
 }

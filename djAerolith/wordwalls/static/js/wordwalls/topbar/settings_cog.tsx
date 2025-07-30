@@ -31,7 +31,7 @@ function SettingsCog({ displayStyle, onSave }: SettingsCogProps) {
       >
         <i
           className="bi bi-gear hovertip"
-          style={{ fontSize: '175%' }}
+          style={{ fontSize: '1.25rem' }}
           aria-hidden="true"
           title="Settings"
           data-bs-toggle="tooltip"

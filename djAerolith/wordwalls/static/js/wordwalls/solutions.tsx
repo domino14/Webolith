@@ -72,7 +72,6 @@ function Solutions({
       className="solutions-content"
       style={{
         overflowX: 'hidden',
-        backgroundColor: 'white', // Light mode background
       }}
     >
       <div className="row">
@@ -80,7 +79,6 @@ function Solutions({
           className="col-lg-12 solutions-stats"
           style={{
             padding: '10px 15px',
-            backgroundColor: 'white', // Light mode background
           }}
         >
           {statsStr}
@@ -88,7 +86,7 @@ function Solutions({
       </div>
       <div className="row">
         <div className="col-lg-12 table-responsive">
-          <table className="table table-condensed solutions-table">
+          <table className="table table-sm solutions-table">
             <thead>
               <tr>
                 <th>Probability</th>

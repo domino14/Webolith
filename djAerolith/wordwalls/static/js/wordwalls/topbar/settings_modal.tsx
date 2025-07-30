@@ -40,7 +40,7 @@ const SettingsModal = forwardRef<SettingsModalRef, SettingsModalProps>(({
     if (stateKey === 'darkMode') {
       // Apply dark mode immediately without saving
       if (value) {
-        document.body.classList.add('dark-mode');
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
 
         // Update backgrounds to appropriate ones for dark mode
         import('../background')
@@ -64,16 +64,9 @@ const SettingsModal = forwardRef<SettingsModalRef, SettingsModalProps>(({
             setStyle(updatedStyle);
           });
 
-        // Also apply dark mode to any existing modals
-        import('../modal_dark_mode')
-          .then(({ applyDarkModeToExistingModals, setupDarkModeModalObserver }) => {
-            setTimeout(() => {
-              applyDarkModeToExistingModals();
-              setupDarkModeModalObserver();
-            }, 100);
-          });
+        // Bootstrap 5 handles modal theming automatically via data-bs-theme
       } else {
-        document.body.classList.remove('dark-mode');
+        document.documentElement.setAttribute('data-bs-theme', 'light');
 
         // Update backgrounds to appropriate ones for light mode
         import('../background')
@@ -126,13 +119,7 @@ const SettingsModal = forwardRef<SettingsModalRef, SettingsModalProps>(({
             setStyle(updatedStyle);
           });
 
-        // Explicitly remove dark mode from modals when switching to light mode
-        import('../modal_dark_mode')
-          .then(({ removeDarkModeFromExistingModals }) => {
-            setTimeout(() => {
-              removeDarkModeFromExistingModals();
-            }, 100);
-          });
+        // Bootstrap 5 handles modal theming automatically via data-bs-theme
       }
     } else {
       // For all other options, just update the state
@@ -143,11 +130,11 @@ const SettingsModal = forwardRef<SettingsModalRef, SettingsModalProps>(({
   const reset = useCallback((newDisplayStyle: Styling) => {
     const newStyle = newDisplayStyle.copy();
 
-    // Make sure dark mode class matches the current style
+    // Make sure dark mode attribute matches the current style
     if (newStyle.darkMode) {
-      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-bs-theme', 'dark');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.documentElement.setAttribute('data-bs-theme', 'light');
     }
 
     setStyle(newStyle);

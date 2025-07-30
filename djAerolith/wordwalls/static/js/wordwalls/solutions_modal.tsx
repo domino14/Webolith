@@ -23,7 +23,7 @@ function SolutionsModal({
 }: SolutionsModalProps) {
   return (
     <ModalSkeleton title="Solutions" modalClass="solutions-modal" size="modal-lg">
-      <div className="modal-body" style={{ height: '80vh', overflowY: 'auto' }}>
+      <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
         <Solutions
           questions={questions}
           numCorrect={numCorrect}

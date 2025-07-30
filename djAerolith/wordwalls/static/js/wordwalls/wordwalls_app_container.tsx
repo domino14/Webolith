@@ -20,11 +20,6 @@ import WordwallsGame from './wordwalls_game';
 import WordwallsApp, { type WordwallsAppRef } from './wordwalls_app';
 import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
-import {
-  applyDarkModeToExistingModals,
-  setupDarkModeModalObserver,
-  removeDarkModeFromExistingModals,
-} from './modal_dark_mode';
 import GuessEnum from './guess';
 import WordwallsAPI from './wordwalls_api';
 import WordwallsRPC from './wordwalls_rpc';
@@ -574,10 +569,10 @@ function WordwallsAppContainer({
       // Check if dark mode changed
       const darkModeChanged = displayStyle.darkMode !== style.darkMode;
 
-      // If dark mode changed, update the body class and adjust backgrounds if needed
+      // If dark mode changed, update the data-bs-theme attribute and adjust backgrounds if needed
       if (darkModeChanged) {
         if (style.darkMode) {
-          document.body.classList.add('dark-mode');
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
           // Set appropriate backgrounds for dark mode if we're not already using dark backgrounds
           if (!darkBackgrounds.has(style.background)) {
             style.setStyleKey(
@@ -592,7 +587,7 @@ function WordwallsAppContainer({
             );
           }
         } else {
-          document.body.classList.remove('dark-mode');
+          document.documentElement.setAttribute('data-bs-theme', 'light');
           // If we were using dark backgrounds, switch to light ones
           if (darkBackgrounds.has(style.background)) {
             style.setStyleKey(
@@ -610,18 +605,7 @@ function WordwallsAppContainer({
 
         // Dark mode preference is stored in the database via the AJAX call below
 
-        // Apply or remove dark mode for modals
-        if (style.darkMode) {
-          setTimeout(() => {
-            applyDarkModeToExistingModals();
-            setupDarkModeModalObserver();
-          }, 100);
-        } else {
-          // When switching back to light mode, explicitly remove dark mode from modals
-          setTimeout(() => {
-            removeDarkModeFromExistingModals();
-          }, 100);
-        }
+        // Bootstrap 5 handles modal theming automatically via data-bs-theme
       }
 
       setDisplayStyleState(style);
@@ -704,9 +688,9 @@ function WordwallsAppContainer({
 
     // Apply dark mode if needed
     if (displayStyle.darkMode) {
-      document.body.classList.add('dark-mode');
+      document.documentElement.setAttribute('data-bs-theme', 'dark');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.documentElement.setAttribute('data-bs-theme', 'light');
     }
 
     // Finally, show table creation modal if tablenum is 0. This whole
@@ -756,10 +740,7 @@ function WordwallsAppContainer({
   const boardWidth = questionWidth * boardGridWidth;
   const boardHeight = questionHeight * boardGridHeight;
   game.setMaxOnScreenQuestions(boardGridWidth * boardGridHeight);
-  // Add dark-mode class to container if dark mode is enabled
-  const containerClasses = `wordwalls-app-container${
-    displayStyle.darkMode ? ' dark-mode-container' : ''
-  }`;
+  const containerClasses = 'wordwalls-app-container';
 
   return (
     <div

@@ -1,0 +1,551 @@
+/* Bootstrap 5 Native Dark Mode Enhancements */
+/* This file contains custom styling that works with Bootstrap 5's native color modes */
+
+/* ========================================
+   CSS Custom Properties for Theme Support
+   ======================================== */
+
+:root {
+  /* Override Bootstrap's default colors with less saturated versions */
+  --bs-primary: #5a6c7d;      /* Muted blue-gray instead of bright blue */
+  --bs-primary-rgb: 90, 108, 125;
+  --bs-success: #6a8a6b;      /* Muted green */
+  --bs-success-rgb: 106, 138, 107;
+  --bs-info: #5b9bd5;         /* Softer blue */
+  --bs-info-rgb: 91, 155, 213;
+  --bs-warning: #d4af37;      /* Muted gold instead of bright yellow */
+  --bs-warning-rgb: 212, 175, 55;
+  --bs-danger: #c85450;       /* Softer red */
+  --bs-danger-rgb: 200, 84, 80;
+  
+  /* Game-specific colors */
+  --game-question-bg: rgba(248, 249, 250, 0.9);
+  --game-table-bg: rgba(255, 255, 255, 0.9);
+  --svg-text-color: #212529;
+  --tooltip-contrast-bg: #212529;
+  --tooltip-contrast-color: #ffffff;
+}
+
+[data-bs-theme="dark"] {
+  /* Game-specific colors for dark mode */
+  --game-question-bg: rgba(35, 35, 35, 0.7);
+  --game-table-bg: rgba(15, 15, 15, 0.8);
+  --svg-text-color: #e0e0e0;
+  --tooltip-contrast-bg: #e0e0e0;
+  --tooltip-contrast-color: #333333;
+}
+
+/* ========================================
+   Application-Specific Components
+   ======================================== */
+
+/* Remove underlines from username links in challenge results */
+.modal-body a[href*="/accounts/profile/"] {
+  text-decoration: none;
+}
+
+.modal-body a[href*="/accounts/profile/"]:hover {
+  text-decoration: underline;
+}
+
+/* Add padding below Show Solutions button area */
+.bg-body-tertiary.p-5 .row:last-child {
+  margin-bottom: 0.75rem;
+}
+
+/* Game board styling */
+.game-question-div {
+  background-color: var(--game-question-bg) !important;
+  color: var(--bs-body-color);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .game-question-div {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+.game-table {
+  background-color: var(--game-table-bg) !important;
+}
+
+/* SVG text elements */
+text.svg-text {
+  fill: var(--svg-text-color);
+}
+
+/* Custom tooltip styling for better contrast */
+.tooltip-inner {
+  background-color: var(--tooltip-contrast-bg);
+  color: var(--tooltip-contrast-color);
+}
+
+/* Chat message styling */
+.chat-message {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+/* Alphabet tile adjustments */
+[data-bs-theme="dark"] .alphabet-color {
+  filter: brightness(0.8);
+}
+
+/* Custom scrollbar for dark mode */
+[data-bs-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bs-tertiary-bg);
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: var(--bs-primary);
+  border-radius: 10px;
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bs-primary-border-subtle);
+}
+
+/* Selection styling */
+[data-bs-theme="dark"] ::selection {
+  background-color: var(--bs-primary);
+  color: var(--bs-primary-text);
+}
+
+/* Highlight elements */
+[data-bs-theme="dark"] .highlight {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced contrast for game-specific text */
+[data-bs-theme="dark"] .game-title {
+  color: var(--bs-heading-color);
+}
+
+[data-bs-theme="dark"] .score-display {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+/* Board elements */
+[data-bs-theme="dark"] .board-row {
+  background-color: var(--bs-secondary-bg);
+}
+
+[data-bs-theme="dark"] .board-cell {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .board-cell:hover {
+  background-color: var(--bs-secondary-bg);
+}
+
+/* End game overlay */
+[data-bs-theme="dark"] .end-game-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .end-game-title {
+  color: var(--bs-heading-color);
+}
+
+[data-bs-theme="dark"] .end-game-score {
+  color: var(--bs-success);
+}
+
+/* ========================================
+   Challenge Button Styling
+   ======================================== */
+
+/* Solved challenge buttons - subtle but visible */
+.btn.challenge-solved {
+  background-color: var(--bs-gray-100);
+  border-color: var(--bs-gray-300);
+  color: var(--bs-gray-600);
+  opacity: 0.8;
+}
+
+[data-bs-theme="dark"] .btn.challenge-solved {
+  background-color: rgba(33, 37, 41, 0.5);  /* Almost transparent dark */
+  border-color: var(--bs-gray-800);
+  color: var(--bs-gray-600);
+  opacity: 0.5;
+}
+
+/* ========================================
+   Bootstrap Component Enhancements - Muted Colors
+   ======================================== */
+
+/* Light mode - vibrant colors with subtle hover effects */
+.btn-primary {
+  background-color: #2196f3;  /* Even more vibrant blue */
+  border-color: #2196f3;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: color-mix(in srgb, #2196f3 85%, black);
+  border-color: color-mix(in srgb, #2196f3 85%, black);
+}
+
+.btn-success {
+  background-color: #4caf50;  /* Vibrant green */
+  border-color: #4caf50;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: color-mix(in srgb, #4caf50 85%, black);
+  border-color: color-mix(in srgb, #4caf50 85%, black);
+}
+
+.btn-info {
+  background-color: #00bcd4;  /* Vibrant cyan */
+  border-color: #00bcd4;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+  background-color: color-mix(in srgb, #00bcd4 85%, black);
+  border-color: color-mix(in srgb, #00bcd4 85%, black);
+}
+
+/* Override nav-pills active color */
+.nav-pills .nav-link.active {
+  background-color: #2196f3;
+  border-color: #2196f3;
+}
+
+/* Override badges */
+.badge.bg-primary {
+  background-color: #2196f3;
+}
+
+.badge.bg-success {
+  background-color: #4caf50;
+}
+
+.badge.bg-info {
+  background-color: #00bcd4;
+}
+
+/* Dark mode - muted but still colorful for better dark theme experience */
+[data-bs-theme="dark"] .btn-primary {
+  background-color: #4a7ba7;  /* Less gray, more blue */
+  border-color: #4a7ba7;
+}
+
+[data-bs-theme="dark"] .btn-primary:hover,
+[data-bs-theme="dark"] .btn-primary:focus {
+  background-color: color-mix(in srgb, #4a7ba7 90%, white);
+  border-color: color-mix(in srgb, #4a7ba7 90%, white);
+}
+
+[data-bs-theme="dark"] .btn-success {
+  background-color: #5a9a5b;  /* Less gray, more green */
+  border-color: #5a9a5b;
+}
+
+[data-bs-theme="dark"] .btn-success:hover,
+[data-bs-theme="dark"] .btn-success:focus {
+  background-color: color-mix(in srgb, #5a9a5b 90%, white);
+  border-color: color-mix(in srgb, #5a9a5b 90%, white);
+}
+
+[data-bs-theme="dark"] .btn-info {
+  background-color: #42a5c7;  /* Less gray, more cyan */
+  border-color: #42a5c7;
+}
+
+[data-bs-theme="dark"] .btn-info:hover,
+[data-bs-theme="dark"] .btn-info:focus {
+  background-color: color-mix(in srgb, #42a5c7 90%, white);
+  border-color: color-mix(in srgb, #42a5c7 90%, white);
+}
+
+[data-bs-theme="dark"] .nav-pills .nav-link.active {
+  background-color: #4a7ba7;
+  border-color: #4a7ba7;
+}
+
+[data-bs-theme="dark"] .badge.bg-primary {
+  background-color: #4a7ba7;
+}
+
+[data-bs-theme="dark"] .badge.bg-success {
+  background-color: #5a9a5b;
+}
+
+[data-bs-theme="dark"] .badge.bg-info {
+  background-color: #42a5c7;
+}
+
+/* ========================================
+   Original Bootstrap Component Enhancements
+   ======================================== */
+
+/* Enhanced button styling for better dark mode visibility */
+[data-bs-theme="dark"] .btn:not(.btn-outline-primary):not(.btn-outline-secondary):not(.btn-outline-success):not(.btn-outline-danger):not(.btn-outline-warning):not(.btn-outline-info):not(.btn-outline-light):not(.btn-outline-dark) {
+  filter: brightness(0.85);
+}
+
+[data-bs-theme="dark"] .btn:not(.btn-outline-primary):not(.btn-outline-secondary):not(.btn-outline-success):not(.btn-outline-danger):not(.btn-outline-warning):not(.btn-outline-info):not(.btn-outline-light):not(.btn-outline-dark):hover,
+[data-bs-theme="dark"] .btn:not(.btn-outline-primary):not(.btn-outline-secondary):not(.btn-outline-success):not(.btn-outline-danger):not(.btn-outline-warning):not(.btn-outline-info):not(.btn-outline-light):not(.btn-outline-dark):focus {
+  filter: brightness(0.9);
+}
+
+/* Enhanced nav pills for better visibility */
+[data-bs-theme="dark"] .nav-pills .nav-link:not(.active) {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .nav-pills .nav-link:not(.active):hover,
+[data-bs-theme="dark"] .nav-pills .nav-link:not(.active):focus {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+/* Add spacing between nav pills */
+.nav-pills .nav-item {
+  margin-right: 0.25rem;
+}
+
+.nav-pills .nav-item:last-child {
+  margin-right: 0;
+}
+
+/* For stacked pills, use vertical spacing instead */
+.nav-pills.flex-column .nav-item {
+  margin-right: 0;
+  margin-bottom: 0.25rem;
+}
+
+.nav-pills.flex-column .nav-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Solutions modal styling */
+[data-bs-theme="dark"] .solutions-content {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .solutions-stats {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+
+/* Solutions table styling */
+[data-bs-theme="dark"] .solutions-table th {
+  background-color: var(--bs-dark);
+  color: var(--bs-light);
+  border-color: var(--bs-border-color);
+}
+
+/* Table contextual classes for solutions */
+.table-danger {
+  background-color: rgba(220, 53, 69, 0.125) !important;
+  color: var(--bs-body-color) !important;
+}
+
+.table-warning {
+  background-color: rgba(255, 193, 7, 0.125) !important;
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .table-danger {
+  background-color: rgba(220, 53, 69, 0.2) !important;
+  color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .table-warning {
+  background-color: rgba(255, 193, 7, 0.2) !important;
+  color: var(--bs-body-color) !important;
+}
+
+/* Improved text colors for dark mode */
+[data-bs-theme="dark"] .text-success {
+  color: var(--bs-success) !important;
+}
+
+[data-bs-theme="dark"] .text-danger {
+  color: var(--bs-danger) !important;
+}
+
+[data-bs-theme="dark"] .text-info {
+  color: var(--bs-info) !important;
+}
+
+/* Dropzone styling */
+[data-bs-theme="dark"] .dropzone {
+  background-color: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .dropzone:hover,
+[data-bs-theme="dark"] .dropzone:focus {
+  background-color: var(--bs-secondary-bg);
+  border-color: var(--bs-border-color-translucent);
+}
+
+[data-bs-theme="dark"] .dropzone.active,
+[data-bs-theme="dark"] .dropzone:active {
+  border-color: var(--bs-primary);
+  background-color: var(--bs-primary-bg-subtle);
+}
+
+/* ========================================
+   Modal Enhancements (if needed)
+   ======================================== */
+
+/* Bootstrap 5 handles modal theming automatically
+   Add any custom modal styling here if needed */
+
+/* Extra compact styling for saved lists table */
+.table.word-list-table {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  height: auto;
+  table-layout: auto;
+}
+
+.table.word-list-table th,
+.table.word-list-table td {
+  padding: 0.5rem 0.5rem;
+  vertical-align: middle;
+  line-height: 1.3;
+  border-bottom: 1px solid var(--bs-border-color);
+  height: auto;
+  min-height: auto;
+}
+
+.table.word-list-table th {
+  font-weight: 600;
+  background-color: var(--bs-tertiary-bg);
+  border-bottom: 2px solid var(--bs-border-color);
+  padding: 0.25rem 0.5rem;
+}
+
+.table.word-list-table tbody tr {
+  height: auto;
+}
+
+/* Force compact row height - override any Bootstrap defaults */
+.table-scroller .table.word-list-table tbody tr {
+  height: auto;
+  min-height: auto;
+}
+
+.table-scroller .table.word-list-table th,
+.table-scroller .table.word-list-table td {
+  height: auto;
+  min-height: auto;
+  padding: 0.5rem 0.5rem;
+  line-height: 1.3;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.table.word-list-table tbody tr:hover {
+  background-color: var(--bs-tertiary-bg);
+}
+
+[data-bs-theme="dark"] .table.word-list-table tbody tr:hover {
+  background-color: var(--bs-gray-800);
+}
+
+/* Make buttons in saved lists table more compact */
+.table.word-list-table .btn-sm {
+  font-size: 0.75rem;
+  padding: 0.1875rem 0.375rem;
+  line-height: 1.1;
+  height: auto;
+  min-height: auto;
+}
+
+.table.word-list-table .btn-group {
+  white-space: nowrap;
+  height: auto;
+  min-height: auto;
+}
+
+.table.word-list-table .btn-group .btn-sm {
+  padding: 0.1875rem 0.25rem;
+  height: auto;
+  min-height: auto;
+}
+
+/* Fix Bootstrap 5 dropdown positioning in tables */
+.table-scroller .dropdown-menu {
+  z-index: 1050;
+}
+
+/* Prevent table from expanding to fill container height */
+.table-scroller {
+  display: block;
+}
+
+.table-scroller .table {
+  height: auto;
+  min-height: auto;
+}
+
+/* Compact modal styling - reduce vertical height, keep width */
+.modal-dialog {
+  max-height: 90vh;
+  margin: 1rem auto;
+}
+
+.modal-content {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body {
+  padding: 1rem 1.25rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 0.75rem 1.25rem;
+  flex-shrink: 0;
+}
+
+.modal-footer {
+  padding: 0.75rem 1.25rem;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   Settings Modal Enhancements
+   ======================================== */
+
+/* Settings section headers */
+.settings-section-header {
+  border-bottom: 2px solid var(--bs-primary);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Settings preview area */
+.settings-preview {
+  background-color: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
+[data-bs-theme="dark"] .settings-preview {
+  background-color: var(--bs-gray-800);
+  border-color: var(--bs-gray-600);
+}
