@@ -32,7 +32,7 @@ class WordwallsRPC extends GenericRPC {
     this.setRPCURL(`/wordwalls/table/${tablenum}/rpc/`);
   }
 
-  async guess(gstr: string, wrongAnswers: string[]): Promise<GuessResponse> {
+  async guess(gstr: string, wrongAnswers: number): Promise<GuessResponse> {
     return this.rpcwrap('guess', {
       guess: gstr,
       wrongAnswers,

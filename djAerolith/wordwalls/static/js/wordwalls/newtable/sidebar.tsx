@@ -72,9 +72,9 @@ function MakeDefaultLexLink({
 }
 
 interface SidebarProps {
-  gameTypes: string[];
-  activeGameType: string;
-  setGameType: (gameType: string) => void;
+  tabs: string[];
+  activeTab: string;
+  setTab: (tab: string) => void;
   currentLexicon: number;
   defaultLexicon: number;
   setLexicon: (lexicon: number) => void;
@@ -85,12 +85,13 @@ interface SidebarProps {
   setQuestionsPerRound: (questions: number) => void;
   disabledInputs: boolean;
   availableLexica: Lexicon[];
+  showPlaySettings: boolean;
 }
 
 function Sidebar({
-  gameTypes,
-  activeGameType,
-  setGameType,
+  tabs,
+  activeTab,
+  setTab,
   currentLexicon,
   defaultLexicon,
   setLexicon,
@@ -101,6 +102,7 @@ function Sidebar({
   setQuestionsPerRound,
   disabledInputs,
   availableLexica,
+  showPlaySettings,
 }: SidebarProps) {
   const handleLexiconChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setLexicon(parseInt(e.target.value, 10));
@@ -118,44 +120,46 @@ function Sidebar({
     <div>
       <Pills
         stacked
-        options={gameTypes}
-        activePill={activeGameType}
-        onPillClick={setGameType}
+        options={tabs}
+        activePill={activeTab}
+        onPillClick={setTab}
       />
 
-      <div className="row" style={{ marginTop: 10 }}>
-        <div className="col-sm-12">
-          <form>
-            <Select
-              colSize={10}
-              label="Lexicon"
-              selectedValue={String(currentLexicon)}
-              options={getLexiconOptions(availableLexica)}
-              onChange={handleLexiconChange}
-            />
-            <MakeDefaultLexLink
-              defaultLexicon={defaultLexicon}
-              setDefaultLexicon={setDefaultLexicon}
-              selectedLexicon={currentLexicon}
-              availableLexica={availableLexica}
-            />
-            <NumberInput
-              colSize={10}
-              label="Minutes"
-              value={desiredTime}
-              onChange={handleTimeChange}
-              disabled={disabledInputs}
-            />
-            <NumberInput
-              colSize={10}
-              label="Questions Per Round"
-              value={String(questionsPerRound)}
-              onChange={handleQuestionsChange}
-              disabled={disabledInputs}
-            />
-          </form>
+      {showPlaySettings && (
+        <div className="row" style={{ marginTop: 10 }}>
+          <div className="col-sm-12">
+            <form>
+              <Select
+                colSize={10}
+                label="Lexicon"
+                selectedValue={String(currentLexicon)}
+                options={getLexiconOptions(availableLexica)}
+                onChange={handleLexiconChange}
+              />
+              <MakeDefaultLexLink
+                defaultLexicon={defaultLexicon}
+                setDefaultLexicon={setDefaultLexicon}
+                selectedLexicon={currentLexicon}
+                availableLexica={availableLexica}
+              />
+              <NumberInput
+                colSize={10}
+                label="Minutes"
+                value={desiredTime}
+                onChange={handleTimeChange}
+                disabled={disabledInputs}
+              />
+              <NumberInput
+                colSize={10}
+                label="Questions Per Round"
+                value={String(questionsPerRound)}
+                onChange={handleQuestionsChange}
+                disabled={disabledInputs}
+              />
+            </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

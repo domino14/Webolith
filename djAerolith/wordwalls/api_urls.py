@@ -31,6 +31,9 @@ from wordwalls.api import (
     load_aerolith_list,
     load_saved_list,
     load_raw_questions,
+    api_stats_today,
+    api_stats_week,
+    api_stats_summary,
 )
 
 urlpatterns = [
@@ -46,6 +49,10 @@ urlpatterns = [
     re_path(r"^load_aerolith_list/$", load_aerolith_list),
     re_path(r"^load_saved_list/$", load_saved_list),
     re_path(r"^load_raw_questions/$", load_raw_questions),
+    # Statistics endpoints
+    re_path(r"^stats/today/$", api_stats_today),
+    re_path(r"^stats/week/$", api_stats_week),
+    re_path(r"^stats/summary/$", api_stats_summary),
     # re_path(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',
     # name='get_new_signature')
 ]
