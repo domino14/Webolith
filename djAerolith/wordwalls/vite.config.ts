@@ -15,7 +15,7 @@ export default defineConfig({
     outDir: path.resolve(__dirname, '../static/dist'),
     emptyOutDir: false, // Don't clear dist since other apps may use it
     rollupOptions: {
-      input: path.resolve(__dirname, './static/js/wordwalls/index.js'),
+      input: path.resolve(__dirname, './static/js/wordwalls/index.ts'),
       output: {
         entryFileNames: 'wordwallsapp.js',
         chunkFileNames: 'vendor.js',

@@ -36,10 +36,10 @@ class GenericRPC extends WordwallsAPI {
 
   async rpcwrap(method: string, params: Record<string, unknown>): Promise<unknown> {
     if (!this.RPCURL) {
-      // eslint-disable-next-line compat/compat
+       
       await Promise.reject(new Error('No RPC URL was set.'));
     }
-    // eslint-disable-next-line compat/compat
+     
     const response = await fetch(this.RPCURL!, this.fetchdataRPC(method, params));
     const data = await response.json();
     if (response.ok && data.result) {

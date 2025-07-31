@@ -89,7 +89,7 @@ function WordwallsSettings({
   const handleShuffle = useCallback((idx: number) => {
     // XXX: This should be moved into a utility shuffle function or something.
     // For now, we'll keep the questions static since this is just a preview
-    // eslint-disable-next-line no-console
+     
     console.log('Shuffle preview question at index:', idx);
   }, []);
 

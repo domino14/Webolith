@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
+ 
 /**
  * @fileOverview A Bootstrap-based text numerical input component.
  */

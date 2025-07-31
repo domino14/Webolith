@@ -36,8 +36,6 @@
   "exclude": [
     "node_modules",
     "**/*.test.js",
-    "**/*.test.jsx",
-    "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.jsx"
   ]
 }

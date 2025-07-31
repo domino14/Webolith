@@ -10,7 +10,7 @@ export default tseslint.config(
   // Base recommended configs
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  
+
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
@@ -55,7 +55,7 @@ export default tseslint.config(
       // Core rules
       'quotes': ['error', 'single'],
       'jsx-quotes': ['error', 'prefer-double'],
-      
+
       // React rules
       'react/jsx-uses-react': 'error',
       'react/jsx-uses-vars': 'error',
@@ -67,11 +67,11 @@ export default tseslint.config(
       ],
       'react/prop-types': 'off',
       'react/require-default-props': 'off',
-      
+
       // React Hooks rules
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-      
+      'react-hooks/exhaustive-deps': 'error',
+
       // Import rules
       'import/extensions': [
         'error',
@@ -83,19 +83,19 @@ export default tseslint.config(
           tsx: 'never',
         },
       ],
-      
+
       // Accessibility rules
       'jsx-a11y/anchor-is-valid': 'warn',
-      
+
       // Compatibility rules
       'compat/compat': 'error',
-      
+
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': ['error'],
       'no-unused-vars': 'off',
     },
   },
-  
+
   // TypeScript-specific overrides
   {
     files: ['**/*.{ts,tsx}'],
@@ -115,7 +115,7 @@ export default tseslint.config(
       ],
     },
   },
-  
+
   // Test file overrides
   {
     files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],

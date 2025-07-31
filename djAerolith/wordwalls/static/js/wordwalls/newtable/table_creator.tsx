@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, {
   useState,
   useEffect,
@@ -129,6 +128,26 @@ interface ModalRef {
  * WordwallsApp, even though it is a part of it.
  */
 const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref) => {
+  const { setLoadingData, onLoadNewList } = props;
+  
+  // Helper function to extract error message from unknown error
+  const getErrorMessage = (error: unknown, defaultMessage: string): string => {
+    if (error && typeof error === 'object') {
+      if ('response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
+        if (typeof error.response.data === 'string') {
+          return `${defaultMessage}: ${error.response.data}`;
+        }
+        if (error.response.data && typeof error.response.data === 'object' && 'error' in error.response.data) {
+          return `${defaultMessage}: ${error.response.data.error}`;
+        }
+      }
+    }
+    if (error instanceof Error) {
+      return `${defaultMessage}: ${error.message}`;
+    }
+    return defaultMessage;
+  };
+  
   /**
    * Redirect to the given URL. This forces the user to leave the table
    * they are currently in.
@@ -169,12 +188,12 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
   const modalRef = useRef<ModalRef>(null);
 
   const showSpinner = useCallback(() => {
-    props.setLoadingData(true);
-  }, [props.setLoadingData]);
+    setLoadingData(true);
+  }, [setLoadingData]);
 
   const hideSpinner = useCallback(() => {
-    props.setLoadingData(false);
-  }, [props.setLoadingData]);
+    setLoadingData(false);
+  }, [setLoadingData]);
 
   const loadSavedListInfo = useCallback(async () => {
     showSpinner();
@@ -207,12 +226,12 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         selectedList,
         tablenum: props.tablenum,
       });
-      props.onLoadNewList(response.data);
-    } catch (error: any) {
+      onLoadNewList(response.data);
+    } catch (error: unknown) {
       let errorMessage = 'Failed to load list';
-      if (error.response?.data) {
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
         errorMessage += `: ${error.response.data}`;
-      } else if (error.message) {
+      } else if (error instanceof Error) {
         errorMessage += `: ${error.message}`;
       }
       Notifications.alert('Error', errorMessage);
@@ -230,13 +249,8 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         namedList: selectedList,
       });
       redirectUrl(response.data.url);
-    } catch (error: any) {
-      let errorMessage = 'Failed to process';
-      if (error.response?.data?.error) {
-        errorMessage += `: ${error.response.data.error}`;
-      } else if (error.message) {
-        errorMessage += `: ${error.message}`;
-      }
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to process');
       Notifications.alert('Error', errorMessage);
     } finally {
       hideSpinner();
@@ -251,13 +265,8 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         // XXX: Probably should do smart updating instead of reloading
         // from the server.
         loadSavedListInfo(); // This will hide when it's over.
-      } catch (error: any) {
-        let errorMessage = 'Failed to delete list';
-        if (error.response?.data) {
-          errorMessage += `: ${error.response.data}`;
-        } else if (error.message) {
-          errorMessage += `: ${error.message}`;
-        }
+      } catch (error: unknown) {
+        const errorMessage = getErrorMessage(error, 'Failed to delete list');
         Notifications.alert('Error', errorMessage);
         hideSpinner();
       }
@@ -273,15 +282,10 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         tablenum: props.tablenum,
         listOption: action,
       });
-      props.onLoadNewList(response.data);
+      onLoadNewList(response.data);
       modalRef.current?.dismiss();
-    } catch (error: any) {
-      let errorMessage = 'Failed to load list';
-      if (error.response?.data) {
-        errorMessage += `: ${error.response.data}`;
-      } else if (error.message) {
-        errorMessage += `: ${error.message}`;
-      }
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to load list');
       Notifications.alert('Error', errorMessage);
     } finally {
       hideSpinner();
@@ -301,13 +305,8 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
         // will hopefully replace it soon.
       });
       redirectUrl(response.data.url);
-    } catch (error: any) {
-      let errorMessage = 'Failed to process';
-      if (error.response?.data?.error) {
-        errorMessage += `: ${error.response.data.error}`;
-      } else if (error.message) {
-        errorMessage += `: ${error.message}`;
-      }
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to process');
       Notifications.alert('Error', errorMessage);
     } finally {
       hideSpinner();
@@ -357,11 +356,8 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>((props, ref)
       }
       
       await loadSavedListInfo();
-    } catch (error: any) {
-      let errorMessage = 'Failed to upload list';
-      if (error.message) {
-        errorMessage += `: ${error.message}`;
-      }
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, 'Failed to upload list');
       Notifications.alert('Error', errorMessage);
     } finally {
       hideSpinner();

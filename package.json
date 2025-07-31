@@ -70,5 +70,6 @@
             "^wordvaultapp/(.*)$": "<rootDir>/frontend/src/$1"
         },
         "testEnvironment": "jsdom"
-    }
+    },
+    "type": "module"
 }

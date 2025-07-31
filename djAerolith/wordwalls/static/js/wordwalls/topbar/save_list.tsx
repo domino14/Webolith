@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions,
-jsx-a11y/click-events-have-key-events */
+ 
 import React, { useState, useRef, useEffect } from 'react';
 
 const MAXIMUM_LIST_NAME_SIZE = 50;

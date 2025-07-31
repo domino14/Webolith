@@ -3,7 +3,10 @@ import { useMemo } from 'react';
 import { createConnectTransport } from '@connectrpc/connect-web';
 import {
   createPromiseClient,
+  PromiseClient,
+  ConnectError,
 } from '@connectrpc/connect';
+import type { ServiceType } from '@bufbuild/protobuf';
 
 const loc = window.location;
 const apiEndpoint = loc.host;
@@ -20,12 +23,17 @@ export const binaryTransport = createConnectTransport({
   useBinaryFormat: true,
 });
 
-export function useClient(
-  service,
+export function useClient<T extends ServiceType>(
+  service: T,
   binary = false,
-) {
+): PromiseClient<T> {
   const tf = binary ? binaryTransport : transport;
   return useMemo(() => createPromiseClient(service, tf), [service, tf]);
 }
 
-export const connectErrorMessage = (e) => e.rawMessage;
+export const connectErrorMessage = (e: unknown): string => {
+  if (e instanceof ConnectError) {
+    return e.rawMessage;
+  }
+  return String(e);
+};

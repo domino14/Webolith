@@ -1,5 +1,4 @@
-// Test functions for wordwalls_game.js
-/* eslint-disable import/no-extraneous-dependencies, no-unused-expressions */
+// Test functions for wordwalls_game.ts
 
 import WordwallsGame, { Internal } from '../wordwalls_game';
 
@@ -163,12 +162,12 @@ const testQuestions = `[
   }
 ]`;
 
-let game;
+let game: WordwallsGame;
 
 describe('Game State', () => {
   beforeEach(() => {
     game = new WordwallsGame();
-    game.init(JSON.parse(testQuestions));
+    game.init(JSON.parse(testQuestions), 'regular');
   });
 
   describe('Initialization', () => {
@@ -191,7 +190,7 @@ describe('Game State', () => {
       game.solve('ENROL', 'ELNOR', 'cesar');
       expect(game.answerExists('ENROL')).toBe(false);
       expect(game.getAnsweredBy().size).toBe(1);
-      expect(game.getAnsweredBy().get('cesar').size).toBe(1);
+      expect(game.getAnsweredBy().get('cesar')?.size).toBe(1);
       expect(game.getOriginalQuestionState().getIn(['ELNOR',
         'answersRemaining'])).toBe(2);
       // lol:
@@ -214,7 +213,7 @@ describe('Game State', () => {
       game.solve('ANEAR', 'AAENR', 'cesar');
       game.solve('ARENA', 'AAENR', 'cesar');
       expect(game.getAnsweredBy().size).toBe(1);
-      expect(game.getAnsweredBy().get('cesar').size).toBe(2);
+      expect(game.getAnsweredBy().get('cesar')?.size).toBe(2);
       expect(game.getOriginalQuestionState().getIn(['AAENR',
         'answersRemaining'])).toBe(0);
       expect(game.alphagramsLeft).toBe(6);
@@ -225,7 +224,7 @@ describe('Game State', () => {
 describe('Internal functions', () => {
   describe('letterCounts', () => {
     it('should count letters properly', () => {
-      const testArray = [
+      const testArray: [string, Record<string, number>][] = [
         ['AEROLITH', {
           A: 1, E: 1, R: 1, O: 1, L: 1, I: 1, T: 1, H: 1,
         }],
@@ -244,17 +243,17 @@ describe('Internal functions', () => {
   });
 
   describe('inBlankAnagrams', () => {
-    const alphaHash = {
-      'ACHILORS?': true,
-      'AEHILOR?': true,
-      'AEHINOR?': true,
-      'AEINOR??': true,
-      'ABBINOR?': true,
-      AEFFGINR: true,
+    const alphaHash: Record<string, number> = {
+      'ACHILORS?': 0,
+      'AEHILOR?': 1,
+      'AEHINOR?': 2,
+      'AEINOR??': 3,
+      'ABBINOR?': 4,
+      AEFFGINR: 5,
     };
 
     it('should find alphagram properly, no build mode', () => {
-      const testArray = [
+      const testArray: [string, string | undefined][] = [
         ['AEROLITH', 'AEHILOR?'],
         ['ANTIHERO', 'AEHINOR?'],
         ['ERASIONS', 'AEINOR??'],
@@ -269,33 +268,36 @@ describe('Internal functions', () => {
         expect(Internal().anagramOfQuestions(
           testArray[i][0],
           alphaHash,
+          false,
+          0,
+          100,
         )).toEqual(testArray[i][1]);
       }
     });
 
     it('should properly calculate anagram of question', () => {
-      const testArrayTrue = [
+      const testArrayTrue: [string[], string, boolean, number, number][] = [
         ['ACROLITH'.split(''), 'ACHILORS?', true, 5, 8],
         ['ACROLITH'.split(''), 'ACHILOR?', true, 5, 8],
-        ['ACROLITH'.split(''), 'ACHILORT'],
+        ['ACROLITH'.split(''), 'ACHILORT', false, 0, 100],
         ['MUUMUUS'.split(''), 'MMSSUUU?', true, 5, 8],
       ];
-      const testArrayFalse = [
+      const testArrayFalse: [string[], string, boolean, number, number][] = [
         ['MUUMUUS'.split(''), 'MMSSUU?', true, 5, 8],
         ['ACROLITH'.split(''), 'AHHILOR?', true, 5, 8],
-        ['ACROLITH'.split(''), 'AEHILORT'],
+        ['ACROLITH'.split(''), 'AEHILORT', false, 0, 100],
       ];
       for (let i = 0; i < testArrayTrue.length; i += 1) {
-        expect(Internal().anagramOfQuestion.apply(null, testArrayTrue[i])).toBeTruthy();
+        expect(Internal().anagramOfQuestion(...testArrayTrue[i])).toBeTruthy();
       }
 
       for (let i = 0; i < testArrayFalse.length; i += 1) {
-        expect(Internal().anagramOfQuestion.apply(null, testArrayFalse[i])).toBeFalsy();
+        expect(Internal().anagramOfQuestion(...testArrayFalse[i])).toBeFalsy();
       }
     });
 
     it('should find alphagram properly, build mode', () => {
-      const testArray = [
+      const testArray: [string, string | undefined, number, number][] = [
         ['AEROLITH', 'AEHILOR?', 5, 8],
         ['ANTIHERO', 'AEHINOR?', 5, 8],
         ['ERASIONS', 'AEINOR??', 5, 8],
@@ -325,7 +327,7 @@ describe('Internal functions', () => {
 
   describe('alphagrammize', () => {
     it('should alphagrammize properly', () => {
-      const testArray = [
+      const testArray: [string, string][] = [
         ['ROBINIA', 'ABIINOR'],
         ['ÑU', 'ÑU'],
         ['PERSPICACITY', 'ACCEIIPPRSTY'],

@@ -4,7 +4,7 @@
  * MIT licensed.
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const getFormattedTime = (milliseconds: number): string => {
   let seconds: number | string;
@@ -66,7 +66,7 @@ function GameTimer({
     completeCallbackRef.current = completeCallback;
   }, [completeCallback]);
 
-  const tick = () => {
+  const tick = useCallback(() => {
     const currentTime = Date.now();
     const dt = prevTimeRef.current ? (currentTime - prevTimeRef.current) : 0;
 
@@ -94,7 +94,7 @@ function GameTimer({
         completeCallbackRef.current();
       }
     }
-  };
+  }, [interval]);
 
   // Handle game state changes
   useEffect(() => {
@@ -118,7 +118,7 @@ function GameTimer({
     if (!prevTime && timeRemaining > 0 && gameGoing) {
       tick();
     }
-  }, [prevTime, timeRemaining, gameGoing]);
+  }, [prevTime, timeRemaining, gameGoing, tick]);
 
   // Cleanup on unmount
   useEffect(() => () => {

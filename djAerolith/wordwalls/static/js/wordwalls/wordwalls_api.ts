@@ -56,7 +56,7 @@ class WordwallsAPI {
     if (method === 'GET') {
       p = `?${qs.stringify(params)}`;
     }
-    // eslint-disable-next-line compat/compat
+     
     const response = await fetch(`${path}${p}`, this.fetchdata(params, method));
     const data = await response.json();
     if (response.ok) {
@@ -74,7 +74,7 @@ class WordwallsAPI {
    * @param params
    */
   async callLegacy(path: string, params: Record<string, unknown>): Promise<unknown> {
-    // eslint-disable-next-line compat/compat
+     
     const response = await fetch(path, this.fetchdataLegacy(params));
     const data = await response.json();
     if (response.ok) {

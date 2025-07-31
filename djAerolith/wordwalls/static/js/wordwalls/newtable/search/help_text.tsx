@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+ 
 import React, { useState } from 'react';
 import { SearchTypesEnum, SearchTypesOrder } from 'wordvaultapp/search/types';
 

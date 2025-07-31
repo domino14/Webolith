@@ -3,8 +3,6 @@
  * should have all state, ajax, etc instead and wordwalls_app should
  * be as dumb as possible.
  */
-/* eslint-disable new-cap, jsx-a11y/no-static-element-interactions */
-/* eslint-disable import/no-import-module-exports */
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import _ from 'underscore';
 import { ajaxUtils } from './ajax_utils';
@@ -241,12 +239,14 @@ function WordwallsAppContainer({
       if (data.info) {
         addMessage(data.info);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = 'Error saving';
-      if (error.response?.data?.error) {
-        errorMessage += `: ${error.response.data.error}`;
-      } else if (error.message) {
-        errorMessage += `: ${error.message}`;
+      if (error && typeof error === 'object') {
+        if ('response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'error' in error.response.data) {
+          errorMessage += `: ${error.response.data.error}`;
+        } else if ('message' in error && typeof error.message === 'string') {
+          errorMessage += `: ${error.message}`;
+        }
       }
       addMessage(errorMessage, 'error');
     }
@@ -328,7 +328,7 @@ function WordwallsAppContainer({
         processGameEnded();
       }
     },
-    [processGameEnded, lastGuessCorrectness, lastGuess, username]
+    [processGameEnded, username]
   );
 
   const submitGuess = useCallback(
@@ -643,7 +643,7 @@ function WordwallsAppContainer({
           game.miss(alphagram);
           setOrigQuestions(game.getOriginalQuestionState());
         }
-      } catch (error) {
+      } catch {
         // Ignore errors for mark missed
       }
     },

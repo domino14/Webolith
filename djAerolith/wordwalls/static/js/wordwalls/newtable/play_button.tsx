@@ -1,6 +1,4 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions,
-jsx-a11y/click-events-have-key-events,jsx-a11y/anchor-is-valid,
-jsx-a11y/interactive-supports-focus */ // goddamn a11y
+/* eslint-disable jsx-a11y/anchor-is-valid */ // goddamn a11y
 
 import React, { useEffect, useRef, useCallback } from 'react';
 

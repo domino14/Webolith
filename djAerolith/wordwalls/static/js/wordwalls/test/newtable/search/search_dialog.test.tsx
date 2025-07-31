@@ -27,7 +27,7 @@ const props: SearchDialogProps = {
   lexicon: 3,
   desiredTime: 100,
   questionsPerRound: 50,
-  // eslint-disable-next-line no-console
+   
   notifyError: (err: string) => { console.log('Mock notifyError: ', err); },
   redirectUrl: () => { },
   tablenum: 12,

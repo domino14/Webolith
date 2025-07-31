@@ -79,7 +79,7 @@ const SettingsModal = forwardRef<SettingsModalRef, SettingsModalProps>(({
             let newBackground = getAppropriateBackground(currentBackground, false, false);
             let newBodyBackground = getAppropriateBackground(currentBodyBackground, false, true);
 
-            // eslint-disable-next-line no-console
+             
             console.log(
               'Background transition:',
               currentBackground,
@@ -96,14 +96,14 @@ const SettingsModal = forwardRef<SettingsModalRef, SettingsModalProps>(({
             if (newBackground === '' && currentBackground !== '') {
               // Default to 'pool_table' for the main background if coming from a dark background
               newBackground = 'pool_table';
-              // eslint-disable-next-line no-console
+               
               console.log('Correcting empty background to pool_table');
             }
 
             if (newBodyBackground === '' && currentBodyBackground !== '') {
               // Default to 'hexellence' for the body background if coming from a dark background
               newBodyBackground = 'hexellence';
-              // eslint-disable-next-line no-console
+               
               console.log('Correcting empty body background to hexellence');
             }
 

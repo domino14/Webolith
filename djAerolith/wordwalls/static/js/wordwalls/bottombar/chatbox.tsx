@@ -40,7 +40,7 @@ function ChatBox({ messages, height = 100 }: ChatBoxProps) {
           if (domNode === null) {
             return;
           }
-          domNode.scrollTop = domNode.scrollHeight; // eslint-disable-line no-param-reassign
+          domNode.scrollTop = domNode.scrollHeight;  
         }}
       >
         {messageNodes}

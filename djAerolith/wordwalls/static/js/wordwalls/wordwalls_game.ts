@@ -1,4 +1,3 @@
-/* eslint-disable new-cap */
 /**
  * @fileOverview Contains logic for wrong word hashes, etc. Used as a
  * helper to calculate state for the react app in app.jsx.
@@ -8,10 +7,48 @@
 import * as Immutable from 'immutable';
 import _ from 'underscore';
 
-const LETTER_SORT_MAP = {};
+// TypeScript interfaces for the game data structures
+interface Word {
+  w: string;  // word
+  d: string;  // definition
+  fh: string; // front hooks
+  bh: string; // back hooks
+  ifh: boolean; // inner front hook
+  ibh: boolean; // inner back hook
+  s: string;  // lexicon symbols
+  solved?: boolean;
+}
+
+interface Question {
+  a: string;  // alphagram
+  p: number;  // probability
+  ws: Word[]; // words
+  idx: number; // index
+  df?: number | string; // difficulty
+  answersRemaining?: number;
+  solved?: boolean;
+  wrongGuess?: boolean;
+}
+
+interface ReducedQuestion {
+  a: string;
+  wMap: Record<string, Word>;
+  displayedAs: string;
+}
+
+interface OriginalWordInfo {
+  idx: number;
+  word: Word;
+}
+
+type LetterCountMap = Record<string, number>;
+type AlphaIndexHash = Record<string, number>;
+type AnsweredByMap = Immutable.Map<string, Immutable.List<unknown>>;
+
+const LETTER_SORT_MAP: Record<string, number> = {};
 const SORT_STRING_ORDER = 'AĄBCĆ1DEĘFGHIJKLŁ2MNŃÑOÓPQR3SŚTUVWXYZŹŻ?';
 
-function makeLetterSortMap() {
+function makeLetterSortMap(): void {
   for (let i = 0; i < SORT_STRING_ORDER.length; i += 1) {
     LETTER_SORT_MAP[SORT_STRING_ORDER[i]] = i;
   }
@@ -23,7 +60,7 @@ function makeLetterSortMap() {
  * to be reworked.
  * @param {string} word
  */
-function alphagrammize(word) {
+function alphagrammize(word: string): string {
   if (_.size(LETTER_SORT_MAP) === 0) {
     makeLetterSortMap();
   }
@@ -38,8 +75,8 @@ function alphagrammize(word) {
  * @param {string} word
  * @returns Object.<string, number>
  */
-function letterCounts(word) {
-  const lc = {};
+function letterCounts(word: string): LetterCountMap {
+  const lc: LetterCountMap = {};
   for (let i = 0; i < word.length; i += 1) {
     if (_.has(lc, word[i])) {
       lc[word[i]] += 1;
@@ -50,7 +87,13 @@ function letterCounts(word) {
   return lc;
 }
 
-function anagramOfQuestion(guessLetters, question, buildMode, minLength, maxLength) {
+function anagramOfQuestion(
+  guessLetters: string[], 
+  question: string, 
+  buildMode: boolean, 
+  minLength: number, 
+  maxLength: number
+): boolean {
   const alphaLC = letterCounts(question);
   for (let i = 0; i < guessLetters.length; i += 1) {
     if (_.has(alphaLC, guessLetters[i])) {
@@ -88,7 +131,13 @@ function anagramOfQuestion(guessLetters, question, buildMode, minLength, maxLeng
  *  used for build mode.
  * @returns {string=}
  */
-function anagramOfQuestions(guess, alphaHash, buildMode, minLength, maxLength) {
+function anagramOfQuestions(
+  guess: string, 
+  alphaHash: AlphaIndexHash, 
+  buildMode: boolean, 
+  minLength: number, 
+  maxLength: number
+): string | undefined {
   const guessLetters = guess.split('');
   return Object.keys(alphaHash).find((val) => anagramOfQuestion(
     guessLetters,
@@ -100,12 +149,36 @@ function anagramOfQuestions(guess, alphaHash, buildMode, minLength, maxLength) {
 }
 
 class Game {
+  curQuestions: Immutable.List<Immutable.Map<string, unknown>>;
+  origQuestions: Immutable.OrderedMap<string, Immutable.Map<string, unknown>>;
+  answeredBy: AnsweredByMap;
+  missedWordsHash: Record<string, number>;
+  originalWordsHash: Record<string, OriginalWordInfo>;
+  alphaAnswersHash: Record<string, boolean>;
+  alphaIndexHash: AlphaIndexHash;
+  alphagramsLeft: number;
+  totalWords: number;
+  maxOnScreenQuestions: number;
+  gameType: string;
+  hasBlanks: boolean;
+  minLength: number;
+  maxLength: number;
+
   constructor() {
     this.curQuestions = Immutable.List();
     this.origQuestions = Immutable.OrderedMap();
     this.answeredBy = Immutable.Map();
     this.missedWordsHash = {};
     this.originalWordsHash = {};
+    this.alphaAnswersHash = {};
+    this.alphaIndexHash = {};
+    this.alphagramsLeft = 0;
+    this.totalWords = 0;
+    this.maxOnScreenQuestions = 52;
+    this.gameType = '';
+    this.hasBlanks = false;
+    this.minLength = 100;
+    this.maxLength = -100;
   }
 
   /**
@@ -114,9 +187,9 @@ class Game {
    * @param {string} gameType The type of game
    * @return {Immutable} The original questions as an immutable.
    */
-  init(questions, gameType) {
-    const qMap = {};
-    const reducedQuestions = [];
+  init(questions: Question[], gameType: string): Immutable.OrderedMap<string, Immutable.Map<string, unknown>> {
+    const qMap: Record<string, Question> = {};
+    const reducedQuestions: ReducedQuestion[] = [];
     this.missedWordsHash = {};
     this.originalWordsHash = {};
     // A simple set of alphagrams of answers. We don't reuse the alphaIndexHash
@@ -136,7 +209,7 @@ class Game {
     this.minLength = 100;
     this.maxLength = -100;
     questions.forEach((question, aidx) => {
-      const newWMap = {};
+      const newWMap: Record<string, Word> = {};
       question.ws.forEach((word, idx) => {
         this.missedWordsHash[word.w] = idx;
         this.originalWordsHash[word.w] = {
@@ -153,7 +226,7 @@ class Game {
           this.maxLength = word.w.length;
         }
       });
-      question.answersRemaining = question.ws.length; // eslint-disable-line no-param-reassign
+      question.answersRemaining = question.ws.length;
       this.alphaIndexHash[question.a] = aidx;
       qMap[question.a] = question;
       if (question.a.includes('?')) {
@@ -169,10 +242,12 @@ class Game {
     this.origQuestions = Immutable.fromJS(qMap).toOrderedMap();
     // This structure is used just for the initial display.
     this.curQuestions = Immutable.fromJS(reducedQuestions);
+    return this.origQuestions;
   }
 
-  miss(alphagram) {
+  miss(alphagram: string): void {
     this.origQuestions = this.origQuestions.update(alphagram, (aObj) => {
+      if (!aObj) return aObj;
       const newObj = aObj.set('solved', false);
       return newObj;
     });
@@ -184,7 +259,7 @@ class Game {
    * @param  {string} guess
    * @return {boolean}
    */
-  answerExists(guess) {
+  answerExists(guess: string): boolean {
     const widx = this.missedWordsHash[guess];
     return widx != null;
   }
@@ -195,7 +270,7 @@ class Game {
    * @param  {string} guess
    * @return {boolean}
    */
-  markPotentialIncorrectGuess(guess) {
+  markPotentialIncorrectGuess(guess: string): boolean {
     // If the guess ever existed, it shouldn't be marked as an incorrect
     // guess.
     if (this.originalAnswerExists(guess)) {
@@ -208,6 +283,7 @@ class Game {
       return false;
     }
     this.origQuestions = this.origQuestions.update(question, (aObj) => {
+      if (!aObj) return aObj;
       const newObj = aObj.set('wrongGuess', true);
       return newObj;
     });
@@ -220,7 +296,7 @@ class Game {
    * @param  {string} guess
    * @return {boolean}
    */
-  originalAnswerExists(guess) {
+  originalAnswerExists(guess: string): boolean {
     return this.originalWordsHash[guess] != null;
   }
 
@@ -230,7 +306,7 @@ class Game {
    * @param {string} guess
    * @return {string?}
    */
-  guessInUnansweredQuestions(guess) {
+  guessInUnansweredQuestions(guess: string): string | null {
     const buildMode = this.gameType.includes('build');
     if (!this.hasBlanks && !buildMode) {
       // alphagrammize the word.
@@ -246,16 +322,16 @@ class Game {
         buildMode,
         this.minLength,
         this.maxLength,
-      );
+      ) || null;
     }
     return null;
   }
 
-  getRemainingAnswers() {
+  getRemainingAnswers(): string[] {
     return Object.keys(this.missedWordsHash);
   }
 
-  addToAnswered(wObj, solver) {
+  addToAnswered(wObj: Immutable.Map<string, unknown>, solver: string): void {
     // Update the "answeredByMap" at key solver with a new list caused by
     // appending wObj to the existing list at that key. If that key doesn't
     // exist, it creates one with an empty list.
@@ -270,7 +346,7 @@ class Game {
    * @param {string} word
    * @return {boolean} Whether the word is in a CSW lexicon and not NWL.
    */
-  isCSW(word) {
+  isCSW(word: string): boolean {
     const w = this.originalWordsHash[word];
     if (!w) {
       return false;
@@ -286,7 +362,7 @@ class Game {
    * @param {string} solver The screenname of the solver
    * @return {boolean} Solving successfully updated variables.
    */
-  solve(word, alphagram, solver) {
+  solve(word: string, alphagram: string, solver: string): boolean {
     const widx = this.missedWordsHash[word];
     if (widx == null) {
       return false;
@@ -299,8 +375,9 @@ class Game {
 
     // Update the word object; add a solved property.
     this.origQuestions = this.origQuestions.updateIn([alphagram, 'ws', widx], (wObj) => {
-      this.addToAnswered(wObj, solver);
-      return wObj.set('solved', true);
+      if (!wObj) return wObj;
+      this.addToAnswered(wObj as Immutable.Map<string, unknown>, solver);
+      return (wObj as Immutable.Map<string, unknown>).set('solved', true);
     });
 
     // Look up the index of this alphagram in the alphaIndex hash.
@@ -310,10 +387,11 @@ class Game {
     this.curQuestions = this.curQuestions.deleteIn([aidx, 'wMap', word]);
 
     this.origQuestions = this.origQuestions.update(alphagram, (aObj) => {
+      if (!aObj) return aObj;
       let replacementAlpha;
       let newObj = aObj.set(
         'answersRemaining',
-        aObj.get('answersRemaining') - 1,
+        aObj.get('answersRemaining') as number - 1,
       );
       if (newObj.get('answersRemaining') !== 0) {
         return newObj;
@@ -338,17 +416,17 @@ class Game {
         replacementAlpha = this.curQuestions.last();
 
         // Set the alpha at `aidx` to the last alpha in the list.
-        this.curQuestions = this.curQuestions.pop().set(aidx, replacementAlpha);
+        this.curQuestions = this.curQuestions.pop().set(aidx, replacementAlpha!);
         // Change the index in this.alphaIndexHash to aidx, for the new
         // alphagram (replace in place).
-        this.alphaIndexHash[replacementAlpha.get('a')] = aidx;
+        this.alphaIndexHash[replacementAlpha!.get('a') as string] = aidx;
       }
       return newObj;
     });
     return true;
   }
 
-  setMaxOnScreenQuestions(n) {
+  setMaxOnScreenQuestions(n: number): void {
     this.maxOnScreenQuestions = n;
   }
 
@@ -356,7 +434,7 @@ class Game {
    * Get the current question state.
    * @return {Immutable.List}
    */
-  getQuestionState() {
+  getQuestionState(): Immutable.List<Immutable.Map<string, unknown>> {
     return this.curQuestions;
   }
 
@@ -364,15 +442,15 @@ class Game {
    * Get the original question state.
    * @return {Immutable.List}
    */
-  getOriginalQuestionState() {
+  getOriginalQuestionState(): Immutable.OrderedMap<string, Immutable.Map<string, unknown>> {
     return this.origQuestions;
   }
 
-  getTotalNumWords() {
+  getTotalNumWords(): number {
     return this.totalWords;
   }
 
-  getAnsweredBy() {
+  getAnsweredBy(): AnsweredByMap {
     return this.answeredBy;
   }
 
@@ -380,14 +458,15 @@ class Game {
    * Shuffle the element at the index given by which.
    * @param  {number} which
    */
-  shuffle(which) {
+  shuffle(which: number): void {
     this.curQuestions = this.curQuestions.update(which, (aObj) => {
-      const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a')).join(''));
+      if (!aObj) return aObj;
+      const newObj = aObj.set('displayedAs', _.shuffle(aObj.get('a') as string).join(''));
       return newObj;
     });
   }
 
-  shuffleAll() {
+  shuffleAll(): void {
     if (!this.curQuestions) {
       return;
     }
@@ -397,9 +476,10 @@ class Game {
     }
   }
 
-  resetAllOrders() {
+  resetAllOrders(): void {
     let i;
-    const updateFunction = (aObj) => {
+    const updateFunction = (aObj: Immutable.Map<string, unknown> | undefined) => {
+      if (!aObj) return aObj;
       const modObj = aObj.set('displayedAs', aObj.get('a'));
       return modObj;
     };
@@ -411,20 +491,21 @@ class Game {
     }
   }
 
-  setCustomLetterOrder(order) {
+  setCustomLetterOrder(order: string): void {
     let i;
     /**
      * Sorts a string into the custom order given by `order`.
      * @param  {string} letters
      * @return {string}
      */
-    const customOrder = (letters) => {
+    const customOrder = (letters: string): string => {
       const sortedLetters = _.sortBy(letters, (letter) => order.indexOf(letter));
       return sortedLetters.join('');
     };
 
-    const updateFunction = (aObj) => {
-      const modObj = aObj.set('displayedAs', customOrder(aObj.get('a')));
+    const updateFunction = (aObj: Immutable.Map<string, unknown> | undefined) => {
+      if (!aObj) return aObj;
+      const modObj = aObj.set('displayedAs', customOrder(aObj.get('a') as string));
       return modObj;
     };
 

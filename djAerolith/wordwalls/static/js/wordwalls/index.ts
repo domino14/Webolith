@@ -7,7 +7,37 @@ import '../../css/theme-enhancements.css';
 
 import App from './app';
 
-const user = JSON.parse(window.TableGlobals.user);
+// Define the shape of the global TableGlobals object
+interface User {
+  username: string;
+  user_hash: string;
+  name: string;
+  email: string;
+  createdAt: number;
+}
+
+interface TableGlobals {
+  user: string; // JSON string
+  lexicon: string;
+  tablenum: number;
+  currentHost: string;
+  addlParams: string; // JSON string
+  availableLexica: string; // JSON string
+  defaultLexicon: string;
+  challengeInfo: string; // JSON string
+  socketServer: string;
+  intercomAppID: string;
+}
+
+// Extend the Window interface to include our globals
+declare global {
+  interface Window {
+    TableGlobals: TableGlobals;
+    Intercom: (command: string, settings?: Record<string, unknown>) => void;
+  }
+}
+
+const user: User = JSON.parse(window.TableGlobals.user);
 
 App.initialize({
   lexicon: window.TableGlobals.lexicon,

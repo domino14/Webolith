@@ -5,13 +5,13 @@
 interface AjaxOptions {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  data?: Record<string, any> | string;
+  data?: Record<string, unknown> | string;
   dataType?: 'json' | 'text' | 'html';
   contentType?: string;
   async?: boolean;
 }
 
-interface AjaxResponse<T = any> {
+interface AjaxResponse<T = unknown> {
   data: T;
   status: number;
   statusText: string;
@@ -20,14 +20,14 @@ interface AjaxResponse<T = any> {
 /**
  * Modern replacement for $.ajax()
  */
-export async function ajax<T = any>(options: AjaxOptions): Promise<AjaxResponse<T>> {
+export async function ajax<T = unknown>(options: AjaxOptions): Promise<AjaxResponse<T>> {
   const {
     url,
     method = 'GET',
     data,
     dataType = 'json',
     contentType = 'application/x-www-form-urlencoded; charset=UTF-8',
-    async = true
+    // async is ignored in fetch (always async)
   } = options;
 
   // Prepare request options
@@ -64,35 +64,31 @@ export async function ajax<T = any>(options: AjaxOptions): Promise<AjaxResponse<
     }
   }
 
-  try {
-    const response = await fetch(url, fetchOptions);
-    
-    let responseData: T;
-    
-    switch (dataType) {
-      case 'json':
-        responseData = await response.json();
-        break;
-      case 'text':
-      case 'html':
-        responseData = await response.text() as T;
-        break;
-      default:
-        responseData = await response.json();
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    return {
-      data: responseData,
-      status: response.status,
-      statusText: response.statusText,
-    };
-  } catch (error) {
-    throw error;
+  const response = await fetch(url, fetchOptions);
+  
+  let responseData: T;
+  
+  switch (dataType) {
+    case 'json':
+      responseData = await response.json();
+      break;
+    case 'text':
+    case 'html':
+      responseData = await response.text() as T;
+      break;
+    default:
+      responseData = await response.json();
   }
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return {
+    data: responseData,
+    status: response.status,
+    statusText: response.statusText,
+  };
 }
 
 /**
@@ -121,16 +117,16 @@ function getCsrfToken(): string | null {
  * Simplified AJAX methods for common use cases
  */
 export const ajaxUtils = {
-  get: <T = any>(url: string, data?: Record<string, any>): Promise<AjaxResponse<T>> => {
+  get: <T = unknown>(url: string, data?: Record<string, unknown>): Promise<AjaxResponse<T>> => {
     const queryString = data ? '?' + new URLSearchParams(data).toString() : '';
     return ajax<T>({ url: url + queryString, method: 'GET' });
   },
 
-  post: <T = any>(url: string, data?: Record<string, any> | string, contentType?: string): Promise<AjaxResponse<T>> => {
+  post: <T = unknown>(url: string, data?: Record<string, unknown> | string, contentType?: string): Promise<AjaxResponse<T>> => {
     return ajax<T>({ url, method: 'POST', data, contentType });
   },
 
-  postJson: <T = any>(url: string, data: Record<string, any>): Promise<AjaxResponse<T>> => {
+  postJson: <T = unknown>(url: string, data: Record<string, unknown>): Promise<AjaxResponse<T>> => {
     return ajax<T>({ 
       url, 
       method: 'POST', 
