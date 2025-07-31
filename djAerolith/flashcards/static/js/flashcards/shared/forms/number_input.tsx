@@ -40,21 +40,17 @@ function NumberInput({
   }
 
   return (
-    <div className="mb-3">
-      <div className="row">
-        <div className={inputColSizeClass}>
-          <label className="form-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            {label}
-          </label>
-          <input
-            type="number"
-            {...addlInputProps}
-            value={value}
-            className="form-control"
-            onChange={onChange}
-          />
-        </div>
-      </div>
+    <div className="form-group">
+      <label className="control-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        {label}
+      </label>
+      <input
+        type="number"
+        {...addlInputProps}
+        value={value}
+        className="form-control"
+        onChange={onChange}
+      />
     </div>
   );
 }

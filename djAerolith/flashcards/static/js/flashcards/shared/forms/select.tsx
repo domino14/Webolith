@@ -35,7 +35,7 @@ function Select({
 
   let badgeElement: React.ReactElement | null = null;
   if (badge) {
-    badgeElement = (<span className="badge bg-success">{badge}</span>);
+    badgeElement = (<span className="badge" style={{ backgroundColor: '#5cb85c' }}>{badge}</span>);
   }
 
   const optionElements = options.map((element) => (
@@ -56,25 +56,21 @@ function Select({
   }
 
   return (
-    <div className="mb-3">
-      <div className="row">
-        <div className={inputColSizeClass}>
-          <label className="form-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            {label}
-            {' '}
-            {badgeElement}
-          </label>
-          <select
-            value={selectedValue}
-            onChange={onChange}
-            className="form-select"
-            style={{ minWidth: '120px' }}
-            {...additionalSelectProps}
-          >
-            {optionElements}
-          </select>
-        </div>
-      </div>
+    <div className="form-group">
+      <label className="control-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        {label}
+        {' '}
+        {badgeElement}
+      </label>
+      <select
+        value={selectedValue}
+        onChange={onChange}
+        className="form-control"
+        style={{ minWidth: '120px' }}
+        {...additionalSelectProps}
+      >
+        {optionElements}
+      </select>
     </div>
   );
 }

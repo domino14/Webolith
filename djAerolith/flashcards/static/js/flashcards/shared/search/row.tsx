@@ -102,7 +102,7 @@ function MinMaxValues({
 }: MinMaxValuesProps) {
   return (
     <div className="row">
-      <div className="col-6">
+      <div className="col-xs-6">
         <NumberValue
           label="Min"
           defaultValue={minValue}
@@ -113,7 +113,7 @@ function MinMaxValues({
           paramName="minValue"
         />
       </div>
-      <div className="col-6">
+      <div className="col-xs-6">
         <NumberValue
           label="Max"
           defaultValue={maxValue}
@@ -171,7 +171,7 @@ function HooksValue({
 
   return (
     <div className="row">
-      <div className="col-4">
+      <div className="col-xs-4">
         <Select
           colSize={12}
           label="Hook Type"
@@ -182,7 +182,7 @@ function HooksValue({
           }}
         />
       </div>
-      <div className="col-5">
+      <div className="col-xs-5">
         <TextInput
           colSize={12}
           label="Hooks"
@@ -194,7 +194,7 @@ function HooksValue({
           )}
         />
       </div>
-      <div className="col-3 d-flex align-items-end" style={{ paddingBottom: '0.75rem' }}>
+      <div className="col-xs-3" style={{ paddingTop: '25px' }}>
         <Checkbox
           label="NOT"
           on={notCondition}
@@ -313,29 +313,28 @@ function SearchRow({
   }
 
   return (
-    <div className="row search-row mb-3">
-      <div className="col-auto d-flex align-items-end pb-3">
-        <div>
+    <div className="row search-row" style={{ marginBottom: '15px' }}>
+      <div className="col-xs-2">
+        <div style={{ paddingTop: '25px' }}>
           <button
             type="button"
-            className="btn btn-info btn-add-search-row me-1"
-            style={{ height: '38px' }}
+            className="btn btn-info btn-add-search-row"
+            style={{ marginRight: '5px' }}
             onClick={addRow}
           >
-            <span className="bi bi-plus" aria-hidden="true" />
+            +
           </button>
           <button
             type="button"
             className="btn btn-info btn-remove-search-row"
-            style={{ height: '38px' }}
             onClick={() => removeRow(index)}
             disabled={removeDisabled}
           >
-            <span className="bi bi-dash" aria-hidden="true" />
+            −
           </button>
         </div>
       </div>
-      <div className="col-3">
+      <div className="col-xs-3">
         <Select
           colSize={12}
           label="Search Criterion"
@@ -346,7 +345,7 @@ function SearchRow({
           }}
         />
       </div>
-      <div className="col">{specificForm}</div>
+      <div className="col-xs-7">{specificForm}</div>
     </div>
   );
 }

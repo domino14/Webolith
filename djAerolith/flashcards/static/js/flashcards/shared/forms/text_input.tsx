@@ -25,22 +25,18 @@ function TextInput({
   const inputColSizeClass = `col-md-${colSize}`;
 
   return (
-    <div className="mb-3">
-      <div className="row">
-        <div className={inputColSizeClass}>
-          <label className="form-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            {label}
-          </label>
-          <input
-            type="text"
-            value={value}
-            className="form-control"
-            maxLength={maxLength}
-            onChange={onChange}
-            onKeyPress={onKeyPress}
-          />
-        </div>
-      </div>
+    <div className="form-group">
+      <label className="control-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        {label}
+      </label>
+      <input
+        type="text"
+        value={value}
+        className="form-control"
+        maxLength={maxLength}
+        onChange={onChange}
+        onKeyPress={onKeyPress}
+      />
     </div>
   );
 }

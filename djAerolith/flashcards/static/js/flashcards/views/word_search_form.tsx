@@ -87,7 +87,7 @@ const WordSearchForm: React.FC<WordSearchFormProps> = (props) => {
       </div>
 
       <div className="row" style={{ marginBottom: 10 }}>
-        <div className="col-xs-4">
+        <div className="col-xs-12">
           <button
             className="btn btn-primary"
             type="button"

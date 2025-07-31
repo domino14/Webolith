@@ -21,10 +21,9 @@ function CheckBox({
   const addlInputProps = disabled ? { disabled: true } : {};
 
   return (
-    <div className="mb-3">
-      <div className="form-check">
+    <div className="checkbox">
+      <label htmlFor={inputId}>
         <input
-          className="form-check-input"
           type="checkbox"
           id={inputId}
           name={name}
@@ -32,15 +31,14 @@ function CheckBox({
           checked={on}
           onChange={onChange}
         />
-        <label className="form-check-label ms-2" htmlFor={inputId}>
-          {label}
-        </label>
-        {helpText && (
-          <div className="form-text">
-            {helpText}
-          </div>
-        )}
-      </div>
+        {' '}
+        {label}
+      </label>
+      {helpText && (
+        <p className="help-block">
+          {helpText}
+        </p>
+      )}
     </div>
   );
 }
