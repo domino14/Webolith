@@ -2,7 +2,7 @@
  * @fileOverview A native HTML5 date input component.
  */
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 import moment from 'moment';
 
@@ -14,13 +14,13 @@ interface DatePickerProps {
   startDate: Date;
 }
 
-function DatePicker({
+const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(({
   id,
   value,
   label,
   onDateChange,
   startDate,
-}: DatePickerProps) {
+}, ref) => {
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(e.target.value);
     onDateChange(selectedDate);
@@ -46,6 +46,7 @@ function DatePicker({
           type="date"
           className="form-control"
           id={id}
+          ref={ref}
           value={formatDateForInput(value.toDate())}
           onChange={handleDateChange}
           min={formatDateForInput(startDate)}
@@ -54,6 +55,8 @@ function DatePicker({
       </div>
     </div>
   );
-}
+});
+
+DatePicker.displayName = 'DatePicker';
 
 export default DatePicker;

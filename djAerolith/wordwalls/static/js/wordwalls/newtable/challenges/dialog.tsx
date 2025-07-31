@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import moment from 'moment';
 
@@ -81,6 +81,15 @@ function ChallengeDialog({
   currentChallenge,
   disabled,
 }: ChallengeDialogProps) {
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDatePickerClick = () => {
+    if (dateInputRef.current) {
+      dateInputRef.current.focus();
+      dateInputRef.current.showPicker?.();
+    }
+  };
+
   // For the different order priorities, make different buttons.
   const rows: React.ReactNode[] = [];
   const challs = challengesDoneAtDate.map((el) => el.challengeID);
@@ -182,13 +191,20 @@ function ChallengeDialog({
   return (
     <div className="row">
       <div className="col-sm-7">
-        <DatePicker
-          id="challenge-date"
-          label="Challenge Date"
-          value={currentDate}
-          onDateChange={onDateChange}
-          startDate={new Date(2011, 5, 14)}
-        />
+        <div 
+          onClick={handleDatePickerClick}
+          style={{ cursor: 'pointer' }}
+          title="Click anywhere to open date picker"
+        >
+          <DatePicker
+            id="challenge-date"
+            label="Challenge Date"
+            value={currentDate}
+            onDateChange={onDateChange}
+            startDate={new Date(2011, 5, 14)}
+            ref={dateInputRef}
+          />
+        </div>
 
         {rows}
 

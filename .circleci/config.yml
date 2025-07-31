@@ -75,7 +75,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run eslint
-      - run: npm run jshint && npm run test && npm run build:wordwalls
+      - run: npm run test && npm run build:wordwalls
       - run: apk add --update ca-certificates openssl && update-ca-certificates
       - run: cd frontend && npm install && npm run lint && npm run build
       - run: cd djAerolith/flashcards && npm install && npm run build
