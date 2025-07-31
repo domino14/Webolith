@@ -71,11 +71,11 @@ describe('<SearchDialogContainer />', () => {
       sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
         lexicon: 3,
         searchCriteria: [{
-          searchType: 1,
+          searchType: 1, // LENGTH in original protobuf types
           minValue: 7,
           maxValue: 7,
         }, {
-          searchType: 2,
+          searchType: 2, // PROBABILITY in original protobuf types  
           minValue: 1,
           maxValue: 200,
         }],
@@ -110,15 +110,15 @@ describe('<SearchDialogContainer />', () => {
     sinon.assert.calledWith(apiSpy, '/wordwalls/api/new_search/', {
       lexicon: 3,
       searchCriteria: [{
-        searchType: 1,
+        searchType: 1, // LENGTH
         minValue: 7,
         maxValue: 7,
       }, {
-        searchType: 2,
+        searchType: 2, // PROBABILITY
         minValue: 1,
         maxValue: 200,
       }, {
-        searchType: 8,
+        searchType: 8, // POINTS
         minValue: 2,
         maxValue: 30,
       }],
@@ -136,8 +136,7 @@ describe('<SearchDialogContainer />', () => {
     }
     expect(screen.getAllByText('Search Criterion').length).toBe(13);
     // And search specifically that fixed length wasn't rendered.
-    // There's an extra searchrow from the hooks search dropdown.
     expect(screen.getAllByTestId(`searchrow-${SearchTypesEnum.LENGTH}`).length).toBe(14);
-    expect(screen.findAllByTestId(`searchrow-${SearchTypesEnum.FIXED_LENGTH}`).length).toBe(undefined);
+    expect(screen.queryAllByTestId(`searchrow-${SearchTypesEnum.FIXED_LENGTH}`).length).toBe(0);
   });
 });

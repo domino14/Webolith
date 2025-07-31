@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { SearchTypesEnum, SearchCriterion } from 'wordvaultapp/search/types';
-import useSearchRows from 'wordvaultapp/search/use_search_rows';
+import useSearchRows from '../search/use_search_rows';
 import BlankSearchDialog from '../search/dialog';
 
 import WordwallsAPI from '../../wordwalls_api';

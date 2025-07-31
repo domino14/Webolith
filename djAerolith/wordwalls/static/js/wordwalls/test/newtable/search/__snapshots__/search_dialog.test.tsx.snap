@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`<SearchDialogContainer /> Static Analysis renders correctly 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -14,41 +14,39 @@ Object {
         >
           <div>
             <div
-              class="row search-row"
+              class="row search-row mb-3"
             >
               <div
-                class="col-xs-1"
-                style="margin-top: 33px; margin-bottom: 5px;"
+                class="col-auto d-flex align-items-end pb-3"
               >
-                <button
-                  class="btn btn-info btn-xs btn-add-search-row"
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    class="glyphicon glyphicon-plus"
-                  />
-                </button>
+                <div>
+                  <button
+                    class="btn btn-info btn-add-search-row me-1"
+                    style="height: 38px;"
+                    type="button"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="bi bi-plus"
+                    />
+                  </button>
+                  <button
+                    class="btn btn-info btn-remove-search-row"
+                    style="height: 38px;"
+                    type="button"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="bi bi-dash"
+                    />
+                  </button>
+                </div>
               </div>
               <div
-                class="col-xs-1"
-                style="margin-top: 33px; margin-bottom: 5px;"
-              >
-                <button
-                  class="btn btn-info btn-xs btn-remove-search-row"
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    class="glyphicon glyphicon-minus"
-                  />
-                </button>
-              </div>
-              <div
-                class="col-xs-4"
+                class="col-3"
               >
                 <div
-                  class="form-group"
+                  class="mb-3"
                 >
                   <div
                     class="row"
@@ -57,13 +55,15 @@ Object {
                       class="col-md-12"
                     >
                       <label
+                        class="form-label"
                         style="overflow: hidden; white-space: nowrap;"
                       >
                         Search Criterion
                          
                       </label>
                       <select
-                        class="form-control"
+                        class="form-select"
+                        style="min-width: 120px;"
                       >
                         <option
                           data-testid="searchrow-1"
@@ -149,60 +149,66 @@ Object {
                 </div>
               </div>
               <div
-                style="margin-top: 2px;"
+                class="col"
               >
                 <div
-                  class="col-xs-3"
+                  class="row"
                 >
                   <div
-                    class="form-group"
+                    class="col-6"
                   >
                     <div
-                      class="row"
+                      class="mb-3"
                     >
                       <div
-                        class="col-md-12"
+                        class="row"
                       >
-                        <label
-                          style="overflow: hidden; white-space: nowrap;"
+                        <div
+                          class="col-md-12"
                         >
-                          Min
-                        </label>
-                        <input
-                          class="form-control input-sm"
-                          max="15"
-                          min="2"
-                          type="number"
-                          value="7"
-                        />
+                          <label
+                            class="form-label"
+                            style="overflow: hidden; white-space: nowrap;"
+                          >
+                            Min
+                          </label>
+                          <input
+                            class="form-control"
+                            max="15"
+                            min="2"
+                            type="number"
+                            value="7"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  class="col-xs-3"
-                >
                   <div
-                    class="form-group"
+                    class="col-6"
                   >
                     <div
-                      class="row"
+                      class="mb-3"
                     >
                       <div
-                        class="col-md-12"
+                        class="row"
                       >
-                        <label
-                          style="overflow: hidden; white-space: nowrap;"
+                        <div
+                          class="col-md-12"
                         >
-                          Max
-                        </label>
-                        <input
-                          class="form-control input-sm"
-                          max="15"
-                          min="2"
-                          type="number"
-                          value="7"
-                        />
+                          <label
+                            class="form-label"
+                            style="overflow: hidden; white-space: nowrap;"
+                          >
+                            Max
+                          </label>
+                          <input
+                            class="form-control"
+                            max="15"
+                            min="2"
+                            type="number"
+                            value="7"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -210,41 +216,39 @@ Object {
               </div>
             </div>
             <div
-              class="row search-row"
+              class="row search-row mb-3"
             >
               <div
-                class="col-xs-1"
-                style="margin-top: 33px; margin-bottom: 5px;"
+                class="col-auto d-flex align-items-end pb-3"
               >
-                <button
-                  class="btn btn-info btn-xs btn-add-search-row"
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    class="glyphicon glyphicon-plus"
-                  />
-                </button>
+                <div>
+                  <button
+                    class="btn btn-info btn-add-search-row me-1"
+                    style="height: 38px;"
+                    type="button"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="bi bi-plus"
+                    />
+                  </button>
+                  <button
+                    class="btn btn-info btn-remove-search-row"
+                    style="height: 38px;"
+                    type="button"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="bi bi-dash"
+                    />
+                  </button>
+                </div>
               </div>
               <div
-                class="col-xs-1"
-                style="margin-top: 33px; margin-bottom: 5px;"
-              >
-                <button
-                  class="btn btn-info btn-xs btn-remove-search-row"
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    class="glyphicon glyphicon-minus"
-                  />
-                </button>
-              </div>
-              <div
-                class="col-xs-4"
+                class="col-3"
               >
                 <div
-                  class="form-group"
+                  class="mb-3"
                 >
                   <div
                     class="row"
@@ -253,13 +257,15 @@ Object {
                       class="col-md-12"
                     >
                       <label
+                        class="form-label"
                         style="overflow: hidden; white-space: nowrap;"
                       >
                         Search Criterion
                          
                       </label>
                       <select
-                        class="form-control"
+                        class="form-select"
+                        style="min-width: 120px;"
                       >
                         <option
                           data-testid="searchrow-1"
@@ -345,60 +351,66 @@ Object {
                 </div>
               </div>
               <div
-                style="margin-top: 2px;"
+                class="col"
               >
                 <div
-                  class="col-xs-3"
+                  class="row"
                 >
                   <div
-                    class="form-group"
+                    class="col-6"
                   >
                     <div
-                      class="row"
+                      class="mb-3"
                     >
                       <div
-                        class="col-md-12"
+                        class="row"
                       >
-                        <label
-                          style="overflow: hidden; white-space: nowrap;"
+                        <div
+                          class="col-md-12"
                         >
-                          Min
-                        </label>
-                        <input
-                          class="form-control input-sm"
-                          max="70000"
-                          min="1"
-                          type="number"
-                          value="1"
-                        />
+                          <label
+                            class="form-label"
+                            style="overflow: hidden; white-space: nowrap;"
+                          >
+                            Min
+                          </label>
+                          <input
+                            class="form-control"
+                            max="70000"
+                            min="1"
+                            type="number"
+                            value="1"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  class="col-xs-3"
-                >
                   <div
-                    class="form-group"
+                    class="col-6"
                   >
                     <div
-                      class="row"
+                      class="mb-3"
                     >
                       <div
-                        class="col-md-12"
+                        class="row"
                       >
-                        <label
-                          style="overflow: hidden; white-space: nowrap;"
+                        <div
+                          class="col-md-12"
                         >
-                          Max
-                        </label>
-                        <input
-                          class="form-control input-sm"
-                          max="70000"
-                          min="1"
-                          type="number"
-                          value="200"
-                        />
+                          <label
+                            class="form-label"
+                            style="overflow: hidden; white-space: nowrap;"
+                          >
+                            Max
+                          </label>
+                          <input
+                            class="form-control"
+                            max="70000"
+                            min="1"
+                            type="number"
+                            value="200"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -408,7 +420,7 @@ Object {
           </div>
           <button
             class="btn btn-primary submit-word-search"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             style="margin-top: 0.75em;"
             type="button"
           >
@@ -416,7 +428,7 @@ Object {
           </button>
           <button
             class="btn btn-info"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             style="margin-top: 0.75em; margin-left: 1em;"
             type="button"
           >
@@ -455,41 +467,39 @@ Object {
       >
         <div>
           <div
-            class="row search-row"
+            class="row search-row mb-3"
           >
             <div
-              class="col-xs-1"
-              style="margin-top: 33px; margin-bottom: 5px;"
+              class="col-auto d-flex align-items-end pb-3"
             >
-              <button
-                class="btn btn-info btn-xs btn-add-search-row"
-                type="button"
-              >
-                <span
-                  aria-hidden="true"
-                  class="glyphicon glyphicon-plus"
-                />
-              </button>
+              <div>
+                <button
+                  class="btn btn-info btn-add-search-row me-1"
+                  style="height: 38px;"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="bi bi-plus"
+                  />
+                </button>
+                <button
+                  class="btn btn-info btn-remove-search-row"
+                  style="height: 38px;"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="bi bi-dash"
+                  />
+                </button>
+              </div>
             </div>
             <div
-              class="col-xs-1"
-              style="margin-top: 33px; margin-bottom: 5px;"
-            >
-              <button
-                class="btn btn-info btn-xs btn-remove-search-row"
-                type="button"
-              >
-                <span
-                  aria-hidden="true"
-                  class="glyphicon glyphicon-minus"
-                />
-              </button>
-            </div>
-            <div
-              class="col-xs-4"
+              class="col-3"
             >
               <div
-                class="form-group"
+                class="mb-3"
               >
                 <div
                   class="row"
@@ -498,13 +508,15 @@ Object {
                     class="col-md-12"
                   >
                     <label
+                      class="form-label"
                       style="overflow: hidden; white-space: nowrap;"
                     >
                       Search Criterion
                        
                     </label>
                     <select
-                      class="form-control"
+                      class="form-select"
+                      style="min-width: 120px;"
                     >
                       <option
                         data-testid="searchrow-1"
@@ -590,60 +602,66 @@ Object {
               </div>
             </div>
             <div
-              style="margin-top: 2px;"
+              class="col"
             >
               <div
-                class="col-xs-3"
+                class="row"
               >
                 <div
-                  class="form-group"
+                  class="col-6"
                 >
                   <div
-                    class="row"
+                    class="mb-3"
                   >
                     <div
-                      class="col-md-12"
+                      class="row"
                     >
-                      <label
-                        style="overflow: hidden; white-space: nowrap;"
+                      <div
+                        class="col-md-12"
                       >
-                        Min
-                      </label>
-                      <input
-                        class="form-control input-sm"
-                        max="15"
-                        min="2"
-                        type="number"
-                        value="7"
-                      />
+                        <label
+                          class="form-label"
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Min
+                        </label>
+                        <input
+                          class="form-control"
+                          max="15"
+                          min="2"
+                          type="number"
+                          value="7"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="col-xs-3"
-              >
                 <div
-                  class="form-group"
+                  class="col-6"
                 >
                   <div
-                    class="row"
+                    class="mb-3"
                   >
                     <div
-                      class="col-md-12"
+                      class="row"
                     >
-                      <label
-                        style="overflow: hidden; white-space: nowrap;"
+                      <div
+                        class="col-md-12"
                       >
-                        Max
-                      </label>
-                      <input
-                        class="form-control input-sm"
-                        max="15"
-                        min="2"
-                        type="number"
-                        value="7"
-                      />
+                        <label
+                          class="form-label"
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Max
+                        </label>
+                        <input
+                          class="form-control"
+                          max="15"
+                          min="2"
+                          type="number"
+                          value="7"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -651,41 +669,39 @@ Object {
             </div>
           </div>
           <div
-            class="row search-row"
+            class="row search-row mb-3"
           >
             <div
-              class="col-xs-1"
-              style="margin-top: 33px; margin-bottom: 5px;"
+              class="col-auto d-flex align-items-end pb-3"
             >
-              <button
-                class="btn btn-info btn-xs btn-add-search-row"
-                type="button"
-              >
-                <span
-                  aria-hidden="true"
-                  class="glyphicon glyphicon-plus"
-                />
-              </button>
+              <div>
+                <button
+                  class="btn btn-info btn-add-search-row me-1"
+                  style="height: 38px;"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="bi bi-plus"
+                  />
+                </button>
+                <button
+                  class="btn btn-info btn-remove-search-row"
+                  style="height: 38px;"
+                  type="button"
+                >
+                  <span
+                    aria-hidden="true"
+                    class="bi bi-dash"
+                  />
+                </button>
+              </div>
             </div>
             <div
-              class="col-xs-1"
-              style="margin-top: 33px; margin-bottom: 5px;"
-            >
-              <button
-                class="btn btn-info btn-xs btn-remove-search-row"
-                type="button"
-              >
-                <span
-                  aria-hidden="true"
-                  class="glyphicon glyphicon-minus"
-                />
-              </button>
-            </div>
-            <div
-              class="col-xs-4"
+              class="col-3"
             >
               <div
-                class="form-group"
+                class="mb-3"
               >
                 <div
                   class="row"
@@ -694,13 +710,15 @@ Object {
                     class="col-md-12"
                   >
                     <label
+                      class="form-label"
                       style="overflow: hidden; white-space: nowrap;"
                     >
                       Search Criterion
                        
                     </label>
                     <select
-                      class="form-control"
+                      class="form-select"
+                      style="min-width: 120px;"
                     >
                       <option
                         data-testid="searchrow-1"
@@ -786,60 +804,66 @@ Object {
               </div>
             </div>
             <div
-              style="margin-top: 2px;"
+              class="col"
             >
               <div
-                class="col-xs-3"
+                class="row"
               >
                 <div
-                  class="form-group"
+                  class="col-6"
                 >
                   <div
-                    class="row"
+                    class="mb-3"
                   >
                     <div
-                      class="col-md-12"
+                      class="row"
                     >
-                      <label
-                        style="overflow: hidden; white-space: nowrap;"
+                      <div
+                        class="col-md-12"
                       >
-                        Min
-                      </label>
-                      <input
-                        class="form-control input-sm"
-                        max="70000"
-                        min="1"
-                        type="number"
-                        value="1"
-                      />
+                        <label
+                          class="form-label"
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Min
+                        </label>
+                        <input
+                          class="form-control"
+                          max="70000"
+                          min="1"
+                          type="number"
+                          value="1"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="col-xs-3"
-              >
                 <div
-                  class="form-group"
+                  class="col-6"
                 >
                   <div
-                    class="row"
+                    class="mb-3"
                   >
                     <div
-                      class="col-md-12"
+                      class="row"
                     >
-                      <label
-                        style="overflow: hidden; white-space: nowrap;"
+                      <div
+                        class="col-md-12"
                       >
-                        Max
-                      </label>
-                      <input
-                        class="form-control input-sm"
-                        max="70000"
-                        min="1"
-                        type="number"
-                        value="200"
-                      />
+                        <label
+                          class="form-label"
+                          style="overflow: hidden; white-space: nowrap;"
+                        >
+                          Max
+                        </label>
+                        <input
+                          class="form-control"
+                          max="70000"
+                          min="1"
+                          type="number"
+                          value="200"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -849,7 +873,7 @@ Object {
         </div>
         <button
           class="btn btn-primary submit-word-search"
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           style="margin-top: 0.75em;"
           type="button"
         >
@@ -857,7 +881,7 @@ Object {
         </button>
         <button
           class="btn btn-info"
-          data-dismiss="modal"
+          data-bs-dismiss="modal"
           style="margin-top: 0.75em; margin-left: 1em;"
           type="button"
         >

@@ -20,11 +20,14 @@
         "prod:build": "npm run build:wordwalls"
     },
     "devDependencies": {
+        "@babel/polyfill": "^7.12.1",
+        "@babel/preset-env": "^7.28.0",
         "@eslint/js": "^9.32.0",
         "@testing-library/jest-dom": "^6.6.4",
         "@testing-library/react": "^16.3.0",
         "@types/bootstrap": "^5.2.10",
         "@types/immutable": "^3.8.6",
+        "@types/jest": "^30.0.0",
         "@types/react": "^19.1.8",
         "@types/react-dom": "^19.1.6",
         "@types/underscore": "^1.13.0",
@@ -43,6 +46,7 @@
         "react-test-renderer": "^19.1.1",
         "rimraf": "^6.0.1",
         "sinon": "^21.0.0",
+        "ts-jest": "^29.4.0",
         "typescript-eslint": "^8.38.0",
         "vite": "^7.0.6"
     },
@@ -63,13 +67,45 @@
         "underscore": "^1.13.7"
     },
     "jest": {
+        "preset": "ts-jest",
+        "testEnvironment": "jsdom",
         "setupFiles": [
-            "./djAerolith/wordwalls/static/js/wordwalls/test/shim.js"
+            "./djAerolith/wordwalls/static/js/wordwalls/test/shim.ts"
         ],
         "moduleNameMapper": {
-            "^wordvaultapp/(.*)$": "<rootDir>/frontend/src/$1"
+            "^wordvaultapp/(.*)$": "<rootDir>/frontend/src/$1",
+            "^sinon$": "<rootDir>/node_modules/sinon/lib/sinon.js"
         },
-        "testEnvironment": "jsdom"
+        "transform": {
+            "^.+\\.(ts|tsx)$": [
+                "ts-jest",
+                {
+                    "tsconfig": "./djAerolith/wordwalls/tsconfig.json",
+                    "isolatedModules": true
+                }
+            ],
+            "^.+\\.(js|jsx)$": "babel-jest",
+            "^.+/gen/.+\\.js$": "babel-jest"
+        },
+        "transformIgnorePatterns": [
+            "node_modules/(?!(sinon|@bufbuild)/)"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ],
+        "testPathIgnorePatterns": [],
+        "globals": {
+            "ts-jest": {
+                "tsconfig": {
+                    "module": "commonjs"
+                }
+            }
+        }
     },
     "type": "module"
 }
