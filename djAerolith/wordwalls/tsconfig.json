@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "lib": ["ES2015", "ES2016", "ES2017", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": "../..",
+    "paths": {
+      "wordvaultapp/*": ["./frontend/src/*"],
+      "wordwallsapp/*": ["./djAerolith/wordwalls/static/js/wordwalls/*"]
+    }
+  },
+  "include": [
+    "static/js/wordwalls/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.js",
+    "**/*.test.jsx"
+  ]
+}

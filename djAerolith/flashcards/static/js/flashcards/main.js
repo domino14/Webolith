@@ -5,11 +5,11 @@ define([
   'backbone',
   './views/app',
   './views/word_lookup',
-  '../../../../static/js/aerolith/csrfAjax'
+  './csrfAjax'
 ], function ($, _, Backbone, App, WordLookup) {
   "use strict";
   var app, wordLookup;
-  require('bootstrap');
+  require('bootstrap/dist/js/bootstrap');
   app = new App({
     el: $('#app-view'),
     numCards: window.AppConfig.numCards,

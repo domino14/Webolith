@@ -52,6 +52,7 @@ from wordwalls.models import (
     DailyChallengeName,
     WordwallsGameModel,
 )
+from wordwalls.stats_service import StatsService
 
 logger = logging.getLogger(__name__)
 
@@ -566,6 +567,13 @@ class WordwallsGame(object):
         # XXX: Autosave doesn't really do anything for saved lists. It
         # always saves, regardless! Oh well...
         word_list.save()
+        
+        # Track quiz start for statistics
+        try:
+            StatsService.update_quiz_started(user)
+        except Exception:
+            logger.exception("Failed to update quiz start statistics")
+        
         game_type = state["gameType"]
         if word_list.category == WordList.CATEGORY_BUILD:
             game_type += "_build"  # This is hell of ghetto.
@@ -1090,6 +1098,13 @@ class WordwallsGame(object):
             state["wrongAnswers"] = wrong_answers
             self.add_to_solvers(state, guess_str, user.username)
             state_modified = True
+            
+            # Track word solve for statistics
+            try:
+                StatsService.update_word_solved(user)
+            except Exception:
+                logger.exception("Failed to update word solve statistics")
+            
             if len(state["answerHash"]) == 0:
                 time_remaining = (
                     state["quizStartTime"] + state["timerSecs"]

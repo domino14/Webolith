@@ -34,6 +34,7 @@ from wordwalls.views import (
 )
 from wordwalls.challenges import toughies_challenge_date
 from wordwalls.game import WordwallsGame, GameInitException
+from wordwalls.stats_service import StatsService
 import rpc.wordsearcher.searcher_pb2 as pb
 
 # from wordwalls.socket_consumers import LOBBY_CHANNEL_NAME, table_info
@@ -561,3 +562,37 @@ def date_from_str(dt):
         ch_date = today
 
     return ch_date
+
+
+# Statistics API endpoints
+@require_GET
+def api_stats_today(request):
+    """Get today's statistics."""
+    try:
+        stats = StatsService.get_today_stats()
+        return response(stats)
+    except Exception as e:
+        logger.exception("Error getting today stats")
+        return bad_request(f"Error retrieving statistics: {str(e)}")
+
+
+@require_GET
+def api_stats_week(request):
+    """Get last 7 days statistics."""
+    try:
+        stats = StatsService.get_weekly_stats()
+        return response(stats)
+    except Exception as e:
+        logger.exception("Error getting weekly stats")
+        return bad_request(f"Error retrieving statistics: {str(e)}")
+
+
+@require_GET
+def api_stats_summary(request):
+    """Get summary of all statistics."""
+    try:
+        stats = StatsService.get_stats_summary()
+        return response(stats)
+    except Exception as e:
+        logger.exception("Error getting stats summary")
+        return bad_request(f"Error retrieving statistics: {str(e)}")

@@ -154,9 +154,7 @@
     };
     </script>
 {% if DEBUG %}
-  <script src="{{STATIC_SRV}}/static/dist/node_vendors~wordwallsapp~flashcardsapp.js"></script>
-  <script src="{{STATIC_SRV}}/static/dist/node_vendors~flashcardsapp.js"></script>
-  <script src="{{STATIC_SRV}}/static/dist/flashcardsapp.js"></script>
+  {% include "flashcards_dynamic/flashcards_dev_include.html" %}
 {% else %}
   {% include "flashcards_dynamic/flashcards_include.html" %}
 {% endif %}

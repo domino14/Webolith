@@ -204,3 +204,7 @@ class Medal(models.Model):
 #     contents = models.CharField(max_length=512)
 #     room = models.ForeignKey(Room)
 #     last_id = models.IntegerField(unique=True)
+
+
+# Import stats models
+from .stats_models import DailyStats, StatsCache, UserDailyActivity

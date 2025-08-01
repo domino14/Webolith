@@ -1,0 +1,78 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+
+import React from 'react';
+
+interface SelectOption {
+  value: string;
+  displayValue: string;
+}
+
+interface SelectProps {
+  options: SelectOption[];
+  colSize: number;
+  label: string;
+  selectedValue: string;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  numItems?: number;
+  badge?: string | null;
+  disabled?: boolean;
+}
+
+function Select({
+  options,
+  colSize,
+  label,
+  selectedValue,
+  onChange,
+  numItems = 1,
+  badge = null,
+  disabled = false,
+}: SelectProps) {
+  // Ensure minimum width for better usability
+  const effectiveColSize = Math.max(colSize, 4);
+  const inputColSizeClass = `col-md-${effectiveColSize}`;
+  const additionalSelectProps: React.SelectHTMLAttributes<HTMLSelectElement> = {};
+
+  let badgeElement: React.ReactElement | null = null;
+  if (badge) {
+    badgeElement = (<span className="badge" style={{ backgroundColor: '#5cb85c' }}>{badge}</span>);
+  }
+
+  const optionElements = options.map((element) => (
+    <option
+      value={element.value}
+      key={element.value}
+      data-testid={`searchrow-${element.value}`}
+    >
+      {element.displayValue}
+    </option>
+  ));
+
+  if (numItems > 1) {
+    additionalSelectProps.size = numItems;
+  }
+  if (disabled) {
+    additionalSelectProps.disabled = true;
+  }
+
+  return (
+    <div className="form-group">
+      <label className="control-label" style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        {label}
+        {' '}
+        {badgeElement}
+      </label>
+      <select
+        value={selectedValue}
+        onChange={onChange}
+        className="form-control"
+        style={{ minWidth: '120px' }}
+        {...additionalSelectProps}
+      >
+        {optionElements}
+      </select>
+    </div>
+  );
+}
+
+export default Select;
