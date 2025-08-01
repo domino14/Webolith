@@ -55,10 +55,7 @@ function getUserLink(user: string, addlData: string) {
 
   const medalName = getMedalName(parsedAddl?.medal);
   const medal = medalName ? (
-    <img
-      src={`/static/img/aerolith/${medalName}_16x16.png`}
-      alt={medalName}
-    />
+    <img src={`/static/img/aerolith/${medalName}_16x16.png`} alt={medalName} />
   ) : null;
 
   return (
@@ -100,11 +97,20 @@ function ChallengeResults({
       overflowStyle.overflow = 'hidden';
     }
 
+    const scorePercentage = 100 * (entry.score / maxScore);
+    const isPerfectScore = scorePercentage === 100;
+    const scoreDisplay = isPerfectScore
+      ? '100%'
+      : `${scorePercentage.toFixed(1)}%`;
+    const scoreStyle: React.CSSProperties = isPerfectScore
+      ? { color: '#FFD700', fontWeight: 'bold' } // Gold color for perfect scores
+      : {};
+
     return (
       <tr key={entry.user}>
         <td>{index + 1}</td>
         <td style={overflowStyle}>{userLink}</td>
-        <td>{`${(100 * (entry.score / maxScore)).toFixed(1)}%`}</td>
+        <td style={scoreStyle}>{scoreDisplay}</td>
         {!hideErrors && <td>{`${entry.w}`}</td>}
         <td>{`${entry.tr} s.`}</td>
       </tr>
@@ -119,19 +125,17 @@ function ChallengeResults({
         height,
       }}
     >
-      <table className="table table-sm" style={tableLayoutStyle}>
+      <table className="table table-sm table-hover" style={tableLayoutStyle}>
         <thead>
           <tr>
-            <th>#</th>
+            <th style={{ width: '10%' }}>#</th>
             <th style={userTHStyle}>User</th>
-            <th>Score</th>
-            {!hideErrors && <th>Errors</th>}
-            <th>Rem.</th>
+            <th style={{ width: '15%' }}>Score</th>
+            {!hideErrors && <th style={{ width: '15%' }}>Errors</th>}
+            <th style={{ width: '15%' }}>Rem.</th>
           </tr>
         </thead>
-        <tbody>
-          {entries}
-        </tbody>
+        <tbody>{entries}</tbody>
       </table>
     </div>
   );

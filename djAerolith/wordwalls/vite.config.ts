@@ -28,6 +28,16 @@ export default defineConfig({
       },
     },
   },
+  experimental: {
+    renderBuiltUrl(filename: string) {
+      // Fix font URLs to point to the correct location
+      if (filename.endsWith('.woff') || filename.endsWith('.woff2')) {
+        return `/static/dist/${filename}`;
+      }
+      // Let Vite handle other assets normally
+      return { relative: true };
+    },
+  },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
