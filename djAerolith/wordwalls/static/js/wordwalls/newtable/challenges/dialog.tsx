@@ -5,6 +5,8 @@ import moment from 'moment';
 import DatePicker from '../../forms/date_picker';
 import ChallengeResults from './challenge_results';
 import ChallengeButtonRow from './challenge_button';
+import { usePacificTime } from '../../hooks/usePacificTime';
+import { formatPacificTime } from '../../utils/pacificTimeUtils';
 
 interface ChallengeInfo {
   id: number;
@@ -43,6 +45,7 @@ interface ChallengeDialogProps {
   challengeInfo: ChallengeInfo[];
   challengesDoneAtDate: ChallengeDone[];
   currentDate: ReturnType<typeof moment>;
+  currentDateString: string;
   onDateChange: (date: Date) => void;
   onChallengeSelected: (challengeID: number) => () => void;
   onChallengeSubmit: () => void;
@@ -53,11 +56,12 @@ interface ChallengeDialogProps {
   specialChallengeInfo: ChallengeInfo[];
   currentChallenge: number;
   disabled: boolean;
+  maxDate: Date;
 }
 
 // XXX merge with similar function in blanks/dialog_container.js
 function getLexiconName(availableLexica: Lexicon[], lexicon: number): string {
-  const lex = availableLexica.find((el) => el.id === lexicon);
+  const lex = availableLexica.find(el => el.id === lexicon);
   if (lex) {
     return lex.lexicon;
   }
@@ -70,6 +74,7 @@ function ChallengeDialog({
   challengeInfo,
   challengesDoneAtDate,
   currentDate,
+  currentDateString,
   onDateChange,
   onChallengeSelected,
   onChallengeSubmit,
@@ -80,8 +85,10 @@ function ChallengeDialog({
   specialChallengeInfo,
   currentChallenge,
   disabled,
+  maxDate,
 }: ChallengeDialogProps) {
   const dateInputRef = useRef<HTMLInputElement>(null);
+  const { countdownText } = usePacificTime();
 
   const handleDatePickerClick = () => {
     if (dateInputRef.current) {
@@ -92,18 +99,18 @@ function ChallengeDialog({
 
   // For the different order priorities, make different buttons.
   const rows: React.ReactNode[] = [];
-  const challs = challengesDoneAtDate.map((el) => el.challengeID);
+  const challs = challengesDoneAtDate.map(el => el.challengeID);
 
   rows.push(
     <ChallengeButtonRow
       title="By Word Length"
       size="md"
       key="ch2"
-      challenges={challengeInfo.filter((ch) => ch.orderPriority === 1)}
+      challenges={challengeInfo.filter(ch => ch.orderPriority === 1)}
       onChallengeClick={onChallengeSelected}
       solvedChallenges={challs}
       selectedChallenge={currentChallenge}
-    />,
+    />
   );
 
   if (specialChallengeInfo.length) {
@@ -112,11 +119,11 @@ function ChallengeDialog({
         title="Special Challenges"
         size="sm"
         key="ch6"
-        challenges={specialChallengeInfo.filter((ch) => ch.orderPriority === 5)}
+        challenges={specialChallengeInfo.filter(ch => ch.orderPriority === 5)}
         onChallengeClick={onChallengeSelected}
         solvedChallenges={challs}
         selectedChallenge={currentChallenge}
-      />,
+      />
     );
   }
 
@@ -125,11 +132,11 @@ function ChallengeDialog({
       title="Word Builder"
       size="sm"
       key="ch5"
-      challenges={challengeInfo.filter((ch) => ch.orderPriority === 4)}
+      challenges={challengeInfo.filter(ch => ch.orderPriority === 4)}
       onChallengeClick={onChallengeSelected}
       solvedChallenges={challs}
       selectedChallenge={currentChallenge}
-    />,
+    />
   );
 
   // Bingo toughies
@@ -141,14 +148,14 @@ function ChallengeDialog({
       challenges={
         // Leave out the "Common Words (long)" for now, and all-time toughies
         // for all but permitted lexica.
-        challengeInfo.filter((ch) => {
+        challengeInfo.filter(ch => {
           if (ch.orderPriority !== 6) {
             return false;
           }
           if (
-            (ch.id === 28 || ch.id === 29)
-            && !ALL_TIME_TOUGHIE_LEXICA.includes(
-              getLexiconName(availableLexica, lexicon),
+            (ch.id === 28 || ch.id === 29) &&
+            !ALL_TIME_TOUGHIE_LEXICA.includes(
+              getLexiconName(availableLexica, lexicon)
             )
           ) {
             return false;
@@ -159,7 +166,7 @@ function ChallengeDialog({
       onChallengeClick={onChallengeSelected}
       solvedChallenges={challs}
       selectedChallenge={currentChallenge}
-    />,
+    />
   );
 
   // Longer challenges
@@ -168,11 +175,11 @@ function ChallengeDialog({
       title="Longer challenges"
       size="sm"
       key="ch3-long"
-      challenges={challengeInfo.filter((ch) => ch.orderPriority === 2)}
+      challenges={challengeInfo.filter(ch => ch.orderPriority === 2)}
       onChallengeClick={onChallengeSelected}
       solvedChallenges={challs}
       selectedChallenge={currentChallenge}
-    />,
+    />
   );
 
   // Finally, some uncommon challenges.
@@ -184,24 +191,25 @@ function ChallengeDialog({
       onChallengeClick={onChallengeSelected}
       solvedChallenges={challs}
       selectedChallenge={currentChallenge}
-      challenges={challengeInfo.filter((ch) => ch.orderPriority === 3)}
-    />,
+      challenges={challengeInfo.filter(ch => ch.orderPriority === 3)}
+    />
   );
 
   return (
     <div className="row">
       <div className="col-sm-7">
-        <div 
+        <div
           onClick={handleDatePickerClick}
           style={{ cursor: 'pointer' }}
           title="Click anywhere to open date picker"
         >
           <DatePicker
             id="challenge-date"
-            label="Challenge Date"
+            label="Challenge Date (Pacific Time)"
             value={currentDate}
             onDateChange={onDateChange}
             startDate={new Date(2011, 5, 14)}
+            maxDate={maxDate}
             ref={dateInputRef}
           />
         </div>
@@ -218,6 +226,11 @@ function ChallengeDialog({
         >
           Play!
         </button>
+
+        <div className="text-muted small mt-3">
+          <div>Current Date: {formatPacificTime()} PT</div>
+          <div>Next reset: in {countdownText}</div>
+        </div>
       </div>
       <div className="col-sm-5">
         <ChallengeResults
@@ -225,6 +238,8 @@ function ChallengeDialog({
           hideErrors={hideErrors}
           height={400}
           fixedLayout
+          currentDate={currentDate}
+          currentDateString={currentDateString}
         />
       </div>
     </div>

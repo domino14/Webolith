@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 
 interface ChallengeEntry {
   user: string;
@@ -19,6 +20,8 @@ interface ChallengeResultsProps {
   hideErrors: boolean;
   height: number;
   fixedLayout?: boolean;
+  currentDate?: ReturnType<typeof moment>;
+  currentDateString?: string; // YYYY-MM-DD format
 }
 
 interface ParsedAddlData {

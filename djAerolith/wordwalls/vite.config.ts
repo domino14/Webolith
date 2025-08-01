@@ -14,16 +14,17 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, '../static/dist'),
     emptyOutDir: false, // Don't clear dist since other apps may use it
+    manifest: true, // Generate manifest.json for cache busting
     rollupOptions: {
       input: path.resolve(__dirname, './static/js/wordwalls/index.ts'),
       output: {
-        entryFileNames: 'wordwallsapp.js',
-        chunkFileNames: 'vendor.js',
+        entryFileNames: 'wordwallsapp.[hash].js',
+        chunkFileNames: 'vendor.[hash].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
-            return 'wordwallsapp.css';
+            return 'wordwallsapp.[hash].css';
           }
-          return '[name].[ext]';
+          return '[name].[hash].[ext]';
         },
       },
     },

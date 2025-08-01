@@ -33,7 +33,9 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
   }));
 
   const handleGuessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGuessText(e.target.value);
+    // Only allow letters (including unicode letters) and remove any non-letter characters
+    const onlyLetters = e.target.value.replace(/[^\p{L}]/gu, '');
+    setGuessText(onlyLetters);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -59,6 +61,8 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
   };
 
   let guessClass: string;
+  let guessStyle: React.CSSProperties = {};
+  
   switch (lastGuessCorrectness) {
     case GuessEnum.INCORRECT:
       guessClass = 'text-danger';
@@ -73,8 +77,12 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
       guessClass = 'text-primary';
       break;
     case GuessEnum.PENDING:
-      // Waiting for server response - should be gray
-      guessClass = 'text-muted';
+      // Waiting for server response - use a slightly less green version of success color
+      guessClass = '';
+      guessStyle = { 
+        color: 'var(--bs-success)', 
+        opacity: 0.8 
+      }; // Use CSS custom property with opacity for dark/light mode compatibility
       break;
     default:
       guessClass = 'text-muted';
@@ -105,10 +113,10 @@ const GuessBox = forwardRef<GuessBoxRef, GuessBoxProps>(({
           Last:
         </span>
         {' '}
-        <strong className={guessClass}>{lastGuess}</strong>
+        <strong className={guessClass} style={guessStyle}>{lastGuess}</strong>
       </div>
       <div className="col-5 d-inline-block d-sm-none">
-        <strong className={guessClass}>
+        <strong className={guessClass} style={guessStyle}>
           {lastGuess}
         </strong>
       </div>

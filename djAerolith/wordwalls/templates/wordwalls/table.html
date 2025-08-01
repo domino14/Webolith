@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 To contact the author, please email delsolar at gmail dot com
 {% endcomment %}
 {% load i18n %}
-
+{% load vite_manifest %}
 {% load value_from_settings %}
 {% value_from_settings USE_GA as USE_GA %}
 
@@ -126,8 +126,8 @@ To contact the author, please email delsolar at gmail dot com
   <script type="module" src="/static/js/wordwalls/@vite/client"></script>
   <script type="module" src="/static/js/wordwalls/index.js"></script>
 {% else %}
-  <link rel="stylesheet" href="{{STATIC_SRV}}/static/dist/wordwallsapp.css">
-  <script type="module" src="{{STATIC_SRV}}/static/dist/wordwallsapp.js"></script>
+  <link rel="stylesheet" href="{{STATIC_SRV}}/static/dist/{% vite_css_asset 'index.ts' %}">
+  <script type="module" src="{{STATIC_SRV}}/static/dist/{% vite_asset 'index.ts' %}"></script>
 {% endif %}
 
 </body>

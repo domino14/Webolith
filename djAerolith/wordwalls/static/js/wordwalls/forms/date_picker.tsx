@@ -12,6 +12,7 @@ interface DatePickerProps {
   label: string;
   onDateChange: (date: Date) => void;
   startDate: Date;
+  maxDate?: Date;
 }
 
 const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(({
@@ -20,6 +21,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(({
   label,
   onDateChange,
   startDate,
+  maxDate,
 }, ref) => {
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Parse date string as local date to avoid timezone issues
@@ -36,6 +38,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(({
   };
 
   const today = new Date();
+  const maxDateToUse = maxDate || today;
 
   return (
     <div>
@@ -54,7 +57,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(({
           value={formatDateForInput(value.toDate())}
           onChange={handleDateChange}
           min={formatDateForInput(startDate)}
-          max={formatDateForInput(today)}
+          max={formatDateForInput(maxDateToUse)}
         />
       </div>
     </div>
