@@ -19,7 +19,12 @@ export default defineConfig({
       output: {
         entryFileNames: 'wordwallsapp.js',
         chunkFileNames: 'vendor.js',
-        assetFileNames: '[name].[ext]',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'wordwallsapp.css';
+          }
+          return '[name].[ext]';
+        },
       },
     },
   },
