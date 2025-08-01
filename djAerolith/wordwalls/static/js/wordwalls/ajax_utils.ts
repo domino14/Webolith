@@ -118,7 +118,9 @@ function getCsrfToken(): string | null {
  */
 export const ajaxUtils = {
   get: <T = unknown>(url: string, data?: Record<string, unknown>): Promise<AjaxResponse<T>> => {
-    const queryString = data ? '?' + new URLSearchParams(data).toString() : '';
+    const queryString = data ? '?' + new URLSearchParams(
+      Object.entries(data).map(([key, value]) => [key, String(value)])
+    ).toString() : '';
     return ajax<T>({ url: url + queryString, method: 'GET' });
   },
 

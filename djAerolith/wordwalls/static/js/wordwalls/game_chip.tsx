@@ -1,4 +1,3 @@
-import React from 'react';
 
 import fonts, { type Fonts } from './fonts';
 

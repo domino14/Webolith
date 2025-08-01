@@ -111,6 +111,7 @@ function getBackgroundsByMode(darkMode: boolean, isBodyBackground = false): Back
 
 export default backgroundURL;
 
+export type { BackgroundOption };
 export {
   darkBackgrounds,
   lightBackgrounds,

@@ -119,10 +119,6 @@ export interface TableCreatorRef {
   showModal: () => void;
 }
 
-interface ChallengeDialogContainerRef {
-  loadChallengePlayedInfo: () => void;
-  loadChallengeLeaderboardData: () => void;
-}
 
 interface ModalRef {
   show: () => void;
@@ -624,7 +620,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
       useRef<ChallengeDialogContainerRef>(null);
 
     const handleModalShown = useCallback(() => {
-      // Refresh challenge data when modal is shown and we're on the challenges tab
+      // Refresh challenge data when modal is shown and we're on the challenges tab  
       if (
         activeListType === LIST_TYPE_CHALLENGE &&
         challengeDialogContainerRef.current

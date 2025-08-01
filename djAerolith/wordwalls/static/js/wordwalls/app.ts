@@ -7,7 +7,7 @@ import { getAppropriateBackground } from './background';
 import { detectDarkModePreference, setTheme } from './dark_mode';
 
 interface ChallengeInfo {
-  id?: string;
+  id?: number;
   lexicon?: string;
   numQuestions?: number;
   seconds?: number;
@@ -27,11 +27,10 @@ interface AvailableLexicon {
 interface AppOptions {
   username: string;
   lexicon: string;
-  defaultLexicon: string;
+  defaultLexicon: number;
   tablenum: number;
   currentHost: string;
-  socketServer: string;
-  challengeInfo?: ChallengeInfo;
+  challengeInfo: ChallengeInfo[];
   availableLexica: AvailableLexicon[];
   addlParams: {
     style: Record<string, unknown>;
@@ -49,7 +48,7 @@ class App {
     let listName: string;
     let autoSave: boolean;
 
-    const style = new Styling(options.addlParams.style);
+    const style = new Styling(typeof options.addlParams.style === 'string' ? options.addlParams.style : JSON.stringify(options.addlParams.style));
 
     // Check if system prefers dark mode and the user hasn't explicitly set a preference
     const systemPrefersDark = detectDarkModePreference();
@@ -101,7 +100,6 @@ class App {
         defaultLexicon: options.defaultLexicon,
         challengeInfo: options.challengeInfo,
         availableLexica: options.availableLexica,
-        socketServer: options.socketServer,
       }),
     );
   }

@@ -89,12 +89,12 @@ function UserBox({
       </div>
       <div className="card-footer">
         <div className="row">
-          <div className="col-sm-4 col-md-4">
-            <span style={{ fontSize: '1.5em' }} className="text text-success">
+          <div className="col-sm-5 col-md-5">
+            <span style={{ fontSize: '1.5em', whiteSpace: 'nowrap' }} className="text text-success">
               {`${percentScore}%`}
             </span>
           </div>
-          <div className="col-sm-8 col-md-6 offset-md-2">
+          <div className="col-sm-7 col-md-5 offset-md-2">
             <div className="row">
               <div className="col-sm-12">
                 <div

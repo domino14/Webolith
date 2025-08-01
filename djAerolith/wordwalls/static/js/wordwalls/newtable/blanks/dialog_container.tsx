@@ -45,7 +45,7 @@ interface Lexicon {
 }
 
 interface BlanksDialogContainerProps {
-  searches: SearchCriterion[];
+  searches?: SearchCriterion[];
   lexicon: number;
   availableLexica: Lexicon[];
   desiredTime: number;

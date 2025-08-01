@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import * as Immutable from 'immutable';
 import { Modal } from 'bootstrap';
 

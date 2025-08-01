@@ -1,10 +1,8 @@
 // Shim requestAnimationFrame to get rid of a warning.
 import '@babel/polyfill'; // Need polyfill for tests to pass.
 
-declare global {
-  var requestAnimationFrame: (callback: FrameRequestCallback) => void;
-}
-
-global.requestAnimationFrame = (callback: FrameRequestCallback): void => {
+// Override requestAnimationFrame for tests
+(global as any).requestAnimationFrame = (callback: FrameRequestCallback) => {
   setTimeout(callback, 0);
+  return 0; // Return a dummy request ID
 };

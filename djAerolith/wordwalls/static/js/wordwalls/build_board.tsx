@@ -3,7 +3,7 @@ import * as Immutable from 'immutable';
 import Styling from './style';
 
 import WordwallsQuestion from './wordwalls_question';
-import backgroundURL from './background';
+import backgroundURL, { type BackgroundOption } from './background';
 import { type ImmutableQuestion } from './immutable-types';
 
 interface SolutionPanelProps {
@@ -20,7 +20,7 @@ function SolutionPanel({ wordLength, totalCount, solvedWords }: SolutionPanelPro
     </span>
   ));
 
-  if (!words.length) {
+  if (!Array.from(words).length) {
     words = (
       <span className="text-muted">
         {`${totalCount} words of length ${wordLength}`}
@@ -100,7 +100,10 @@ function BuildBoard({
     answerers.forEach((answered) => {
       // Answerers is a map of player to answers
       answered.forEach((word) => {
-        solsarr[word.get('w').length - 1].push(word.get('w'));
+        const wordStr = word.get('w');
+        if (wordStr) {
+          solsarr[wordStr.length - 1].push(wordStr);
+        }
       });
     });
 
@@ -114,8 +117,9 @@ function BuildBoard({
             // This is hugely inefficient - a triple nested loop in a render
             // call! This needs to be reworked
             // (Luckily, we are still dealing with relatively small numbers here...)
-            if (word.get('w').length === idx + 1) {
-              solvedWordsForLength.push(word.get('w'));
+            const wordStr = word.get('w');
+            if (wordStr && wordStr.length === idx + 1) {
+              solvedWordsForLength.push(wordStr);
             }
           });
         });
@@ -135,7 +139,7 @@ function BuildBoard({
   const leftMargin = 5;
   const topMargin = 4;
   const style: React.CSSProperties = {
-    backgroundImage: backgroundURL(displayStyle.background),
+    backgroundImage: backgroundURL(displayStyle.background as BackgroundOption),
   };
 
   if (displayStyle.background === 'pool_table') {
@@ -148,9 +152,9 @@ function BuildBoard({
     renderedQuestion = (
       <WordwallsQuestion
         displayStyle={displayStyle}
-        letters={question.get('displayedAs')}
+        letters={(question as any).get('displayedAs') as string}
         qNumber={0}
-        words={question.get('wMap')}
+        words={(question as any).get('wMap') as Immutable.Map<string, unknown>}
         gridX={(width > 320 ? width / 8.0 : 30)}
         gridY={0}
         ySize={40}

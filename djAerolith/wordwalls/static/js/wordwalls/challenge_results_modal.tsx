@@ -1,4 +1,3 @@
-import React from 'react';
 
 import ChallengeResults from './newtable/challenges/challenge_results';
 import ModalSkeleton from './modal_skeleton';

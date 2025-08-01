@@ -22,7 +22,7 @@ import GuessEnum from './guess';
 import WordwallsAPI from './wordwalls_api';
 import WordwallsRPC from './wordwalls_rpc';
 
-interface ChallengeInfoItem {
+interface ChallengeInfo {
   id?: number;
   lexicon?: string;
   numQuestions?: number;
@@ -70,7 +70,7 @@ interface WordwallsAppContainerProps {
   tablenum: number;
   currentHost: string;
   defaultLexicon: number;
-  challengeInfo: ChallengeInfoItem[];
+  challengeInfo: ChallengeInfo[];
   availableLexica: AvailableLexicon[];
 }
 

@@ -92,7 +92,14 @@ export default tseslint.config(
 
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': ['error'],
+      '@typescript-eslint/no-redeclare': ['error'],
+      '@typescript-eslint/prefer-ts-expect-error': ['error'],
+      '@typescript-eslint/ban-ts-comment': ['error'],
+      '@typescript-eslint/no-explicit-any': ['warn'],
+      '@typescript-eslint/no-non-null-assertion': ['warn'],
       'no-unused-vars': 'off',
+      'no-redeclare': 'off',
+      'import/no-duplicates': ['error'],
     },
   },
 
