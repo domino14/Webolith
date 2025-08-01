@@ -463,6 +463,24 @@ text.svg-text {
   background-color: var(--bs-gray-800);
 }
 
+/* Fix Bootstrap 5 table bg-success by setting CSS custom properties */
+.table.word-list-table tbody tr.bg-success {
+  --bs-table-bg-state: #d4edda;
+}
+
+[data-bs-theme="dark"] .table.word-list-table tbody tr.bg-success {
+  --bs-table-bg-state: #1a472a;
+}
+
+/* Keep hover effect for completed lists */
+.table.word-list-table tbody tr.bg-success:hover {
+  --bs-table-bg-state: #c3e6cb;
+}
+
+[data-bs-theme="dark"] .table.word-list-table tbody tr.bg-success:hover {
+  --bs-table-bg-state: #255a32;
+}
+
 /* Make buttons in saved lists table more compact */
 .table.word-list-table .btn-sm {
   font-size: 0.75rem;

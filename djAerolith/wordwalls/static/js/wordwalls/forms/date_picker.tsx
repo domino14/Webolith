@@ -22,7 +22,11 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(({
   startDate,
 }, ref) => {
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(e.target.value);
+    // Parse date string as local date to avoid timezone issues
+    // e.target.value is in format "YYYY-MM-DD"
+    const dateStr = e.target.value;
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const selectedDate = new Date(year, month - 1, day); // month is 0-indexed
     onDateChange(selectedDate);
   };
 
