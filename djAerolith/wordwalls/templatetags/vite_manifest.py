@@ -6,7 +6,6 @@ import json
 import os
 from django import template
 from django.conf import settings
-from django.core.cache import cache
 
 register = template.Library()
 
@@ -22,24 +21,14 @@ def vite_asset(entry_name: str) -> str:
     Returns:
         The hashed filename from the manifest (e.g., 'wordwallsapp.abc123.js')
     """
-    # Cache the manifest to avoid reading it on every request
-    cache_key = "vite_manifest"
-    manifest = cache.get(cache_key)
+    manifest_path = os.path.join(settings.BASE_DIR, "static/dist/.vite/manifest.json")
 
-    if manifest is None:
-        manifest_path = os.path.join(
-            settings.BASE_DIR, "static/dist/.vite/manifest.json"
-        )
-
-        try:
-            with open(manifest_path, "r") as f:
-                manifest = json.load(f)
-                # Cache for 5 minutes in development, longer in production
-                cache_timeout = 300 if settings.DEBUG else 1800
-                cache.set(cache_key, manifest, cache_timeout)
-        except (FileNotFoundError, json.JSONDecodeError):
-            # Fallback to default names if manifest doesn't exist
-            manifest = {}
+    try:
+        with open(manifest_path, "r") as f:
+            manifest = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Fallback to default names if manifest doesn't exist
+        manifest = {}
 
     # Look up the entry in the manifest
     if entry_name in manifest:
@@ -65,21 +54,13 @@ def vite_css_asset(entry_name: str) -> str:
     Returns:
         The hashed CSS filename from the manifest (e.g., 'wordwallsapp.abc123.css')
     """
-    cache_key = "vite_manifest"
-    manifest = cache.get(cache_key)
+    manifest_path = os.path.join(settings.BASE_DIR, "static/dist/.vite/manifest.json")
 
-    if manifest is None:
-        manifest_path = os.path.join(
-            settings.BASE_DIR, "static/dist/.vite/manifest.json"
-        )
-
-        try:
-            with open(manifest_path, "r") as f:
-                manifest = json.load(f)
-                cache_timeout = 300 if settings.DEBUG else 3600
-                cache.set(cache_key, manifest, cache_timeout)
-        except (FileNotFoundError, json.JSONDecodeError):
-            manifest = {}
+    try:
+        with open(manifest_path, "r") as f:
+            manifest = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        manifest = {}
 
     # Look for CSS assets associated with the entry
     if entry_name in manifest and "css" in manifest[entry_name]:
