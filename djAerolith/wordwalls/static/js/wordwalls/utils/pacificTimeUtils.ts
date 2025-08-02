@@ -51,29 +51,21 @@ export function getPacificDateString(date?: Date): string {
  * Get the next Pacific Time midnight
  */
 export function getNextPacificMidnight(): Date {
-  const now = getCurrentPacificTime();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  const now = new Date();
   
-  // Convert back to local time for the timezone
-  const utcTime = tomorrow.getTime() + (tomorrow.getTimezoneOffset() * 60000);
-  const pacificOffset = getPacificTimezoneOffset();
-  return new Date(utcTime + (pacificOffset * 60000));
+  
+  
+  // Create a date object for current Pacific time
+  const pacificNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  
+  // Create a date for midnight Pacific time (tomorrow)
+  const midnightPacific = new Date(pacificNow);
+  midnightPacific.setDate(midnightPacific.getDate() + 1);
+  midnightPacific.setHours(0, 0, 0, 0);
+  
+  return midnightPacific;
 }
 
-/**
- * Get Pacific timezone offset in minutes (accounting for DST)
- */
-function getPacificTimezoneOffset(): number {
-  const now = new Date();
-  // Create a date in Pacific Time
-  const pacificTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  const localTime = new Date(now.toLocaleString());
-  
-  // Calculate offset in minutes
-  return (localTime.getTime() - pacificTime.getTime()) / (1000 * 60);
-}
 
 /**
  * Calculate time remaining until next Pacific midnight
@@ -83,15 +75,33 @@ export function getTimeUntilNextMidnight(): {
   minutes: number;
   totalMinutes: number;
 } {
-  const now = getCurrentPacificTime();
-  const nextMidnight = getNextPacificMidnight();
-  const diffMs = nextMidnight.getTime() - now.getTime();
+  const now = new Date();
   
-  const totalMinutes = Math.floor(diffMs / (1000 * 60));
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+  // Get the current time in Pacific timezone as a string
+  const pacificTimeStr = now.toLocaleString('en-US', { 
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
   
-  return { hours, minutes, totalMinutes };
+  // Parse to get hour and minute
+  const [, timePart] = pacificTimeStr.split(', ');
+  const [currentHour, currentMinute] = timePart.split(':').map(Number);
+  
+  // Calculate minutes until midnight
+  const minutesInDay = 24 * 60;
+  const currentMinutes = currentHour * 60 + currentMinute;
+  const minutesUntilMidnight = minutesInDay - currentMinutes;
+  
+  const hours = Math.floor(minutesUntilMidnight / 60);
+  const minutes = minutesUntilMidnight % 60;
+  
+  return { hours, minutes, totalMinutes: minutesUntilMidnight };
 }
 
 /**

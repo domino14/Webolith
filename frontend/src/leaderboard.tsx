@@ -4,11 +4,33 @@ import { GetDailyLeaderboardResponse_LeaderboardItem } from "./gen/rpc/wordvault
 import { notifications } from "@mantine/notifications";
 import { Stack, Table, Text } from "@mantine/core";
 
+const getTimeUntilMidnightPacific = (): string => {
+  const now = new Date();
+  const pacificTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+  
+  const midnightPacific = new Date(pacificTime);
+  midnightPacific.setHours(24, 0, 0, 0);
+  
+  const timeDiff = midnightPacific.getTime() - pacificTime.getTime();
+  
+  const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+  
+  if (hours === 0) {
+    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+  } else if (minutes === 0) {
+    return `${hours} hour${hours !== 1 ? 's' : ''}`;
+  } else {
+    return `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+  }
+};
+
 const Leaderboard: React.FC = () => {
   const { jwt, wordVaultClient } = useContext(AppContext);
   const [leaderboard, setLeaderboard] = useState<
     GetDailyLeaderboardResponse_LeaderboardItem[]
   >([]);
+  const [timeUntilReset, setTimeUntilReset] = useState(getTimeUntilMidnightPacific());
 
   const fetchLeaderboard = useCallback(async () => {
     if (!wordVaultClient) {
@@ -33,6 +55,14 @@ const Leaderboard: React.FC = () => {
     }
     fetchLeaderboard();
   }, [fetchLeaderboard, jwt]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeUntilReset(getTimeUntilMidnightPacific());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   const data = useMemo(() => {
     return leaderboard.map((v) => ({
@@ -76,7 +106,7 @@ const Leaderboard: React.FC = () => {
 
   return (
     <Stack gap="lg">
-      <Text c="dimmed">Stats reset at midnight Aerolith time (US/Pacific)</Text>
+      <Text c="dimmed">Next reset in {timeUntilReset} (midnight US/Pacific)</Text>
       <Text c="dimmed">
         {totalStats[0]} users have studied {totalStats[1]} cards today.{" "}
         {randomSaying}

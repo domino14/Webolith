@@ -30,7 +30,7 @@ function SolutionPanel({ wordLength, totalCount, solvedWords }: SolutionPanelPro
 
   return (
     <li className="list-group-item">
-      <span className="badge">
+      <span className="badge bg-secondary me-2">
         {`${totalCount - solvedWords.length}`}
       </span>
       <span

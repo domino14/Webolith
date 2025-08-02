@@ -94,7 +94,7 @@ export async function ajax<T = unknown>(options: AjaxOptions): Promise<AjaxRespo
 /**
  * Get CSRF token from cookie or meta tag
  */
-function getCsrfToken(): string | null {
+export function getCsrfToken(): string | null {
   // Try to get from cookie first (Django's default)
   const cookies = document.cookie.split(';');
   for (const cookie of cookies) {

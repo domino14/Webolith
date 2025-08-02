@@ -8,7 +8,7 @@ import React, {
   forwardRef,
 } from 'react';
 
-import { ajaxUtils } from '../ajax_utils';
+import { ajaxUtils, ajax, getCsrfToken } from '../ajax_utils';
 import ModalSkeleton from '../modal_skeleton';
 import Pills from './pills';
 import Notifications from '../notifications';
@@ -458,7 +458,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
       showSpinner();
       if (action === PlayOptions.PLAY_DELETE) {
         try {
-          await fetch(`/base/api/saved_list/${listID}`, { method: 'DELETE' });
+          await ajax({ url: `/base/api/saved_list/${listID}`, method: 'DELETE' });
           // XXX: Probably should do smart updating instead of reloading
           // from the server.
           loadSavedListInfo(); // This will hide when it's over.
@@ -536,17 +536,11 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
       showSpinner();
 
       try {
-        // Get CSRF token for the request
-        const csrfToken = document.cookie
-          .split(';')
-          .find(cookie => cookie.trim().startsWith('csrftoken='))
-          ?.split('=')[1];
-
         const response = await fetch('/wordwalls/ajax_upload/', {
           method: 'POST',
           body: data,
           headers: {
-            'X-CSRFToken': csrfToken || '',
+            'X-CSRFToken': getCsrfToken() || '',
           },
         });
 

@@ -6,7 +6,26 @@
  * Might move this over to RPC eventually.
  */
 import qs from 'qs';
-import Cookies from 'js-cookie';
+
+// Import CSRF token utility
+function getCsrfToken(): string | null {
+  // Try to get from cookie first (Django's default)
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'csrftoken') {
+      return decodeURIComponent(value);
+    }
+  }
+  
+  // Try to get from meta tag
+  const metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement;
+  if (metaTag) {
+    return metaTag.content;
+  }
+  
+  return null;
+}
 
 interface RequestInit {
   method: string;
@@ -23,7 +42,7 @@ class WordwallsAPI {
       method: 'POST',
       headers: new Headers({
         'Content-Type': 'application/json',
-        'X-CSRFToken': Cookies.get('csrftoken') || '',
+        'X-CSRFToken': getCsrfToken() || '',
       }),
       credentials: 'include',
     };
@@ -46,7 +65,7 @@ class WordwallsAPI {
       body: qs.stringify(params),
       headers: new Headers({
         'Content-Type': 'application/x-www-form-urlencoded',
-        'X-CSRFToken': Cookies.get('csrftoken') || '',
+        'X-CSRFToken': getCsrfToken() || '',
       }),
     };
   }

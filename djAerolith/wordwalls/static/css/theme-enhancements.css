@@ -18,9 +18,12 @@
   --bs-danger: #c85450;       /* Softer red */
   --bs-danger-rgb: 200, 84, 80;
   
+  /* Font size to match Bootstrap 3 (14px instead of 16px) */
+  --bs-body-font-size: 0.875rem;  /* 14px when root is 16px */
+  
   /* Game-specific colors */
   --game-question-bg: rgba(248, 249, 250, 0.9);
-  --game-table-bg: rgba(255, 255, 255, 0.9);
+  --game-table-bg: rgba(248, 248, 248, 0.9);  /* Softer white */
   --svg-text-color: #212529;
   --tooltip-contrast-bg: #212529;
   --tooltip-contrast-color: #ffffff;
@@ -180,52 +183,70 @@ text.svg-text {
 }
 
 /* ========================================
+   Light Mode White Background Adjustments
+   ======================================== */
+
+/* Make white backgrounds slightly less saturated in light mode */
+:root:not([data-bs-theme="dark"]) {
+  --bs-body-bg: #f8f8f8;  /* Softer off-white body background */
+}
+
+/* Cards and tables with less saturated backgrounds */
+:root:not([data-bs-theme="dark"]) .card {
+  background-color: #f8f8f8;
+}
+
+:root:not([data-bs-theme="dark"]) .table {
+  --bs-table-bg: #f8f8f8;
+}
+
+/* ========================================
    Bootstrap Component Enhancements - Muted Colors
    ======================================== */
 
-/* Light mode - vibrant colors with subtle hover effects */
-.btn-primary {
-  background-color: #2196f3;  /* Even more vibrant blue */
-  border-color: #2196f3;
+/* Light mode - muted colors with subtle hover effects */
+:root:not([data-bs-theme="dark"]) .btn-primary {
+  background-color: #4a90d9;  /* More blue but still muted */
+  border-color: #4a90d9;
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-  background-color: color-mix(in srgb, #2196f3 85%, black);
-  border-color: color-mix(in srgb, #2196f3 85%, black);
+:root:not([data-bs-theme="dark"]) .btn-primary:hover,
+:root:not([data-bs-theme="dark"]) .btn-primary:focus {
+  background-color: color-mix(in srgb, #4a90d9 85%, black);
+  border-color: color-mix(in srgb, #4a90d9 85%, black);
 }
 
-.btn-success {
+:root:not([data-bs-theme="dark"]) .btn-success {
   background-color: #4caf50;  /* Vibrant green */
   border-color: #4caf50;
 }
 
-.btn-success:hover,
-.btn-success:focus {
+:root:not([data-bs-theme="dark"]) .btn-success:hover,
+:root:not([data-bs-theme="dark"]) .btn-success:focus {
   background-color: color-mix(in srgb, #4caf50 85%, black);
   border-color: color-mix(in srgb, #4caf50 85%, black);
 }
 
-.btn-info {
-  background-color: #00bcd4;  /* Vibrant cyan */
-  border-color: #00bcd4;
+:root:not([data-bs-theme="dark"]) .btn-info {
+  background-color: #5eb3c4;  /* Less saturated cyan */
+  border-color: #5eb3c4;
 }
 
-.btn-info:hover,
-.btn-info:focus {
-  background-color: color-mix(in srgb, #00bcd4 85%, black);
-  border-color: color-mix(in srgb, #00bcd4 85%, black);
+:root:not([data-bs-theme="dark"]) .btn-info:hover,
+:root:not([data-bs-theme="dark"]) .btn-info:focus {
+  background-color: color-mix(in srgb, #5eb3c4 85%, black);
+  border-color: color-mix(in srgb, #5eb3c4 85%, black);
 }
 
 /* Override nav-pills active color */
-.nav-pills .nav-link.active {
-  background-color: #2196f3;
-  border-color: #2196f3;
+:root:not([data-bs-theme="dark"]) .nav-pills .nav-link.active {
+  background-color: #4a90d9;
+  border-color: #4a90d9;
 }
 
 /* Override badges */
-.badge.bg-primary {
-  background-color: #2196f3;
+:root:not([data-bs-theme="dark"]) .badge.bg-primary {
+  background-color: #4a90d9;
 }
 
 .badge.bg-success {
@@ -527,6 +548,11 @@ text.svg-text {
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Apply softer background only in light mode */
+:root:not([data-bs-theme="dark"]) .modal-content {
+  background-color: #f8f8f8;  /* Softer off-white for less saturation */
 }
 
 .modal-body {
