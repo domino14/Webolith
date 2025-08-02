@@ -106,7 +106,7 @@ function ChallengeResults({
       ? '100%'
       : `${scorePercentage.toFixed(1)}%`;
     const scoreStyle: React.CSSProperties = isPerfectScore
-      ? { color: '#FFD700', fontWeight: 'bold' } // Gold color for perfect scores
+      ? { color: '#a8952aff', fontWeight: 'bold' } // Gold color for perfect scores
       : {};
 
     return (
