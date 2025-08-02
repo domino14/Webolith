@@ -32,7 +32,7 @@ const prodConfig = _.defaults({
     new CompressionPlugin(),
     // For flashcards app:
     new HtmlWebpackPlugin({
-      filename: path.resolve(__dirname, '../../static/dist/templates/flashcards_dynamic/flashcards_include.html'),
+      filename: path.resolve(__dirname, '../static/dist/templates/flashcards_dynamic/flashcards_include.html'),
       inject: false,
       template: path.resolve(__dirname, 'flashcards_include_template.html'),
     }),
