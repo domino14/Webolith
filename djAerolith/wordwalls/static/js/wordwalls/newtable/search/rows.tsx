@@ -24,7 +24,7 @@ function SearchRows({
     <div>
       {searches.map((search, idx) => (
         <SearchRow
-          key={`${search.searchType}-${search.options.minValue || search.options.value || 0}`}
+          key={`${search.searchType}-${idx}`}
           index={idx}
           searchType={search.searchType}
           searchCriterion={search.options}
