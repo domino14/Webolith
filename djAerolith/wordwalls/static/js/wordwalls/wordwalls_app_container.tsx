@@ -573,33 +573,21 @@ function WordwallsAppContainer({
       if (darkModeChanged) {
         if (style.darkMode) {
           document.documentElement.setAttribute('data-bs-theme', 'dark');
-          // Set appropriate backgrounds for dark mode if we're not already using dark backgrounds
-          if (!darkBackgrounds.has(style.background)) {
-            style.setStyleKey(
-              'background',
-              getAppropriateBackground(style.background, true, false)
-            );
+          // Only auto-adjust backgrounds if user hasn't set a preference (empty background)
+          if (style.background === '') {
+            style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
           }
-          if (!darkBackgrounds.has(style.bodyBackground)) {
-            style.setStyleKey(
-              'bodyBackground',
-              getAppropriateBackground(style.bodyBackground, true, true)
-            );
+          if (style.bodyBackground === '') {
+            style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
           }
         } else {
           document.documentElement.setAttribute('data-bs-theme', 'light');
-          // If we were using dark backgrounds, switch to light ones
-          if (darkBackgrounds.has(style.background)) {
-            style.setStyleKey(
-              'background',
-              getAppropriateBackground(style.background, false, false)
-            );
+          // Only auto-adjust backgrounds if user hasn't set a preference (empty background)
+          if (style.background === '') {
+            style.setStyleKey('background', getAppropriateBackground(style.background, false, false));
           }
-          if (darkBackgrounds.has(style.bodyBackground)) {
-            style.setStyleKey(
-              'bodyBackground',
-              getAppropriateBackground(style.bodyBackground, false, true)
-            );
+          if (style.bodyBackground === '') {
+            style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, false, true));
           }
         }
 

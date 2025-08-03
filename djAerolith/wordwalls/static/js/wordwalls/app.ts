@@ -64,9 +64,13 @@ class App {
       // Set Bootstrap 5 native dark theme
       setTheme('dark');
 
-      // Make sure we have an appropriate background for dark mode
-      style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
-      style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
+      // Only auto-adjust backgrounds if user hasn't set a preference (empty background)
+      if (style.background === '') {
+        style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
+      }
+      if (style.bodyBackground === '') {
+        style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
+      }
     } else {
       // Set Bootstrap 5 native light theme
       setTheme('light');
