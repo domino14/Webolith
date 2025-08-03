@@ -3,15 +3,12 @@
  * should have all state, ajax, etc instead and wordwalls_app should
  * be as dumb as possible.
  */
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import _ from 'underscore';
 import { ajaxUtils } from './ajax_utils';
 import * as Immutable from 'immutable';
 
-import backgroundURL, {
-  darkBackgrounds,
-  getAppropriateBackground,
-} from './background';
+import backgroundURL, { getAppropriateBackground } from './background';
 import Styling from './style';
 import Presence from './presence';
 import WordwallsGame from './wordwalls_game';
@@ -158,7 +155,7 @@ function WordwallsAppContainer({
         // save with a listname.
         listname: autoSave ? listName : '',
       });
-      
+
       // Try sendBeacon first, fallback to sync fetch
       if (!navigator.sendBeacon(tableUrl(), data)) {
         // Fallback to fetch (this may not complete if page is unloading)
@@ -225,13 +222,13 @@ function WordwallsAppContainer({
       addMessage('You must enter a list name for saving!', 'error');
       return;
     }
-    
+
     try {
       const response = await ajaxUtils.post(tableUrl(), {
         action: 'save',
         listname: listName,
       });
-      
+
       const data = response.data;
       if (data.success === true) {
         addMessage(`Saved as ${data.listname}`, 'info');
@@ -242,7 +239,15 @@ function WordwallsAppContainer({
     } catch (error: unknown) {
       let errorMessage = 'Error saving';
       if (error && typeof error === 'object') {
-        if ('response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'error' in error.response.data) {
+        if (
+          'response' in error &&
+          error.response &&
+          typeof error.response === 'object' &&
+          'data' in error.response &&
+          error.response.data &&
+          typeof error.response.data === 'object' &&
+          'error' in error.response.data
+        ) {
           errorMessage += `: ${error.response.data.error}`;
         } else if ('message' in error && typeof error.message === 'string') {
           errorMessage += `: ${error.message}`;
@@ -575,19 +580,31 @@ function WordwallsAppContainer({
           document.documentElement.setAttribute('data-bs-theme', 'dark');
           // Only auto-adjust backgrounds if user hasn't set a preference (empty background)
           if (style.background === '') {
-            style.setStyleKey('background', getAppropriateBackground(style.background, true, false));
+            style.setStyleKey(
+              'background',
+              getAppropriateBackground(style.background, true, false)
+            );
           }
           if (style.bodyBackground === '') {
-            style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, true, true));
+            style.setStyleKey(
+              'bodyBackground',
+              getAppropriateBackground(style.bodyBackground, true, true)
+            );
           }
         } else {
           document.documentElement.setAttribute('data-bs-theme', 'light');
           // Only auto-adjust backgrounds if user hasn't set a preference (empty background)
           if (style.background === '') {
-            style.setStyleKey('background', getAppropriateBackground(style.background, false, false));
+            style.setStyleKey(
+              'background',
+              getAppropriateBackground(style.background, false, false)
+            );
           }
           if (style.bodyBackground === '') {
-            style.setStyleKey('bodyBackground', getAppropriateBackground(style.bodyBackground, false, true));
+            style.setStyleKey(
+              'bodyBackground',
+              getAppropriateBackground(style.bodyBackground, false, true)
+            );
           }
         }
 
@@ -601,8 +618,11 @@ function WordwallsAppContainer({
       ajaxUtils.postJson('/wordwalls/api/configure/', style).catch(() => {
         // Ignore errors for style persistence
       });
-      
-      document.body.style.setProperty('background-image', backgroundURL(style.bodyBackground));
+
+      document.body.style.setProperty(
+        'background-image',
+        backgroundURL(style.bodyBackground)
+      );
     },
     [displayStyle.darkMode]
   );
@@ -626,7 +646,7 @@ function WordwallsAppContainer({
         const response = await ajaxUtils.post(`${tableUrl()}missed/`, {
           idx: alphaIdx,
         });
-        
+
         if (response.data.success === true) {
           game.miss(alphagram);
           setOrigQuestions(game.getOriginalQuestionState());
@@ -664,7 +684,7 @@ function WordwallsAppContainer({
     document.addEventListener('keypress', handleKeydown);
 
     window.addEventListener('resize', handleResize);
-    
+
     // Initialize tooltips (will be replaced with Bootstrap 5 later)
     const tooltipElements = document.querySelectorAll('.hovertip');
     tooltipElements.forEach(element => {
@@ -672,7 +692,10 @@ function WordwallsAppContainer({
       element.setAttribute('data-bs-placement', 'bottom');
     });
 
-    document.body.style.setProperty('background-image', backgroundURL(displayStyle.bodyBackground));
+    document.body.style.setProperty(
+      'background-image',
+      backgroundURL(displayStyle.bodyBackground)
+    );
 
     // Apply dark mode if needed
     if (displayStyle.darkMode) {
