@@ -79,7 +79,12 @@ const ChallengeDialogContainer = forwardRef<
     },
     ref
   ) => {
-    const [currentDate, setCurrentDate] = useState(() => moment());
+    const [currentDate, setCurrentDate] = useState(() => {
+      const pacificDateStr = new Date().toLocaleDateString('en-CA', { 
+        timeZone: 'America/Los_Angeles' 
+      });
+      return moment(pacificDateStr);
+    });
     const [challengesDoneAtDate, setChallengesDoneAtDate] = useState<
       { challengeID: number }[]
     >([]);

@@ -12,14 +12,6 @@ export function getCurrentPacificTime(): Date {
 }
 
 /**
- * Get Pacific Time for a specific date
- * Note: This returns the provided date, but formatting functions handle timezone conversion
- */
-export function getPacificTime(date: Date): Date {
-  return date;
-}
-
-/**
  * Format Pacific Time as a readable string
  */
 export function formatPacificTime(date?: Date): string {
@@ -46,26 +38,6 @@ export function getPacificDateString(date?: Date): string {
   const targetDate = date || new Date();
   return targetDate.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }); // en-CA gives YYYY-MM-DD format
 }
-
-/**
- * Get the next Pacific Time midnight
- */
-export function getNextPacificMidnight(): Date {
-  const now = new Date();
-  
-  
-  
-  // Create a date object for current Pacific time
-  const pacificNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  
-  // Create a date for midnight Pacific time (tomorrow)
-  const midnightPacific = new Date(pacificNow);
-  midnightPacific.setDate(midnightPacific.getDate() + 1);
-  midnightPacific.setHours(0, 0, 0, 0);
-  
-  return midnightPacific;
-}
-
 
 /**
  * Calculate time remaining until next Pacific midnight
@@ -105,52 +77,14 @@ export function getTimeUntilNextMidnight(): {
 }
 
 /**
- * Check if a Pacific Time date is today
- */
-export function isPacificToday(date: Date): boolean {
-  const now = new Date();
-  const todayPT = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  const datePT = date.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  return todayPT === datePT;
-}
-
-/**
- * Check if a Pacific Time date is in the future
- */
-export function isPacificFuture(date: Date): boolean {
-  const now = new Date();
-  const todayPT = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  const datePT = date.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  return datePT > todayPT;
-}
-
-/**
- * Check if a date string (YYYY-MM-DD) represents today in Pacific Time
- */
-export function isPacificTodayString(dateString: string): boolean {
-  const now = new Date();
-  const todayPT = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  return todayPT === dateString;
-}
-
-/**
- * Check if a date string (YYYY-MM-DD) represents a future date in Pacific Time
- */
-export function isPacificFutureString(dateString: string): boolean {
-  const now = new Date();
-  const todayPT = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  return dateString > todayPT;
-}
-
-/**
  * Get the maximum selectable Pacific Time date (today)
  */
 export function getMaxPacificDate(): Date {
   const now = new Date();
-  // Get today's date in Pacific Time
-  const pacificDateStr = now.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
-  const [year, month, day] = pacificDateStr.split('-').map(Number);
-  return new Date(year, month - 1, day); // month is 0-indexed
+  const year = parseInt(now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', year: 'numeric' }));
+  const month = parseInt(now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', month: 'numeric' }));
+  const day = parseInt(now.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', day: 'numeric' }));
+  return new Date(year, month - 1, day, 12, 0, 0); // noon to avoid DST issues
 }
 
 /**

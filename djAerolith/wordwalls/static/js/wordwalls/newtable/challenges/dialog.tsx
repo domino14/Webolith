@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import moment from 'moment';
+import { Tooltip } from 'bootstrap';
 
 import DatePicker from '../../forms/date_picker';
 import ChallengeResults from './challenge_results';
@@ -89,6 +90,18 @@ function ChallengeDialog({
 }: ChallengeDialogProps) {
   const dateInputRef = useRef<HTMLInputElement>(null);
   const { countdownText } = usePacificTime();
+
+  // Initialize Bootstrap tooltips
+  useEffect(() => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => 
+      new Tooltip(tooltipTriggerEl as Element)
+    );
+
+    return () => {
+      tooltipList.forEach(tooltip => tooltip.dispose());
+    };
+  }, []);
 
   const handleDatePickerClick = () => {
     if (dateInputRef.current) {
@@ -205,7 +218,18 @@ function ChallengeDialog({
         >
           <DatePicker
             id="challenge-date"
-            label="Challenge Date (Pacific Time)"
+            label={
+              <>
+                Challenge Date (Pacific Time)
+                <i 
+                  className="bi bi-question-circle ms-1"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="This shows the latest available challenge date in Pacific Time (Los Angeles). New challenges become available at midnight Pacific Time."
+                  style={{ fontSize: '0.875em', cursor: 'help' }}
+                />
+              </>
+            }
             value={currentDate}
             onDateChange={onDateChange}
             startDate={new Date(2011, 5, 14)}
