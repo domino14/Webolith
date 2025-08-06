@@ -429,17 +429,10 @@ function WordwallsAppContainer({
       if (newAutoSave && !listName) {
         return false; // There is no list name, don't toggle the checkbox.
       }
+      showAutosaveMessage(newAutoSave);
       return newAutoSave;
     });
-  }, [listName]);
-
-  // Handle autosave state change effects
-  useEffect(() => {
-    if (autoSave && !gameGoing) {
-      saveGame();
-    }
-    showAutosaveMessage(autoSave);
-  }, [autoSave, gameGoing, saveGame, showAutosaveMessage]);
+  }, [listName, showAutosaveMessage]);
 
   const handleShuffleAll = useCallback(() => {
     game.shuffleAll();
