@@ -146,7 +146,7 @@ function WordwallsAppContainer({
     [tablenum]
   );
 
-  const beforeUnload = useCallback(() => {
+  const beforeUnload = useCallback((e: any) => {
     if (gameGoing) {
       // Use navigator.sendBeacon for unload events when possible
       const data = new URLSearchParams({
@@ -167,6 +167,12 @@ function WordwallsAppContainer({
           // Ignore errors during unload
         });
       }
+      
+      // Show warning dialog when game is active
+      const warningMessage = 'You have an active game in progress. Your progress will be saved, but you may lose your current position.';
+      e.preventDefault();
+      e.returnValue = warningMessage;
+      return warningMessage;
     }
   }, [gameGoing, autoSave, listName, tableUrl]);
 
@@ -365,6 +371,12 @@ function WordwallsAppContainer({
         game.init(data.questions, data.gameType);
         setNumberOfRounds(prev => prev + 1);
         setOrigQuestions(game.getOriginalQuestionState());
+        
+        // Apply custom order automatically if configured
+        if (displayStyle.customTileOrder) {
+          game.setCustomLetterOrder(displayStyle.customTileOrder);
+        }
+        
         setCurQuestions(game.getQuestionState());
         setAnsweredBy(game.getAnsweredBy());
         setTotalWords(game.getTotalNumWords());
@@ -389,7 +401,7 @@ function WordwallsAppContainer({
         setIsTyping(data.gameType!.includes('typing'));
       }
     },
-    [gameGoing, addMessage, listName]
+    [gameGoing, addMessage, listName, displayStyle.customTileOrder]
   );
 
   const timerRanOut = useCallback(() => {
@@ -657,7 +669,7 @@ function WordwallsAppContainer({
 
   useEffect(() => {
     // Set up beforeUnloadEventHandler here.
-    window.onbeforeunload = beforeUnload;
+    window.addEventListener('beforeunload', beforeUnload);
 
     // Note: Vite handles hot reload automatically, no manual HMR code needed
     // Disallow backspace to go back to previous page.
@@ -707,6 +719,7 @@ function WordwallsAppContainer({
     }
 
     return () => {
+      window.removeEventListener('beforeunload', beforeUnload);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('keydown', handleKeydown);
       document.removeEventListener('keypress', handleKeydown);
