@@ -119,7 +119,6 @@ export interface TableCreatorRef {
   showModal: () => void;
 }
 
-
 interface ModalRef {
   show: () => void;
   dismiss: () => void;
@@ -458,7 +457,10 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
       showSpinner();
       if (action === PlayOptions.PLAY_DELETE) {
         try {
-          await ajax({ url: `/base/api/saved_list/${listID}`, method: 'DELETE' });
+          await ajax({
+            url: `/base/api/saved_list/${listID}`,
+            method: 'DELETE',
+          });
           // XXX: Probably should do smart updating instead of reloading
           // from the server.
           loadSavedListInfo(); // This will hide when it's over.
@@ -614,7 +616,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
       useRef<ChallengeDialogContainerRef>(null);
 
     const handleModalShown = useCallback(() => {
-      // Refresh challenge data when modal is shown and we're on the challenges tab  
+      // Refresh challenge data when modal is shown and we're on the challenges tab
       if (
         activeListType === LIST_TYPE_CHALLENGE &&
         challengeDialogContainerRef.current
@@ -829,7 +831,7 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
           <div className="row">
             <div className="col-sm-2">
               <Sidebar
-                tabs={[TAB_PLAY /*TAB_STATS, TAB_HISTORY, TAB_LEADERBOARDS*/]}
+                tabs={[TAB_PLAY, TAB_STATS /*, TAB_HISTORY, TAB_LEADERBOARDS*/]}
                 activeTab={activeTab}
                 setTab={handleTabChange}
                 currentLexicon={currentLexicon}
