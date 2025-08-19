@@ -26,6 +26,7 @@ from typing import List
 
 from django.conf import settings
 from django.db import IntegrityError
+from django.db import transaction
 from django.utils.translation import gettext as _
 from django.utils import timezone
 import waffle
@@ -261,42 +262,52 @@ class WordwallsGame(object):
         )
         return wgm.pk  # the table number
 
+
     def get_or_create_dc(self, ch_date, ch_lex, ch_name):
         """
         Get, or create, a daily challenge with the given parameters.
-
         """
         try:
-            qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
-        except DailyChallenge.DoesNotExist:
-            ret = generate_dc_questions(ch_name, ch_lex, ch_date)
-            if not ret:
-                return None
+            with transaction.atomic():
+                dc, created = DailyChallenge.objects.get_or_create(
+                    date=ch_date,
+                    lexicon=ch_lex,
+                    name=ch_name,
+                    defaults={
+                        'seconds': 0,  # or any default value
+                        'alphagrams': '[]',  # or any default value
+                        'category': DailyChallenge.CATEGORY_ANAGRAM  # or any default value
+                    }
+                )
+                if created:
+                    ret = generate_dc_questions(ch_name, ch_lex, ch_date)
+                    if not ret:
+                        return None
 
-            qs, secs = ret
-            if qs.size() == 0:
-                logger.info("Empty questions.")
-                return None
-            ch_category = DailyChallenge.CATEGORY_ANAGRAM
-            if qs.build_mode:
-                ch_category = DailyChallenge.CATEGORY_BUILD
-            dc = DailyChallenge(
-                date=ch_date,
-                lexicon=ch_lex,
-                name=ch_name,
-                seconds=secs,
-                alphagrams=qs.to_json(),
-                category=ch_category,
-            )
-            try:
-                dc.save()
-            except IntegrityError:
-                logger.exception("Caught integrity error")
-                # This happens rarely if the DC gets generated twice
-                # in very close proximity.
-                qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
+                    qs, secs = ret
+                    if qs.size() == 0:
+                        logger.info("Empty questions.")
+                        return None
+                    ch_category = DailyChallenge.CATEGORY_ANAGRAM
+                    if qs.build_mode:
+                        ch_category = DailyChallenge.CATEGORY_BUILD
 
-        return qs, secs, dc
+                    dc.seconds = secs
+                    dc.alphagrams = qs.to_json()
+                    dc.category = ch_category
+                    dc.save()
+
+                qs = Questions()
+                qs.set_from_json(dc.alphagrams)
+                qs.shuffle()
+                secs = dc.seconds
+                return qs, secs, dc
+
+        except IntegrityError:
+            logger.exception("Caught integrity error")
+            # This happens rarely if the DC gets generated twice in very close proximity.
+            # Retry getting the DailyChallenge
+            return self.get_dc(ch_date, ch_lex, ch_name)
 
     def initialize_by_search_params(
         self,
