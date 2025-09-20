@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -19,6 +19,16 @@ export declare const WordVaultService: {
       readonly name: "GetCardCount",
       readonly I: typeof GetCardCountRequest,
       readonly O: typeof CardCountResponse,
+      readonly kind: MethodKind.Unary,
+      readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetCardCountByDeck
+     */
+    readonly getCardCountByDeck: {
+      readonly name: "GetCardCountByDeck",
+      readonly I: typeof GetCardCountByDeckRequest,
+      readonly O: typeof GetCardCountByDeckResponse,
       readonly kind: MethodKind.Unary,
       readonly idempotency: MethodIdempotency.NoSideEffects,
     },
@@ -131,6 +141,16 @@ export declare const WordVaultService: {
       readonly name: "GetDailyProgress",
       readonly I: typeof GetDailyProgressRequest,
       readonly O: typeof GetDailyProgressResponse,
+      readonly kind: MethodKind.Unary,
+      readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetDailyProgressByDeck
+     */
+    readonly getDailyProgressByDeck: {
+      readonly name: "GetDailyProgressByDeck",
+      readonly I: typeof GetDailyProgressByDeckRequest,
+      readonly O: typeof GetDailyProgressByDeckResponse,
       readonly kind: MethodKind.Unary,
       readonly idempotency: MethodIdempotency.NoSideEffects,
     },
