@@ -21,6 +21,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { getBrowserTimezone } from "./timezones";
 import { useNavigate } from "react-router-dom";
+import { useIsDecksEnabled } from "./use_is_decks_enabled";
 
 type scheduleBreakdown = { [key: string]: number };
 
@@ -33,7 +34,7 @@ const CardSchedule: React.FC = () => {
     bigint | null,
     scheduleBreakdown
   > | null>(null);
-  const useDecksEnabled = decksById.size > 0;
+  const isDecksEnabled = useIsDecksEnabled();
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
@@ -381,15 +382,15 @@ const CardSchedule: React.FC = () => {
       </Center>
       <BarChart
         h={300}
-        data={useDecksEnabled ? chartDataNext30Days : chartDataNext30DaysSimple}
+        data={isDecksEnabled ? chartDataNext30Days : chartDataNext30DaysSimple}
         dataKey="date"
         series={
-          useDecksEnabled
+          isDecksEnabled
             ? seriesNext30Days
             : [{ name: "Card Count", color: "blue" }]
         }
         tickLine="x"
-        type={useDecksEnabled ? "stacked" : "default"}
+        type={isDecksEnabled ? "stacked" : "default"}
       />
 
       <Center mt="xl">
@@ -401,12 +402,12 @@ const CardSchedule: React.FC = () => {
         data={chartDataWeekly}
         dataKey="week"
         series={
-          useDecksEnabled
+          isDecksEnabled
             ? seriesNext30Days
             : [{ name: "Card Count", color: "blue" }]
         }
         tickLine="x"
-        type={useDecksEnabled ? "stacked" : "default"}
+        type={isDecksEnabled ? "stacked" : "default"}
       />
     </div>
   );
