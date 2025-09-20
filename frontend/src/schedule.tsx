@@ -33,6 +33,7 @@ const CardSchedule: React.FC = () => {
     bigint | null,
     scheduleBreakdown
   > | null>(null);
+  const useDecksEnabled = decksById.size > 0;
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
@@ -174,6 +175,27 @@ const CardSchedule: React.FC = () => {
 
       return { chartDataNext30Days, seriesNext30Days, totalOverdue };
     }, [deckSchedules, decksById]);
+
+  // Non-stacked daily data (single series) from aggregated schedule
+  const chartDataNext30DaysSimple = useMemo(() => {
+    if (!cardSchedule) return [];
+
+    const result = [] as Array<{ date: string; "Card Count": number }>;
+    const today = new Date();
+    const localTimeOffset = today.getTimezoneOffset() * 60000;
+
+    for (let i = 0; i < 30; i++) {
+      const currentDate = new Date(today);
+      currentDate.setDate(today.getDate() + i);
+      const localDate = new Date(currentDate.getTime() - localTimeOffset);
+      const dateString = localDate.toISOString().split("T")[0];
+
+      const count = cardSchedule[dateString] || 0;
+      result.push({ date: dateString, "Card Count": count });
+    }
+
+    return result;
+  }, [cardSchedule]);
 
   const chartDataWeekly = useMemo(() => {
     if (!deckSchedules) return [];
@@ -359,11 +381,15 @@ const CardSchedule: React.FC = () => {
       </Center>
       <BarChart
         h={300}
-        data={chartDataNext30Days}
+        data={useDecksEnabled ? chartDataNext30Days : chartDataNext30DaysSimple}
         dataKey="date"
-        series={seriesNext30Days}
+        series={
+          useDecksEnabled
+            ? seriesNext30Days
+            : [{ name: "Card Count", color: "blue" }]
+        }
         tickLine="x"
-        type="stacked"
+        type={useDecksEnabled ? "stacked" : "default"}
       />
 
       <Center mt="xl">
@@ -374,9 +400,13 @@ const CardSchedule: React.FC = () => {
         h={300}
         data={chartDataWeekly}
         dataKey="week"
-        series={seriesNext30Days}
+        series={
+          useDecksEnabled
+            ? seriesNext30Days
+            : [{ name: "Card Count", color: "blue" }]
+        }
         tickLine="x"
-        type="stacked"
+        type={useDecksEnabled ? "stacked" : "default"}
       />
     </div>
   );
