@@ -5,7 +5,6 @@ const ALLOWLISTED_USERS = ["benmuschol", "benmusch", "cesar"];
 
 // TODO: Fully release decks soon and remove this
 export function useIsDecksEnabled() {
-  return false;
   const { username, isMember } = useContext(AppContext);
   return ALLOWLISTED_USERS.includes(username) || isMember;
 }
