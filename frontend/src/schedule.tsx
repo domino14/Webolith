@@ -139,8 +139,6 @@ const CardSchedule: React.FC = () => {
       return entries;
     }, [deckSchedules, getDeckLabel]);
 
-  // Helpers moved to module scope
-
   const fetchDueQuestions = useCallback(async () => {
     if (!lexicon || !wordVaultClient) {
       return;
