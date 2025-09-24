@@ -40,6 +40,8 @@ const COLOR_PALETTE = [
   "lime",
 ];
 
+const DAYS_TO_SHOW_FOR_DAILY_SCHEDULE = 30;
+
 // Module-scoped date helpers
 function parseLocalDate(dateStr: string): Date {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -96,6 +98,19 @@ function buildWeekRanges(
     ranges.push({ weekStart, weekEnd, label: `Week of ${weekLabel}` });
   }
   return ranges;
+}
+
+function forEachDateStringInNextNDays(
+  n: number,
+  callback: (dateString: string) => void
+) {
+  const today = new Date();
+  for (let i = 0; i < n; i++) {
+    const currentDate = new Date(today);
+    currentDate.setDate(today.getDate() + i);
+    const dateString = getLocalISODate(currentDate);
+    callback(dateString);
+  }
 }
 
 const CardSchedule: React.FC = () => {
@@ -221,21 +236,19 @@ const CardSchedule: React.FC = () => {
         color: COLOR_PALETTE[idx % COLOR_PALETTE.length],
       }));
 
-      const today = new Date();
       const chartDataNext30Days: Array<Record<string, number | string>> = [];
 
-      for (let i = 0; i < 30; i++) {
-        const currentDate = new Date(today);
-        currentDate.setDate(today.getDate() + i);
-        const dateString = getLocalISODate(currentDate);
-
-        const row: Record<string, number | string> = { date: dateString };
-        for (const [id, breakdown] of sortedDeckEntries) {
-          const label = getDeckLabel(id);
-          row[label] = breakdown[dateString] ?? 0;
+      forEachDateStringInNextNDays(
+        DAYS_TO_SHOW_FOR_DAILY_SCHEDULE,
+        (dateString) => {
+          const row: Record<string, number | string> = { date: dateString };
+          for (const [id, breakdown] of sortedDeckEntries) {
+            const label = getDeckLabel(id);
+            row[label] = breakdown[dateString] ?? 0;
+          }
+          chartDataNext30Days.push(row);
         }
-        chartDataNext30Days.push(row);
-      }
+      );
 
       // Compute total overdue across decks
       let totalOverdue = 0;
@@ -250,18 +263,15 @@ const CardSchedule: React.FC = () => {
   // TODO: Remove when decks are fully released
   const chartDataNext30DaysSimple = useMemo(() => {
     if (!cardSchedule) return [];
-
     const result = [] as Array<{ date: string; "Card Count": number }>;
-    const today = new Date();
 
-    for (let i = 0; i < 30; i++) {
-      const currentDate = new Date(today);
-      currentDate.setDate(today.getDate() + i);
-      const dateString = getLocalISODate(currentDate);
-
-      const count = cardSchedule[dateString] || 0;
-      result.push({ date: dateString, "Card Count": count });
-    }
+    forEachDateStringInNextNDays(
+      DAYS_TO_SHOW_FOR_DAILY_SCHEDULE,
+      (dateString) => {
+        const count = cardSchedule[dateString] || 0;
+        result.push({ date: dateString, "Card Count": count });
+      }
+    );
 
     return result;
   }, [cardSchedule]);
