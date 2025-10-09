@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { proto3, Timestamp } from "@bufbuild/protobuf";
+import { Int64Value, proto3, Timestamp } from "@bufbuild/protobuf";
 import { Alphagram } from "../wordsearcher/searcher_pb.js";
 
 /**
@@ -216,6 +216,37 @@ export const CardCountResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * @generated from message wordvault.GetCardCountByDeckRequest
+ */
+export const GetCardCountByDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetCardCountByDeckRequest",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeckCardCount
+ */
+export const DeckCardCount = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeckCardCount",
+  () => [
+    { no: 1, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 2, name: "count", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetCardCountByDeckResponse
+ */
+export const GetCardCountByDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetCardCountByDeckResponse",
+  () => [
+    { no: 1, name: "items", kind: "message", T: DeckCardCount, repeated: true },
+  ],
+);
+
+/**
  * @generated from message wordvault.NextScheduledCountRequest
  */
 export const NextScheduledCountRequest = /*@__PURE__*/ proto3.makeMessageType(
@@ -336,6 +367,37 @@ export const GetDailyProgressResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.GetDailyProgressResponse",
   () => [
     { no: 1, name: "progress_stats", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 5 /* ScalarType.INT32 */} },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDailyProgressByDeckRequest
+ */
+export const GetDailyProgressByDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyProgressByDeckRequest",
+  () => [
+    { no: 1, name: "timezone", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DailyProgressByDeckItem
+ */
+export const DailyProgressByDeckItem = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DailyProgressByDeckItem",
+  () => [
+    { no: 1, name: "deck_id", kind: "message", T: Int64Value },
+    { no: 2, name: "progress_stats", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 5 /* ScalarType.INT32 */} },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetDailyProgressByDeckResponse
+ */
+export const GetDailyProgressByDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetDailyProgressByDeckResponse",
+  () => [
+    { no: 1, name: "items", kind: "message", T: DailyProgressByDeckItem, repeated: true },
   ],
 );
 

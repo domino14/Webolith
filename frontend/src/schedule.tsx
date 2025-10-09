@@ -21,18 +21,138 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { getBrowserTimezone } from "./timezones";
 import { useNavigate } from "react-router-dom";
+import { useIsDecksEnabled } from "./use_is_decks_enabled";
 
 type scheduleBreakdown = { [key: string]: number };
 
+const COLOR_PALETTE = [
+  "blue",
+  "teal",
+  "orange",
+  "grape",
+  "cyan",
+  "red",
+  "yellow",
+  "violet",
+  "green",
+  "pink",
+  "indigo",
+  "lime",
+];
+
+const DAYS_TO_SHOW_FOR_DAILY_SCHEDULE = 30;
+
+// Module-scoped date helpers
+function parseLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function getLocalISODate(date: Date): string {
+  const localTimeOffset = date.getTimezoneOffset() * 60000;
+  const localDate = new Date(date.getTime() - localTimeOffset);
+  return localDate.toISOString().split("T")[0];
+}
+
+function getStartOfWeek(date: Date): Date {
+  const start = new Date(date);
+  start.setDate(date.getDate() - date.getDay());
+  return start;
+}
+
+function getEndOfWeek(date: Date): Date {
+  const end = new Date(date);
+  end.setDate(date.getDate() + (6 - date.getDay()));
+  return end;
+}
+
+function getWeeklyRangeForDates(
+  dates: Date[]
+): { startOfWeek: Date; totalWeeks: number; oneWeekMs: number } | null {
+  if (!dates || dates.length === 0) return null;
+
+  const sorted = [...dates].sort((a, b) => a.getTime() - b.getTime());
+  const earliestDate = sorted[0];
+  const latestDate = sorted[sorted.length - 1];
+
+  const startOfWeek = getStartOfWeek(earliestDate);
+  const endOfWeek = getEndOfWeek(latestDate);
+
+  const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+  const totalWeeks =
+    Math.floor((endOfWeek.getTime() - startOfWeek.getTime()) / oneWeekMs) + 1;
+
+  return { startOfWeek, totalWeeks, oneWeekMs };
+}
+
+function buildWeekRanges(
+  startOfWeek: Date,
+  totalWeeks: number,
+  oneWeekMs: number
+): Array<{ weekStart: Date; weekEnd: Date; label: string }> {
+  const ranges: Array<{ weekStart: Date; weekEnd: Date; label: string }> = [];
+  for (let i = 0; i < totalWeeks; i++) {
+    const weekStart = new Date(startOfWeek.getTime() + i * oneWeekMs);
+    const weekEnd = new Date(weekStart.getTime() + oneWeekMs - 1);
+    const weekLabel = `${weekStart.toISOString().split("T")[0]}`;
+    ranges.push({ weekStart, weekEnd, label: `Week of ${weekLabel}` });
+  }
+  return ranges;
+}
+
+function forEachDateStringInNextNDays(
+  n: number,
+  callback: (dateString: string) => void
+) {
+  const today = new Date();
+  for (let i = 0; i < n; i++) {
+    const currentDate = new Date(today);
+    currentDate.setDate(today.getDate() + i);
+    const dateString = getLocalISODate(currentDate);
+    callback(dateString);
+  }
+}
+
 const CardSchedule: React.FC = () => {
-  const { lexicon, wordVaultClient } = useContext(AppContext);
+  const { lexicon, wordVaultClient, decksById } = useContext(AppContext);
   const [cardSchedule, setCardSchedule] = useState<scheduleBreakdown | null>(
     null
   );
+  const [deckSchedules, setDeckSchedules] = useState<Map<
+    bigint | null,
+    scheduleBreakdown
+  > | null>(null);
+  const isDecksEnabled = useIsDecksEnabled();
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
   const [showLoader, setShowLoader] = useState(false);
+
+  // Helpers
+  const getDeckLabel = useCallback(
+    (id: bigint | null) => {
+      if (id === null || !decksById || !decksById.has(id))
+        return "Default Deck";
+      return decksById.get(id)!.name;
+    },
+    [decksById]
+  );
+
+  const sortedDeckEntries: [bigint | null, scheduleBreakdown][] =
+    useMemo(() => {
+      if (!deckSchedules) return [];
+      const entries = Array.from(deckSchedules.entries());
+      entries.sort(([aId], [bId]) => {
+        if (aId === null) return -1;
+        if (bId === null) return 1;
+
+        const an = getDeckLabel(aId);
+        const bn = getDeckLabel(bId);
+
+        return an.localeCompare(bn);
+      });
+      return entries;
+    }, [deckSchedules, getDeckLabel]);
 
   const fetchDueQuestions = useCallback(async () => {
     if (!lexicon || !wordVaultClient) {
@@ -40,11 +160,28 @@ const CardSchedule: React.FC = () => {
     }
     try {
       setShowLoader(true);
-      const resp = await wordVaultClient.nextScheduledCount({
+      const resp = await wordVaultClient.nextScheduledCountByDeck({
         lexicon,
         timezone: getBrowserTimezone(),
       });
-      setCardSchedule(resp.breakdown);
+
+      // Aggregate per-deck breakdowns into a single per-day breakdown
+      const aggregated: scheduleBreakdown = {};
+      const breakdownsByDeckId = new Map<bigint | null, scheduleBreakdown>();
+
+      for (const deckBreakdown of resp.breakdowns ?? []) {
+        const deckId = deckBreakdown.deckId ?? null;
+        const breakdown = (deckBreakdown.breakdown ?? {}) as scheduleBreakdown;
+        breakdownsByDeckId.set(deckId, breakdown);
+
+        for (const [date, countForDateAndDeck] of Object.entries(breakdown)) {
+          aggregated[date] =
+            (aggregated[date] ?? 0) + (countForDateAndDeck ?? 0);
+        }
+      }
+
+      setDeckSchedules(breakdownsByDeckId);
+      setCardSchedule(aggregated);
     } catch (e) {
       notifications.show({
         color: "red",
@@ -83,82 +220,135 @@ const CardSchedule: React.FC = () => {
     fetchTotalQuestions();
   }, [fetchTotalQuestions]);
 
-  const chartDataNext30Days = useMemo(() => {
+  // Build stacked daily data per deck for next 30 days
+  const { chartDataNext30Days, seriesNext30Days, totalOverdue } =
+    useMemo(() => {
+      if (sortedDeckEntries.length === 0) {
+        return {
+          chartDataNext30Days: [],
+          seriesNext30Days: [],
+          totalOverdue: 0,
+        };
+      }
+
+      const seriesNext30Days = sortedDeckEntries.map(([id], idx) => ({
+        name: getDeckLabel(id),
+        color: COLOR_PALETTE[idx % COLOR_PALETTE.length],
+      }));
+
+      const chartDataNext30Days: Array<Record<string, number | string>> = [];
+
+      forEachDateStringInNextNDays(
+        DAYS_TO_SHOW_FOR_DAILY_SCHEDULE,
+        (dateString) => {
+          const row: Record<string, number | string> = { date: dateString };
+          for (const [id, breakdown] of sortedDeckEntries) {
+            const label = getDeckLabel(id);
+            row[label] = breakdown[dateString] ?? 0;
+          }
+          chartDataNext30Days.push(row);
+        }
+      );
+
+      // Compute total overdue across decks
+      let totalOverdue = 0;
+      for (const [, breakdown] of sortedDeckEntries) {
+        totalOverdue += breakdown["overdue"] ?? 0;
+      }
+
+      return { chartDataNext30Days, seriesNext30Days, totalOverdue };
+    }, [sortedDeckEntries, getDeckLabel]);
+
+  // Non-stacked daily data (single series) from aggregated schedule
+  // TODO: Remove when decks are fully released
+  const chartDataNext30DaysSimple = useMemo(() => {
     if (!cardSchedule) return [];
+    const result = [] as Array<{ date: string; "Card Count": number }>;
 
-    const result = [];
-    const today = new Date();
-    const localTimeOffset = today.getTimezoneOffset() * 60000; // Offset in milliseconds
-
-    for (let i = 0; i < 30; i++) {
-      const currentDate = new Date(today);
-      currentDate.setDate(today.getDate() + i);
-      // Adjust for the local timezone offset
-      const localDate = new Date(currentDate.getTime() - localTimeOffset); // Adjusted date
-      const dateString = localDate.toISOString().split("T")[0]; // Format: 'YYYY-MM-DD'
-
-      const count = cardSchedule[dateString] || 0;
-      result.push({ date: dateString, "Card Count": count });
-    }
+    forEachDateStringInNextNDays(
+      DAYS_TO_SHOW_FOR_DAILY_SCHEDULE,
+      (dateString) => {
+        const count = cardSchedule[dateString] || 0;
+        result.push({ date: dateString, "Card Count": count });
+      }
+    );
 
     return result;
   }, [cardSchedule]);
 
   const chartDataWeekly = useMemo(() => {
+    if (sortedDeckEntries.length === 0) return [];
+
+    // Gather all dates across decks (excluding 'overdue')
+    const allDates: Date[] = [];
+    for (const [, breakdown] of sortedDeckEntries) {
+      for (const key of Object.keys(breakdown)) {
+        if (key === "overdue") continue;
+        allDates.push(parseLocalDate(key));
+      }
+    }
+
+    const range = getWeeklyRangeForDates(allDates);
+    if (!range) return [];
+
+    const ranges = buildWeekRanges(
+      range.startOfWeek,
+      range.totalWeeks,
+      range.oneWeekMs
+    );
+    const weeklyData: Array<Record<string, number | string>> = [];
+
+    for (const { weekStart, weekEnd, label } of ranges) {
+      const row: Record<string, number | string> = { week: label };
+
+      for (const [id, breakdown] of sortedDeckEntries) {
+        const deckLabel = getDeckLabel(id);
+        let sum = 0;
+        for (const [dateStr, count] of Object.entries(breakdown)) {
+          if (dateStr === "overdue") continue;
+          const d = parseLocalDate(dateStr);
+          if (d >= weekStart && d <= weekEnd) {
+            sum += count ?? 0;
+          }
+        }
+        row[deckLabel] = sum;
+      }
+
+      weeklyData.push(row);
+    }
+
+    return weeklyData;
+  }, [sortedDeckEntries, getDeckLabel]);
+
+  // Aggregated weekly data (single series) from aggregated schedule
+  // TODO: Remove when decks are fully released
+  const chartDataWeeklySimple = useMemo(() => {
     if (!cardSchedule) return [];
 
-    // Helper function to create a date in the user's local timezone from 'YYYY-MM-DD'
-    // Note that the data that comes back from the API is in the user's local
-    // timezone.
-    const toLocalDate = (dateStr: string) => {
-      const [year, month, day] = dateStr.split("-").map(Number);
-      return new Date(year, month - 1, day); // month is 0-indexed in JavaScript Date
-    };
+    // Collect all dates from aggregated schedule (excluding 'overdue')
+    const dateKeys = Object.keys(cardSchedule).filter((k) => k !== "overdue");
+    if (dateKeys.length === 0) return [];
 
-    // Extract date-count pairs from cardSchedule, excluding 'overdue'
-    const dateCounts = Object.entries(cardSchedule)
-      .filter(([dateStr]) => dateStr !== "overdue")
-      .map(([dateStr, count]) => ({
-        date: toLocalDate(dateStr), // Adjust to local timezone
-        "Card Count": count,
-      }));
+    const dates = dateKeys.map(parseLocalDate);
+    const range = getWeeklyRangeForDates(dates);
+    if (!range) return [];
 
-    // Sort the dates in ascending order
-    dateCounts.sort((a, b) => a.date.getTime() - b.date.getTime());
-
-    // Determine the date range
-    const earliestDate = dateCounts[0]?.date || new Date();
-    const latestDate = dateCounts[dateCounts.length - 1]?.date || new Date();
-
-    // Calculate the number of weeks between earliest and latest dates
-    const startOfWeek = new Date(earliestDate);
-    startOfWeek.setDate(earliestDate.getDate() - earliestDate.getDay()); // Adjust to start of the week (Sunday)
-
-    const endOfWeek = new Date(latestDate);
-    endOfWeek.setDate(latestDate.getDate() + (6 - latestDate.getDay())); // Adjust to end of the week (Saturday)
-
-    const oneWeekMs = 7 * 24 * 60 * 60 * 1000; // Milliseconds in one week
-    const totalWeeks = Math.ceil(
-      (endOfWeek.getTime() - startOfWeek.getTime()) / oneWeekMs
+    const ranges = buildWeekRanges(
+      range.startOfWeek,
+      range.totalWeeks,
+      range.oneWeekMs
     );
+    const weeklyData: Array<{ week: string; "Card Count": number }> = [];
 
-    const weeklyData = [];
-
-    // Loop through each week in the date range
-    for (let i = 0; i <= totalWeeks; i++) {
-      const weekStart = new Date(startOfWeek.getTime() + i * oneWeekMs);
-      const weekEnd = new Date(weekStart.getTime() + oneWeekMs - 1);
-
-      // Sum counts for dates within this week
-      const weekCount = dateCounts
-        .filter((d) => d.date >= weekStart && d.date <= weekEnd)
-        .reduce((sum, d) => sum + d["Card Count"], 0);
-      const weekLabel = `${weekStart.toISOString().split("T")[0]}`;
-
-      weeklyData.push({
-        week: `Week of ${weekLabel}`,
-        "Card Count": weekCount,
-      });
+    for (const { weekStart, weekEnd, label } of ranges) {
+      let sum = 0;
+      for (const dateStr of dateKeys) {
+        const d = parseLocalDate(dateStr);
+        if (d >= weekStart && d <= weekEnd) {
+          sum += cardSchedule[dateStr] ?? 0;
+        }
+      }
+      weeklyData.push({ week: label, "Card Count": sum });
     }
 
     return weeklyData;
@@ -221,7 +411,7 @@ const CardSchedule: React.FC = () => {
             label="Cards to postpone"
             value={cardsToPostpone}
             min={0}
-            max={cardSchedule?.overdue}
+            max={totalOverdue || cardSchedule?.overdue}
             onChange={(v) => setCardsToPostpone(v as number)}
           />
           <Button color="pink" onClick={sendPostponement}>
@@ -244,11 +434,11 @@ const CardSchedule: React.FC = () => {
         <Text mb="sm">
           You have {numCards} cards in lexicon {lexicon}.
         </Text>
-        {cardSchedule?.overdue && (
+        {totalOverdue || cardSchedule?.overdue ? (
           <div>
             <Text c="red" fw={700} mb="sm">
               Cards currently due:&nbsp;
-              {cardSchedule.overdue}
+              {totalOverdue || cardSchedule?.overdue}
             </Text>
             <Group gap="xl">
               <Button onClick={() => navigate("/load-scheduled-questions")}>
@@ -263,17 +453,22 @@ const CardSchedule: React.FC = () => {
               </Button>
             </Group>
           </div>
-        )}
+        ) : null}
       </>
       <Center mt="xl">
         <Text>Daily schedule (next 30 days)</Text>
       </Center>
       <BarChart
         h={300}
-        data={chartDataNext30Days}
+        data={isDecksEnabled ? chartDataNext30Days : chartDataNext30DaysSimple}
         dataKey="date"
-        series={[{ name: "Card Count", color: "blue" }]}
+        series={
+          isDecksEnabled
+            ? seriesNext30Days
+            : [{ name: "Card Count", color: "blue" }]
+        }
         tickLine="x"
+        type={isDecksEnabled ? "stacked" : "default"}
       />
 
       <Center mt="xl">
@@ -282,10 +477,15 @@ const CardSchedule: React.FC = () => {
 
       <BarChart
         h={300}
-        data={chartDataWeekly}
+        data={isDecksEnabled ? chartDataWeekly : chartDataWeeklySimple}
         dataKey="week"
-        series={[{ name: "Card Count", color: "blue" }]}
+        series={
+          isDecksEnabled
+            ? seriesNext30Days
+            : [{ name: "Card Count", color: "blue" }]
+        }
         tickLine="x"
+        type={isDecksEnabled ? "stacked" : "default"}
       />
     </div>
   );

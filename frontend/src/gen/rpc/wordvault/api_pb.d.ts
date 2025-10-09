@@ -565,6 +565,85 @@ export declare class CardCountResponse extends Message<CardCountResponse> {
 }
 
 /**
+ * @generated from message wordvault.GetCardCountByDeckRequest
+ */
+export declare class GetCardCountByDeckRequest extends Message<GetCardCountByDeckRequest> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  constructor(data?: PartialMessage<GetCardCountByDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetCardCountByDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCardCountByDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetCardCountByDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetCardCountByDeckRequest;
+
+  static equals(a: GetCardCountByDeckRequest | PlainMessage<GetCardCountByDeckRequest> | undefined, b: GetCardCountByDeckRequest | PlainMessage<GetCardCountByDeckRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeckCardCount
+ */
+export declare class DeckCardCount extends Message<DeckCardCount> {
+  /**
+   * 0 represents the default deck
+   *
+   * @generated from field: uint64 deck_id = 1;
+   */
+  deckId: bigint;
+
+  /**
+   * @generated from field: uint32 count = 2;
+   */
+  count: number;
+
+  constructor(data?: PartialMessage<DeckCardCount>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeckCardCount";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeckCardCount;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeckCardCount;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeckCardCount;
+
+  static equals(a: DeckCardCount | PlainMessage<DeckCardCount> | undefined, b: DeckCardCount | PlainMessage<DeckCardCount> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetCardCountByDeckResponse
+ */
+export declare class GetCardCountByDeckResponse extends Message<GetCardCountByDeckResponse> {
+  /**
+   * @generated from field: repeated wordvault.DeckCardCount items = 1;
+   */
+  items: DeckCardCount[];
+
+  constructor(data?: PartialMessage<GetCardCountByDeckResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetCardCountByDeckResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetCardCountByDeckResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetCardCountByDeckResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetCardCountByDeckResponse;
+
+  static equals(a: GetCardCountByDeckResponse | PlainMessage<GetCardCountByDeckResponse> | undefined, b: GetCardCountByDeckResponse | PlainMessage<GetCardCountByDeckResponse> | undefined): boolean;
+}
+
+/**
  * @generated from message wordvault.NextScheduledCountRequest
  */
 export declare class NextScheduledCountRequest extends Message<NextScheduledCountRequest> {
@@ -878,6 +957,85 @@ export declare class GetDailyProgressResponse extends Message<GetDailyProgressRe
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyProgressResponse;
 
   static equals(a: GetDailyProgressResponse | PlainMessage<GetDailyProgressResponse> | undefined, b: GetDailyProgressResponse | PlainMessage<GetDailyProgressResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDailyProgressByDeckRequest
+ */
+export declare class GetDailyProgressByDeckRequest extends Message<GetDailyProgressByDeckRequest> {
+  /**
+   * @generated from field: string timezone = 1;
+   */
+  timezone: string;
+
+  constructor(data?: PartialMessage<GetDailyProgressByDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyProgressByDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyProgressByDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyProgressByDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyProgressByDeckRequest;
+
+  static equals(a: GetDailyProgressByDeckRequest | PlainMessage<GetDailyProgressByDeckRequest> | undefined, b: GetDailyProgressByDeckRequest | PlainMessage<GetDailyProgressByDeckRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DailyProgressByDeckItem
+ */
+export declare class DailyProgressByDeckItem extends Message<DailyProgressByDeckItem> {
+  /**
+   * Nullable deck id. Null represents the default deck.
+   *
+   * @generated from field: google.protobuf.Int64Value deck_id = 1;
+   */
+  deckId?: bigint;
+
+  /**
+   * @generated from field: map<string, int32> progress_stats = 2;
+   */
+  progressStats: { [key: string]: number };
+
+  constructor(data?: PartialMessage<DailyProgressByDeckItem>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DailyProgressByDeckItem";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DailyProgressByDeckItem;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DailyProgressByDeckItem;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DailyProgressByDeckItem;
+
+  static equals(a: DailyProgressByDeckItem | PlainMessage<DailyProgressByDeckItem> | undefined, b: DailyProgressByDeckItem | PlainMessage<DailyProgressByDeckItem> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetDailyProgressByDeckResponse
+ */
+export declare class GetDailyProgressByDeckResponse extends Message<GetDailyProgressByDeckResponse> {
+  /**
+   * @generated from field: repeated wordvault.DailyProgressByDeckItem items = 1;
+   */
+  items: DailyProgressByDeckItem[];
+
+  constructor(data?: PartialMessage<GetDailyProgressByDeckResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetDailyProgressByDeckResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetDailyProgressByDeckResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetDailyProgressByDeckResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyProgressByDeckResponse;
+
+  static equals(a: GetDailyProgressByDeckResponse | PlainMessage<GetDailyProgressByDeckResponse> | undefined, b: GetDailyProgressByDeckResponse | PlainMessage<GetDailyProgressByDeckResponse> | undefined): boolean;
 }
 
 /**
