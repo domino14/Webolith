@@ -92,7 +92,6 @@ export default function LoadScheduledQuestions() {
       !isMember
     );
   }, [isMember, totalCardCount]);
-  console.log(overdueCountByDeckId);
 
   return (
     <div>
