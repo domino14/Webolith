@@ -50,6 +50,9 @@ const COLOR_PALETTE = [
   "lime.6",
 ];
 
+const ALL_DECKS_OPTION_VALUE = "ALL";
+const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
+
 const CardStats: React.FC = () => {
   const { lexicon, jwt, wordVaultClient, decksById } = useContext(AppContext);
   const [lookup, setLookup] = useState("");
@@ -61,9 +64,14 @@ const CardStats: React.FC = () => {
   const [aggregatedStats, setAggregatedStats] = useState<{
     [key: string]: number;
   }>({});
-  const [selectedDeck, setSelectedDeck] = useState<string>("ALL");
+
   const isDecksEnabled = useIsDecksEnabled();
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
+
+  // Default deck has null ID, so indicate no selected deck with a separate
+  // bool
+  const [allDecksSelected, setAllDecksSelected] = useState<boolean>(true);
+  const [selectedDeckId, setSelectedDeckId] = useState<bigint | null>(null);
 
   const EMPTY_STATS: { [key: string]: number } = useMemo(
     () => ({
@@ -136,7 +144,7 @@ const CardStats: React.FC = () => {
   const deckOptions = useMemo(() => {
     if (!isDecksEnabled) return [] as { value: string; label: string }[];
     const opts: { value: string; label: string }[] = [
-      { value: "ALL", label: "All decks" },
+      { value: ALL_DECKS_OPTION_VALUE, label: "All decks" },
     ];
 
     const idSet = new Set<bigint | null>();
@@ -168,25 +176,26 @@ const CardStats: React.FC = () => {
   // Update the displayed stats based on the selected deck
   useEffect(() => {
     if (!deckProgressStats) return;
-    if (selectedDeck === "ALL") {
+    if (allDecksSelected) {
       setTodayStats(
         Object.keys(aggregatedStats).length ? aggregatedStats : EMPTY_STATS
       );
       return;
     }
-    if (selectedDeck === "DEFAULT") {
+    if (!selectedDeckId || selectedDeckId === null) {
       setTodayStats(deckProgressStats.get(null) ?? { ...EMPTY_STATS });
       return;
     }
-    try {
-      const id = BigInt(selectedDeck);
-      setTodayStats(deckProgressStats.get(id) ?? { ...EMPTY_STATS });
-    } catch {
-      setTodayStats(
-        Object.keys(aggregatedStats).length ? aggregatedStats : EMPTY_STATS
-      );
-    }
-  }, [selectedDeck, deckProgressStats, aggregatedStats, EMPTY_STATS]);
+
+    const id = selectedDeckId;
+    setTodayStats(deckProgressStats.get(id) ?? { ...EMPTY_STATS });
+  }, [
+    allDecksSelected,
+    selectedDeckId,
+    deckProgressStats,
+    aggregatedStats,
+    EMPTY_STATS,
+  ]);
 
   // Build per-deck rating breakdown for "All decks"
   const deckIdsForBreakdown = useMemo(() => {
@@ -207,7 +216,7 @@ const CardStats: React.FC = () => {
   } = useMemo(() => {
     if (
       !isDecksEnabled ||
-      selectedDeck !== "ALL" ||
+      !allDecksSelected ||
       (deckIdsForBreakdown?.length ?? 0) <= 1
     ) {
       return { deckBreakdownChartData: [], deckBreakdownSeries: [] };
@@ -249,7 +258,7 @@ const CardStats: React.FC = () => {
     return { deckBreakdownChartData: rows, deckBreakdownSeries: series };
   }, [
     isDecksEnabled,
-    selectedDeck,
+    allDecksSelected,
     deckIdsForBreakdown,
     deckProgressStats,
     getDeckLabel,
@@ -303,8 +312,19 @@ const CardStats: React.FC = () => {
         <Stack w={300} mb="sm">
           <Select
             label="Deck"
-            value={selectedDeck}
-            onChange={(v) => setSelectedDeck(v ?? "ALL")}
+            value={selectedDeckId?.toString() ?? ALL_DECKS_OPTION_VALUE}
+            onChange={(val) => {
+              if (val === ALL_DECKS_OPTION_VALUE || !val) {
+                setAllDecksSelected(true);
+                setSelectedDeckId(null);
+              } else if (val === DEFAULT_DECK_OPTION_VALUE) {
+                setAllDecksSelected(false);
+                setSelectedDeckId(null);
+              } else {
+                setAllDecksSelected(false);
+                setSelectedDeckId(BigInt(val));
+              }
+            }}
             data={deckOptions}
             renderOption={({ option }) => {
               let studied = 0;
@@ -335,7 +355,7 @@ const CardStats: React.FC = () => {
         stats={Object.keys(todayStats).length ? todayStats : EMPTY_STATS}
       />
 
-      {selectedDeck === "ALL" && deckBreakdownSeries.length > 1 && (
+      {allDecksSelected && deckBreakdownSeries.length > 1 && (
         <>
           <Text mt="lg" fw={700}>
             Today's answers by deck
