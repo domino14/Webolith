@@ -31,7 +31,7 @@ export default function LoadScheduledQuestions() {
 
   const [deckId, setDeckId] = useState<bigint | null>(null);
   const [totalCardCount, setTotalCardCount] = useState<number | undefined>(
-    undefined,
+    undefined
   );
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -57,8 +57,8 @@ export default function LoadScheduledQuestions() {
             breakdowns?.map((c) => [
               c.deckId ?? null,
               c.breakdown["overdue"] ?? 0,
-            ]),
-          ),
+            ])
+          )
         );
 
         const totalCount = await wordVaultClient.getCardCount({});
@@ -125,7 +125,6 @@ export default function LoadScheduledQuestions() {
             {totalOverdueCount != 1 ? "are" : "is"} now due in the lexicon{" "}
             {lexicon}.
           </Text>
-
           {totalOverdueCount !== 0 && (
             <Group mt="lg">
               {decksById.size > 0 && (
@@ -143,7 +142,9 @@ export default function LoadScheduledQuestions() {
                   renderOption={({ option }) => {
                     const overdueCount =
                       overdueCountByDeckId?.get(
-                        option.value === "" ? null : BigInt(option.value),
+                        option.value === "" || !option.value
+                          ? 0n
+                          : BigInt(option.value)
                       ) ?? 0;
                     return (
                       <Group>
@@ -166,7 +167,6 @@ export default function LoadScheduledQuestions() {
               </Button>
             </Group>
           )}
-
           {totalOverdueCount === 0 && (
             <Text>
               Why not <Link to="/word-search">add some more?</Link>
