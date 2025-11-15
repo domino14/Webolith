@@ -5,13 +5,11 @@ version: "3"
 
 services:
   pgdb:
-    image: postgres
+    image: postgres:15
     environment:
       POSTGRES_DB: djaerolith
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
-    volumes:
-      - pg-data-volume:/var/lib/postgresql/data
     expose:
       - 5432
     ports:
@@ -52,10 +50,6 @@ services:
       - 8180:8180
     networks:
       - aeronet
-
-volumes:
-  pg-data-volume:
-    external: false
 
 networks:
   aeronet:
