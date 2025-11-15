@@ -42,8 +42,12 @@ services:
     environment:
       LEXICON_PATH: /opt/lexica
       LOG_LEVEL: debug
+      DB_MIGRATIONS_PATH: file:///opt/db/migrations
+      DB_CONN_URI: postgresql://postgres:pass@pgdb:5432/djaerolith?sslmode=disable
     volumes:
       - ${HOME}/word-game-lexica:/opt/lexica
+    depends_on:
+      - pgdb
     expose:
       - 8180
     ports:
