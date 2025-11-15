@@ -10,6 +10,11 @@ services:
       POSTGRES_DB: djaerolith
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     expose:
       - 5432
     ports:
@@ -29,8 +34,10 @@ services:
     build: .
     working_dir: /opt/webolith/djAerolith
     depends_on:
-      - pgdb
-      - word_db_server
+      pgdb:
+        condition: service_healthy
+      word_db_server:
+        condition: service_healthy
     links:
       - pgdb
     command: python manage.py runserver 0.0.0.0:8000
@@ -47,7 +54,13 @@ services:
     volumes:
       - ${HOME}/word-game-lexica:/opt/lexica
     depends_on:
-      - pgdb
+      pgdb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 8180 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     expose:
       - 8180
     ports:

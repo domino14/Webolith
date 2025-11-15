@@ -45,34 +45,11 @@ jobs:
             $DOCKER_WDB_SERVER /opt/dbmaker \
             -outputdir /opt/data/lexica/db -dbs NWL18,NWL20,CSW19,FISE2
 
-      - name: Install dockerize
-        env:
-          DOCKERIZE_VERSION: v0.6.0
-        run: |
-          wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
       - name: Copy docker-compose config
         run: cp .github/workflows/docker-compose.yml .
 
       - name: Start services
         run: docker compose up -d
-
-      - name: Check running containers
-        run: docker compose ps
-
-      - name: Check PostgreSQL logs
-        run: docker compose logs pgdb
-
-      - name: Wait for PostgreSQL
-        run: dockerize -wait tcp://localhost:5432 -timeout 2m
-
-      - name: Check word-db-server logs
-        run: docker compose logs word_db_server
-
-      - name: Wait for word-db-server
-        run: dockerize -wait tcp://localhost:8180 -timeout 2m
 
       - name: Run Django tests
         run: docker compose exec -T app ./manage.py test -v2
