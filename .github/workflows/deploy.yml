@@ -68,8 +68,11 @@ jobs:
       - name: Wait for PostgreSQL
         run: dockerize -wait tcp://localhost:5432 -timeout 2m
 
+      - name: Check word-db-server logs
+        run: docker compose logs word_db_server
+
       - name: Wait for word-db-server
-        run: dockerize -wait tcp://localhost:8180 -timeout 1m
+        run: dockerize -wait tcp://localhost:8180 -timeout 2m
 
       - name: Run Django tests
         run: docker compose exec -T app ./manage.py test -v2
