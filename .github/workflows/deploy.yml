@@ -53,7 +53,9 @@ jobs:
           sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-      # Use docker-compose file in this dir.
+      - name: Copy docker-compose config
+        run: cp .github/workflows/docker-compose.yml .
+
       - name: Start services
         run: docker compose up -d
 
