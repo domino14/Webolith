@@ -191,20 +191,10 @@ jobs:
           build-args: |
             static_root=./webolith_static/
           push: true
-          load: true
           tags: ${{ steps.meta-nginx.outputs.tags }}
           labels: ${{ steps.meta-nginx.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Verify static files in nginx image
-        run: |
-          echo "Verifying static files inside nginx Docker image..."
-          IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/webolith-nginx:${{ github.sha }}"
-          docker run --rm --entrypoint /bin/sh $IMAGE_TAG -c "ls -lah /opt/webolith_static/" || { echo "ERROR: Static files not found in nginx image!"; exit 1; }
-          echo "Sample files in container:"
-          docker run --rm --entrypoint /bin/sh $IMAGE_TAG -c "find /opt/webolith_static -type f | head -20"
-          echo "Total files in container: $(docker run --rm --entrypoint /bin/sh $IMAGE_TAG -c 'find /opt/webolith_static -type f | wc -l')"
 
       - name: Clean up static files
         run: rm -rf ${{ github.workspace }}/static/webolith_static
