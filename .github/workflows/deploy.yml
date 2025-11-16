@@ -51,6 +51,17 @@ jobs:
       - name: Start services
         run: docker compose up -d
 
+      - name: Wait for services (with timeout)
+        run: sleep 30
+
+      - name: Check container status
+        if: always()
+        run: docker compose ps
+
+      - name: Check word_db_server logs
+        if: always()
+        run: docker compose logs word_db_server
+
       - name: Run Django tests
         run: docker compose exec -T app ./manage.py test -v2
 

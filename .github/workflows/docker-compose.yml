@@ -57,7 +57,7 @@ services:
       pgdb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 8180 || exit 1"]
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/8180' || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 10
