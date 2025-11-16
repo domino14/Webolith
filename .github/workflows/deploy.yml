@@ -248,4 +248,6 @@ jobs:
           pip3 install invoke
 
       - name: Deploy to Kubernetes
+        env:
+          GITHUB_SHA: ${{ github.sha }}
         run: cd aerolith-k8s && inv deploy-webolith
