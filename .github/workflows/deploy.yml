@@ -113,7 +113,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: static-assets
-          path: djAerolith/static/dist
+          path: |
+            djAerolith/static/dist
+            !djAerolith/static/dist/**/.gitignore
+          include-hidden-files: true
           retention-days: 1
 
   build-docker:
@@ -137,6 +140,15 @@ jobs:
           name: static-assets
           path: djAerolith/static/dist
 
+      - name: Verify downloaded assets for Django app
+        run: |
+          echo "Checking djAerolith/static/dist for manifest and wordwalls assets..."
+          ls -lah djAerolith/static/dist/
+          echo "Manifest file:"
+          find djAerolith/static/dist -name "manifest.json" -exec cat {} \;
+          echo "Wordwalls assets:"
+          find djAerolith/static/dist -name "wordwallsapp*"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -152,6 +164,13 @@ jobs:
 
       - name: Collect static files
         run: cd djAerolith && STATIC_ROOT=${{ github.workspace }}/static/webolith_static ./manage.py collectstatic --noinput
+
+      - name: Verify collectstatic results
+        run: |
+          echo "Files collected to static/webolith_static/dist/:"
+          ls -la ${{ github.workspace }}/static/webolith_static/dist/
+          echo "Looking for wordwalls and manifest files:"
+          find ${{ github.workspace }}/static/webolith_static/dist -name "wordwallsapp*" -o -name "manifest.json"
 
       - name: Compile messages
         run: cd djAerolith && ./manage.py compilemessages
@@ -170,8 +189,10 @@ jobs:
         run: |
           echo "Checking static files in build context..."
           ls -lah static/webolith_static/ || { echo "ERROR: webolith_static directory not found!"; exit 1; }
-          echo "Sample of static files:"
-          find static/webolith_static -type f | head -20
+          echo "Contents of dist directory:"
+          ls -lah static/webolith_static/dist/
+          echo "Looking for wordwalls assets:"
+          find static/webolith_static/dist -name "wordwallsapp*" -o -name "manifest.json"
           echo "Total file count: $(find static/webolith_static -type f | wc -l)"
 
       - name: Extract metadata for nginx image
