@@ -856,7 +856,7 @@ export declare class DeleteRequest extends Message<DeleteRequest> {
   lexicon: string;
 
   /**
-   * The following two conditions are mutually exclusive.
+   * The following three conditions are mutually exclusive.
    *
    * @generated from field: bool only_new_questions = 2;
    */
@@ -909,6 +909,52 @@ export declare class DeleteResponse extends Message<DeleteResponse> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteResponse;
 
   static equals(a: DeleteResponse | PlainMessage<DeleteResponse> | undefined, b: DeleteResponse | PlainMessage<DeleteResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeleteFromDeckRequest
+ */
+export declare class DeleteFromDeckRequest extends Message<DeleteFromDeckRequest> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  /**
+   * The following three conditions are mutually exclusive.
+   *
+   * @generated from field: bool only_new_questions = 2;
+   */
+  onlyNewQuestions: boolean;
+
+  /**
+   * @generated from field: repeated string only_alphagrams = 3;
+   */
+  onlyAlphagrams: string[];
+
+  /**
+   * @generated from field: bool all_questions = 4;
+   */
+  allQuestions: boolean;
+
+  /**
+   * @generated from field: uint64 deck_id = 5;
+   */
+  deckId: bigint;
+
+  constructor(data?: PartialMessage<DeleteFromDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteFromDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteFromDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteFromDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteFromDeckRequest;
+
+  static equals(a: DeleteFromDeckRequest | PlainMessage<DeleteFromDeckRequest> | undefined, b: DeleteFromDeckRequest | PlainMessage<DeleteFromDeckRequest> | undefined): boolean;
 }
 
 /**

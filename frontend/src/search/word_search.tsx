@@ -30,6 +30,7 @@ import { useForm } from "@mantine/form";
 import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { useIsDecksEnabled } from "../use_is_decks_enabled";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -66,6 +67,7 @@ type AlertValues = {
 const WordSearchForm: React.FC = () => {
   const { lexicon, jwt, wordVaultClient, wordServerClient, decksById } =
     useContext(AppContext);
+  const isDecksEnabled = useIsDecksEnabled();
   const [alert, setAlert] = useState<AlertValues>({
     shown: false,
     color: "green",
@@ -73,11 +75,18 @@ const WordSearchForm: React.FC = () => {
   });
   const [showLoader, setShowLoader] = useState(false);
   const [deckId, setDeckId] = useState<bigint | null>(null);
+  const [bulkDeleteDeckId, setBulkDeleteDeckId] = useState<bigint | null>(
+    null,
+  );
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
   const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
   const [
     openedSearchDelete,
     { close: closeSearchDelete, open: openSearchDelete },
+  ] = useDisclosure(false);
+  const [
+    openedSearchDeleteDeck,
+    { close: closeSearchDeleteDeck, open: openSearchDeleteDeck },
   ] = useDisclosure(false);
 
   const uploadWordListForm = useForm({
@@ -238,6 +247,42 @@ const WordSearchForm: React.FC = () => {
     [lexicon, wordVaultClient],
   );
 
+  const sendDeleteFromDeck = useCallback(
+    async (
+      deckId: bigint,
+      onlyNew: boolean,
+      allCards?: boolean,
+      alphagramList?: string[],
+    ) => {
+      if (!wordVaultClient) {
+        return;
+      }
+      try {
+        setShowLoader(true);
+        const resp = await wordVaultClient.deleteFromDeck({
+          lexicon,
+          deckId,
+          onlyNewQuestions: onlyNew,
+          allQuestions: allCards,
+          onlyAlphagrams: alphagramList,
+        });
+        notifications.show({
+          color: "green",
+          message: `Deleted ${resp.numDeleted} cards.`,
+        });
+      } catch (e) {
+        notifications.show({
+          color: "red",
+          title: "Error",
+          message: String(e),
+        });
+      } finally {
+        setShowLoader(false);
+      }
+    },
+    [lexicon, wordVaultClient],
+  );
+
   const {
     searchCriteria,
     addSearchRow,
@@ -324,6 +369,44 @@ const WordSearchForm: React.FC = () => {
     }
   }, [lexicon, sendDelete, searchCriteria, wordServerClient, setAlert]);
 
+  const deleteFromDeckWordVault = useCallback(
+    async (targetDeckId: bigint) => {
+      if (!lexicon || !wordServerClient) {
+        return;
+      }
+      try {
+        setShowLoader(true);
+        setAlert((prev) => ({ ...prev, shown: false }));
+
+        const searchRequest = {
+          searchparams: searchCriteria.map((s) => s.toProtoObj()),
+        };
+        searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
+
+        const searchResponse = await wordServerClient.search(searchRequest);
+
+        if (searchResponse.alphagrams.length === 0) {
+          throw new Error("No cards to delete.");
+        }
+        await sendDeleteFromDeck(
+          targetDeckId,
+          false,
+          false,
+          searchResponse.alphagrams.map((a) => a.alphagram),
+        );
+      } catch (e) {
+        setAlert({
+          color: "red",
+          shown: true,
+          text: String(e),
+        });
+      } finally {
+        setShowLoader(false);
+      }
+    },
+    [lexicon, sendDeleteFromDeck, searchCriteria, wordServerClient, setAlert],
+  );
+
   const deckIdSelect =
     decksById.size >= 1 ? (
       <Select
@@ -356,7 +439,7 @@ const WordSearchForm: React.FC = () => {
       >
         <Text size="lg" m="lg">
           Are you sure? This will delete the cards matching your search criteria
-          from WordVault. This can't be undone!
+          from WordVault from ALL decks. This can't be undone!
         </Text>
         <Group gap="lg" m="lg">
           <Button
@@ -369,6 +452,36 @@ const WordSearchForm: React.FC = () => {
             Yes, delete matching cards
           </Button>
           <Button onClick={closeSearchDelete}>Nevermind</Button>
+        </Group>
+      </Modal>
+
+      <Modal
+        opened={openedSearchDeleteDeck}
+        withCloseButton
+        onClose={closeSearchDeleteDeck}
+        title="Delete some cards from deck?"
+      >
+        <Text size="lg" m="lg">
+          Are you sure? This will delete the cards matching your search criteria
+          from{" "}
+          <strong>
+            {deckId ? decksById.get(deckId)?.name : "Default Deck"}
+          </strong>
+          . This can't be undone!
+        </Text>
+        <Group gap="lg" m="lg">
+          <Button
+            onClick={() => {
+              if (deckId) {
+                deleteFromDeckWordVault(deckId);
+              }
+              closeSearchDeleteDeck();
+            }}
+            color="pink"
+          >
+            Yes, delete matching cards from this deck
+          </Button>
+          <Button onClick={closeSearchDeleteDeck}>Nevermind</Button>
         </Group>
       </Modal>
 
@@ -422,14 +535,33 @@ const WordSearchForm: React.FC = () => {
               OR
             </Text>
 
-            <Button
-              variant="light"
-              color="red"
-              style={{ maxWidth: 250 }}
-              onClick={openSearchDelete}
-            >
-              Delete from WordVault
-            </Button>
+            {isDecksEnabled && deckId ? (
+              <Group>
+                <Button
+                  variant="light"
+                  color="red"
+                  onClick={openSearchDeleteDeck}
+                >
+                  Delete from {decksById.get(deckId)?.name ?? "Default Deck"}
+                </Button>
+                <Button
+                  variant="light"
+                  color="pink"
+                  onClick={openSearchDelete}
+                >
+                  Delete from All Decks
+                </Button>
+              </Group>
+            ) : (
+              <Button
+                variant="light"
+                color="red"
+                style={{ maxWidth: 250 }}
+                onClick={openSearchDelete}
+              >
+                Delete from WordVault
+              </Button>
+            )}
 
             {showLoader ? <Loader color="blue" type="bars" /> : null}
           </Stack>
@@ -636,9 +768,44 @@ const WordSearchForm: React.FC = () => {
             You can always re-add them later.
           </Text>
 
-          <Button color="pink" m="xl" onClick={() => sendDelete(true)}>
-            Delete new cards
-          </Button>
+          {isDecksEnabled && decksById.size >= 1 ? (
+            <Group m="xl">
+              <Select
+                value={bulkDeleteDeckId?.toString() ?? ""}
+                onChange={(value) =>
+                  setBulkDeleteDeckId(
+                    value == "" || value == null
+                      ? null
+                      : BigInt(parseInt(value)),
+                  )
+                }
+                data={[
+                  { value: "", label: "All Decks" },
+                  ...[...decksById.values()].map((deck) => ({
+                    value: deck.id.toString(),
+                    label: deck.name,
+                  })),
+                ]}
+                style={{ minWidth: 200 }}
+                placeholder="Select deck"
+                size="md"
+              />
+              <Button
+                color="pink"
+                onClick={() =>
+                  bulkDeleteDeckId
+                    ? sendDeleteFromDeck(bulkDeleteDeckId, true)
+                    : sendDelete(true)
+                }
+              >
+                Delete new cards
+              </Button>
+            </Group>
+          ) : (
+            <Button color="pink" m="xl" onClick={() => sendDelete(true)}>
+              Delete new cards
+            </Button>
+          )}
 
           <Divider m="xl" />
 
@@ -655,6 +822,28 @@ const WordSearchForm: React.FC = () => {
             actually want to delete all your cards!
           </Text>
           <Stack m="xl">
+            {isDecksEnabled && decksById.size >= 1 && (
+              <Select
+                value={bulkDeleteDeckId?.toString() ?? ""}
+                onChange={(value) =>
+                  setBulkDeleteDeckId(
+                    value == "" || value == null
+                      ? null
+                      : BigInt(parseInt(value)),
+                  )
+                }
+                data={[
+                  { value: "", label: "All Decks" },
+                  ...[...decksById.values()].map((deck) => ({
+                    value: deck.id.toString(),
+                    label: deck.name,
+                  })),
+                ]}
+                style={{ minWidth: 200 }}
+                placeholder="Select deck"
+                size="md"
+              />
+            )}
             <TextInput
               label="Type in DELETE ALL CARDS"
               value={deleteAllTextInput}
@@ -662,7 +851,11 @@ const WordSearchForm: React.FC = () => {
             />
             <Button
               color="red"
-              onClick={() => sendDelete(false, true)}
+              onClick={() =>
+                bulkDeleteDeckId
+                  ? sendDeleteFromDeck(bulkDeleteDeckId, false, true)
+                  : sendDelete(false, true)
+              }
               disabled={deleteAllTextInput !== "DELETE ALL CARDS"}
             >
               Delete ALL cards
