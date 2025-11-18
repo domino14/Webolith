@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext } from "react";
 import { AppContext } from "../app_context";
 import {
   Alert,
@@ -9,15 +9,12 @@ import {
   Group,
   List,
   Loader,
-  Select,
   Stack,
   Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-
-// Deck selector constants
-const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
+import { useDeckSelector } from "./useDeckSelector";
 
 type AlertValues = {
   shown: boolean;
@@ -38,8 +35,8 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
   showLoader,
   setShowLoader,
 }) => {
-  const { lexicon, jwt, decksById } = useContext(AppContext);
-  const [deckId, setDeckId] = useState<bigint | null>(null);
+  const { lexicon, jwt } = useContext(AppContext);
+  const { selector: deckSelector } = useDeckSelector();
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
 
   const uploadCardboxForm = useForm({
@@ -102,30 +99,6 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
     },
     [jwt, lexicon, onAlertChange, setShowLoader]
   );
-
-  const deckIdSelect =
-    decksById.size >= 1 ? (
-      <Select
-        value={deckId === null ? DEFAULT_DECK_OPTION_VALUE : deckId.toString()}
-        onChange={(value) =>
-          setDeckId(
-            value === DEFAULT_DECK_OPTION_VALUE || value == null
-              ? null
-              : BigInt(parseInt(value))
-          )
-        }
-        data={[
-          { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
-          ...[...decksById.values()].map((deck) => ({
-            value: deck.id.toString(),
-            label: deck.name,
-          })),
-        ]}
-        style={{ minWidth: 200 }}
-        placeholder="Select deck"
-        size="lg"
-      />
-    ) : null;
 
   return (
     <>
@@ -232,7 +205,7 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
             m="md"
           />
           <Group m="md">
-            {deckIdSelect}
+            {deckSelector}
             <Button
               variant="light"
               color="blue"

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext } from "react";
 import {
   SearchTypesEnum,
   SearchCriterion,
@@ -13,11 +13,11 @@ import {
   Group,
   Loader,
   Modal,
-  Select,
   Stack,
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useDeckSelector } from "./useDeckSelector";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -45,9 +45,6 @@ const initialCriteria = [
   }),
 ];
 
-// Deck selector constants
-const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
-
 type AlertValues = {
   shown: boolean;
   color?: string;
@@ -73,7 +70,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
 }) => {
   const { lexicon, wordVaultClient, wordServerClient, decksById } =
     useContext(AppContext);
-  const [deckId, setDeckId] = useState<bigint | null>(null);
+  const { value: deck, selector: deckSelector } = useDeckSelector();
   const [
     openedSearchDelete,
     { close: closeSearchDelete, open: openSearchDelete },
@@ -105,10 +102,11 @@ const SearchTab: React.FC<SearchTabProps> = ({
       searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
 
       const searchResponse = await wordServerClient.search(searchRequest);
+      const deckId = deck.all ? 0n : deck.id;
       console.log("Adding cards!!", { deckId });
       const addResp = await wordVaultClient.addCards({
         lexicon,
-        deckId: deckId ?? undefined,
+        deckId: deckId === 0n ? undefined : deckId,
         alphagrams: searchResponse.alphagrams.map((a) => a.alphagram),
       });
 
@@ -133,7 +131,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
     wordVaultClient,
     onAlertChange,
     setShowLoader,
-    deckId,
+    deck,
     alert,
   ]);
 
@@ -177,73 +175,48 @@ const SearchTab: React.FC<SearchTabProps> = ({
     alert,
   ]);
 
-  const onConfirmDeleteFromDeckViaSearch = useCallback(
-    async (targetDeckId: bigint) => {
-      if (!lexicon || !wordServerClient) {
-        return;
+  const onConfirmDeleteFromDeckViaSearch = useCallback(async () => {
+    if (!lexicon || !wordServerClient) {
+      return;
+    }
+    try {
+      setShowLoader(true);
+      onAlertChange({ ...alert, shown: false });
+
+      const searchRequest = {
+        searchparams: searchCriteria.map((s) => s.toProtoObj()),
+      };
+      searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
+
+      const searchResponse = await wordServerClient.search(searchRequest);
+
+      if (searchResponse.alphagrams.length === 0) {
+        throw new Error("No cards to delete.");
       }
-      try {
-        setShowLoader(true);
-        onAlertChange({ ...alert, shown: false });
-
-        const searchRequest = {
-          searchparams: searchCriteria.map((s) => s.toProtoObj()),
-        };
-        searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
-
-        const searchResponse = await wordServerClient.search(searchRequest);
-
-        if (searchResponse.alphagrams.length === 0) {
-          throw new Error("No cards to delete.");
-        }
-        await onDeleteFromDeck(
-          targetDeckId,
-          searchResponse.alphagrams.map((a) => a.alphagram)
-        );
-      } catch (e) {
-        onAlertChange({
-          color: "red",
-          shown: true,
-          text: String(e),
-        });
-      } finally {
-        setShowLoader(false);
-      }
-    },
-    [
-      lexicon,
-      onDeleteFromDeck,
-      searchCriteria,
-      wordServerClient,
-      onAlertChange,
-      setShowLoader,
-      alert,
-    ]
-  );
-
-  const deckIdSelect =
-    decksById.size >= 1 ? (
-      <Select
-        value={deckId === null ? DEFAULT_DECK_OPTION_VALUE : deckId.toString()}
-        onChange={(value) =>
-          setDeckId(
-            value === DEFAULT_DECK_OPTION_VALUE || value == null
-              ? null
-              : BigInt(parseInt(value))
-          )
-        }
-        data={[
-          { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
-          ...[...decksById.values()].map((deck) => ({
-            value: deck.id.toString(),
-            label: deck.name,
-          })),
-        ]}
-        style={{ minWidth: 200 }}
-        placeholder="Select deck"
-        size="lg"
-      />
-    ) : null;
+      const deckId = deck.all ? 0n : deck.id;
+      await onDeleteFromDeck(
+        deckId,
+        searchResponse.alphagrams.map((a) => a.alphagram)
+      );
+    } catch (e) {
+      onAlertChange({
+        color: "red",
+        shown: true,
+        text: String(e),
+      });
+    } finally {
+      setShowLoader(false);
+    }
+  }, [
+    lexicon,
+    onDeleteFromDeck,
+    searchCriteria,
+    wordServerClient,
+    onAlertChange,
+    setShowLoader,
+    alert,
+    deck,
+  ]);
 
   return (
     <>
@@ -279,16 +252,12 @@ const SearchTab: React.FC<SearchTabProps> = ({
       >
         <Text size="lg" m="lg">
           Are you sure? This will delete the cards matching your search criteria
-          from{" "}
-          <strong>
-            {deckId ? decksById.get(deckId)?.name : "Default Deck"}
-          </strong>
-          . This can't be undone!
+          from <strong>{deck.name}</strong>. This can't be undone!
         </Text>
         <Group gap="lg" m="lg">
           <Button
             onClick={() => {
-              onConfirmDeleteFromDeckViaSearch(deckId ?? 0n);
+              onConfirmDeleteFromDeckViaSearch();
               closeSearchDeleteDeck();
             }}
             color="pink"
@@ -309,7 +278,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
           allowedSearchTypes={allowedSearchTypes}
         />
         <Group mb="lg">
-          {deckIdSelect}
+          {deckSelector}
           <Button
             variant="light"
             color="blue"
@@ -332,13 +301,8 @@ const SearchTab: React.FC<SearchTabProps> = ({
 
         {decksById.size >= 1 ? (
           <Group>
-            <Button
-              variant="light"
-              color="red"
-              onClick={openSearchDeleteDeck}
-            >
-              Delete from{" "}
-              {deckId ? decksById.get(deckId)?.name : "Default Deck"}
+            <Button variant="light" color="red" onClick={openSearchDeleteDeck}>
+              Delete from {deck.name}
             </Button>
             <Button variant="light" color="pink" onClick={openSearchDelete}>
               Delete from All Decks

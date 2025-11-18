@@ -1,11 +1,8 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../app_context";
-import { Button, Center, Loader, Select, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Center, Loader, Stack, Text, TextInput } from "@mantine/core";
 import { useIsDecksEnabled } from "../use_is_decks_enabled";
-
-// Deck selector constants
-const ALL_DECKS_OPTION_VALUE = "ALL";
-const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
+import { useDeckSelector } from "./useDeckSelector";
 
 type DeleteAllCardsProps = {
   onDeleteAllCards: (deckId: bigint | null) => Promise<void>;
@@ -18,7 +15,11 @@ const DeleteAllCards: React.FC<DeleteAllCardsProps> = ({
 }) => {
   const { decksById } = useContext(AppContext);
   const isDecksEnabled = useIsDecksEnabled();
-  const [bulkDeleteDeckId, setBulkDeleteDeckId] = useState<bigint | null>(null);
+  const { value: deck, selector: deckSelector } = useDeckSelector({
+    showAllDecksOption: true,
+    size: "md",
+    initialValue: { all: true },
+  });
   const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
 
   return (
@@ -36,37 +37,7 @@ const DeleteAllCards: React.FC<DeleteAllCardsProps> = ({
         actually want to delete all your cards!
       </Text>
       <Stack m="xl">
-        {isDecksEnabled && decksById.size >= 1 && (
-          <Select
-            value={
-              bulkDeleteDeckId === null
-                ? ALL_DECKS_OPTION_VALUE
-                : bulkDeleteDeckId === 0n
-                ? DEFAULT_DECK_OPTION_VALUE
-                : bulkDeleteDeckId.toString()
-            }
-            onChange={(value) =>
-              setBulkDeleteDeckId(
-                value === ALL_DECKS_OPTION_VALUE || value == null
-                  ? null
-                  : value === DEFAULT_DECK_OPTION_VALUE
-                  ? 0n
-                  : BigInt(parseInt(value))
-              )
-            }
-            data={[
-              { value: ALL_DECKS_OPTION_VALUE, label: "All Decks" },
-              { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
-              ...[...decksById.values()].map((deck) => ({
-                value: deck.id.toString(),
-                label: deck.name,
-              })),
-            ]}
-            style={{ minWidth: 200 }}
-            placeholder="Select deck"
-            size="md"
-          />
-        )}
+        {isDecksEnabled && decksById.size >= 1 && deckSelector}
         <TextInput
           label="Type in DELETE ALL CARDS"
           value={deleteAllTextInput}
@@ -74,7 +45,7 @@ const DeleteAllCards: React.FC<DeleteAllCardsProps> = ({
         />
         <Button
           color="red"
-          onClick={() => onDeleteAllCards(bulkDeleteDeckId)}
+          onClick={() => onDeleteAllCards(deck.all ? null : deck.id)}
           disabled={deleteAllTextInput !== "DELETE ALL CARDS"}
         >
           Delete ALL cards

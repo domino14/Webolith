@@ -1,11 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { AppContext } from "../app_context";
-import { Button, Group, Select, Text } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
 import { useIsDecksEnabled } from "../use_is_decks_enabled";
-
-// Deck selector constants
-const ALL_DECKS_OPTION_VALUE = "ALL";
-const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
+import { useDeckSelector } from "./useDeckSelector";
 
 type DeleteNewCardsProps = {
   onDeleteNewCards: (deckId: bigint | null) => Promise<void>;
@@ -16,7 +13,11 @@ const DeleteNewCards: React.FC<DeleteNewCardsProps> = ({
 }) => {
   const { decksById } = useContext(AppContext);
   const isDecksEnabled = useIsDecksEnabled();
-  const [bulkDeleteDeckId, setBulkDeleteDeckId] = useState<bigint | null>(null);
+  const { value: deck, selector: deckSelector } = useDeckSelector({
+    showAllDecksOption: true,
+    size: "md",
+    initialValue: { all: true },
+  });
 
   return (
     <>
@@ -35,48 +36,16 @@ const DeleteNewCards: React.FC<DeleteNewCardsProps> = ({
 
       {isDecksEnabled && decksById.size >= 1 ? (
         <Group m="xl">
-          <Select
-            value={
-              bulkDeleteDeckId === null
-                ? ALL_DECKS_OPTION_VALUE
-                : bulkDeleteDeckId === 0n
-                ? DEFAULT_DECK_OPTION_VALUE
-                : bulkDeleteDeckId.toString()
-            }
-            onChange={(value) =>
-              setBulkDeleteDeckId(
-                value === ALL_DECKS_OPTION_VALUE || value == null
-                  ? null
-                  : value === DEFAULT_DECK_OPTION_VALUE
-                  ? 0n
-                  : BigInt(parseInt(value))
-              )
-            }
-            data={[
-              { value: ALL_DECKS_OPTION_VALUE, label: "All Decks" },
-              { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
-              ...[...decksById.values()].map((deck) => ({
-                value: deck.id.toString(),
-                label: deck.name,
-              })),
-            ]}
-            style={{ minWidth: 200 }}
-            placeholder="Select deck"
-            size="md"
-          />
+          {deckSelector}
           <Button
             color="pink"
-            onClick={() => onDeleteNewCards(bulkDeleteDeckId)}
+            onClick={() => onDeleteNewCards(deck.all ? null : deck.id)}
           >
             Delete new cards
           </Button>
         </Group>
       ) : (
-        <Button
-          color="pink"
-          m="xl"
-          onClick={() => onDeleteNewCards(null)}
-        >
+        <Button color="pink" m="xl" onClick={() => onDeleteNewCards(null)}>
           Delete new cards
         </Button>
       )}

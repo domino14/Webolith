@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext } from "react";
 import { AppContext } from "../app_context";
 import {
   Alert,
@@ -6,14 +6,11 @@ import {
   FileInput,
   Group,
   Loader,
-  Select,
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
-
-// Deck selector constants
-const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
+import { useDeckSelector } from "./useDeckSelector";
 
 type AlertValues = {
   shown: boolean;
@@ -34,9 +31,9 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
   showLoader,
   setShowLoader,
 }) => {
-  const { lexicon, wordVaultClient, wordServerClient, decksById } =
+  const { lexicon, wordVaultClient, wordServerClient } =
     useContext(AppContext);
-  const [deckId, setDeckId] = useState<bigint | null>(null);
+  const { value: deck, selector: deckSelector } = useDeckSelector();
 
   const uploadWordListForm = useForm({
     initialValues: {
@@ -83,9 +80,10 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
         if (alphagramResp.alphagrams.length === 0) {
           throw new Error("Your uploaded list had no valid alphagrams.");
         }
+        const deckId = deck.all ? 0n : deck.id;
         const wvResp = await wordVaultClient.addCards({
           lexicon,
-          deckId: deckId ?? undefined,
+          deckId: deckId === 0n ? undefined : deckId,
           alphagrams: alphagramResp.alphagrams.map((a) => a.alphagram),
         });
         onAlertChange({
@@ -103,32 +101,8 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
         setShowLoader(false);
       }
     },
-    [wordServerClient, lexicon, wordVaultClient, onAlertChange, setShowLoader, deckId]
+    [wordServerClient, lexicon, wordVaultClient, onAlertChange, setShowLoader, deck]
   );
-
-  const deckIdSelect =
-    decksById.size >= 1 ? (
-      <Select
-        value={deckId === null ? DEFAULT_DECK_OPTION_VALUE : deckId.toString()}
-        onChange={(value) =>
-          setDeckId(
-            value === DEFAULT_DECK_OPTION_VALUE || value == null
-              ? null
-              : BigInt(parseInt(value))
-          )
-        }
-        data={[
-          { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
-          ...[...decksById.values()].map((deck) => ({
-            value: deck.id.toString(),
-            label: deck.name,
-          })),
-        ]}
-        style={{ minWidth: 200 }}
-        placeholder="Select deck"
-        size="lg"
-      />
-    ) : null;
 
   return (
     <>
@@ -175,7 +149,7 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
             m="md"
           />
           <Group m="md">
-            {deckIdSelect}
+            {deckSelector}
             <Button
               variant="light"
               color="blue"
