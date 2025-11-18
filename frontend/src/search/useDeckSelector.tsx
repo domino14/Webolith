@@ -10,6 +10,7 @@ export type DeckSelectorValue =
 type UseDeckSelectorOptions = {
   showAllDecksOption?: boolean;
   size?: MantineSize;
+  minWidth?: number;
   initialValue?: DeckValue;
 };
 
@@ -42,6 +43,7 @@ export function useDeckSelector(options?: UseDeckSelectorOptions) {
       onSelect={setInternalValue}
       showAllDecksOption={options?.showAllDecksOption}
       size={options?.size}
+      minWidth={options?.minWidth}
     />
   );
 

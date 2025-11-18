@@ -13,6 +13,7 @@ type DeckSelectorProps = {
   onSelect: (value: DeckValue) => void;
   showAllDecksOption?: boolean;
   size?: MantineSize;
+  minWidth?: number;
 };
 
 const DeckSelector: React.FC<DeckSelectorProps> = ({
@@ -20,6 +21,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({
   onSelect,
   showAllDecksOption = false,
   size = "lg",
+  minWidth = 200,
 }) => {
   const { decksById } = useContext(AppContext);
 
@@ -67,7 +69,7 @@ const DeckSelector: React.FC<DeckSelectorProps> = ({
       value={getSelectValue()}
       onChange={handleChange}
       data={options}
-      style={{ minWidth: 200 }}
+      style={{ minWidth }}
       placeholder="Select deck"
       size={size}
     />

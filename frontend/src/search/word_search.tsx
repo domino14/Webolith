@@ -7,19 +7,8 @@ import UploadTextFileTab from "./UploadTextFileTab";
 import UploadCardboxTab from "./UploadCardboxTab";
 import BulkCardDeletionTab from "./BulkCardDeletionTab";
 
-type AlertValues = {
-  shown: boolean;
-  color?: string;
-  text?: string;
-};
-
 const WordSearchForm: React.FC = () => {
   const { lexicon, wordVaultClient } = useContext(AppContext);
-  const [alert, setAlert] = useState<AlertValues>({
-    shown: false,
-    color: "green",
-    text: "",
-  });
   const [showLoader, setShowLoader] = useState(false);
 
   const handleDeleteFromAllDecks = useCallback(
@@ -168,11 +157,7 @@ const WordSearchForm: React.FC = () => {
   );
 
   return (
-    <Tabs
-      variant="default"
-      defaultValue="search"
-      onChange={() => setAlert((prev) => ({ ...prev, shown: false }))}
-    >
+    <Tabs variant="default" defaultValue="search">
       <Tabs.List>
         <Tabs.Tab value="search">Search</Tabs.Tab>
         <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
@@ -189,8 +174,6 @@ const WordSearchForm: React.FC = () => {
 
       <Tabs.Panel value="search">
         <SearchTab
-          onAlertChange={setAlert}
-          alert={alert}
           showLoader={showLoader}
           setShowLoader={setShowLoader}
           onDeleteFromAllDecks={handleDeleteFromAllDecks}
@@ -200,8 +183,6 @@ const WordSearchForm: React.FC = () => {
 
       <Tabs.Panel value="upload-list">
         <UploadTextFileTab
-          onAlertChange={setAlert}
-          alert={alert}
           showLoader={showLoader}
           setShowLoader={setShowLoader}
         />
@@ -209,8 +190,6 @@ const WordSearchForm: React.FC = () => {
 
       <Tabs.Panel value="upload-cardbox">
         <UploadCardboxTab
-          onAlertChange={setAlert}
-          alert={alert}
           showLoader={showLoader}
           setShowLoader={setShowLoader}
         />
@@ -220,7 +199,6 @@ const WordSearchForm: React.FC = () => {
         <BulkCardDeletionTab
           onDeleteNewCards={handleDeleteNewCards}
           onDeleteAllCards={handleDeleteAllCards}
-          alert={alert}
           showLoader={showLoader}
         />
       </Tabs.Panel>

@@ -1,7 +1,6 @@
 import { useCallback, useContext } from "react";
 import { AppContext } from "../app_context";
 import {
-  Alert,
   Button,
   FileInput,
   Group,
@@ -9,25 +8,16 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
 import { useDeckSelector } from "./useDeckSelector";
 
-type AlertValues = {
-  shown: boolean;
-  color?: string;
-  text?: string;
-};
-
 type UploadTextFileTabProps = {
-  onAlertChange: (alert: AlertValues) => void;
-  alert: AlertValues;
   showLoader: boolean;
   setShowLoader: (loading: boolean) => void;
 };
 
 const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
-  onAlertChange,
-  alert,
   showLoader,
   setShowLoader,
 }) => {
@@ -44,10 +34,10 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
   const processUploadedFile = useCallback(
     async (uploadedList: string[]) => {
       if (!wordVaultClient || !wordServerClient) {
-        onAlertChange({
+        notifications.show({
           color: "red",
-          shown: true,
-          text: "Word database connection not available, try refreshing",
+          title: "Error",
+          message: "Word database connection not available, try refreshing",
         });
         return;
       }
@@ -86,22 +76,21 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
           deckId: deckId === 0n ? undefined : deckId,
           alphagrams: alphagramResp.alphagrams.map((a) => a.alphagram),
         });
-        onAlertChange({
+        notifications.show({
           color: "green",
-          shown: true,
-          text: `Uploaded ${wvResp.numCardsAdded} cards to your WordVault`,
+          message: `Uploaded ${wvResp.numCardsAdded} cards to your WordVault`,
         });
       } catch (e) {
-        onAlertChange({
+        notifications.show({
           color: "red",
-          shown: true,
-          text: String(e),
+          title: "Error",
+          message: String(e),
         });
       } finally {
         setShowLoader(false);
       }
     },
-    [wordServerClient, lexicon, wordVaultClient, onAlertChange, setShowLoader, deck]
+    [wordServerClient, lexicon, wordVaultClient, setShowLoader, deck]
   );
 
   return (
@@ -122,19 +111,19 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
                 const nonEmptyLines = lines.filter((line) => line !== "");
                 processUploadedFile(nonEmptyLines);
               } else {
-                onAlertChange({
+                notifications.show({
                   color: "red",
-                  shown: true,
-                  text: "File could not be read as text.",
+                  title: "Error",
+                  message: "File could not be read as text.",
                 });
               }
             };
 
             reader.onerror = function () {
-              onAlertChange({
+              notifications.show({
                 color: "red",
-                shown: true,
-                text: String(reader.error),
+                title: "Error",
+                message: String(reader.error),
               });
             };
           })}
@@ -163,11 +152,6 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
         </form>
         {showLoader ? <Loader color="blue" type="bars" /> : null}
       </Stack>
-      {alert.shown && (
-        <Alert variant="light" color={alert.color} mt="lg">
-          {alert.text}
-        </Alert>
-      )}
     </>
   );
 };

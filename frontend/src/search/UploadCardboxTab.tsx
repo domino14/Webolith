@@ -1,7 +1,6 @@
 import { useCallback, useContext } from "react";
 import { AppContext } from "../app_context";
 import {
-  Alert,
   Button,
   Code,
   Collapse,
@@ -14,24 +13,15 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { useDeckSelector } from "./useDeckSelector";
 
-type AlertValues = {
-  shown: boolean;
-  color?: string;
-  text?: string;
-};
-
 type UploadCardboxTabProps = {
-  onAlertChange: (alert: AlertValues) => void;
-  alert: AlertValues;
   showLoader: boolean;
   setShowLoader: (loading: boolean) => void;
 };
 
 const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
-  onAlertChange,
-  alert,
   showLoader,
   setShowLoader,
 }) => {
@@ -49,7 +39,6 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
     async (uploadedCardbox: ArrayBuffer) => {
       try {
         setShowLoader(true);
-        onAlertChange({ shown: false });
 
         // Step 1: Convert ArrayBuffer to Blob
         const blob = new Blob([uploadedCardbox], {
@@ -82,22 +71,21 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
 
         // Process the successful response
         const result = await response.text();
-        onAlertChange({
+        notifications.show({
           color: "green",
-          shown: true,
-          text: result,
+          message: result,
         });
       } catch (e) {
-        onAlertChange({
+        notifications.show({
           color: "red",
-          shown: true,
-          text: String(e),
+          title: "Error",
+          message: String(e),
         });
       } finally {
         setShowLoader(false);
       }
     },
-    [jwt, lexicon, onAlertChange, setShowLoader]
+    [jwt, lexicon, setShowLoader]
   );
 
   return (
@@ -187,10 +175,10 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
             };
 
             reader.onerror = function () {
-              onAlertChange({
+              notifications.show({
                 color: "red",
-                shown: true,
-                text: String(reader.error),
+                title: "Error",
+                message: String(reader.error),
               });
             };
           })}
@@ -219,11 +207,6 @@ const UploadCardboxTab: React.FC<UploadCardboxTabProps> = ({
         </form>
         {showLoader ? <Loader color="blue" type="bars" /> : null}
       </Stack>
-      {alert.shown && (
-        <Alert variant="light" color={alert.color} mt="lg">
-          {alert.text}
-        </Alert>
-      )}
     </>
   );
 };

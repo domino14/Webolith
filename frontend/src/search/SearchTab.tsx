@@ -8,7 +8,6 @@ import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
 import SearchRows from "./rows";
 import {
-  Alert,
   Button,
   Group,
   Loader,
@@ -17,6 +16,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { useDeckSelector } from "./useDeckSelector";
 
 const allowedSearchTypes = new Set([
@@ -45,15 +45,7 @@ const initialCriteria = [
   }),
 ];
 
-type AlertValues = {
-  shown: boolean;
-  color?: string;
-  text?: string;
-};
-
 type SearchTabProps = {
-  onAlertChange: (alert: AlertValues) => void;
-  alert: AlertValues;
   showLoader: boolean;
   setShowLoader: (loading: boolean) => void;
   onDeleteFromAllDecks: (alphagramList: string[]) => Promise<void>;
@@ -61,8 +53,6 @@ type SearchTabProps = {
 };
 
 const SearchTab: React.FC<SearchTabProps> = ({
-  onAlertChange,
-  alert,
   showLoader,
   setShowLoader,
   onDeleteFromAllDecks,
@@ -94,7 +84,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
     }
     try {
       setShowLoader(true);
-      onAlertChange({ ...alert, shown: false });
 
       const searchRequest = {
         searchparams: searchCriteria.map((s) => s.toProtoObj()),
@@ -110,16 +99,15 @@ const SearchTab: React.FC<SearchTabProps> = ({
         alphagrams: searchResponse.alphagrams.map((a) => a.alphagram),
       });
 
-      onAlertChange({
+      notifications.show({
         color: "green",
-        shown: true,
-        text: `Added ${addResp.numCardsAdded} cards to WordVault.`,
+        message: `Added ${addResp.numCardsAdded} cards to WordVault.`,
       });
     } catch (e) {
-      onAlertChange({
+      notifications.show({
         color: "red",
-        shown: true,
-        text: String(e),
+        title: "Error",
+        message: String(e),
       });
     } finally {
       setShowLoader(false);
@@ -129,10 +117,8 @@ const SearchTab: React.FC<SearchTabProps> = ({
     searchCriteria,
     wordServerClient,
     wordVaultClient,
-    onAlertChange,
     setShowLoader,
     deck,
-    alert,
   ]);
 
   const onConfirmDeleteFromAllDecksViaSearch = useCallback(async () => {
@@ -141,7 +127,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
     }
     try {
       setShowLoader(true);
-      onAlertChange({ ...alert, shown: false });
 
       const searchRequest = {
         searchparams: searchCriteria.map((s) => s.toProtoObj()),
@@ -157,10 +142,10 @@ const SearchTab: React.FC<SearchTabProps> = ({
         searchResponse.alphagrams.map((a) => a.alphagram)
       );
     } catch (e) {
-      onAlertChange({
+      notifications.show({
         color: "red",
-        shown: true,
-        text: String(e),
+        title: "Error",
+        message: String(e),
       });
     } finally {
       setShowLoader(false);
@@ -170,9 +155,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
     onDeleteFromAllDecks,
     searchCriteria,
     wordServerClient,
-    onAlertChange,
     setShowLoader,
-    alert,
   ]);
 
   const onConfirmDeleteFromDeckViaSearch = useCallback(async () => {
@@ -181,7 +164,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
     }
     try {
       setShowLoader(true);
-      onAlertChange({ ...alert, shown: false });
 
       const searchRequest = {
         searchparams: searchCriteria.map((s) => s.toProtoObj()),
@@ -199,10 +181,10 @@ const SearchTab: React.FC<SearchTabProps> = ({
         searchResponse.alphagrams.map((a) => a.alphagram)
       );
     } catch (e) {
-      onAlertChange({
+      notifications.show({
         color: "red",
-        shown: true,
-        text: String(e),
+        title: "Error",
+        message: String(e),
       });
     } finally {
       setShowLoader(false);
@@ -212,9 +194,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
     onDeleteFromDeck,
     searchCriteria,
     wordServerClient,
-    onAlertChange,
     setShowLoader,
-    alert,
     deck,
   ]);
 
@@ -289,11 +269,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
             Add to WordVault
           </Button>
         </Group>
-        {alert.shown && (
-          <Alert variant="light" color={alert.color} mt="lg">
-            {alert.text}
-          </Alert>
-        )}
 
         <Text size="lg" mb="lg">
           OR
