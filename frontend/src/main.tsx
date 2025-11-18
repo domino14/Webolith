@@ -15,7 +15,7 @@ import "@mantine/notifications/styles.css";
 import "@mantine/charts/styles.css";
 
 import { Notifications } from "@mantine/notifications";
-import WordSearch from "./search/word_search.tsx";
+import ManageCardsPage from "./search/manage_cards.tsx";
 import CardSchedule from "./schedule.tsx";
 import Help from "./help.tsx";
 import CardStats from "./card_stats.tsx";
@@ -48,7 +48,7 @@ const router = createBrowserRouter(
         },
         {
           path: "/word-search",
-          element: <WordSearch />,
+          element: <ManageCardsPage />,
         },
         {
           path: "/decks",
@@ -75,7 +75,7 @@ const router = createBrowserRouter(
   ],
   {
     basename: "/wordvault",
-  },
+  }
 );
 
 const theme = createTheme({
@@ -98,5 +98,5 @@ createRoot(document.getElementById("root")!).render(
       <Notifications position="top-center" />
       <RouterProvider router={router} />
     </MantineProvider>
-  </StrictMode>,
+  </StrictMode>
 );

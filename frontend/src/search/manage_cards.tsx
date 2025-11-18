@@ -7,7 +7,7 @@ import UploadTextFileTab from "./UploadTextFileTab";
 import UploadCardboxTab from "./UploadCardboxTab";
 import BulkCardDeletionTab from "./BulkCardDeletionTab";
 
-const WordSearchForm: React.FC = () => {
+const ManageCardsPage: React.FC = () => {
   const { lexicon, wordVaultClient } = useContext(AppContext);
   const [showLoader, setShowLoader] = useState(false);
 
@@ -206,4 +206,4 @@ const WordSearchForm: React.FC = () => {
   );
 };
 
-export default WordSearchForm;
+export default ManageCardsPage;
