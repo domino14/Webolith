@@ -15,11 +15,17 @@ const BulkCardDeletionTab: React.FC<BulkCardDeletionTabProps> = ({
 }) => {
   return (
     <>
-      <DeleteNewCards onDeleteNewCards={onDeleteNewCards} />
+      <DeleteNewCards
+        onDeleteNewCards={onDeleteNewCards}
+        showLoader={showLoader}
+      />
 
       <Divider m="xl" />
 
-      <DeleteAllCards onDeleteAllCards={onDeleteAllCards} showLoader={showLoader} />
+      <DeleteAllCards
+        onDeleteAllCards={onDeleteAllCards}
+        showLoader={showLoader}
+      />
     </>
   );
 };
