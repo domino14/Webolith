@@ -58,6 +58,10 @@ const initialCriteria = [
   }),
 ];
 
+// Deck selector constants
+const ALL_DECKS_OPTION_VALUE = "ALL";
+const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
+
 type AlertValues = {
   shown: boolean;
   color?: string;
@@ -75,9 +79,7 @@ const WordSearchForm: React.FC = () => {
   });
   const [showLoader, setShowLoader] = useState(false);
   const [deckId, setDeckId] = useState<bigint | null>(null);
-  const [bulkDeleteDeckId, setBulkDeleteDeckId] = useState<bigint | null>(
-    null,
-  );
+  const [bulkDeleteDeckId, setBulkDeleteDeckId] = useState<bigint | null>(null);
   const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
   const [deleteAllTextInput, setDeleteAllTextInput] = useState("");
   const [
@@ -159,7 +161,7 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [wordServerClient, lexicon, wordVaultClient],
+    [wordServerClient, lexicon, wordVaultClient]
   );
 
   const processUploadedCardbox = useCallback(
@@ -193,7 +195,7 @@ const WordSearchForm: React.FC = () => {
           // Handle HTTP errors
           const errorText = await response.text();
           throw new Error(
-            `HTTP error! Status: ${response.status}, Message: ${errorText}`,
+            `HTTP error! Status: ${response.status}, Message: ${errorText}`
           );
         }
 
@@ -214,7 +216,7 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [jwt, lexicon],
+    [jwt, lexicon]
   );
 
   const sendDelete = useCallback(
@@ -244,7 +246,7 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [lexicon, wordVaultClient],
+    [lexicon, wordVaultClient]
   );
 
   const sendDeleteFromDeck = useCallback(
@@ -252,7 +254,7 @@ const WordSearchForm: React.FC = () => {
       deckId: bigint,
       onlyNew: boolean,
       allCards?: boolean,
-      alphagramList?: string[],
+      alphagramList?: string[]
     ) => {
       if (!wordVaultClient) {
         return;
@@ -280,7 +282,7 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [lexicon, wordVaultClient],
+    [lexicon, wordVaultClient]
   );
 
   const {
@@ -356,7 +358,7 @@ const WordSearchForm: React.FC = () => {
       await sendDelete(
         false,
         false,
-        searchResponse.alphagrams.map((a) => a.alphagram),
+        searchResponse.alphagrams.map((a) => a.alphagram)
       );
     } catch (e) {
       setAlert({
@@ -392,7 +394,7 @@ const WordSearchForm: React.FC = () => {
           targetDeckId,
           false,
           false,
-          searchResponse.alphagrams.map((a) => a.alphagram),
+          searchResponse.alphagrams.map((a) => a.alphagram)
         );
       } catch (e) {
         setAlert({
@@ -404,20 +406,22 @@ const WordSearchForm: React.FC = () => {
         setShowLoader(false);
       }
     },
-    [lexicon, sendDeleteFromDeck, searchCriteria, wordServerClient, setAlert],
+    [lexicon, sendDeleteFromDeck, searchCriteria, wordServerClient, setAlert]
   );
 
   const deckIdSelect =
     decksById.size >= 1 ? (
       <Select
-        value={deckId?.toString() ?? ""}
+        value={deckId === null ? DEFAULT_DECK_OPTION_VALUE : deckId.toString()}
         onChange={(value) =>
           setDeckId(
-            value == "" || value == null ? null : BigInt(parseInt(value)),
+            value === DEFAULT_DECK_OPTION_VALUE || value == null
+              ? null
+              : BigInt(parseInt(value))
           )
         }
         data={[
-          { value: "", label: "Default Deck" },
+          { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
           ...[...decksById.values()].map((deck) => ({
             value: deck.id.toString(),
             label: deck.name,
@@ -439,7 +443,7 @@ const WordSearchForm: React.FC = () => {
       >
         <Text size="lg" m="lg">
           Are you sure? This will delete the cards matching your search criteria
-          from WordVault from ALL decks. This can't be undone!
+          from WordVault from the selected deck. This can't be undone!
         </Text>
         <Group gap="lg" m="lg">
           <Button
@@ -472,9 +476,7 @@ const WordSearchForm: React.FC = () => {
         <Group gap="lg" m="lg">
           <Button
             onClick={() => {
-              if (deckId) {
-                deleteFromDeckWordVault(deckId);
-              }
+              deleteFromDeckWordVault(deckId ?? 0n);
               closeSearchDeleteDeck();
             }}
             color="pink"
@@ -535,20 +537,17 @@ const WordSearchForm: React.FC = () => {
               OR
             </Text>
 
-            {isDecksEnabled && deckId ? (
+            {isDecksEnabled && decksById.size >= 1 ? (
               <Group>
                 <Button
                   variant="light"
                   color="red"
                   onClick={openSearchDeleteDeck}
                 >
-                  Delete from {decksById.get(deckId)?.name ?? "Default Deck"}
+                  Delete from{" "}
+                  {deckId ? decksById.get(deckId)?.name : "Default Deck"}
                 </Button>
-                <Button
-                  variant="light"
-                  color="pink"
-                  onClick={openSearchDelete}
-                >
+                <Button variant="light" color="pink" onClick={openSearchDelete}>
                   Delete from All Decks
                 </Button>
               </Group>
@@ -771,16 +770,25 @@ const WordSearchForm: React.FC = () => {
           {isDecksEnabled && decksById.size >= 1 ? (
             <Group m="xl">
               <Select
-                value={bulkDeleteDeckId?.toString() ?? ""}
+                value={
+                  bulkDeleteDeckId === null
+                    ? ALL_DECKS_OPTION_VALUE
+                    : bulkDeleteDeckId === 0n
+                    ? DEFAULT_DECK_OPTION_VALUE
+                    : bulkDeleteDeckId.toString()
+                }
                 onChange={(value) =>
                   setBulkDeleteDeckId(
-                    value == "" || value == null
+                    value === ALL_DECKS_OPTION_VALUE || value == null
                       ? null
-                      : BigInt(parseInt(value)),
+                      : value === DEFAULT_DECK_OPTION_VALUE
+                      ? 0n
+                      : BigInt(parseInt(value))
                   )
                 }
                 data={[
-                  { value: "", label: "All Decks" },
+                  { value: ALL_DECKS_OPTION_VALUE, label: "All Decks" },
+                  { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
                   ...[...decksById.values()].map((deck) => ({
                     value: deck.id.toString(),
                     label: deck.name,
@@ -793,9 +801,9 @@ const WordSearchForm: React.FC = () => {
               <Button
                 color="pink"
                 onClick={() =>
-                  bulkDeleteDeckId
-                    ? sendDeleteFromDeck(bulkDeleteDeckId, true)
-                    : sendDelete(true)
+                  bulkDeleteDeckId === null
+                    ? sendDelete(true)
+                    : sendDeleteFromDeck(bulkDeleteDeckId, true)
                 }
               >
                 Delete new cards
@@ -824,16 +832,25 @@ const WordSearchForm: React.FC = () => {
           <Stack m="xl">
             {isDecksEnabled && decksById.size >= 1 && (
               <Select
-                value={bulkDeleteDeckId?.toString() ?? ""}
+                value={
+                  bulkDeleteDeckId === null
+                    ? ALL_DECKS_OPTION_VALUE
+                    : bulkDeleteDeckId === 0n
+                    ? DEFAULT_DECK_OPTION_VALUE
+                    : bulkDeleteDeckId.toString()
+                }
                 onChange={(value) =>
                   setBulkDeleteDeckId(
-                    value == "" || value == null
+                    value === ALL_DECKS_OPTION_VALUE || value == null
                       ? null
-                      : BigInt(parseInt(value)),
+                      : value === DEFAULT_DECK_OPTION_VALUE
+                      ? 0n
+                      : BigInt(parseInt(value))
                   )
                 }
                 data={[
-                  { value: "", label: "All Decks" },
+                  { value: ALL_DECKS_OPTION_VALUE, label: "All Decks" },
+                  { value: DEFAULT_DECK_OPTION_VALUE, label: "Default Deck" },
                   ...[...decksById.values()].map((deck) => ({
                     value: deck.id.toString(),
                     label: deck.name,
@@ -852,9 +869,9 @@ const WordSearchForm: React.FC = () => {
             <Button
               color="red"
               onClick={() =>
-                bulkDeleteDeckId
-                  ? sendDeleteFromDeck(bulkDeleteDeckId, false, true)
-                  : sendDelete(false, true)
+                bulkDeleteDeckId === null
+                  ? sendDelete(false, true)
+                  : sendDeleteFromDeck(bulkDeleteDeckId, false, true)
               }
               disabled={deleteAllTextInput !== "DELETE ALL CARDS"}
             >
