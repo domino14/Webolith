@@ -175,7 +175,7 @@ function ManageDecks() {
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null);
 
   const [deckBreakdownsByDeckId, setDeckBreakdownsByDeckId] = useState<
-    Map<bigint | null, DeckBreakdown>
+    Map<bigint, DeckBreakdown>
   >(new Map());
 
   const existingDeckNames = [...decksById.values()].map((d) =>
@@ -196,7 +196,7 @@ function ManageDecks() {
           setDeckBreakdownsByDeckId(
             new Map(
               response.breakdowns.map((breakdown) => [
-                breakdown.deckId ?? null,
+                breakdown.deckId ?? 0n,
                 breakdown,
               ])
             )
@@ -282,7 +282,7 @@ function ManageDecks() {
       </Group>
       <SimpleGrid cols={{ base: 1, md: 2 }} maw={1000} spacing="lg">
         <DefaultDeckDisplay
-          breakdown={deckBreakdownsByDeckId.get(null) ?? null}
+          breakdown={deckBreakdownsByDeckId.get(0n) ?? null}
         />
         {[...decksById.values()].map((deck) => (
           <NonDefaultDeckDisplay
