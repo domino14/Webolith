@@ -434,9 +434,21 @@ export declare class MoveCardsRequest extends Message<MoveCardsRequest> {
   alphagrams: string[];
 
   /**
-   * @generated from field: uint64 deck_id = 3;
+   * @generated from field: uint64 target_deck_id = 3;
    */
-  deckId: bigint;
+  targetDeckId: bigint;
+
+  /**
+   * The following two fields are mutually exclusive.
+   *
+   * @generated from field: bool from_all_decks = 4;
+   */
+  fromAllDecks: boolean;
+
+  /**
+   * @generated from field: uint64 source_deck_id = 5;
+   */
+  sourceDeckId: bigint;
 
   constructor(data?: PartialMessage<MoveCardsRequest>);
 
@@ -845,8 +857,6 @@ export declare class PostponeResponse extends Message<PostponeResponse> {
 }
 
 /**
- * TODO: make this deck-aware
- *
  * @generated from message wordvault.DeleteRequest
  */
 export declare class DeleteRequest extends Message<DeleteRequest> {
@@ -912,6 +922,10 @@ export declare class DeleteResponse extends Message<DeleteResponse> {
 }
 
 /**
+ * Needs to be a separate request from the non-deck-aware delete request because
+ * we need to be able to differentiate between no deck ID meaning default deck
+ * vs. no deck ID meaning all decks
+ *
  * @generated from message wordvault.DeleteFromDeckRequest
  */
 export declare class DeleteFromDeckRequest extends Message<DeleteFromDeckRequest> {

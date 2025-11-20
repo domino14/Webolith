@@ -7,16 +7,9 @@ import {
 import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
 import SearchRows from "./rows";
-import {
-  Button,
-  Group,
-  Loader,
-  Select,
-  Stack,
-} from "@mantine/core";
+import { Button, Group, Loader, Select, Stack } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useDeckSelector } from "./useDeckSelector";
-import { MoveCardsRequest } from "../gen/rpc/wordvault/api_pb";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -74,6 +67,10 @@ const SearchTab: React.FC<SearchTabProps> = ({
     initialValue: { deckId: 0n },
   });
 
+  if (targetDeck.all) {
+    throw new Error("Illegal state: target deck cannot be all decks.");
+  }
+
   const {
     searchCriteria,
     addSearchRow,
@@ -125,38 +122,24 @@ const SearchTab: React.FC<SearchTabProps> = ({
           await onDeleteFromDeck(sourceDeck.id, alphagrams);
         }
       } else if (action === "move") {
-        if (!sourceDeck.all && !targetDeck.all && sourceDeck.id === targetDeck.id) {
-            notifications.show({
-                color: "red",
-                message: "Source and target decks cannot be the same.",
-            });
-            return;
+        if (!sourceDeck.all && sourceDeck.id === targetDeck.id) {
+          notifications.show({
+            color: "red",
+            message: "Source and target decks cannot be the same.",
+          });
+          return;
         }
-        
+
         const targetDeckId = targetDeck.all ? 0n : targetDeck.id;
         const sourceDeckId = sourceDeck.all ? undefined : sourceDeck.id;
-        
-        // @ts-ignore: MoveCardsRequest generated types might be missing sourceDeckId/fromAllDecks
-        const moveReq = new MoveCardsRequest({
-            lexicon,
-            alphagrams,
-            deckId: targetDeckId,
-            sourceDeckId: sourceDeckId,
-            fromAllDecks: sourceDeck.all,
-        });
-        // Manually assign extra properties if the constructor ignores them due to type safety
-        // (Protobuf classes usually ignore unknown fields in constructor)
-        
-        const reqPlain: any = {
-            lexicon,
-            alphagrams,
-            deckId: targetDeckId,
-            sourceDeckId: sourceDeckId,
-            fromAllDecks: sourceDeck.all
-        };
 
-        // @ts-ignore
-        const moveResp = await wordVaultClient.moveCards(reqPlain);
+        const moveResp = await wordVaultClient.moveCards({
+          lexicon,
+          alphagrams,
+          targetDeckId: targetDeckId,
+          sourceDeckId: sourceDeckId,
+          fromAllDecks: sourceDeck.all,
+        });
 
         notifications.show({
           color: "green",

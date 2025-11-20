@@ -169,7 +169,9 @@ export const MoveCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
   () => [
     { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 3, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 3, name: "target_deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 4, name: "from_all_decks", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 5, name: "source_deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
   ],
 );
 
@@ -326,8 +328,6 @@ export const PostponeResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
- * TODO: make this deck-aware
- *
  * @generated from message wordvault.DeleteRequest
  */
 export const DeleteRequest = /*@__PURE__*/ proto3.makeMessageType(
@@ -351,6 +351,10 @@ export const DeleteResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * Needs to be a separate request from the non-deck-aware delete request because
+ * we need to be able to differentiate between no deck ID meaning default deck
+ * vs. no deck ID meaning all decks
+ *
  * @generated from message wordvault.DeleteFromDeckRequest
  */
 export const DeleteFromDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
