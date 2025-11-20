@@ -21,7 +21,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { getBrowserTimezone } from "./timezones";
 import { useNavigate } from "react-router-dom";
-import { useIsDecksEnabled } from "./use_is_decks_enabled";
 
 type scheduleBreakdown = { [key: string]: number };
 
@@ -122,7 +121,6 @@ const CardSchedule: React.FC = () => {
     bigint | null,
     scheduleBreakdown
   > | null>(null);
-  const isDecksEnabled = useIsDecksEnabled();
   const [numCards, setNumCards] = useState(0);
   const [cardsToPostpone, setCardsToPostpone] = useState(0);
   const [postponeModalOpened, postponeModalHandlers] = useDisclosure();
@@ -259,23 +257,6 @@ const CardSchedule: React.FC = () => {
       return { chartDataNext30Days, seriesNext30Days, totalOverdue };
     }, [sortedDeckEntries, getDeckLabel]);
 
-  // Non-stacked daily data (single series) from aggregated schedule
-  // TODO: Remove when decks are fully released
-  const chartDataNext30DaysSimple = useMemo(() => {
-    if (!cardSchedule) return [];
-    const result = [] as Array<{ date: string; "Card Count": number }>;
-
-    forEachDateStringInNextNDays(
-      DAYS_TO_SHOW_FOR_DAILY_SCHEDULE,
-      (dateString) => {
-        const count = cardSchedule[dateString] || 0;
-        result.push({ date: dateString, "Card Count": count });
-      }
-    );
-
-    return result;
-  }, [cardSchedule]);
-
   const chartDataWeekly = useMemo(() => {
     if (sortedDeckEntries.length === 0) return [];
 
@@ -319,40 +300,6 @@ const CardSchedule: React.FC = () => {
 
     return weeklyData;
   }, [sortedDeckEntries, getDeckLabel]);
-
-  // Aggregated weekly data (single series) from aggregated schedule
-  // TODO: Remove when decks are fully released
-  const chartDataWeeklySimple = useMemo(() => {
-    if (!cardSchedule) return [];
-
-    // Collect all dates from aggregated schedule (excluding 'overdue')
-    const dateKeys = Object.keys(cardSchedule).filter((k) => k !== "overdue");
-    if (dateKeys.length === 0) return [];
-
-    const dates = dateKeys.map(parseLocalDate);
-    const range = getWeeklyRangeForDates(dates);
-    if (!range) return [];
-
-    const ranges = buildWeekRanges(
-      range.startOfWeek,
-      range.totalWeeks,
-      range.oneWeekMs
-    );
-    const weeklyData: Array<{ week: string; "Card Count": number }> = [];
-
-    for (const { weekStart, weekEnd, label } of ranges) {
-      let sum = 0;
-      for (const dateStr of dateKeys) {
-        const d = parseLocalDate(dateStr);
-        if (d >= weekStart && d <= weekEnd) {
-          sum += cardSchedule[dateStr] ?? 0;
-        }
-      }
-      weeklyData.push({ week: label, "Card Count": sum });
-    }
-
-    return weeklyData;
-  }, [cardSchedule]);
 
   const sendPostponement = useCallback(async () => {
     if (!wordVaultClient) {
@@ -460,15 +407,11 @@ const CardSchedule: React.FC = () => {
       </Center>
       <BarChart
         h={300}
-        data={isDecksEnabled ? chartDataNext30Days : chartDataNext30DaysSimple}
+        data={chartDataNext30Days}
         dataKey="date"
-        series={
-          isDecksEnabled
-            ? seriesNext30Days
-            : [{ name: "Card Count", color: "blue" }]
-        }
+        series={seriesNext30Days}
         tickLine="x"
-        type={isDecksEnabled ? "stacked" : "default"}
+        type="stacked"
       />
 
       <Center mt="xl">
@@ -477,15 +420,11 @@ const CardSchedule: React.FC = () => {
 
       <BarChart
         h={300}
-        data={isDecksEnabled ? chartDataWeekly : chartDataWeeklySimple}
+        data={chartDataWeekly}
         dataKey="week"
-        series={
-          isDecksEnabled
-            ? seriesNext30Days
-            : [{ name: "Card Count", color: "blue" }]
-        }
+        series={seriesNext30Days}
         tickLine="x"
-        type={isDecksEnabled ? "stacked" : "default"}
+        type="stacked"
       />
     </div>
   );

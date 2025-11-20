@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import {
   SearchTypesEnum,
   SearchCriterion,
@@ -52,8 +52,11 @@ const SearchTab: React.FC<SearchTabProps> = ({
   onDeleteFromAllDecks,
   onDeleteFromDeck,
 }) => {
-  const { lexicon, wordVaultClient, wordServerClient } = useContext(AppContext);
+  const { lexicon, wordVaultClient, wordServerClient, decksById } =
+    useContext(AppContext);
   const [action, setAction] = useState<ActionType>("add");
+
+  const hasDecks = decksById.size > 0;
 
   const { value: sourceDeck, selector: sourceDeckSelector } = useDeckSelector({
     showAllDecksOption: true,
@@ -168,8 +171,41 @@ const SearchTab: React.FC<SearchTabProps> = ({
     onDeleteFromDeck,
   ]);
 
+  const actionOptions = useMemo(() => {
+    if (hasDecks) {
+      return [
+        { label: "Add to deck", value: "add" },
+        { label: "Move cards", value: "move" },
+        { label: "Delete cards", value: "delete" },
+      ];
+    }
+
+    return [
+      { label: "Add cards", value: "add" },
+      { label: "Delete cards", value: "delete" },
+    ];
+  }, [hasDecks]);
+
+  const buttonDisabled = useMemo(() => {
+    if (action === "move") {
+      return !hasDecks;
+    }
+
+    return false;
+  }, [action, hasDecks]);
+
+  const buttonLabel = useMemo(() => {
+    if (action === "add") {
+      return hasDecks ? "Add to Deck" : "Add to WordVault";
+    }
+    if (action === "delete") {
+      return "Delete Cards";
+    }
+    return "Move Cards";
+  }, [action, hasDecks]);
+
   return (
-    <Stack mt="lg">
+    <Stack mt="lg" gap="sm">
       <SearchRows
         criteria={searchCriteria}
         addSearchRow={addSearchRow}
@@ -179,23 +215,21 @@ const SearchTab: React.FC<SearchTabProps> = ({
         allowedSearchTypes={allowedSearchTypes}
       />
 
-      <Select
-        label="Action"
-        value={action}
-        onChange={(value) => setAction(value as ActionType)}
-        data={[
-          { label: "Add to deck", value: "add" },
-          { label: "Move cards", value: "move" },
-          { label: "Delete cards", value: "delete" },
-        ]}
-        size="md"
-        mb="md"
-        allowDeselect={false}
-      />
+      <Group>
+        <Select
+          label="Action"
+          value={action}
+          onChange={(value) => setAction(value as ActionType)}
+          data={actionOptions}
+          size="lg"
+          mb="lg"
+          allowDeselect={false}
+        />
+      </Group>
 
       <Group mb="lg" align="flex-end">
-        {action === "add" && targetDeckSelector}
-        {action === "delete" && sourceDeckSelector}
+        {action === "add" && hasDecks && targetDeckSelector}
+        {action === "delete" && hasDecks && sourceDeckSelector}
         {action === "move" && (
           <>
             {sourceDeckSelector}
@@ -208,12 +242,9 @@ const SearchTab: React.FC<SearchTabProps> = ({
           color={action === "delete" ? "red" : "blue"}
           onClick={handleAction}
           size="lg"
+          disabled={buttonDisabled}
         >
-          {action === "add"
-            ? "Add to Deck"
-            : action === "delete"
-            ? "Delete Cards"
-            : "Move Cards"}
+          {buttonLabel}
         </Button>
       </Group>
 
