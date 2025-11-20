@@ -70,10 +70,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
     initialValue: { deckId: 0n },
   });
 
-  if (targetDeck.all) {
-    throw new Error("Illegal state: target deck cannot be all decks.");
-  }
-
   const {
     searchCriteria,
     addSearchRow,
@@ -118,6 +114,16 @@ const SearchTab: React.FC<SearchTabProps> = ({
           color: "green",
           message: `Added ${addResp.numCardsAdded} cards to WordVault.`,
         });
+
+        if (addResp.numCardsInOtherDecks > 0) {
+          const countInOtherDecks = addResp.numCardsInOtherDecks;
+          const cardOrCards = countInOtherDecks === 1 ? "card" : "cards";
+
+          notifications.show({
+            color: "yellow",
+            message: `${countInOtherDecks} ${cardOrCards} were already in other decks. If you wish to add them to this deck, you must move them from the other decks first.`,
+          });
+        }
       } else if (action === "delete") {
         if (sourceDeck.all) {
           await onDeleteFromAllDecks(alphagrams);
@@ -125,7 +131,11 @@ const SearchTab: React.FC<SearchTabProps> = ({
           await onDeleteFromDeck(sourceDeck.id, alphagrams);
         }
       } else if (action === "move") {
-        if (!sourceDeck.all && sourceDeck.id === targetDeck.id) {
+        if (
+          !sourceDeck.all &&
+          !targetDeck.all &&
+          sourceDeck.id === targetDeck.id
+        ) {
           notifications.show({
             color: "red",
             message: "Source and target decks cannot be the same.",
