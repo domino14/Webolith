@@ -117,11 +117,14 @@ const SearchTab: React.FC<SearchTabProps> = ({
 
         if (addResp.numCardsInOtherDecks > 0) {
           const countInOtherDecks = addResp.numCardsInOtherDecks;
-          const cardOrCards = countInOtherDecks === 1 ? "card" : "cards";
+          const inOtherDecksMessage =
+            countInOtherDecks === 1
+              ? "card is in another deck"
+              : "cards were already in other decks";
 
           notifications.show({
             color: "yellow",
-            message: `${countInOtherDecks} ${cardOrCards} were already in other decks. If you wish to add them to this deck, you must move them from the other decks first.`,
+            message: `${countInOtherDecks} ${inOtherDecksMessage}. If you wish to add them to this deck, you must move them from the other decks first.`,
           });
         }
       } else if (action === "delete") {
