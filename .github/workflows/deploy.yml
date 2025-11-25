@@ -46,7 +46,7 @@ jobs:
             -outputdir /opt/data/lexica/db -dbs NWL18,NWL20,CSW19,FISE2
 
       - name: Copy docker-compose config
-        run: cp .github/workflows/docker-compose.yml .
+        run: cp .github/docker-compose.yml .
 
       - name: Start services
         run: docker compose up -d
