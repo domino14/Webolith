@@ -12,6 +12,7 @@ type UseDeckSelectorOptions = {
   size?: MantineSize;
   minWidth?: number;
   initialValue?: DeckValue;
+  label?: string;
 };
 
 export function useDeckSelector(options?: UseDeckSelectorOptions) {
@@ -44,8 +45,9 @@ export function useDeckSelector(options?: UseDeckSelectorOptions) {
       showAllDecksOption={options?.showAllDecksOption}
       size={options?.size}
       minWidth={options?.minWidth}
+      label={options?.label}
     />
   );
 
-  return { value, selector };
+  return { value, selector, setInternalValue };
 }

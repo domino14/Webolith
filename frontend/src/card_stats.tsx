@@ -33,7 +33,6 @@ import {
 } from "@tabler/icons-react";
 import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "./timezones";
-import { useIsDecksEnabled } from "./use_is_decks_enabled";
 
 const COLOR_PALETTE = [
   "blue.6",
@@ -65,7 +64,6 @@ const CardStats: React.FC = () => {
     [key: string]: number;
   }>({});
 
-  const isDecksEnabled = useIsDecksEnabled();
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
 
   // Default deck has null ID, so indicate no selected deck with a separate
@@ -142,7 +140,6 @@ const CardStats: React.FC = () => {
 
   // Build Select options when decks are enabled
   const deckOptions = useMemo(() => {
-    if (!isDecksEnabled) return [] as { value: string; label: string }[];
     const opts: { value: string; label: string }[] = [
       { value: ALL_DECKS_OPTION_VALUE, label: "All decks" },
     ];
@@ -171,7 +168,7 @@ const CardStats: React.FC = () => {
       }
     }
     return opts;
-  }, [isDecksEnabled, deckProgressStats, decksById, getDeckLabel]);
+  }, [deckProgressStats, decksById, getDeckLabel]);
 
   // Update the displayed stats based on the selected deck
   useEffect(() => {
@@ -199,13 +196,12 @@ const CardStats: React.FC = () => {
 
   // Build per-deck rating breakdown for "All decks"
   const deckIdsForBreakdown = useMemo(() => {
-    if (!isDecksEnabled) return [] as (bigint | null)[];
     const idSet = new Set<bigint | null>();
     idSet.add(null);
     for (const id of decksById.keys()) idSet.add(id);
     for (const id of deckProgressStats?.keys() ?? []) idSet.add(id);
     return Array.from(idSet.values());
-  }, [isDecksEnabled, decksById, deckProgressStats]);
+  }, [decksById, deckProgressStats]);
 
   const {
     deckBreakdownChartData,
@@ -214,11 +210,7 @@ const CardStats: React.FC = () => {
     deckBreakdownChartData: Array<Record<string, number | string>>;
     deckBreakdownSeries: { name: string; color: string }[];
   } = useMemo(() => {
-    if (
-      !isDecksEnabled ||
-      !allDecksSelected ||
-      (deckIdsForBreakdown?.length ?? 0) <= 1
-    ) {
+    if (!allDecksSelected || (deckIdsForBreakdown?.length ?? 0) <= 1) {
       return { deckBreakdownChartData: [], deckBreakdownSeries: [] };
     }
 
@@ -257,7 +249,6 @@ const CardStats: React.FC = () => {
 
     return { deckBreakdownChartData: rows, deckBreakdownSeries: series };
   }, [
-    isDecksEnabled,
     allDecksSelected,
     deckIdsForBreakdown,
     deckProgressStats,
@@ -308,7 +299,7 @@ const CardStats: React.FC = () => {
 
   return (
     <>
-      {isDecksEnabled && deckOptions.length > 0 && (
+      {deckOptions.length > 0 && (
         <Stack w={300} mb="sm">
           <Select
             label="Deck"

@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../app_context";
 import { Button, Center, Loader, Stack, Text, TextInput } from "@mantine/core";
-import { useIsDecksEnabled } from "../use_is_decks_enabled";
 import { useDeckSelector } from "./useDeckSelector";
 
 type DeleteAllCardsProps = {
@@ -14,7 +13,6 @@ const DeleteAllCards: React.FC<DeleteAllCardsProps> = ({
   showLoader,
 }) => {
   const { decksById } = useContext(AppContext);
-  const isDecksEnabled = useIsDecksEnabled();
   const { value: deck, selector: deckSelector } = useDeckSelector({
     showAllDecksOption: true,
     size: "md",
@@ -37,7 +35,7 @@ const DeleteAllCards: React.FC<DeleteAllCardsProps> = ({
         actually want to delete all your cards!
       </Text>
       <Stack m="xl">
-        {isDecksEnabled && decksById.size >= 1 && deckSelector}
+        {decksById.size >= 1 && deckSelector}
         <TextInput
           label="Type in DELETE ALL CARDS"
           value={deleteAllTextInput}

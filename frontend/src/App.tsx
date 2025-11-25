@@ -34,7 +34,6 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import Cookies from "js-cookie";
-import { useIsDecksEnabled } from "./use_is_decks_enabled";
 
 // this can come from the backend later in some other way.
 const lexMap = {
@@ -56,7 +55,6 @@ function App() {
     isMember,
     setDefaultLexicon,
   } = useContext(AppContext);
-  const isDecksEnabled = useIsDecksEnabled();
 
   const [showChangeLexLink, setShowChangeLexLink] = useState(false);
   const loginURL = `${window.location.protocol}//${window.location.host}/accounts/login?next=/wordvault`;
@@ -160,9 +158,7 @@ function App() {
                 <IconCubePlus color="green" />,
                 "Manage WordVault cards",
               ],
-              isDecksEnabled
-                ? ["decks", <IconFolders color="green" />, "Decks (BETA)"]
-                : null,
+              ["decks", <IconFolders color="green" />, "Decks"],
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
               ["stats", <IconGraph color="green" />, "Statistics"],
               ["leaderboard", <IconMedal2 color="green" />, "Leaderboard"],
