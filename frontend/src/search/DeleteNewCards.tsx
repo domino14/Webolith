@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { AppContext } from "../app_context";
 import { Button, Group, Loader, Stack, Text } from "@mantine/core";
-import { useIsDecksEnabled } from "../use_is_decks_enabled";
 import { useDeckSelector } from "./useDeckSelector";
 
 type DeleteNewCardsProps = {
@@ -14,7 +13,6 @@ const DeleteNewCards: React.FC<DeleteNewCardsProps> = ({
   showLoader,
 }) => {
   const { decksById } = useContext(AppContext);
-  const isDecksEnabled = useIsDecksEnabled();
   const { value: deck, selector: deckSelector } = useDeckSelector({
     showAllDecksOption: true,
     size: "md",
@@ -37,7 +35,7 @@ const DeleteNewCards: React.FC<DeleteNewCardsProps> = ({
       </Text>
 
       <Stack>
-        {isDecksEnabled && decksById.size >= 1 ? (
+        {decksById.size >= 1 ? (
           <Group m="xl">
             {deckSelector}
 
