@@ -563,6 +563,24 @@ export const EditDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * @generated from message wordvault.DeleteDeckRequest
+ */
+export const DeleteDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteDeckRequest",
+  () => [
+    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeleteDeckResponse
+ */
+export const DeleteDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteDeckResponse",
+  [],
+);
+
+/**
  * @generated from message wordvault.EditFsrsParametersResponse
  */
 export const EditFsrsParametersResponse = /*@__PURE__*/ proto3.makeMessageType(
