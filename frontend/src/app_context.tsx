@@ -137,6 +137,7 @@ export interface AppContextType {
   decksById: Map<bigint, Deck>;
   addDeck: (d: Deck) => void;
   updateDeck: (d: Deck) => void;
+  removeDeck: (deckId: bigint) => void;
 }
 
 const initialContext: AppContextType = {
@@ -168,6 +169,7 @@ const initialContext: AppContextType = {
   decksById: new Map(),
   addDeck: () => {},
   updateDeck: () => {},
+  removeDeck: () => {},
 };
 
 export const AppContext = createContext<AppContextType>(initialContext);
@@ -395,6 +397,15 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     [setDecks],
   );
 
+  const removeDeck = useCallback(
+    (deckId: bigint) => {
+      setDecks((decks) => {
+        return decks.filter((d) => d.id !== deckId);
+      });
+    },
+    [setDecks],
+  );
+
   return (
     <AppContext.Provider
       value={{
@@ -416,6 +427,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
         decksById: filteredDecksById,
         addDeck,
         updateDeck,
+        removeDeck,
       }}
     >
       {children}

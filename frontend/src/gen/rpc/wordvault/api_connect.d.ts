@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -217,6 +217,15 @@ export declare const WordVaultService: {
       readonly name: "EditDeck",
       readonly I: typeof EditDeckRequest,
       readonly O: typeof EditDeckResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.DeleteDeck
+     */
+    readonly deleteDeck: {
+      readonly name: "DeleteDeck",
+      readonly I: typeof DeleteDeckRequest,
+      readonly O: typeof DeleteDeckResponse,
       readonly kind: MethodKind.Unary,
     },
   }

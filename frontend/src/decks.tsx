@@ -8,11 +8,12 @@ import {
   Modal,
   TextInput,
   ActionIcon,
+  Tooltip,
 } from "@mantine/core";
 import { AppContext } from "./app_context";
 import { useContext, useEffect, useState } from "react";
 import { Deck, DeckBreakdown } from "./gen/rpc/wordvault/api_pb";
-import { IconPlus, IconEdit } from "@tabler/icons-react";
+import { IconPlus, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
@@ -102,14 +103,54 @@ function DeckFormModal({
   );
 }
 
+interface DeleteDeckModalProps {
+  opened: boolean;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
+  deckName: string;
+}
+
+function DeleteDeckModal({
+  opened,
+  onClose,
+  onConfirm,
+  deckName,
+}: DeleteDeckModalProps) {
+  const handleConfirm = async () => {
+    await onConfirm();
+    onClose();
+  };
+
+  return (
+    <Modal opened={opened} onClose={onClose} title="Delete Deck" centered>
+      <Stack>
+        <Text>
+          Are you sure you want to delete the deck "{deckName}"? This action
+          cannot be undone.
+        </Text>
+        <Group justify="flex-end">
+          <Button variant="subtle" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button color="red" onClick={handleConfirm}>
+            Delete Deck
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
+}
+
 function DeckDisplay({
   breakdown,
   name,
   onEdit,
+  onDelete,
 }: {
   name: string;
   breakdown: DeckBreakdown | null;
   onEdit?: () => void;
+  onDelete?: () => void;
 }) {
   const overdue = breakdown?.breakdown["overdue"] ?? 0;
   const total = Object.values(breakdown?.breakdown ?? {}).reduce(
@@ -117,22 +158,43 @@ function DeckDisplay({
     0
   );
 
+  const canDelete = total === 0;
+
   return (
     <Card withBorder>
       <Stack>
         <Group justify="space-between" align="flex-start">
           <Text fw={500}>{name}</Text>
-          {onEdit && (
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              size="sm"
-              onClick={onEdit}
-              aria-label="Edit deck name"
-            >
-              <IconEdit size={14} />
-            </ActionIcon>
-          )}
+          <Group gap="xs">
+            {onEdit && (
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="sm"
+                onClick={onEdit}
+                aria-label="Edit deck name"
+              >
+                <IconEdit size={14} />
+              </ActionIcon>
+            )}
+            {onDelete && (
+              <Tooltip
+                label="All cards must be moved or deleted from the deck first"
+                disabled={canDelete}
+              >
+                <ActionIcon
+                  variant="subtle"
+                  color="red"
+                  size="sm"
+                  onClick={onDelete}
+                  disabled={!canDelete}
+                  aria-label="Delete deck"
+                >
+                  <IconTrash size={14} />
+                </ActionIcon>
+              </Tooltip>
+            )}
+          </Group>
         </Group>
         <Text c="dimmed">
           {overdue} {overdue === 1 ? "card" : "cards"} due • {total} total
@@ -154,25 +216,39 @@ function NonDefaultDeckDisplay({
   deck,
   breakdown,
   onEdit,
+  onDelete,
 }: {
   deck: Deck;
   breakdown: DeckBreakdown | null;
   onEdit: (deck: Deck) => void;
+  onDelete: (deck: Deck) => void;
 }) {
   return (
     <DeckDisplay
       name={deck.name}
       breakdown={breakdown}
       onEdit={() => onEdit(deck)}
+      onDelete={() => onDelete(deck)}
     />
   );
 }
 
 function ManageDecks() {
-  const { decksById, wordVaultClient, lexicon, addDeck, updateDeck } =
-    useContext(AppContext);
+  const {
+    decksById,
+    wordVaultClient,
+    lexicon,
+    addDeck,
+    updateDeck,
+    removeDeck,
+  } = useContext(AppContext);
   const [opened, { open, close }] = useDisclosure(false);
+  const [
+    deleteModalOpened,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null);
+  const [deletingDeck, setDeletingDeck] = useState<Deck | null>(null);
 
   const [deckBreakdownsByDeckId, setDeckBreakdownsByDeckId] = useState<
     Map<bigint, DeckBreakdown>
@@ -263,9 +339,44 @@ function ManageDecks() {
     open();
   };
 
+  const handleDeleteDeck = (deck: Deck) => {
+    setDeletingDeck(deck);
+    openDeleteModal();
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!wordVaultClient || !deletingDeck) {
+      return;
+    }
+
+    try {
+      await wordVaultClient.deleteDeck({
+        id: deletingDeck.id,
+      });
+
+      removeDeck(deletingDeck.id);
+      notifications.show({
+        color: "green",
+        message: `Deck "${deletingDeck.name}" deleted successfully!`,
+      });
+    } catch (error) {
+      notifications.show({
+        color: "red",
+        title: "Error",
+        message: String(error),
+      });
+      throw error; // Re-throw to prevent modal from closing
+    }
+  };
+
   const handleModalClose = () => {
     setEditingDeck(null);
     close();
+  };
+
+  const handleDeleteModalClose = () => {
+    setDeletingDeck(null);
+    closeDeleteModal();
   };
 
   return (
@@ -290,6 +401,7 @@ function ManageDecks() {
             key={deck.id}
             breakdown={deckBreakdownsByDeckId.get(deck.id) ?? null}
             onEdit={handleEditDeck}
+            onDelete={handleDeleteDeck}
           />
         ))}
       </SimpleGrid>
@@ -300,6 +412,13 @@ function ManageDecks() {
         deck={editingDeck}
         existingDeckNames={existingDeckNames}
         onSubmit={handleFormSubmit}
+      />
+
+      <DeleteDeckModal
+        opened={deleteModalOpened}
+        onClose={handleDeleteModalClose}
+        onConfirm={handleConfirmDelete}
+        deckName={deletingDeck?.name ?? ""}
       />
     </Stack>
   );

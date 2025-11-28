@@ -1455,6 +1455,49 @@ export declare class EditDeckResponse extends Message<EditDeckResponse> {
 }
 
 /**
+ * @generated from message wordvault.DeleteDeckRequest
+ */
+export declare class DeleteDeckRequest extends Message<DeleteDeckRequest> {
+  /**
+   * @generated from field: int64 id = 1;
+   */
+  id: bigint;
+
+  constructor(data?: PartialMessage<DeleteDeckRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteDeckRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteDeckRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteDeckRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteDeckRequest;
+
+  static equals(a: DeleteDeckRequest | PlainMessage<DeleteDeckRequest> | undefined, b: DeleteDeckRequest | PlainMessage<DeleteDeckRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeleteDeckResponse
+ */
+export declare class DeleteDeckResponse extends Message<DeleteDeckResponse> {
+  constructor(data?: PartialMessage<DeleteDeckResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteDeckResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteDeckResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteDeckResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteDeckResponse;
+
+  static equals(a: DeleteDeckResponse | PlainMessage<DeleteDeckResponse> | undefined, b: DeleteDeckResponse | PlainMessage<DeleteDeckResponse> | undefined): boolean;
+}
+
+/**
  * @generated from message wordvault.EditFsrsParametersResponse
  */
 export declare class EditFsrsParametersResponse extends Message<EditFsrsParametersResponse> {
