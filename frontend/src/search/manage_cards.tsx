@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from "react";
 import { AppContext } from "../app_context";
-import { Badge, Tabs } from "@mantine/core";
+import { Tabs } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import SearchTab from "./SearchTab";
 import UploadTextFileTab from "./UploadTextFileTab";
@@ -161,12 +161,7 @@ const ManageCardsPage: React.FC = () => {
       <Tabs.List>
         <Tabs.Tab value="search">Search</Tabs.Tab>
         <Tabs.Tab value="upload-list">Upload text file</Tabs.Tab>
-        <Tabs.Tab value="upload-cardbox">
-          Upload Zyzzyva Cardbox
-          <Badge color="green" ml="md">
-            New
-          </Badge>
-        </Tabs.Tab>
+        <Tabs.Tab value="upload-cardbox">Upload Zyzzyva Cardbox</Tabs.Tab>
         <Tabs.Tab value="delete-cards" c="red">
           Bulk card deletion
         </Tabs.Tab>
