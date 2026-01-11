@@ -37,6 +37,7 @@ def get_stats(request, lexicon, type_of_challenge_id):
         "OSPS48",
         "OSPS49",
         "OSPS50",
+        "OSPS51",
     ]
     french_lexica = ["FRA20", "FRA24"]
     german_lexica = ["Deutsch", "RD29"]

@@ -148,3 +148,9 @@
     lexiconName: RD29
   model: base.lexicon
   pk: 27
+- fields:
+    lengthCounts: '{"10":319569,"11":367076,"12":382297,"13":366694,"14":327406,"15":271623,"2":103,"3":1138,"4":5351,"5":18634,"6":45831,"7":95670,"8":166562,"9":247360}'
+    lexiconDescription: Polska Federacja Scrabble - Update 51
+    lexiconName: OSPS51
+  model: base.lexicon
+  pk: 28

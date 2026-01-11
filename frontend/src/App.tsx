@@ -41,7 +41,7 @@ const lexMap = {
   CSW24: 25,
   FRA24: 23,
   RD29: 27,
-  OSPS50: 26,
+  OSPS51: 28,
 };
 
 function App() {
@@ -133,7 +133,7 @@ function App() {
         <AppShell.Section grow component={ScrollArea}>
           <Select
             label="Lexicon"
-            data={["NWL23", "CSW24", "FRA24", "RD29", "OSPS50"]}
+            data={["NWL23", "CSW24", "FRA24", "RD29", "OSPS51"]}
             value={lexicon}
             onChange={(val) => setLexicon(val ?? "")}
             mb="md"

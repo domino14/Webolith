@@ -397,7 +397,7 @@ def create_spanish_lists():
 
 
 def create_polish_lists():
-    lex = Lexicon.objects.get(lexiconName="OSPS50")
+    lex = Lexicon.objects.get(lexiconName="OSPS51")
     for i in range(2, 16):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -455,7 +455,7 @@ def create_polish_lists():
             i,
             False,
             json.dumps(qs),
-            "OSPS50 {} nie jest w OSPS49".format(friendly_number_map_polish[i]),
+            "OSPS51 {} nie jest w OSPS50".format(friendly_number_map_polish[i]),
         )
 
 
@@ -634,8 +634,8 @@ class Command(BaseCommand):
         # create_french_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
-        # NamedList.objects.filter(lexicon__lexiconName="OSPS50").delete()
-        # create_polish_lists()
+        NamedList.objects.filter(lexicon__lexiconName="OSPS51").delete()
+        create_polish_lists()
         # create_french_lists()
         NamedList.objects.filter(lexicon__lexiconName__in=["RD29"]).delete()
         create_german_lists()

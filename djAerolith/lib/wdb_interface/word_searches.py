@@ -245,8 +245,8 @@ def temporary_list_name(
                     desc = "CSW21"
                 elif lexicon_name == "FISE2":
                     desc = "FISE09"
-                elif lexicon_name == "OSPS50":
-                    desc = "OSPS49"
+                elif lexicon_name == "OSPS51":
+                    desc = "OSPS50"
                 elif lexicon_name == "FRA24":
                     desc = "FRA20"
                 elif lexicon_name == "RD29":
