@@ -47,21 +47,21 @@ mapa_amigable = {  # Los?
     15: "Quinces",
 }
 
-friendly_number_map_german = {  # Use Die
-    2: "Zweien",
-    3: "Dreien",
-    4: "Vieren",
-    5: "Fünfen",
-    6: "Sechsen",
-    7: "Siebenen",
-    8: "Achten",
-    9: "Neunen",
-    10: "Zehnen",
-    11: "Elfen",
-    12: "Zwölfen",
-    13: "Dreizehnen",
-    14: "Vierzehnen",
-    15: "Fünfzehnen",
+friendly_number_map_german = {
+    2: "Zweier",
+    3: "Dreier",
+    4: "Vierer",
+    5: "Fünfer",
+    6: "Sechser",
+    7: "Siebener",
+    8: "Achter",
+    9: "Neuner",
+    10: "Zehner",
+    11: "Elfer",
+    12: "Zwölfer",
+    13: "Dreizehner",
+    14: "Vierzehner",
+    15: "Fünfzehner",
 }
 
 # French dictionary (French numbers do not change in plural, so it's the same as singular)
@@ -460,7 +460,7 @@ def create_polish_lists():
 
 
 def create_german_lists():
-    lex = Lexicon.objects.get(lexiconName="Deutsch")
+    lex = Lexicon.objects.get(lexiconName="RD29")
     for i in range(2, 15):
         logger.debug("Creating WL for lex %s, length %s", lex.lexiconName, i)
         length_counts = json.loads(lex.lengthCounts)
@@ -503,6 +503,23 @@ def create_german_lists():
                 json.dumps(qs),
                 friendly_number_map_german[i] + " mit ÄJÖQÜVXY",
             )
+
+        # New words
+        qs = word_search(
+            [
+                SearchDescription.lexicon(lex),
+                SearchDescription.length(i, i),
+                SearchDescription.not_in_lexicon("update"),
+            ]
+        ).to_python()
+        create_named_list(
+            lex,
+            len(qs),
+            i,
+            False,
+            json.dumps(qs),
+            "RD29-{}, die in RD28 fehlen".format(friendly_number_map_german[i]),
+        )
 
 
 def create_french_lists():
@@ -617,9 +634,9 @@ class Command(BaseCommand):
         # create_french_lists()
         # for lex in Lexicon.objects.filter(lexiconName__in=["NWL20"]):
         #     createNamedLists(lex)
-        NamedList.objects.filter(lexicon__lexiconName="OSPS50").delete()
-        create_polish_lists()
+        # NamedList.objects.filter(lexicon__lexiconName="OSPS50").delete()
+        # create_polish_lists()
         # create_french_lists()
-        # NamedList.objects.filter(lexicon__lexiconName__in=["Deutsch"]).delete()
-        # create_german_lists()
+        NamedList.objects.filter(lexicon__lexiconName__in=["RD29"]).delete()
+        create_german_lists()
         print(f"Elapsed: {time.time()-start} s")

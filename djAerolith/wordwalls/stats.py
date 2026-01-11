@@ -39,6 +39,7 @@ def get_stats(request, lexicon, type_of_challenge_id):
         "OSPS50",
     ]
     french_lexica = ["FRA20", "FRA24"]
+    german_lexica = ["Deutsch", "RD29"]
 
     if lexicon.lexiconName in american_lexica:
         lexica = american_lexica
@@ -48,6 +49,8 @@ def get_stats(request, lexicon, type_of_challenge_id):
         lexica = polish_lexica
     elif lexicon.lexiconName in french_lexica:
         lexica = french_lexica
+    elif lexicon.lexiconName in german_lexica:
+        lexica = german_lexica
     else:
         lexica = [lexicon.lexiconName]
 

@@ -142,3 +142,9 @@
     lexiconName: OSPS50
   model: base.lexicon
   pk: 26
+- fields:
+    lengthCounts: '{"10":77027,"11":86841,"12":89681,"13":79859,"14":68313,"2":63,"3":545,"4":2446,"5":6175,"6":12972,"7":24721,"8":39612,"9":58970}'
+    lexiconDescription: Scrabble®-Turnierliste German Lexicon
+    lexiconName: RD29
+  model: base.lexicon
+  pk: 27

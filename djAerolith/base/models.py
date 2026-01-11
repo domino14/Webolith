@@ -47,6 +47,7 @@ EXCLUDED_LEXICA = [
     "FRA20",
     "NWL20",
     "CSW21",
+    "Deutsch",
 ]
 
 # XXX: This handles Spanish, English, Polish, German, French.

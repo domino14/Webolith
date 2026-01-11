@@ -249,6 +249,8 @@ def temporary_list_name(
                     desc = "OSPS49"
                 elif lexicon_name == "FRA24":
                     desc = "FRA20"
+                elif lexicon_name == "RD29":
+                    desc = "Deutsch"
             tokens.append(f"not in {desc}")
         elif sd.condition == pb.SearchRequest.Condition.MATCHING_ANAGRAM:
             tokens.append(f"matching {sd.stringvalue.value}")
@@ -258,7 +260,11 @@ def temporary_list_name(
             tokens.append("deleted words")
         elif sd.condition == pb.SearchRequest.Condition.CONTAINS_HOOKS:
             hook_type_names = ["front", "back", "inner"]
-            hook_type_name = hook_type_names[sd.hooksparam.hook_type] if sd.hooksparam.hook_type < 3 else "unknown"
+            hook_type_name = (
+                hook_type_names[sd.hooksparam.hook_type]
+                if sd.hooksparam.hook_type < 3
+                else "unknown"
+            )
             not_text = "NOT " if sd.hooksparam.not_condition else ""
             tokens.append(f"{not_text}{hook_type_name} hooks: {sd.hooksparam.hooks}")
         elif sd.condition == pb.SearchRequest.Condition.DEFINITION_CONTAINS:
