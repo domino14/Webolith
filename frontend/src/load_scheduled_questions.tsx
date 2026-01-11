@@ -1,23 +1,11 @@
-import {
-  Alert,
-  Button,
-  Collapse,
-  Group,
-  Image,
-  List,
-  Select,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { Alert, Button, Group, Select, Text } from "@mantine/core";
 import { useContext, useEffect, useMemo, useState } from "react";
 import FSRSCards from "./fsrs_cards";
 import { Link } from "react-router-dom";
 import { AppContext } from "./app_context";
 import { notifications } from "@mantine/notifications";
 import { LoginState, MaxNonmemberCards } from "./constants";
-import { IconAlertCircleFilled, IconDatabaseDollar } from "@tabler/icons-react";
-import addCardsImg from "./assets/wordvault-adding-new-words.png";
-import { useDisclosure } from "@mantine/hooks";
+import { IconDatabaseDollar } from "@tabler/icons-react";
 
 export default function LoadScheduledQuestions() {
   const [cardsOngoing, setCardsOngoing] = useState(false);
@@ -33,8 +21,6 @@ export default function LoadScheduledQuestions() {
   const [totalCardCount, setTotalCardCount] = useState<number | undefined>(
     undefined
   );
-  const [openedInstr, { toggle: toggleInstr }] = useDisclosure(false);
-  const theme = useMantineTheme();
 
   useEffect(() => {
     if (lexicon === "" || cardsOngoing || loggedIn != LoginState.LoggedIn) {
@@ -174,7 +160,7 @@ export default function LoadScheduledQuestions() {
           )}
         </>
       ) : null}
-      {lexicon.startsWith("CSW") && (
+      {/*
         <>
           <Group gap="sm">
             <IconAlertCircleFilled color={theme.colors.red[6]} />
@@ -214,7 +200,7 @@ export default function LoadScheduledQuestions() {
             </Text>
           </Collapse>
         </>
-      )}
+      )*/}
     </div>
   );
 }
