@@ -44,9 +44,9 @@ const NO_LOAD_WHILE_PLAYING =
 
 const NWL23_LEX_ID = 24;
 const FISE2_LEX_ID = 10;
-const OSPS_LEX_ID = 26;
+const OSPS_LEX_ID = 28;
 const COLLINS_24_LEX_ID = 25;
-const DEUTSCH_LEX_ID = 17;
+const DEUTSCH_LEX_ID = 27;
 
 const COLLINS_LICENSE_TEXT =
   'Published under license with Collins, an imprint of HarperCollins Publishers Limited';

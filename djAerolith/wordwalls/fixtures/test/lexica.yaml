@@ -142,3 +142,15 @@
     lexiconName: OSPS50
   model: base.lexicon
   pk: 26
+- fields:
+    lengthCounts: '{"10":77027,"11":86841,"12":89681,"13":79859,"14":68313,"2":63,"3":545,"4":2446,"5":6175,"6":12972,"7":24721,"8":39612,"9":58970}'
+    lexiconDescription: Scrabble®-Turnierliste German Lexicon
+    lexiconName: RD29
+  model: base.lexicon
+  pk: 27
+- fields:
+    lengthCounts: '{"10":319569,"11":367076,"12":382297,"13":366694,"14":327406,"15":271623,"2":103,"3":1138,"4":5351,"5":18634,"6":45831,"7":95670,"8":166562,"9":247360}'
+    lexiconDescription: Polska Federacja Scrabble - Update 51
+    lexiconName: OSPS51
+  model: base.lexicon
+  pk: 28
