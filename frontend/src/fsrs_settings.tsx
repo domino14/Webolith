@@ -1,5 +1,5 @@
 import { NumberInput, Stack, Switch } from "@mantine/core";
-import type { GetInputPropsReturnType } from "@mantine/form";
+import type { UseFormReturnType } from "@mantine/form";
 
 export interface FsrsFormValues {
   retentionPercent: number;
@@ -15,7 +15,7 @@ export const validateRetentionPercent = (value: number): string | null => {
 
 interface FsrsSettingsFieldsProps {
   values: FsrsFormValues;
-  getInputProps: (path: keyof FsrsFormValues) => GetInputPropsReturnType;
+  getInputProps: UseFormReturnType<FsrsFormValues>["getInputProps"];
   mt?: string;
 }
 
