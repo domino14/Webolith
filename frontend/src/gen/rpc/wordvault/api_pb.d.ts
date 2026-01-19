@@ -1272,6 +1272,25 @@ export declare class EditFsrsParametersRequest extends Message<EditFsrsParameter
 }
 
 /**
+ * @generated from message wordvault.EditFsrsParametersResponse
+ */
+export declare class EditFsrsParametersResponse extends Message<EditFsrsParametersResponse> {
+  constructor(data?: PartialMessage<EditFsrsParametersResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditFsrsParametersResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditFsrsParametersResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditFsrsParametersResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditFsrsParametersResponse;
+
+  static equals(a: EditFsrsParametersResponse | PlainMessage<EditFsrsParametersResponse> | undefined, b: EditFsrsParametersResponse | PlainMessage<EditFsrsParametersResponse> | undefined): boolean;
+}
+
+/**
  * @generated from message wordvault.Deck
  */
 export declare class Deck extends Message<Deck> {
@@ -1289,6 +1308,13 @@ export declare class Deck extends Message<Deck> {
    * @generated from field: string name = 3;
    */
   name: string;
+
+  /**
+   * Nil if the deck is using global settings.
+   *
+   * @generated from field: wordvault.FsrsParameters fsrs_parameters_override = 4;
+   */
+  fsrsParametersOverride?: FsrsParameters;
 
   constructor(data?: PartialMessage<Deck>);
 
@@ -1415,6 +1441,13 @@ export declare class EditDeckRequest extends Message<EditDeckRequest> {
    */
   name: string;
 
+  /**
+   * Nil means clear the FSRS parameters (use global settings).
+   *
+   * @generated from field: wordvault.FsrsParameters fsrs_parameters_override = 3;
+   */
+  fsrsParametersOverride?: FsrsParameters;
+
   constructor(data?: PartialMessage<EditDeckRequest>);
 
   static readonly runtime: typeof proto3;
@@ -1495,24 +1528,5 @@ export declare class DeleteDeckResponse extends Message<DeleteDeckResponse> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteDeckResponse;
 
   static equals(a: DeleteDeckResponse | PlainMessage<DeleteDeckResponse> | undefined, b: DeleteDeckResponse | PlainMessage<DeleteDeckResponse> | undefined): boolean;
-}
-
-/**
- * @generated from message wordvault.EditFsrsParametersResponse
- */
-export declare class EditFsrsParametersResponse extends Message<EditFsrsParametersResponse> {
-  constructor(data?: PartialMessage<EditFsrsParametersResponse>);
-
-  static readonly runtime: typeof proto3;
-  static readonly typeName = "wordvault.EditFsrsParametersResponse";
-  static readonly fields: FieldList;
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditFsrsParametersResponse;
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditFsrsParametersResponse;
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditFsrsParametersResponse;
-
-  static equals(a: EditFsrsParametersResponse | PlainMessage<EditFsrsParametersResponse> | undefined, b: EditFsrsParametersResponse | PlainMessage<EditFsrsParametersResponse> | undefined): boolean;
 }
 
