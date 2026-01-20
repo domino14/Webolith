@@ -9,21 +9,44 @@ import {
   TextInput,
   ActionIcon,
   Tooltip,
+  Switch,
+  Divider,
 } from "@mantine/core";
-import { AppContext } from "./app_context";
+import { AppContext, SchedulerSettings } from "./app_context";
 import { useContext, useEffect, useState } from "react";
-import { Deck, DeckBreakdown } from "./gen/rpc/wordvault/api_pb";
+import {
+  Deck,
+  DeckBreakdown,
+  FsrsParameters,
+  FsrsScheduler,
+} from "./gen/rpc/wordvault/api_pb";
 import { IconPlus, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
+import {
+  FsrsSettingsFields,
+  validateRetentionPercent,
+} from "./fsrs_settings";
+
+interface DeckFormValues {
+  name: string;
+  useCustomFsrs: boolean;
+  retentionPercent: number;
+  enableShortTerm: boolean;
+}
 
 interface DeckFormModalProps {
   opened: boolean;
   onClose: () => void;
   deck?: Deck | null;
   existingDeckNames: string[];
-  onSubmit: (name: string, deck?: Deck) => Promise<void>;
+  globalSchedulerSettings: SchedulerSettings | null;
+  onSubmit: (
+    name: string,
+    fsrsParametersOverride: FsrsParameters | undefined,
+    deck?: Deck
+  ) => Promise<void>;
 }
 
 function DeckFormModal({
@@ -31,13 +54,17 @@ function DeckFormModal({
   onClose,
   deck,
   existingDeckNames,
+  globalSchedulerSettings,
   onSubmit,
 }: DeckFormModalProps) {
   const isEditing = !!deck;
 
-  const form = useForm({
+  const form = useForm<DeckFormValues>({
     initialValues: {
       name: "",
+      useCustomFsrs: false,
+      retentionPercent: 90,
+      enableShortTerm: false,
     },
     validate: {
       name: (value) => {
@@ -58,18 +85,44 @@ function DeckFormModal({
         }
         return null;
       },
+      retentionPercent: (value, values) => {
+        if (values.useCustomFsrs) {
+          return validateRetentionPercent(value);
+        }
+        return null;
+      },
     },
   });
 
   useEffect(() => {
+    const hasCustomFsrs = !!deck?.fsrsParametersOverride;
+    const customRetention = deck?.fsrsParametersOverride?.requestRetention;
+    const customScheduler = deck?.fsrsParametersOverride?.scheduler;
+
     form.setInitialValues({
       name: deck?.name || "",
+      useCustomFsrs: hasCustomFsrs,
+      retentionPercent: hasCustomFsrs && customRetention !== undefined
+        ? customRetention * 100
+        : globalSchedulerSettings?.retentionPercent ?? 90,
+      enableShortTerm: hasCustomFsrs
+        ? customScheduler === FsrsScheduler.SHORT_TERM
+        : globalSchedulerSettings?.enableShortTerm ?? false,
     });
     form.reset();
-  }, [deck]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [deck, globalSchedulerSettings]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSubmit = async (values: { name: string }) => {
-    await onSubmit(values.name.trim(), deck || undefined);
+  const handleSubmit = async (values: DeckFormValues) => {
+    let fsrsOverride: FsrsParameters | undefined;
+    if (isEditing && values.useCustomFsrs) {
+      fsrsOverride = new FsrsParameters({
+        requestRetention: values.retentionPercent / 100,
+        scheduler: values.enableShortTerm
+          ? FsrsScheduler.SHORT_TERM
+          : FsrsScheduler.LONG_TERM,
+      });
+    }
+    await onSubmit(values.name.trim(), fsrsOverride, deck || undefined);
     form.reset();
     onClose();
   };
@@ -81,7 +134,7 @@ function DeckFormModal({
       title={isEditing ? "Edit Deck" : "Add New Deck"}
       centered
     >
-      <form onSubmit={form.onSubmit(handleSubmit)} key={deck?.id || "new"}>
+      <form onSubmit={form.onSubmit(handleSubmit)} key={deck?.id ?? "new"}>
         <Stack>
           <TextInput
             label="Deck Name"
@@ -89,7 +142,31 @@ function DeckFormModal({
             {...form.getInputProps("name")}
             data-autofocus
           />
-          <Group justify="flex-end">
+
+          {isEditing && (
+            <>
+              <Divider mt="sm" />
+              <Switch
+                label="Use custom scheduling settings"
+                description={
+                  form.values.useCustomFsrs
+                    ? "This deck uses its own scheduling settings"
+                    : `Using global settings (${globalSchedulerSettings?.retentionPercent ?? 90}% retention, ${globalSchedulerSettings?.enableShortTerm ? "short-term" : "long-term"} scheduler)`
+                }
+                checked={form.values.useCustomFsrs}
+                {...form.getInputProps("useCustomFsrs")}
+              />
+
+              {form.values.useCustomFsrs && (
+                <FsrsSettingsFields
+                  values={form.values}
+                  getInputProps={form.getInputProps}
+                />
+              )}
+            </>
+          )}
+
+          <Group justify="flex-end" mt="md">
             <Button variant="subtle" onClick={onClose}>
               Cancel
             </Button>
@@ -241,6 +318,7 @@ function ManageDecks() {
     addDeck,
     updateDeck,
     removeDeck,
+    schedulerSettings,
   } = useContext(AppContext);
   const [opened, { open, close }] = useDisclosure(false);
   const [
@@ -286,7 +364,11 @@ function ManageDecks() {
     fetchOverdueCounts();
   }, [wordVaultClient, lexicon]);
 
-  const handleFormSubmit = async (name: string, deck?: Deck) => {
+  const handleFormSubmit = async (
+    name: string,
+    fsrsParametersOverride: FsrsParameters | undefined,
+    deck?: Deck
+  ) => {
     if (!wordVaultClient || !lexicon) {
       return;
     }
@@ -296,13 +378,14 @@ function ManageDecks() {
         const response = await wordVaultClient.editDeck({
           id: deck.id,
           name: name,
+          fsrsParametersOverride: fsrsParametersOverride,
         });
 
         if (response.deck) {
           updateDeck(response.deck);
           notifications.show({
             color: "green",
-            message: `Deck renamed to "${name}" successfully!`,
+            message: `Deck "${name}" updated successfully!`,
           });
         }
       } else {
@@ -411,6 +494,7 @@ function ManageDecks() {
         onClose={handleModalClose}
         deck={editingDeck}
         existingDeckNames={existingDeckNames}
+        globalSchedulerSettings={schedulerSettings}
         onSubmit={handleFormSubmit}
       />
 

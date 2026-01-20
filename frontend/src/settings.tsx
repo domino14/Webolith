@@ -7,19 +7,15 @@ import {
   TileStyle,
   SchedulerSettings,
 } from "./app_context";
-import {
-  Button,
-  Divider,
-  NumberInput,
-  Select,
-  Switch,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Button, Divider, Select, Switch, Text, TextInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { FsrsScheduler } from "./gen/rpc/wordvault/api_pb";
 import { WordVaultService } from "./gen/rpc/wordvault/api_connect";
 import { PromiseClient } from "@connectrpc/connect";
+import {
+  FsrsSettingsFields,
+  validateRetentionPercent,
+} from "./fsrs_settings";
 
 const _submitFsrsSettingsAsync = async (
   wordVaultClient: PromiseClient<typeof WordVaultService>,
@@ -51,11 +47,7 @@ const Settings: React.FC = () => {
       retentionPercent: 90,
     },
     validate: {
-      retentionPercent: (value) => {
-        if (value < 70 || value > 97) {
-          return "Retention rate must be between 70% and 97%";
-        }
-      },
+      retentionPercent: validateRetentionPercent,
     },
   });
 
@@ -205,22 +197,9 @@ const Settings: React.FC = () => {
           Scheduling Settings
         </Text>
 
-        <NumberInput
-          label="Desired retention rate"
-          description="Target probability of recalling a word during review. The scheduling adjusts to maintain this rate. Choose 70%–97% (default: 90%)"
-          placeholder="95%"
-          suffix="%"
-          min={70}
-          max={97}
-          decimalScale={2}
-          {...settingsForm.getInputProps("retentionPercent")}
-          mt="lg"
-        />
-        <Switch
-          label="Use short-term scheduler"
-          description="Prioritize rapid study of recently-missed words"
-          checked={settingsForm.values.enableShortTerm}
-          {...settingsForm.getInputProps("enableShortTerm")}
+        <FsrsSettingsFields
+          values={settingsForm.values}
+          getInputProps={settingsForm.getInputProps}
           mt="lg"
         />
 

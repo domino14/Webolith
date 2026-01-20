@@ -491,6 +491,14 @@ export const EditFsrsParametersRequest = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * @generated from message wordvault.EditFsrsParametersResponse
+ */
+export const EditFsrsParametersResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditFsrsParametersResponse",
+  [],
+);
+
+/**
  * @generated from message wordvault.Deck
  */
 export const Deck = /*@__PURE__*/ proto3.makeMessageType(
@@ -499,6 +507,7 @@ export const Deck = /*@__PURE__*/ proto3.makeMessageType(
     { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
     { no: 2, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "fsrs_parameters_override", kind: "message", T: FsrsParameters },
   ],
 );
 
@@ -549,6 +558,7 @@ export const EditDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
   () => [
     { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "fsrs_parameters_override", kind: "message", T: FsrsParameters },
   ],
 );
 
@@ -577,14 +587,6 @@ export const DeleteDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
  */
 export const DeleteDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.DeleteDeckResponse",
-  [],
-);
-
-/**
- * @generated from message wordvault.EditFsrsParametersResponse
- */
-export const EditFsrsParametersResponse = /*@__PURE__*/ proto3.makeMessageType(
-  "wordvault.EditFsrsParametersResponse",
   [],
 );
 
