@@ -12,6 +12,9 @@ from wordwalls.models import (
     Medal,
     User,
 )
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from datetime import datetime
 
 
 # If not logged in, will ask user to log in and forward back to the main url
@@ -59,6 +62,18 @@ def get_stats(request, lexicon, type_of_challenge_id):
     challenges = DailyChallenge.objects.filter(
         name=name, lexicon__lexiconName__in=lexica
     )
+
+    # Validate and parse dates
+    try:
+        if start_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        if end_date:
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        return JsonResponse(
+            {"error": "Invalid date format. Dates must be in YYYY-MM-DD format."},
+            status=400,
+        )
 
     if not start_date and not end_date:
         pass
