@@ -268,6 +268,14 @@ IGNORABLE_404_STARTS = (
 SEND_BROKEN_LINK_EMAILS = False
 INTERNAL_IPS = ("127.0.0.1",)
 CSRF_FAILURE_VIEW = "views.csrf_failure"
+# Uncommenting these would fix CSRF failures for users who switch between
+# aerolith.org and www.aerolith.org, by sharing cookies across subdomains.
+# WARNING: deploying this will log out all existing users, since their current
+# sessionid cookies are scoped to the exact hostname (no leading dot) and
+# won't be sent for the new .aerolith.org domain. Do this during low traffic.
+# if not DEBUG:
+#     CSRF_COOKIE_DOMAIN = ".aerolith.org"
+#     SESSION_COOKIE_DOMAIN = ".aerolith.org"
 
 
 LOGGING = {

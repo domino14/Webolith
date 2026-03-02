@@ -30,6 +30,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.utils.translation import gettext as _
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 import waffle
 
@@ -54,6 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 @login_required
+@ensure_csrf_cookie
 @require_http_methods(["GET", "POST"])
 def table(request, tableid=None):
     if request.method == "POST":
