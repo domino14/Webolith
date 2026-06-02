@@ -553,6 +553,12 @@ class WordwallsGame(object):
 
         state["quizGoing"] = True  # start quiz
         state["quizStartTime"] = time.time()
+        logger.info(
+            "event=quiz_started player=%s table=%s list=%s",
+            user.username,
+            tablenum,
+            wgm.word_list.name,
+        )
         state["answerHash"] = answer_hash
         state["originalAnswerHash"] = copy.deepcopy(answer_hash)
         state["numAnswersThisRound"] = len(answer_hash)
@@ -698,7 +704,10 @@ class WordwallsGame(object):
         now = time.time()
         logger.info(
             "Got game ended but did not actually end: "
-            "start_time=%f timer=%f now=%f quizGoing=%s elapsed=%s",
+            "player=%s table=%s list=%s start_time=%f timer=%f now=%f quizGoing=%s elapsed=%s",
+            wgm.host.username,
+            tablenum,
+            wgm.word_list.name if wgm.word_list else None,
             state["quizStartTime"],
             state["timerSecs"],
             now,
@@ -887,6 +896,12 @@ class WordwallsGame(object):
         return ret
 
     def do_quiz_end_actions(self, state, tablenum, wgm):
+        logger.info(
+            "event=quiz_ended player=%s table=%s list=%s",
+            wgm.host.username,
+            tablenum,
+            wgm.word_list.name if wgm.word_list else None,
+        )
         state["quizGoing"] = False
         state["justCreatedFirstMissed"] = False
         # copy missed alphagrams to state['missed']
