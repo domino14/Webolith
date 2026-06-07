@@ -18,15 +18,24 @@
 
 from django.urls import re_path, include
 
+from django.views.decorators.csrf import csrf_exempt
+
 from wordwalls.views import table, mark_missed, ajax_upload, log
 from wordwalls.rpc import table_rpc
 from wordwalls.stats import leaderboard, get_medals, main, get_stats
+from lib.jwt_auth import jwt_or_login_required
 
 
 urlpatterns = [
     re_path(r"^$", table),
     re_path(r"^table/(?P<tableid>\d+)/$", table, name="wordwalls_table"),
     re_path(r"^table/(?P<tableid>\d+)/rpc/$", table_rpc),
+    # Mobile RPC: csrf-exempt, JWT auth only (no session cookie in native app).
+    re_path(
+        r"^api/mobile/table/(?P<tableid>\d+)/rpc/$",
+        csrf_exempt(jwt_or_login_required(table_rpc)),
+        name="wordwalls_mobile_rpc",
+    ),
     re_path(r"^table/(?P<tableid>\d+)/missed/$", mark_missed),
     re_path(r"^ajax_upload/$", ajax_upload, name="ajax_upload"),
     re_path(r"^api/", include("wordwalls.api_urls")),

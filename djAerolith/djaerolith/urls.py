@@ -38,6 +38,8 @@ from views import (
     trigger500,
     jwt_req,
     jwt_extend,
+    mobile_login,
+    mobile_google_login,
     slow_view,
     paypal_ipn,
 )
@@ -61,6 +63,8 @@ urlpatterns = [
     re_path(r"^health/", health),
     re_path(r"^jwt", jwt_req),
     re_path(r"^jwt_extend", jwt_extend),
+    re_path(r"^api/mobile/login/$", mobile_login),
+    re_path(r"^api/mobile/google-login/$", mobile_google_login),
     re_path(r"^heymanslowdown/", slow_view),
     re_path(r"^bigfatphony/", trigger500),
     re_path(r"^about/", TemplateView.as_view(template_name="about.html")),
