@@ -122,10 +122,10 @@ def giveup(user, tableid, params):
 
 def game_timer_ended(user, tableid, params):
     wwg = WordwallsGame()
-    success = wwg.check_game_ended(tableid)
-    if success is not True:
-        raise RPCError(success)
-    return True
+    result = wwg.check_game_ended(tableid)
+    if isinstance(result, str):  # table does not exist
+        raise RPCError(result)
+    return result  # {"ended": bool, "timeRemaining"?: float}
 
 
 def save_game(user, tableid, params):

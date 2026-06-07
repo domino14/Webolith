@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.db import connection
 
 from base.forms import SavedListForm
+from unittest.mock import patch
 from wordwalls.game import WordwallsGame, GameInitException
 from wordwalls.models import DailyChallengeName, NamedList, DailyChallenge
 from wordwalls.tests.mixins import WordListAssertMixin
@@ -84,6 +85,56 @@ class WordwallsBasicLogicTest(WordwallsBasicLogicTestBase):
         wgm = wwg.get_wgm(table_id)
         state = json.loads(wgm.currentGameState)
         self.assertFalse(state["quizGoing"])
+
+    def test_check_game_ended_real_timeout(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.start_quiz(table_id, user)
+        with patch.object(wwg, "server_time_remaining", return_value=-1.0):
+            result = wwg.check_game_ended(table_id)
+        self.assertEqual(result, {"ended": True})
+        wgm = wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertFalse(state["quizGoing"])
+
+    def test_check_game_ended_within_grace(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.start_quiz(table_id, user)
+        # remaining == 0 exactly is still accepted (grace window is 0)
+        with patch.object(wwg, "server_time_remaining", return_value=0.0):
+            result = wwg.check_game_ended(table_id)
+        self.assertEqual(result, {"ended": True})
+        wgm = wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertFalse(state["quizGoing"])
+
+    def test_check_game_ended_too_early_rejected(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.start_quiz(table_id, user)
+        with patch.object(wwg, "server_time_remaining", return_value=120.0):
+            result = wwg.check_game_ended(table_id)
+        self.assertFalse(result["ended"])
+        self.assertAlmostEqual(result["timeRemaining"], 120.0, delta=1.0)
+        # Quiz must still be going
+        wgm = wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertTrue(state["quizGoing"])
+
+    def test_check_game_ended_round_already_over(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.start_quiz(table_id, user)
+        # End the game via give_up first, then call check_game_ended again.
+        wwg.give_up(user, table_id)
+        result = wwg.check_game_ended(table_id)
+        self.assertEqual(result, {"ended": True})
+
+    def test_check_game_ended_no_table(self):
+        wwg = WordwallsGame()
+        result = wwg.check_game_ended(999999)
+        self.assertIsInstance(result, str)
 
     def test_word_list_created(self):
         logger.debug("In test_word_list_created")
