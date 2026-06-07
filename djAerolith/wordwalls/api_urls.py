@@ -17,7 +17,9 @@
 # To contact the author, please email delsolar at gmail dot com
 
 from django.urls import re_path
+from django.views.decorators.csrf import csrf_exempt
 
+from lib.jwt_auth import jwt_or_login_required
 from wordwalls.api import (
     api_answers,
     api_challengers_by_tablenum,
@@ -36,6 +38,7 @@ from wordwalls.api import (
     api_stats_summary,
 )
 
+
 urlpatterns = [
     re_path(r"^answers/$", api_answers),
     re_path(r"^challengers_by_tablenum/$", api_challengers_by_tablenum),
@@ -45,6 +48,11 @@ urlpatterns = [
     re_path(r"^special_challenges/$", special_challenges),
     re_path(r"^default_lists/$", default_lists),
     re_path(r"^new_challenge/$", new_challenge),
+    # Mobile: same view, csrf_exempt so Bearer-token requests aren't blocked
+    # by CsrfViewMiddleware before the view even runs.
+    re_path(r"^mobile/new_challenge/$", csrf_exempt(jwt_or_login_required(new_challenge))),
+    re_path(r"^mobile/default_lists/$", jwt_or_login_required(default_lists)),
+    re_path(r"^mobile/load_aerolith_list/$", csrf_exempt(jwt_or_login_required(load_aerolith_list))),
     re_path(r"^new_search/$", new_search),
     re_path(r"^load_aerolith_list/$", load_aerolith_list),
     re_path(r"^load_saved_list/$", load_saved_list),
