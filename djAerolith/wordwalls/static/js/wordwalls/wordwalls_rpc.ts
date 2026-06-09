@@ -17,7 +17,8 @@ interface GiveUpResponse {
 }
 
 interface TimerEndedResponse {
-  [key: string]: unknown;
+  ended: boolean;
+  timeRemaining?: number; // seconds; present when ended === false
 }
 
 class WordwallsRPC extends GenericRPC {

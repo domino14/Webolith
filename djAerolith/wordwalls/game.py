@@ -56,6 +56,10 @@ from wordwalls.stats_service import StatsService
 
 logger = logging.getLogger(__name__)
 
+# Grace window (seconds) to absorb network/latency jitter when the
+# frontend reports the timer ended slightly before the server clock agrees.
+TIMER_END_GRACE_SECS = 0
+
 
 class GameInitException(Exception):
     pass
@@ -662,6 +666,10 @@ class WordwallsGame(object):
         # internal function; not meant to be called by the outside
         return (state["quizStartTime"] + state["timerSecs"]) < time.time()
 
+    def server_time_remaining(self, state):
+        # internal function; not meant to be called by the outside
+        return (state["quizStartTime"] + state["timerSecs"]) - time.time()
+
     def get_wgm(self, tablenum, lock=True):
         """
         Get word game model.
@@ -683,12 +691,17 @@ class WordwallsGame(object):
         # XXX: This function could be called multiple times from different
         # clients. The lock in get_wgm should do the right thing here,
         # but we should figure out how to test this.
+        #
+        # Returns:
+        #   {"ended": True}                               game ended (or already over)
+        #   {"ended": False, "timeRemaining": <float>}   rejected; client should resync
+        #   error string                                  table does not exist (RPCError)
         wgm = self.get_wgm(tablenum)
         if not wgm:
             return _("Table does not exist.")
 
         state = json.loads(wgm.currentGameState)
-        timer_ran_out = self.did_timer_run_out(state)
+        remaining = self.server_time_remaining(state)
         quiz_going = state["quizGoing"]
 
         def end_game():
@@ -697,14 +710,20 @@ class WordwallsGame(object):
             wgm.currentGameState = json.dumps(state)
             wgm.save()
 
-        if timer_ran_out and quiz_going:
-            # the game is over! mark it so.
+        if not quiz_going:
+            logger.info("event=round-is-over")
+            return {"ended": True}
+
+        if remaining <= TIMER_END_GRACE_SECS:
             end_game()
-            return True
+            return {"ended": True}
+
+        # Frontend reported time-up but the server clock disagrees. Reject it
+        # and return authoritative remaining time so the client can resync.
         now = time.time()
         logger.info(
             "Got game ended but did not actually end: "
-            "player=%s table=%s list=%s start_time=%f timer=%f now=%f quizGoing=%s elapsed=%s",
+            "player=%s table=%s list=%s start_time=%f timer=%f now=%f quizGoing=%s elapsed=%s remaining=%f",
             wgm.host.username,
             tablenum,
             wgm.word_list.name if wgm.word_list else None,
@@ -713,18 +732,10 @@ class WordwallsGame(object):
             now,
             state["quizGoing"],
             now - state["quizStartTime"],
+            remaining,
         )
-        if not timer_ran_out:
-            # Log this, but end the game anyway. What else are we going
-            # to do? Otherwise, front end just gets stuck.
-            logger.info("event=ran-out-too-early")
-            end_game()
-            return True
-        if not quiz_going:
-            logger.info("event=round-is-over")
-            return _("The round is over.")
-
-        return False
+        logger.info("event=ran-out-too-early")
+        return {"ended": False, "timeRemaining": remaining}
 
     def allow_give_up(self, wgm, user):
         """

@@ -4,7 +4,7 @@
  * MIT licensed.
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 const getFormattedTime = (milliseconds: number): string => {
   let seconds: number | string;
@@ -25,6 +25,9 @@ interface GameTimerProps {
   interval?: number;
   completeCallback?: (() => void) | null;
   warningCountdown?: number;
+  // Bump this to force a timer resync even when initialGameTime is value-equal
+  // (e.g. when the backend rejects an early timerEnded and returns the same ms).
+  resetNonce?: number;
 }
 
 function GameTimer({
@@ -33,106 +36,73 @@ function GameTimer({
   interval = 500,
   completeCallback = null,
   warningCountdown = 10000,
+  resetNonce = 0,
 }: GameTimerProps) {
   const [timeRemaining, setTimeRemaining] = useState<number>(initialGameTime);
-  const [prevTime, setPrevTime] = useState<number | null>(null);
+
+  // deadline is performance.now() + initialGameTime, set on each (re)start.
+  // Using performance.now() makes the countdown monotonic: an NTP/wall-clock
+  // jump cannot move it, so a stalled tick merely delays the display update
+  // instead of subtracting phantom time from the remaining count.
+  const deadlineRef = useRef<number | null>(null);
   const timeoutIdRef = useRef<number | null>(null);
-
-  // Use refs to store current values for the tick function
-  const timeRemainingRef = useRef<number>(timeRemaining);
-  const prevTimeRef = useRef<number | null>(prevTime);
-  const gameGoingRef = useRef<boolean>(gameGoing);
-  const initialGameTimeRef = useRef<number>(initialGameTime);
+  const firedRef = useRef<boolean>(false);
   const completeCallbackRef = useRef<(() => void) | null>(completeCallback);
-
-  // Update refs when state/props change
-  useEffect(() => {
-    timeRemainingRef.current = timeRemaining;
-  }, [timeRemaining]);
-
-  useEffect(() => {
-    prevTimeRef.current = prevTime;
-  }, [prevTime]);
-
-  useEffect(() => {
-    gameGoingRef.current = gameGoing;
-  }, [gameGoing]);
-
-  useEffect(() => {
-    initialGameTimeRef.current = initialGameTime;
-  }, [initialGameTime]);
 
   useEffect(() => {
     completeCallbackRef.current = completeCallback;
   }, [completeCallback]);
 
-  const tick = useCallback(() => {
-    const currentTime = Date.now();
-    const dt = prevTimeRef.current ? (currentTime - prevTimeRef.current) : 0;
-
-    // correct for small variations in actual timeout time
-    const timeRemainingInInterval = (interval - (dt % interval));
-    let timeout = timeRemainingInInterval;
-
-    if (timeRemainingInInterval < (interval / 2.0)) {
-      timeout += interval;
-    }
-
-    const newTimeRemaining = Math.max(timeRemainingRef.current - dt, 0);
-    const countdownComplete = (prevTimeRef.current && newTimeRemaining <= 0);
-
+  const clearPending = useCallback(() => {
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
     }
+  }, []);
 
-    timeoutIdRef.current = countdownComplete ? null : window.setTimeout(tick, timeout);
-    setPrevTime(currentTime);
-    setTimeRemaining(newTimeRemaining);
+  const tick = useCallback(() => {
+    if (deadlineRef.current === null) return;
 
-    if (countdownComplete && initialGameTimeRef.current && gameGoingRef.current) {
-      if (completeCallbackRef.current) {
-        completeCallbackRef.current();
-      }
-    }
-  }, [interval]);
+    const remaining = Math.max(deadlineRef.current - performance.now(), 0);
+    setTimeRemaining(remaining);
 
-  // Handle game state changes
-  useEffect(() => {
-    if (!gameGoing) {
-      setPrevTime(null);
-      setTimeRemaining(0);
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-        timeoutIdRef.current = null;
+    if (remaining <= 0) {
+      clearPending();
+      if (!firedRef.current) {
+        firedRef.current = true;
+        completeCallbackRef.current?.();
       }
       return;
     }
 
-    // Game is starting - reset the timer
-    setPrevTime(null);
-    setTimeRemaining(initialGameTime);
-  }, [gameGoing, initialGameTime]);
+    // Align next wake-up to the interval grid so the display updates smoothly,
+    // but never schedule past the deadline.
+    const timeIntoInterval = performance.now() % interval;
+    const next = Math.min(interval - timeIntoInterval, remaining);
+    timeoutIdRef.current = window.setTimeout(tick, next);
+  }, [interval, clearPending]);
 
-  // Start ticking when component mounts or when timer should start
+  // (Re)start or stop whenever game state, initial time, or the resync nonce changes.
   useEffect(() => {
-    if (!prevTime && timeRemaining > 0 && gameGoing) {
-      tick();
+    clearPending();
+    if (!gameGoing || initialGameTime <= 0) {
+      deadlineRef.current = null;
+      setTimeRemaining(0);
+      return;
     }
-  }, [prevTime, timeRemaining, gameGoing, tick]);
+    deadlineRef.current = performance.now() + initialGameTime;
+    firedRef.current = false;
+    setTimeRemaining(initialGameTime);
+    tick();
+    return clearPending;
+  }, [gameGoing, initialGameTime, resetNonce, tick, clearPending]);
 
   // Cleanup on unmount
-  useEffect(() => () => {
-    if (timeoutIdRef.current) {
-      clearTimeout(timeoutIdRef.current);
-    }
-  }, []);
+  useEffect(() => clearPending, [clearPending]);
 
-  let cn: string;
-  if (timeRemaining <= warningCountdown) {
-    cn = 'badge bg-warning text-dark';
-  } else {
-    cn = 'badge bg-info';
-  }
+  const cn = timeRemaining <= warningCountdown
+    ? 'badge bg-warning text-dark'
+    : 'badge bg-info';
 
   return (
     <span

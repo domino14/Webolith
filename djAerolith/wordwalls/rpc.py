@@ -1,5 +1,6 @@
 # RPC endpoint for actual wordwalls game.
 import json
+import logging
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -8,6 +9,8 @@ from wordwalls.game import WordwallsGame
 from lib.response import bad_request, response
 
 # from wordwalls.socket_consumers import broadcast_to_table, BroadcastTypes
+
+logger = logging.getLogger(__name__)
 
 
 class RPCError(Exception):
@@ -72,6 +75,7 @@ def table_rpc(request, tableid):
     handler = method_lookup(method)
     if not handler:
         return bad_rpc_response(req_id, "RPC method {} does not exist.".format(method))
+    logger.info("event=rpc user=%s table=%s method=%s", request.user.username, tableid, method)
     try:
         ret = handler(request.user, tableid, params)
     except RPCError as e:
@@ -122,10 +126,10 @@ def giveup(user, tableid, params):
 
 def game_timer_ended(user, tableid, params):
     wwg = WordwallsGame()
-    success = wwg.check_game_ended(tableid)
-    if success is not True:
-        raise RPCError(success)
-    return True
+    result = wwg.check_game_ended(tableid)
+    if isinstance(result, str):  # table does not exist
+        raise RPCError(result)
+    return result  # {"ended": bool, "timeRemaining"?: float}
 
 
 def save_game(user, tableid, params):

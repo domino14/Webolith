@@ -334,6 +334,11 @@ LOGGING = {
             "level": "DEBUG" if DEBUG else "INFO",
             "propagate": False,
         },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
         "": {  # catch-all
             "handlers": ["console", "mail_admins"],
             "level": "DEBUG" if DEBUG else "INFO",

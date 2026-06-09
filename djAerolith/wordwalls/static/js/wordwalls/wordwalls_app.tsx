@@ -45,6 +45,7 @@ interface WordwallsAppProps {
   handleGiveup: () => void;
   gameGoing: boolean;
   initialGameTime: number;
+  timerResetNonce: number;
   timerRanOut: () => void;
   numberOfRounds: number;
   isChallenge: boolean;
@@ -92,6 +93,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
   handleGiveup,
   gameGoing,
   initialGameTime,
+  timerResetNonce,
   timerRanOut,
   numberOfRounds,
   isChallenge,
@@ -157,6 +159,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
         />
         <GameTimer
           initialGameTime={initialGameTime}
+          resetNonce={timerResetNonce}
           completeCallback={timerRanOut}
           gameGoing={gameGoing}
         />

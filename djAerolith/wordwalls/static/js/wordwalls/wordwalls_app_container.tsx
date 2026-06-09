@@ -89,6 +89,7 @@ function WordwallsAppContainer({
 }: WordwallsAppContainerProps) {
   const [gameGoing, setGameGoing] = useState(false);
   const [initialGameTime, setInitialGameTime] = useState(0);
+  const [timerResetNonce, setTimerResetNonce] = useState(0);
   const [origQuestions, setOrigQuestions] = useState(
     game.getOriginalQuestionState()
   );
@@ -407,7 +408,18 @@ function WordwallsAppContainer({
   const timerRanOut = useCallback(() => {
     rpcRef.current
       .timerRanOut()
-      .then(() => processGameEnded())
+      .then((res) => {
+        if (res.ended) {
+          processGameEnded();
+          return;
+        }
+        // Server rejected the early end — resync the countdown to the
+        // authoritative remaining time and keep playing.
+        if (typeof res.timeRemaining === 'number') {
+          setInitialGameTime(res.timeRemaining * 1000);
+          setTimerResetNonce((n) => n + 1);
+        }
+      })
       .catch(error => {
         addMessage(error.message);
       });
@@ -798,6 +810,7 @@ function WordwallsAppContainer({
         handleGiveup={handleGiveup}
         gameGoing={gameGoing}
         initialGameTime={initialGameTime}
+        timerResetNonce={timerResetNonce}
         timerRanOut={timerRanOut}
         numberOfRounds={numberOfRounds}
         isChallenge={isChallenge}
