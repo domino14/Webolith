@@ -1,0 +1,79 @@
+/**
+ * Transitions for moving around the Great Wall.
+ *
+ * Enter-only: the outgoing view is replaced immediately and only the incoming
+ * one animates. Sequencing an exit against the ~30ms rectangle load would mean
+ * holding stale words on screen while the clock runs, and the effect reads the
+ * same either way.
+ */
+
+.gw-anim {
+  animation-duration: 0.28s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+
+/* Entering a rectangle: the board swells up out of the wall. */
+@keyframes gw-zoom-in {
+  from { opacity: 0; transform: scale(0.55); }
+  to   { opacity: 1; transform: none; }
+}
+
+/*
+ * Leaving a rectangle: the wall starts held at the rectangle you were in --
+ * transform-origin is set inline to that rectangle's centre -- and pulls back to
+ * the whole wall, so the red squares you just left are what you zoom out from.
+ */
+@keyframes gw-zoom-out {
+  from { opacity: 0; transform: scale(var(--gw-zoom, 6)); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Rectangle to rectangle: the new board arrives from the side you travelled. */
+@keyframes gw-slide-right {
+  from { opacity: 0; transform: translateX(45%); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes gw-slide-left {
+  from { opacity: 0; transform: translateX(-45%); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes gw-slide-down {
+  from { opacity: 0; transform: translateY(45%); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes gw-slide-up {
+  from { opacity: 0; transform: translateY(-45%); }
+  to   { opacity: 1; transform: none; }
+}
+
+.gw-zoom-in    { animation-name: gw-zoom-in; }
+.gw-zoom-out   { animation-name: gw-zoom-out; }
+.gw-slide-right { animation-name: gw-slide-right; }
+.gw-slide-left  { animation-name: gw-slide-left; }
+.gw-slide-down  { animation-name: gw-slide-down; }
+.gw-slide-up    { animation-name: gw-slide-up; }
+
+/* Arrow pads sit centred on each edge of the board. */
+.gw-board-wrap { position: relative; }
+
+.gw-arrow {
+  position: absolute;
+  z-index: 2;
+  opacity: 0.35;
+  transition: opacity 0.15s ease;
+  line-height: 1;
+}
+.gw-board-wrap:hover .gw-arrow { opacity: 0.9; }
+.gw-arrow:disabled { opacity: 0.12; }
+
+.gw-arrow-up    { top: 0;    left: 50%; transform: translate(-50%, -50%); }
+.gw-arrow-down  { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
+.gw-arrow-left  { left: 0;   top: 50%;  transform: translate(-50%, -50%); }
+.gw-arrow-right { right: 0;  top: 50%;  transform: translate(50%, -50%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gw-anim { animation: none !important; }
+  .gw-arrow { transition: none; }
+}

@@ -126,7 +126,10 @@ To contact the author, please email delsolar at gmail dot com
   <script type="module" src="/static/js/wordwalls/@vite/client"></script>
   <script type="module" src="/static/js/wordwalls/index.js"></script>
 {% else %}
-  <link rel="stylesheet" href="{{STATIC_SRV}}/static/dist/{% vite_css_asset 'index.ts' %}">
+  {% vite_css_assets 'index.ts' as css_files %}
+  {% for css_file in css_files %}
+  <link rel="stylesheet" href="{{STATIC_SRV}}/static/dist/{{ css_file }}">
+  {% endfor %}
   <script type="module" src="{{STATIC_SRV}}/static/dist/{% vite_asset 'index.ts' %}"></script>
 {% endif %}
 

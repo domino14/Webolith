@@ -74,6 +74,7 @@
 
             <li><a href="/about" class="navbarLink">{% trans "About" %}</a></li>
             <li><a href="/wordwalls" class="navbarLink">{% trans "Wordwalls" %}</a></li>
+            <li><a href="/wordwalls/infinite/" class="navbarLink">{% trans "Great Wall" %}</a></li>
             <li><a href="/wordvault" class="navbarLink">WordVault</a></li>
             <li><a href="/wordwalls/stats" class="navbarLink">{% trans "Stats" %}</a></li>
             <li><a href="/wordwalls/leaderboard" class="navbarLink">{% trans "Hall of Fame" %}</a></li>
@@ -132,6 +133,7 @@
         {% else %}
           {% trans "Welcome back" %}, {{user}}! {% trans "Here are some things you can do" %}: <BR><BR>
           <a href="wordwalls" class="btn btn-primary space-down">{% trans "Play WordWalls" %}</a><BR>
+          <a href="/wordwalls/infinite/" class="btn btn-primary space-down">{% trans "Take on the Great Wall" %}</a><BR>
           <a href="/wordvault" class="btn btn-primary space-down">{% trans "Learn with WordVault" %}</a><BR>
           <a href="/wordwalls/stats" class="btn btn-sm btn-info space-down">{% trans "See your WordWalls statistics" %}</a><BR>
           <a href="/wordwalls/leaderboard" class="btn btn-sm btn-info space-down">{% trans "See Hall of Fame" %}</a><BR>

@@ -208,3 +208,6 @@ class Medal(models.Model):
 
 # Import stats models
 from .stats_models import DailyStats, StatsCache, UserDailyActivity
+
+# Import Great Wall models
+from .infinite_models import InfiniteWall, InfiniteWallChunk

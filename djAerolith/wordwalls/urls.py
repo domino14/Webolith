@@ -20,6 +20,13 @@ from django.urls import re_path, include
 
 from wordwalls.views import table, mark_missed, ajax_upload, log
 from wordwalls.rpc import table_rpc
+from wordwalls.infinite_rpc import wall_rpc
+from wordwalls.infinite_views import (
+    beacon_pause,
+    new_wall,
+    picker,
+    wall as infinite_wall_view,
+)
 from wordwalls.stats import leaderboard, get_medals, main, get_stats
 
 
@@ -28,6 +35,17 @@ urlpatterns = [
     re_path(r"^table/(?P<tableid>\d+)/$", table, name="wordwalls_table"),
     re_path(r"^table/(?P<tableid>\d+)/rpc/$", table_rpc),
     re_path(r"^table/(?P<tableid>\d+)/missed/$", mark_missed),
+    re_path(r"^infinite/$", picker, name="infinite_picker"),
+    re_path(r"^infinite/new/$", new_wall, name="infinite_new"),
+    re_path(
+        r"^infinite/(?P<wall_id>\d+)/$", infinite_wall_view, name="infinite_wall"
+    ),
+    re_path(r"^infinite/(?P<wall_id>\d+)/rpc/$", wall_rpc, name="infinite_rpc"),
+    re_path(
+        r"^infinite/(?P<wall_id>\d+)/beacon_pause/$",
+        beacon_pause,
+        name="infinite_beacon_pause",
+    ),
     re_path(r"^ajax_upload/$", ajax_upload, name="ajax_upload"),
     re_path(r"^api/", include("wordwalls.api_urls")),
     # re_path(r'^getNewSignature/$', 'wordwalls.views.get_new_signature',

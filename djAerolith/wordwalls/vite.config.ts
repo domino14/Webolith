@@ -16,13 +16,20 @@ export default defineConfig({
     emptyOutDir: false, // Don't clear dist since other apps may use it
     manifest: true, // Generate manifest.json for cache busting
     rollupOptions: {
-      input: path.resolve(__dirname, './static/js/wordwalls/index.ts'),
+      input: {
+        index: path.resolve(__dirname, './static/js/wordwalls/index.ts'),
+        infinite: path.resolve(__dirname, './static/js/wordwalls/infinite.ts'),
+      },
       output: {
-        entryFileNames: 'wordwallsapp.[hash].js',
+        entryFileNames: (chunkInfo) => (chunkInfo.name === 'index'
+          ? 'wordwallsapp.[hash].js'
+          : 'infinitewallapp.[hash].js'),
         chunkFileNames: 'vendor.[hash].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
-            return 'wordwallsapp.[hash].css';
+            return assetInfo.name.startsWith('infinite')
+              ? 'infinitewallapp.[hash].css'
+              : 'wordwallsapp.[hash].css';
           }
           return '[name].[hash].[ext]';
         },

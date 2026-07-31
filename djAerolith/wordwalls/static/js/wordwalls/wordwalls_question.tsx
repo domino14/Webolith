@@ -176,4 +176,8 @@ function WordwallsQuestion({
   );
 }
 
-export default WordwallsQuestion;
+// Memoized. curQuestions is Immutable, so solving one question leaves every
+// other question's props referentially identical and they can be skipped --
+// without this, one guess reconciles all the questions on the board. Matters
+// most for the Great Wall, whose rectangles are 128 questions rather than 50.
+export default React.memo(WordwallsQuestion);
