@@ -13,12 +13,24 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 
 from base.models import EXCLUDED_LEXICA, Lexicon
-from wordwalls.infinite_game import InfiniteWallError, InfiniteWallGame, locked_wall
+from wordwalls.infinite_game import (
+    InfiniteWallError,
+    InfiniteWallGame,
+    leaderboards,
+    locked_wall,
+)
 from wordwalls.infinite_models import InfiniteWall
 from wordwalls.infinite_perm import DEFAULT_CHUNK_SIZE, VALID_WORD_LENGTHS
 from wordwalls.views import get_user_meta_info
 
 logger = logging.getLogger(__name__)
+
+
+def _default_lexicon_pk(user):
+    profile = getattr(user, "aerolithprofile", None)
+    if profile and profile.defaultLexicon_id:
+        return profile.defaultLexicon_id
+    return None
 
 
 def _static_srv():
@@ -89,7 +101,10 @@ def picker(request):
             "word_lengths": VALID_WORD_LENGTHS,
             # So the page's size hint can't drift from the real rectangle size.
             "chunk_size": DEFAULT_CHUNK_SIZE,
-            "default_lexicon": request.user.aerolithprofile.defaultLexicon.pk,
+            "leaderboards": leaderboards(),
+            # Only preselects the dropdown, so a user without a profile row
+            # should still get the page rather than a 500.
+            "default_lexicon": _default_lexicon_pk(request.user),
         },
     )
 
@@ -123,7 +138,7 @@ def wall(request, wall_id):
         messages.error(request, str(e))
         return redirect(reverse("infinite_picker"))
 
-    profile = request.user.aerolithprofile
+    profile = getattr(request.user, "aerolithprofile", None)
     return render(
         request,
         "wordwalls/infinite.html",
@@ -131,7 +146,8 @@ def wall(request, wall_id):
             "wall_id": wall_obj.pk,
             "lexicon": wall_obj.lexicon.lexiconName,
             "word_length": wall_obj.word_length,
-            "style": profile.customWordwallsStyle,
+            # Empty falls back to the default tile style in infinite.ts.
+            "style": profile.customWordwallsStyle if profile else "",
             "user": json.dumps(get_user_meta_info(request.user)),
             "intercom_app_id": settings.INTERCOM_APP_ID,
             "STATIC_SRV": _static_srv(),

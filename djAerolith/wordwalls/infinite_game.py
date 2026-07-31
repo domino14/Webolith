@@ -469,6 +469,59 @@ class InfiniteWallGame:
         wall.save(update_fields=fields)
 
 
+LEADERBOARD_SIZE = 10
+
+
+def leaderboards(limit: int = LEADERBOARD_SIZE):
+    """
+    One board per (lexicon, word length), fastest run first.
+
+    Reads only finished walls. Their elapsed_ms was frozen at completion and
+    resumed_at cleared, so -- unlike a wall still in progress -- there is no
+    stale clock to reap here and the stored number can be trusted as-is.
+
+    A player who clears the same wall type more than once appears once, with
+    their best time: the query is ordered by elapsed_ms, so the first row seen
+    for a user is already their fastest.
+    """
+    boards = {}
+    rows = (
+        InfiniteWall.objects.filter(
+            state=InfiniteWall.DONE, completed__isnull=False
+        )
+        .select_related("user", "lexicon")
+        .order_by("elapsed_ms", "completed")
+    )
+    for wall in rows:
+        key = (wall.lexicon_id, wall.word_length)
+        board = boards.setdefault(
+            key,
+            {
+                "lexicon": wall.lexicon.lexiconName,
+                "word_length": wall.word_length,
+                "num_alphagrams": wall.num_alphagrams,
+                "entries": [],
+                "_seen": set(),
+            },
+        )
+        if wall.user_id in board["_seen"] or len(board["entries"]) >= limit:
+            continue
+        board["_seen"].add(wall.user_id)
+        board["entries"].append(
+            {
+                "rank": len(board["entries"]) + 1,
+                "username": wall.user.username,
+                "elapsed_ms": wall.elapsed_ms,
+                "completed": wall.completed,
+            }
+        )
+
+    ordered = sorted(boards.values(), key=lambda b: (b["lexicon"], b["word_length"]))
+    for board in ordered:
+        del board["_seen"]
+    return ordered
+
+
 @contextmanager
 def locked_wall(wall_id, user):
     """

@@ -61,12 +61,23 @@
 .gw-arrow {
   position: absolute;
   z-index: 2;
-  opacity: 0.35;
-  transition: opacity 0.15s ease;
+  opacity: 0.85;
   line-height: 1;
 }
-.gw-board-wrap:hover .gw-arrow { opacity: 0.9; }
-.gw-arrow:disabled { opacity: 0.12; }
+
+/*
+ * Constant opacity on purpose. Fading in on .gw-board-wrap:hover looked
+ * backwards in practice: each arrow is centred on the board's edge and so sits
+ * half outside the wrapper, meaning moving onto the outer half of an arrow left
+ * the wrapper and faded it out just as you reached for it.
+ */
+
+/* Keep the ring for keyboard focus, drop it after a mouse click -- otherwise
+   the last arrow pressed keeps a glow. */
+.gw-arrow:focus:not(:focus-visible) { box-shadow: none; }
+
+/* Only reachable while a rectangle is loading; edge arrows are not rendered. */
+.gw-arrow:disabled { opacity: 0.35; }
 
 .gw-arrow-up    { top: 0;    left: 50%; transform: translate(-50%, -50%); }
 .gw-arrow-down  { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
@@ -75,5 +86,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   .gw-anim { animation: none !important; }
-  .gw-arrow { transition: none; }
 }

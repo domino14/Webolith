@@ -568,7 +568,7 @@ function InfiniteApp({
         {detail.numAlphagrams.toLocaleString()}
         {' solved ('}
         {percent.toFixed(2)}
-        {'%) — '}
+        {'%) – '}
         {remaining.toLocaleString()}
         {' to go'}
       </span>
@@ -635,7 +635,7 @@ function InfiniteApp({
           <p className="text-muted mb-2">
             {state === 'D'
               ? 'Wall cleared. Nice run.'
-              : `Clock stopped — browsing the wall is free. Click any rectangle to
+              : `Clock stopped – browsing the wall is free. Click any rectangle to
                  open its ${detail.chunkSize} alphagrams and start the clock.`}
           </p>
           {/* The animated wrapper is inside the measured container on purpose:
@@ -677,17 +677,20 @@ function InfiniteApp({
                 onShuffle={onShuffleQuestion}
               />
             </div>
+            {/* Edges simply have no arrow, rather than a greyed-out one: a
+                disabled control still invites a click. */}
             {ARROWS.map(({ dir, cls, icon, label }) => {
               const target = neighbourChunk(detail, chunk, dir);
+              if (target == null) {
+                return null;
+              }
               return (
                 <button
                   key={dir}
                   type="button"
                   className={`btn btn-sm btn-dark gw-arrow ${cls}`}
-                  disabled={busy || target == null}
-                  title={target == null
-                    ? `No rectangle ${label} of here`
-                    : rectangleLabel(target, detail.numChunks)}
+                  disabled={busy}
+                  title={rectangleLabel(target, detail.numChunks)}
                   aria-label={`Move ${label}`}
                   onClick={() => moveTo(dir)}
                 >
@@ -708,7 +711,7 @@ function InfiniteApp({
           <div className="mt-3">
             <div className="text-muted small mb-1">
               {rectangleLabel(chunk ?? 0, detail.numChunks)}
-              {` — ${alphagramsLeft} alphagram${alphagramsLeft === 1 ? '' : 's'} left here. `}
+              {` – ${alphagramsLeft} alphagram${alphagramsLeft === 1 ? '' : 's'} left here. `}
               Click the map to jump elsewhere.
             </div>
             <WallCanvas

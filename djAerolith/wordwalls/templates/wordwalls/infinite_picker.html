@@ -8,7 +8,7 @@
   <h2>{% trans "The Great Wall" %}</h2>
   <p class="text-muted" style="max-width: 46em;">
     {% blocktrans %}One wall holds every alphagram of a length in a lexicon. Zoom into a
-    rectangle to make its words solvable, and pause whenever you like &mdash; the clock
+    rectangle to make its words solvable, and pause whenever you like &ndash; the clock
     and your progress are saved on the server. Note that the clock keeps running while
     you are navigating the wall.{% endblocktrans %}
   </p>
@@ -70,7 +70,7 @@
                 <td>{{ row.wall.lexicon.lexiconName }} {{ row.wall.word_length }}s</td>
                 <td>{{ row.wall.solved_count }} / {{ row.wall.num_alphagrams }}
                   ({{ row.percent }}%)</td>
-                <td data-elapsed-ms="{{ row.elapsed_ms }}">&mdash;</td>
+                <td data-elapsed-ms="{{ row.elapsed_ms }}">&ndash;</td>
                 <td>
                   {% if row.running_elsewhere %}
                     <span class="label label-warning">{% trans "Running in another tab" %}</span>
@@ -91,6 +91,52 @@
       {% endif %}
     </div>
   </div>
+
+  <hr>
+
+  <h4>{% trans "Hall of Fame" %}</h4>
+  {% if leaderboards %}
+    <p class="text-muted">
+      {% trans "Fastest completed walls. One entry per player, their best time." %}
+    </p>
+    <div class="row">
+      {% for board in leaderboards %}
+        <div class="col-md-4">
+          <h5>
+            {{ board.lexicon }} {{ board.word_length }}s
+            <small class="text-muted">
+              ({{ board.num_alphagrams }} {% trans "alphagrams" %})
+            </small>
+          </h5>
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{% trans "Player" %}</th>
+                <th>{% trans "Time" %}</th>
+                <th>{% trans "Finished" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in board.entries %}
+                <tr>
+                  <td>{{ entry.rank }}</td>
+                  <td>{{ entry.username }}</td>
+                  {# Formatted by the same script that renders the wall list. #}
+                  <td data-elapsed-ms="{{ entry.elapsed_ms }}">&ndash;</td>
+                  <td class="text-muted">{{ entry.completed|date:"M j, Y" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">
+      {% trans "Nobody has cleared a wall yet. Be the first." %}
+    </p>
+  {% endif %}
 </div>
 
 <script>

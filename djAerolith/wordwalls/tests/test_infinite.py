@@ -13,11 +13,16 @@ from unittest import mock
 
 from django.contrib.auth.models import User
 from django.test import SimpleTestCase, TestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from base.models import Lexicon
 from lib.domain import Alphagram, Question, Questions, Word
-from wordwalls.infinite_game import InfiniteWallError, InfiniteWallGame
+from wordwalls.infinite_game import (
+    InfiniteWallError,
+    InfiniteWallGame,
+    leaderboards,
+)
 from wordwalls.infinite_models import InfiniteWall, InfiniteWallChunk
 from wordwalls.infinite_perm import (
     DEFAULT_CHUNK_H,
@@ -742,3 +747,173 @@ class InfiniteWallPayloadTest(InfiniteWallTestBase):
         wall = self.make_wall(21223)
         payload = self.game.bitmap(wall)
         self.assertEqual(len(base64.b64decode(payload["solvedBitmap"])), 2653)
+
+
+class LeaderboardTest(InfiniteWallTestBase):
+    """
+    Built straight off finished walls -- no separate leaderboard model. Their
+    elapsed_ms is frozen at completion, so nothing here needs stale-clock
+    reaping the way a running wall does.
+    """
+
+    def finish(self, user, lexicon, word_length, elapsed_ms, days_ago=0):
+        wall = InfiniteWall.objects.create(
+            user=user,
+            lexicon=lexicon,
+            word_length=word_length,
+            num_alphagrams=24,
+            chunk_w=DEFAULT_CHUNK_W,
+            chunk_h=DEFAULT_CHUNK_H,
+            chunk_cols=1,
+            seed=1,
+            state=InfiniteWall.DONE,
+            solved_bitmap=bytes(bitmap_size(24)),
+            solved_count=24,
+            elapsed_ms=elapsed_ms,
+            completed=timezone.now() - timedelta(days=days_ago),
+        )
+        return wall
+
+    def test_empty_when_nobody_has_finished(self):
+        self.assertEqual(leaderboards(), [])
+
+    def test_unfinished_walls_never_appear(self):
+        # A running wall's clock is still moving; only completed runs count.
+        self.make_wall(24)
+        self.make_wall(24, state=InfiniteWall.PAUSED)
+        self.assertEqual(leaderboards(), [])
+
+    def test_one_board_per_lexicon_and_length(self):
+        csw = Lexicon.objects.get(lexiconName="CSW24")
+        self.finish(self.user, self.lexicon, 7, 1000)
+        self.finish(self.user, self.lexicon, 8, 1000)
+        self.finish(self.user, csw, 7, 1000)
+
+        boards = leaderboards()
+        self.assertEqual(
+            [(b["lexicon"], b["word_length"]) for b in boards],
+            [("CSW24", 7), ("NWL23", 7), ("NWL23", 8)],
+        )
+
+    def test_fastest_first_and_ranked(self):
+        self.finish(self.user, self.lexicon, 7, 30000)
+        self.finish(self.other_user, self.lexicon, 7, 10000)
+
+        entries = leaderboards()[0]["entries"]
+        self.assertEqual([e["username"] for e in entries],
+                         [self.other_user.username, self.user.username])
+        self.assertEqual([e["rank"] for e in entries], [1, 2])
+        self.assertEqual([e["elapsed_ms"] for e in entries], [10000, 30000])
+
+    def test_a_player_appears_once_with_their_best_time(self):
+        self.finish(self.user, self.lexicon, 7, 50000, days_ago=2)
+        self.finish(self.user, self.lexicon, 7, 20000, days_ago=1)
+        self.finish(self.other_user, self.lexicon, 7, 35000)
+
+        entries = leaderboards()[0]["entries"]
+        self.assertEqual(len(entries), 2)
+        me = next(e for e in entries if e["username"] == self.user.username)
+        self.assertEqual(me["elapsed_ms"], 20000)
+        self.assertEqual(me["rank"], 1)
+
+    def test_respects_the_size_limit(self):
+        for i in range(5):
+            user = User.objects.create_user(f"runner{i}", f"r{i}@x.com", "pw")
+            self.finish(user, self.lexicon, 7, 1000 * (i + 1))
+
+        entries = leaderboards(limit=3)[0]["entries"]
+        self.assertEqual(len(entries), 3)
+        self.assertEqual([e["elapsed_ms"] for e in entries], [1000, 2000, 3000])
+
+    def test_a_slow_run_does_not_use_up_a_slot_before_a_fast_one(self):
+        # The limit is applied after ordering, not while scanning arbitrary rows.
+        for i in range(4):
+            user = User.objects.create_user(f"slow{i}", f"s{i}@x.com", "pw")
+            self.finish(user, self.lexicon, 7, 900000 - i)
+        fast = User.objects.create_user("fast", "f@x.com", "pw")
+        self.finish(fast, self.lexicon, 7, 1)
+
+        entries = leaderboards(limit=2)[0]["entries"]
+        self.assertEqual(entries[0]["username"], "fast")
+
+    def test_carries_the_wall_size_for_context(self):
+        self.finish(self.user, self.lexicon, 7, 1000)
+        self.assertEqual(leaderboards()[0]["num_alphagrams"], 24)
+
+
+class InfiniteWallViewTest(InfiniteWallTestBase):
+    """The pages render at all -- neither view had coverage before."""
+
+    def test_picker_requires_login(self):
+        response = self.client.get(reverse("infinite_picker"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_picker_renders_with_no_walls(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("infinite_picker"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Build the wall")
+        self.assertContains(response, "Nobody has cleared a wall yet")
+
+    def test_picker_lists_your_walls_and_the_leaderboard(self):
+        self.make_wall(24, state=InfiniteWall.PAUSED)
+        InfiniteWall.objects.create(
+            user=self.other_user,
+            lexicon=self.lexicon,
+            word_length=7,
+            num_alphagrams=24,
+            chunk_w=DEFAULT_CHUNK_W,
+            chunk_h=DEFAULT_CHUNK_H,
+            chunk_cols=1,
+            seed=1,
+            state=InfiniteWall.DONE,
+            solved_bitmap=bytes(bitmap_size(24)),
+            solved_count=24,
+            elapsed_ms=1234567,
+            completed=timezone.now(),
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("infinite_picker"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Hall of Fame")
+        # Another player's finished run shows on the board...
+        self.assertContains(response, self.other_user.username)
+        # ...and the raw ms is emitted for the page script to format.
+        self.assertContains(response, "1234567")
+
+    def test_wall_page_renders_for_its_owner(self):
+        wall = self.make_wall(24)
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("infinite_wall", args=(wall.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "InfiniteGlobals")
+
+    def test_wall_page_turns_away_someone_elses_wall(self):
+        wall = self.make_wall(24)
+        self.client.force_login(self.other_user)
+        response = self.client.get(reverse("infinite_wall", args=(wall.pk,)))
+        self.assertRedirects(response, reverse("infinite_picker"))
+
+    def test_pages_survive_a_user_with_no_profile(self):
+        # The profile only supplies a default lexicon and a tile style; missing
+        # one used to 500 the whole page.
+        self.assertFalse(hasattr(self.other_user, "aerolithprofile"))
+        wall = InfiniteWall.objects.create(
+            user=self.other_user,
+            lexicon=self.lexicon,
+            word_length=7,
+            num_alphagrams=24,
+            chunk_w=DEFAULT_CHUNK_W,
+            chunk_h=DEFAULT_CHUNK_H,
+            chunk_cols=1,
+            seed=1,
+            solved_bitmap=bytes(bitmap_size(24)),
+        )
+        self.client.force_login(self.other_user)
+        self.assertEqual(
+            self.client.get(reverse("infinite_picker")).status_code, 200
+        )
+        self.assertEqual(
+            self.client.get(reverse("infinite_wall", args=(wall.pk,))).status_code,
+            200,
+        )
