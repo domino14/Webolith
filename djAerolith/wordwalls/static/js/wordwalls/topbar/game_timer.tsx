@@ -6,6 +6,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+// Floor for the self-correcting reschedule below; also keeps a stalled main
+// thread from spinning the timer.
+const MIN_TICK_MS = 20;
+
 const getFormattedTime = (milliseconds: number): string => {
   let seconds: number | string;
   let minutes: number | string;
@@ -22,7 +26,6 @@ const getFormattedTime = (milliseconds: number): string => {
 interface GameTimerProps {
   gameGoing?: boolean;
   initialGameTime: number;
-  interval?: number;
   completeCallback?: (() => void) | null;
   warningCountdown?: number;
   // Bump this to force a timer resync even when initialGameTime is value-equal
@@ -33,7 +36,6 @@ interface GameTimerProps {
 function GameTimer({
   gameGoing = false,
   initialGameTime,
-  interval = 500,
   completeCallback = null,
   warningCountdown = 10000,
   resetNonce = 0,
@@ -75,12 +77,29 @@ function GameTimer({
       return;
     }
 
-    // Align next wake-up to the interval grid so the display updates smoothly,
-    // but never schedule past the deadline.
-    const timeIntoInterval = performance.now() % interval;
-    const next = Math.min(interval - timeIntoInterval, remaining);
+    // Wake up when the DISPLAYED value next changes, not on a grid derived from
+    // performance.now().
+    //
+    // The deadline is performance.now() + initialGameTime, so its second
+    // boundaries sit at whatever phase the round happened to start on. Aligning
+    // to the performance.now() grid instead made the digit turn over late by
+    // anywhere from 0 to a full interval, differently for every round -- which
+    // reads as an uneven, stuttering countdown.
+    //
+    // getFormattedTime rounds, so the text changes as `remaining` falls past
+    // each (N - 0.5) second mark.
+    const displayed = Math.round(remaining / 1000);
+    // +1 so we land just past the boundary: Math.round(239.5) is still 240,
+    // so waking exactly on it would see no change and have to tick again.
+    const untilDisplayChanges = remaining - (displayed - 0.5) * 1000 + 1;
+    const next = Math.min(
+      // A tick landing a hair early leaves this near zero; the floor stops that
+      // becoming a busy loop and the following tick corrects it.
+      Math.max(MIN_TICK_MS, untilDisplayChanges),
+      remaining,
+    );
     timeoutIdRef.current = window.setTimeout(tick, next);
-  }, [interval, clearPending]);
+  }, [clearPending]);
 
   // (Re)start or stop whenever game state, initial time, or the resync nonce changes.
   useEffect(() => {

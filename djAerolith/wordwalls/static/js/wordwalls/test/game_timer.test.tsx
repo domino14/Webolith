@@ -30,7 +30,7 @@ describe('GameTimer', () => {
 
   it('counts down using the monotonic deadline', () => {
     const { getByText } = render(
-      <GameTimer gameGoing initialGameTime={6000} interval={500} />
+      <GameTimer gameGoing initialGameTime={6000} />
     );
     act(() => { advance(2000); });
     expect(getByText('00:04')).toBeTruthy();
@@ -39,7 +39,7 @@ describe('GameTimer', () => {
   it('fires completeCallback exactly once when deadline is reached', () => {
     const cb = jest.fn();
     render(
-      <GameTimer gameGoing initialGameTime={3000} interval={500} completeCallback={cb} />
+      <GameTimer gameGoing initialGameTime={3000} completeCallback={cb} />
     );
     act(() => { advance(3000); });
     // Drive a few more ticks to confirm it doesn't fire again
@@ -50,7 +50,7 @@ describe('GameTimer', () => {
   it('does not fire completeCallback before the deadline', () => {
     const cb = jest.fn();
     render(
-      <GameTimer gameGoing initialGameTime={5000} interval={500} completeCallback={cb} />
+      <GameTimer gameGoing initialGameTime={5000} completeCallback={cb} />
     );
     act(() => { advance(4000); });
     expect(cb).not.toHaveBeenCalled();
@@ -64,7 +64,7 @@ describe('GameTimer', () => {
     // correct regardless of how large a single dt is.
     const cb = jest.fn();
     render(
-      <GameTimer gameGoing initialGameTime={6000} interval={500} completeCallback={cb} />
+      <GameTimer gameGoing initialGameTime={6000} completeCallback={cb} />
     );
     // Simulate one normal tick
     act(() => { advance(500); });
@@ -80,7 +80,7 @@ describe('GameTimer', () => {
   it('resets when resetNonce is bumped (resync path)', () => {
     const cb = jest.fn();
     const { rerender } = render(
-      <GameTimer gameGoing initialGameTime={6000} interval={500} completeCallback={cb} resetNonce={0} />
+      <GameTimer gameGoing initialGameTime={6000} completeCallback={cb} resetNonce={0} />
     );
     // Count down 4 seconds
     act(() => { advance(4000); });
@@ -89,7 +89,7 @@ describe('GameTimer', () => {
     // Server resyncs: same initialGameTime but nonce changes
     act(() => {
       rerender(
-        <GameTimer gameGoing initialGameTime={6000} interval={500} completeCallback={cb} resetNonce={1} />
+        <GameTimer gameGoing initialGameTime={6000} completeCallback={cb} resetNonce={1} />
       );
     });
     // Should have a fresh 6s deadline — advancing only 4s more shouldn't fire
@@ -103,14 +103,55 @@ describe('GameTimer', () => {
   it('stops and resets to 0 when gameGoing becomes false', () => {
     const cb = jest.fn();
     const { rerender, getByText } = render(
-      <GameTimer gameGoing initialGameTime={6000} interval={500} completeCallback={cb} />
+      <GameTimer gameGoing initialGameTime={6000} completeCallback={cb} />
     );
     act(() => { advance(1000); });
     act(() => {
-      rerender(<GameTimer gameGoing={false} initialGameTime={6000} interval={500} completeCallback={cb} />);
+      rerender(<GameTimer gameGoing={false} initialGameTime={6000} completeCallback={cb} />);
     });
     expect(getByText('00:00')).toBeTruthy();
     act(() => { advance(10000); });
     expect(cb).not.toHaveBeenCalled();
+  });
+
+  /**
+   * The countdown must turn over at the same point regardless of when the round
+   * started.
+   *
+   * The deadline is performance.now() + initialGameTime, so its second
+   * boundaries land on whatever phase the round happened to begin at. Waking on
+   * a grid derived from performance.now() instead made the digit change late by
+   * 0-500ms, differently every round, which reads as an uneven countdown. Ticks
+   * now target the displayed value's own boundary.
+   */
+  it('turns over at the same point whatever phase the round starts on', () => {
+    const STEP = 10;
+    const lags: number[] = [];
+
+    [0, 100, 250, 375, 499].forEach((startPhase) => {
+      nowMs = 100000 + startPhase;
+      const { container, unmount } = render(
+        <GameTimer gameGoing initialGameTime={240000} />,
+      );
+      const first = container.textContent;
+      let observed: number | null = null;
+      for (let t = STEP; t <= 2000 && observed === null; t += STEP) {
+        act(() => {
+          nowMs += STEP;
+          jest.advanceTimersByTime(STEP);
+        });
+        if (container.textContent !== first) {
+          observed = t;
+        }
+      }
+      expect(observed).not.toBeNull();
+      // 240.0s reads "240"; it becomes "239" once remaining passes 239.5s.
+      lags.push((observed as number) - 500);
+      unmount();
+    });
+
+    // Identical for every start phase -- that is the property that was broken.
+    expect(new Set(lags).size).toBe(1);
+    expect(lags[0]).toBeLessThanOrEqual(STEP);
   });
 });
