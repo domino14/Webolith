@@ -75,13 +75,46 @@ def fake_wdb_response(probabilities, words_per=WORDS_PER_ALPHAGRAM):
 
 
 class WallPermutationTest(SimpleTestCase):
+    def assert_bijection(self, n, seed):
+        """Every cell maps to a distinct rank, and every rank is produced."""
+        perm = WallPermutation(seed, n)
+        ranks = [perm.forward(cell) for cell in range(n)]
+        msg = "n={0} seed={1}".format(n, seed)
+        # Checks all three failure modes at once: out of range, duplicated, and
+        # missing. A plain hash would fail the latter two.
+        self.assertEqual(len(ranks), n, msg)
+        self.assertEqual(len(set(ranks)), n, "duplicated ranks: " + msg)
+        self.assertEqual(set(ranks), set(range(n)), "missing ranks: " + msg)
+
     def test_is_a_bijection(self):
         for n in (1, 2, 7, 100, 999, 1000, 2861, 21223):
-            perm = WallPermutation(0xDEADBEEF, n)
-            ranks = [perm.forward(cell) for cell in range(n)]
-            self.assertEqual(
-                set(ranks), set(range(n)), msg="not a bijection for n={0}".format(n)
-            )
+            self.assert_bijection(n, 0xDEADBEEF)
+
+    def test_is_a_bijection_for_every_small_wall(self):
+        # Sweep rather than sample: small n is where an off-by-one in the block
+        # width or the cycle walk would show up.
+        for n in range(1, 40):
+            for seed in (0, 1, 12345):
+                self.assert_bijection(n, seed)
+
+    def test_is_a_bijection_across_block_width_changes(self):
+        # The Feistel block is sized from n's bit length, so the width changes
+        # at each power of two -- and with it how often the cycle walk fires.
+        for power in range(1, 11):
+            for n in (2**power - 1, 2**power, 2**power + 1):
+                self.assert_bijection(n, 99)
+
+    def test_is_a_bijection_when_no_cycle_walking_is_needed(self):
+        # n = 256 makes the block domain exactly 256, so forward() never has to
+        # walk -- a distinct path from every other size.
+        perm = WallPermutation(7, 256)
+        self.assertEqual(perm.half, 4)
+        self.assertEqual(1 << (2 * perm.half), 256)
+        self.assert_bijection(256, 7)
+
+    def test_is_a_bijection_for_extreme_seeds(self):
+        for seed in (0, 1, 2**31, 2**63 - 1, 0xFFFFFFFFFFFFFFFF):
+            self.assert_bijection(1000, seed)
 
     def test_inverse_round_trips(self):
         for n in (1, 2, 7, 100, 1000, 2861):
