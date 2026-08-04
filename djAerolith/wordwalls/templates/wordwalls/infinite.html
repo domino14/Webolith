@@ -1,0 +1,66 @@
+{% load i18n %}
+{% load vite_manifest %}
+{% load value_from_settings %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/static/favicon.ico" />
+  <title>{% trans "The Great Wall" %} - {{lexicon}} {{word_length}}s</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+
+  <style>
+    /* Always reserve the vertical scrollbar. The wall is sized to the width of
+       its container, and is usually tall enough to scroll -- so letting the
+       scrollbar come and go would change that width by ~15px each time and make
+       the wall resize itself in a loop. Reserving it keeps the width constant. */
+    html { overflow-y: scroll; }
+  </style>
+
+<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/{{intercom_app_id}}';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()</script>
+
+</head>
+
+<body>
+  {% value_from_settings DEBUG as DEBUG %}
+
+{% block content %}
+<script>
+  // Our entry point reads window.InfiniteGlobals to boot the app.
+  var InfiniteGlobals = {
+    wallId: {{wall_id}},
+    lexicon: '{{lexicon}}',   // Used to modify guesses in case of FISE etc.
+    wordLength: {{word_length}},
+    style: '{{style | escapejs}}',
+    user: '{{ user | escapejs }}',
+    intercomAppID: '{{intercom_app_id}}'
+  };
+</script>
+
+<div class="container-fluid" style="padding-top: 10px;">
+  <div id="main-app-content"></div>
+</div>
+
+{% endblock %}
+
+{% if DEBUG %}
+  <script type="module">
+    import RefreshRuntime from '/static/js/wordwalls/@react-refresh'
+    RefreshRuntime.injectIntoGlobalHook(window)
+    window.$RefreshReg$ = () => {}
+    window.$RefreshSig$ = () => (type) => type
+    window.__vite_plugin_react_preamble_installed__ = true
+  </script>
+  <script type="module" src="/static/js/wordwalls/@vite/client"></script>
+  <script type="module" src="/static/js/wordwalls/infinite.js"></script>
+{% else %}
+  {% vite_css_assets 'infinite.ts' as css_files %}
+  {% for css_file in css_files %}
+  <link rel="stylesheet" href="{{STATIC_SRV}}/static/dist/{{ css_file }}">
+  {% endfor %}
+  <script type="module" src="{{STATIC_SRV}}/static/dist/{% vite_asset 'infinite.ts' %}"></script>
+{% endif %}
+
+</body>
+</html>

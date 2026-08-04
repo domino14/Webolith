@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "The Great Wall" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <h2>{% trans "The Great Wall" %}</h2>
+  <p class="text-muted" style="max-width: 46em;">
+    {% blocktrans %}One wall holds every alphagram of a length in a lexicon. Zoom into a
+    rectangle to make its words solvable, and pause whenever you like &ndash; the clock
+    and your progress are saved on the server. Note that the clock keeps running while
+    you are navigating the wall.{% endblocktrans %}
+  </p>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-5">
+      <h4>{% trans "Start a new wall" %}</h4>
+      <form method="post" action="{% url 'infinite_new' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="lexicon">{% trans "Lexicon" %}</label>
+          <select class="form-control" id="lexicon" name="lexicon">
+            {% for entry in lexica %}
+              <option value="{{ entry.lexicon.pk }}"
+                {% if entry.lexicon.pk == default_lexicon %}selected{% endif %}
+                data-counts="{% for length, count in entry.counts.items %}{{ length }}:{{ count }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                {{ entry.lexicon.lexiconName }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="word_length">{% trans "Word length" %}</label>
+          <select class="form-control" id="word_length" name="word_length">
+            {% for length in word_lengths %}
+              <option value="{{ length }}" {% if length == 7 %}selected{% endif %}>
+                {{ length }}{% trans "s" %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <p class="text-muted" id="wall-size-hint"></p>
+        <button type="submit" class="btn btn-primary">{% trans "Build the wall" %}</button>
+      </form>
+    </div>
+
+    <div class="col-md-7">
+      <h4>{% trans "Your walls" %}</h4>
+      {% if walls %}
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>{% trans "Wall" %}</th>
+              <th>{% trans "Progress" %}</th>
+              <th>{% trans "Time" %}</th>
+              <th>{% trans "State" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in walls %}
+              <tr>
+                <td>{{ row.wall.lexicon.lexiconName }} {{ row.wall.word_length }}s</td>
+                <td>{{ row.wall.solved_count }} / {{ row.wall.num_alphagrams }}
+                  ({{ row.percent }}%)</td>
+                <td data-elapsed-ms="{{ row.elapsed_ms }}">&ndash;</td>
+                <td>
+                  {% if row.running_elsewhere %}
+                    <span class="label label-warning">{% trans "Running in another tab" %}</span>
+                  {% else %}
+                    {{ row.wall.get_state_display }}
+                  {% endif %}
+                </td>
+                <td>
+                  <a class="btn btn-sm btn-default"
+                     href="{% url 'infinite_wall' row.wall.pk %}">{% trans "Open" %}</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="text-muted">{% trans "No walls yet. Build one to get started." %}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr>
+
+  <h4>{% trans "Hall of Fame" %}</h4>
+  {% if leaderboards %}
+    <p class="text-muted">
+      {% trans "Fastest completed walls. One entry per player, their best time." %}
+    </p>
+    <div class="row">
+      {% for board in leaderboards %}
+        <div class="col-md-4">
+          <h5>
+            {{ board.lexicon }} {{ board.word_length }}s
+            <small class="text-muted">
+              ({{ board.num_alphagrams }} {% trans "alphagrams" %})
+            </small>
+          </h5>
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{% trans "Player" %}</th>
+                <th>{% trans "Time" %}</th>
+                <th>{% trans "Finished" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in board.entries %}
+                <tr>
+                  <td>{{ entry.rank }}</td>
+                  <td>{{ entry.username }}</td>
+                  {# Formatted by the same script that renders the wall list. #}
+                  <td data-elapsed-ms="{{ entry.elapsed_ms }}">&ndash;</td>
+                  <td class="text-muted">{{ entry.completed|date:"M j, Y" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">
+      {% trans "Nobody has cleared a wall yet. Be the first." %}
+    </p>
+  {% endif %}
+</div>
+
+<script>
+(function () {
+  // Rectangle size comes from the server so it can never drift from
+  // infinite_perm.CHUNK_SIZE.
+  var CHUNK_SIZE = {{ chunk_size }};
+
+  // Show how big the chosen wall will be, using the per-lexicon alphagram
+  // counts the server already embedded in each option.
+  var lexSelect = document.getElementById('lexicon');
+  var lenSelect = document.getElementById('word_length');
+  var hint = document.getElementById('wall-size-hint');
+
+  function counts() {
+    var raw = lexSelect.options[lexSelect.selectedIndex].getAttribute('data-counts') || '';
+    var out = {};
+    raw.split(',').forEach(function (pair) {
+      var kv = pair.split(':');
+      if (kv.length === 2) { out[kv[0]] = parseInt(kv[1], 10); }
+    });
+    return out;
+  }
+
+  function update() {
+    var n = counts()[lenSelect.value];
+    if (!n) {
+      hint.textContent = 'That length is not available in this lexicon.';
+      return;
+    }
+    var rectangles = Math.ceil(n / CHUNK_SIZE);
+    hint.textContent = n.toLocaleString() + ' alphagrams, in ' +
+      rectangles.toLocaleString() + ' rectangles of ' + CHUNK_SIZE + ' each.';
+  }
+
+  lexSelect.addEventListener('change', update);
+  lenSelect.addEventListener('change', update);
+  update();
+
+  // Render the stored elapsed times.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('[data-elapsed-ms]'), function (cell) {
+      var total = Math.floor(parseInt(cell.getAttribute('data-elapsed-ms'), 10) / 1000);
+      var h = Math.floor(total / 3600);
+      var m = Math.floor((total % 3600) / 60);
+      var s = total % 60;
+      cell.textContent = h + ':' + String(m).padStart(2, '0') + ':' +
+        String(s).padStart(2, '0');
+    });
+}());
+</script>
+{% endblock %}
