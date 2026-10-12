@@ -7,7 +7,6 @@ unlike test_game_logic.py, which talks to the real service.
 """
 
 import base64
-import importlib
 import logging
 import threading
 from io import StringIO
@@ -18,7 +17,6 @@ from unittest import mock
 from django.contrib.auth.models import User
 from django.core.management import CommandError, call_command
 from django.db import connection
-from django.db.migrations.loader import MigrationLoader
 from django.test import SimpleTestCase, TestCase, TransactionTestCase
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
@@ -1221,23 +1219,32 @@ class InfiniteWallProgressStorageTest(InfiniteWallTestBase):
         for g in payload["solvedCells"]:
             self.assertTrue(self.cell_solved(wall, g))
 
-    def test_old_code_can_still_insert_rectangles(self):
-        """
-        Pre-0019 pods keep serving until the rollout finishes. Their inserts
-        don't name the new columns, which must therefore default in the
-        database, not just in Django.
-        """
-        wall = self.make_wall(200)
+    def test_the_legacy_columns_are_gone(self):
+        # 0021 dropped them. The storage check still runs and says so.
         with connection.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO wordwalls_infinitewallchunk "
-                "(wall_id, chunk_index, answers, solved_words) "
-                "VALUES (%s, 0, %s, %s)",
-                [wall.pk, '[{"g": 0, "q": "NRU", "a": ["RUN"]}]', '["RUN"]'],
-            )
-        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=0)
-        self.assertEqual(bytes(chunk.solved_cells), b"")
-        self.assertEqual(bytes(chunk.solved_word_bits), b"")
+            for model, column in [
+                (InfiniteWall, "solved_bitmap"),
+                (InfiniteWallChunk, "solved_words"),
+            ]:
+                names = {
+                    col.name
+                    for col in connection.introspection.get_table_description(
+                        cursor, model._meta.db_table
+                    )
+                }
+                self.assertNotIn(column, names)
+
+        self.patch_wdb()
+        wall = self.game.create(self.user, self.lexicon, 7)
+        self.game.resume(wall)
+        self.game.load_chunk(wall, 0)
+        entry = self.first_entry(wall)
+        for word in entry["a"]:
+            self.game.guess(wall, 0, word)
+        out = StringIO()
+        call_command("check_great_wall_storage", stdout=out)
+        self.assertIn("legacy columns: bitmap=False words=False", out.getvalue())
+        self.assertIn("no problems found", out.getvalue())
 
     def test_guessing_into_a_row_with_empty_masks_works(self):
         # A rectangle row the pre-0019 code created mid-deploy has b"" masks.
@@ -1252,215 +1259,6 @@ class InfiniteWallProgressStorageTest(InfiniteWallTestBase):
         self.assertTrue(result["alphagramSolved"])
         self.assertTrue(self.cell_solved(wall, entry["g"]))
         self.assertEqual(self.game.load_chunk(wall, 0)["solvedWords"], sorted(entry["a"]))
-
-
-class LegacyProgressMergeTest(InfiniteWallTestBase):
-    """
-    The legacy-progress merge that 0019 ran and 0020 reruns.
-
-    The live models no longer have solved_bitmap/solved_words, but the columns
-    stay in the database until 0021, so legacy rows are written through the
-    historical models as of 0019 -- the same models the migrations hand it.
-    """
-
-    merge = staticmethod(
-        importlib.import_module(
-            "wordwalls.migrations.0019_infinitewallchunk_progress_masks"
-        ).merge_legacy_progress
-    )
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.legacy_apps = (
-            MigrationLoader(connection)
-            .project_state(("wordwalls", "0019_infinitewallchunk_progress_masks"))
-            .apps
-        )
-        cls.LegacyWall = cls.legacy_apps.get_model("wordwalls", "InfiniteWall")
-        cls.LegacyChunk = cls.legacy_apps.get_model("wordwalls", "InfiniteWallChunk")
-
-    def set_legacy_bitmap(self, wall, solved_cells):
-        legacy = self.LegacyWall.objects.get(pk=wall.pk)
-        bitmap = bytearray(bytes(legacy.solved_bitmap) or bitmap_size(wall.num_alphagrams))
-        for g in solved_cells:
-            set_bit(bitmap, g)
-        legacy.solved_bitmap = bytes(bitmap)
-        legacy.solved_count += len(solved_cells)
-        legacy.save(update_fields=["solved_bitmap", "solved_count"])
-        wall.refresh_from_db()
-
-    def legacy_chunk(self, wall, chunk_index, solved_cells, solved_words):
-        """A rectangle as the old code left it: progress only in legacy fields."""
-        size = DEFAULT_CHUNK_SIZE
-        base = chunk_index * size
-        cells = range(base, min(base + size, wall.num_alphagrams))
-        answers = [
-            {"g": g, "q": "Q{0}".format(g), "a": ["A{0}".format(g), "B{0}".format(g)]}
-            for g in cells
-        ]
-        self.set_legacy_bitmap(wall, solved_cells)
-        return self.LegacyChunk.objects.create(
-            wall_id=wall.pk,
-            chunk_index=chunk_index,
-            answers=answers,
-            solved_words=solved_words,
-        )
-
-    def run_merge(self):
-        self.merge(self.legacy_apps, None)
-
-    def test_moves_cells_and_words_onto_the_rectangle(self):
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 1, {130}, ["A130", "B130", "A131"])
-
-        self.run_merge()
-        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=1)
-        self.assertTrue(get_bit(bytes(chunk.solved_cells), 130 - 128))
-        self.assertEqual(popcount(chunk.solved_cells), 1)
-
-        self.patch_wdb()
-        payload = self.game.load_chunk(wall, 1)
-        self.assertEqual(payload["solvedWords"], ["A130", "A131", "B130"])
-        self.assertEqual(payload["solvedCells"], [130])
-        self.assertTrue(self.cell_solved(wall, 130))
-        self.assertFalse(self.cell_solved(wall, 131))
-
-    def test_is_idempotent_and_keeps_newer_progress(self):
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 0, {5}, ["A5", "B5"])
-        self.run_merge()
-
-        # New code records more progress, then the merge runs again (0020).
-        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=0)
-        cells = padded(chunk.solved_cells, DEFAULT_CHUNK_SIZE)
-        set_bit(cells, 6)
-        chunk.solved_cells = bytes(cells)
-        chunk.save()
-        self.run_merge()
-
-        chunk.refresh_from_db()
-        self.assertEqual(popcount(chunk.solved_cells), 2)
-        wall.refresh_from_db()
-        self.assertEqual(wall.solved_count, 2)
-
-    def test_prunes_already_cleared_rectangles(self):
-        wall = self.make_wall(150)
-        self.legacy_chunk(wall, 1, set(range(128, 150)), [])
-        self.run_merge()
-        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=1)
-        self.assertEqual(chunk.answers, [])
-        self.assertEqual(popcount(chunk.solved_cells), 22)
-
-    def test_corrects_a_drifted_count(self):
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 0, {1, 2}, [])
-        InfiniteWall.objects.filter(pk=wall.pk).update(solved_count=7)
-        self.run_merge()
-        wall.refresh_from_db()
-        self.assertEqual(wall.solved_count, 2)
-
-    def test_leaves_a_finished_walls_count_alone(self):
-        # Seeded or hand-made finished walls can have no rectangles at all;
-        # recounting from bits would zero out a leaderboard entry.
-        wall = self.make_wall(24, state=InfiniteWall.DONE)
-        InfiniteWall.objects.filter(pk=wall.pk).update(solved_count=24)
-        self.run_merge()
-        wall.refresh_from_db()
-        self.assertEqual(wall.solved_count, 24)
-        self.assertEqual(wall.state, InfiniteWall.DONE)
-
-    def test_unaligned_older_shape(self):
-        wall = self.make_wall(300)
-        wall.chunk_w, wall.chunk_h = 5, 20
-        wall.save()
-        size = 100
-        self.set_legacy_bitmap(wall, {205})
-        InfiniteWallChunk.objects.create(
-            wall=wall,
-            chunk_index=2,
-            answers=[{"g": g, "q": "Q", "a": ["W{0}".format(g)]} for g in range(200, 300)],
-        )
-        self.run_merge()
-        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=2)
-        self.assertTrue(get_bit(bytes(chunk.solved_cells), 205 - 2 * size))
-        self.assertTrue(self.cell_solved(wall, 205))
-
-    def test_new_code_inserts_leave_the_legacy_columns_defaulted(self):
-        # 0020 took the fields out of the models, so inserts no longer name the
-        # columns; the database defaults keep NOT NULL satisfied until 0021.
-        self.patch_wdb()
-        wall = self.game.create(self.user, self.lexicon, 7)
-        self.game.resume(wall)
-        self.game.load_chunk(wall, 0)
-        self.assertEqual(bytes(self.LegacyWall.objects.get(pk=wall.pk).solved_bitmap), b"")
-        self.assertEqual(
-            self.LegacyChunk.objects.get(wall_id=wall.pk, chunk_index=0).solved_words, []
-        )
-
-    def test_code_that_still_names_the_legacy_columns_keeps_working(self):
-        # Pods running pre-0020 code during the deploy still read and write them.
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 0, {3}, ["A3", "B3"])
-        legacy = self.LegacyWall.objects.get(pk=wall.pk)
-        self.assertTrue(get_bit(bytes(legacy.solved_bitmap), 3))
-
-    def test_check_command_passes_once_merged(self):
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 1, {130}, ["A130", "B130"])
-        self.run_merge()
-        out = StringIO()
-        call_command("check_great_wall_storage", stdout=out)
-        self.assertIn("legacy columns: bitmap=True words=True", out.getvalue())
-        self.assertIn("no problems found", out.getvalue())
-
-    def test_check_command_catches_progress_missing_from_the_masks(self):
-        # Legacy progress written after the merge ran, i.e. what 0020's rerun is
-        # for -- the check must flag it until it has been merged.
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 1, {130}, ["A130", "B130"])
-        self.run_merge()
-        self.set_legacy_bitmap(wall, {131})
-        self.LegacyChunk.objects.filter(wall_id=wall.pk, chunk_index=1).update(
-            solved_words=["A130", "B130", "A131", "B131"]
-        )
-        with self.assertRaises(CommandError):
-            call_command("check_great_wall_storage", stdout=StringIO())
-        self.run_merge()
-        call_command("check_great_wall_storage", stdout=StringIO())
-
-
-class RerunMergeTest(LegacyProgressMergeTest):
-    """
-    Every case above against 0020's merge, which runs while players are guessing.
-    """
-
-    merge = staticmethod(
-        importlib.import_module(
-            "wordwalls.migrations.0020_remove_legacy_progress_from_state"
-        ).merge_legacy_progress
-    )
-
-    def test_is_not_atomic(self):
-        # One transaction over the whole merge deadlocked with live guesses.
-        migration = importlib.import_module(
-            "wordwalls.migrations.0020_remove_legacy_progress_from_state"
-        ).Migration
-        self.assertFalse(migration.atomic)
-
-    def test_locks_each_wall_and_writes_nothing_already_merged(self):
-        wall = self.make_wall(300)
-        self.legacy_chunk(wall, 0, {5}, ["A5", "B5"])
-        self.legacy_chunk(wall, 2, set(range(256, 300)), [])
-        self.run_merge()
-
-        with CaptureQueriesContext(connection) as ctx:
-            self.run_merge()
-        sql = [q["sql"] for q in ctx.captured_queries]
-        self.assertEqual([s for s in sql if s.startswith("UPDATE")], [])
-        locks = [s for s in sql if "FOR UPDATE" in s]
-        self.assertEqual(len(locks), 1)
-        self.assertIn("wordwalls_infinitewall", locks[0])
 
 
 class StorageCheckSnapshotTest(TransactionTestCase):
