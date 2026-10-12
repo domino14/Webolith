@@ -128,6 +128,26 @@ describe('ChunkState guessing', () => {
     expect(state.originalAnswerExists('NOTHERE')).toBe(false);
   });
 
+  it('treats words found on an earlier visit as already solved, not wrong', () => {
+    // The server omits RUN from a revisited rectangle and reports it separately.
+    const state = new ChunkState();
+    state.init(GEO, CHUNK, [packet(BASE, 'NRU', [word('URN')])], ['RUN']);
+    expect(state.answerExists('RUN')).toBe(false);
+    expect(state.originalAnswerExists('RUN')).toBe(true);
+    expect(state.markPotentialIncorrectGuess('RUN')).toBe(false);
+    expect(state.getWordsLeft()).toBe(1);
+  });
+
+  it('does not carry found words into a different rectangle', () => {
+    // ChunkState only models the open rectangle. RUN was found in rectangle 2,
+    // so in rectangle 3 it is simply not an answer. Coming back to rectangle 2
+    // re-fetches it from the server as a solvedWord (the test above).
+    const state = new ChunkState();
+    state.init(GEO, CHUNK, [], ['RUN']);
+    state.init(GEO, CHUNK + 1, []);
+    expect(state.originalAnswerExists('RUN')).toBe(false);
+  });
+
   it('flags the question an anagram-shaped wrong guess was aiming at', () => {
     const state = loaded();
     // NUR is an anagram of NRU but is not one of its words.

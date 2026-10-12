@@ -58,9 +58,16 @@ class ChunkState {
    * Lay a server payload out into slots.
    *
    * The server omits fully solved alphagrams and already-found words, so
-   * whatever arrives is exactly what is still outstanding.
+   * whatever arrives is exactly what is still outstanding. `solvedWords` are
+   * the ones found on an earlier visit: they never get a slot, but retyping
+   * one must read as already solved rather than wrong.
    */
-  init(geo: WallGeometry, chunk: number, questions: QuestionPacket[]): void {
+  init(
+    geo: WallGeometry,
+    chunk: number,
+    questions: QuestionPacket[],
+    solvedWords: string[] = [],
+  ): void {
     const slots: Immutable.Map<string, unknown>[] = [];
     for (let i = 0; i < geo.chunkSize; i += 1) {
       slots.push(EMPTY_SLOT);
@@ -72,6 +79,10 @@ class ChunkState {
     this.unsolvedAlphagrams = {};
     this.alphagramsLeft = 0;
     this.wordsLeft = 0;
+
+    solvedWords.forEach((w) => {
+      this.everWords[w] = true;
+    });
 
     questions.forEach((question) => {
       const slot = cellToSlot(geo, question.g);

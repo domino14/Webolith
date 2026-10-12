@@ -273,16 +273,6 @@ function InfiniteApp({
     }
   }, [applyStatus, dropChunk]);
 
-  const refreshBitmap = useCallback(async () => {
-    try {
-      const res = await rpcRef.current.bitmap();
-      setBitmap(decodeBitmap(res.solvedBitmap));
-      applyStatus(res, true);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  }, [applyStatus]);
-
   const applyTileOrder = useCallback(() => {
     const chunkState = chunkStateRef.current;
     if (displayStyle.customTileOrder) {
@@ -314,7 +304,10 @@ function InfiniteApp({
           ? 'gw-zoom-in'
           : `gw-slide-${slideDirection(geo, from, which)}`,
       });
-      chunkStateRef.current.init(geo, which, res.questions);
+      chunkStateRef.current.init(geo, which, res.questions, res.solvedWords);
+      // Picks up cells the server credited itself (alphagrams with no
+      // answers), so a cleared rectangle needs no whole-bitmap refetch.
+      setBitmap((prev) => res.solvedCells.reduce(withBitSet, prev));
       setChunk(which);
       setAlphagramsLeft(chunkStateRef.current.getAlphagramsLeft());
       applyStatus(res, true);
@@ -452,9 +445,9 @@ function InfiniteApp({
     if (zoomed && alphagramsLeft === 0 && curQuestions.size > 0) {
       // Pause as well as drop: an emptied rectangle returns you to the overview,
       // where the clock must not be running.
-      backToWall().then(refreshBitmap);
+      backToWall();
     }
-  }, [zoomed, alphagramsLeft, curQuestions.size, backToWall, refreshBitmap]);
+  }, [zoomed, alphagramsLeft, curQuestions.size, backToWall]);
 
   // -- keeping the server informed -----------------------------------------
 

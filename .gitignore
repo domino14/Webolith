@@ -27,3 +27,4 @@ analysis/*.txt
 djAerolith/venv
 frontend/*.tsbuildinfo
 frontend/.vite
+.env.proddb

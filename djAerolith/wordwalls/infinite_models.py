@@ -3,8 +3,9 @@ Models for the Great Wall.
 
 Deliberately separate from the finite-list machinery in base.WordList: a wall has
 no origQuestions blob, no questionIndex cursor, and no missed/firstMissed lists.
-Progress is a bitmap over cell indices, and the alphagram that lives in a cell is
-derived on demand from (seed, cell) rather than materialized.
+Progress lives on the rectangle rows as small per-rectangle bitmasks; the
+alphagram that lives in a cell is derived on demand from (seed, cell) rather than
+materialized.
 """
 
 from django.contrib.auth.models import User
@@ -42,9 +43,13 @@ class InfiniteWall(models.Model):
     seed = models.BigIntegerField()
 
     state = models.CharField(max_length=1, choices=STATES, default=NOT_STARTED)
-    # ceil(num_alphagrams / 8) bytes. Bit g (LSB-first within each byte) is set
-    # when every word of the alphagram in cell g has been solved.
+    # Legacy: the old wall-wide progress bitmap, rewritten in full on every
+    # solve. Superseded by InfiniteWallChunk.solved_cells and no longer read or
+    # written; kept only so migration 0020 can merge in anything written by the
+    # old code mid-deploy before dropping it.
     solved_bitmap = models.BinaryField(default=b"")
+    # Kept in step with the rectangles' solved_cells, so completion and the
+    # picker's percentage never need to scan them.
     solved_count = models.IntegerField(default=0)
 
     # Accumulated running time, excluding any currently-running stretch.
@@ -82,19 +87,32 @@ class InfiniteWallChunk(models.Model):
     """
     One zoomable rectangle that a player has visited at least once.
 
-    `answers` holds only alphagram + word strings -- the same reduced shape as
-    base.WordList.origQuestions, roughly 5 KB. Definitions, hooks and lexicon
-    symbols are never persisted here; they are re-fetched from the word server on
-    each load the way wordwalls.game.load_questions already does, so display
-    metadata cannot go stale.
+    `answers` holds only cell, alphagram and word strings, roughly 5 KB.
+    Definitions, hooks and lexicon symbols are never persisted here; they are
+    re-fetched from the word server on each load the way
+    wordwalls.game.load_questions already does, so display metadata cannot go
+    stale. Once every cell is solved `answers` is emptied: nothing left to guess
+    needs it, and it is derivable from (seed, cell) anyway. The table has
+    toast_tuple_target = 128 (migration 0019), so answers always sits out of
+    line, still compressed, and a guess rewrites only the few dozen bytes of
+    progress below.
+
+    Progress is two bitmasks, both LSB-first like infinite_perm.get_bit:
+    `solved_cells` has bit (g - first cell of the rectangle) set once cell g is
+    solved, and `solved_word_bits` has one bit per word, numbered in `answers`
+    order (see infinite_perm.word_bits).
     """
 
     wall = models.ForeignKey(
         InfiniteWall, on_delete=models.CASCADE, related_name="chunk_set"
     )
     chunk_index = models.IntegerField()
-    # Cell-ordered: [{"q": alphagram, "a": [word, ...]}, ...]
+    # Cell-ordered: [{"g": cell, "q": alphagram, "a": [word, ...]}, ...]
     answers = models.JSONField()
+    solved_cells = models.BinaryField(default=b"")
+    solved_word_bits = models.BinaryField(default=b"")
+    # Legacy: found words as a list of strings. Superseded by solved_word_bits;
+    # dropped in 0020 alongside InfiniteWall.solved_bitmap.
     solved_words = models.JSONField(default=list)
 
     class Meta:

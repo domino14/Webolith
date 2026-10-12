@@ -43,6 +43,10 @@ export interface WallDetail extends BitmapResponse, WallGeometry {
 export interface ChunkResponse extends WallStatus {
   chunk: number;
   questions: QuestionPacket[];
+  /** Words already found in this rectangle; absent from `questions`. */
+  solvedWords: string[];
+  /** Solved cells in this rectangle, including any the server credited. */
+  solvedCells: number[];
 }
 
 export interface GuessResponse extends WallStatus {

@@ -6,13 +6,18 @@ The word server is mocked throughout, so these need no running word_db_server --
 unlike test_game_logic.py, which talks to the real service.
 """
 
+import base64
+import importlib
 import logging
 from datetime import timedelta
 from math import ceil
 from unittest import mock
 
+from django.apps import apps
 from django.contrib.auth.models import User
+from django.db import connection
 from django.test import SimpleTestCase, TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
@@ -30,10 +35,14 @@ from wordwalls.infinite_perm import (
     DEFAULT_CHUNK_W,
     WallGeometry,
     WallPermutation,
+    assemble_bitmap,
     bitmap_size,
     chunk_cols_for,
     get_bit,
+    padded,
+    popcount,
     set_bit,
+    word_bits,
 )
 
 logger = logging.getLogger(__name__)
@@ -316,7 +325,6 @@ class InfiniteWallTestBase(TestCase):
             chunk_cols=chunk_cols,
             seed=4242,
             state=state,
-            solved_bitmap=bytes(bitmap_size(n)),
             resumed_at=timezone.now() if state == InfiniteWall.RUNNING else None,
         )
 
@@ -336,6 +344,10 @@ class InfiniteWallTestBase(TestCase):
 
     def tearDown(self):
         mock.patch.stopall()
+
+    def cell_solved(self, wall, g):
+        """Read a cell the way the client does: off the assembled bitmap."""
+        return get_bit(base64.b64decode(self.game.bitmap(wall)["solvedBitmap"]), g)
 
     def solve_chunk(self, wall, chunk_index):
         """Guess every outstanding word in a rectangle."""
@@ -369,7 +381,6 @@ class InfiniteWallCreationTest(InfiniteWallTestBase):
         self.assertEqual(wall.chunk_cols, 25)
         self.assertEqual(wall.state, InfiniteWall.NOT_STARTED)
         self.assertEqual(wall.solved_count, 0)
-        self.assertEqual(len(bytes(wall.solved_bitmap)), 2653)
 
     def test_create_rejects_bad_length(self):
         for length in (3, 10, 0):
@@ -639,7 +650,7 @@ class InfiniteWallGuessTest(InfiniteWallTestBase):
         self.assertFalse(result["alphagramSolved"])
         wall.refresh_from_db()
         self.assertEqual(wall.solved_count, 0)
-        self.assertFalse(get_bit(bytes(wall.solved_bitmap), entry["g"]))
+        self.assertFalse(self.cell_solved(wall, entry["g"]))
 
     def test_full_alphagram_sets_the_bit(self):
         wall = self.make_wall(200)
@@ -651,7 +662,7 @@ class InfiniteWallGuessTest(InfiniteWallTestBase):
         self.assertTrue(result["alphagramSolved"])
         wall.refresh_from_db()
         self.assertEqual(wall.solved_count, 1)
-        self.assertTrue(get_bit(bytes(wall.solved_bitmap), entry["g"]))
+        self.assertTrue(self.cell_solved(wall, entry["g"]))
 
     def test_repeat_guess_is_already_solved_and_does_not_double_count(self):
         wall = self.make_wall(200)
@@ -662,7 +673,7 @@ class InfiniteWallGuessTest(InfiniteWallTestBase):
         result = self.game.guess(wall, 0, entry["a"][0])
         self.assertTrue(result["alreadySolved"])
         chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=0)
-        self.assertEqual(chunk.solved_words.count(entry["a"][0]), 1)
+        self.assertEqual(popcount(chunk.solved_word_bits), 1)
 
     def test_guess_is_case_insensitive_and_trimmed(self):
         wall = self.make_wall(200)
@@ -744,7 +755,7 @@ class InfiniteWallGuessTest(InfiniteWallTestBase):
 
         reloaded = self.game.get_wall(wall.pk, self.user)
         self.assertEqual(reloaded.solved_count, 1)
-        self.assertTrue(get_bit(bytes(reloaded.solved_bitmap), entry["g"]))
+        self.assertTrue(self.cell_solved(reloaded, entry["g"]))
         self.assertEqual(reloaded.state, InfiniteWall.PAUSED)
 
 
@@ -774,8 +785,6 @@ class InfiniteWallPayloadTest(InfiniteWallTestBase):
             self.assertIn(key, detail)
 
     def test_bitmap_is_base64_of_the_right_length(self):
-        import base64
-
         self.patch_wdb()
         wall = self.make_wall(21223)
         payload = self.game.bitmap(wall)
@@ -800,7 +809,6 @@ class LeaderboardTest(InfiniteWallTestBase):
             chunk_cols=1,
             seed=1,
             state=InfiniteWall.DONE,
-            solved_bitmap=bytes(bitmap_size(24)),
             solved_count=24,
             elapsed_ms=elapsed_ms,
             completed=timezone.now() - timedelta(days=days_ago),
@@ -900,7 +908,6 @@ class InfiniteWallViewTest(InfiniteWallTestBase):
             chunk_cols=1,
             seed=1,
             state=InfiniteWall.DONE,
-            solved_bitmap=bytes(bitmap_size(24)),
             solved_count=24,
             elapsed_ms=1234567,
             completed=timezone.now(),
@@ -940,7 +947,6 @@ class InfiniteWallViewTest(InfiniteWallTestBase):
             chunk_h=DEFAULT_CHUNK_H,
             chunk_cols=1,
             seed=1,
-            solved_bitmap=bytes(bitmap_size(24)),
         )
         self.client.force_login(self.other_user)
         self.assertEqual(
@@ -950,3 +956,280 @@ class InfiniteWallViewTest(InfiniteWallTestBase):
             self.client.get(reverse("infinite_wall", args=(wall.pk,))).status_code,
             200,
         )
+
+
+class ProgressMaskTest(SimpleTestCase):
+    def test_padded_zero_extends_without_touching_the_original(self):
+        original = b"\x05"
+        out = padded(original, 20)
+        self.assertEqual(bytes(out), b"\x05\x00\x00")
+        self.assertEqual(original, b"\x05")
+        # Never truncates.
+        self.assertEqual(bytes(padded(b"\x01\x02", 3)), b"\x01\x02")
+
+    def test_popcount(self):
+        self.assertEqual(popcount(b""), 0)
+        self.assertEqual(popcount(b"\xff\x01"), 9)
+
+    def test_word_bits_number_words_in_answers_order(self):
+        answers = [
+            {"g": 4, "q": "NRU", "a": ["RUN", "URN"]},
+            {"g": 9, "q": "AET", "a": ["ATE", "EAT", "TEA"]},
+        ]
+        bits = word_bits(answers)
+        self.assertEqual(
+            {word: bit for word, (bit, _entry) in bits.items()},
+            {"RUN": 0, "URN": 1, "ATE": 2, "EAT": 3, "TEA": 4},
+        )
+        self.assertIs(bits["TEA"][1], answers[1])
+
+    def masks_for(self, n, chunk_size, solved):
+        """Per-rectangle masks for a set of solved cells."""
+        masks = {}
+        for g in solved:
+            chunk, local = divmod(g, chunk_size)
+            mask = masks.setdefault(chunk, bytearray(bitmap_size(chunk_size)))
+            set_bit(mask, local)
+        return [(chunk, bytes(mask)) for chunk, mask in masks.items()]
+
+    def assert_assembles(self, n, chunk_size, solved):
+        bitmap = assemble_bitmap(n, chunk_size, self.masks_for(n, chunk_size, solved))
+        self.assertEqual(len(bitmap), bitmap_size(n))
+        self.assertEqual(
+            {g for g in range(n) if get_bit(bitmap, g)}, set(solved)
+        )
+
+    def test_assembles_aligned_rectangles(self):
+        self.assert_assembles(300, 128, {0, 7, 8, 127, 128, 200, 299})
+
+    def test_assembles_an_older_unaligned_shape(self):
+        # 5x20 = 100 cells, which does not land on byte boundaries.
+        self.assert_assembles(21223, 100, {0, 99, 100, 101, 12900, 21222})
+
+    def test_empty_wall_progress(self):
+        self.assertEqual(assemble_bitmap(24, 128, []), bytes(3))
+
+
+class InfiniteWallProgressStorageTest(InfiniteWallTestBase):
+    """Progress lives on the rectangles; the wall row only keeps a count."""
+
+    def setUp(self):
+        super().setUp()
+        self.patch_wdb()
+
+    def first_entry(self, wall, chunk_index=0):
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=chunk_index)
+        return chunk.answers[0]
+
+    def test_revisit_reports_found_words(self):
+        """
+        The bug this guards: words found on an earlier visit were left out of
+        the rectangle payload, so the client called a retype of one wrong
+        instead of already solved.
+        """
+        wall = self.make_wall(300)
+        self.game.load_chunk(wall, 0)
+        entry = self.first_entry(wall)
+        self.game.guess(wall, 0, entry["a"][0])
+        self.game.load_chunk(wall, 1)
+
+        payload = self.game.load_chunk(wall, 0)
+        self.assertEqual(payload["solvedWords"], [entry["a"][0]])
+        self.assertEqual(payload["solvedCells"], [])
+
+    def test_first_visit_reports_nothing_solved(self):
+        wall = self.make_wall(200)
+        payload = self.game.load_chunk(wall, 0)
+        self.assertEqual(payload["solvedWords"], [])
+        self.assertEqual(payload["solvedCells"], [])
+
+    def test_solved_cells_lists_finished_alphagrams(self):
+        wall = self.make_wall(300)
+        self.game.load_chunk(wall, 1)
+        entry = self.first_entry(wall, 1)
+        for word in entry["a"]:
+            self.game.guess(wall, 1, word)
+        payload = self.game.load_chunk(wall, 1)
+        self.assertEqual(payload["solvedCells"], [entry["g"]])
+
+    def test_a_guess_writes_only_the_small_columns(self):
+        wall = self.make_wall(200)
+        self.game.load_chunk(wall, 0)
+        entry = self.first_entry(wall)
+
+        with CaptureQueriesContext(connection) as ctx:
+            for word in entry["a"]:
+                self.game.guess(wall, 0, word)
+        updates = [
+            q["sql"] for q in ctx.captured_queries if q["sql"].startswith("UPDATE")
+        ]
+        self.assertTrue(updates)
+        for sql in updates:
+            self.assertNotIn('"answers"', sql)
+            self.assertNotIn('"solved_bitmap"', sql)
+            self.assertNotIn('"solved_words"', sql)
+
+    def test_clearing_a_rectangle_drops_its_answers_but_keeps_its_cells(self):
+        wall = self.make_wall(300)
+        self.game.load_chunk(wall, 1)
+        self.solve_chunk(wall, 1)
+
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=1)
+        self.assertEqual(chunk.answers, [])
+        self.assertEqual(popcount(chunk.solved_cells), DEFAULT_CHUNK_SIZE)
+        wall.refresh_from_db()
+        self.assertEqual(wall.solved_count, DEFAULT_CHUNK_SIZE)
+        for g in range(DEFAULT_CHUNK_SIZE, 2 * DEFAULT_CHUNK_SIZE):
+            self.assertTrue(self.cell_solved(wall, g))
+        self.assertFalse(self.cell_solved(wall, 0))
+
+    def test_a_cleared_rectangle_reloads_empty(self):
+        wall = self.make_wall(300)
+        self.game.load_chunk(wall, 0)
+        self.solve_chunk(wall, 0)
+        payload = self.game.load_chunk(wall, 0)
+        self.assertEqual(payload["questions"], [])
+        self.assertEqual(len(payload["solvedCells"]), DEFAULT_CHUNK_SIZE)
+
+    def test_answerless_cells_show_as_solved(self):
+        mock.patch.stopall()
+        mock.patch(
+            "wordwalls.infinite_game.questions_from_probability_list",
+            side_effect=lambda lex, probs, wl, expand=False: fake_wdb_response(
+                sorted(probs)[:-3]
+            ),
+        ).start()
+        wall = self.make_wall(100)
+        payload = self.game.load_chunk(wall, 0)
+        self.assertEqual(len(payload["solvedCells"]), 3)
+        for g in payload["solvedCells"]:
+            self.assertTrue(self.cell_solved(wall, g))
+
+    def test_guessing_into_a_row_with_empty_masks_works(self):
+        # A rectangle row the pre-0019 code created mid-deploy has b"" masks.
+        wall = self.make_wall(200)
+        self.game.load_chunk(wall, 0)
+        InfiniteWallChunk.objects.filter(wall=wall).update(
+            solved_cells=b"", solved_word_bits=b""
+        )
+        entry = self.first_entry(wall)
+        for word in entry["a"]:
+            result = self.game.guess(wall, 0, word)
+        self.assertTrue(result["alphagramSolved"])
+        self.assertTrue(self.cell_solved(wall, entry["g"]))
+        self.assertEqual(self.game.load_chunk(wall, 0)["solvedWords"], sorted(entry["a"]))
+
+
+class LegacyProgressMergeTest(InfiniteWallTestBase):
+    """Migration 0019's merge of the old wall bitmap and word lists."""
+
+    merge = staticmethod(
+        importlib.import_module(
+            "wordwalls.migrations.0019_infinitewallchunk_progress_masks"
+        ).merge_legacy_progress
+    )
+
+    def legacy_chunk(self, wall, chunk_index, solved_cells, solved_words):
+        """A rectangle as the old code left it: progress only in legacy fields."""
+        size = DEFAULT_CHUNK_SIZE
+        base = chunk_index * size
+        cells = range(base, min(base + size, wall.num_alphagrams))
+        answers = [
+            {"g": g, "q": "Q{0}".format(g), "a": ["A{0}".format(g), "B{0}".format(g)]}
+            for g in cells
+        ]
+        bitmap = bytearray(wall.solved_bitmap or bitmap_size(wall.num_alphagrams))
+        for g in solved_cells:
+            set_bit(bitmap, g)
+        wall.solved_bitmap = bytes(bitmap)
+        wall.solved_count += len(solved_cells)
+        wall.save()
+        return InfiniteWallChunk.objects.create(
+            wall=wall,
+            chunk_index=chunk_index,
+            answers=answers,
+            solved_words=solved_words,
+        )
+
+    def run_merge(self):
+        self.merge(apps, None)
+
+    def test_moves_cells_and_words_onto_the_rectangle(self):
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 1, {130}, ["A130", "B130", "A131"])
+
+        self.run_merge()
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=1)
+        self.assertTrue(get_bit(bytes(chunk.solved_cells), 130 - 128))
+        self.assertEqual(popcount(chunk.solved_cells), 1)
+
+        self.patch_wdb()
+        payload = self.game.load_chunk(wall, 1)
+        self.assertEqual(payload["solvedWords"], ["A130", "A131", "B130"])
+        self.assertEqual(payload["solvedCells"], [130])
+        self.assertTrue(self.cell_solved(wall, 130))
+        self.assertFalse(self.cell_solved(wall, 131))
+
+    def test_is_idempotent_and_keeps_newer_progress(self):
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 0, {5}, ["A5", "B5"])
+        self.run_merge()
+
+        # New code records more progress, then the merge runs again (0020).
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=0)
+        cells = padded(chunk.solved_cells, DEFAULT_CHUNK_SIZE)
+        set_bit(cells, 6)
+        chunk.solved_cells = bytes(cells)
+        chunk.save()
+        self.run_merge()
+
+        chunk.refresh_from_db()
+        self.assertEqual(popcount(chunk.solved_cells), 2)
+        wall.refresh_from_db()
+        self.assertEqual(wall.solved_count, 2)
+
+    def test_prunes_already_cleared_rectangles(self):
+        wall = self.make_wall(150)
+        self.legacy_chunk(wall, 1, set(range(128, 150)), [])
+        self.run_merge()
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=1)
+        self.assertEqual(chunk.answers, [])
+        self.assertEqual(popcount(chunk.solved_cells), 22)
+
+    def test_corrects_a_drifted_count(self):
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 0, {1, 2}, [])
+        InfiniteWall.objects.filter(pk=wall.pk).update(solved_count=7)
+        self.run_merge()
+        wall.refresh_from_db()
+        self.assertEqual(wall.solved_count, 2)
+
+    def test_leaves_a_finished_walls_count_alone(self):
+        # Seeded or hand-made finished walls can have no rectangles at all;
+        # recounting from bits would zero out a leaderboard entry.
+        wall = self.make_wall(24, state=InfiniteWall.DONE)
+        InfiniteWall.objects.filter(pk=wall.pk).update(solved_count=24)
+        self.run_merge()
+        wall.refresh_from_db()
+        self.assertEqual(wall.solved_count, 24)
+        self.assertEqual(wall.state, InfiniteWall.DONE)
+
+    def test_unaligned_older_shape(self):
+        wall = self.make_wall(300)
+        wall.chunk_w, wall.chunk_h = 5, 20
+        wall.save()
+        size = 100
+        bitmap = bytearray(bitmap_size(300))
+        set_bit(bitmap, 205)
+        wall.solved_bitmap = bytes(bitmap)
+        wall.solved_count = 1
+        wall.save()
+        InfiniteWallChunk.objects.create(
+            wall=wall,
+            chunk_index=2,
+            answers=[{"g": g, "q": "Q", "a": ["W{0}".format(g)]} for g in range(200, 300)],
+        )
+        self.run_merge()
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=2)
+        self.assertTrue(get_bit(bytes(chunk.solved_cells), 205 - 2 * size))
+        self.assertTrue(self.cell_solved(wall, 205))
