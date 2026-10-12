@@ -98,6 +98,7 @@
   {% if leaderboards %}
     <p class="text-muted">
       {% trans "Fastest completed walls. One entry per player, their best time." %}
+      {% blocktrans with size=leaderboard_size %}Top {{ size }} shown; open a board to see everyone.{% endblocktrans %}
     </p>
     <div class="row">
       {% for board in leaderboards %}
@@ -119,7 +120,7 @@
             </thead>
             <tbody>
               {% for entry in board.entries %}
-                <tr>
+                <tr{% if entry.username == user.username %} class="info"{% endif %}>
                   <td>{{ entry.rank }}</td>
                   <td>{{ entry.username }}</td>
                   {# Formatted by the same script that renders the wall list. #}
@@ -129,6 +130,15 @@
               {% endfor %}
             </tbody>
           </table>
+          <p>
+            <a href="{% url 'infinite_leaderboard' board.lexicon_id board.word_length %}">
+              {% if board.players > board.entries|length %}
+                {% blocktrans count players=board.players %}All {{ players }} player &rarr;{% plural %}All {{ players }} players &rarr;{% endblocktrans %}
+              {% else %}
+                {% trans "Full board" %} &rarr;
+              {% endif %}
+            </a>
+          </p>
         </div>
       {% endfor %}
     </div>
@@ -175,17 +185,7 @@
   lexSelect.addEventListener('change', update);
   lenSelect.addEventListener('change', update);
   update();
-
-  // Render the stored elapsed times.
-  Array.prototype.forEach.call(
-    document.querySelectorAll('[data-elapsed-ms]'), function (cell) {
-      var total = Math.floor(parseInt(cell.getAttribute('data-elapsed-ms'), 10) / 1000);
-      var h = Math.floor(total / 3600);
-      var m = Math.floor((total % 3600) / 60);
-      var s = total % 60;
-      cell.textContent = h + ':' + String(m).padStart(2, '0') + ':' +
-        String(s).padStart(2, '0');
-    });
 }());
 </script>
+{% include "wordwalls/_infinite_elapsed.html" %}
 {% endblock %}

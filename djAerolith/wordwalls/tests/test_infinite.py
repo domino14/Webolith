@@ -26,6 +26,7 @@ from lib.domain import Alphagram, Question, Questions, Word
 from wordwalls.infinite_game import (
     InfiniteWallError,
     InfiniteWallGame,
+    finishers,
     leaderboards,
 )
 from wordwalls.infinite_models import InfiniteWall, InfiniteWallChunk
@@ -383,12 +384,12 @@ class InfiniteWallCreationTest(InfiniteWallTestBase):
         self.assertEqual(wall.solved_count, 0)
 
     def test_create_rejects_bad_length(self):
-        for length in (3, 10, 0):
+        for length in (2, 10, 0):
             with self.assertRaises(InfiniteWallError):
                 self.game.create(self.user, self.lexicon, length)
 
     def test_every_supported_length_builds(self):
-        for length in (4, 5, 6, 7, 8, 9):
+        for length in (3, 4, 5, 6, 7, 8, 9):
             wall = self.game.create(self.user, self.lexicon, length)
             self.assertGreater(wall.num_alphagrams, 0)
             geometry = self.game.geometry(wall)
@@ -880,6 +881,118 @@ class LeaderboardTest(InfiniteWallTestBase):
     def test_carries_the_wall_size_for_context(self):
         self.finish(self.user, self.lexicon, 7, 1000)
         self.assertEqual(leaderboards()[0]["num_alphagrams"], 24)
+
+
+    def test_summary_counts_every_player_beyond_the_top(self):
+        for i in range(12):
+            user = User.objects.create_user(f"p{i}", f"p{i}@x.com", "pw")
+            self.finish(user, self.lexicon, 7, 1000 * (i + 1))
+        # A repeat run by the same player is still one player.
+        self.finish(User.objects.get(username="p0"), self.lexicon, 7, 500)
+
+        board = leaderboards(limit=10)[0]
+        self.assertEqual(board["players"], 12)
+        self.assertEqual(len(board["entries"]), 10)
+        self.assertEqual(board["lexicon_id"], self.lexicon.pk)
+
+    def test_finishers_lists_everyone_once_with_their_best_run(self):
+        for i in range(15):
+            user = User.objects.create_user(f"f{i}", f"f{i}@x.com", "pw")
+            self.finish(user, self.lexicon, 7, 1000 * (15 - i))
+            self.finish(user, self.lexicon, 7, 999999)
+
+        rows = list(finishers(self.lexicon.pk, 7))
+        self.assertEqual(len(rows), 15)
+        self.assertEqual(len({w.user_id for w in rows}), 15)
+        self.assertEqual(
+            [w.elapsed_ms for w in rows], [1000 * (i + 1) for i in range(15)]
+        )
+
+    def test_finishers_breaks_a_tie_by_who_finished_first(self):
+        late = User.objects.create_user("late", "l@x.com", "pw")
+        early = User.objects.create_user("early", "e@x.com", "pw")
+        self.finish(late, self.lexicon, 7, 5000, days_ago=1)
+        self.finish(early, self.lexicon, 7, 5000, days_ago=3)
+        self.assertEqual(
+            [w.user.username for w in finishers(self.lexicon.pk, 7)],
+            ["early", "late"],
+        )
+
+    def test_finishers_keeps_boards_apart(self):
+        self.finish(self.user, self.lexicon, 7, 1000)
+        self.finish(self.other_user, self.lexicon, 8, 1000)
+        self.assertEqual(
+            [w.user_id for w in finishers(self.lexicon.pk, 7)], [self.user.pk]
+        )
+
+    def test_threes_get_a_board(self):
+        self.finish(self.user, self.lexicon, 3, 1000)
+        self.assertEqual(leaderboards()[0]["word_length"], 3)
+
+
+class LeaderboardPageTest(InfiniteWallTestBase):
+    """The full, paginated board for one wall type."""
+
+    finish = LeaderboardTest.finish
+
+    def url(self, length=7, page=None):
+        base = reverse("infinite_leaderboard", args=(self.lexicon.pk, length))
+        return base + ("?page={0}".format(page) if page else "")
+
+    def add_players(self, count):
+        for i in range(count):
+            user = User.objects.create_user(f"r{i:03d}", f"r{i}@x.com", "pw")
+            self.finish(user, self.lexicon, 7, 1000 * (i + 1))
+
+    def test_requires_login(self):
+        self.assertEqual(self.client.get(self.url()).status_code, 302)
+
+    def test_pages_through_everyone(self):
+        self.add_players(55)
+        self.client.force_login(self.user)
+
+        first = self.client.get(self.url())
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual([e["rank"] for e in first.context["entries"]], list(range(1, 51)))
+        self.assertContains(first, "55 players have cleared this wall")
+        self.assertContains(first, "?page=2")
+
+        second = self.client.get(self.url(page=2))
+        entries = second.context["entries"]
+        self.assertEqual([e["rank"] for e in entries], list(range(51, 56)))
+        self.assertEqual(entries[-1]["username"], "r054")
+
+    def test_a_bad_page_number_falls_back_rather_than_erroring(self):
+        self.add_players(3)
+        self.client.force_login(self.user)
+        for page in ("99", "abc", "-1"):
+            response = self.client.get(self.url(page=page))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response.context["entries"]), 3)
+
+    def test_highlights_your_own_row(self):
+        self.finish(self.user, self.lexicon, 7, 1000)
+        self.client.force_login(self.user)
+        self.assertContains(self.client.get(self.url()), 'class="info"')
+
+    def test_empty_board(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url(length=3))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Nobody has cleared this wall yet")
+
+    def test_unknown_wall_types_404(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.get(self.url(length=12)).status_code, 404)
+        missing = reverse("infinite_leaderboard", args=(999999, 7))
+        self.assertEqual(self.client.get(missing).status_code, 404)
+
+    def test_picker_links_to_the_full_board(self):
+        self.add_players(12)
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("infinite_picker"))
+        self.assertContains(response, self.url())
+        self.assertContains(response, "All 12 players")
 
 
 class InfiniteWallViewTest(InfiniteWallTestBase):

@@ -1,0 +1,14 @@
+<script>
+(function () {
+  // Render stored elapsed times (ms) as h:mm:ss.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('[data-elapsed-ms]'), function (cell) {
+      var total = Math.floor(parseInt(cell.getAttribute('data-elapsed-ms'), 10) / 1000);
+      var h = Math.floor(total / 3600);
+      var m = Math.floor((total % 3600) / 60);
+      var s = total % 60;
+      cell.textContent = h + ':' + String(m).padStart(2, '0') + ':' +
+        String(s).padStart(2, '0');
+    });
+}());
+</script>

@@ -16,6 +16,7 @@ from contextlib import contextmanager
 from math import ceil
 
 from django.db import transaction
+from django.db.models import Count, Max
 from django.utils import timezone
 
 from lib.wdb_interface.wdb_helper import (
@@ -541,54 +542,78 @@ class InfiniteWallGame:
 LEADERBOARD_SIZE = 10
 
 
-def leaderboards(limit: int = LEADERBOARD_SIZE):
+def finishers(lexicon_id, word_length):
     """
-    One board per (lexicon, word length), fastest run first.
+    Every player who has cleared this wall type, fastest first.
+
+    One row per player -- their best run, the earliest one on a tie -- picked in
+    the database with DISTINCT ON, so a board pages cleanly however many
+    players it holds.
 
     Reads only finished walls. Their elapsed_ms was frozen at completion and
     resumed_at cleared, so -- unlike a wall still in progress -- there is no
     stale clock to reap here and the stored number can be trusted as-is.
-
-    A player who clears the same wall type more than once appears once, with
-    their best time: the query is ordered by elapsed_ms, so the first row seen
-    for a user is already their fastest.
     """
-    boards = {}
-    rows = (
-        InfiniteWall.objects.filter(
-            state=InfiniteWall.DONE, completed__isnull=False
-        )
-        .select_related("user", "lexicon")
-        .order_by("elapsed_ms", "completed")
+    done = InfiniteWall.objects.filter(
+        state=InfiniteWall.DONE,
+        completed__isnull=False,
+        lexicon_id=lexicon_id,
+        word_length=word_length,
     )
-    for wall in rows:
-        key = (wall.lexicon_id, wall.word_length)
-        board = boards.setdefault(
-            key,
-            {
-                "lexicon": wall.lexicon.lexiconName,
-                "word_length": wall.word_length,
-                "num_alphagrams": wall.num_alphagrams,
-                "entries": [],
-                "_seen": set(),
-            },
-        )
-        if wall.user_id in board["_seen"] or len(board["entries"]) >= limit:
-            continue
-        board["_seen"].add(wall.user_id)
-        board["entries"].append(
-            {
-                "rank": len(board["entries"]) + 1,
-                "username": wall.user.username,
-                "elapsed_ms": wall.elapsed_ms,
-                "completed": wall.completed,
-            }
-        )
+    best = (
+        done.order_by("user_id", "elapsed_ms", "completed", "pk")
+        .distinct("user_id")
+        .values("pk")
+    )
+    return (
+        InfiniteWall.objects.filter(pk__in=best)
+        .select_related("user")
+        .order_by("elapsed_ms", "completed", "pk")
+    )
 
-    ordered = sorted(boards.values(), key=lambda b: (b["lexicon"], b["word_length"]))
-    for board in ordered:
-        del board["_seen"]
-    return ordered
+
+def ranked_entries(walls, first_rank=1):
+    """Leaderboard rows for a slice of finishers(); ranks follow the slice."""
+    return [
+        {
+            "rank": first_rank + i,
+            "username": wall.user.username,
+            "elapsed_ms": wall.elapsed_ms,
+            "completed": wall.completed,
+        }
+        for i, wall in enumerate(walls)
+    ]
+
+
+def leaderboards(limit: int = LEADERBOARD_SIZE):
+    """
+    One summary board per (lexicon, word length) that anyone has cleared.
+
+    Each carries its top `limit` players and the total player count, so the
+    picker can link to the full, paginated board when there are more.
+    """
+    boards = (
+        InfiniteWall.objects.filter(state=InfiniteWall.DONE, completed__isnull=False)
+        .values("lexicon_id", "lexicon__lexiconName", "word_length")
+        .annotate(
+            players=Count("user_id", distinct=True),
+            num_alphagrams=Max("num_alphagrams"),
+        )
+        .order_by("lexicon__lexiconName", "word_length")
+    )
+    return [
+        {
+            "lexicon_id": board["lexicon_id"],
+            "lexicon": board["lexicon__lexiconName"],
+            "word_length": board["word_length"],
+            "num_alphagrams": board["num_alphagrams"],
+            "players": board["players"],
+            "entries": ranked_entries(
+                finishers(board["lexicon_id"], board["word_length"])[:limit]
+            ),
+        }
+        for board in boards
+    ]
 
 
 @contextmanager

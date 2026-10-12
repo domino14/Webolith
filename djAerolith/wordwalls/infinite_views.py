@@ -6,18 +6,22 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.core.paginator import Paginator
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 
 from base.models import EXCLUDED_LEXICA, Lexicon
 from wordwalls.infinite_game import (
+    LEADERBOARD_SIZE,
     InfiniteWallError,
     InfiniteWallGame,
+    finishers,
     leaderboards,
     locked_wall,
+    ranked_entries,
 )
 from wordwalls.infinite_models import InfiniteWall
 from wordwalls.infinite_perm import DEFAULT_CHUNK_SIZE, VALID_WORD_LENGTHS
@@ -102,9 +106,42 @@ def picker(request):
             # So the page's size hint can't drift from the real rectangle size.
             "chunk_size": DEFAULT_CHUNK_SIZE,
             "leaderboards": leaderboards(),
+            "leaderboard_size": LEADERBOARD_SIZE,
             # Only preselects the dropdown, so a user without a profile row
             # should still get the page rather than a 500.
             "default_lexicon": _default_lexicon_pk(request.user),
+        },
+    )
+
+
+LEADERBOARD_PAGE_SIZE = 50
+
+
+@login_required
+@require_GET
+def leaderboard(request, lexicon_id, word_length):
+    """Everyone who has cleared one wall type, fastest first, paginated."""
+    lexicon = get_object_or_404(Lexicon, pk=lexicon_id)
+    word_length = int(word_length)
+    if word_length not in VALID_WORD_LENGTHS:
+        raise Http404("No such wall type.")
+
+    page = Paginator(
+        finishers(lexicon.pk, word_length), LEADERBOARD_PAGE_SIZE
+    ).get_page(request.GET.get("page"))
+    walls = list(page.object_list)
+    entries = ranked_entries(walls, page.start_index())
+
+    return render(
+        request,
+        "wordwalls/infinite_leaderboard.html",
+        {
+            "lexicon": lexicon,
+            "word_length": word_length,
+            "num_alphagrams": walls[0].num_alphagrams if walls else None,
+            "page": page,
+            "entries": entries,
+            "elided_pages": page.paginator.get_elided_page_range(page.number),
         },
     )
 

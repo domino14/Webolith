@@ -23,6 +23,7 @@ from wordwalls.rpc import table_rpc
 from wordwalls.infinite_rpc import wall_rpc
 from wordwalls.infinite_views import (
     beacon_pause,
+    leaderboard as infinite_leaderboard,
     new_wall,
     picker,
     wall as infinite_wall_view,
@@ -37,6 +38,11 @@ urlpatterns = [
     re_path(r"^table/(?P<tableid>\d+)/missed/$", mark_missed),
     re_path(r"^infinite/$", picker, name="infinite_picker"),
     re_path(r"^infinite/new/$", new_wall, name="infinite_new"),
+    re_path(
+        r"^infinite/leaderboard/(?P<lexicon_id>\d+)/(?P<word_length>\d+)/$",
+        infinite_leaderboard,
+        name="infinite_leaderboard",
+    ),
     re_path(
         r"^infinite/(?P<wall_id>\d+)/$", infinite_wall_view, name="infinite_wall"
     ),

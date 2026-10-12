@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% blocktrans with lex=lexicon.lexiconName %}Great Wall {{ lex }} {{ word_length }}s{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <p><a href="{% url 'infinite_picker' %}">&larr; {% trans "The Great Wall" %}</a></p>
+
+  <h2>
+    {{ lexicon.lexiconName }} {{ word_length }}s
+    {% if num_alphagrams %}
+      <small class="text-muted">({{ num_alphagrams }} {% trans "alphagrams" %})</small>
+    {% endif %}
+  </h2>
+
+  {% if entries %}
+    <p class="text-muted">
+      {% blocktrans count players=page.paginator.count %}{{ players }} player has cleared this wall.{% plural %}{{ players }} players have cleared this wall.{% endblocktrans %}
+      {% trans "One entry per player, their best time." %}
+    </p>
+
+    <table class="table table-condensed" style="max-width: 46em;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{% trans "Player" %}</th>
+          <th>{% trans "Time" %}</th>
+          <th>{% trans "Finished" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr{% if entry.username == user.username %} class="info"{% endif %}>
+            <td>{{ entry.rank }}</td>
+            <td>{{ entry.username }}</td>
+            <td data-elapsed-ms="{{ entry.elapsed_ms }}">&ndash;</td>
+            <td class="text-muted">{{ entry.completed|date:"M j, Y" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if page.has_other_pages %}
+      <ul class="pagination">
+        {% if page.has_previous %}
+          <li><a href="?page={{ page.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for number in elided_pages %}
+          {% if number == page.paginator.ELLIPSIS %}
+            <li class="disabled"><span>&hellip;</span></li>
+          {% elif number == page.number %}
+            <li class="active"><span>{{ number }}</span></li>
+          {% else %}
+            <li><a href="?page={{ number }}">{{ number }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if page.has_next %}
+          <li><a href="?page={{ page.next_page_number }}">&raquo;</a></li>
+        {% else %}
+          <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <p class="text-muted">{% trans "Nobody has cleared this wall yet. Be the first." %}</p>
+  {% endif %}
+</div>
+{% include "wordwalls/_infinite_elapsed.html" %}
+{% endblock %}
