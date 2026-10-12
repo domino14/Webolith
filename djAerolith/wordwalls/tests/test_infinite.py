@@ -9,13 +9,15 @@ unlike test_game_logic.py, which talks to the real service.
 import base64
 import importlib
 import logging
+from io import StringIO
 from datetime import timedelta
 from math import ceil
 from unittest import mock
 
-from django.apps import apps
 from django.contrib.auth.models import User
+from django.core.management import CommandError, call_command
 from django.db import connection
+from django.db.migrations.loader import MigrationLoader
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
@@ -1252,13 +1254,40 @@ class InfiniteWallProgressStorageTest(InfiniteWallTestBase):
 
 
 class LegacyProgressMergeTest(InfiniteWallTestBase):
-    """Migration 0019's merge of the old wall bitmap and word lists."""
+    """
+    The legacy-progress merge that 0019 ran and 0020 reruns.
+
+    The live models no longer have solved_bitmap/solved_words, but the columns
+    stay in the database until 0021, so legacy rows are written through the
+    historical models as of 0019 -- the same models the migrations hand it.
+    """
 
     merge = staticmethod(
         importlib.import_module(
             "wordwalls.migrations.0019_infinitewallchunk_progress_masks"
         ).merge_legacy_progress
     )
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.legacy_apps = (
+            MigrationLoader(connection)
+            .project_state(("wordwalls", "0019_infinitewallchunk_progress_masks"))
+            .apps
+        )
+        cls.LegacyWall = cls.legacy_apps.get_model("wordwalls", "InfiniteWall")
+        cls.LegacyChunk = cls.legacy_apps.get_model("wordwalls", "InfiniteWallChunk")
+
+    def set_legacy_bitmap(self, wall, solved_cells):
+        legacy = self.LegacyWall.objects.get(pk=wall.pk)
+        bitmap = bytearray(bytes(legacy.solved_bitmap) or bitmap_size(wall.num_alphagrams))
+        for g in solved_cells:
+            set_bit(bitmap, g)
+        legacy.solved_bitmap = bytes(bitmap)
+        legacy.solved_count += len(solved_cells)
+        legacy.save(update_fields=["solved_bitmap", "solved_count"])
+        wall.refresh_from_db()
 
     def legacy_chunk(self, wall, chunk_index, solved_cells, solved_words):
         """A rectangle as the old code left it: progress only in legacy fields."""
@@ -1269,21 +1298,16 @@ class LegacyProgressMergeTest(InfiniteWallTestBase):
             {"g": g, "q": "Q{0}".format(g), "a": ["A{0}".format(g), "B{0}".format(g)]}
             for g in cells
         ]
-        bitmap = bytearray(wall.solved_bitmap or bitmap_size(wall.num_alphagrams))
-        for g in solved_cells:
-            set_bit(bitmap, g)
-        wall.solved_bitmap = bytes(bitmap)
-        wall.solved_count += len(solved_cells)
-        wall.save()
-        return InfiniteWallChunk.objects.create(
-            wall=wall,
+        self.set_legacy_bitmap(wall, solved_cells)
+        return self.LegacyChunk.objects.create(
+            wall_id=wall.pk,
             chunk_index=chunk_index,
             answers=answers,
             solved_words=solved_words,
         )
 
     def run_merge(self):
-        self.merge(apps, None)
+        self.merge(self.legacy_apps, None)
 
     def test_moves_cells_and_words_onto_the_rectangle(self):
         wall = self.make_wall(300)
@@ -1350,11 +1374,7 @@ class LegacyProgressMergeTest(InfiniteWallTestBase):
         wall.chunk_w, wall.chunk_h = 5, 20
         wall.save()
         size = 100
-        bitmap = bytearray(bitmap_size(300))
-        set_bit(bitmap, 205)
-        wall.solved_bitmap = bytes(bitmap)
-        wall.solved_count = 1
-        wall.save()
+        self.set_legacy_bitmap(wall, {205})
         InfiniteWallChunk.objects.create(
             wall=wall,
             chunk_index=2,
@@ -1364,3 +1384,46 @@ class LegacyProgressMergeTest(InfiniteWallTestBase):
         chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=2)
         self.assertTrue(get_bit(bytes(chunk.solved_cells), 205 - 2 * size))
         self.assertTrue(self.cell_solved(wall, 205))
+
+    def test_new_code_inserts_leave_the_legacy_columns_defaulted(self):
+        # 0020 took the fields out of the models, so inserts no longer name the
+        # columns; the database defaults keep NOT NULL satisfied until 0021.
+        self.patch_wdb()
+        wall = self.game.create(self.user, self.lexicon, 7)
+        self.game.resume(wall)
+        self.game.load_chunk(wall, 0)
+        self.assertEqual(bytes(self.LegacyWall.objects.get(pk=wall.pk).solved_bitmap), b"")
+        self.assertEqual(
+            self.LegacyChunk.objects.get(wall_id=wall.pk, chunk_index=0).solved_words, []
+        )
+
+    def test_code_that_still_names_the_legacy_columns_keeps_working(self):
+        # Pods running pre-0020 code during the deploy still read and write them.
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 0, {3}, ["A3", "B3"])
+        legacy = self.LegacyWall.objects.get(pk=wall.pk)
+        self.assertTrue(get_bit(bytes(legacy.solved_bitmap), 3))
+
+    def test_check_command_passes_once_merged(self):
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 1, {130}, ["A130", "B130"])
+        self.run_merge()
+        out = StringIO()
+        call_command("check_great_wall_storage", stdout=out)
+        self.assertIn("legacy columns: bitmap=True words=True", out.getvalue())
+        self.assertIn("no problems found", out.getvalue())
+
+    def test_check_command_catches_progress_missing_from_the_masks(self):
+        # Legacy progress written after the merge ran, i.e. what 0020's rerun is
+        # for -- the check must flag it until it has been merged.
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 1, {130}, ["A130", "B130"])
+        self.run_merge()
+        self.set_legacy_bitmap(wall, {131})
+        self.LegacyChunk.objects.filter(wall_id=wall.pk, chunk_index=1).update(
+            solved_words=["A130", "B130", "A131", "B131"]
+        )
+        with self.assertRaises(CommandError):
+            call_command("check_great_wall_storage", stdout=StringIO())
+        self.run_merge()
+        call_command("check_great_wall_storage", stdout=StringIO())

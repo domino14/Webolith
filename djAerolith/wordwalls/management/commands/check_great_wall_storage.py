@@ -1,29 +1,53 @@
 """
 Read-only consistency check for Great Wall progress storage.
 
-Run it after migration 0019 and again before 0020 drops the legacy columns.
-While InfiniteWall.solved_bitmap still exists it is the reference copy: every
-legacy bit must also be set in the rectangles' new masks (new progress may add
-bits, never remove them). Exits non-zero if anything is wrong.
+Run it after migration 0019 and again before 0021 drops the legacy columns.
+While the solved_bitmap and solved_words columns still exist they are the
+reference copy: every legacy bit and found word must also be set in the
+rectangles' new masks (new progress may add bits, never remove them). They are
+read straight from the database, since 0020 took them out of the models.
+Exits non-zero if anything is wrong.
 """
 
+import json
+
 from django.core.management.base import BaseCommand, CommandError
+from django.db import connection
 
 from wordwalls.infinite_game import InfiniteWallGame
 from wordwalls.infinite_models import InfiniteWall, InfiniteWallChunk
 from wordwalls.infinite_perm import assemble_bitmap, get_bit, popcount, word_bits
 
 
-def _has_field(model, name):
-    return any(f.name == name for f in model._meta.get_fields())
+def _legacy_column(model, column, key_columns):
+    """
+    {key: value} for a legacy column, or None once 0021 has dropped it.
+
+    Raw SQL because the models no longer declare these columns.
+    """
+    table = model._meta.db_table
+    with connection.cursor() as cursor:
+        names = {
+            col.name for col in connection.introspection.get_table_description(cursor, table)
+        }
+        if column not in names:
+            return None
+        cursor.execute(
+            "SELECT {0}, {1} FROM {2}".format(", ".join(key_columns), column, table)
+        )
+        return {tuple(row[:-1]): row[-1] for row in cursor.fetchall()}
 
 
 class Command(BaseCommand):
     help = "Check Great Wall progress storage for lost or inconsistent progress"
 
     def handle(self, *args, **options):
-        legacy_bitmap = _has_field(InfiniteWall, "solved_bitmap")
-        legacy_words = _has_field(InfiniteWallChunk, "solved_words")
+        legacy_bitmaps = _legacy_column(InfiniteWall, "solved_bitmap", ["id"])
+        legacy_word_lists = _legacy_column(
+            InfiniteWallChunk, "solved_words", ["wall_id", "chunk_index"]
+        )
+        legacy_bitmap = legacy_bitmaps is not None
+        legacy_words = legacy_word_lists is not None
         game = InfiniteWallGame()
         problems = []
         walls = chunks = pruned = 0
@@ -44,7 +68,9 @@ class Command(BaseCommand):
             bits = new.bit_count()
 
             if legacy_bitmap:
-                old = int.from_bytes(bytes(wall.solved_bitmap or b""), "little")
+                old = int.from_bytes(
+                    bytes(legacy_bitmaps.get((wall.pk,)) or b""), "little"
+                )
                 lost = (old & ~new).bit_count()
                 if lost:
                     problems.append(
@@ -85,7 +111,10 @@ class Command(BaseCommand):
                 found = {w for w, (bit, _e) in numbered.items() if get_bit(word_mask, bit)}
 
                 if legacy_words:
-                    missing = set(chunk.solved_words or []) - found
+                    words = legacy_word_lists.get((wall.pk, chunk.chunk_index)) or []
+                    if isinstance(words, str):
+                        words = json.loads(words)
+                    missing = set(words) - found
                     if missing:
                         problems.append(
                             "{0}: {1} legacy found words missing".format(

@@ -43,11 +43,6 @@ class InfiniteWall(models.Model):
     seed = models.BigIntegerField()
 
     state = models.CharField(max_length=1, choices=STATES, default=NOT_STARTED)
-    # Legacy: the old wall-wide progress bitmap, rewritten in full on every
-    # solve. Superseded by InfiniteWallChunk.solved_cells and no longer read or
-    # written; kept only so migration 0020 can merge in anything written by the
-    # old code mid-deploy before dropping it.
-    solved_bitmap = models.BinaryField(default=b"")
     # Kept in step with the rectangles' solved_cells, so completion and the
     # picker's percentage never need to scan them.
     solved_count = models.IntegerField(default=0)
@@ -111,9 +106,9 @@ class InfiniteWallChunk(models.Model):
     answers = models.JSONField()
     solved_cells = models.BinaryField(default=b"")
     solved_word_bits = models.BinaryField(default=b"")
-    # Legacy: found words as a list of strings. Superseded by solved_word_bits;
-    # dropped in 0020 alongside InfiniteWall.solved_bitmap.
-    solved_words = models.JSONField(default=list)
+    # The legacy solved_bitmap (on the wall) and solved_words (here) columns
+    # still exist in the database until migration 0021 drops them; 0020 took
+    # them out of the models so no running code names them by then.
 
     class Meta:
         unique_together = ("wall", "chunk_index")
