@@ -1105,6 +1105,24 @@ class InfiniteWallProgressStorageTest(InfiniteWallTestBase):
         for g in payload["solvedCells"]:
             self.assertTrue(self.cell_solved(wall, g))
 
+    def test_old_code_can_still_insert_rectangles(self):
+        """
+        Pre-0019 pods keep serving until the rollout finishes. Their inserts
+        don't name the new columns, which must therefore default in the
+        database, not just in Django.
+        """
+        wall = self.make_wall(200)
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO wordwalls_infinitewallchunk "
+                "(wall_id, chunk_index, answers, solved_words) "
+                "VALUES (%s, 0, %s, %s)",
+                [wall.pk, '[{"g": 0, "q": "NRU", "a": ["RUN"]}]', '["RUN"]'],
+            )
+        chunk = InfiniteWallChunk.objects.get(wall=wall, chunk_index=0)
+        self.assertEqual(bytes(chunk.solved_cells), b"")
+        self.assertEqual(bytes(chunk.solved_word_bits), b"")
+
     def test_guessing_into_a_row_with_empty_masks_works(self):
         # A rectangle row the pre-0019 code created mid-deploy has b"" masks.
         wall = self.make_wall(200)
