@@ -1427,3 +1427,36 @@ class LegacyProgressMergeTest(InfiniteWallTestBase):
             call_command("check_great_wall_storage", stdout=StringIO())
         self.run_merge()
         call_command("check_great_wall_storage", stdout=StringIO())
+
+
+class RerunMergeTest(LegacyProgressMergeTest):
+    """
+    Every case above against 0020's merge, which runs while players are guessing.
+    """
+
+    merge = staticmethod(
+        importlib.import_module(
+            "wordwalls.migrations.0020_remove_legacy_progress_from_state"
+        ).merge_legacy_progress
+    )
+
+    def test_is_not_atomic(self):
+        # One transaction over the whole merge deadlocked with live guesses.
+        migration = importlib.import_module(
+            "wordwalls.migrations.0020_remove_legacy_progress_from_state"
+        ).Migration
+        self.assertFalse(migration.atomic)
+
+    def test_locks_each_wall_and_writes_nothing_already_merged(self):
+        wall = self.make_wall(300)
+        self.legacy_chunk(wall, 0, {5}, ["A5", "B5"])
+        self.legacy_chunk(wall, 2, set(range(256, 300)), [])
+        self.run_merge()
+
+        with CaptureQueriesContext(connection) as ctx:
+            self.run_merge()
+        sql = [q["sql"] for q in ctx.captured_queries]
+        self.assertEqual([s for s in sql if s.startswith("UPDATE")], [])
+        locks = [s for s in sql if "FOR UPDATE" in s]
+        self.assertEqual(len(locks), 1)
+        self.assertIn("wordwalls_infinitewall", locks[0])
