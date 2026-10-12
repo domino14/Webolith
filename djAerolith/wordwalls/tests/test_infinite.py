@@ -9,6 +9,7 @@ unlike test_game_logic.py, which talks to the real service.
 import base64
 import importlib
 import logging
+import threading
 from io import StringIO
 from datetime import timedelta
 from math import ceil
@@ -18,7 +19,7 @@ from django.contrib.auth.models import User
 from django.core.management import CommandError, call_command
 from django.db import connection
 from django.db.migrations.loader import MigrationLoader
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase, TestCase, TransactionTestCase
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
@@ -1460,3 +1461,69 @@ class RerunMergeTest(LegacyProgressMergeTest):
         locks = [s for s in sql if "FOR UPDATE" in s]
         self.assertEqual(len(locks), 1)
         self.assertIn("wordwalls_infinitewall", locks[0])
+
+
+class StorageCheckSnapshotTest(TransactionTestCase):
+    """
+    The check runs against live prod, so a guess can land mid-check.
+
+    TransactionTestCase because the check sets its isolation level, which only
+    works as the first statement of a real transaction, and the concurrent
+    guess must commit from another connection.
+    """
+
+    fixtures = InfiniteWallTestBase.fixtures
+
+    def test_a_guess_landing_mid_check_is_not_a_problem(self):
+        wall = InfiniteWall.objects.create(
+            user=User.objects.get(username="cesar"),
+            lexicon=Lexicon.objects.get(lexiconName="NWL23"),
+            word_length=7,
+            num_alphagrams=300,
+            chunk_w=DEFAULT_CHUNK_W,
+            chunk_h=DEFAULT_CHUNK_H,
+            chunk_cols=1,
+            seed=4242,
+            state=InfiniteWall.RUNNING,
+            resumed_at=timezone.now(),
+        )
+        InfiniteWallChunk.objects.create(
+            wall=wall,
+            chunk_index=0,
+            answers=[{"g": g, "q": "Q", "a": ["W{0}".format(g)]} for g in range(128)],
+            solved_cells=bytes(DEFAULT_CHUNK_SIZE // 8),
+            solved_word_bits=bytes(DEFAULT_CHUNK_SIZE // 8),
+        )
+
+        def guess_from_another_connection():
+            # What a guess commits: the word, its cell, and the count.
+            try:
+                cells = bytearray(DEFAULT_CHUNK_SIZE // 8)
+                set_bit(cells, 0)
+                InfiniteWallChunk.objects.filter(wall=wall).update(
+                    solved_cells=bytes(cells), solved_word_bits=bytes(cells)
+                )
+                InfiniteWall.objects.filter(pk=wall.pk).update(solved_count=1)
+            finally:
+                connection.close()
+
+        real_geometry = InfiniteWallGame.geometry
+
+        def geometry_then_guess(game, w):
+            # The check has read the wall row and is about to read its
+            # rectangles: the moment the race used to bite.
+            thread = threading.Thread(target=guess_from_another_connection)
+            thread.start()
+            thread.join()
+            return real_geometry(game, w)
+
+        out = StringIO()
+        with mock.patch.object(InfiniteWallGame, "geometry", geometry_then_guess):
+            call_command("check_great_wall_storage", stdout=out)
+        self.assertIn("no problems found", out.getvalue())
+
+        # The guess did commit, and the next check sees all of it.
+        out = StringIO()
+        call_command("check_great_wall_storage", stdout=out)
+        self.assertIn("no problems found", out.getvalue())
+        self.assertEqual(InfiniteWall.objects.get(pk=wall.pk).solved_count, 1)
