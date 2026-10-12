@@ -1009,7 +1009,7 @@ class InfiniteWallViewTest(InfiniteWallTestBase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("infinite_picker"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Build the wall")
+        self.assertContains(response, "Start chipping away")
         self.assertContains(response, "Nobody has cleared a wall yet")
 
     def test_picker_lists_your_walls_and_the_leaderboard(self):
