@@ -120,6 +120,20 @@ class Migration(migrations.Migration):
             name="solved_word_bits",
             field=models.BinaryField(default=b""),
         ),
+        # AddField's default only backfills existing rows; Django 4.2 then
+        # drops it from the column. Old pods keep serving until the rollout
+        # finishes (and indefinitely if it fails), and their inserts don't
+        # name these columns -- so without a database default, opening a
+        # new rectangle there would hit the NOT NULL. Empty masks are what
+        # the new code expects anyway, and 0020 merges what those pods wrote.
+        migrations.RunSQL(
+            "ALTER TABLE wordwalls_infinitewallchunk "
+            "ALTER COLUMN solved_cells SET DEFAULT ''::bytea, "
+            "ALTER COLUMN solved_word_bits SET DEFAULT ''::bytea",
+            "ALTER TABLE wordwalls_infinitewallchunk "
+            "ALTER COLUMN solved_cells DROP DEFAULT, "
+            "ALTER COLUMN solved_word_bits DROP DEFAULT",
+        ),
         # Toast any row over 128 bytes, so answers (still compressed) always
         # sits out of line and a guess, which rewrites only the small progress
         # columns, never copies it. STORAGE EXTERNAL would do the same but give
