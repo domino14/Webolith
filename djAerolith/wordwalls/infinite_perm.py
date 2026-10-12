@@ -135,6 +135,57 @@ def set_bit(buf: bytearray, g: int) -> None:
     buf[g >> 3] |= 1 << (g & 7)
 
 
+def padded(buf, nbits: int) -> bytearray:
+    """A mutable copy of a bitmask, zero-extended to hold at least nbits."""
+    out = bytearray(buf)
+    if len(out) < bitmap_size(nbits):
+        out.extend(bytes(bitmap_size(nbits) - len(out)))
+    return out
+
+
+def popcount(buf) -> int:
+    return int.from_bytes(bytes(buf), "little").bit_count()
+
+
+def word_bits(answers):
+    """
+    Word -> (bit, entry) for a rectangle's stored answers.
+
+    Words are numbered in `answers` order, which is fixed once the rectangle is
+    materialized, so the numbering is stable for the life of the row.
+    """
+    bits = {}
+    for entry in answers:
+        for word in entry["a"]:
+            bits[word] = (len(bits), entry)
+    return bits
+
+
+def assemble_bitmap(n: int, chunk_size: int, masks) -> bytes:
+    """
+    Build the wall-wide bitmap the client draws from per-rectangle masks.
+
+    `masks` yields (chunk_index, solved_cells). Rectangles are disjoint, so when
+    they are byte-aligned (every default shape is) each mask is a straight copy;
+    an older unaligned shape falls back to setting bits one at a time.
+    """
+    buf = bytearray(bitmap_size(n))
+    for chunk_index, mask in masks:
+        mask = bytes(mask)
+        base = chunk_index * chunk_size
+        if chunk_size % 8 == 0:
+            start = base >> 3
+            piece = mask[: max(0, len(buf) - start)]
+            buf[start : start + len(piece)] = piece
+            continue
+        for byte_index, byte in enumerate(mask):
+            for bit in range(8):
+                g = base + (byte_index << 3) + bit
+                if (byte >> bit) & 1 and g < n:
+                    set_bit(buf, g)
+    return bytes(buf)
+
+
 def _round_fn(seed: int, rnd: int, x: int, half_bits: int) -> int:
     """Keyed round function. blake2b so the mapping is stable across versions."""
     digest = hashlib.blake2b(

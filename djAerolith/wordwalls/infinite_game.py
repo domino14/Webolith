@@ -4,7 +4,8 @@ Game logic for the Great Wall.
 Shaped like wordwalls.game.WordwallsGame -- a stateless service object whose
 methods each take a lock on the row they mutate -- but with a very different state
 model. There is no question cursor and no materialized list: the alphagram in a
-cell is derived from (seed, cell) on demand, and progress is a bitmap.
+cell is derived from (seed, cell) on demand, and progress is a small bitmask on
+each visited rectangle's row.
 """
 
 import base64
@@ -29,10 +30,14 @@ from wordwalls.infinite_perm import (
     VALID_WORD_LENGTHS,
     WallGeometry,
     WallPermutation,
+    assemble_bitmap,
     bitmap_size,
     chunk_cols_for,
     get_bit,
+    padded,
+    popcount,
     set_bit,
+    word_bits,
 )
 
 logger = logging.getLogger(__name__)
@@ -87,7 +92,6 @@ class InfiniteWallGame:
             ),
             # Positive so it always round-trips through a signed BIGINT.
             seed=random.SystemRandom().getrandbits(62),
-            solved_bitmap=bytes(bitmap_size(n)),
         )
         logger.info(
             "event=infinite_wall_created wall=%s user=%s lexicon=%s length=%s n=%s",
@@ -232,7 +236,18 @@ class InfiniteWallGame:
         return detail
 
     def bitmap(self, wall: InfiniteWall) -> dict:
-        payload = {"solvedBitmap": base64.b64encode(bytes(wall.solved_bitmap)).decode()}
+        """
+        The wall-wide bitmap, assembled from the rectangles' own masks.
+
+        values_list reads just the two small columns, so the out-of-line answers
+        are never fetched. A wall has at most n / chunk_size rectangle rows.
+        """
+        masks = InfiniteWallChunk.objects.filter(wall=wall).values_list(
+            "chunk_index", "solved_cells"
+        )
+        geometry = self.geometry(wall)
+        bitmap = assemble_bitmap(geometry.n, geometry.chunk_size, masks)
+        payload = {"solvedBitmap": base64.b64encode(bitmap).decode()}
         payload.update(self.wall_status(wall))
         return payload
 
@@ -265,9 +280,22 @@ class InfiniteWallGame:
             wall.active_chunk = chunk_index
             wall.save(update_fields=["active_chunk", "last_activity"])
 
+        solved = self._solved_words(chunk)
+        base = chunk_index * geometry.chunk_size
+        cell_mask = padded(chunk.solved_cells, geometry.chunk_size)
         payload = {
             "chunk": chunk_index,
-            "questions": self._question_packets(wall, chunk, hydrated),
+            "questions": self._question_packets(wall, chunk, solved, hydrated),
+            # Words already found here, so a revisit can tell a repeat from a
+            # wrong guess without a round trip -- they are not in `questions`.
+            "solvedWords": sorted(solved),
+            # Lets the client light up cells the server credited on its own
+            # (answerless ones) without refetching the whole bitmap.
+            "solvedCells": [
+                g
+                for g in geometry.cells_in_chunk(chunk_index)
+                if get_bit(cell_mask, g - base)
+            ],
         }
         payload.update(self.wall_status(wall))
         return payload
@@ -309,13 +337,22 @@ class InfiniteWallGame:
             )
         answers.sort(key=lambda entry: entry["g"])
 
-        chunk = InfiniteWallChunk.objects.create(
-            wall=wall, chunk_index=chunk_index, answers=answers, solved_words=[]
-        )
-
         # A cell the lexicon has no answers for can never be solved, so credit it
         # now rather than leaving the wall permanently uncompletable.
+        base = chunk_index * geometry.chunk_size
+        solved_cells = bytearray(bitmap_size(geometry.chunk_size))
         missing = set(cells) - {entry["g"] for entry in answers}
+        for g in missing:
+            set_bit(solved_cells, g - base)
+
+        chunk = InfiniteWallChunk.objects.create(
+            wall=wall,
+            chunk_index=chunk_index,
+            answers=answers,
+            solved_cells=bytes(solved_cells),
+            solved_word_bits=bytes(bitmap_size(len(word_bits(answers)))),
+        )
+
         if missing:
             logger.warning(
                 "event=infinite_wall_empty_cells wall=%s chunk=%s count=%s",
@@ -323,12 +360,18 @@ class InfiniteWallGame:
                 chunk_index,
                 len(missing),
             )
-            self._credit_cells(wall, missing)
+            self._credit(wall, len(missing))
+            self._prune_if_cleared(chunk, geometry)
 
         return chunk, questions
 
+    def _solved_words(self, chunk: InfiniteWallChunk) -> set:
+        answers = word_bits(chunk.answers)
+        bits = padded(chunk.solved_word_bits, len(answers))
+        return {word for word, (bit, _entry) in answers.items() if get_bit(bits, bit)}
+
     def _question_packets(
-        self, wall: InfiniteWall, chunk: InfiniteWallChunk, hydrated=None
+        self, wall: InfiniteWall, chunk: InfiniteWallChunk, solved, hydrated=None
     ):
         """
         Build the front-end packet for a rectangle.
@@ -338,7 +381,6 @@ class InfiniteWallGame:
         partially solved alphagram, and means a resumed rectangle never ships
         back answers the player already found.
         """
-        solved = set(chunk.solved_words)
         pending = [
             entry for entry in chunk.answers if not solved.issuperset(entry["a"])
         ]
@@ -392,29 +434,47 @@ class InfiniteWallGame:
         if chunk is None:
             raise InfiniteWallError("That rectangle is not loaded.")
 
-        entry = {w: e for e in chunk.answers for w in e["a"]}.get(guess_str)
-        if entry is None:
+        geometry = self.geometry(wall)
+        base = chunk_index * geometry.chunk_size
+        bits = word_bits(chunk.answers)
+        found = bits.get(guess_str)
+        if found is None:
             payload = {"alphagram": None, "word": None, "alreadySolved": False}
             payload.update(self.wall_status(wall))
             return payload
 
-        if guess_str in chunk.solved_words:
+        bit, entry = found
+        # Padded because a row the pre-0019 code created mid-deploy has empty
+        # masks; 0020 merges whatever that code recorded.
+        word_mask = padded(chunk.solved_word_bits, len(bits))
+        cell_mask = padded(chunk.solved_cells, geometry.chunk_size)
+        if get_bit(word_mask, bit):
             payload = {
                 "alphagram": entry["q"],
                 "word": guess_str,
                 "cell": entry["g"],
                 "alreadySolved": True,
-                "alphagramSolved": get_bit(bytes(wall.solved_bitmap), entry["g"]),
+                "alphagramSolved": get_bit(cell_mask, entry["g"] - base),
             }
             payload.update(self.wall_status(wall))
             return payload
 
-        chunk.solved_words = chunk.solved_words + [guess_str]
-        chunk.save(update_fields=["solved_words"])
+        set_bit(word_mask, bit)
+        chunk.solved_word_bits = bytes(word_mask)
+        fields = ["solved_word_bits"]
 
-        alphagram_done = set(chunk.solved_words).issuperset(entry["a"])
+        alphagram_done = all(get_bit(word_mask, bits[w][0]) for w in entry["a"])
         if alphagram_done:
-            self._credit_cells(wall, [entry["g"]])
+            set_bit(cell_mask, entry["g"] - base)
+            chunk.solved_cells = bytes(cell_mask)
+            fields.append("solved_cells")
+        # Only these small columns are written; answers is stored out of line
+        # (migration 0019), so it is not copied by this update.
+        chunk.save(update_fields=fields)
+
+        if alphagram_done:
+            self._credit(wall, 1)
+            self._prune_if_cleared(chunk, geometry)
 
         payload = {
             "alphagram": entry["q"],
@@ -427,23 +487,32 @@ class InfiniteWallGame:
         payload["completed"] = wall.state == InfiniteWall.DONE
         return payload
 
-    def _credit_cells(self, wall: InfiniteWall, cells) -> None:
-        """Mark cells solved, and finish the wall if that was the last of them."""
-        bitmap = bytearray(wall.solved_bitmap)
-        newly = 0
-        for cell in cells:
-            if not get_bit(bitmap, cell):
-                set_bit(bitmap, cell)
-                newly += 1
-        if not newly:
-            return
+    def _prune_if_cleared(
+        self, chunk: InfiniteWallChunk, geometry: WallGeometry
+    ) -> None:
+        """
+        Drop a cleared rectangle's answers.
 
-        wall.solved_bitmap = bytes(bitmap)
+        Nothing is left to guess, and they are derivable from (seed, cell)
+        anyway; this is what keeps a finished wall to a few bytes per rectangle
+        instead of the whole lexicon. solved_cells stays, since the overview is
+        drawn from it.
+        """
+        if popcount(chunk.solved_cells) < len(
+            geometry.cells_in_chunk(chunk.chunk_index)
+        ):
+            return
+        chunk.answers = []
+        chunk.solved_word_bits = b""
+        chunk.save(update_fields=["answers", "solved_word_bits"])
+
+    def _credit(self, wall: InfiniteWall, newly: int) -> None:
+        """Count newly solved cells, and finish the wall if they were the last."""
         wall.solved_count += newly
         # last_activity is deliberately absent: this runs on every solved
         # alphagram (~21k times over a full sevens run), and auto_now would make
         # each one a wider write for no benefit. Navigation points refresh it.
-        fields = ["solved_bitmap", "solved_count"]
+        fields = ["solved_count"]
 
         if wall.solved_count >= wall.num_alphagrams:
             wall.elapsed_ms = self.elapsed_ms(wall)
