@@ -6,13 +6,15 @@ While the solved_bitmap and solved_words columns still exist they are the
 reference copy: every legacy bit and found word must also be set in the
 rectangles' new masks (new progress may add bits, never remove them). They are
 read straight from the database, since 0020 took them out of the models.
-Exits non-zero if anything is wrong.
+Everything is read from one snapshot, so walls being played while it runs
+cannot show a count that disagrees with their rectangles. Exits non-zero if
+anything is wrong.
 """
 
 import json
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db import connection
+from django.db import connection, transaction
 
 from wordwalls.infinite_game import InfiniteWallGame
 from wordwalls.infinite_models import InfiniteWall, InfiniteWallChunk
@@ -42,6 +44,19 @@ class Command(BaseCommand):
     help = "Check Great Wall progress storage for lost or inconsistent progress"
 
     def handle(self, *args, **options):
+        # Read every wall and rectangle as of one moment. Otherwise a guess
+        # landing between reading a wall and reading its rectangles looks like
+        # a count that disagrees with its bits.
+        outermost = not connection.in_atomic_block
+        with transaction.atomic():
+            if outermost:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY"
+                    )
+            self.check_storage()
+
+    def check_storage(self):
         legacy_bitmaps = _legacy_column(InfiniteWall, "solved_bitmap", ["id"])
         legacy_word_lists = _legacy_column(
             InfiniteWallChunk, "solved_words", ["wall_id", "chunk_index"]
