@@ -106,9 +106,6 @@ class InfiniteWallChunk(models.Model):
     answers = models.JSONField()
     solved_cells = models.BinaryField(default=b"")
     solved_word_bits = models.BinaryField(default=b"")
-    # The legacy solved_bitmap (on the wall) and solved_words (here) columns
-    # still exist in the database until migration 0021 drops them; 0020 took
-    # them out of the models so no running code names them by then.
 
     class Meta:
         unique_together = ("wall", "chunk_index")

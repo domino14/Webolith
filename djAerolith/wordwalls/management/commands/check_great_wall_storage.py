@@ -1,11 +1,14 @@
 """
 Read-only consistency check for Great Wall progress storage.
 
-Run it after migration 0019 and again before 0021 drops the legacy columns.
-While the solved_bitmap and solved_words columns still exist they are the
-reference copy: every legacy bit and found word must also be set in the
-rectangles' new masks (new progress may add bits, never remove them). They are
-read straight from the database, since 0020 took them out of the models.
+Checks that each running wall's count matches its rectangles' solved cells,
+and that every cell's bit agrees with whether all of its words are found.
+
+Until migration 0021 drops them, the legacy solved_bitmap and solved_words
+columns are also the reference copy: every legacy bit and found word must also
+be set in the rectangles' new masks (new progress may add bits, never remove
+them). They are read straight from the database, since 0020 took them out of
+the models; once they are gone those checks are skipped.
 Everything is read from one snapshot, so walls being played while it runs
 cannot show a count that disagrees with their rectangles. Exits non-zero if
 anything is wrong.
