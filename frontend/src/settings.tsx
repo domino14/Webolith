@@ -16,6 +16,7 @@ import {
   FsrsSettingsFields,
   validateRetentionPercent,
 } from "./fsrs_settings";
+import FsrsUpgrade from "./fsrs_upgrade";
 
 const _submitFsrsSettingsAsync = async (
   wordVaultClient: PromiseClient<typeof WordVaultService>,
@@ -219,6 +220,7 @@ const Settings: React.FC = () => {
           Save
         </Button>
       </form>
+      <FsrsUpgrade />
     </div>
   );
 };
