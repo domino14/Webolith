@@ -21,6 +21,7 @@ import React, { useContext, useMemo } from "react";
 import { IconArrowsShuffle, IconArrowUp, IconSpace } from "@tabler/icons-react";
 import { AppContext, FontStyle, TileStyle } from "./app_context";
 import { useIsSmallScreen } from "./use_is_small_screen";
+import { LeechBadge } from "./leech";
 import classes from "./flashcard.module.css";
 
 interface FlashcardProps {
@@ -309,6 +310,57 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         />
       );
     }
+    case TileStyle.Indigo: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.indigo[7] : theme.colors.indigo[3]}
+          c={isDark ? theme.colors.gray[0] : theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
+    case TileStyle.Teal: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.teal[4] : theme.colors.teal[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
+    case TileStyle.Lime: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.lime[4] : theme.colors.lime[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
     case TileStyle.None:
     default: {
       return (
@@ -340,6 +392,16 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const smallScreen = useIsSmallScreen();
   const { displaySettings } = useContext(AppContext);
   const backgroundColor = isDark ? theme.colors.dark[8] : theme.colors.gray[0];
+  const lapses = useMemo(() => {
+    try {
+      const card = JSON.parse(
+        new TextDecoder().decode(currentCard.cardJsonRepr),
+      );
+      return typeof card.Lapses === "number" ? card.Lapses : 0;
+    } catch {
+      return 0;
+    }
+  }, [currentCard.cardJsonRepr]);
 
   const shuffleButton = (
     <Button
@@ -433,6 +495,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
               side="back"
             />
           </Flex>
+          <LeechBadge lapses={lapses} />
           {currentCard.alphagram?.words.map((word) => {
             const highlightAsMissed =
               missedWords !== undefined &&

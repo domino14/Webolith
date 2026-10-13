@@ -16,6 +16,7 @@ import {
   FsrsSettingsFields,
   validateRetentionPercent,
 } from "./fsrs_settings";
+import FsrsUpgrade from "./fsrs_upgrade";
 
 const _submitFsrsSettingsAsync = async (
   wordVaultClient: PromiseClient<typeof WordVaultService>,
@@ -148,6 +149,10 @@ const Settings: React.FC = () => {
               label: "Blue",
             },
             {
+              value: TileStyle.Indigo,
+              label: "Indigo",
+            },
+            {
               value: TileStyle.Orange,
               label: "Orange",
             },
@@ -158,6 +163,14 @@ const Settings: React.FC = () => {
             {
               value: TileStyle.Green,
               label: "Green",
+            },
+            {
+              value: TileStyle.Teal,
+              label: "Teal",
+            },
+            {
+              value: TileStyle.Lime,
+              label: "Lime",
             },
             {
               value: TileStyle.Pink,
@@ -207,6 +220,7 @@ const Settings: React.FC = () => {
           Save
         </Button>
       </form>
+      <FsrsUpgrade />
     </div>
   );
 };

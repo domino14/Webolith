@@ -24,6 +24,10 @@ import {
 import { notifications } from "@mantine/notifications";
 import { Score, Card as WordVaultCard } from "./gen/rpc/wordvault/api_pb";
 import {
+  Alphagram,
+  SearchRequest_Condition,
+} from "./gen/rpc/wordsearcher/searcher_pb";
+import {
   IconAlertHexagon,
   IconBabyBottle,
   IconCheck,
@@ -33,6 +37,9 @@ import {
 } from "@tabler/icons-react";
 import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "./timezones";
+import { fsrsRecall, useFsrsVersion } from "./fsrs_version";
+import ReviewHeatmap from "./review_heatmap";
+import { LeechBadge } from "./leech";
 
 const COLOR_PALETTE = [
   "blue.6",
@@ -53,7 +60,8 @@ const ALL_DECKS_OPTION_VALUE = "ALL";
 const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
 
 const CardStats: React.FC = () => {
-  const { lexicon, jwt, wordVaultClient, decksById } = useContext(AppContext);
+  const { lexicon, jwt, wordVaultClient, wordServerClient, decksById } =
+    useContext(AppContext);
   const [lookup, setLookup] = useState("");
   const [todayStats, setTodayStats] = useState<{
     [key: string]: number;
@@ -65,6 +73,8 @@ const CardStats: React.FC = () => {
   }>({});
 
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
+  // Probability and words for the looked-up card, if the expansion worked.
+  const [expanded, setExpanded] = useState<Alphagram | null>(null);
 
   // Default deck has null ID, so indicate no selected deck with a separate
   // bool
@@ -83,6 +93,7 @@ const CardStats: React.FC = () => {
       ReviewedGood: 0,
       NewEasy: 0,
       ReviewedEasy: 0,
+      Repeats: 0,
     }),
     []
   );
@@ -269,13 +280,64 @@ const CardStats: React.FC = () => {
         throw new Error("No card found");
       }
       setCardInfo(resp.cards[0]);
+      setExpanded(null);
+      const alphagram = resp.cards[0].alphagram?.alphagram;
+      if (wordServerClient && alphagram) {
+        wordServerClient
+          .search({
+            searchparams: [
+              {
+                condition: SearchRequest_Condition.LEXICON,
+                conditionparam: {
+                  value: { value: lexicon },
+                  case: "stringvalue",
+                },
+              },
+              {
+                condition: SearchRequest_Condition.ALPHAGRAM_LIST,
+                conditionparam: {
+                  value: { values: [alphagram] },
+                  case: "stringarray",
+                },
+              },
+            ],
+            expand: true,
+          })
+          .then((r) => setExpanded(r.alphagrams[0] ?? null))
+          .catch((e) => console.error("Error expanding alphagram:", e));
+      }
     } catch (e) {
       notifications.show({
         color: "red",
         message: String(e),
       });
     }
-  }, [lexicon, lookup, wordVaultClient]);
+  }, [lexicon, lookup, wordVaultClient, wordServerClient]);
+
+  // E.g. after missing the word in a tournament: schedule it as a miss now.
+  const markMissed = useCallback(async () => {
+    const alphagram = cardInfo?.alphagram?.alphagram;
+    if (!wordVaultClient || !alphagram) {
+      return;
+    }
+    try {
+      await wordVaultClient.scoreCard({
+        lexicon,
+        alphagram,
+        score: Score.AGAIN,
+      });
+      notifications.show({
+        color: "green",
+        message: `Marked ${alphagram.toUpperCase()} as missed. You'll see it again soon.`,
+      });
+      await lookupAlphagram();
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        message: String(e),
+      });
+    }
+  }, [cardInfo, lexicon, wordVaultClient, lookupAlphagram]);
 
   const fsrsCard = useMemo(
     () =>
@@ -388,6 +450,8 @@ const CardStats: React.FC = () => {
       {cardInfo && fsrsCard && reviewLog && (
         <CardInfo
           cardInfo={cardInfo}
+          expanded={expanded}
+          onMarkMissed={markMissed}
           fsrsCard={fsrsCard}
           reviewLog={reviewLog}
         />
@@ -422,12 +486,16 @@ interface CardInfoProps {
   fsrsCard: fsrsCard;
   reviewLog: reviewLogItem[];
   cardInfo: WordVaultCard;
+  expanded: Alphagram | null;
+  onMarkMissed: () => void;
 }
 
 const CardInfo: React.FC<CardInfoProps> = ({
   fsrsCard,
   reviewLog,
   cardInfo,
+  expanded,
+  onMarkMissed,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -440,24 +508,29 @@ const CardInfo: React.FC<CardInfoProps> = ({
   const dueDate = dstr(fsrsCard.Due, true);
   const lastReview = dstr(fsrsCard.LastReview, true);
 
+  const [fsrsVersion] = useFsrsVersion();
+
   const forgettingCurve = useMemo(() => {
-    // return math.Pow(1+factor*elapsedDays/stability, decay)
-    // 	var Decay = -0.5
-    // var Factor = math.Pow(0.9, 1/Decay) - 1
+    if (fsrsVersion === null) {
+      return [];
+    }
     const curve = [];
     const today = new Date();
-
-    // Get these from FSRS parameters once we make that configurable, if ever.
-    const decay = -0.5;
-    const factor = Math.pow(0.9, 1 / decay) - 1;
+    // Recall depends on the time since the last review, so the curve starts
+    // at today's retrievability.
+    const elapsedToday = Math.max(
+      (today.getTime() - new Date(fsrsCard.LastReview).getTime()) / 86400000,
+      0,
+    );
     for (let i = 0; i < 365; i++) {
       curve.push({
-        Recall: Math.pow(1 + (factor * i) / fsrsCard.Stability, decay) * 100,
+        Recall:
+          fsrsRecall(fsrsVersion, fsrsCard.Stability, elapsedToday + i) * 100,
         date: new Date(today.getTime() + 86400000 * i).toLocaleDateString(),
       });
     }
     return curve;
-  }, [fsrsCard.Stability]);
+  }, [fsrsCard.Stability, fsrsCard.LastReview, fsrsVersion]);
 
   return (
     <>
@@ -476,6 +549,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
           <Text size="xl" fw={700} ta="center" c={theme.colors.blue[4]}>
             {cardInfo.alphagram?.alphagram.toUpperCase()}
           </Text>
+          <LeechBadge lapses={fsrsCard.Lapses} />
           <List spacing="xs" withPadding>
             <List.Item>
               <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
@@ -509,6 +583,51 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 </Text>
               </Text>
             </List.Item>
+            {expanded && expanded.probability > 0 && (
+              <List.Item>
+                <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
+                  Probability:{" "}
+                  <Text component="span" fw={500}>
+                    #{expanded.probability}
+                  </Text>
+                </Text>
+              </List.Item>
+            )}
+            {expanded && expanded.difficulty > 0 && (
+              <List.Item>
+                <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
+                  <Tooltip
+                    multiline
+                    w={350}
+                    withArrow
+                    label="How hard this bingo is for players in general, compared with other 7s and 8s: 1 is easiest, 100 is hardest. Not the same as FSRS difficulty below, which is about you."
+                  >
+                    <IconHelp
+                      size={16}
+                      style={{ marginRight: 6, marginBottom: -3 }}
+                    />
+                  </Tooltip>
+                  Aerolith difficulty:{" "}
+                  <Text
+                    component="span"
+                    fw={500}
+                    c={expanded.difficulty > 80 ? "red" : undefined}
+                  >
+                    {expanded.difficulty}/100
+                  </Text>
+                </Text>
+              </List.Item>
+            )}
+            {expanded && expanded.words.length > 0 && (
+              <List.Item>
+                <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
+                  Words:{" "}
+                  <Text component="span" fw={500}>
+                    {expanded.words.map((w) => w.word).join(", ")}
+                  </Text>
+                </Text>
+              </List.Item>
+            )}
           </List>
 
           <Text size="lg" fw={700} mt="md" c={theme.colors.blue[4]}>
@@ -571,6 +690,17 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Text>
             </Text>
           </Stack>
+
+          <Tooltip
+            multiline
+            w={300}
+            withArrow
+            label="Score this card as missed right now, e.g. if you missed the word in a game. It goes back into relearning."
+          >
+            <Button variant="light" color="red" onClick={onMarkMissed}>
+              Mark as missed
+            </Button>
+          </Tooltip>
         </Stack>
       </Card>
 
@@ -600,6 +730,12 @@ const CardInfo: React.FC<CardInfoProps> = ({
 
       <Text fw={700} mb="lg" mt="lg" size="lg" c={theme.colors.blue[4]}>
         Review History
+      </Text>
+
+      <ReviewHeatmap reviewLog={reviewLog} />
+
+      <Text fw={700} mb="lg" mt="lg" size="md">
+        All reviews
       </Text>
 
       <Timeline
@@ -687,6 +823,15 @@ const TodayStats: React.FC<TodayStatsProps> = ({ stats }) => {
             : ""}
         </Text>
       </Text>
+      {stats.Repeats > 0 && (
+        <Text>
+          Repeat reviews today:
+          <Text c="dimmed">
+            {stats.Repeats} (cards seen again the same day, like after a
+            miss; the rates above only count each card's first try)
+          </Text>
+        </Text>
+      )}
       <Text>Score breakdown</Text>
       <BarChart
         h={300}

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, ScoreCardRequest, ScoreCardResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, PreviewFsrsUpgradeRequest, PreviewFsrsUpgradeResponse, ScoreCardRequest, ScoreCardResponse, UpgradeFsrsRequest, UpgradeFsrsResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -190,6 +190,30 @@ export declare const WordVaultService: {
       readonly name: "EditFsrsParameters",
       readonly I: typeof EditFsrsParametersRequest,
       readonly O: typeof EditFsrsParametersResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * Shows what UpgradeFsrs would do, without changing anything.
+     *
+     * @generated from rpc wordvault.WordVaultService.PreviewFsrsUpgrade
+     */
+    readonly previewFsrsUpgrade: {
+      readonly name: "PreviewFsrsUpgrade",
+      readonly I: typeof PreviewFsrsUpgradeRequest,
+      readonly O: typeof PreviewFsrsUpgradeResponse,
+      readonly kind: MethodKind.Unary,
+      readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * Moves the user from FSRS-5 to FSRS-6 weights and reschedules all their
+     * cards as if they had always been on FSRS-6.
+     *
+     * @generated from rpc wordvault.WordVaultService.UpgradeFsrs
+     */
+    readonly upgradeFsrs: {
+      readonly name: "UpgradeFsrs",
+      readonly I: typeof UpgradeFsrsRequest,
+      readonly O: typeof UpgradeFsrsResponse,
       readonly kind: MethodKind.Unary,
     },
     /**
