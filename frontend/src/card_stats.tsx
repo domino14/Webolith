@@ -83,6 +83,7 @@ const CardStats: React.FC = () => {
       ReviewedGood: 0,
       NewEasy: 0,
       ReviewedEasy: 0,
+      Repeats: 0,
     }),
     []
   );
@@ -687,6 +688,15 @@ const TodayStats: React.FC<TodayStatsProps> = ({ stats }) => {
             : ""}
         </Text>
       </Text>
+      {stats.Repeats > 0 && (
+        <Text>
+          Repeat reviews today:
+          <Text c="dimmed">
+            {stats.Repeats} (cards seen again the same day, like after a
+            miss; the rates above only count each card's first try)
+          </Text>
+        </Text>
+      )}
       <Text>Score breakdown</Text>
       <BarChart
         h={300}
