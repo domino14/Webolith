@@ -23,6 +23,8 @@ import urllib
 from urllib.parse import urlencode
 from dateutil.relativedelta import relativedelta
 
+import requests as http_requests
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -35,7 +37,8 @@ from django.http import (
     HttpResponseBadRequest,
     HttpResponse,
 )
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
+from django.contrib.auth import authenticate
 from django.utils import timezone
 import jwt
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
@@ -152,6 +155,129 @@ def jwt_extend(request):
         return HttpResponseBadRequest("Token has expired. Please log in again.")
     except InvalidTokenError:
         return HttpResponseBadRequest("Invalid token.")
+
+
+@csrf_exempt
+@require_POST
+def mobile_login(request):
+    """
+    POST /api/mobile/login/
+    Body: {"username": "...", "password": "..."}
+
+    Returns a JWT on success (no session cookie required).
+    Used by the mobile app for username/password authentication.
+    """
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": "Invalid JSON."}, status=400)
+
+    username = body.get("username", "").strip()
+    password = body.get("password", "")
+
+    if not username or not password:
+        return JsonResponse({"error": "username and password are required."}, status=400)
+
+    user = authenticate(request, username=username, password=password)
+    if user is None:
+        return JsonResponse({"error": "Invalid credentials."}, status=401)
+    if not user.is_active:
+        return JsonResponse({"error": "Account is disabled."}, status=401)
+
+    token = create_jwt(user)
+    return JsonResponse({
+        "token": token,
+        "username": user.username,
+        "member": user.aerolithprofile.member,
+    })
+
+
+@csrf_exempt
+@require_POST
+def mobile_google_login(request):
+    """
+    POST /api/mobile/google-login/
+    Body: {"id_token": "<Google ID token from expo-auth-session>"}
+
+    Verifies the Google ID token via Google's tokeninfo endpoint,
+    then finds or creates the linked Django user (mirroring social_django's
+    associate_by_email pipeline), and returns a JWT.
+    """
+    try:
+        body = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({"error": "Invalid JSON."}, status=400)
+
+    id_token = body.get("id_token", "").strip()
+    if not id_token:
+        return JsonResponse({"error": "id_token is required."}, status=400)
+
+    # Verify with Google's tokeninfo endpoint (no extra dependencies required).
+    try:
+        resp = http_requests.get(
+            "https://oauth2.googleapis.com/tokeninfo",
+            params={"id_token": id_token},
+            timeout=10,
+        )
+    except http_requests.RequestException as e:
+        logger.error("Google tokeninfo request failed: %s", e)
+        return JsonResponse({"error": "Could not reach Google."}, status=502)
+
+    if resp.status_code != 200:
+        return JsonResponse({"error": "Invalid Google token."}, status=401)
+
+    claims = resp.json()
+
+    # Verify the token was issued for our app.
+    google_client_id = settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+    if google_client_id and claims.get("aud") != google_client_id:
+        logger.warning(
+            "Google token aud mismatch: expected %s got %s",
+            google_client_id,
+            claims.get("aud"),
+        )
+        return JsonResponse({"error": "Token audience mismatch."}, status=401)
+
+    google_sub = claims.get("sub")
+    email = claims.get("email", "").lower()
+    if not google_sub:
+        return JsonResponse({"error": "Missing sub in Google token."}, status=401)
+
+    # 1. Try to find an existing social link (UserSocialAuth).
+    from social_django.models import UserSocialAuth
+    try:
+        social_auth = UserSocialAuth.objects.get(provider="google-oauth2", uid=google_sub)
+        user = social_auth.user
+    except UserSocialAuth.DoesNotExist:
+        # 2. Associate by email (mirror social_django pipeline step).
+        user = User.objects.filter(email__iexact=email).first() if email else None
+
+        if user is None:
+            # 3. Create a new user.
+            base_username = email.split("@")[0] if email else f"google_{google_sub[:8]}"
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+            user = User.objects.create_user(username=username, email=email)
+
+        # Link this Google account to the user for future logins.
+        UserSocialAuth.objects.create(
+            user=user,
+            provider="google-oauth2",
+            uid=google_sub,
+        )
+
+    if not user.is_active:
+        return JsonResponse({"error": "Account is disabled."}, status=401)
+
+    token = create_jwt(user)
+    return JsonResponse({
+        "token": token,
+        "username": user.username,
+        "member": user.aerolithprofile.member,
+    })
 
 
 def csrf_failure(request, reason=""):

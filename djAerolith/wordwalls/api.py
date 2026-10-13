@@ -5,6 +5,7 @@ from typing import List
 from functools import wraps
 
 from django.contrib.auth.decorators import login_required
+from lib.jwt_auth import jwt_or_login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_GET, require_POST
 from django.utils import timezone
@@ -158,7 +159,7 @@ def challenges_played(request):
     return response(resp)
 
 
-@login_required
+@jwt_or_login_required
 @require_GET
 def special_challenges(request):
     lex = request.GET.get("lexicon")
@@ -281,7 +282,7 @@ def table_response(tablenum):
     )
 
 
-@login_required
+@jwt_or_login_required
 @require_POST
 @load_new_words
 def new_challenge(request, parsed_req_body):
