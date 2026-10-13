@@ -36,6 +36,7 @@ import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "./timezones";
 import { fsrsRecall, useFsrsVersion } from "./fsrs_version";
 import ReviewHeatmap from "./review_heatmap";
+import { LeechBadge } from "./leech";
 
 const COLOR_PALETTE = [
   "blue.6",
@@ -292,6 +293,31 @@ const CardStats: React.FC = () => {
     }
   }, [lexicon, lookup, wordVaultClient, wordServerClient]);
 
+  // E.g. after missing the word in a tournament: schedule it as a miss now.
+  const markMissed = useCallback(async () => {
+    const alphagram = cardInfo?.alphagram?.alphagram;
+    if (!wordVaultClient || !alphagram) {
+      return;
+    }
+    try {
+      await wordVaultClient.scoreCard({
+        lexicon,
+        alphagram,
+        score: Score.AGAIN,
+      });
+      notifications.show({
+        color: "green",
+        message: `Marked ${alphagram.toUpperCase()} as missed. You'll see it again soon.`,
+      });
+      await lookupAlphagram();
+    } catch (e) {
+      notifications.show({
+        color: "red",
+        message: String(e),
+      });
+    }
+  }, [cardInfo, lexicon, wordVaultClient, lookupAlphagram]);
+
   const fsrsCard = useMemo(
     () =>
       cardInfo
@@ -404,6 +430,7 @@ const CardStats: React.FC = () => {
         <CardInfo
           cardInfo={cardInfo}
           expanded={expanded}
+          onMarkMissed={markMissed}
           fsrsCard={fsrsCard}
           reviewLog={reviewLog}
         />
@@ -439,6 +466,7 @@ interface CardInfoProps {
   reviewLog: reviewLogItem[];
   cardInfo: WordVaultCard;
   expanded: Alphagram | null;
+  onMarkMissed: () => void;
 }
 
 const CardInfo: React.FC<CardInfoProps> = ({
@@ -446,6 +474,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
   reviewLog,
   cardInfo,
   expanded,
+  onMarkMissed,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -499,6 +528,7 @@ const CardInfo: React.FC<CardInfoProps> = ({
           <Text size="xl" fw={700} ta="center" c={theme.colors.blue[4]}>
             {cardInfo.alphagram?.alphagram.toUpperCase()}
           </Text>
+          <LeechBadge lapses={fsrsCard.Lapses} />
           <List spacing="xs" withPadding>
             <List.Item>
               <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
@@ -614,6 +644,17 @@ const CardInfo: React.FC<CardInfoProps> = ({
               </Text>
             </Text>
           </Stack>
+
+          <Tooltip
+            multiline
+            w={300}
+            withArrow
+            label="Score this card as missed right now, e.g. if you missed the word in a game. It goes back into relearning."
+          >
+            <Button variant="light" color="red" onClick={onMarkMissed}>
+              Mark as missed
+            </Button>
+          </Tooltip>
         </Stack>
       </Card>
 
