@@ -477,6 +477,71 @@ export const GetFsrsParametersResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.GetFsrsParametersResponse",
   () => [
     { no: 1, name: "parameters", kind: "message", T: FsrsParameters },
+    { no: 2, name: "fsrs_version", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.PreviewFsrsUpgradeRequest
+ */
+export const PreviewFsrsUpgradeRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.PreviewFsrsUpgradeRequest",
+  [],
+);
+
+/**
+ * @generated from message wordvault.UpgradeFsrsRequest
+ */
+export const UpgradeFsrsRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.UpgradeFsrsRequest",
+  [],
+);
+
+/**
+ * What upgrading to FSRS-6 does (or did) to a user's cards. "Due" counts are
+ * relative to the time of the request.
+ *
+ * @generated from message wordvault.FsrsUpgradeSummary
+ */
+export const FsrsUpgradeSummary = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.FsrsUpgradeSummary",
+  () => [
+    { no: 1, name: "current_version", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "target_version", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "total_cards", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 4, name: "rescheduled_cards", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 5, name: "imported_cards", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 6, name: "unchanged_cards", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 7, name: "due_now_before", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 8, name: "due_now_after", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 9, name: "due_within_week_before", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 10, name: "due_within_week_after", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 11, name: "due_within_month_before", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 12, name: "due_within_month_after", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 13, name: "moved_earlier", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 14, name: "moved_later", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 15, name: "median_interval_days_before", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 16, name: "median_interval_days_after", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.PreviewFsrsUpgradeResponse
+ */
+export const PreviewFsrsUpgradeResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.PreviewFsrsUpgradeResponse",
+  () => [
+    { no: 1, name: "summary", kind: "message", T: FsrsUpgradeSummary },
+  ],
+);
+
+/**
+ * @generated from message wordvault.UpgradeFsrsResponse
+ */
+export const UpgradeFsrsResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.UpgradeFsrsResponse",
+  () => [
+    { no: 1, name: "summary", kind: "message", T: FsrsUpgradeSummary },
   ],
 );
 

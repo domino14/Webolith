@@ -1232,6 +1232,14 @@ export declare class GetFsrsParametersResponse extends Message<GetFsrsParameters
    */
   parameters?: FsrsParameters;
 
+  /**
+   * The FSRS version the user's cards are scheduled with (5 or 6). Users on
+   * version 5 can upgrade with UpgradeFsrs.
+   *
+   * @generated from field: int32 fsrs_version = 2;
+   */
+  fsrsVersion: number;
+
   constructor(data?: PartialMessage<GetFsrsParametersResponse>);
 
   static readonly runtime: typeof proto3;
@@ -1245,6 +1253,203 @@ export declare class GetFsrsParametersResponse extends Message<GetFsrsParameters
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetFsrsParametersResponse;
 
   static equals(a: GetFsrsParametersResponse | PlainMessage<GetFsrsParametersResponse> | undefined, b: GetFsrsParametersResponse | PlainMessage<GetFsrsParametersResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.PreviewFsrsUpgradeRequest
+ */
+export declare class PreviewFsrsUpgradeRequest extends Message<PreviewFsrsUpgradeRequest> {
+  constructor(data?: PartialMessage<PreviewFsrsUpgradeRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.PreviewFsrsUpgradeRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PreviewFsrsUpgradeRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PreviewFsrsUpgradeRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PreviewFsrsUpgradeRequest;
+
+  static equals(a: PreviewFsrsUpgradeRequest | PlainMessage<PreviewFsrsUpgradeRequest> | undefined, b: PreviewFsrsUpgradeRequest | PlainMessage<PreviewFsrsUpgradeRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.UpgradeFsrsRequest
+ */
+export declare class UpgradeFsrsRequest extends Message<UpgradeFsrsRequest> {
+  constructor(data?: PartialMessage<UpgradeFsrsRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.UpgradeFsrsRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpgradeFsrsRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpgradeFsrsRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpgradeFsrsRequest;
+
+  static equals(a: UpgradeFsrsRequest | PlainMessage<UpgradeFsrsRequest> | undefined, b: UpgradeFsrsRequest | PlainMessage<UpgradeFsrsRequest> | undefined): boolean;
+}
+
+/**
+ * What upgrading to FSRS-6 does (or did) to a user's cards. "Due" counts are
+ * relative to the time of the request.
+ *
+ * @generated from message wordvault.FsrsUpgradeSummary
+ */
+export declare class FsrsUpgradeSummary extends Message<FsrsUpgradeSummary> {
+  /**
+   * @generated from field: int32 current_version = 1;
+   */
+  currentVersion: number;
+
+  /**
+   * @generated from field: int32 target_version = 2;
+   */
+  targetVersion: number;
+
+  /**
+   * @generated from field: uint32 total_cards = 3;
+   */
+  totalCards: number;
+
+  /**
+   * Cards whose memory state was rebuilt by replaying their review history.
+   *
+   * @generated from field: uint32 rescheduled_cards = 4;
+   */
+  rescheduledCards: number;
+
+  /**
+   * Cards imported from Cardbox keep their memory state; only their due
+   * date is recalculated.
+   *
+   * @generated from field: uint32 imported_cards = 5;
+   */
+  importedCards: number;
+
+  /**
+   * New (never reviewed) cards, which are left alone.
+   *
+   * @generated from field: uint32 unchanged_cards = 6;
+   */
+  unchangedCards: number;
+
+  /**
+   * @generated from field: uint32 due_now_before = 7;
+   */
+  dueNowBefore: number;
+
+  /**
+   * @generated from field: uint32 due_now_after = 8;
+   */
+  dueNowAfter: number;
+
+  /**
+   * @generated from field: uint32 due_within_week_before = 9;
+   */
+  dueWithinWeekBefore: number;
+
+  /**
+   * @generated from field: uint32 due_within_week_after = 10;
+   */
+  dueWithinWeekAfter: number;
+
+  /**
+   * @generated from field: uint32 due_within_month_before = 11;
+   */
+  dueWithinMonthBefore: number;
+
+  /**
+   * @generated from field: uint32 due_within_month_after = 12;
+   */
+  dueWithinMonthAfter: number;
+
+  /**
+   * @generated from field: uint32 moved_earlier = 13;
+   */
+  movedEarlier: number;
+
+  /**
+   * @generated from field: uint32 moved_later = 14;
+   */
+  movedLater: number;
+
+  /**
+   * Median of (due date - last review) in days, over reviewed cards.
+   *
+   * @generated from field: double median_interval_days_before = 15;
+   */
+  medianIntervalDaysBefore: number;
+
+  /**
+   * @generated from field: double median_interval_days_after = 16;
+   */
+  medianIntervalDaysAfter: number;
+
+  constructor(data?: PartialMessage<FsrsUpgradeSummary>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.FsrsUpgradeSummary";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FsrsUpgradeSummary;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FsrsUpgradeSummary;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FsrsUpgradeSummary;
+
+  static equals(a: FsrsUpgradeSummary | PlainMessage<FsrsUpgradeSummary> | undefined, b: FsrsUpgradeSummary | PlainMessage<FsrsUpgradeSummary> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.PreviewFsrsUpgradeResponse
+ */
+export declare class PreviewFsrsUpgradeResponse extends Message<PreviewFsrsUpgradeResponse> {
+  /**
+   * @generated from field: wordvault.FsrsUpgradeSummary summary = 1;
+   */
+  summary?: FsrsUpgradeSummary;
+
+  constructor(data?: PartialMessage<PreviewFsrsUpgradeResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.PreviewFsrsUpgradeResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PreviewFsrsUpgradeResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PreviewFsrsUpgradeResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PreviewFsrsUpgradeResponse;
+
+  static equals(a: PreviewFsrsUpgradeResponse | PlainMessage<PreviewFsrsUpgradeResponse> | undefined, b: PreviewFsrsUpgradeResponse | PlainMessage<PreviewFsrsUpgradeResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.UpgradeFsrsResponse
+ */
+export declare class UpgradeFsrsResponse extends Message<UpgradeFsrsResponse> {
+  /**
+   * @generated from field: wordvault.FsrsUpgradeSummary summary = 1;
+   */
+  summary?: FsrsUpgradeSummary;
+
+  constructor(data?: PartialMessage<UpgradeFsrsResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.UpgradeFsrsResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpgradeFsrsResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpgradeFsrsResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpgradeFsrsResponse;
+
+  static equals(a: UpgradeFsrsResponse | PlainMessage<UpgradeFsrsResponse> | undefined, b: UpgradeFsrsResponse | PlainMessage<UpgradeFsrsResponse> | undefined): boolean;
 }
 
 /**
