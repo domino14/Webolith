@@ -148,6 +148,10 @@ const Settings: React.FC = () => {
               label: "Blue",
             },
             {
+              value: TileStyle.Indigo,
+              label: "Indigo",
+            },
+            {
               value: TileStyle.Orange,
               label: "Orange",
             },
@@ -158,6 +162,14 @@ const Settings: React.FC = () => {
             {
               value: TileStyle.Green,
               label: "Green",
+            },
+            {
+              value: TileStyle.Teal,
+              label: "Teal",
+            },
+            {
+              value: TileStyle.Lime,
+              label: "Lime",
             },
             {
               value: TileStyle.Pink,

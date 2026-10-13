@@ -37,9 +37,12 @@ export enum TileStyle {
   MatchDisplay = "match-display",
 
   Blue = "blue",
+  Indigo = "indigo",
   Orange = "orange",
   Yellow = "yellow",
   Green = "green",
+  Teal = "teal",
+  Lime = "lime",
   Pink = "pink",
   Red = "red",
   Violet = "violet",

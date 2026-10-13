@@ -309,6 +309,57 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         />
       );
     }
+    case TileStyle.Indigo: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.indigo[7] : theme.colors.indigo[3]}
+          c={isDark ? theme.colors.gray[0] : theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
+    case TileStyle.Teal: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.teal[4] : theme.colors.teal[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
+    case TileStyle.Lime: {
+      return (
+        <TiledText
+          fw={700}
+          ff={fontStyle}
+          bg={isDark ? theme.colors.lime[4] : theme.colors.lime[2]}
+          c={theme.colors.gray[9]}
+          classNames={{
+            text: classes.responsiveTileText,
+            tile: classes.responsiveTilePaper,
+          }}
+          text={displayQuestion}
+          reorderable={side === "front"}
+          onMoveLetter={onMoveLetter}
+        />
+      );
+    }
     case TileStyle.None:
     default: {
       return (
