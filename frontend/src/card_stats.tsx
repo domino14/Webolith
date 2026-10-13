@@ -23,6 +23,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Score, Card as WordVaultCard } from "./gen/rpc/wordvault/api_pb";
+import { Alphagram } from "./gen/rpc/wordsearcher/searcher_pb";
 import {
   IconAlertHexagon,
   IconBabyBottle,
@@ -55,7 +56,8 @@ const ALL_DECKS_OPTION_VALUE = "ALL";
 const DEFAULT_DECK_OPTION_VALUE = "DEFAULT";
 
 const CardStats: React.FC = () => {
-  const { lexicon, jwt, wordVaultClient, decksById } = useContext(AppContext);
+  const { lexicon, jwt, wordVaultClient, wordServerClient, decksById } =
+    useContext(AppContext);
   const [lookup, setLookup] = useState("");
   const [todayStats, setTodayStats] = useState<{
     [key: string]: number;
@@ -67,6 +69,8 @@ const CardStats: React.FC = () => {
   }>({});
 
   const [cardInfo, setCardInfo] = useState<WordVaultCard | null>(null);
+  // Probability and words for the looked-up card, if the expansion worked.
+  const [expanded, setExpanded] = useState<Alphagram | null>(null);
 
   // Default deck has null ID, so indicate no selected deck with a separate
   // bool
@@ -272,13 +276,21 @@ const CardStats: React.FC = () => {
         throw new Error("No card found");
       }
       setCardInfo(resp.cards[0]);
+      setExpanded(null);
+      const alphagram = resp.cards[0].alphagram?.alphagram;
+      if (wordServerClient && alphagram) {
+        wordServerClient
+          .expand({ lexicon, alphagrams: [{ alphagram }] })
+          .then((r) => setExpanded(r.alphagrams[0] ?? null))
+          .catch((e) => console.error("Error expanding alphagram:", e));
+      }
     } catch (e) {
       notifications.show({
         color: "red",
         message: String(e),
       });
     }
-  }, [lexicon, lookup, wordVaultClient]);
+  }, [lexicon, lookup, wordVaultClient, wordServerClient]);
 
   const fsrsCard = useMemo(
     () =>
@@ -391,6 +403,7 @@ const CardStats: React.FC = () => {
       {cardInfo && fsrsCard && reviewLog && (
         <CardInfo
           cardInfo={cardInfo}
+          expanded={expanded}
           fsrsCard={fsrsCard}
           reviewLog={reviewLog}
         />
@@ -425,12 +438,14 @@ interface CardInfoProps {
   fsrsCard: fsrsCard;
   reviewLog: reviewLogItem[];
   cardInfo: WordVaultCard;
+  expanded: Alphagram | null;
 }
 
 const CardInfo: React.FC<CardInfoProps> = ({
   fsrsCard,
   reviewLog,
   cardInfo,
+  expanded,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -517,6 +532,26 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 </Text>
               </Text>
             </List.Item>
+            {expanded && expanded.probability > 0 && (
+              <List.Item>
+                <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
+                  Probability:{" "}
+                  <Text component="span" fw={500}>
+                    #{expanded.probability}
+                  </Text>
+                </Text>
+              </List.Item>
+            )}
+            {expanded && expanded.words.length > 0 && (
+              <List.Item>
+                <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
+                  Words:{" "}
+                  <Text component="span" fw={500}>
+                    {expanded.words.map((w) => w.word).join(", ")}
+                  </Text>
+                </Text>
+              </List.Item>
+            )}
           </List>
 
           <Text size="lg" fw={700} mt="md" c={theme.colors.blue[4]}>
