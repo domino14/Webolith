@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { Button, Loader, Modal, Stack, Table, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { AppContext } from "./app_context";
 import { FsrsUpgradeSummary } from "./gen/rpc/wordvault/api_pb";
-
-const LATEST_FSRS_VERSION = 6;
+import { LATEST_FSRS_VERSION, useFsrsVersion } from "./fsrs_version";
 
 const formatDays = (days: number) =>
   days >= 10 ? `${Math.round(days)} days` : `${days.toFixed(1)} days`;
@@ -50,20 +49,10 @@ const SummaryTable: React.FC<{ summary: FsrsUpgradeSummary }> = ({
 // to the latest one.
 const FsrsUpgrade: React.FC = () => {
   const { wordVaultClient } = useContext(AppContext);
-  const [version, setVersion] = useState<number | null>(null);
+  const [version, setVersion] = useFsrsVersion();
   const [summary, setSummary] = useState<FsrsUpgradeSummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [modalOpened, modalHandlers] = useDisclosure();
-
-  useEffect(() => {
-    if (!wordVaultClient) {
-      return;
-    }
-    wordVaultClient
-      .getFsrsParameters({})
-      .then((resp) => setVersion(resp.fsrsVersion))
-      .catch((e) => console.error("Error fetching FSRS version:", e));
-  }, [wordVaultClient]);
 
   const preview = useCallback(async () => {
     if (!wordVaultClient) {
@@ -103,7 +92,7 @@ const FsrsUpgrade: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [wordVaultClient, modalHandlers]);
+  }, [wordVaultClient, modalHandlers, setVersion]);
 
   if (version === null) {
     return null;

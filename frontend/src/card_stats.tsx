@@ -33,6 +33,8 @@ import {
 } from "@tabler/icons-react";
 import { BarChart, LineChart } from "@mantine/charts";
 import { getBrowserTimezone } from "./timezones";
+import { fsrsRecall, useFsrsVersion } from "./fsrs_version";
+import ReviewHeatmap from "./review_heatmap";
 
 const COLOR_PALETTE = [
   "blue.6",
@@ -441,24 +443,29 @@ const CardInfo: React.FC<CardInfoProps> = ({
   const dueDate = dstr(fsrsCard.Due, true);
   const lastReview = dstr(fsrsCard.LastReview, true);
 
+  const [fsrsVersion] = useFsrsVersion();
+
   const forgettingCurve = useMemo(() => {
-    // return math.Pow(1+factor*elapsedDays/stability, decay)
-    // 	var Decay = -0.5
-    // var Factor = math.Pow(0.9, 1/Decay) - 1
+    if (fsrsVersion === null) {
+      return [];
+    }
     const curve = [];
     const today = new Date();
-
-    // Get these from FSRS parameters once we make that configurable, if ever.
-    const decay = -0.5;
-    const factor = Math.pow(0.9, 1 / decay) - 1;
+    // Recall depends on the time since the last review, so the curve starts
+    // at today's retrievability.
+    const elapsedToday = Math.max(
+      (today.getTime() - new Date(fsrsCard.LastReview).getTime()) / 86400000,
+      0,
+    );
     for (let i = 0; i < 365; i++) {
       curve.push({
-        Recall: Math.pow(1 + (factor * i) / fsrsCard.Stability, decay) * 100,
+        Recall:
+          fsrsRecall(fsrsVersion, fsrsCard.Stability, elapsedToday + i) * 100,
         date: new Date(today.getTime() + 86400000 * i).toLocaleDateString(),
       });
     }
     return curve;
-  }, [fsrsCard.Stability]);
+  }, [fsrsCard.Stability, fsrsCard.LastReview, fsrsVersion]);
 
   return (
     <>
@@ -601,6 +608,12 @@ const CardInfo: React.FC<CardInfoProps> = ({
 
       <Text fw={700} mb="lg" mt="lg" size="lg" c={theme.colors.blue[4]}>
         Review History
+      </Text>
+
+      <ReviewHeatmap reviewLog={reviewLog} />
+
+      <Text fw={700} mb="lg" mt="lg" size="md">
+        All reviews
       </Text>
 
       <Timeline
