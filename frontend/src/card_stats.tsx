@@ -23,7 +23,10 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { Score, Card as WordVaultCard } from "./gen/rpc/wordvault/api_pb";
-import { Alphagram } from "./gen/rpc/wordsearcher/searcher_pb";
+import {
+  Alphagram,
+  SearchRequest_Condition,
+} from "./gen/rpc/wordsearcher/searcher_pb";
 import {
   IconAlertHexagon,
   IconBabyBottle,
@@ -281,7 +284,25 @@ const CardStats: React.FC = () => {
       const alphagram = resp.cards[0].alphagram?.alphagram;
       if (wordServerClient && alphagram) {
         wordServerClient
-          .expand({ lexicon, alphagrams: [{ alphagram }] })
+          .search({
+            searchparams: [
+              {
+                condition: SearchRequest_Condition.LEXICON,
+                conditionparam: {
+                  value: { value: lexicon },
+                  case: "stringvalue",
+                },
+              },
+              {
+                condition: SearchRequest_Condition.ALPHAGRAM_LIST,
+                conditionparam: {
+                  value: { values: [alphagram] },
+                  case: "stringarray",
+                },
+              },
+            ],
+            expand: true,
+          })
           .then((r) => setExpanded(r.alphagrams[0] ?? null))
           .catch((e) => console.error("Error expanding alphagram:", e));
       }
