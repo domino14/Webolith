@@ -572,6 +572,31 @@ const CardInfo: React.FC<CardInfoProps> = ({
                 </Text>
               </List.Item>
             )}
+            {expanded && expanded.difficulty > 0 && (
+              <List.Item>
+                <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
+                  <Tooltip
+                    multiline
+                    w={350}
+                    withArrow
+                    label="How hard this bingo is for players in general, compared with other 7s and 8s: 1 is easiest, 100 is hardest. Not the same as FSRS difficulty below, which is about you."
+                  >
+                    <IconHelp
+                      size={16}
+                      style={{ marginRight: 6, marginBottom: -3 }}
+                    />
+                  </Tooltip>
+                  Aerolith difficulty:{" "}
+                  <Text
+                    component="span"
+                    fw={500}
+                    c={expanded.difficulty > 80 ? "red" : undefined}
+                  >
+                    {expanded.difficulty}/100
+                  </Text>
+                </Text>
+              </List.Item>
+            )}
             {expanded && expanded.words.length > 0 && (
               <List.Item>
                 <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
