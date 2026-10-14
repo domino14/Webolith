@@ -1,15 +1,13 @@
 import { useCallback, useContext, useMemo, useState } from "react";
-import {
-  SearchTypesEnum,
-  SearchCriterion,
-  lexiconSearchCriterion,
-} from "./types";
+import { SearchTypesEnum, SearchCriterion } from "./types";
 import useSearchRows from "./use_search_rows";
 import { AppContext } from "../app_context";
 import SearchRows from "./rows";
 import { Button, Group, Loader, Select, Stack } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useDeckSelector } from "./useDeckSelector";
+import { notifyCardActionError } from "./notify_error";
+import { SearchRequest_SearchParam } from "../gen/rpc/wordsearcher/searcher_pb";
 
 const allowedSearchTypes = new Set([
   SearchTypesEnum.PROBABILITY,
@@ -40,8 +38,13 @@ const initialCriteria = [
 type SearchTabProps = {
   showLoader: boolean;
   setShowLoader: (loading: boolean) => void;
-  onDeleteFromAllDecks: (alphagramList: string[]) => Promise<void>;
-  onDeleteFromDeck: (deckId: bigint, alphagramList: string[]) => Promise<void>;
+  onDeleteFromAllDecks: (
+    searchParams: SearchRequest_SearchParam[]
+  ) => Promise<void>;
+  onDeleteFromDeck: (
+    deckId: bigint,
+    searchParams: SearchRequest_SearchParam[]
+  ) => Promise<void>;
 };
 
 type ActionType = "add" | "move" | "delete";
@@ -52,8 +55,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
   onDeleteFromAllDecks,
   onDeleteFromDeck,
 }) => {
-  const { lexicon, wordVaultClient, wordServerClient, decksById } =
-    useContext(AppContext);
+  const { lexicon, wordVaultClient, decksById } = useContext(AppContext);
   const [action, setAction] = useState<ActionType>("add");
 
   const hasDecks = decksById.size > 0;
@@ -79,35 +81,31 @@ const SearchTab: React.FC<SearchTabProps> = ({
   } = useSearchRows(initialCriteria, allowedSearchTypes);
 
   const handleAction = useCallback(async () => {
-    if (!lexicon || !wordServerClient || !wordVaultClient) {
+    if (!lexicon || !wordVaultClient) {
       return;
     }
+    // The search runs on the server, in the current lexicon.
+    const searchParams = searchCriteria.map((s) => s.toProtoObj());
+
+    if (action === "delete") {
+      // The delete handlers manage the loader and notifications themselves.
+      if (sourceDeck.all) {
+        await onDeleteFromAllDecks(searchParams);
+      } else {
+        await onDeleteFromDeck(sourceDeck.id, searchParams);
+      }
+      return;
+    }
+
     try {
       setShowLoader(true);
-
-      const searchRequest = {
-        searchparams: searchCriteria.map((s) => s.toProtoObj()),
-      };
-      searchRequest.searchparams.unshift(lexiconSearchCriterion(lexicon));
-
-      const searchResponse = await wordServerClient.search(searchRequest);
-
-      if (searchResponse.alphagrams.length === 0) {
-        notifications.show({
-          color: "yellow",
-          message: "No cards match the search criteria.",
-        });
-        return;
-      }
-
-      const alphagrams = searchResponse.alphagrams.map((a) => a.alphagram);
 
       if (action === "add") {
         const deckId = targetDeck.all ? 0n : targetDeck.id;
         const addResp = await wordVaultClient.addCards({
           lexicon,
           deckId: deckId === 0n ? undefined : deckId,
-          alphagrams,
+          searchParams,
         });
 
         notifications.show({
@@ -127,12 +125,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
             message: `${countInOtherDecks} ${inOtherDecksMessage}. If you wish to add them to this deck, you must move them from the other decks first.`,
           });
         }
-      } else if (action === "delete") {
-        if (sourceDeck.all) {
-          await onDeleteFromAllDecks(alphagrams);
-        } else {
-          await onDeleteFromDeck(sourceDeck.id, alphagrams);
-        }
       } else if (action === "move") {
         if (
           !sourceDeck.all &&
@@ -151,7 +143,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
 
         const moveResp = await wordVaultClient.moveCards({
           lexicon,
-          alphagrams,
+          searchParams,
           targetDeckId: targetDeckId,
           sourceDeckId: sourceDeckId,
           fromAllDecks: sourceDeck.all,
@@ -163,11 +155,7 @@ const SearchTab: React.FC<SearchTabProps> = ({
         });
       }
     } catch (e) {
-      notifications.show({
-        color: "red",
-        title: "Error",
-        message: String(e),
-      });
+      notifyCardActionError(e);
     } finally {
       setShowLoader(false);
     }
@@ -175,7 +163,6 @@ const SearchTab: React.FC<SearchTabProps> = ({
     action,
     lexicon,
     searchCriteria,
-    wordServerClient,
     wordVaultClient,
     setShowLoader,
     sourceDeck,

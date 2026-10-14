@@ -252,18 +252,6 @@ function searchCriteriaOptions(
   );
 }
 
-export const lexiconSearchCriterion = (lex: string) => {
-  return new SearchRequest_SearchParam({
-    condition: SearchRequest_Condition.LEXICON,
-    conditionparam: {
-      case: "stringvalue",
-      value: new SearchRequest_StringValue({
-        value: lex,
-      }),
-    },
-  });
-};
-
 class SearchCriterion {
   searchType: number;
   options: { [key: string]: optionType };

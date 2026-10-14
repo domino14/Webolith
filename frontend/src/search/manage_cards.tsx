@@ -6,13 +6,15 @@ import SearchTab from "./SearchTab";
 import UploadTextFileTab from "./UploadTextFileTab";
 import UploadCardboxTab from "./UploadCardboxTab";
 import BulkCardDeletionTab from "./BulkCardDeletionTab";
+import { notifyCardActionError } from "./notify_error";
+import { SearchRequest_SearchParam } from "../gen/rpc/wordsearcher/searcher_pb";
 
 const ManageCardsPage: React.FC = () => {
   const { lexicon, wordVaultClient } = useContext(AppContext);
   const [showLoader, setShowLoader] = useState(false);
 
   const handleDeleteFromAllDecks = useCallback(
-    async (alphagramList: string[]) => {
+    async (searchParams: SearchRequest_SearchParam[]) => {
       if (!wordVaultClient) {
         return;
       }
@@ -20,20 +22,14 @@ const ManageCardsPage: React.FC = () => {
         setShowLoader(true);
         const resp = await wordVaultClient.delete({
           lexicon,
-          onlyNewQuestions: false,
-          allQuestions: false,
-          onlyAlphagrams: alphagramList,
+          searchParams,
         });
         notifications.show({
           color: "green",
           message: `Deleted ${resp.numDeleted} cards.`,
         });
       } catch (e) {
-        notifications.show({
-          color: "red",
-          title: "Error",
-          message: String(e),
-        });
+        notifyCardActionError(e);
       } finally {
         setShowLoader(false);
       }
@@ -42,7 +38,7 @@ const ManageCardsPage: React.FC = () => {
   );
 
   const handleDeleteFromDeck = useCallback(
-    async (deckId: bigint, alphagramList: string[]) => {
+    async (deckId: bigint, searchParams: SearchRequest_SearchParam[]) => {
       if (!wordVaultClient) {
         return;
       }
@@ -51,20 +47,14 @@ const ManageCardsPage: React.FC = () => {
         const resp = await wordVaultClient.deleteFromDeck({
           lexicon,
           deckId,
-          onlyNewQuestions: false,
-          allQuestions: false,
-          onlyAlphagrams: alphagramList,
+          searchParams,
         });
         notifications.show({
           color: "green",
           message: `Deleted ${resp.numDeleted} cards.`,
         });
       } catch (e) {
-        notifications.show({
-          color: "red",
-          title: "Error",
-          message: String(e),
-        });
+        notifyCardActionError(e);
       } finally {
         setShowLoader(false);
       }
