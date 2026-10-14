@@ -20,6 +20,7 @@ import {
 import { QuestionSearcher } from "./gen/rpc/wordsearcher/searcher_connect";
 import { ServiceType } from "@bufbuild/protobuf";
 import { Deck, FsrsScheduler } from "./gen/rpc/wordvault/api_pb";
+import { WORDVAULT_LEXICA } from "./lexica";
 
 export enum FontStyle {
   Monospace = "monospace",
@@ -219,6 +220,13 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
   const [tokenExpiry, setTokenExpiry] = useState(0);
   const [isMember, setIsMember] = useState(false);
   const [lexicon, setLexicon] = useState("");
+  // Other apps (e.g. Wordwalls) can link here with ?lexicon=CSW24 to open
+  // WordVault in that lexicon instead of the default one. Read it on the
+  // first render, since the index route redirects and drops the query.
+  const [linkedLexicon] = useState(() => {
+    const lex = new URLSearchParams(window.location.search).get("lexicon");
+    return lex && WORDVAULT_LEXICA.includes(lex) ? lex : "";
+  });
   const [defaultLexicon, setDefaultLexicon] = useState("");
   const [loginState, setLoginState] = useState(LoginState.Unknown);
   const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(
@@ -286,7 +294,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
       try {
         const response = await fetch("/accounts/profile/default_lexicon");
         const data = await response.json();
-        setLexicon(data.defaultLexicon);
+        setLexicon(linkedLexicon || data.defaultLexicon);
         setDefaultLexicon(data.defaultLexicon);
       } catch (error) {
         console.error("Error fetching default lexicon:", error);
@@ -296,7 +304,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
     if (loginState === LoginState.LoggedIn) {
       fetchDefaultLexicon();
     }
-  }, [loginState]);
+  }, [loginState, linkedLexicon]);
 
   // Fetch wordvault display settings on login, from the Aerolith API.
   useEffect(() => {

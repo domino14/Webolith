@@ -34,6 +34,7 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import Cookies from "js-cookie";
+import { WORDVAULT_LEXICA } from "./lexica";
 
 // this can come from the backend later in some other way.
 const lexMap = {
@@ -133,7 +134,7 @@ function App() {
         <AppShell.Section grow component={ScrollArea}>
           <Select
             label="Lexicon"
-            data={["NWL23", "CSW24", "FRA24", "RD29", "OSPS52"]}
+            data={WORDVAULT_LEXICA}
             value={lexicon}
             onChange={(val) => setLexicon(val ?? "")}
             mb="md"

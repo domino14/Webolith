@@ -19,6 +19,7 @@ import ManageCardsPage from "./search/manage_cards.tsx";
 import CardSchedule from "./schedule.tsx";
 import Help from "./help.tsx";
 import CardStats from "./card_stats.tsx";
+import CardPage from "./card_page.tsx";
 import Settings from "./settings.tsx";
 import Leaderboard from "./leaderboard.tsx";
 import Decks from "./decks.tsx";
@@ -57,6 +58,10 @@ const router = createBrowserRouter(
         {
           path: "/stats",
           element: <CardStats />,
+        },
+        {
+          path: "/card/:alphagram",
+          element: <CardPage />,
         },
         {
           path: "/leaderboard",

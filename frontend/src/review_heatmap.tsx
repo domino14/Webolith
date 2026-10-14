@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Group,
@@ -16,7 +16,7 @@ const GAP = 3;
 type ReviewLogEntry = {
   Rating: number;
   Review: string;
-  ImportLog?: unknown;
+  ImportLog?: { ImportedDate?: string };
 };
 
 type Day = {
@@ -41,15 +41,23 @@ const ReviewHeatmap: React.FC<ReviewHeatmapProps> = ({ reviewLog }) => {
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const viewport = useRef<HTMLDivElement>(null);
+  // One tooltip for the whole grid, labeled with the hovered day, rather than
+  // a Tooltip component per square.
+  const [hovered, setHovered] = useState<Day | null>(null);
 
-  const ratingColors: { [rating: number]: string } = {
-    1: theme.colors.red[6],
-    2: theme.colors.yellow[6],
-    3: theme.colors.green[6],
-    4: theme.colors.pink[6],
-  };
-  const importColor = theme.colors.blue[4];
-  const emptyColor = isDark ? theme.colors.dark[5] : theme.colors.gray[2];
+  const { ratingColors, importColor, emptyColor } = useMemo(
+    () => ({
+      ratingColors: {
+        1: theme.colors.red[6],
+        2: theme.colors.yellow[6],
+        3: theme.colors.green[6],
+        4: theme.colors.pink[6],
+      } as { [rating: number]: string },
+      importColor: theme.colors.blue[4],
+      emptyColor: isDark ? theme.colors.dark[5] : theme.colors.gray[2],
+    }),
+    [theme, isDark],
+  );
 
   const weeks = useMemo(() => {
     if (reviewLog.length === 0) {
@@ -58,8 +66,11 @@ const ReviewHeatmap: React.FC<ReviewHeatmapProps> = ({ reviewLog }) => {
     const byDay = new Map<string, { ratings: number[]; imported: boolean }>();
     let first = startOfDay(new Date());
     for (const rl of reviewLog) {
-      const d = new Date(rl.Review);
-      if (isNaN(d.getTime())) {
+      // Import entries have a zero Review time (0001-01-01); without this the
+      // calendar would start in year 1 and render hundreds of thousands of
+      // days.
+      const d = new Date(rl.ImportLog?.ImportedDate ?? rl.Review);
+      if (isNaN(d.getTime()) || d.getFullYear() < 1970) {
         continue;
       }
       if (d < first) {
@@ -104,16 +115,61 @@ const ReviewHeatmap: React.FC<ReviewHeatmapProps> = ({ reviewLog }) => {
     }
   }, [weeks]);
 
+  // Memoized so that hovering, which only changes the tooltip label, doesn't
+  // re-render every square.
+  const columns = useMemo(() => {
+    const colorFor = (day: Day) =>
+      day.ratings.length > 0
+        ? ratingColors[day.ratings[0]] ?? emptyColor
+        : day.imported
+          ? importColor
+          : emptyColor;
+
+    return weeks.map((week, wi) => {
+      const month = week[0].date.getMonth();
+      const showMonth = wi === 0 || weeks[wi - 1][0].date.getMonth() !== month;
+      return (
+        <Box key={wi} style={{ width: SQUARE, flexShrink: 0 }}>
+          <Text
+            size="10px"
+            c="dimmed"
+            h={14}
+            style={{ whiteSpace: "nowrap", overflow: "visible" }}
+          >
+            {showMonth
+              ? week[0].date.toLocaleDateString(undefined, {
+                  month: "short",
+                })
+              : ""}
+          </Text>
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: GAP,
+            }}
+          >
+            {week.map((day) => (
+              <Box
+                key={day.date.getTime()}
+                w={SQUARE}
+                h={SQUARE}
+                onMouseEnter={() => setHovered(day)}
+                style={{
+                  backgroundColor: colorFor(day),
+                  borderRadius: 2,
+                }}
+              />
+            ))}
+          </Box>
+        </Box>
+      );
+    });
+  }, [weeks, ratingColors, importColor, emptyColor]);
+
   if (weeks.length === 0) {
     return null;
   }
-
-  const colorFor = (day: Day) =>
-    day.ratings.length > 0
-      ? ratingColors[day.ratings[0]] ?? emptyColor
-      : day.imported
-        ? importColor
-        : emptyColor;
 
   const labelFor = (day: Day) => {
     const parts = day.ratings.map((r) => Score[r] ?? String(r));
@@ -128,50 +184,17 @@ const ReviewHeatmap: React.FC<ReviewHeatmapProps> = ({ reviewLog }) => {
   return (
     <>
       <ScrollArea viewportRef={viewport} type="auto" offsetScrollbars>
-        <Box style={{ display: "flex", gap: GAP }}>
-          {weeks.map((week, wi) => {
-            const month = week[0].date.getMonth();
-            const showMonth =
-              wi === 0 || weeks[wi - 1][0].date.getMonth() !== month;
-            return (
-              <Box key={wi} style={{ width: SQUARE, flexShrink: 0 }}>
-                <Text
-                  size="10px"
-                  c="dimmed"
-                  h={14}
-                  style={{ whiteSpace: "nowrap", overflow: "visible" }}
-                >
-                  {showMonth
-                    ? week[0].date.toLocaleDateString(undefined, {
-                        month: "short",
-                      })
-                    : ""}
-                </Text>
-                <Box
-                  style={{ display: "flex", flexDirection: "column", gap: GAP }}
-                >
-                  {week.map((day) => (
-                    <Tooltip
-                      key={day.date.getTime()}
-                      label={labelFor(day)}
-                      withArrow
-                      openDelay={100}
-                    >
-                      <Box
-                        w={SQUARE}
-                        h={SQUARE}
-                        style={{
-                          backgroundColor: colorFor(day),
-                          borderRadius: 2,
-                        }}
-                      />
-                    </Tooltip>
-                  ))}
-                </Box>
-              </Box>
-            );
-          })}
-        </Box>
+        <Tooltip.Floating
+          label={hovered ? labelFor(hovered) : ""}
+          disabled={!hovered}
+        >
+          <Box
+            style={{ display: "flex", gap: GAP }}
+            onMouseLeave={() => setHovered(null)}
+          >
+            {columns}
+          </Box>
+        </Tooltip.Floating>
       </ScrollArea>
       <Group gap="md" mt="xs">
         {[
