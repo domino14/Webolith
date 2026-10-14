@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Int64Value, proto3, Timestamp } from "@bufbuild/protobuf";
-import { Alphagram } from "../wordsearcher/searcher_pb.js";
+import { Alphagram, SearchRequest_SearchParam } from "../wordsearcher/searcher_pb.js";
 
 /**
  * @generated from enum wordvault.Score
@@ -138,6 +138,32 @@ export const ScoreCardResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * ScoreCardsRequest gives the same score to several cards at once, e.g. to
+ * mark every card missed in a Wordwalls round as AGAIN.
+ *
+ * @generated from message wordvault.ScoreCardsRequest
+ */
+export const ScoreCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.ScoreCardsRequest",
+  () => [
+    { no: 1, name: "score", kind: "enum", T: proto3.getEnumType(Score) },
+    { no: 2, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.ScoreCardsResponse
+ */
+export const ScoreCardsResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.ScoreCardsResponse",
+  () => [
+    { no: 1, name: "num_scored", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "not_scored", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ],
+);
+
+/**
  * @generated from message wordvault.AddCardsRequest
  */
 export const AddCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
@@ -146,6 +172,7 @@ export const AddCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
     { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 3, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 4, name: "search_params", kind: "message", T: SearchRequest_SearchParam, repeated: true },
   ],
 );
 
@@ -172,6 +199,7 @@ export const MoveCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
     { no: 3, name: "target_deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
     { no: 4, name: "from_all_decks", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 5, name: "source_deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 6, name: "search_params", kind: "message", T: SearchRequest_SearchParam, repeated: true },
   ],
 );
 
@@ -337,6 +365,7 @@ export const DeleteRequest = /*@__PURE__*/ proto3.makeMessageType(
     { no: 2, name: "only_new_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "only_alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "all_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 5, name: "search_params", kind: "message", T: SearchRequest_SearchParam, repeated: true },
   ],
 );
 
@@ -364,6 +393,7 @@ export const DeleteFromDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
     { no: 2, name: "only_new_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 3, name: "only_alphagrams", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "all_questions", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "search_params", kind: "message", T: SearchRequest_SearchParam, repeated: true },
     { no: 5, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
   ],
 );

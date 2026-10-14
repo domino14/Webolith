@@ -815,6 +815,7 @@ function WordwallsAppContainer({
         numberOfRounds={numberOfRounds}
         isChallenge={isChallenge}
         isBuild={isBuild}
+        lexicon={lexicon}
         isTyping={isTyping}
         curQuestions={curQuestions}
         origQuestions={origQuestions}

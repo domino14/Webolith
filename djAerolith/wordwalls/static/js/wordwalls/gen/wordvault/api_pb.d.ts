@@ -5,7 +5,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage, Timestamp } from "@bufbuild/protobuf";
 import { Message, proto3 } from "@bufbuild/protobuf";
-import type { Alphagram } from "../wordsearcher/searcher_pb.js";
+import type { Alphagram, SearchRequest_SearchParam } from "../wordsearcher/searcher_pb.js";
 
 /**
  * @generated from enum wordvault.Score
@@ -352,6 +352,75 @@ export declare class ScoreCardResponse extends Message<ScoreCardResponse> {
 }
 
 /**
+ * ScoreCardsRequest gives the same score to several cards at once, e.g. to
+ * mark every card missed in a Wordwalls round as AGAIN.
+ *
+ * @generated from message wordvault.ScoreCardsRequest
+ */
+export declare class ScoreCardsRequest extends Message<ScoreCardsRequest> {
+  /**
+   * @generated from field: wordvault.Score score = 1;
+   */
+  score: Score;
+
+  /**
+   * @generated from field: string lexicon = 2;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: repeated string alphagrams = 3;
+   */
+  alphagrams: string[];
+
+  constructor(data?: PartialMessage<ScoreCardsRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.ScoreCardsRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ScoreCardsRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ScoreCardsRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ScoreCardsRequest;
+
+  static equals(a: ScoreCardsRequest | PlainMessage<ScoreCardsRequest> | undefined, b: ScoreCardsRequest | PlainMessage<ScoreCardsRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.ScoreCardsResponse
+ */
+export declare class ScoreCardsResponse extends Message<ScoreCardsResponse> {
+  /**
+   * @generated from field: uint32 num_scored = 1;
+   */
+  numScored: number;
+
+  /**
+   * Requested alphagrams that were not scored, either because there is no
+   * such card or because the card was just reviewed.
+   *
+   * @generated from field: repeated string not_scored = 2;
+   */
+  notScored: string[];
+
+  constructor(data?: PartialMessage<ScoreCardsResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.ScoreCardsResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ScoreCardsResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ScoreCardsResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ScoreCardsResponse;
+
+  static equals(a: ScoreCardsResponse | PlainMessage<ScoreCardsResponse> | undefined, b: ScoreCardsResponse | PlainMessage<ScoreCardsResponse> | undefined): boolean;
+}
+
+/**
  * @generated from message wordvault.AddCardsRequest
  */
 export declare class AddCardsRequest extends Message<AddCardsRequest> {
@@ -361,6 +430,11 @@ export declare class AddCardsRequest extends Message<AddCardsRequest> {
   lexicon: string;
 
   /**
+   * Exactly one of alphagrams or search_params must be given. If
+   * search_params is given, the server runs the search in the request's
+   * lexicon and adds the resulting alphagrams. Any lexicon condition in
+   * search_params is ignored.
+   *
    * @generated from field: repeated string alphagrams = 2;
    */
   alphagrams: string[];
@@ -369,6 +443,11 @@ export declare class AddCardsRequest extends Message<AddCardsRequest> {
    * @generated from field: uint64 deck_id = 3;
    */
   deckId: bigint;
+
+  /**
+   * @generated from field: repeated wordsearcher.SearchRequest.SearchParam search_params = 4;
+   */
+  searchParams: SearchRequest_SearchParam[];
 
   constructor(data?: PartialMessage<AddCardsRequest>);
 
@@ -429,6 +508,9 @@ export declare class MoveCardsRequest extends Message<MoveCardsRequest> {
   lexicon: string;
 
   /**
+   * Exactly one of alphagrams or search_params must be given (see
+   * AddCardsRequest).
+   *
    * @generated from field: repeated string alphagrams = 2;
    */
   alphagrams: string[];
@@ -449,6 +531,11 @@ export declare class MoveCardsRequest extends Message<MoveCardsRequest> {
    * @generated from field: uint64 source_deck_id = 5;
    */
   sourceDeckId: bigint;
+
+  /**
+   * @generated from field: repeated wordsearcher.SearchRequest.SearchParam search_params = 6;
+   */
+  searchParams: SearchRequest_SearchParam[];
 
   constructor(data?: PartialMessage<MoveCardsRequest>);
 
@@ -866,7 +953,7 @@ export declare class DeleteRequest extends Message<DeleteRequest> {
   lexicon: string;
 
   /**
-   * The following three conditions are mutually exclusive.
+   * The following four conditions are mutually exclusive.
    *
    * @generated from field: bool only_new_questions = 2;
    */
@@ -881,6 +968,13 @@ export declare class DeleteRequest extends Message<DeleteRequest> {
    * @generated from field: bool all_questions = 4;
    */
   allQuestions: boolean;
+
+  /**
+   * Delete the cards matching this search (see AddCardsRequest).
+   *
+   * @generated from field: repeated wordsearcher.SearchRequest.SearchParam search_params = 5;
+   */
+  searchParams: SearchRequest_SearchParam[];
 
   constructor(data?: PartialMessage<DeleteRequest>);
 
@@ -935,7 +1029,7 @@ export declare class DeleteFromDeckRequest extends Message<DeleteFromDeckRequest
   lexicon: string;
 
   /**
-   * The following three conditions are mutually exclusive.
+   * The following four conditions are mutually exclusive.
    *
    * @generated from field: bool only_new_questions = 2;
    */
@@ -950,6 +1044,13 @@ export declare class DeleteFromDeckRequest extends Message<DeleteFromDeckRequest
    * @generated from field: bool all_questions = 4;
    */
   allQuestions: boolean;
+
+  /**
+   * Delete the cards matching this search (see AddCardsRequest).
+   *
+   * @generated from field: repeated wordsearcher.SearchRequest.SearchParam search_params = 6;
+   */
+  searchParams: SearchRequest_SearchParam[];
 
   /**
    * @generated from field: uint64 deck_id = 5;

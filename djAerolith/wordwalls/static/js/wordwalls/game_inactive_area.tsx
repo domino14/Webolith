@@ -31,6 +31,8 @@ interface GameInactiveAreaProps {
   totalWords: number;
   markMissed: (idx: number, alphagram: string) => void;
   showLexiconSymbols: boolean;
+  lexicon: string;
+  isBuild: boolean;
   isChallenge: boolean;
   challengeData: ChallengeData;
   numberOfRounds: number;
@@ -47,6 +49,8 @@ function GameInactiveArea({
   totalWords,
   markMissed,
   showLexiconSymbols,
+  lexicon,
+  isBuild,
   isChallenge,
   challengeData,
   numberOfRounds,
@@ -167,6 +171,8 @@ function GameInactiveArea({
         totalWords={totalWords}
         markMissed={markMissed}
         showLexiconSymbols={showLexiconSymbols}
+        lexicon={lexicon}
+        isBuild={isBuild}
       />
     </div>
   );
