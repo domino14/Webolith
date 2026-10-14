@@ -9,8 +9,10 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import { Code, ConnectError } from "@connectrpc/connect";
 import { SearchRequest_Condition } from "../gen/rpc/wordsearcher/searcher_pb";
 import { useDeckSelector } from "./useDeckSelector";
+import { notifyCardActionError } from "./notify_error";
 
 type UploadTextFileTabProps = {
   showLoader: boolean;
@@ -21,8 +23,7 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
   showLoader,
   setShowLoader,
 }) => {
-  const { lexicon, wordVaultClient, wordServerClient } =
-    useContext(AppContext);
+  const { lexicon, wordVaultClient } = useContext(AppContext);
   const { value: deck, selector: deckSelector } = useDeckSelector();
 
   const uploadWordListForm = useForm({
@@ -33,7 +34,7 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
 
   const processUploadedFile = useCallback(
     async (uploadedList: string[]) => {
-      if (!wordVaultClient || !wordServerClient) {
+      if (!wordVaultClient) {
         notifications.show({
           color: "red",
           title: "Error",
@@ -44,17 +45,11 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
 
       try {
         setShowLoader(true);
-        const alphagramResp = await wordServerClient.search({
-          searchparams: [
-            {
-              condition: SearchRequest_Condition.LEXICON,
-              conditionparam: {
-                value: {
-                  value: lexicon,
-                },
-                case: "stringvalue",
-              },
-            },
+        const deckId = deck.all ? 0n : deck.id;
+        const wvResp = await wordVaultClient.addCards({
+          lexicon,
+          deckId: deckId === 0n ? undefined : deckId,
+          searchParams: [
             {
               condition:
                 SearchRequest_Condition.UPLOADED_WORD_OR_ALPHAGRAM_LIST,
@@ -67,30 +62,24 @@ const UploadTextFileTab: React.FC<UploadTextFileTabProps> = ({
             },
           ],
         });
-        if (alphagramResp.alphagrams.length === 0) {
-          throw new Error("Your uploaded list had no valid alphagrams.");
-        }
-        const deckId = deck.all ? 0n : deck.id;
-        const wvResp = await wordVaultClient.addCards({
-          lexicon,
-          deckId: deckId === 0n ? undefined : deckId,
-          alphagrams: alphagramResp.alphagrams.map((a) => a.alphagram),
-        });
         notifications.show({
           color: "green",
           message: `Uploaded ${wvResp.numCardsAdded} cards to your WordVault`,
         });
       } catch (e) {
-        notifications.show({
-          color: "red",
-          title: "Error",
-          message: String(e),
-        });
+        if (e instanceof ConnectError && e.code === Code.NotFound) {
+          notifications.show({
+            color: "yellow",
+            message: "Your uploaded list had no valid alphagrams.",
+          });
+        } else {
+          notifyCardActionError(e);
+        }
       } finally {
         setShowLoader(false);
       }
     },
-    [wordServerClient, lexicon, wordVaultClient, setShowLoader, deck]
+    [lexicon, wordVaultClient, setShowLoader, deck]
   );
 
   return (
