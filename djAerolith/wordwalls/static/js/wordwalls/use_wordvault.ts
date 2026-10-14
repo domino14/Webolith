@@ -33,20 +33,27 @@ export interface WordVaultActions {
   add: (alphagram: string) => void;
   markMissed: (alphagram: string) => void;
   addAllMissed: () => void;
-  numMissed: number;
+  // What addAllMissed would do.
+  numToAdd: number;
+  numToMark: number;
+  // Whether we're asking the user to confirm addAllMissed.
+  confirming: boolean;
+  setConfirming: (c: boolean) => void;
   refresh: () => void;
   // Decks for this lexicon, not counting the default deck.
   decks: VaultDeck[];
   // Where new cards go; 0 is the default deck.
   deckId: bigint;
   setDeckId: (id: bigint) => void;
+  // Name of the deck new cards go to, or undefined for the default deck.
+  deckName: string | undefined;
 }
 
 // Blank questions don't have a single real alphagram, so WordVault can't
 // hold them.
 const isEligible = (alphagram: string) => !alphagram.includes('?');
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 const DEFAULT_DECK_ID = BigInt(0);
 
@@ -99,6 +106,7 @@ export default function useWordVault(
   const [message, setMessage] = useState<WordVaultActions['message']>(null);
   const [decks, setDecks] = useState<VaultDeck[]>([]);
   const [chosenDeckId, setChosenDeckId] = useState<bigint>(DEFAULT_DECK_ID);
+  const [confirming, setConfirming] = useState(false);
 
   const isLoaded = loadedRound === roundKey;
   // Fall back to the default deck if the remembered one was deleted.
@@ -114,6 +122,7 @@ export default function useWordVault(
     if (!enabled || loggedOut || alphagrams.length === 0) {
       return;
     }
+    setConfirming(false);
     Promise.all([getExistingCards(lexicon, alphagrams), getDecks(lexicon)])
       .then(([cards, lexiconDecks]) => {
         setExisting(cards);
@@ -216,6 +225,7 @@ export default function useWordVault(
     if (toAdd.length === 0 && toMark.length === 0) {
       return;
     }
+    setConfirming(false);
     setBusy(true);
     setMessage(null);
     const addKeys = toAdd.map(alphagramKey);
@@ -279,7 +289,11 @@ export default function useWordVault(
     add,
     markMissed,
     addAllMissed,
-    numMissed: pendingMissed.toAdd.length + pendingMissed.toMark.length,
+    numToAdd: pendingMissed.toAdd.length,
+    numToMark: pendingMissed.toMark.length,
+    confirming,
+    setConfirming,
+    deckName,
     refresh,
     decks,
     deckId,

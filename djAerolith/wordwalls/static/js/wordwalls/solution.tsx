@@ -113,9 +113,9 @@ function Solution({
       items.push({ label: 'View card in WordVault', href: vaultCardUrl });
     }
     const icon = vault ? (
-      <i className={`bi ${vault.icon}`} aria-hidden="true" />
+      <i className={`bi fs-5 ${vault.icon}`} aria-hidden="true" />
     ) : (
-      <i className="bi bi-three-dots" aria-hidden="true" />
+      <i className="bi fs-5 bi-three-dots" aria-hidden="true" />
     );
     const title = vault ? vault.title : 'Actions';
 
