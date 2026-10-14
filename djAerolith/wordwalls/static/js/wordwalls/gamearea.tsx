@@ -35,6 +35,7 @@ interface GameAreaProps {
   challengeData: ChallengeData;
   isChallenge: boolean;
   isBuild: boolean;
+  lexicon: string;
   isTyping: boolean;
   width: number;
   height: number;
@@ -62,6 +63,7 @@ function GameArea({
   challengeData,
   isChallenge,
   isBuild,
+  lexicon,
   isTyping,
   width,
   height,
@@ -139,6 +141,8 @@ function GameArea({
       totalWords={totalWords}
       markMissed={markMissed}
       showLexiconSymbols={!displayStyle.hideLexiconSymbols}
+      lexicon={lexicon}
+      isBuild={isBuild}
       isChallenge={isChallenge}
       challengeData={challengeData}
       numberOfRounds={numberOfRounds}

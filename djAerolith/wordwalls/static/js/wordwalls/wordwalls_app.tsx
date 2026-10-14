@@ -50,6 +50,7 @@ interface WordwallsAppProps {
   numberOfRounds: number;
   isChallenge: boolean;
   isBuild: boolean;
+  lexicon: string;
   isTyping: boolean;
   curQuestions: Immutable.List<ImmutableQuestion>;
   origQuestions: Immutable.OrderedMap<string, ImmutableQuestion>;
@@ -98,6 +99,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
   numberOfRounds,
   isChallenge,
   isBuild,
+  lexicon,
   isTyping,
   curQuestions,
   origQuestions,
@@ -175,6 +177,7 @@ const WordwallsApp = forwardRef<WordwallsAppRef, WordwallsAppProps>(({
             numberOfRounds={numberOfRounds}
             isChallenge={isChallenge}
             isBuild={isBuild}
+            lexicon={lexicon}
             isTyping={isTyping}
             curQuestions={curQuestions}
             origQuestions={origQuestions}
