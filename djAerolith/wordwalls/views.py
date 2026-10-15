@@ -349,7 +349,8 @@ def get_leaderboard_data(lex, chName, challengeDate, tiebreaker):
 @login_required
 def mark_missed(request, tableid):
     wwg = WordwallsGame()
-    marked = wwg.mark_missed(request.POST["idx"], tableid, request.user)
+    # idx is one question index, or several separated by commas.
+    marked = wwg.mark_missed(request.POST["idx"].split(","), tableid, request.user)
     return response({"success": marked})
 
 

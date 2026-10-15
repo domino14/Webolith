@@ -657,15 +657,16 @@ function WordwallsAppContainer({
   );
 
   const markMissed = useCallback(
-    async (alphaIdx: number, alphagram: string) => {
-      // Mark the alphagram missed.
+    async (questions: { idx: number; alphagram: string }[]) => {
+      // Mark the alphagrams missed, in one request so the server doesn't
+      // race updating the list.
       try {
         const response = await ajaxUtils.post(`${tableUrl()}missed/`, {
-          idx: alphaIdx,
+          idx: questions.map((q) => q.idx).join(','),
         });
 
         if (response.data.success === true) {
-          game.miss(alphagram);
+          questions.forEach((q) => game.miss(q.alphagram));
           setOrigQuestions(game.getOriginalQuestionState());
         }
       } catch {

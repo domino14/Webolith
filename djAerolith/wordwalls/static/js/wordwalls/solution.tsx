@@ -30,7 +30,7 @@ const VAULT_STATUS_DISPLAY: Record<VaultStatus, { icon: string; title: string } 
 };
 
 interface SolutionProps {
-  markMissed: (idx: number, alphagram: string) => void;
+  markMissed: (questions: { idx: number; alphagram: string }[]) => void;
   idx: number;
   alphagram: string;
   correct: boolean;
@@ -77,7 +77,7 @@ function Solution({
   vaultCardUrl,
 }: SolutionProps) {
   const handleMarkMissed = () => {
-    markMissed(idx, alphagram);
+    markMissed([{ idx, alphagram }]);
   };
 
   let qTdClass = '';

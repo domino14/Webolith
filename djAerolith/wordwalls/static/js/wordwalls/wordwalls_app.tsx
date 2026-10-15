@@ -57,7 +57,7 @@ interface WordwallsAppProps {
   totalWords: number;
   answeredBy: Immutable.Map<string, Immutable.List<Immutable.Map<string, string>>>;
   onShuffleQuestion: (idx: number) => void;
-  markMissed: (idx: number, alphagram: string) => void;
+  markMissed: (questions: { idx: number; alphagram: string }[]) => void;
   wrongAnswers: number;
   hideErrors: boolean;
   boardWidth: number;

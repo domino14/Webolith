@@ -1050,9 +1050,11 @@ class WordwallsGame(object):
         for alpha in missed_alphas:
             self.add_dc_missed_bingo(dc, alpha)
 
-    def mark_missed(self, question_index, tablenum, user):
+    def mark_missed(self, question_indices, tablenum, user):
+        """Mark the given questions missed. Returns whether any of them
+        were newly marked; ones already missed are skipped."""
         try:
-            question_index = int(question_index)
+            question_indices = [int(i) for i in question_indices]
         except (ValueError, TypeError):
             return False
         wgm = self.get_wgm(tablenum)
@@ -1061,20 +1063,24 @@ class WordwallsGame(object):
         word_list = wgm.word_list
         missed = json.loads(word_list.missed)
         state = json.loads(wgm.currentGameState)
-        if question_index in set(missed):
-            # Already missed, user should not be able to mark it missed.
+        missed_set = set(missed)
+        # Already missed ones can't be marked missed again.
+        to_mark = [i for i in dict.fromkeys(question_indices) if i not in missed_set]
+        if not to_mark:
             return False
-        missed.append(question_index)
+        missed.extend(to_mark)
         word_list.missed = json.dumps(missed)
-        word_list.numMissed += 1
+        word_list.numMissed += len(to_mark)
         if state.get("justCreatedFirstMissed"):
             logger.debug("Also adding to first missed count")
             # Also add to first missed count.
             first_missed = json.loads(word_list.firstMissed)
-            if question_index not in set(first_missed):
-                first_missed.append(question_index)
-                word_list.numFirstMissed += 1
-                word_list.firstMissed = json.dumps(first_missed)
+            first_missed_set = set(first_missed)
+            for question_index in to_mark:
+                if question_index not in first_missed_set:
+                    first_missed.append(question_index)
+                    word_list.numFirstMissed += 1
+            word_list.firstMissed = json.dumps(first_missed)
 
         word_list.save()
         logger.debug("Missed: %s", word_list.missed)

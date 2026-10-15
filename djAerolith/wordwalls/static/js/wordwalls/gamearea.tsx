@@ -30,7 +30,7 @@ interface GameAreaProps {
   numCorrect: number;
   onShuffle: (idx: number) => void;
   gameGoing: boolean;
-  markMissed: (idx: number, alphagram: string) => void;
+  markMissed: (questions: { idx: number; alphagram: string }[]) => void;
   answerers: Immutable.Map<string, Immutable.List<Immutable.Map<string, string>>>;
   challengeData: ChallengeData;
   isChallenge: boolean;
