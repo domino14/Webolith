@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import * as Immutable from 'immutable';
 
@@ -24,7 +24,7 @@ interface SolutionsProps {
   questions: Immutable.OrderedMap<string, ImmutableQuestion>;
   numCorrect: number;
   totalWords: number;
-  markMissed: (idx: number, alphagram: string) => void;
+  markMissed: (questions: { idx: number; alphagram: string }[]) => void;
   showLexiconSymbols: boolean;
   wordVault: WordVaultActions;
 }
@@ -37,6 +37,7 @@ function Solutions({
   showLexiconSymbols,
   wordVault,
 }: SolutionsProps) {
+  const [confirmingMarkAll, setConfirmingMarkAll] = useState(false);
   const tableRows: React.ReactElement[] = [];
   let wordIdx = 0;
 
@@ -85,6 +86,14 @@ function Solutions({
 
   const numToChange = wordVault.numToAdd + wordVault.numToMark;
 
+  // The solved questions, which "Mark all missed" would mark missed.
+  const solvedQuestions: { idx: number; alphagram: string }[] = [];
+  questions.forEach((question) => {
+    if (question.get('solved', false)) {
+      solvedQuestions.push({ idx: question.get('idx'), alphagram: question.get('a') });
+    }
+  });
+
   let statsStr: string | null = null;
   if (totalWords > 0) {
     statsStr = `Correct: ${numCorrect} / ${totalWords}
@@ -100,12 +109,50 @@ function Solutions({
     >
       <div className="row">
         <div
-          className="col-lg-12 solutions-stats"
+          className="col-lg-12 solutions-stats d-flex align-items-center gap-3 flex-wrap"
           style={{
             padding: '10px 15px',
           }}
         >
-          {statsStr}
+          <span>{statsStr}</span>
+          {confirmingMarkAll && solvedQuestions.length > 0 ? (
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span className="small">
+                This will mark
+                {' '}
+                {plural(solvedQuestions.length, 'solved alphagram')}
+                {' '}
+                as missed in this list. Continue?
+              </span>
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                onClick={() => {
+                  setConfirmingMarkAll(false);
+                  markMissed(solvedQuestions);
+                }}
+              >
+                Confirm
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => setConfirmingMarkAll(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary"
+              disabled={solvedQuestions.length === 0}
+              onClick={() => setConfirmingMarkAll(true)}
+              title="Mark every alphagram missed in this list, including the ones you solved"
+            >
+              Mark all missed
+            </button>
+          )}
         </div>
       </div>
       {wordVault.enabled && (

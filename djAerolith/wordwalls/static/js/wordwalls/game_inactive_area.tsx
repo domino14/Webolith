@@ -29,7 +29,7 @@ interface GameInactiveAreaProps {
   questions: Immutable.OrderedMap<string, ImmutableQuestion>;
   numCorrect: number;
   totalWords: number;
-  markMissed: (idx: number, alphagram: string) => void;
+  markMissed: (questions: { idx: number; alphagram: string }[]) => void;
   showLexiconSymbols: boolean;
   lexicon: string;
   isBuild: boolean;
