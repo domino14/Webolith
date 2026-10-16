@@ -6,7 +6,7 @@ import {
   SearchTypesEnum,
 } from "./types";
 
-const maybeReorderCriteria = (searchCriteria: SearchCriterion[]) => {
+export const maybeReorderCriteria = (searchCriteria: SearchCriterion[]) => {
   // Matching anagram must always come last.
   const arrCopy: SearchCriterion[] = [];
   const toPushBack: SearchCriterion[] = [];

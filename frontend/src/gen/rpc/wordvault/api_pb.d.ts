@@ -58,6 +58,45 @@ export declare enum FsrsScheduler {
 }
 
 /**
+ * The value a study plan stage is ordered and batched by. Each alphagram's
+ * value is its rank within its length, so 7s and 8s interleave.
+ *
+ * @generated from enum wordvault.StudyPlanSortField
+ */
+export declare enum StudyPlanSortField {
+  /**
+   * @generated from enum value: STUDY_PLAN_SORT_PROBABILITY = 0;
+   */
+  STUDY_PLAN_SORT_PROBABILITY = 0,
+}
+
+/**
+ * @generated from enum wordvault.StudyPlanBatchUnit
+ */
+export declare enum StudyPlanBatchUnit {
+  /**
+   * @generated from enum value: STUDY_PLAN_BATCH_NONE = 0;
+   */
+  STUDY_PLAN_BATCH_NONE = 0,
+
+  /**
+   * Every missing card of one stage within one window of the sort field,
+   * e.g. probability 3,501–4,000. Windows are aligned to multiples of
+   * batch_size.
+   *
+   * @generated from enum value: STUDY_PLAN_BATCH_WINDOW = 1;
+   */
+  STUDY_PLAN_BATCH_WINDOW = 1,
+
+  /**
+   * The next batch_size missing cards in plan order, across stages.
+   *
+   * @generated from enum value: STUDY_PLAN_BATCH_CARDS = 2;
+   */
+  STUDY_PLAN_BATCH_CARDS = 2,
+}
+
+/**
  * @generated from message wordvault.Card
  */
 export declare class Card extends Message<Card> {
@@ -1834,5 +1873,685 @@ export declare class DeleteDeckResponse extends Message<DeleteDeckResponse> {
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteDeckResponse;
 
   static equals(a: DeleteDeckResponse | PlainMessage<DeleteDeckResponse> | undefined, b: DeleteDeckResponse | PlainMessage<DeleteDeckResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.StudyPlanStage
+ */
+export declare class StudyPlanStage extends Message<StudyPlanStage> {
+  /**
+   * Optional.
+   *
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * As in AddCardsRequest.search_params. A probability range caps the stage;
+   * a probability limit or list picks its alphagrams. Lists and limits must
+   * come last, and the server moves them there.
+   *
+   * @generated from field: repeated wordsearcher.SearchRequest.SearchParam search_params = 2;
+   */
+  searchParams: SearchRequest_SearchParam[];
+
+  /**
+   * @generated from field: wordvault.StudyPlanSortField sort_field = 3;
+   */
+  sortField: StudyPlanSortField;
+
+  /**
+   * @generated from field: bool descending = 4;
+   */
+  descending: boolean;
+
+  constructor(data?: PartialMessage<StudyPlanStage>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlanStage";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlanStage;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlanStage;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlanStage;
+
+  static equals(a: StudyPlanStage | PlainMessage<StudyPlanStage> | undefined, b: StudyPlanStage | PlainMessage<StudyPlanStage> | undefined): boolean;
+}
+
+/**
+ * A study plan is an ordered list of stages that cards are added from, a
+ * batch at a time, into one deck. An alphagram belongs to the first stage
+ * whose search matches it. Progress isn't stored: a card in the user's vault
+ * counts as done, whichever deck it's in.
+ *
+ * @generated from message wordvault.StudyPlan
+ */
+export declare class StudyPlan extends Message<StudyPlan> {
+  /**
+   * @generated from field: int64 id = 1;
+   */
+  id: bigint;
+
+  /**
+   * @generated from field: string lexicon = 2;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: string name = 3;
+   */
+  name: string;
+
+  /**
+   * The deck batches are added to; 0 is the default deck. Several plans can
+   * add to the same deck.
+   *
+   * @generated from field: uint64 deck_id = 4;
+   */
+  deckId: bigint;
+
+  /**
+   * @generated from field: repeated wordvault.StudyPlanStage stages = 5;
+   */
+  stages: StudyPlanStage[];
+
+  /**
+   * @generated from field: wordvault.StudyPlanBatchUnit batch_unit = 6;
+   */
+  batchUnit: StudyPlanBatchUnit;
+
+  /**
+   * @generated from field: uint32 batch_size = 7;
+   */
+  batchSize: number;
+
+  constructor(data?: PartialMessage<StudyPlan>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlan";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlan;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlan;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlan;
+
+  static equals(a: StudyPlan | PlainMessage<StudyPlan> | undefined, b: StudyPlan | PlainMessage<StudyPlan> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.AddStudyPlanRequest
+ */
+export declare class AddStudyPlanRequest extends Message<AddStudyPlanRequest> {
+  /**
+   * @generated from field: wordvault.StudyPlan plan = 1;
+   */
+  plan?: StudyPlan;
+
+  constructor(data?: PartialMessage<AddStudyPlanRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.AddStudyPlanRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddStudyPlanRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddStudyPlanRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddStudyPlanRequest;
+
+  static equals(a: AddStudyPlanRequest | PlainMessage<AddStudyPlanRequest> | undefined, b: AddStudyPlanRequest | PlainMessage<AddStudyPlanRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.AddStudyPlanResponse
+ */
+export declare class AddStudyPlanResponse extends Message<AddStudyPlanResponse> {
+  /**
+   * @generated from field: wordvault.StudyPlan plan = 1;
+   */
+  plan?: StudyPlan;
+
+  constructor(data?: PartialMessage<AddStudyPlanResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.AddStudyPlanResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddStudyPlanResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddStudyPlanResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddStudyPlanResponse;
+
+  static equals(a: AddStudyPlanResponse | PlainMessage<AddStudyPlanResponse> | undefined, b: AddStudyPlanResponse | PlainMessage<AddStudyPlanResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetStudyPlansRequest
+ */
+export declare class GetStudyPlansRequest extends Message<GetStudyPlansRequest> {
+  constructor(data?: PartialMessage<GetStudyPlansRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetStudyPlansRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStudyPlansRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStudyPlansRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStudyPlansRequest;
+
+  static equals(a: GetStudyPlansRequest | PlainMessage<GetStudyPlansRequest> | undefined, b: GetStudyPlansRequest | PlainMessage<GetStudyPlansRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetStudyPlansResponse
+ */
+export declare class GetStudyPlansResponse extends Message<GetStudyPlansResponse> {
+  /**
+   * @generated from field: repeated wordvault.StudyPlan plans = 1;
+   */
+  plans: StudyPlan[];
+
+  constructor(data?: PartialMessage<GetStudyPlansResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetStudyPlansResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStudyPlansResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStudyPlansResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStudyPlansResponse;
+
+  static equals(a: GetStudyPlansResponse | PlainMessage<GetStudyPlansResponse> | undefined, b: GetStudyPlansResponse | PlainMessage<GetStudyPlansResponse> | undefined): boolean;
+}
+
+/**
+ * Replaces the plan with the given id. Its lexicon can't change.
+ *
+ * @generated from message wordvault.EditStudyPlanRequest
+ */
+export declare class EditStudyPlanRequest extends Message<EditStudyPlanRequest> {
+  /**
+   * @generated from field: wordvault.StudyPlan plan = 1;
+   */
+  plan?: StudyPlan;
+
+  constructor(data?: PartialMessage<EditStudyPlanRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditStudyPlanRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditStudyPlanRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditStudyPlanRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditStudyPlanRequest;
+
+  static equals(a: EditStudyPlanRequest | PlainMessage<EditStudyPlanRequest> | undefined, b: EditStudyPlanRequest | PlainMessage<EditStudyPlanRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.EditStudyPlanResponse
+ */
+export declare class EditStudyPlanResponse extends Message<EditStudyPlanResponse> {
+  /**
+   * @generated from field: wordvault.StudyPlan plan = 1;
+   */
+  plan?: StudyPlan;
+
+  constructor(data?: PartialMessage<EditStudyPlanResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.EditStudyPlanResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditStudyPlanResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditStudyPlanResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditStudyPlanResponse;
+
+  static equals(a: EditStudyPlanResponse | PlainMessage<EditStudyPlanResponse> | undefined, b: EditStudyPlanResponse | PlainMessage<EditStudyPlanResponse> | undefined): boolean;
+}
+
+/**
+ * Deletes the plan only; its deck and cards stay.
+ *
+ * @generated from message wordvault.DeleteStudyPlanRequest
+ */
+export declare class DeleteStudyPlanRequest extends Message<DeleteStudyPlanRequest> {
+  /**
+   * @generated from field: int64 id = 1;
+   */
+  id: bigint;
+
+  constructor(data?: PartialMessage<DeleteStudyPlanRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteStudyPlanRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteStudyPlanRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteStudyPlanRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteStudyPlanRequest;
+
+  static equals(a: DeleteStudyPlanRequest | PlainMessage<DeleteStudyPlanRequest> | undefined, b: DeleteStudyPlanRequest | PlainMessage<DeleteStudyPlanRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.DeleteStudyPlanResponse
+ */
+export declare class DeleteStudyPlanResponse extends Message<DeleteStudyPlanResponse> {
+  constructor(data?: PartialMessage<DeleteStudyPlanResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.DeleteStudyPlanResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteStudyPlanResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteStudyPlanResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteStudyPlanResponse;
+
+  static equals(a: DeleteStudyPlanResponse | PlainMessage<DeleteStudyPlanResponse> | undefined, b: DeleteStudyPlanResponse | PlainMessage<DeleteStudyPlanResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetStudyPlanProgressRequest
+ */
+export declare class GetStudyPlanProgressRequest extends Message<GetStudyPlanProgressRequest> {
+  /**
+   * @generated from oneof wordvault.GetStudyPlanProgressRequest.which
+   */
+  which: {
+    /**
+     * @generated from field: int64 plan_id = 1;
+     */
+    value: bigint;
+    case: "planId";
+  } | {
+    /**
+     * An unsaved plan, e.g. while it's being edited. Name and id are
+     * ignored.
+     *
+     * @generated from field: wordvault.StudyPlan plan = 2;
+     */
+    value: StudyPlan;
+    case: "plan";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * Width of the progress blocks, in sort field values. Defaults to the
+   * window size for window plans, and to 500 otherwise.
+   *
+   * @generated from field: uint32 block_size = 3;
+   */
+  blockSize: number;
+
+  /**
+   * Also count the cards in the plan's deck. This is slower: it has to read
+   * every card in the lexicon rather than an index.
+   *
+   * @generated from field: bool include_deck_counts = 4;
+   */
+  includeDeckCounts: boolean;
+
+  constructor(data?: PartialMessage<GetStudyPlanProgressRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetStudyPlanProgressRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStudyPlanProgressRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStudyPlanProgressRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStudyPlanProgressRequest;
+
+  static equals(a: GetStudyPlanProgressRequest | PlainMessage<GetStudyPlanProgressRequest> | undefined, b: GetStudyPlanProgressRequest | PlainMessage<GetStudyPlanProgressRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.StudyPlanBlock
+ */
+export declare class StudyPlanBlock extends Message<StudyPlanBlock> {
+  /**
+   * The range of sort field values this block covers.
+   *
+   * @generated from field: int32 lo = 1;
+   */
+  lo: number;
+
+  /**
+   * @generated from field: int32 hi = 2;
+   */
+  hi: number;
+
+  /**
+   * @generated from field: uint32 total = 3;
+   */
+  total: number;
+
+  /**
+   * @generated from field: uint32 added = 4;
+   */
+  added: number;
+
+  constructor(data?: PartialMessage<StudyPlanBlock>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlanBlock";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlanBlock;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlanBlock;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlanBlock;
+
+  static equals(a: StudyPlanBlock | PlainMessage<StudyPlanBlock> | undefined, b: StudyPlanBlock | PlainMessage<StudyPlanBlock> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.StudyPlanStageProgress
+ */
+export declare class StudyPlanStageProgress extends Message<StudyPlanStageProgress> {
+  /**
+   * @generated from field: uint32 total = 1;
+   */
+  total: number;
+
+  /**
+   * @generated from field: uint32 added = 2;
+   */
+  added: number;
+
+  /**
+   * Whether every card from the start of the stage (in its order) up to and
+   * including this sort field value is in the vault. Unset if the first card
+   * isn't.
+   *
+   * @generated from field: optional int32 done_through = 3;
+   */
+  doneThrough?: number;
+
+  /**
+   * Blocks with at least one alphagram, in ascending sort field order
+   * regardless of the stage's order.
+   *
+   * @generated from field: repeated wordvault.StudyPlanBlock blocks = 4;
+   */
+  blocks: StudyPlanBlock[];
+
+  constructor(data?: PartialMessage<StudyPlanStageProgress>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlanStageProgress";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlanStageProgress;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlanStageProgress;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlanStageProgress;
+
+  static equals(a: StudyPlanStageProgress | PlainMessage<StudyPlanStageProgress> | undefined, b: StudyPlanStageProgress | PlainMessage<StudyPlanStageProgress> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.StudyPlanBatchItem
+ */
+export declare class StudyPlanBatchItem extends Message<StudyPlanBatchItem> {
+  /**
+   * @generated from field: string alphagram = 1;
+   */
+  alphagram: string;
+
+  /**
+   * @generated from field: uint32 stage = 2;
+   */
+  stage: number;
+
+  /**
+   * @generated from field: int32 length = 3;
+   */
+  length: number;
+
+  /**
+   * @generated from field: int32 sort_value = 4;
+   */
+  sortValue: number;
+
+  constructor(data?: PartialMessage<StudyPlanBatchItem>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlanBatchItem";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlanBatchItem;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlanBatchItem;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlanBatchItem;
+
+  static equals(a: StudyPlanBatchItem | PlainMessage<StudyPlanBatchItem> | undefined, b: StudyPlanBatchItem | PlainMessage<StudyPlanBatchItem> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.StudyPlanBatch
+ */
+export declare class StudyPlanBatch extends Message<StudyPlanBatch> {
+  /**
+   * Index of the stage the batch starts in.
+   *
+   * @generated from field: uint32 stage = 1;
+   */
+  stage: number;
+
+  /**
+   * Window plans only: the window this batch comes from. Unset when gaps is
+   * set.
+   *
+   * @generated from field: int32 window_lo = 2;
+   */
+  windowLo: number;
+
+  /**
+   * @generated from field: int32 window_hi = 3;
+   */
+  windowHi: number;
+
+  /**
+   * In plan order. At most the server's per-request card limit; for a
+   * window plan the rest of the window (or of the gaps) comes in the next
+   * batch.
+   *
+   * @generated from field: repeated wordvault.StudyPlanBatchItem items = 4;
+   */
+  items: StudyPlanBatchItem[];
+
+  /**
+   * Window plans only: every missing card in the window, or every gap when
+   * gaps is set, which can be more than len(items).
+   *
+   * @generated from field: uint32 num_missing_in_window = 5;
+   */
+  numMissingInWindow: number;
+
+  /**
+   * Window plans only: the batch fills in gaps rather than a window. A gap
+   * is a missing card that comes before the last window of its stage that's
+   * complete, such as a word a new lexicon added to a finished range. The
+   * batch has every gap, across windows and stages, up to the first window
+   * not yet reached.
+   *
+   * @generated from field: bool gaps = 6;
+   */
+  gaps: boolean;
+
+  constructor(data?: PartialMessage<StudyPlanBatch>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlanBatch";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlanBatch;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlanBatch;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlanBatch;
+
+  static equals(a: StudyPlanBatch | PlainMessage<StudyPlanBatch> | undefined, b: StudyPlanBatch | PlainMessage<StudyPlanBatch> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.StudyPlanDeckCounts
+ */
+export declare class StudyPlanDeckCounts extends Message<StudyPlanDeckCounts> {
+  /**
+   * @generated from field: uint32 cards_in_deck = 1;
+   */
+  cardsInDeck: number;
+
+  /**
+   * Cards in the deck that belong to some stage of the plan.
+   *
+   * @generated from field: uint32 cards_in_deck_in_plan = 2;
+   */
+  cardsInDeckInPlan: number;
+
+  constructor(data?: PartialMessage<StudyPlanDeckCounts>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.StudyPlanDeckCounts";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StudyPlanDeckCounts;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): StudyPlanDeckCounts;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): StudyPlanDeckCounts;
+
+  static equals(a: StudyPlanDeckCounts | PlainMessage<StudyPlanDeckCounts> | undefined, b: StudyPlanDeckCounts | PlainMessage<StudyPlanDeckCounts> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetStudyPlanProgressResponse
+ */
+export declare class GetStudyPlanProgressResponse extends Message<GetStudyPlanProgressResponse> {
+  /**
+   * @generated from field: repeated wordvault.StudyPlanStageProgress stages = 1;
+   */
+  stages: StudyPlanStageProgress[];
+
+  /**
+   * @generated from field: uint32 total = 2;
+   */
+  total: number;
+
+  /**
+   * @generated from field: uint32 added = 3;
+   */
+  added: number;
+
+  /**
+   * Unset when the plan is complete.
+   *
+   * @generated from field: wordvault.StudyPlanBatch next_batch = 4;
+   */
+  nextBatch?: StudyPlanBatch;
+
+  /**
+   * @generated from field: uint32 block_size = 5;
+   */
+  blockSize: number;
+
+  /**
+   * Only if include_deck_counts was set.
+   *
+   * @generated from field: wordvault.StudyPlanDeckCounts deck_counts = 6;
+   */
+  deckCounts?: StudyPlanDeckCounts;
+
+  constructor(data?: PartialMessage<GetStudyPlanProgressResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetStudyPlanProgressResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetStudyPlanProgressResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetStudyPlanProgressResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetStudyPlanProgressResponse;
+
+  static equals(a: GetStudyPlanProgressResponse | PlainMessage<GetStudyPlanProgressResponse> | undefined, b: GetStudyPlanProgressResponse | PlainMessage<GetStudyPlanProgressResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.AddStudyPlanBatchRequest
+ */
+export declare class AddStudyPlanBatchRequest extends Message<AddStudyPlanBatchRequest> {
+  /**
+   * @generated from field: int64 plan_id = 1;
+   */
+  planId: bigint;
+
+  constructor(data?: PartialMessage<AddStudyPlanBatchRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.AddStudyPlanBatchRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddStudyPlanBatchRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddStudyPlanBatchRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddStudyPlanBatchRequest;
+
+  static equals(a: AddStudyPlanBatchRequest | PlainMessage<AddStudyPlanBatchRequest> | undefined, b: AddStudyPlanBatchRequest | PlainMessage<AddStudyPlanBatchRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.AddStudyPlanBatchResponse
+ */
+export declare class AddStudyPlanBatchResponse extends Message<AddStudyPlanBatchResponse> {
+  /**
+   * @generated from field: uint32 num_cards_added = 1;
+   */
+  numCardsAdded: number;
+
+  /**
+   * What was added. Unset when the plan was already complete.
+   *
+   * @generated from field: wordvault.StudyPlanBatch batch = 2;
+   */
+  batch?: StudyPlanBatch;
+
+  constructor(data?: PartialMessage<AddStudyPlanBatchResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.AddStudyPlanBatchResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AddStudyPlanBatchResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AddStudyPlanBatchResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AddStudyPlanBatchResponse;
+
+  static equals(a: AddStudyPlanBatchResponse | PlainMessage<AddStudyPlanBatchResponse> | undefined, b: AddStudyPlanBatchResponse | PlainMessage<AddStudyPlanBatchResponse> | undefined): boolean;
 }
 

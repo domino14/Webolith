@@ -23,6 +23,9 @@ import CardPage from "./card_page.tsx";
 import Settings from "./settings.tsx";
 import Leaderboard from "./leaderboard.tsx";
 import Decks from "./decks.tsx";
+import StudyPlans from "./study_plans/plans.tsx";
+import StudyPlanPage from "./study_plans/plan.tsx";
+import EditStudyPlan from "./study_plans/edit_plan.tsx";
 
 const router = createBrowserRouter(
   [
@@ -54,6 +57,22 @@ const router = createBrowserRouter(
         {
           path: "/decks",
           element: <Decks />,
+        },
+        {
+          path: "/study-plans",
+          element: <StudyPlans />,
+        },
+        {
+          path: "/study-plans/new",
+          element: <EditStudyPlan />,
+        },
+        {
+          path: "/study-plans/:id",
+          element: <StudyPlanPage />,
+        },
+        {
+          path: "/study-plans/:id/edit",
+          element: <EditStudyPlan />,
         },
         {
           path: "/stats",

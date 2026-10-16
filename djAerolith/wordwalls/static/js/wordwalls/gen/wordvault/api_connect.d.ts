@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, PreviewFsrsUpgradeRequest, PreviewFsrsUpgradeResponse, ScoreCardRequest, ScoreCardResponse, ScoreCardsRequest, ScoreCardsResponse, UpgradeFsrsRequest, UpgradeFsrsResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, AddStudyPlanBatchRequest, AddStudyPlanBatchResponse, AddStudyPlanRequest, AddStudyPlanResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, DeleteStudyPlanRequest, DeleteStudyPlanResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, EditStudyPlanRequest, EditStudyPlanResponse, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, GetStudyPlanProgressRequest, GetStudyPlanProgressResponse, GetStudyPlansRequest, GetStudyPlansResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, PreviewFsrsUpgradeRequest, PreviewFsrsUpgradeResponse, ScoreCardRequest, ScoreCardResponse, ScoreCardsRequest, ScoreCardsResponse, UpgradeFsrsRequest, UpgradeFsrsResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -259,6 +259,64 @@ export declare const WordVaultService: {
       readonly name: "DeleteDeck",
       readonly I: typeof DeleteDeckRequest,
       readonly O: typeof DeleteDeckResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.AddStudyPlan
+     */
+    readonly addStudyPlan: {
+      readonly name: "AddStudyPlan",
+      readonly I: typeof AddStudyPlanRequest,
+      readonly O: typeof AddStudyPlanResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetStudyPlans
+     */
+    readonly getStudyPlans: {
+      readonly name: "GetStudyPlans",
+      readonly I: typeof GetStudyPlansRequest,
+      readonly O: typeof GetStudyPlansResponse,
+      readonly kind: MethodKind.Unary,
+      readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.EditStudyPlan
+     */
+    readonly editStudyPlan: {
+      readonly name: "EditStudyPlan",
+      readonly I: typeof EditStudyPlanRequest,
+      readonly O: typeof EditStudyPlanResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.DeleteStudyPlan
+     */
+    readonly deleteStudyPlan: {
+      readonly name: "DeleteStudyPlan",
+      readonly I: typeof DeleteStudyPlanRequest,
+      readonly O: typeof DeleteStudyPlanResponse,
+      readonly kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.GetStudyPlanProgress
+     */
+    readonly getStudyPlanProgress: {
+      readonly name: "GetStudyPlanProgress",
+      readonly I: typeof GetStudyPlanProgressRequest,
+      readonly O: typeof GetStudyPlanProgressResponse,
+      readonly kind: MethodKind.Unary,
+      readonly idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * Adds the plan's next batch of missing cards to its deck.
+     *
+     * @generated from rpc wordvault.WordVaultService.AddStudyPlanBatch
+     */
+    readonly addStudyPlanBatch: {
+      readonly name: "AddStudyPlanBatch",
+      readonly I: typeof AddStudyPlanBatchRequest,
+      readonly O: typeof AddStudyPlanBatchResponse,
       readonly kind: MethodKind.Unary,
     },
   }
