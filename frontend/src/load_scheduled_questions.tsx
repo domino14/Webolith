@@ -1,4 +1,11 @@
-import { Alert, Button, Group, Select, Text } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Card,
+  Group,
+  SimpleGrid,
+  Text,
+} from "@mantine/core";
 import { useContext, useEffect, useMemo, useState } from "react";
 import FSRSCards from "./fsrs_cards";
 import { Link } from "react-router-dom";
@@ -111,50 +118,66 @@ export default function LoadScheduledQuestions() {
             {totalOverdueCount != 1 ? "are" : "is"} now due in the lexicon{" "}
             {lexicon}.
           </Text>
-          {totalOverdueCount !== 0 && (
-            <Group mt="lg">
-              {decksById.size > 0 && (
-                <Select
-                  data={[
-                    {
-                      value: "",
-                      label: "Default Deck",
-                    },
-                    ...Array.from(decksById.entries()).map(([id, deck]) => ({
-                      value: id.toString(),
-                      label: deck.name,
-                    })),
-                  ]}
-                  renderOption={({ option }) => {
-                    const overdueCount =
-                      overdueCountByDeckId?.get(
-                        option.value === "" || !option.value
-                          ? 0n
-                          : BigInt(option.value)
-                      ) ?? 0;
-                    return (
-                      <Group>
-                        <Text>
-                          {option.label}
-                          <Text size="sm" c="dimmed">
-                            ({overdueCount} due)
-                          </Text>
+          {decksById.size > 0 ? (
+            <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }} mt="lg" maw={960}>
+              {[
+                { id: null, name: "Default Deck" },
+                ...Array.from(decksById.values()).map((deck) => ({
+                  id: deck.id,
+                  name: deck.name,
+                })),
+              ].map(({ id, name }) => {
+                const dueCount = overdueCountByDeckId.get(id ?? 0n) ?? 0;
+                const hasDue = dueCount > 0;
+                return (
+                  <Card
+                    key={String(id ?? 0n)}
+                    withBorder
+                    padding="md"
+                    style={
+                      hasDue
+                        ? {
+                            background: "var(--mantine-color-blue-light)",
+                            borderColor: "var(--mantine-color-blue-light-hover)",
+                          }
+                        : undefined
+                    }
+                  >
+                    <Group justify="space-between" wrap="nowrap">
+                      <div style={{ minWidth: 0 }}>
+                        <Text fw={600} truncate>
+                          {name}
                         </Text>
-                      </Group>
-                    );
-                  }}
-                  value={deckId?.toString() ?? ""}
-                  onChange={(value) => setDeckId(value ? BigInt(value) : null)}
-                />
-              )}
-
-              <Button onClick={() => setCardsOngoing(true)}>
-                Start studying
-              </Button>
-            </Group>
+                        <Text size="sm" c={hasDue ? undefined : "dimmed"}>
+                          {dueCount} due
+                        </Text>
+                      </div>
+                      <Button
+                        variant={hasDue ? "filled" : "default"}
+                        disabled={!hasDue}
+                        onClick={() => {
+                          setDeckId(id);
+                          setCardsOngoing(true);
+                        }}
+                      >
+                        Study
+                      </Button>
+                    </Group>
+                  </Card>
+                );
+              })}
+            </SimpleGrid>
+          ) : (
+            totalOverdueCount !== 0 && (
+              <Group mt="lg">
+                <Button onClick={() => setCardsOngoing(true)}>
+                  Start studying
+                </Button>
+              </Group>
+            )
           )}
           {totalOverdueCount === 0 && (
-            <Text>
+            <Text mt="md">
               Why not <Link to="/word-search">add some more?</Link>
             </Text>
           )}
