@@ -33,6 +33,31 @@ export const FsrsScheduler = /*@__PURE__*/ proto3.makeEnum(
 );
 
 /**
+ * The value a study plan stage is ordered and batched by. Each alphagram's
+ * value is its rank within its length, so 7s and 8s interleave.
+ *
+ * @generated from enum wordvault.StudyPlanSortField
+ */
+export const StudyPlanSortField = /*@__PURE__*/ proto3.makeEnum(
+  "wordvault.StudyPlanSortField",
+  [
+    {no: 0, name: "STUDY_PLAN_SORT_PROBABILITY"},
+  ],
+);
+
+/**
+ * @generated from enum wordvault.StudyPlanBatchUnit
+ */
+export const StudyPlanBatchUnit = /*@__PURE__*/ proto3.makeEnum(
+  "wordvault.StudyPlanBatchUnit",
+  [
+    {no: 0, name: "STUDY_PLAN_BATCH_NONE"},
+    {no: 1, name: "STUDY_PLAN_BATCH_WINDOW"},
+    {no: 2, name: "STUDY_PLAN_BATCH_CARDS"},
+  ],
+);
+
+/**
  * @generated from message wordvault.Card
  */
 export const Card = /*@__PURE__*/ proto3.makeMessageType(
@@ -683,5 +708,233 @@ export const DeleteDeckRequest = /*@__PURE__*/ proto3.makeMessageType(
 export const DeleteDeckResponse = /*@__PURE__*/ proto3.makeMessageType(
   "wordvault.DeleteDeckResponse",
   [],
+);
+
+/**
+ * @generated from message wordvault.StudyPlanStage
+ */
+export const StudyPlanStage = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlanStage",
+  () => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "search_params", kind: "message", T: SearchRequest_SearchParam, repeated: true },
+    { no: 3, name: "sort_field", kind: "enum", T: proto3.getEnumType(StudyPlanSortField) },
+    { no: 4, name: "descending", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ],
+);
+
+/**
+ * A study plan is an ordered list of stages that cards are added from, a
+ * batch at a time, into one deck. An alphagram belongs to the first stage
+ * whose search matches it. Progress isn't stored: a card in the user's vault
+ * counts as done, whichever deck it's in.
+ *
+ * @generated from message wordvault.StudyPlan
+ */
+export const StudyPlan = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlan",
+  () => [
+    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "deck_id", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 5, name: "stages", kind: "message", T: StudyPlanStage, repeated: true },
+    { no: 6, name: "batch_unit", kind: "enum", T: proto3.getEnumType(StudyPlanBatchUnit) },
+    { no: 7, name: "batch_size", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.AddStudyPlanRequest
+ */
+export const AddStudyPlanRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.AddStudyPlanRequest",
+  () => [
+    { no: 1, name: "plan", kind: "message", T: StudyPlan },
+  ],
+);
+
+/**
+ * @generated from message wordvault.AddStudyPlanResponse
+ */
+export const AddStudyPlanResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.AddStudyPlanResponse",
+  () => [
+    { no: 1, name: "plan", kind: "message", T: StudyPlan },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetStudyPlansRequest
+ */
+export const GetStudyPlansRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetStudyPlansRequest",
+  [],
+);
+
+/**
+ * @generated from message wordvault.GetStudyPlansResponse
+ */
+export const GetStudyPlansResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetStudyPlansResponse",
+  () => [
+    { no: 1, name: "plans", kind: "message", T: StudyPlan, repeated: true },
+  ],
+);
+
+/**
+ * Replaces the plan with the given id. Its lexicon can't change.
+ *
+ * @generated from message wordvault.EditStudyPlanRequest
+ */
+export const EditStudyPlanRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditStudyPlanRequest",
+  () => [
+    { no: 1, name: "plan", kind: "message", T: StudyPlan },
+  ],
+);
+
+/**
+ * @generated from message wordvault.EditStudyPlanResponse
+ */
+export const EditStudyPlanResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.EditStudyPlanResponse",
+  () => [
+    { no: 1, name: "plan", kind: "message", T: StudyPlan },
+  ],
+);
+
+/**
+ * Deletes the plan only; its deck and cards stay.
+ *
+ * @generated from message wordvault.DeleteStudyPlanRequest
+ */
+export const DeleteStudyPlanRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteStudyPlanRequest",
+  () => [
+    { no: 1, name: "id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.DeleteStudyPlanResponse
+ */
+export const DeleteStudyPlanResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.DeleteStudyPlanResponse",
+  [],
+);
+
+/**
+ * @generated from message wordvault.GetStudyPlanProgressRequest
+ */
+export const GetStudyPlanProgressRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetStudyPlanProgressRequest",
+  () => [
+    { no: 1, name: "plan_id", kind: "scalar", T: 3 /* ScalarType.INT64 */, oneof: "which" },
+    { no: 2, name: "plan", kind: "message", T: StudyPlan, oneof: "which" },
+    { no: 3, name: "block_size", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 4, name: "include_deck_counts", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.StudyPlanBlock
+ */
+export const StudyPlanBlock = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlanBlock",
+  () => [
+    { no: 1, name: "lo", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "hi", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "total", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 4, name: "added", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.StudyPlanStageProgress
+ */
+export const StudyPlanStageProgress = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlanStageProgress",
+  () => [
+    { no: 1, name: "total", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "added", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "done_through", kind: "scalar", T: 5 /* ScalarType.INT32 */, opt: true },
+    { no: 4, name: "blocks", kind: "message", T: StudyPlanBlock, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.StudyPlanBatchItem
+ */
+export const StudyPlanBatchItem = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlanBatchItem",
+  () => [
+    { no: 1, name: "alphagram", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "stage", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "length", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "sort_value", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.StudyPlanBatch
+ */
+export const StudyPlanBatch = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlanBatch",
+  () => [
+    { no: 1, name: "stage", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "window_lo", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "window_hi", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 4, name: "items", kind: "message", T: StudyPlanBatchItem, repeated: true },
+    { no: 5, name: "num_missing_in_window", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 6, name: "gaps", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.StudyPlanDeckCounts
+ */
+export const StudyPlanDeckCounts = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.StudyPlanDeckCounts",
+  () => [
+    { no: 1, name: "cards_in_deck", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "cards_in_deck_in_plan", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetStudyPlanProgressResponse
+ */
+export const GetStudyPlanProgressResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetStudyPlanProgressResponse",
+  () => [
+    { no: 1, name: "stages", kind: "message", T: StudyPlanStageProgress, repeated: true },
+    { no: 2, name: "total", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "added", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 4, name: "next_batch", kind: "message", T: StudyPlanBatch },
+    { no: 5, name: "block_size", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 6, name: "deck_counts", kind: "message", T: StudyPlanDeckCounts },
+  ],
+);
+
+/**
+ * @generated from message wordvault.AddStudyPlanBatchRequest
+ */
+export const AddStudyPlanBatchRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.AddStudyPlanBatchRequest",
+  () => [
+    { no: 1, name: "plan_id", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+  ],
+);
+
+/**
+ * @generated from message wordvault.AddStudyPlanBatchResponse
+ */
+export const AddStudyPlanBatchResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.AddStudyPlanBatchResponse",
+  () => [
+    { no: 1, name: "num_cards_added", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "batch", kind: "message", T: StudyPlanBatch },
+  ],
 );
 

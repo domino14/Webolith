@@ -28,6 +28,7 @@ import {
   IconHeartDollar,
   IconMedal2,
   IconMoon,
+  IconRoute,
   IconSettings,
   IconSun,
   IconUserQuestion,
@@ -159,6 +160,11 @@ function App() {
                 <IconCubePlus color="green" />,
                 "Manage WordVault cards",
               ],
+              [
+                "study-plans",
+                <IconRoute color="green" />,
+                "Study plans",
+              ],
               ["decks", <IconFolders color="green" />, "Decks"],
               ["card-schedules", <IconCalendar color="green" />, "Scheduling"],
               ["stats", <IconGraph color="green" />, "Statistics"],
@@ -206,7 +212,10 @@ function App() {
                       &nbsp; {label}
                     </div>
                   }
-                  active={location.pathname === `/${path}`}
+                  active={
+                    location.pathname === `/${path}` ||
+                    location.pathname.startsWith(`/${path}/`)
+                  }
                 />
               ))}
           </>

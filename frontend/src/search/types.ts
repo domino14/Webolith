@@ -410,6 +410,95 @@ class SearchCriterion {
 }
 
 /**
+ * Converts a search param from the server back to a criterion. Returns null
+ * for conditions this editor doesn't have, such as uploaded lists.
+ */
+function criterionFromProto(
+  param: SearchRequest_SearchParam
+): SearchCriterion | null {
+  const typeProps = SearchTypesEnum.properties[param.condition];
+  if (!typeProps) {
+    return null;
+  }
+  const cp = param.conditionparam;
+  switch (typeProps.inputType) {
+    case SearchTypesInputs.TWO_NUMBERS:
+      return new SearchCriterion(param.condition, {
+        minValue: cp.case === "minmax" ? cp.value.min : typeProps.defaultMin,
+        maxValue: cp.case === "minmax" ? cp.value.max : typeProps.defaultMax,
+      });
+    case SearchTypesInputs.ONE_NUMBER:
+      return new SearchCriterion(param.condition, {
+        value: cp.case === "numbervalue" ? cp.value.value : typeProps.default,
+      });
+    case SearchTypesInputs.ONE_STRING:
+      return new SearchCriterion(param.condition, {
+        value: cp.case === "stringvalue" ? cp.value.value : typeProps.default,
+      });
+    case SearchTypesInputs.SELECT:
+      return new SearchCriterion(param.condition, {
+        value:
+          cp.case === "numbervalue" &&
+          cp.value.value === SearchRequest_NotInLexCondition.OTHER_ENGLISH
+            ? "other_english"
+            : "update",
+      });
+    case SearchTypesInputs.HOOKS:
+      return new SearchCriterion(param.condition, {
+        hookType:
+          cp.case === "hooksparam"
+            ? cp.value.hookType
+            : SearchRequest_HookType.FRONT_HOOKS,
+        hooks: cp.case === "hooksparam" ? cp.value.hooks : "",
+        notCondition: cp.case === "hooksparam" ? cp.value.notCondition : false,
+      });
+    case SearchTypesInputs.NONE:
+      return new SearchCriterion(param.condition, {});
+  }
+  return null;
+}
+
+const hookTypeNames: { [key: number]: string } = {
+  [SearchRequest_HookType.FRONT_HOOKS]: "Front hooks",
+  [SearchRequest_HookType.BACK_HOOKS]: "Back hooks",
+  [SearchRequest_HookType.INNER_HOOKS]: "Inner hooks",
+};
+
+/**
+ * A short description of a search param, e.g. "Word Length 7–8".
+ */
+function describeSearchParam(param: SearchRequest_SearchParam): string {
+  const cp = param.conditionparam;
+  const name =
+    SearchTypesEnum.properties[param.condition]?.displayName ??
+    SearchRequest_Condition[param.condition];
+  switch (cp.case) {
+    case "minmax":
+      return cp.value.min === cp.value.max
+        ? `${name} ${cp.value.min}`
+        : `${name} ${cp.value.min}–${cp.value.max}`;
+    case "numbervalue":
+      if (param.condition === cond.NOT_IN_LEXICON) {
+        return cp.value.value === SearchRequest_NotInLexCondition.OTHER_ENGLISH
+          ? "Not in the other English lexicon"
+          : "New in this lexicon";
+      }
+      return `${name} ${cp.value.value}`;
+    case "stringvalue":
+      return `${name} ${cp.value.value}`;
+    case "hooksparam":
+      return `${cp.value.notCondition ? "No " : ""}${
+        hookTypeNames[cp.value.hookType] ?? "Hooks"
+      } ${cp.value.hooks}`;
+    case "stringarray":
+      return `${name} (${cp.value.values.length})`;
+    case "numberarray":
+      return `${name} (${cp.value.values.length})`;
+  }
+  return name;
+}
+
+/**
  * Given a list of word search criteria, figure out the next one to add,
  * based on the order.
  * @param wordSearchCriteria
@@ -466,6 +555,8 @@ export {
   SearchTypesOrder,
   searchCriterionToAdd,
   searchCriteriaOptions,
+  criterionFromProto,
+  describeSearchParam,
   SearchCriterion,
   SearchTypesInputs,
 };
