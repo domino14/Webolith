@@ -85,6 +85,14 @@ const Help = () => {
           about it.
         </Text>
       </List>
+      <Text mt="sm" mb="sm">
+        Not sure which to pick? Turn on "Simple grading" in Settings. You'll
+        only see two buttons: Missed (type "1") and Right (type "2"). Right
+        counts as Good. You give up a little efficiency on very easy and very
+        hard cards, but the algorithm still works well. In typing mode, the
+        grade is suggested for you based on whether you found every word; press
+        Enter to accept it.
+      </Text>
       <Text size="xl" mt="sm" fw={700}>
         Scheduling
       </Text>

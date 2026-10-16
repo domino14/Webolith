@@ -54,6 +54,8 @@ export type DisplaySettings = {
   tileStyle: TileStyle;
   showNumAnagrams: boolean;
   customOrder: string;
+  // Only show Missed/Right grading buttons; Right always maps to Good.
+  simpleRatings: boolean;
 };
 
 export type SchedulerSettings = {
@@ -161,6 +163,7 @@ const initialContext: AppContextType = {
     tileStyle: TileStyle.None,
     showNumAnagrams: true,
     customOrder: "",
+    simpleRatings: false,
   },
   setDisplaySettings: () => {},
   schedulerSettings: {
@@ -327,6 +330,7 @@ export const AppContextProvider: React.FC<AppProviderProps> = ({
             fontStyle: Object.values(FontStyle).includes(data.fontStyle)
               ? data.fontStyle
               : initialContext.displaySettings.fontStyle,
+            simpleRatings: !!data.simpleRatings,
           };
         }
         setDisplaySettings(data);
