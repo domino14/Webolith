@@ -25,12 +25,17 @@ const mergeBlocks = (blocks: StudyPlanBlock[]) => {
   return merged;
 };
 
+// Closer to the empty color than to blue, so a block with only a few cards
+// added doesn't look half done.
+const SOME_ADDED_COLOR =
+  "color-mix(in srgb, var(--mantine-color-blue-9) 40%, var(--mantine-color-default-border))";
+
 const blockColor = (b: StudyPlanBlock) => {
   if (b.added === b.total) {
     return "var(--mantine-color-blue-5)";
   }
   if (b.added > 0) {
-    return "var(--mantine-color-blue-9)";
+    return SOME_ADDED_COLOR;
   }
   return "var(--mantine-color-default-border)";
 };
@@ -103,7 +108,7 @@ export const ProgressLegend = () => (
   <Group gap="lg">
     {[
       ["var(--mantine-color-blue-5)", "All added"],
-      ["var(--mantine-color-blue-9)", "Some added"],
+      [SOME_ADDED_COLOR, "Some added"],
       ["var(--mantine-color-default-border)", "None added"],
     ].map(([color, label]) => (
       <Group key={label} gap={6}>
