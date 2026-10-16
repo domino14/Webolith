@@ -553,8 +553,12 @@ export const UpgradeFsrsRequest = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
- * What upgrading to FSRS-6 does (or did) to a user's cards. "Due" counts are
- * relative to the time of the request.
+ * What upgrading to FSRS-6 does (or did) to a user's cards. The upgrade
+ * replays each reviewed card's history to rebuild its memory state (stability
+ * and difficulty) under FSRS-6, but keeps its due date, so no cards become due
+ * because of it. The new memory state shows up in the intervals cards get
+ * from their next review on. "Due" counts are relative to the time of the
+ * request.
  *
  * @generated from message wordvault.FsrsUpgradeSummary
  */
@@ -577,6 +581,10 @@ export const FsrsUpgradeSummary = /*@__PURE__*/ proto3.makeMessageType(
     { no: 14, name: "moved_later", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
     { no: 15, name: "median_interval_days_before", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
     { no: 16, name: "median_interval_days_after", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 17, name: "good_interval_shorter", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 18, name: "good_interval_longer", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 19, name: "median_good_interval_days_before", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 20, name: "median_good_interval_days_after", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
   ],
 );
 
