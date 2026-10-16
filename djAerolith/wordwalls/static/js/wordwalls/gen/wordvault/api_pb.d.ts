@@ -1434,12 +1434,8 @@ export declare class UpgradeFsrsRequest extends Message<UpgradeFsrsRequest> {
 }
 
 /**
- * What upgrading to FSRS-6 does (or did) to a user's cards. The upgrade
- * replays each reviewed card's history to rebuild its memory state (stability
- * and difficulty) under FSRS-6, but keeps its due date, so no cards become due
- * because of it. The new memory state shows up in the intervals cards get
- * from their next review on. "Due" counts are relative to the time of the
- * request.
+ * What upgrading to FSRS-6 does (or did) to a user's cards. "Due" counts are
+ * relative to the time of the request.
  *
  * @generated from message wordvault.FsrsUpgradeSummary
  */
@@ -1467,24 +1463,21 @@ export declare class FsrsUpgradeSummary extends Message<FsrsUpgradeSummary> {
   rescheduledCards: number;
 
   /**
-   * Cards imported from Cardbox, which have no real history before the
-   * import. They're left alone.
+   * Cards imported from Cardbox keep their memory state; only their due
+   * date is recalculated.
    *
    * @generated from field: uint32 imported_cards = 5;
    */
   importedCards: number;
 
   /**
-   * New (never reviewed) cards, and any whose history couldn't be replayed.
-   * They're left alone.
+   * New (never reviewed) cards, which are left alone.
    *
    * @generated from field: uint32 unchanged_cards = 6;
    */
   unchangedCards: number;
 
   /**
-   * Due dates don't change, so the before and after counts are the same.
-   *
    * @generated from field: uint32 due_now_before = 7;
    */
   dueNowBefore: number;
@@ -1515,8 +1508,6 @@ export declare class FsrsUpgradeSummary extends Message<FsrsUpgradeSummary> {
   dueWithinMonthAfter: number;
 
   /**
-   * Always 0: due dates don't move.
-   *
    * @generated from field: uint32 moved_earlier = 13;
    */
   movedEarlier: number;
@@ -1527,8 +1518,7 @@ export declare class FsrsUpgradeSummary extends Message<FsrsUpgradeSummary> {
   movedLater: number;
 
   /**
-   * Median of (due date - last review) in days, over reviewed cards. The
-   * same before and after.
+   * Median of (due date - last review) in days, over reviewed cards.
    *
    * @generated from field: double median_interval_days_before = 15;
    */
@@ -1538,31 +1528,6 @@ export declare class FsrsUpgradeSummary extends Message<FsrsUpgradeSummary> {
    * @generated from field: double median_interval_days_after = 16;
    */
   medianIntervalDaysAfter: number;
-
-  /**
-   * How intervals drift. For each rebuilt card in review, the interval it
-   * would get if answered Good when it next comes up (at its due date, or
-   * now if it's overdue), with its current memory state and version, and
-   * with its rebuilt one and the target version.
-   *
-   * @generated from field: uint32 good_interval_shorter = 17;
-   */
-  goodIntervalShorter: number;
-
-  /**
-   * @generated from field: uint32 good_interval_longer = 18;
-   */
-  goodIntervalLonger: number;
-
-  /**
-   * @generated from field: double median_good_interval_days_before = 19;
-   */
-  medianGoodIntervalDaysBefore: number;
-
-  /**
-   * @generated from field: double median_good_interval_days_after = 20;
-   */
-  medianGoodIntervalDaysAfter: number;
 
   constructor(data?: PartialMessage<FsrsUpgradeSummary>);
 
