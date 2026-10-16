@@ -9,37 +9,24 @@ import { LATEST_FSRS_VERSION, useFsrsVersion } from "./fsrs_version";
 const formatDays = (days: number) =>
   days >= 10 ? `${Math.round(days)} days` : `${days.toFixed(1)} days`;
 
-const SummaryTable: React.FC<{ summary: FsrsUpgradeSummary }> = ({
+// How the upgrade changes intervals. Due dates don't change, so this is the
+// interval cards get the next time they're answered Good.
+const IntervalTable: React.FC<{ summary: FsrsUpgradeSummary }> = ({
   summary,
 }) => (
   <Table>
     <Table.Thead>
       <Table.Tr>
         <Table.Th></Table.Th>
-        <Table.Th>Now</Table.Th>
-        <Table.Th>After upgrade</Table.Th>
+        <Table.Th>FSRS-{summary.currentVersion}</Table.Th>
+        <Table.Th>FSRS-{summary.targetVersion}</Table.Th>
       </Table.Tr>
     </Table.Thead>
     <Table.Tbody>
       <Table.Tr>
-        <Table.Td>Due now</Table.Td>
-        <Table.Td>{summary.dueNowBefore}</Table.Td>
-        <Table.Td>{summary.dueNowAfter}</Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>Due in the next 7 days</Table.Td>
-        <Table.Td>{summary.dueWithinWeekBefore}</Table.Td>
-        <Table.Td>{summary.dueWithinWeekAfter}</Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>Due in the next 30 days</Table.Td>
-        <Table.Td>{summary.dueWithinMonthBefore}</Table.Td>
-        <Table.Td>{summary.dueWithinMonthAfter}</Table.Td>
-      </Table.Tr>
-      <Table.Tr>
-        <Table.Td>Typical interval</Table.Td>
-        <Table.Td>{formatDays(summary.medianIntervalDaysBefore)}</Table.Td>
-        <Table.Td>{formatDays(summary.medianIntervalDaysAfter)}</Table.Td>
+        <Table.Td>Typical next interval after a correct answer</Table.Td>
+        <Table.Td>{formatDays(summary.medianGoodIntervalDaysBefore)}</Table.Td>
+        <Table.Td>{formatDays(summary.medianGoodIntervalDaysAfter)}</Table.Td>
       </Table.Tr>
     </Table.Tbody>
   </Table>
@@ -82,8 +69,8 @@ const FsrsUpgrade: React.FC = () => {
         color: "green",
         title: `Upgraded to FSRS-${LATEST_FSRS_VERSION}`,
         message: s
-          ? `Rescheduled ${s.rescheduledCards + s.importedCards} cards. ${s.dueNowAfter} are due now.`
-          : "Your cards have been rescheduled.",
+          ? `Updated ${s.rescheduledCards} cards. Your due dates haven't changed.`
+          : "Your cards have been updated. Your due dates haven't changed.",
       });
       setVersion(LATEST_FSRS_VERSION);
       modalHandlers.close();
@@ -116,20 +103,33 @@ const FsrsUpgrade: React.FC = () => {
         {summary && (
           <Stack>
             <Text>
-              Your {summary.totalCards} cards, in all lexicons, will be
-              rescheduled as if you had been using FSRS-
-              {LATEST_FSRS_VERSION} all along, based on your review history.
-              Cards that end up overdue become due now.
+              FSRS-{LATEST_FSRS_VERSION} will recalculate how well you know
+              each of your {summary.totalCards} cards, in all lexicons, from
+              your review history, as if you had been using it all along.
             </Text>
-            <SummaryTable summary={summary} />
-            <Text size="sm">
-              {summary.movedEarlier} cards move earlier and{" "}
-              {summary.movedLater} move later by a day or more.{" "}
-              {summary.unchangedCards > 0 &&
-                `${summary.unchangedCards} cards you haven't studied yet stay as they are. `}
-              {summary.importedCards > 0 &&
-                `${summary.importedCards} cards imported from Cardbox keep their memory estimates and only get new due dates.`}
+            <Text>
+              Your due dates stay the same, so nothing becomes due because of
+              the upgrade. You have {summary.dueNowBefore} cards due now and{" "}
+              {summary.dueWithinWeekBefore} due in the next 7 days, before and
+              after upgrading.
             </Text>
+            <Text>
+              From each card's next review on, FSRS-{LATEST_FSRS_VERSION}{" "}
+              schedules it. When you next answer them correctly,{" "}
+              {summary.goodIntervalLonger} cards will get a longer interval
+              than they would now and {summary.goodIntervalShorter} a shorter
+              one. Words you've always known tend to get longer intervals,
+              and words you've missed shorter ones.
+            </Text>
+            <IntervalTable summary={summary} />
+            {(summary.unchangedCards > 0 || summary.importedCards > 0) && (
+              <Text size="sm">
+                {summary.unchangedCards > 0 &&
+                  `${summary.unchangedCards} cards you haven't studied yet stay as they are. `}
+                {summary.importedCards > 0 &&
+                  `${summary.importedCards} cards imported from Cardbox keep their memory estimates.`}
+              </Text>
+            )}
             <Text fw={700} c="red">
               This can't be undone.
             </Text>
