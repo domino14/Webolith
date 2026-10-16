@@ -12,6 +12,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconFolders } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -166,7 +167,12 @@ const StudyPlanPage = () => {
           <Title order={2}>{plan.name}</Title>
           <Group gap={6}>
             <Badge variant="default">{plan.lexicon}</Badge>
-            <Badge variant="default">{deckName(plan.deckId, decksById)}</Badge>
+            <Badge
+              variant="default"
+              leftSection={<IconFolders size={12} />}
+            >
+              {deckName(plan.deckId, decksById)}
+            </Badge>
             <Badge variant="default">{batchRuleLabel(plan)}</Badge>
           </Group>
         </Stack>

@@ -9,7 +9,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
+import { IconFolders, IconPlus } from "@tabler/icons-react";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../app_context";
@@ -56,7 +56,12 @@ const PlanCard = ({ plan }: { plan: StudyPlan }) => {
             {plan.name}
           </Text>
           <Group gap={6}>
-            <Badge variant="default">{deckName(plan.deckId, decksById)}</Badge>
+            <Badge
+              variant="default"
+              leftSection={<IconFolders size={12} />}
+            >
+              {deckName(plan.deckId, decksById)}
+            </Badge>
             <Badge variant="default">{batchRuleLabel(plan)}</Badge>
           </Group>
         </Group>
