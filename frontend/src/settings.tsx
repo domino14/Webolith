@@ -44,6 +44,7 @@ const Settings: React.FC = () => {
       tileStyle: TileStyle.None,
       showNumAnagrams: true,
       customOrder: "",
+      simpleRatings: false,
       enableShortTerm: false,
       retentionPercent: 90,
     },
@@ -90,6 +91,7 @@ const Settings: React.FC = () => {
                   tileStyle: values.tileStyle,
                   showNumAnagrams: values.showNumAnagrams,
                   customOrder: values.customOrder,
+                  simpleRatings: values.simpleRatings,
                 }),
               }),
               _submitFsrsSettingsAsync(wordVaultClient, values),
@@ -109,6 +111,7 @@ const Settings: React.FC = () => {
             tileStyle: values.tileStyle,
             showNumAnagrams: values.showNumAnagrams,
             customOrder: values.customOrder,
+            simpleRatings: values.simpleRatings,
           });
           setSchedulerSettings({
             enableShortTerm: values.enableShortTerm,
@@ -209,6 +212,14 @@ const Settings: React.FC = () => {
         <Text size="xl" mt="lg">
           Scheduling Settings
         </Text>
+
+        <Switch
+          checked={settingsForm.values.simpleRatings}
+          {...settingsForm.getInputProps("simpleRatings")}
+          mt="lg"
+          label="Simple grading (Missed / Right)"
+          description="Grade cards with just two buttons instead of four. Right counts as Good."
+        />
 
         <FsrsSettingsFields
           values={settingsForm.values}

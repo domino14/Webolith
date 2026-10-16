@@ -38,7 +38,28 @@ interface FlashcardProps {
   isPaywalled: boolean;
   typingMode: boolean;
   missedWords?: Set<string>;
+  // A grade suggested from typing-mode results; Enter accepts it.
+  suggestedScore?: Score;
 }
+
+type GradeButton = {
+  score: Score;
+  label: string;
+  color: string;
+  shortcut: string;
+};
+
+const fullGradeButtons: GradeButton[] = [
+  { score: Score.AGAIN, label: "Missed", color: "red", shortcut: "1" },
+  { score: Score.HARD, label: "Hard", color: "yellow", shortcut: "2" },
+  { score: Score.GOOD, label: "Good", color: "green", shortcut: "3" },
+  { score: Score.EASY, label: "Easy", color: "gray", shortcut: "4" },
+];
+
+const simpleGradeButtons: GradeButton[] = [
+  { score: Score.AGAIN, label: "Missed", color: "red", shortcut: "1" },
+  { score: Score.GOOD, label: "Right", color: "green", shortcut: "2" },
+];
 
 type TiledTextProps = {
   classNames: {
@@ -385,12 +406,16 @@ const Flashcard: React.FC<FlashcardProps> = ({
   origDisplayQuestion,
   missedWords,
   typingMode,
+  suggestedScore,
 }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === "dark";
   const smallScreen = useIsSmallScreen();
   const { displaySettings } = useContext(AppContext);
+  const gradeButtons = displaySettings.simpleRatings
+    ? simpleGradeButtons
+    : fullGradeButtons;
   const backgroundColor = isDark ? theme.colors.dark[8] : theme.colors.gray[0];
   const lapses = useMemo(() => {
     try {
@@ -538,58 +563,29 @@ const Flashcard: React.FC<FlashcardProps> = ({
             );
           })}
           <Group mt="sm" justify="space-evenly">
-            <Button
-              color="red"
-              variant={isDark ? "light" : "outline"}
-              onClick={() => handleScore(Score.AGAIN)}
-              size={smallScreen ? "xs" : "lg"}
-            >
-              Missed
-              {!smallScreen && (
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (1)
-                </Text>
-              )}
-            </Button>
-            <Button
-              color="yellow"
-              variant={isDark ? "light" : "outline"}
-              onClick={() => handleScore(Score.HARD)}
-              size={smallScreen ? "xs" : "lg"}
-            >
-              Hard
-              {!smallScreen && (
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (2)
-                </Text>
-              )}
-            </Button>
-            <Button
-              color="green"
-              variant={isDark ? "light" : "outline"}
-              onClick={() => handleScore(Score.GOOD)}
-              size={smallScreen ? "xs" : "lg"}
-            >
-              Good
-              {!smallScreen && (
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (3)
-                </Text>
-              )}
-            </Button>
-            <Button
-              color="gray"
-              variant={isDark ? "light" : "outline"}
-              onClick={() => handleScore(Score.EASY)}
-              size={smallScreen ? "xs" : "lg"}
-            >
-              Easy
-              {!smallScreen && (
-                <Text component="span" c="dimmed" size="sm">
-                  &nbsp; (4)
-                </Text>
-              )}
-            </Button>
+            {gradeButtons.map(({ score, label, color, shortcut }) => {
+              const suggested = score === suggestedScore;
+              return (
+                <Button
+                  key={score}
+                  color={color}
+                  variant={suggested ? "filled" : isDark ? "light" : "outline"}
+                  onClick={() => handleScore(score)}
+                  size={smallScreen ? "xs" : "lg"}
+                >
+                  {label}
+                  {!smallScreen && (
+                    <Text
+                      component="span"
+                      c={suggested ? undefined : "dimmed"}
+                      size="sm"
+                    >
+                      &nbsp; ({suggested ? "Enter" : shortcut})
+                    </Text>
+                  )}
+                </Button>
+              );
+            })}
           </Group>
           {showLoader ? <Loader color="blue" /> : null}
         </Stack>

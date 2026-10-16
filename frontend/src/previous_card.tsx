@@ -14,11 +14,25 @@ export interface HistoryEntry {
 interface PreviousCardProps {
   entry: HistoryEntry;
   handleRescore: (score: Score) => void;
+  simpleRatings: boolean;
 }
+
+const fullRescoreButtons = [
+  { score: Score.AGAIN, label: "Missed", color: "red" },
+  { score: Score.HARD, label: "Hard", color: "yellow" },
+  { score: Score.GOOD, label: "Good", color: "green" },
+  { score: Score.EASY, label: "Easy", color: "gray" },
+];
+
+const simpleRescoreButtons = [
+  { score: Score.AGAIN, label: "Missed", color: "red" },
+  { score: Score.GOOD, label: "Right", color: "green" },
+];
 
 const PreviousCard: React.FC<PreviousCardProps> = ({
   entry,
   handleRescore,
+  simpleRatings,
 }) => {
   const [editPopoverOpened, setEditPopoverOpened] = useState(false);
 
@@ -40,7 +54,11 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
               span
               c={entry.score === Score.AGAIN ? "red" : "green"}
             >
-              {Score[entry.score] === "AGAIN" ? "MISSED" : Score[entry.score]}
+              {entry.score === Score.AGAIN
+                ? "MISSED"
+                : simpleRatings
+                  ? "RIGHT"
+                  : Score[entry.score]}
             </Text>
           </Text>
           <Text size="sm" c="dimmed">
@@ -66,50 +84,22 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
           <Popover.Dropdown>
             <Text>Set new rating for this card ({entry.alphagram})</Text>
             <Group mt="sm">
-              <Button
-                color="red"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.AGAIN);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Missed
-              </Button>
-              <Button
-                color="yellow"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.HARD);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Hard
-              </Button>
-              <Button
-                color="green"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.GOOD);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Good
-              </Button>
-              <Button
-                color="gray"
-                variant="light"
-                onClick={() => {
-                  handleRescore(Score.EASY);
-                  setEditPopoverOpened(false);
-                }}
-                size="xs"
-              >
-                Easy
-              </Button>
+              {(simpleRatings ? simpleRescoreButtons : fullRescoreButtons).map(
+                ({ score, label, color }) => (
+                  <Button
+                    key={score}
+                    color={color}
+                    variant="light"
+                    onClick={() => {
+                      handleRescore(score);
+                      setEditPopoverOpened(false);
+                    }}
+                    size="xs"
+                  >
+                    {label}
+                  </Button>
+                ),
+              )}
             </Group>
           </Popover.Dropdown>
         </Popover>
