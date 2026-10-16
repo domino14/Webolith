@@ -247,6 +247,29 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     );
   }, [currentCard, alphagramLetters, customArrange]);
 
+  // In typing mode with simple ratings, we know whether every word was
+  // found, so suggest the grade and let Enter accept it.
+  const suggestedScore: Score | undefined = useMemo(() => {
+    if (
+      !displaySettings.simpleRatings ||
+      !typingMode ||
+      !flipped ||
+      !currentCard ||
+      !currentCard.alphagram
+    ) {
+      return undefined;
+    }
+    return correctGuesses.size === currentCard.alphagram.words.length
+      ? Score.GOOD
+      : Score.AGAIN;
+  }, [
+    displaySettings.simpleRatings,
+    typingMode,
+    flipped,
+    currentCard,
+    correctGuesses,
+  ]);
+
   // Keyboard event handler
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -282,6 +305,28 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
             setDisplayQuestion(
               customArrange(alphagramLetters, currentCard.alphagram.alphagram),
             );
+            break;
+        }
+      } else if (displaySettings.simpleRatings) {
+        switch (event.key) {
+          case "1":
+            event.preventDefault();
+            handleScore(Score.AGAIN);
+            break;
+          // Accept 3 and 4 too, for muscle memory from the four-button mode.
+          case "2":
+          case "3":
+          case "4":
+            event.preventDefault();
+            handleScore(Score.GOOD);
+            break;
+          case "Enter":
+            if (suggestedScore !== undefined) {
+              event.preventDefault();
+              handleScore(suggestedScore);
+            }
+            break;
+          default:
             break;
         }
       } else {
@@ -320,11 +365,14 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     currentCard,
     alphagramLetters,
     customArrange,
+    displaySettings.simpleRatings,
+    suggestedScore,
   ]);
 
-  const handleGuessEntered = useCallback(() => {
+  // Returns true if this guess solved (and flipped) the card.
+  const handleGuessEntered = useCallback((): boolean => {
     if (!currentCard || !currentCard.alphagram || flipped) {
-      return;
+      return false;
     }
     // Normalize input
     const guess = typeInputValue.trim().toUpperCase();
@@ -350,7 +398,9 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
     if (updatedCorrectGuesses?.size === currentCard.alphagram.words.length) {
       // we solved the card; flip it.
       handleFlip();
+      return true;
     }
+    return false;
   }, [currentCard, correctGuesses, typeInputValue, flipped]);
   const sortedGuesses = useMemo(() => {
     return Array.from(correctGuesses).sort((a, b) => a.localeCompare(b));
@@ -404,7 +454,11 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
                 if (e.key === " ") {
                   e.preventDefault();
                 }
-                handleGuessEntered();
+                if (handleGuessEntered()) {
+                  // Don't let the Enter that solved the card also reach the
+                  // window handler and accept the suggested grade.
+                  e.stopPropagation();
+                }
               } else {
                 setInputError(null);
               }
@@ -429,6 +483,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
           handleFlip={handleFlip}
           currentCard={currentCard}
           missedWords={missedWords}
+          suggestedScore={suggestedScore}
           handleScore={handleScore}
           showLoader={showLoader}
           displayQuestion={displayQuestion}
@@ -466,7 +521,11 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
       </Center>
       {/* Previous card summary */}
       {previousCard && (
-        <PreviousCard entry={previousCard} handleRescore={handleRescore} />
+        <PreviousCard
+          entry={previousCard}
+          handleRescore={handleRescore}
+          simpleRatings={displaySettings.simpleRatings}
+        />
       )}
       {showLoadMoreLink && (
         <Button onClick={setFinishedCards}>Load more cards</Button>
