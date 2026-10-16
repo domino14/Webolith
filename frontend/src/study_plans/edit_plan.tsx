@@ -307,7 +307,7 @@ const EditStudyPlan = () => {
         <Group justify="space-between" align="baseline">
           <Title order={3}>Stages</Title>
           <Text size="sm" c="dimmed">
-            Worked through top to bottom. A word belongs to the first stage it
+            Worked through top to bottom. An alphagram belongs to the first stage it
             matches.
           </Text>
         </Group>
@@ -366,7 +366,7 @@ const EditStudyPlan = () => {
                 <Group gap={4} wrap="nowrap">
                   {count !== undefined && (
                     <Text size="sm" c="dimmed" mr="xs">
-                      {fmt(count)} words
+                      {fmt(count)} alphagrams
                     </Text>
                   )}
                   <Tooltip label="Move up">
@@ -550,14 +550,14 @@ const EditStudyPlan = () => {
         />
         <Text size="sm" c="dimmed" maw={640}>
           {isWindow
-            ? `Each "Add next batch" adds every missing word in one probability block of the current stage: 1–${fmt(
+            ? `Each "Add next batch" adds every missing alphagram in one probability block of the current stage: 1–${fmt(
                 size
               )}, then ${fmt(size + 1)}–${fmt(
                 2 * size
               )}, and so on. When a stage is done, the next press starts the next stage.`
             : `Each "Add next batch" adds the next ${fmt(
                 size
-              )} words you don't have, in plan order. A batch can run into the next stage.`}
+              )} alphagrams you don't have, in plan order. A batch can run into the next stage.`}
         </Text>
       </Stack>
 
@@ -585,7 +585,7 @@ const EditStudyPlan = () => {
           <Stack gap={6}>
             <Text>
               <b>
-                {fmt(preview.added)} of {fmt(preview.total)} words in this plan
+                {fmt(preview.added)} of {fmt(preview.total)} alphagrams in this plan
                 are already in your vault.
               </b>{" "}
               Nothing is copied or moved; progress is read from your vault

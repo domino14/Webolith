@@ -20,6 +20,7 @@ import {
   GetStudyPlanProgressResponse,
   StudyPlan,
   StudyPlanBatch,
+  StudyPlanBatchUnit,
   StudyPlanStage,
 } from "../gen/rpc/wordvault/api_pb";
 import { describeSearchParam } from "../search/types";
@@ -192,13 +193,13 @@ const StudyPlanPage = () => {
                 <Text c="dimmed">
                   {next
                     ? batchDetail(next)
-                    : "Every word in every stage is in your vault."}
+                    : "Every alphagram in every stage is in your vault."}
                 </Text>
               </Stack>
               {next && (
                 <Group>
                   <Button variant="default" size="md" onClick={preview.open}>
-                    Preview words
+                    Preview alphagrams
                   </Button>
                   <Button size="md" onClick={addBatch} loading={adding}>
                     Add {fmt(next.items.length)} cards
@@ -220,7 +221,7 @@ const StudyPlanPage = () => {
             <Group justify="space-between">
               <Title order={3}>Progress</Title>
               <Text c="dimmed">
-                {fmt(progress.added)} of {fmt(progress.total)} words ·{" "}
+                {fmt(progress.added)} of {fmt(progress.total)} alphagrams ·{" "}
                 {progress.total
                   ? Math.floor((100 * progress.added) / progress.total)
                   : 0}
@@ -267,8 +268,12 @@ const StudyPlanPage = () => {
               );
             })}
             <Text size="xs" c="dimmed">
-              Probability. Each block is {fmt(progress.blockSize)} wide, or
-              more for long stages.
+              Each block is a range of {fmt(progress.blockSize)}{" "}
+              probabilities, or more in long stages, shaded by how many of its
+              alphagrams you have. Ranges with no alphagrams in the stage
+              aren't shown.
+              {plan.batchUnit === StudyPlanBatchUnit.STUDY_PLAN_BATCH_CARDS &&
+                " Batches are counted in cards, so one batch is usually a small part of a block."}
             </Text>
             <ProgressLegend />
           </Stack>

@@ -65,7 +65,7 @@ const PlanCard = ({ plan }: { plan: StudyPlan }) => {
             <Progress value={pct} />
             <Group justify="space-between">
               <Text size="sm" c="dimmed">
-                {fmt(progress.added)} of {fmt(progress.total)} words ·{" "}
+                {fmt(progress.added)} of {fmt(progress.total)} alphagrams ·{" "}
                 {Math.floor(pct)}%
               </Text>
               <Text size="sm" c={progress.nextBatch ? "yellow" : "blue"}>

@@ -52,7 +52,7 @@ export const ProgressStrip = ({ blocks, descending, nextValue }: Props) => {
   if (shown.length === 0) {
     return (
       <Text size="sm" c="dimmed">
-        No words match this stage.
+        No alphagrams match this stage.
       </Text>
     );
   }
