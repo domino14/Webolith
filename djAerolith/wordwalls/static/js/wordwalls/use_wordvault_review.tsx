@@ -160,7 +160,9 @@ export function useWordVaultReviewState({
     setSession(null);
   }, [setSession]);
 
-  return {
+  // The container re-renders on every guess; keep the same object unless
+  // something here changed, so context consumers don't re-render too.
+  return useMemo(() => ({
     session,
     active,
     begin,
@@ -172,7 +174,7 @@ export function useWordVaultReviewState({
     discard,
     busy,
     message,
-  };
+  }), [session, active, begin, rating, setRating, result, counts, submit, discard, busy, message]);
 }
 
 const noop = () => {};
