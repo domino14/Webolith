@@ -2,6 +2,60 @@ import React from 'react';
 
 import WordPartDisplay from './word_part_display';
 import { type VaultStatus } from './use_wordvault';
+import { RATING_LABELS, Score } from './wordvault_review';
+
+// Styled in theme-enhancements.css.
+const RATING_BUTTON_CLASS: Record<number, string> = {
+  [Score.AGAIN]: 'wv-rating-again',
+  [Score.HARD]: 'wv-rating-hard',
+  [Score.GOOD]: 'wv-rating-good',
+  [Score.EASY]: 'wv-rating-easy',
+};
+
+const formatDue = (due: Date) => due.toLocaleDateString(undefined, {
+  month: 'short', day: 'numeric',
+});
+
+interface RatingCellProps {
+  rating: Score;
+  // Unset once the ratings are sent.
+  onRate?: (score: Score) => void;
+  // After sending: when the card is next due, or null if it wasn't scored.
+  result?: Date | null;
+}
+
+function RatingCell({ rating, onRate, result }: RatingCellProps) {
+  if (result !== undefined) {
+    const label = RATING_LABELS.find(([s]) => s === rating)?.[1];
+    return result === null ? (
+      <span className="small text-body-secondary" title="Just reviewed, or no longer in WordVault.">
+        Not scored
+      </span>
+    ) : (
+      <span className="small text-nowrap" title={`Scored ${label}.`}>
+        {`${label} · due ${formatDue(result)}`}
+      </span>
+    );
+  }
+  return (
+    <div className="btn-group btn-group-sm wv-rating" role="group" aria-label="WordVault rating">
+      {RATING_LABELS.map(([score, label]) => {
+        return (
+          <button
+            key={score}
+            type="button"
+            className={`btn py-0 px-1 ${RATING_BUTTON_CLASS[score]}`}
+            aria-pressed={score === rating}
+            disabled={!onRate}
+            onClick={() => onRate?.(score)}
+          >
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 // How each WordVault status looks in the actions column. 'unknown' has no
 // icon: WordVault isn't available for this question.
@@ -51,6 +105,10 @@ interface SolutionProps {
   addToVault: (alphagram: string) => void;
   markMissedInVault: (alphagram: string) => void;
   vaultCardUrl: string;
+  // Set in a WordVault review round: this card's rating.
+  reviewRating?: Score;
+  onRate?: (alphagram: string, score: Score) => void;
+  reviewResult?: Date | null;
 }
 
 function Solution({
@@ -75,6 +133,9 @@ function Solution({
   addToVault,
   markMissedInVault,
   vaultCardUrl,
+  reviewRating,
+  onRate,
+  reviewResult,
 }: SolutionProps) {
   const handleMarkMissed = () => {
     markMissed([{ idx, alphagram }]);
@@ -95,7 +156,15 @@ function Solution({
   const wordDisplay = (innerFrontHook ? '･' : '') + word + (innerBackHook ? '･' : '') + lexiconSymbols;
 
   let actionsCell: React.ReactNode = null;
-  if (wordPos === 0) {
+  if (wordPos === 0 && reviewRating !== undefined) {
+    actionsCell = (
+      <RatingCell
+        rating={reviewRating}
+        onRate={onRate ? (score) => onRate(alphagram, score) : undefined}
+        result={reviewResult}
+      />
+    );
+  } else if (wordPos === 0) {
     const vault = VAULT_STATUS_DISPLAY[vaultStatus];
     const items: { label: string; onClick?: () => void; href?: string }[] = [];
     if (correct) {

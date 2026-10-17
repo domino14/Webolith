@@ -5,6 +5,8 @@ import * as Immutable from 'immutable';
 import Solution from './solution';
 import { type ImmutableWord, type ImmutableQuestion } from './immutable-types';
 import { plural, type WordVaultActions } from './use_wordvault';
+import { type WordVaultReview } from './use_wordvault_review';
+import { RATING_LABELS } from './wordvault_review';
 
 // E.g. "add 23 new cards to WordVault (Long words) and mark 10 existing cards
 // as missed".
@@ -27,6 +29,87 @@ interface SolutionsProps {
   markMissed: (questions: { idx: number; alphagram: string }[]) => void;
   showLexiconSymbols: boolean;
   wordVault: WordVaultActions;
+  // Set after a WordVault review round, to rate its cards.
+  review: WordVaultReview | null;
+}
+
+// E.g. "32 Good, 8 Missed".
+const describeRatings = (review: WordVaultReview) => RATING_LABELS
+  .filter(([score]) => review.counts.get(score))
+  .map(([score, label]) => `${review.counts.get(score)} ${label}`)
+  .join(', ');
+
+function ReviewBar({ review }: { review: WordVaultReview }) {
+  const [confirming, setConfirming] = useState(false);
+  const { session } = review;
+  if (!session) {
+    return null;
+  }
+  const numRatings = Object.keys(session.ratings).length;
+  const deck = session.deckName ? ` (${session.deckName})` : '';
+
+  let controls: React.ReactNode;
+  if (session.status === 'submitted') {
+    controls = <span>{`Ratings sent to WordVault${deck}.`}</span>;
+  } else if (confirming) {
+    controls = (
+      <div className="d-flex align-items-center gap-2 flex-wrap">
+        <span className="small">
+          {`This will score ${plural(numRatings, 'card')} in WordVault: ${
+            describeRatings(review)}. This can't be undone. Continue?`}
+        </span>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary"
+          onClick={() => {
+            setConfirming(false);
+            review.submit();
+          }}
+        >
+          Confirm
+        </button>
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => setConfirming(false)}
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  } else {
+    controls = (
+      <>
+        <span>{`Ratings: ${describeRatings(review)}`}</span>
+        <button
+          type="button"
+          className="btn btn-sm btn-primary"
+          disabled={review.busy || numRatings === 0}
+          onClick={() => setConfirming(true)}
+        >
+          {review.busy ? 'Sending…' : `Send ${plural(numRatings, 'rating')} to WordVault`}
+        </button>
+      </>
+    );
+  }
+
+  return (
+    <div className="row">
+      <div className="col-lg-12 d-flex align-items-center gap-3 flex-wrap mt-2 mb-3">
+        {controls}
+        <a
+          className="ms-auto small"
+          href={`/wordvault/?lexicon=${encodeURIComponent(session.lexicon)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open WordVault
+          {' '}
+          <i className="bi bi-box-arrow-up-right" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  );
 }
 
 function Solutions({
@@ -36,6 +119,7 @@ function Solutions({
   markMissed,
   showLexiconSymbols,
   wordVault,
+  review,
 }: SolutionsProps) {
   const [confirmingMarkAll, setConfirmingMarkAll] = useState(false);
   const tableRows: React.ReactElement[] = [];
@@ -78,6 +162,9 @@ function Solutions({
           markMissedInVault={wordVault.markMissed}
           vaultCardUrl={`/wordvault/card/${encodeURIComponent(question.get('a'))}?lexicon=${
             encodeURIComponent(wordVault.lexicon)}`}
+          reviewRating={review?.rating(question.get('a'))}
+          onRate={review?.session?.status === 'rating' ? review.setRating : undefined}
+          reviewResult={review?.result(question.get('a'))}
         />,
       );
       wordIdx += 1;
@@ -155,6 +242,16 @@ function Solutions({
           )}
         </div>
       </div>
+      {review && <ReviewBar review={review} />}
+      {review?.message && (
+        <div className="row">
+          <div className="col-lg-12">
+            <div className={`alert alert-${review.message.kind} py-2`} role="status">
+              {review.message.text}
+            </div>
+          </div>
+        </div>
+      )}
       {wordVault.enabled && (
         <div className="row">
           <div className="col-lg-12 d-flex align-items-center gap-3 flex-wrap mt-2 mb-3">
@@ -243,7 +340,7 @@ function Solutions({
                 <th>Word</th>
                 <th>&gt;</th>
                 <th>Definition</th>
-                <th>Actions</th>
+                <th>{review ? 'Rating' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody>{tableRows}</tbody>

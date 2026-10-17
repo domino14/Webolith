@@ -11,6 +11,63 @@ import ChallengeResultsModal from './challenge_results_modal';
 import StartButton from './start_button';
 import HeroButton from './hero_button';
 import { type ImmutableQuestion } from './immutable-types';
+import { useWordVaultReview, type WordVaultReview } from './use_wordvault_review';
+import { plural } from './use_wordvault';
+import Notifications from './notifications';
+
+/**
+ * Reminds the player to send the ratings from a WordVault review round.
+ * If that round isn't the list in this table anymore, the ratings can be
+ * sent or discarded from here.
+ */
+function WordVaultReviewReminder({ review }: { review: WordVaultReview }) {
+  const { session } = review;
+  if (!session || session.status !== 'rating') {
+    return review.message && !review.active ? (
+      <div className={`alert alert-${review.message.kind} py-2`} role="status">
+        {review.message.text}
+      </div>
+    ) : null;
+  }
+  const n = Object.keys(session.ratings).length;
+  if (review.active) {
+    return (
+      <div className="alert alert-info py-2" role="status">
+        Check your WordVault ratings in Show Solutions, then send them to WordVault.
+        You can practice the missed cards after that.
+      </div>
+    );
+  }
+  return (
+    <div className="alert alert-warning py-2 d-flex align-items-center gap-2 flex-wrap" role="status">
+      <span>
+        {`You haven't sent your ratings for ${plural(n, 'card')} from your last WordVault round.`}
+      </span>
+      <button
+        type="button"
+        className="btn btn-sm btn-primary"
+        disabled={review.busy}
+        onClick={review.submit}
+      >
+        {review.busy ? 'Sending…' : 'Send them'}
+      </button>
+      <button
+        type="button"
+        className="btn btn-sm btn-link text-body-secondary ms-auto"
+        disabled={review.busy}
+        onClick={() => Notifications.confirm(
+          'Discard ratings?',
+          `You've already seen these ${plural(n, 'card')}. If you discard their ratings,
+          WordVault will show them to you again as if you hadn't, which throws off
+          its scheduling. Only discard them if something went wrong.`,
+          review.discard,
+        )}
+      >
+        Discard…
+      </button>
+    </div>
+  );
+}
 
 interface ChallengeEntry {
   user: string;
@@ -60,6 +117,10 @@ function GameInactiveArea({
   hideErrors,
   handleStart,
 }: GameInactiveAreaProps) {
+  const review = useWordVaultReview();
+  // Another round of a WordVault review list is practice; the first round's
+  // ratings have to be sent before it.
+  const startBlocked = review.active && review.session?.status === 'rating';
   const handleStartClick = () => {
     handleStart();
   };
@@ -94,6 +155,8 @@ function GameInactiveArea({
         buttonText="Start"
         buttonClass="btn btn-primary btn-lg"
         handleButtonClick={handleStartClick}
+        disabled={startBlocked}
+        title={startBlocked ? 'Send your WordVault ratings first.' : undefined}
       />
     );
 
@@ -110,14 +173,25 @@ function GameInactiveArea({
       jumbotronHeader = (
         <div>
           <h1>Game over!</h1>
-          <p>
-            You can continue by clicking
-            {' '}
-            {startButton}
-            {' '}
-            again, or
-            view solutions / results below.
-          </p>
+          {startBlocked ? (
+            <p>
+              Rate your cards in Show Solutions and send the ratings to WordVault.
+              Then you can practice the missed ones by clicking
+              {' '}
+              {startButton}
+              {' '}
+              again.
+            </p>
+          ) : (
+            <p>
+              You can continue by clicking
+              {' '}
+              {startButton}
+              {' '}
+              again, or
+              view solutions / results below.
+            </p>
+          )}
           <div className="row">
             <HeroButton
               addlButtonClass="btn-primary"
@@ -179,6 +253,7 @@ function GameInactiveArea({
 
   return (
     <div className="bg-body-tertiary p-5 rounded-3 mb-4">
+      <WordVaultReviewReminder review={review} />
       {renderJumbotronHeader()}
       {renderTableManagementButtons()}
       {renderModals()}

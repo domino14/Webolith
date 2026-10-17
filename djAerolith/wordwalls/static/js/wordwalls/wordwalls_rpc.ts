@@ -3,6 +3,7 @@
  */
 
 import GenericRPC from './generic_rpc';
+import type WordwallsGame from './wordwalls_game';
 
 interface GuessResponse {
   [key: string]: unknown;
@@ -10,6 +11,19 @@ interface GuessResponse {
 
 interface StartGameResponse {
   [key: string]: unknown;
+}
+
+export interface ResumeResponse {
+  // Whether the round is still running. A round whose time ran out while
+  // the player was away comes back with going false, so its solutions can
+  // still be shown.
+  going: boolean;
+  questions?: Parameters<WordwallsGame['init']>[0];
+  // Words solved so far: word, alphagram, solver.
+  solved?: { w: string; a: string; s: string }[];
+  time?: number; // seconds left
+  gameType?: string;
+  wrongAnswers?: number;
 }
 
 interface GiveUpResponse {
@@ -42,6 +56,10 @@ class WordwallsRPC extends GenericRPC {
 
   async startGame(): Promise<StartGameResponse> {
     return this.rpcwrap('start', {}) as Promise<StartGameResponse>;
+  }
+
+  async resumeGame(): Promise<ResumeResponse> {
+    return this.rpcwrap('resume', {}) as Promise<ResumeResponse>;
   }
 
   async giveUp(): Promise<GiveUpResponse> {

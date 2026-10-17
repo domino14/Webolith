@@ -131,6 +131,7 @@ class WordwallsGame(object):
         if use_table is None:
             wgm = new_wgm()
         else:
+            self.end_abandoned_rounds(tablenum=use_table)
             wgm = self.get_wgm(tablenum=use_table, lock=True)
             old_word_list = wgm.word_list
             if multiplayer and wgm.host != host:
@@ -351,12 +352,21 @@ class WordwallsGame(object):
         questions_per_round,
         use_table,
         multiplayer,
+        wordvault_review=False,
     ):
+        """
+        wordvault_review marks a round of due WordVault cards. The player
+        rates the cards in WordVault afterwards, and these rounds don't
+        count toward Wordwalls stats.
+        """
         dt = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         qs = Questions()
         qs.set_from_list(raw_questions)
 
         wl = self.initialize_word_list(qs, lex, user)
+        state_kwargs = {}
+        if wordvault_review:
+            state_kwargs["wordvaultReview"] = True
         wgm = self.create_or_update_game_instance(
             user,
             lex,
@@ -364,8 +374,11 @@ class WordwallsGame(object):
             use_table,
             multiplayer,
             timerSecs=secs,
-            temp_list_name="quiz on {}".format(dt),
+            temp_list_name=(
+                "WordVault review on {}" if wordvault_review else "quiz on {}"
+            ).format(dt),
             questionsToPull=questions_per_round,
+            **state_kwargs,
         )
         return wgm.pk
 
@@ -436,6 +449,12 @@ class WordwallsGame(object):
             raise GameInitException(
                 "Cannot quiz on first missed unless you " "have gone through list once."
             )
+        # A round of this list may have been left running in some table;
+        # end it so its unsolved questions are recorded as missed before
+        # the list is changed.
+        self.end_abandoned_rounds(word_list=saved_list, tablenum=use_table)
+        saved_list.refresh_from_db()
+
         temp_list_name = None
         save_name = saved_list.name
         if multiplayer:
@@ -579,24 +598,115 @@ class WordwallsGame(object):
         word_list.save()
         
         # Track quiz start for statistics
-        try:
-            StatsService.update_quiz_started(user)
-        except Exception:
-            logger.exception("Failed to update quiz start statistics")
-        
+        if not state.get("wordvaultReview"):
+            try:
+                StatsService.update_quiz_started(user)
+            except Exception:
+                logger.exception("Failed to update quiz start statistics")
+
+        ret = {
+            "questions": questions,
+            "time": state["timerSecs"],
+            "gameType": self.client_game_type(state, word_list),
+            "serverMsg": start_message,
+        }
+
+        return ret
+
+    def client_game_type(self, state, word_list):
         game_type = state["gameType"]
         if word_list.category == WordList.CATEGORY_BUILD:
             game_type += "_build"  # This is hell of ghetto.
         elif word_list.category == WordList.CATEGORY_TYPING:
             game_type += "_typing"
-        ret = {
+        return game_type
+
+    def resume_quiz(self, tablenum, user):
+        """
+        Return what the front end needs to pick a round back up after the
+        page was reloaded or the tab closed: the round's questions, the
+        words solved so far and the time left. The timer keeps running
+        while the player is away; a round whose time ran out is ended
+        here, and its questions are still returned so the player can see
+        the solutions.
+
+        Returns {"going": False} if there is no round to resume.
+        """
+        wgm = self.get_wgm(tablenum)
+        if not wgm:
+            return self.create_error_message(_("That table does not exist."))
+        state = json.loads(wgm.currentGameState)
+        if not state["quizGoing"]:
+            return {"going": False}
+        word_list = wgm.word_list
+        if not word_list:
+            state["quizGoing"] = False
+            wgm.currentGameState = json.dumps(state)
+            wgm.save()
+            return {"going": False}
+
+        # The round's questions, as indices into origQuestions, in the
+        # order they were asked.
+        round_questions = list(
+            dict.fromkeys(idx for _alpha, idx in state["originalAnswerHash"].values())
+        )
+        solvers = state.get("solvers", {})
+        solved = [
+            {"w": w, "a": alpha_idx[0], "s": solvers.get(w, user.username)}
+            for w, alpha_idx in state["originalAnswerHash"].items()
+            if w not in state["answerHash"]
+        ]
+        going = not self.did_timer_run_out(state)
+        if not going:
+            state["timeRemaining"] = 0
+            self.do_quiz_end_actions(state, tablenum, wgm)
+            wgm.currentGameState = json.dumps(state)
+            wgm.save()
+
+        questions, _answer_hash = self.load_questions(
+            round_questions, json.loads(word_list.origQuestions), word_list
+        )
+        logger.info(
+            "event=quiz_resumed player=%s table=%s going=%s",
+            user.username,
+            tablenum,
+            going,
+        )
+        return {
+            "going": going,
             "questions": questions,
-            "time": state["timerSecs"],
-            "gameType": game_type,
-            "serverMsg": start_message,
+            "solved": solved,
+            "time": max(self.server_time_remaining(state), 0) if going else 0,
+            "gameType": self.client_game_type(state, word_list),
+            "wrongAnswers": state.get("wrongAnswers", 0),
         }
 
-        return ret
+    def end_abandoned_rounds(self, word_list=None, tablenum=None):
+        """
+        End rounds that were left running, e.g. because the player closed
+        the tab mid-round, in the tables that use `word_list` and in table
+        `tablenum`. Ending a round records its unsolved questions as
+        missed, so this has to happen before the list or table is reused.
+        """
+        tables = {}
+        if word_list is not None and word_list.pk:
+            for wgm in WordwallsGameModel.objects.select_for_update().filter(
+                word_list=word_list
+            ):
+                tables[wgm.pk] = wgm
+        if tablenum is not None and tablenum not in tables:
+            wgm = self.get_wgm(tablenum)
+            if wgm:
+                tables[wgm.pk] = wgm
+        for wgm in tables.values():
+            state = json.loads(wgm.currentGameState)
+            if not state.get("quizGoing") or not wgm.word_list:
+                continue
+            logger.info("event=end_abandoned_round table=%s", wgm.pk)
+            state["timeRemaining"] = 0
+            self.do_quiz_end_actions(state, wgm.pk, wgm)
+            wgm.currentGameState = json.dumps(state)
+            wgm.save()
 
     def load_questions(self, qs, orig_questions, word_list):
         """
@@ -1132,11 +1242,12 @@ class WordwallsGame(object):
             state_modified = True
             
             # Track word solve for statistics
-            try:
-                StatsService.update_word_solved(user)
-            except Exception:
-                logger.exception("Failed to update word solve statistics")
-            
+            if not state.get("wordvaultReview"):
+                try:
+                    StatsService.update_word_solved(user)
+                except Exception:
+                    logger.exception("Failed to update word solve statistics")
+
             if len(state["answerHash"]) == 0:
                 time_remaining = (
                     state["quizStartTime"] + state["timerSecs"]
