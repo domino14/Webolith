@@ -48,6 +48,7 @@ def method_lookup(method_str):
     method_dict = {
         "guess": guess,
         "start": start,
+        "resume": resume,
         "giveup": giveup,
         "timerEnded": game_timer_ended,
     }
@@ -114,6 +115,14 @@ def start(user, tableid, params):
     # if wwg.is_multiplayer(tableid):
     #     broadcast_to_table(tableid, BroadcastTypes.GAME_PAYLOAD, quiz_params)
     return quiz_params
+
+
+def resume(user, tableid, params):
+    wwg = WordwallsGame()
+    result = wwg.resume_quiz(tableid, user)
+    if "error" in result:
+        raise RPCError(result["error"])
+    return result
 
 
 def giveup(user, tableid, params):

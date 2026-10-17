@@ -4,6 +4,7 @@ import {
   ActionIcon,
   Alert,
   AppShell,
+  Badge,
   Burger,
   Button,
   Group,
@@ -45,6 +46,9 @@ const lexMap = {
   RD29: 27,
   OSPS52: 29,
 };
+
+// Sections to flag as new in the nav.
+const NEW_SECTIONS = new Set(["study-plans"]);
 
 function App() {
   const [openedBurger, { toggle: toggleBurger, close: closeBurger }] =
@@ -211,6 +215,13 @@ function App() {
                       {icon}
                       &nbsp; {label}
                     </div>
+                  }
+                  rightSection={
+                    NEW_SECTIONS.has(path as string) ? (
+                      <Badge size="sm" color="green" variant="light">
+                        New
+                      </Badge>
+                    ) : undefined
                   }
                   active={
                     location.pathname === `/${path}` ||

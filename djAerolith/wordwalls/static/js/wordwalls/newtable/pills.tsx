@@ -6,9 +6,12 @@ interface PillProps {
   active: boolean;
   onPillClick: () => void;
   name: string;
+  badge?: string;
 }
 
-function Pill({ active, onPillClick, name }: PillProps) {
+function Pill({
+  active, onPillClick, name, badge,
+}: PillProps) {
   return (
     <li className="nav-item">
       <a
@@ -17,6 +20,7 @@ function Pill({ active, onPillClick, name }: PillProps) {
         style={{ cursor: 'pointer' }}
       >
         {name}
+        {badge && <span className="badge text-bg-success ms-1">{badge}</span>}
       </a>
     </li>
   );
@@ -27,6 +31,8 @@ interface PillsProps {
   stacked?: boolean;
   options: string[];
   onPillClick: (option: string) => void;
+  // A label to show next to some options, e.g. "New".
+  badges?: Record<string, string>;
 }
 
 function Pills({
@@ -34,6 +40,7 @@ function Pills({
   stacked = false,
   options,
   onPillClick,
+  badges = {},
 }: PillsProps) {
   let className: string;
   if (stacked) {
@@ -47,6 +54,7 @@ function Pills({
       active={activePill === option}
       onPillClick={() => onPillClick(option)}
       name={option}
+      badge={badges[option]}
       key={option}
     />
   ));

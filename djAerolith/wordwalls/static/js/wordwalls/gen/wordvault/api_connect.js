@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, AddStudyPlanBatchRequest, AddStudyPlanBatchResponse, AddStudyPlanRequest, AddStudyPlanResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, DeleteStudyPlanRequest, DeleteStudyPlanResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, EditStudyPlanRequest, EditStudyPlanResponse, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, GetStudyPlanProgressRequest, GetStudyPlanProgressResponse, GetStudyPlansRequest, GetStudyPlansResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, PreviewFsrsUpgradeRequest, PreviewFsrsUpgradeResponse, ScoreCardRequest, ScoreCardResponse, ScoreCardsRequest, ScoreCardsResponse, UpgradeFsrsRequest, UpgradeFsrsResponse } from "./api_pb.js";
+import { AddCardsRequest, AddCardsResponse, AddDeckRequest, AddDeckResponse, AddStudyPlanBatchRequest, AddStudyPlanBatchResponse, AddStudyPlanRequest, AddStudyPlanResponse, BatchScoreCardsRequest, BatchScoreCardsResponse, CardCountResponse, Cards, DeleteDeckRequest, DeleteDeckResponse, DeleteFromDeckRequest, DeleteRequest, DeleteResponse, DeleteStudyPlanRequest, DeleteStudyPlanResponse, EditDeckRequest, EditDeckResponse, EditFsrsParametersRequest, EditFsrsParametersResponse, EditLastScoreRequest, EditStudyPlanRequest, EditStudyPlanResponse, GetCardCountByDeckRequest, GetCardCountByDeckResponse, GetCardCountRequest, GetCardInfoRequest, GetDailyLeaderboardRequest, GetDailyLeaderboardResponse, GetDailyProgressByDeckRequest, GetDailyProgressByDeckResponse, GetDailyProgressRequest, GetDailyProgressResponse, GetDecksRequest, GetDecksResponse, GetFsrsParametersRequest, GetFsrsParametersResponse, GetNextScheduledRequest, GetSingleNextScheduledRequest, GetSingleNextScheduledResponse, GetStudyPlanProgressRequest, GetStudyPlanProgressResponse, GetStudyPlansRequest, GetStudyPlansResponse, MoveCardsRequest, MoveCardsResponse, NextScheduledBreakdown, NextScheduledCountByDeckRequest, NextScheduledCountByDeckResponse, NextScheduledCountRequest, PostponeRequest, PostponeResponse, PreviewFsrsUpgradeRequest, PreviewFsrsUpgradeResponse, ScoreCardRequest, ScoreCardResponse, ScoreCardsRequest, ScoreCardsResponse, UpgradeFsrsRequest, UpgradeFsrsResponse } from "./api_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -96,6 +96,15 @@ export const WordVaultService = {
       name: "ScoreCards",
       I: ScoreCardsRequest,
       O: ScoreCardsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc wordvault.WordVaultService.BatchScoreCards
+     */
+    batchScoreCards: {
+      name: "BatchScoreCards",
+      I: BatchScoreCardsRequest,
+      O: BatchScoreCardsResponse,
       kind: MethodKind.Unary,
     },
     /**

@@ -119,3 +119,60 @@ export async function scoreAllAgain(lexicon: string, alphagrams: string[]): Prom
   const resp = await client.scoreCards({ lexicon, alphagrams, score: Score.AGAIN });
   return resp.notScored;
 }
+
+export interface DueCard {
+  // As WordVault stores it.
+  alphagram: string;
+  words: string[];
+}
+
+/** The cards due now in a deck, most overdue first. */
+export async function getDueCards(
+  lexicon: string,
+  deckId: bigint,
+  limit: number,
+): Promise<DueCard[]> {
+  const resp = await client.getNextScheduled({ lexicon, deckId, limit });
+  const cards: DueCard[] = [];
+  resp.cards.forEach((card) => {
+    if (card.alphagram) {
+      cards.push({
+        alphagram: card.alphagram.alphagram,
+        words: card.alphagram.words.map((w) => w.word),
+      });
+    }
+  });
+  return cards;
+}
+
+/** Number of cards due now, by deck id (0 is the default deck). */
+export async function getDueCounts(lexicon: string): Promise<Map<bigint, number>> {
+  const resp = await client.nextScheduledCountByDeck({ lexicon, onlyOverdue: true });
+  const counts = new Map<bigint, number>();
+  resp.breakdowns.forEach((b) => {
+    counts.set(b.deckId, b.breakdown.overdue ?? 0);
+  });
+  return counts;
+}
+
+export interface BatchScoreResult {
+  // Alphagram as sent -> when the card is next due.
+  scored: Map<string, Date>;
+  // Alphagrams that were not scored (no such card, or just reviewed).
+  notScored: string[];
+}
+
+/** Scores several cards in one request, each with its own score. */
+export async function batchScore(
+  lexicon: string,
+  scores: { alphagram: string; score: Score }[],
+): Promise<BatchScoreResult> {
+  const resp = await client.batchScoreCards({ lexicon, scores });
+  const scored = new Map<string, Date>();
+  resp.scored.forEach((s) => {
+    if (s.nextScheduled) {
+      scored.set(s.alphagram, s.nextScheduled.toDate());
+    }
+  });
+  return { scored, notScored: resp.notScored };
+}

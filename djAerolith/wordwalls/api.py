@@ -252,6 +252,7 @@ def load_new_words(f):
         parsed_req["selectedList"] = body.get("selectedList")
         parsed_req["multiplayer"] = body.get("multiplayer", False)
         parsed_req["raw_questions"] = body.get("rawQuestions", False)
+        parsed_req["wordvault_review"] = bool(body.get("wordvaultReview", False))
         return f(request, parsed_req, *args, **kwargs)
 
     return wrap
@@ -454,6 +455,7 @@ def load_raw_questions(request, parsed_req_body):
             parsed_req_body["questions_per_round"],
             use_table=parsed_req_body["tablenum"],
             multiplayer=parsed_req_body["multiplayer"],
+            wordvault_review=parsed_req_body["wordvault_review"],
         )
     except GameInitException as e:
         return bad_request(str(e))
