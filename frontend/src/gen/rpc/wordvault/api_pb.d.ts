@@ -460,6 +460,130 @@ export declare class ScoreCardsResponse extends Message<ScoreCardsResponse> {
 }
 
 /**
+ * BatchScoreCardsRequest scores several cards at once, each with its own
+ * score, e.g. the ratings from a Wordwalls round of due cards.
+ *
+ * @generated from message wordvault.BatchScoreCardsRequest
+ */
+export declare class BatchScoreCardsRequest extends Message<BatchScoreCardsRequest> {
+  /**
+   * @generated from field: string lexicon = 1;
+   */
+  lexicon: string;
+
+  /**
+   * @generated from field: repeated wordvault.CardScore scores = 2;
+   */
+  scores: CardScore[];
+
+  constructor(data?: PartialMessage<BatchScoreCardsRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.BatchScoreCardsRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): BatchScoreCardsRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): BatchScoreCardsRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): BatchScoreCardsRequest;
+
+  static equals(a: BatchScoreCardsRequest | PlainMessage<BatchScoreCardsRequest> | undefined, b: BatchScoreCardsRequest | PlainMessage<BatchScoreCardsRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.CardScore
+ */
+export declare class CardScore extends Message<CardScore> {
+  /**
+   * @generated from field: string alphagram = 1;
+   */
+  alphagram: string;
+
+  /**
+   * @generated from field: wordvault.Score score = 2;
+   */
+  score: Score;
+
+  constructor(data?: PartialMessage<CardScore>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.CardScore";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CardScore;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CardScore;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CardScore;
+
+  static equals(a: CardScore | PlainMessage<CardScore> | undefined, b: CardScore | PlainMessage<CardScore> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.ScoredCard
+ */
+export declare class ScoredCard extends Message<ScoredCard> {
+  /**
+   * The alphagram as given in the request.
+   *
+   * @generated from field: string alphagram = 1;
+   */
+  alphagram: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp next_scheduled = 2;
+   */
+  nextScheduled?: Timestamp;
+
+  constructor(data?: PartialMessage<ScoredCard>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.ScoredCard";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ScoredCard;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ScoredCard;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ScoredCard;
+
+  static equals(a: ScoredCard | PlainMessage<ScoredCard> | undefined, b: ScoredCard | PlainMessage<ScoredCard> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.BatchScoreCardsResponse
+ */
+export declare class BatchScoreCardsResponse extends Message<BatchScoreCardsResponse> {
+  /**
+   * @generated from field: repeated wordvault.ScoredCard scored = 1;
+   */
+  scored: ScoredCard[];
+
+  /**
+   * Requested alphagrams that were not scored, either because there is no
+   * such card or because the card was just reviewed.
+   *
+   * @generated from field: repeated string not_scored = 2;
+   */
+  notScored: string[];
+
+  constructor(data?: PartialMessage<BatchScoreCardsResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.BatchScoreCardsResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): BatchScoreCardsResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): BatchScoreCardsResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): BatchScoreCardsResponse;
+
+  static equals(a: BatchScoreCardsResponse | PlainMessage<BatchScoreCardsResponse> | undefined, b: BatchScoreCardsResponse | PlainMessage<BatchScoreCardsResponse> | undefined): boolean;
+}
+
+/**
  * @generated from message wordvault.AddCardsRequest
  */
 export declare class AddCardsRequest extends Message<AddCardsRequest> {

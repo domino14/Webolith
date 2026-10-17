@@ -834,6 +834,143 @@ def blank_bingo_generator(
         ]
 
 
+class WordwallsResumeTest(WordwallsBasicLogicTestBase):
+    """
+    Rounds keep going when the page is closed or reloaded, and can be
+    picked back up.
+
+    """
+
+    def test_nothing_to_resume(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        self.assertEqual(wwg.resume_quiz(table_id, user), {"going": False})
+
+    def test_resume_round(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, user)
+        question = params["questions"][0]
+        word = question["ws"][0]["w"]
+        wwg.guess(word, table_id, user)
+
+        resumed = wwg.resume_quiz(table_id, user)
+        self.assertTrue(resumed["going"])
+        self.assertEqual(resumed["gameType"], "regular")
+        self.assertEqual(
+            [q["a"] for q in resumed["questions"]],
+            [q["a"] for q in params["questions"]],
+        )
+        self.assertEqual(
+            resumed["solved"], [{"w": word, "a": question["a"], "s": "cesar"}]
+        )
+        self.assertGreater(resumed["time"], 0)
+        self.assertLessEqual(resumed["time"], 240)
+        # The round is still going; guesses still count.
+        wgm = wwg.get_wgm(table_id)
+        self.assertTrue(json.loads(wgm.currentGameState)["quizGoing"])
+
+    def test_resume_round_that_ran_out(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        params = wwg.start_quiz(table_id, user)
+        with patch.object(wwg, "did_timer_run_out", return_value=True):
+            resumed = wwg.resume_quiz(table_id, user)
+        # The round is ended, but its questions come back for the solutions.
+        self.assertFalse(resumed["going"])
+        self.assertEqual(resumed["time"], 0)
+        self.assertEqual(len(resumed["questions"]), len(params["questions"]))
+        wgm = wwg.get_wgm(table_id)
+        self.assertFalse(json.loads(wgm.currentGameState)["quizGoing"])
+        self.assertEqual(wgm.word_list.numMissed, 50)
+
+    def test_new_list_in_table_ends_round(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.start_quiz(table_id, user)
+        old_list = wwg.get_wgm(table_id).word_list
+        lex = Lexicon.objects.get(lexiconName="NWL18")
+        search = [
+            SearchDescription.lexicon(lex),
+            SearchDescription.length(7, 7),
+            SearchDescription.probability_range(1, 10),
+        ]
+        # Keep the old list around so we can check it.
+        old_list.is_temporary = False
+        old_list.save()
+        wwg.initialize_by_search_params(user, search, 240, use_table=table_id)
+        old_list.refresh_from_db()
+        self.assertEqual(old_list.numMissed, 50)
+
+    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+    def test_reloading_saved_list_ends_abandoned_round(self):
+        LIST_NAME = "i live in a giant bucket"
+        user = User.objects.get(username="cesar")
+        lex = Lexicon.objects.get(lexiconName="NWL18")
+        wwg = WordwallsGame()
+        word_list = WordList.objects.get(name=LIST_NAME)
+        table_id = wwg.initialize_by_saved_list(
+            lex, user, word_list, SavedListForm.CONTINUE_LIST_CHOICE, 240
+        )
+        params = wwg.start_quiz(table_id, user)
+        self.assertEqual(len(params["questions"]), 1)
+        # The player closes the tab mid-round and later loads the list in
+        # a new table. The abandoned round's question counts as missed,
+        # just as if they had given up.
+        word_list = WordList.objects.get(name=LIST_NAME)
+        new_table_id = wwg.initialize_by_saved_list(
+            lex, user, word_list, SavedListForm.CONTINUE_LIST_CHOICE, 240
+        )
+        self.assertNotEqual(new_table_id, table_id)
+        wgm = wwg.get_wgm(table_id)
+        self.assertFalse(json.loads(wgm.currentGameState)["quizGoing"])
+        word_list = WordList.objects.get(name=LIST_NAME)
+        self.assert_wl(
+            word_list,
+            {
+                "numFirstMissed": 4,
+                "numMissed": 4,
+                "goneThruOnce": True,
+                "questionIndex": 15,
+            },
+        )
+        self.assertEqual(set([0, 2, 3, 10]), set(json.loads(word_list.firstMissed)))
+
+
+class WordwallsWordVaultReviewTest(WordwallsBasicLogicTestBase):
+    def test_review_round_skips_stats(self):
+        user = User.objects.get(username="cesar")
+        lex = Lexicon.objects.get(lexiconName="NWL18")
+        wwg = WordwallsGame()
+        table_id = wwg.initialize_by_raw_questions(
+            lex,
+            user,
+            [{"q": "AEINRST", "a": ["RETAINS"]}, {"q": "ADEEGMMO", "a": ["GAMODEME"]}],
+            60,
+            10,
+            None,
+            False,
+            wordvault_review=True,
+        )
+        wgm = wwg.get_wgm(table_id)
+        state = json.loads(wgm.currentGameState)
+        self.assertTrue(state["wordvaultReview"])
+        self.assertTrue(state["temp_list_name"].startswith("WordVault review on "))
+        with patch("wordwalls.game.StatsService") as stats:
+            params = wwg.start_quiz(table_id, user)
+            self.assertEqual(len(params["questions"]), 2)
+            wwg.guess("GAMODEME", table_id, user)
+        stats.update_quiz_started.assert_not_called()
+        stats.update_word_solved.assert_not_called()
+
+    def test_regular_round_counts_stats(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        with patch("wordwalls.game.StatsService") as stats:
+            wwg.start_quiz(table_id, user)
+        stats.update_quiz_started.assert_called_once()
+
+
 class WordwallsChallengeBehaviorTest(WordwallsBasicLogicTestBase):
     """
     Test challenge behavior. Create challenges, quiz on them, leaderboards,

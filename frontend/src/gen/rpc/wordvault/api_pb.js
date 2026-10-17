@@ -189,6 +189,53 @@ export const ScoreCardsResponse = /*@__PURE__*/ proto3.makeMessageType(
 );
 
 /**
+ * BatchScoreCardsRequest scores several cards at once, each with its own
+ * score, e.g. the ratings from a Wordwalls round of due cards.
+ *
+ * @generated from message wordvault.BatchScoreCardsRequest
+ */
+export const BatchScoreCardsRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.BatchScoreCardsRequest",
+  () => [
+    { no: 1, name: "lexicon", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "scores", kind: "message", T: CardScore, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.CardScore
+ */
+export const CardScore = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.CardScore",
+  () => [
+    { no: 1, name: "alphagram", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "score", kind: "enum", T: proto3.getEnumType(Score) },
+  ],
+);
+
+/**
+ * @generated from message wordvault.ScoredCard
+ */
+export const ScoredCard = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.ScoredCard",
+  () => [
+    { no: 1, name: "alphagram", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "next_scheduled", kind: "message", T: Timestamp },
+  ],
+);
+
+/**
+ * @generated from message wordvault.BatchScoreCardsResponse
+ */
+export const BatchScoreCardsResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.BatchScoreCardsResponse",
+  () => [
+    { no: 1, name: "scored", kind: "message", T: ScoredCard, repeated: true },
+    { no: 2, name: "not_scored", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ],
+);
+
+/**
  * @generated from message wordvault.AddCardsRequest
  */
 export const AddCardsRequest = /*@__PURE__*/ proto3.makeMessageType(

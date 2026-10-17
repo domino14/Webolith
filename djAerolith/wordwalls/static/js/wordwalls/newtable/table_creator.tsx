@@ -23,6 +23,7 @@ import BlankSearchDialogContainer from './blanks/dialog_container';
 import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
+import WordVaultDialogContainer from './wordvault/dialog_container';
 
 import { useClient } from '../connect';
 import { Anagrammer } from '../gen/wordsearcher/searcher_connect';
@@ -37,6 +38,7 @@ const LIST_TYPE_WORDSEARCH = 'Word Search';
 const LIST_TYPE_BLANKS = 'Blanks';
 const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const LIST_TYPE_SAVED_LIST = 'My Saved Lists';
+const LIST_TYPE_WORDVAULT = 'WordVault';
 const FLASHCARD_URL = '/flashcards/';
 
 const NO_LOAD_WHILE_PLAYING =
@@ -372,6 +374,8 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
     const api = useMemo(() => new WordwallsAPI(), []);
     const wordServerRPC = useClient(Anagrammer);
     const modalRef = useRef<ModalRef>(null);
+    // Bumped when the lobby opens, so the WordVault due counts are fresh.
+    const [wordVaultNonce, setWordVaultNonce] = useState(0);
 
     const showSpinner = useCallback(() => {
       setLoadingData(true);
@@ -616,6 +620,9 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
       useRef<ChallengeDialogContainerRef>(null);
 
     const handleModalShown = useCallback(() => {
+      if (activeListType === LIST_TYPE_WORDVAULT) {
+        setWordVaultNonce((n) => n + 1);
+      }
       // Refresh challenge data when modal is shown and we're on the challenges tab
       if (
         activeListType === LIST_TYPE_CHALLENGE &&
@@ -783,6 +790,23 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
             />
           );
           break;
+        case LIST_TYPE_WORDVAULT:
+          selectedQuizSearchDialog = (
+            <WordVaultDialogContainer
+              key={wordVaultNonce}
+              tablenum={props.tablenum}
+              lexicon={currentLexicon}
+              availableLexica={props.availableLexica}
+              onLoadNewList={props.onLoadNewList}
+              onLoaded={() => modalRef.current?.dismiss()}
+              showSpinner={showSpinner}
+              hideSpinner={hideSpinner}
+              notifyError={notifyError}
+              api={api}
+              disabled={props.gameGoing}
+            />
+          );
+          break;
         default:
           selectedQuizSearchDialog = null;
       }
@@ -795,9 +819,11 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
               LIST_TYPE_BLANKS,
               LIST_TYPE_AEROLITH_LISTS,
               LIST_TYPE_SAVED_LIST,
+              LIST_TYPE_WORDVAULT,
             ]}
             activePill={activeListType}
             onPillClick={handlePillClick}
+            badges={{ [LIST_TYPE_WORDVAULT]: 'New' }}
           />
           {selectedQuizSearchDialog}
         </div>
@@ -843,7 +869,11 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
                 setTime={setDesiredTime}
                 questionsPerRound={questionsPerRound}
                 setQuestionsPerRound={setQuestionsPerRound}
-                disabledInputs={activeListType === LIST_TYPE_CHALLENGE}
+                // These lists set their own time and size.
+                disabledInputs={
+                  activeListType === LIST_TYPE_CHALLENGE ||
+                  activeListType === LIST_TYPE_WORDVAULT
+                }
                 showPlaySettings={activeTab === TAB_PLAY}
               />
             </div>

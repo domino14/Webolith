@@ -593,3 +593,49 @@ text.svg-text {
   background-color: var(--bs-gray-800);
   border-color: var(--bs-gray-600);
 }
+/* ========================================
+   WordVault rating buttons (solutions)
+   ======================================== */
+
+/* Only the chosen rating is colored, in the muted palette above, and in
+   the same colors WordVault uses for its rating buttons. */
+.wv-rating .btn {
+  --bs-btn-color: var(--bs-secondary-color);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: var(--bs-body-color);
+  --bs-btn-hover-bg: var(--bs-tertiary-bg);
+  --bs-btn-hover-border-color: var(--bs-border-color);
+  --bs-btn-active-color: var(--bs-body-color);
+  --bs-btn-active-bg: var(--bs-tertiary-bg);
+  --bs-btn-active-border-color: var(--bs-border-color);
+  --bs-btn-disabled-color: var(--bs-secondary-color);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--bs-border-color);
+}
+
+.wv-rating .btn[aria-pressed="true"] {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--wv-rating-color);
+  --bs-btn-border-color: var(--wv-rating-color);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--wv-rating-color);
+  --bs-btn-hover-border-color: var(--wv-rating-color);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--wv-rating-color);
+  --bs-btn-disabled-border-color: var(--wv-rating-color);
+  /* Keep a chosen rating readable after the ratings are sent. */
+  --bs-btn-disabled-opacity: 0.85;
+}
+
+.wv-rating-again { --wv-rating-color: var(--bs-danger); }
+.wv-rating-hard { --wv-rating-color: var(--bs-warning); }
+.wv-rating-good { --wv-rating-color: var(--bs-success); }
+.wv-rating-easy { --wv-rating-color: var(--bs-secondary); }
+
+/* Gold is too light for white text. */
+.wv-rating .btn.wv-rating-hard[aria-pressed="true"] {
+  --bs-btn-color: #212529;
+  --bs-btn-hover-color: #212529;
+  --bs-btn-disabled-color: #212529;
+}

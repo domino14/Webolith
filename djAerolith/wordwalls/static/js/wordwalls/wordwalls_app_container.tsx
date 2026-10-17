@@ -17,7 +17,11 @@ import Spinner from './spinner';
 import TableCreator from './newtable/table_creator';
 import GuessEnum from './guess';
 import WordwallsAPI from './wordwalls_api';
-import WordwallsRPC from './wordwalls_rpc';
+import WordwallsRPC, { type ResumeResponse } from './wordwalls_rpc';
+import {
+  useWordVaultReviewState,
+  WordVaultReviewContext,
+} from './use_wordvault_review';
 
 interface ChallengeInfo {
   id?: number;
@@ -126,6 +130,8 @@ function WordwallsAppContainer({
   const [currentHost] = useState(initialCurrentHost);
   const [lexicon, setLexiconState] = useState(initialLexicon);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  // Whether we've checked for a round to resume after a page load.
+  const [resumeChecked, setResumeChecked] = useState(initialTablenum === 0);
 
   const wwAppRef = useRef<WordwallsAppRef>(null);
   const myTableCreatorRef = useRef<{
@@ -147,35 +153,17 @@ function WordwallsAppContainer({
     [tablenum]
   );
 
-  const beforeUnload = useCallback((e: any) => {
+  const beforeUnload = useCallback((e: BeforeUnloadEvent) => {
     if (gameGoing) {
-      // Use navigator.sendBeacon for unload events when possible
-      const data = new URLSearchParams({
-        action: 'giveUpAndSave',
-        // Fool the endpoint; if autosave is not on, don't actually
-        // save with a listname.
-        listname: autoSave ? listName : '',
-      });
-
-      // Try sendBeacon first, fallback to sync fetch
-      if (!navigator.sendBeacon(tableUrl(), data)) {
-        // Fallback to fetch (this may not complete if page is unloading)
-        fetch(tableUrl(), {
-          method: 'POST',
-          body: data,
-          keepalive: true,
-        }).catch(() => {
-          // Ignore errors during unload
-        });
-      }
-      
-      // Show warning dialog when game is active
-      const warningMessage = 'You have an active game in progress. Your progress will be saved, but you may lose your current position.';
+      // The round keeps going on the server, and comes back when this table
+      // is opened again, so just make sure leaving is on purpose.
+      const warningMessage = 'You have a game in progress. You can come back to it, but the timer keeps running.';
       e.preventDefault();
       e.returnValue = warningMessage;
       return warningMessage;
     }
-  }, [gameGoing, autoSave, listName, tableUrl]);
+    return undefined;
+  }, [gameGoing]);
 
   const addMessage = useCallback(
     (serverMsg: string, optType?: string, optSender?: string) => {
@@ -403,6 +391,51 @@ function WordwallsAppContainer({
       }
     },
     [gameGoing, addMessage, listName, displayStyle.customTileOrder]
+  );
+
+  const handleResumeReceived = useCallback(
+    (data: ResumeResponse) => {
+      if (!data.questions) {
+        return;
+      }
+      game.init(data.questions, data.gameType ?? '');
+      data.solved?.forEach((s) => game.solve(s.w, s.a, s.s));
+      if (displayStyle.customTileOrder) {
+        game.setCustomLetterOrder(displayStyle.customTileOrder);
+      }
+      setNumberOfRounds(1);
+      setOrigQuestions(game.getOriginalQuestionState());
+      setCurQuestions(game.getQuestionState());
+      setAnsweredBy(game.getAnsweredBy());
+      setTotalWords(game.getTotalNumWords());
+      setWrongAnswers(data.wrongAnswers ?? 0);
+      const gameType = data.gameType ?? '';
+      setIsChallenge(gameType.includes('challenge'));
+      setIsBuild(gameType.includes('build'));
+      setIsTyping(gameType.includes('typing'));
+      if (data.going) {
+        setInitialGameTime((data.time ?? 0) * 1000);
+        setGameGoing(true);
+        addMessage('Picked up your game where you left off. The timer kept running while you were away.', 'info');
+        wwAppRef.current?.setGuessBoxFocus();
+      } else {
+        addMessage('Time ran out on your game while you were away. You can see the solutions below.', 'info');
+        if (gameType.includes('challenge')) {
+          apiRef.current
+            .call(
+              '/wordwalls/api/challengers_by_tablenum/',
+              {
+                tablenum,
+                tiebreaker: displayStyle.hideErrors ? 'time' : 'errors',
+              },
+              'GET'
+            )
+            .then((d) => setChallengeData(d as ChallengeData))
+            .catch(error => addMessage(error.message));
+        }
+      }
+    },
+    [displayStyle.customTileOrder, displayStyle.hideErrors, tablenum, addMessage],
   );
 
   const timerRanOut = useCallback(() => {
@@ -676,6 +709,30 @@ function WordwallsAppContainer({
     [tableUrl]
   );
 
+  useEffect(() => {
+    // If a round was going when the page was closed or reloaded, pick it
+    // back up.
+    if (initialTablenum === 0) {
+      return;
+    }
+    rpcRef.current
+      .resumeGame()
+      .then(handleResumeReceived)
+      .catch((error) => addMessage(error.message))
+      .finally(() => setResumeChecked(true));
+    // Only on page load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const wordVaultReview = useWordVaultReviewState({
+    tablenum,
+    listName,
+    questions: origQuestions,
+    gameGoing,
+    numberOfRounds,
+    ready: resumeChecked,
+  });
+
   const resetTableCreator = useCallback(() => {
     myTableCreatorRef.current?.resetDialog();
   }, []);
@@ -773,76 +830,78 @@ function WordwallsAppContainer({
   const containerClasses = 'wordwalls-app-container';
 
   return (
-    <div
-      className={containerClasses}
-      data-display-style={JSON.stringify(displayStyle)}
-    >
-      <Spinner visible={loadingData} />
-      <TableCreator
-        // Normally this is invisible. It is shown by the
-        // new-button modal or other conditions (route).
-        ref={myTableCreatorRef}
-        defaultLexicon={defaultLexicon}
-        setDefaultLexicon={setDefaultLexicon}
-        availableLexica={availableLexica}
-        challengeInfo={challengeInfo}
-        tablenum={tablenum}
-        currentHost={currentHost}
-        onLoadNewList={handleLoadNewList}
-        gameGoing={gameGoing}
-        setLoadingData={setLoadingData}
-        username={username}
-        hideErrors={displayStyle.hideErrors}
-        displayStyle={displayStyle}
-      />
-      <WordwallsApp
-        boardWidth={boardWidth}
-        boardHeight={boardHeight}
-        boardGridWidth={boardGridWidth}
-        boardGridHeight={boardGridHeight}
-        windowWidth={windowWidth}
-        listName={listName}
-        autoSave={autoSave}
-        onListNameChange={handleListNameChange}
-        onAutoSaveToggle={handleAutoSaveToggle}
-        displayStyle={displayStyle}
-        setDisplayStyle={setDisplayStyle}
-        handleStart={handleStart}
-        handleGiveup={handleGiveup}
-        gameGoing={gameGoing}
-        initialGameTime={initialGameTime}
-        timerResetNonce={timerResetNonce}
-        timerRanOut={timerRanOut}
-        numberOfRounds={numberOfRounds}
-        isChallenge={isChallenge}
-        isBuild={isBuild}
-        lexicon={lexicon}
-        isTyping={isTyping}
-        curQuestions={curQuestions}
-        origQuestions={origQuestions}
-        totalWords={totalWords}
-        answeredBy={answeredBy}
-        onShuffleQuestion={onShuffleQuestion}
-        markMissed={markMissed}
-        challengeData={challengeData}
-        resetTableCreator={resetTableCreator}
-        tableCreatorModalSelector=".table-modal"
-        username={username}
-        wrongAnswers={wrongAnswers}
-        hideErrors={displayStyle.hideErrors}
-        onGuessSubmit={onGuessSubmit}
-        lastGuess={lastGuess}
-        lastGuessCorrectness={lastGuessCorrectness}
-        onHotKey={onHotKey}
-        handleShuffleAll={handleShuffleAll}
-        handleAlphagram={handleAlphagram}
-        handleCustomOrder={handleCustomOrder}
-        tableMessages={
-          messages.get('table', Immutable.List()).toJS() as TableMessage[]
-        }
-        ref={wwAppRef}
-      />
-    </div>
+    <WordVaultReviewContext.Provider value={wordVaultReview}>
+      <div
+        className={containerClasses}
+        data-display-style={JSON.stringify(displayStyle)}
+      >
+        <Spinner visible={loadingData} />
+        <TableCreator
+          // Normally this is invisible. It is shown by the
+          // new-button modal or other conditions (route).
+          ref={myTableCreatorRef}
+          defaultLexicon={defaultLexicon}
+          setDefaultLexicon={setDefaultLexicon}
+          availableLexica={availableLexica}
+          challengeInfo={challengeInfo}
+          tablenum={tablenum}
+          currentHost={currentHost}
+          onLoadNewList={handleLoadNewList}
+          gameGoing={gameGoing}
+          setLoadingData={setLoadingData}
+          username={username}
+          hideErrors={displayStyle.hideErrors}
+          displayStyle={displayStyle}
+        />
+        <WordwallsApp
+          boardWidth={boardWidth}
+          boardHeight={boardHeight}
+          boardGridWidth={boardGridWidth}
+          boardGridHeight={boardGridHeight}
+          windowWidth={windowWidth}
+          listName={listName}
+          autoSave={autoSave}
+          onListNameChange={handleListNameChange}
+          onAutoSaveToggle={handleAutoSaveToggle}
+          displayStyle={displayStyle}
+          setDisplayStyle={setDisplayStyle}
+          handleStart={handleStart}
+          handleGiveup={handleGiveup}
+          gameGoing={gameGoing}
+          initialGameTime={initialGameTime}
+          timerResetNonce={timerResetNonce}
+          timerRanOut={timerRanOut}
+          numberOfRounds={numberOfRounds}
+          isChallenge={isChallenge}
+          isBuild={isBuild}
+          lexicon={lexicon}
+          isTyping={isTyping}
+          curQuestions={curQuestions}
+          origQuestions={origQuestions}
+          totalWords={totalWords}
+          answeredBy={answeredBy}
+          onShuffleQuestion={onShuffleQuestion}
+          markMissed={markMissed}
+          challengeData={challengeData}
+          resetTableCreator={resetTableCreator}
+          tableCreatorModalSelector=".table-modal"
+          username={username}
+          wrongAnswers={wrongAnswers}
+          hideErrors={displayStyle.hideErrors}
+          onGuessSubmit={onGuessSubmit}
+          lastGuess={lastGuess}
+          lastGuessCorrectness={lastGuessCorrectness}
+          onHotKey={onHotKey}
+          handleShuffleAll={handleShuffleAll}
+          handleAlphagram={handleAlphagram}
+          handleCustomOrder={handleCustomOrder}
+          tableMessages={
+            messages.get('table', Immutable.List()).toJS() as TableMessage[]
+          }
+          ref={wwAppRef}
+        />
+      </div>
+    </WordVaultReviewContext.Provider>
   );
 }
 

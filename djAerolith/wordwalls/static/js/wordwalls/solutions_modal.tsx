@@ -8,6 +8,7 @@ import { type ImmutableQuestion } from './immutable-types';
 import { WORDVAULT_LEXICA } from 'wordvaultapp/lexica';
 
 import useWordVault from './use_wordvault';
+import { useWordVaultReview } from './use_wordvault_review';
 
 interface SolutionsModalProps {
   questions: Immutable.OrderedMap<string, ImmutableQuestion>;
@@ -28,11 +29,16 @@ function SolutionsModal({
   lexicon,
   isBuild,
 }: SolutionsModalProps) {
+  const review = useWordVaultReview();
+  // After a WordVault review round, the solutions are where the cards get
+  // rated, instead of being added to WordVault.
+  const reviewing = review.active
+    && (review.session?.status === 'rating' || review.session?.status === 'submitted');
   // In build mode the question is a pool of letters, not an alphagram.
   const wordVault = useWordVault(
     lexicon,
     questions,
-    !isBuild && WORDVAULT_LEXICA.includes(lexicon),
+    !isBuild && !reviewing && WORDVAULT_LEXICA.includes(lexicon),
   );
   return (
     <ModalSkeleton
@@ -49,6 +55,7 @@ function SolutionsModal({
           markMissed={markMissed}
           showLexiconSymbols={showLexiconSymbols}
           wordVault={wordVault}
+          review={reviewing ? review : null}
         />
       </div>
     </ModalSkeleton>
