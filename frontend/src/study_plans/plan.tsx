@@ -22,6 +22,7 @@ import {
   StudyPlan,
   StudyPlanBatch,
   StudyPlanBatchUnit,
+  StudyPlanSortField,
   StudyPlanStage,
 } from "../gen/rpc/wordvault/api_pb";
 import { describeSearchParam } from "../search/types";
@@ -32,6 +33,8 @@ import {
   deckName,
   fmt,
   notifyPlanError,
+  orderLabel,
+  sortFieldName,
   stageName,
 } from "./common";
 import { ProgressLegend, ProgressStrip } from "./progress_strip";
@@ -44,10 +47,33 @@ export const StageChips = ({ stage }: { stage: StudyPlanStage }) => (
       </Badge>
     ))}
     <Text size="xs" c="dimmed">
-      Probability, {stage.descending ? "high to low" : "low to high"}
+      {orderLabel(stage)}
     </Text>
   </Group>
 );
+
+// The rank shown for a batch's alphagrams. A batch of cards can run across
+// stages ordered by different ranks.
+const batchFieldName = (plan: StudyPlan, batch: StudyPlanBatch) => {
+  const names = new Set(
+    batch.items.map((it) => sortFieldName(plan.stages[it.stage]?.sortField))
+  );
+  return names.size === 1 ? [...names][0] : "Rank";
+};
+
+// What a progress block is a range of: "probabilities", "playability
+// ranks", or both when the stages differ.
+const blockUnits = (plan: StudyPlan) => {
+  const playability = plan.stages.map(
+    (st) => st.sortField === StudyPlanSortField.STUDY_PLAN_SORT_PLAYABILITY
+  );
+  if (playability.every(Boolean)) {
+    return "playability ranks";
+  }
+  return playability.some(Boolean)
+    ? "probability or playability ranks"
+    : "probabilities";
+};
 
 const BatchPreview = ({
   plan,
@@ -67,7 +93,7 @@ const BatchPreview = ({
           <Table.Tr>
             <Table.Th>Alphagram</Table.Th>
             <Table.Th>Stage</Table.Th>
-            <Table.Th ta="right">Probability</Table.Th>
+            <Table.Th ta="right">{batchFieldName(plan, batch)}</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -268,6 +294,7 @@ const StudyPlanPage = () => {
                   <ProgressStrip
                     blocks={sp.blocks}
                     descending={stage.descending}
+                    fieldName={sortFieldName(stage.sortField)}
                     nextValue={nextHere?.sortValue}
                   />
                 </Stack>
@@ -275,7 +302,7 @@ const StudyPlanPage = () => {
             })}
             <Text size="xs" c="dimmed">
               Each block is a range of {fmt(progress.blockSize)}{" "}
-              probabilities, or more in long stages, shaded by how many of its
+              {blockUnits(plan)}, or more in long stages, shaded by how many of its
               alphagrams you have. Ranges with no alphagrams in the stage
               aren't shown.
               {plan.batchUnit === StudyPlanBatchUnit.STUDY_PLAN_BATCH_CARDS &&

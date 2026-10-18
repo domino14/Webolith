@@ -43,13 +43,20 @@ const blockColor = (b: StudyPlanBlock) => {
 type Props = {
   blocks: StudyPlanBlock[];
   descending: boolean;
+  // What the blocks are ranges of, e.g. "Probability".
+  fieldName: string;
   // The sort value of the next batch's first card, to mark its block.
   nextValue?: number;
 };
 
 // A row of blocks shaded by how much of each is in the vault, in the
 // stage's order so progress fills from the left.
-export const ProgressStrip = ({ blocks, descending, nextValue }: Props) => {
+export const ProgressStrip = ({
+  blocks,
+  descending,
+  fieldName,
+  nextValue,
+}: Props) => {
   let shown = mergeBlocks(blocks);
   if (descending) {
     shown = [...shown].reverse();
@@ -70,7 +77,7 @@ export const ProgressStrip = ({ blocks, descending, nextValue }: Props) => {
           return (
             <Tooltip
               key={b.lo}
-              label={`Probability ${fmt(b.lo)}–${fmt(b.hi)}: ${fmt(
+              label={`${fieldName} ${fmt(b.lo)}–${fmt(b.hi)}: ${fmt(
                 b.added
               )} of ${fmt(b.total)} added${isNext ? " (next batch)" : ""}`}
             >

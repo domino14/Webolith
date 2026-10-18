@@ -54,6 +54,7 @@ import {
   deckName,
   fmt,
   notifyPlanError,
+  orderLabel,
   stageName,
 } from "./common";
 
@@ -65,6 +66,7 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.NUM_VOWELS,
   SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.DIFFICULTY_RANGE,
+  SearchTypesEnum.PLAYABILITY_RANGE,
   SearchTypesEnum.PROBABILITY_LIMIT,
   SearchTypesEnum.MATCHING_ANAGRAM,
   SearchTypesEnum.CONTAINS_HOOKS,
@@ -77,6 +79,7 @@ type StageState = {
   // Conditions the editor can't show, such as uploaded lists. They're kept
   // as they are, after the others.
   extra: SearchRequest_SearchParam[];
+  sortField: StudyPlanSortField;
   descending: boolean;
 };
 
@@ -86,6 +89,7 @@ const newStage = (): StageState => ({
     new SearchCriterion(SearchTypesEnum.LENGTH, { minValue: 7, maxValue: 7 }),
   ],
   extra: [],
+  sortField: StudyPlanSortField.STUDY_PLAN_SORT_PROBABILITY,
   descending: false,
 });
 
@@ -106,21 +110,33 @@ const stageFromProto = (st: StudyPlanStage): StageState => {
       extra.push(p);
     }
   });
-  return { name: st.name, criteria, extra, descending: st.descending };
+  return {
+    name: st.name,
+    criteria,
+    extra,
+    sortField: st.sortField,
+    descending: st.descending,
+  };
 };
 
 const stageToProto = (s: StageState) =>
   new StudyPlanStage({
     name: s.name.trim(),
     searchParams: [...s.criteria.map((c) => c.toProtoObj()), ...s.extra],
-    sortField: StudyPlanSortField.STUDY_PLAN_SORT_PROBABILITY,
+    sortField: s.sortField,
     descending: s.descending,
   });
 
+// The order Select's values are "<sort field>-asc" or "<sort field>-desc".
 const orderOptions = [
-  { value: "asc", label: "Probability, low to high" },
-  { value: "desc", label: "Probability, high to low" },
-];
+  StudyPlanSortField.STUDY_PLAN_SORT_PROBABILITY,
+  StudyPlanSortField.STUDY_PLAN_SORT_PLAYABILITY,
+].flatMap((field) =>
+  [false, true].map((descending) => ({
+    value: `${field}-${descending ? "desc" : "asc"}`,
+    label: orderLabel(new StudyPlanStage({ sortField: field, descending })),
+  }))
+);
 
 const EditStudyPlan = () => {
   const { id } = useParams();
@@ -356,9 +372,7 @@ const EditStudyPlan = () => {
                         </Badge>
                       ))}
                       <Text size="xs" c="dimmed">
-                        {stage.descending
-                          ? "Probability, high to low"
-                          : "Probability, low to high"}
+                        {orderLabel(proto)}
                       </Text>
                     </>
                   )}
@@ -491,13 +505,20 @@ const EditStudyPlan = () => {
                   <Select
                     label="Order"
                     data={orderOptions}
-                    value={stage.descending ? "desc" : "asc"}
-                    onChange={(v) =>
+                    value={`${stage.sortField}-${
+                      stage.descending ? "desc" : "asc"
+                    }`}
+                    onChange={(v) => {
+                      if (!v) {
+                        return;
+                      }
+                      const [field, dir] = v.split("-");
                       updateStage(idx, (s) => ({
                         ...s,
-                        descending: v === "desc",
-                      }))
-                    }
+                        sortField: Number(field),
+                        descending: dir === "desc",
+                      }));
+                    }}
                     allowDeselect={false}
                     maw={300}
                   />
@@ -529,7 +550,7 @@ const EditStudyPlan = () => {
           data={[
             {
               value: String(StudyPlanBatchUnit.STUDY_PLAN_BATCH_WINDOW),
-              label: "Probability window",
+              label: "Window",
             },
             {
               value: String(StudyPlanBatchUnit.STUDY_PLAN_BATCH_CARDS),
@@ -550,7 +571,7 @@ const EditStudyPlan = () => {
         />
         <Text size="sm" c="dimmed" maw={640}>
           {isWindow
-            ? `Each "Add next batch" adds every missing alphagram in one probability block of the current stage: 1–${fmt(
+            ? `Each "Add next batch" adds every missing alphagram in one block of the current stage's order (probability or playability): 1–${fmt(
                 size
               )}, then ${fmt(size + 1)}–${fmt(
                 2 * size
