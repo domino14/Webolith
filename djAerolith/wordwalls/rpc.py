@@ -91,7 +91,7 @@ def guess(user, tableid, params):
     wwg = WordwallsGame()
     state = wwg.guess(g.strip(), tableid, user, wrong_answers=wrong_answers)
     if state is None:
-        raise RPCError("Quiz is already over.")
+        raise RPCError("That table does not exist.")
 
     game_packet = {
         "g": state["going"],
@@ -100,6 +100,8 @@ def guess(user, tableid, params):
         "a": state["already_solved"],
         "s": state["solver"],
     }
+    if "message" in state:
+        game_packet["m"] = state["message"]
     # If this is a multiplayer game, should broadcast to group.
     # if wwg.is_multiplayer(tableid):
     #     broadcast_to_table(tableid, BroadcastTypes.GUESS_RESPONSE, game_packet)

@@ -936,6 +936,102 @@ class WordwallsResumeTest(WordwallsBasicLogicTestBase):
         )
         self.assertEqual(set([0, 2, 3, 10]), set(json.loads(word_list.firstMissed)))
 
+    @override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+    def test_stale_round_does_not_duplicate_missed(self):
+        table_id, user = self.setup_quiz()
+        wwg = WordwallsGame()
+        wwg.start_quiz(table_id, user)
+        # The round is left running in this table. Meanwhile the list is
+        # restarted and the same questions are quizzed and missed in
+        # another table.
+        word_list = wwg.get_wgm(table_id).word_list
+        word_list.restart_list()
+        lex = Lexicon.objects.get(lexiconName="NWL18")
+        other_wgm = wwg.create_or_update_game_instance(
+            user, lex, word_list, None, False, timerSecs=240
+        )
+        wwg.start_quiz(other_wgm.pk, user)
+        wwg.give_up(user, other_wgm.pk)
+        word_list.refresh_from_db()
+        self.assertEqual(word_list.numMissed, 5)
+        # Ending the stale round doesn't miss the same questions again.
+        wwg.end_abandoned_rounds(tablenum=table_id)
+        word_list.refresh_from_db()
+        missed = json.loads(word_list.missed)
+        self.assertEqual(sorted(missed), list(range(5)))
+        self.assertEqual(word_list.numMissed, 5)
+
+
+@override_settings(WORDWALLS_QUESTIONS_PER_ROUND=5)
+class WordwallsOneTablePerListTest(WordwallsBasicLogicTestBase):
+    """
+    A saved list lives on one table only, the one it was last loaded in.
+
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.wwg = WordwallsGame()
+        self.lex = Lexicon.objects.get(lexiconName="NWL18")
+        table_id, self.user = self.setup_quiz()
+        self.word_list = self.wwg.get_wgm(table_id).word_list
+        self.word_list.is_temporary = False
+        self.word_list.name = "my eights"
+        self.word_list.save()
+
+    def load(self, use_table=None):
+        return self.wwg.initialize_by_saved_list(
+            self.lex,
+            self.user,
+            self.word_list,
+            SavedListForm.CONTINUE_LIST_CHOICE,
+            240,
+            use_table=use_table,
+        )
+
+    def test_loading_list_takes_it_from_other_tables(self):
+        old_table = self.load()
+        new_table = self.load()
+        self.assertNotEqual(old_table, new_table)
+        self.assertIsNone(self.wwg.get_wgm(old_table).word_list)
+        self.assertEqual(self.wwg.get_wgm(new_table).word_list, self.word_list)
+        # The old table can't quiz on the list anymore.
+        self.assertIn("error", self.wwg.start_quiz(old_table, self.user))
+        self.assertFalse(self.wwg.mark_missed([0], old_table, self.user))
+        self.assertFalse(
+            self.wwg.save(self.user, old_table, "my eights")["success"]
+        )
+
+    def test_reloading_list_in_its_table_keeps_it(self):
+        table_id = self.load()
+        self.assertEqual(self.load(use_table=table_id), table_id)
+        self.assertEqual(self.wwg.get_wgm(table_id).word_list, self.word_list)
+
+    def test_round_in_old_table_ends_on_guess(self):
+        old_table = self.load()
+        params = self.wwg.start_quiz(old_table, self.user)
+        # The list is opened at another table (e.g. another computer)
+        # while the round is going. The round counts as missed.
+        self.load()
+        self.word_list.refresh_from_db()
+        self.assertEqual(self.word_list.numMissed, 5)
+        # The old table's next guess ends its round, with an explanation.
+        word = params["questions"][0]["ws"][0]["w"]
+        result = self.wwg.guess(word, old_table, self.user)
+        self.assertFalse(result["going"])
+        self.assertEqual(result["alphagram"], "")
+        self.assertIn("another table", result["message"])
+
+    def test_guess_after_round_ended(self):
+        table_id = self.load()
+        params = self.wwg.start_quiz(table_id, self.user)
+        self.wwg.give_up(self.user, table_id)
+        word = params["questions"][0]["ws"][0]["w"]
+        result = self.wwg.guess(word, table_id, self.user)
+        self.assertFalse(result["going"])
+        self.assertEqual(result["alphagram"], "")
+        self.assertNotIn("message", result)
+
 
 class WordwallsWordVaultReviewTest(WordwallsBasicLogicTestBase):
     def test_review_round_skips_stats(self):
