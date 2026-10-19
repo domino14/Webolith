@@ -286,11 +286,15 @@ function WordwallsAppContainer({
   ]);
 
   const handleGuessResponse = useCallback(
-    (data: { g?: boolean; C?: string; w?: string; s?: string }) => {
+    (data: { g?: boolean; C?: string; w?: string; s?: string; m?: string }) => {
       let endQuiz = false;
       if (data.g === false) {
         // The quiz has ended
         endQuiz = true;
+      }
+      if (data.m) {
+        // e.g. this table's list was opened at another table.
+        addMessage(data.m);
       }
       if (!_.has(data, 'C') || data.C === '') {
         if (endQuiz) {
@@ -328,7 +332,7 @@ function WordwallsAppContainer({
         processGameEnded();
       }
     },
-    [processGameEnded, username]
+    [processGameEnded, username, addMessage]
   );
 
   const submitGuess = useCallback(

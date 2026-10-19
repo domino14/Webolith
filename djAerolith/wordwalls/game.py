@@ -65,6 +65,15 @@ class GameInitException(Exception):
     pass
 
 
+def no_word_list_message():
+    # A table loses its list when the list is opened at another table
+    # (or deleted).
+    return _(
+        "This table no longer has its word list. It may have been opened "
+        "at another table. Please load a word list."
+    )
+
+
 class WordwallsGame(object):
     def _initial_state(self):
         """Return an initial state object, for a brand new game."""
@@ -476,6 +485,13 @@ class WordwallsGame(object):
             temp_list_name=temp_list_name,
             questionsToPull=questions_per_round,
         )
+        # A list lives on one table only, the one it was last loaded in.
+        # Otherwise a round left in an older table could be ended after
+        # the list has moved on, and record misses against the wrong
+        # questions. The rounds in these tables were ended above.
+        WordwallsGameModel.objects.filter(word_list=saved_list).exclude(
+            pk=wgm.pk
+        ).update(word_list=None)
         return wgm.pk  # this is a table number id!
 
     def maybe_modify_word_list(self, word_list, list_option):
@@ -535,12 +551,7 @@ class WordwallsGame(object):
         word_list = wgm.word_list
 
         if not word_list:
-            return self.create_error_message(
-                _(
-                    "It appears this word list has been deleted. Please "
-                    "load or create a new word list."
-                )
-            )
+            return self.create_error_message(no_word_list_message())
 
         if word_list.questionIndex > word_list.numCurAlphagrams - 1:
             start_message += _("Now quizzing on missed list.") + "\r\n"
@@ -926,10 +937,7 @@ class WordwallsGame(object):
             logger.warning("Unable to save, quiz is going.")
             return _("You can only save the game at the end of a round.")
         if not wgm.word_list:
-            return _(
-                "The word list associated with this table seems to have "
-                "been deleted. Please load or create a new list."
-            )
+            return no_word_list_message()
 
     def save(self, user, tablenum, listname):
         logger.info(
@@ -1031,7 +1039,10 @@ class WordwallsGame(object):
             missed_indices.add(state["answerHash"][w][1])
             # [0] is the alphagram, [1] is the index in origQuestions
         missed = json.loads(wgm.word_list.missed)
-        missed.extend(missed_indices)
+        # Questions already missed, e.g. by an earlier round of the same
+        # questions, can't be missed again.
+        missed_set = set(missed)
+        missed.extend(i for i in missed_indices if i not in missed_set)
         word_list = wgm.word_list
         word_list.missed = json.dumps(missed)
         word_list.numMissed = len(missed)
@@ -1171,6 +1182,8 @@ class WordwallsGame(object):
         if not wgm:
             return _("No table #%s exists") % tablenum
         word_list = wgm.word_list
+        if not word_list:
+            return False
         missed = json.loads(word_list.missed)
         state = json.loads(wgm.currentGameState)
         missed_set = set(missed)
@@ -1213,7 +1226,8 @@ class WordwallsGame(object):
         return {"questions": questions, "time_remaining": time_remaining}
 
     def guess(self, guess_str, tablenum, user, *, sleep=None, wrong_answers=0):
-        """Handle a guess submission from the front end."""
+        """Handle a guess submission from the front end. Returns None if
+        the table doesn't exist."""
         logger.debug("User %s guessed %s (wrong=%s)", user, guess_str, wrong_answers)
         guess_str = guess_str.upper()
         wgm = self.get_wgm(tablenum)
@@ -1223,8 +1237,20 @@ class WordwallsGame(object):
         state = json.loads(wgm.currentGameState)
         state_modified = False
         if not state["quizGoing"]:
+            # The round may have been ended without the front end knowing,
+            # e.g. because its list was opened at another table. Tell the
+            # front end to end it too.
             logger.info("Guess came in after quiz ended.")
-            return
+            ret = {
+                "going": False,
+                "word": guess_str,
+                "alphagram": "",
+                "solver": user.username,
+                "already_solved": False,
+            }
+            if not wgm.word_list:
+                ret["message"] = no_word_list_message()
+            return ret
         # Otherwise, let's process the guess.
         if self.did_timer_run_out(state):
             state["timeRemaining"] = 0
