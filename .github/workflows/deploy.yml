@@ -23,11 +23,19 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+      # actions/checkout sends the token in a header. A token in the clone
+      # URL was dropped whenever GitHub answered with a redirect, which
+      # failed the job now and then ("could not read Username").
       - name: Clone lexicon repo
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+        uses: actions/checkout@v4
+        with:
+          repository: domino14/word-game-lexica
+          token: ${{ secrets.GH_PAT }}
+          path: word-game-lexica
+
+      - name: Move lexicon repo into place
         run: |
-          git clone --depth 1 https://${GH_PAT}@github.com/domino14/word-game-lexica ~/word-game-lexica
+          mv word-game-lexica ~/word-game-lexica
           rm -rf ~/word-game-lexica/.git
           mkdir ~/word-game-lexica/db
 
