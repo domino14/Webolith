@@ -177,6 +177,22 @@ const propertiesObject: { [key: number]: SearchTypeProperty } = {
     in NWL23 and CSW24 currently. These words were split into 100 equal-size groups
     by difficulty, ranging from 1 (easiest) to 100 (hardest).`,
   },
+  [cond.PLAYABILITY_RANGE]: {
+    code: cond.PLAYABILITY_RANGE,
+    displayName: "Playability range",
+    inputType: SearchTypesInputs.TWO_NUMBERS,
+    defaultMin: 1,
+    defaultMax: 100,
+    minAllowed: 1,
+    maxAllowed: 70000,
+    description: `Playability ranks the alphagrams of each length by how
+    much knowing them is worth in play: how many points a strong bot would
+    lose per game if it didn't know any of the alphagram's words. 1 is the
+    most playable. It comes from millions of computer self-play games and is
+    available in NWL23 and CSW24 currently. Ranks of long words (11 letters
+    and up) are mostly based on probability, since they rarely come up in
+    play.`,
+  },
   [cond.DELETED_WORD]: {
     code: cond.DELETED_WORD,
     displayName: "Words deleted from previous lexicon",
@@ -216,6 +232,7 @@ const SearchTypesEnum = {
   PROBABILITY_LIMIT: cond.PROBABILITY_LIMIT,
   MATCHING_ANAGRAM: cond.MATCHING_ANAGRAM,
   DIFFICULTY_RANGE: cond.DIFFICULTY_RANGE,
+  PLAYABILITY_RANGE: cond.PLAYABILITY_RANGE,
   DELETED_WORD: cond.DELETED_WORD,
   CONTAINS_HOOKS: cond.CONTAINS_HOOKS,
   DEFINITION_CONTAINS: cond.DEFINITION_CONTAINS,
@@ -232,6 +249,7 @@ const SearchTypesOrder: number[] = [
   SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.FIXED_LENGTH,
   SearchTypesEnum.DIFFICULTY_RANGE,
+  SearchTypesEnum.PLAYABILITY_RANGE,
   SearchTypesEnum.TAGS,
   SearchTypesEnum.NUM_TWO_BLANKS,
   SearchTypesEnum.MAX_SOLUTIONS,

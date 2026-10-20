@@ -18,6 +18,7 @@ const allowedSearchTypes = new Set([
   SearchTypesEnum.NUM_VOWELS,
   SearchTypesEnum.NOT_IN_LEXICON,
   SearchTypesEnum.DIFFICULTY_RANGE,
+  SearchTypesEnum.PLAYABILITY_RANGE,
   SearchTypesEnum.PROBABILITY_LIMIT,
   SearchTypesEnum.MATCHING_ANAGRAM,
   SearchTypesEnum.CONTAINS_HOOKS,

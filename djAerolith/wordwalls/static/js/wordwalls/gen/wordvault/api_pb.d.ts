@@ -68,6 +68,14 @@ export declare enum StudyPlanSortField {
    * @generated from enum value: STUDY_PLAN_SORT_PROBABILITY = 0;
    */
   STUDY_PLAN_SORT_PROBABILITY = 0,
+
+  /**
+   * Playability rank from HastyBot self-play (1 = most playable). Only
+   * lexica with playability data (NWL23 for now) can use it.
+   *
+   * @generated from enum value: STUDY_PLAN_SORT_PLAYABILITY = 1;
+   */
+  STUDY_PLAN_SORT_PLAYABILITY = 1,
 }
 
 /**
@@ -81,7 +89,7 @@ export declare enum StudyPlanBatchUnit {
 
   /**
    * Every missing card of one stage within one window of the sort field,
-   * e.g. probability 3,501–4,000. Windows are aligned to multiples of
+   * e.g. probability 3,501–4,000 or playability 1–500. Windows are aligned to multiples of
    * batch_size.
    *
    * @generated from enum value: STUDY_PLAN_BATCH_WINDOW = 1;

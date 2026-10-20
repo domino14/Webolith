@@ -42,6 +42,7 @@ export const StudyPlanSortField = /*@__PURE__*/ proto3.makeEnum(
   "wordvault.StudyPlanSortField",
   [
     {no: 0, name: "STUDY_PLAN_SORT_PROBABILITY"},
+    {no: 1, name: "STUDY_PLAN_SORT_PLAYABILITY"},
   ],
 );
 

@@ -5,6 +5,7 @@ import {
   StudyPlan,
   StudyPlanBatch,
   StudyPlanBatchUnit,
+  StudyPlanSortField,
   StudyPlanStage,
 } from "../gen/rpc/wordvault/api_pb";
 
@@ -12,6 +13,18 @@ export const fmt = (n: number) => n.toLocaleString("en-US");
 
 export const stageName = (stage: StudyPlanStage | undefined, idx: number) =>
   stage?.name || `Stage ${idx + 1}`;
+
+// The name of the rank a stage is ordered by, e.g. "Probability".
+export const sortFieldName = (field: StudyPlanSortField | undefined) =>
+  field === StudyPlanSortField.STUDY_PLAN_SORT_PLAYABILITY
+    ? "Playability"
+    : "Probability";
+
+// "Probability, low to high"
+export const orderLabel = (stage: StudyPlanStage) =>
+  `${sortFieldName(stage.sortField)}, ${
+    stage.descending ? "high to low" : "low to high"
+  }`;
 
 export const deckName = (deckId: bigint, decksById: Map<bigint, Deck>) =>
   deckId === 0n
@@ -46,7 +59,8 @@ export const batchTitle = (plan: StudyPlan, batch: StudyPlanBatch) => {
   }
   const stage = stageName(plan.stages[batch.stage], batch.stage);
   if (plan.batchUnit === StudyPlanBatchUnit.STUDY_PLAN_BATCH_WINDOW) {
-    return `${stage} · Probability ${fmt(batch.windowLo)}–${fmt(
+    const field = sortFieldName(plan.stages[batch.stage]?.sortField);
+    return `${stage} · ${field} ${fmt(batch.windowLo)}–${fmt(
       batch.windowHi
     )}`;
   }
