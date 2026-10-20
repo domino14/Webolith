@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from base.models import Lexicon
 from lib.domain import Alphagram, Question, Questions
+from lib.wdb_interface.wdb_helper import questions_from_alphagrams
 from wordwalls.challenge_queue import (
     collect_asks,
     compute_needs,
@@ -167,6 +168,135 @@ class ChallengeSchedulerTest(TestCase):
         self.assertEqual(len(set(seen)), n)
         cycle.refresh_from_db()
         self.assertEqual(cycle.cursor, n)
+
+
+class ScheduledChallengesOverTimeTest(TestCase):
+    """Live challenges played day after day, through the game's own path."""
+
+    fixtures = [
+        "test/lexica.yaml",
+        "test/users.json",
+        "test/profiles.json",
+        "challenge_names.json",
+    ]
+    NEW = ["AEINRST", "ADEGINR"]
+    OLD = ["EIKLNST", "AEILNRT", "ADEINRT", "AEILRST"]
+    PARTNERS = ["ABEILRT", "AEGILNR", "AEIMNRS"]
+
+    def setUp(self):
+        self.user = User.objects.get(username="cesar")
+        self.lex = Lexicon.objects.get(lexiconName="NWL20")
+        self.sevens = DailyChallengeName.objects.get(name="Today's 7s")
+        self.start = timezone.localtime(timezone.now()).date()
+        ChallengeCycle.objects.create(
+            lexicon=self.lex, word_length=7, seed=42, priority_slots=3
+        )
+        for alpha in self.NEW:
+            ChallengeQueueItem.objects.create(
+                lexicon=self.lex,
+                alphagram=alpha,
+                word_length=7,
+                asks_remaining=2,
+                new_word=True,
+                priority=0,
+            )
+        for alpha in self.OLD:
+            ChallengeQueueItem.objects.create(
+                lexicon=self.lex,
+                alphagram=alpha,
+                word_length=7,
+                asks_remaining=1,
+                priority=1,
+            )
+
+    def play(self, day):
+        """Play the live 7s on `day` as if it were today; its questions."""
+        now = timezone.now() + timedelta(days=(day - self.start).days)
+        partners = questions_from_alphagrams(self.lex, self.PARTNERS)
+        with patch(
+            "wordwalls.challenge_scheduler.timezone.now", return_value=now
+        ), patch("wordwalls.challenge_scheduler.word_search", return_value=partners):
+            WordwallsGame().initialize_daily_challenge(
+                self.user, self.lex, self.sevens, day
+            )
+        dc = DailyChallenge.objects.get(lexicon=self.lex, name=self.sevens, date=day)
+        return {q["q"]: q["a"] for q in json.loads(dc.alphagrams)}
+
+    def test_queue_drains_in_order_then_cycle_takes_over(self):
+        days = [self.start + timedelta(days=i) for i in range(10)]
+        played = [self.play(d) for d in days]
+
+        for qs in played:
+            self.assertEqual(len(qs), 50)
+            self.assertTrue(all(len(a) == 7 and qs[a] for a in qs))
+        # Day 1: both new words first, each with an easy partner, then the
+        # top old bingo.
+        self.assertTrue(set(self.NEW) <= set(played[0]))
+        # (A third could turn up through the cycle, by chance.)
+        self.assertGreaterEqual(len(set(self.PARTNERS) & set(played[0])), 2)
+        self.assertIn(self.OLD[0], played[0])
+        self.assertEqual(
+            sorted(played[0]["AEINRST"]),
+            [
+                "ANESTRI",
+                "ANTSIER",
+                "NASTIER",
+                "RATINES",
+                "RETAINS",
+                "RETINAS",
+                "RETSINA",
+                "STAINER",
+                "STEARIN",
+            ],
+        )
+        # Days 2-7: the new words wait out their week; old bingos go 3 a day.
+        self.assertTrue(set(self.OLD[1:]) <= set(played[1]))
+        for qs in played[1:7]:
+            self.assertFalse(set(self.NEW) & set(qs))
+        # Day 8: their second ask, after which the queue is empty.
+        self.assertTrue(set(self.NEW) <= set(played[7]))
+        self.assertFalse(
+            ChallengeQueueItem.objects.filter(asks_remaining__gt=0).exists()
+        )
+        for item in ChallengeQueueItem.objects.filter(alphagram__in=self.NEW):
+            self.assertEqual(item.last_asked, days[7])
+
+        # Every day after the first is all cycle unless a queued bingo or
+        # partner was due, and the cycle never repeats an alphagram.
+        cycle_only = [
+            set(qs) - set(self.NEW) - set(self.OLD) - set(self.PARTNERS)
+            for qs in played
+        ]
+        seen = set()
+        for qs in cycle_only:
+            self.assertFalse(seen & qs)
+            seen |= qs
+        self.assertEqual(len(cycle_only[8]), 50)
+
+    def test_reopening_a_day_doesnt_ask_again(self):
+        first = self.play(self.start)
+        cursor = ChallengeCycle.objects.get().cursor
+        self.assertEqual(self.play(self.start), first)
+        self.assertEqual(ChallengeCycle.objects.get().cursor, cursor)
+        self.assertEqual(
+            ChallengeQueueItem.objects.get(alphagram="AEINRST").asks_remaining, 1
+        )
+
+    def test_built_queue_feeds_the_next_challenge(self):
+        ChallengeQueueItem.objects.all().delete()
+        bingos = {7: [("EIKLNST", "TINKLES", True)], 8: []}
+        with patch(
+            "wordwalls.challenge_queue.current_bingos",
+            side_effect=lambda lex, length: bingos[length],
+        ):
+            call_command(
+                "build_challenge_queue", "NWL20", "--players", "50", stdout=StringIO()
+            )
+        item = ChallengeQueueItem.objects.get()
+        self.assertEqual(item.asks_remaining, 2)
+        self.assertIn("EIKLNST", self.play(self.start))
+        item.refresh_from_db()
+        self.assertEqual((item.asks_remaining, item.last_asked), (1, self.start))
 
 
 class LoadChallengeQueueTest(TestCase):
