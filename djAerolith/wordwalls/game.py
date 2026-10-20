@@ -42,6 +42,7 @@ from lib.wdb_interface.wdb_helper import (
 from lib.wdb_interface.word_searches import temporary_list_name
 import rpc.wordsearcher.searcher_pb2 as pb
 from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
+from wordwalls.challenge_scheduler import plan_scheduled_challenge
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
 from wordwalls.models import (
@@ -283,7 +284,11 @@ class WordwallsGame(object):
         try:
             qs, secs, dc = self.get_dc(ch_date, ch_lex, ch_name)
         except DailyChallenge.DoesNotExist:
-            ret = generate_dc_questions(ch_name, ch_lex, ch_date)
+            plan = plan_scheduled_challenge(ch_name, ch_lex, ch_date)
+            if plan:
+                ret = plan.questions, ch_name.timeSecs
+            else:
+                ret = generate_dc_questions(ch_name, ch_lex, ch_date)
             if not ret:
                 return None
 
@@ -304,6 +309,8 @@ class WordwallsGame(object):
             )
             try:
                 dc.save()
+                if plan:
+                    plan.commit()
             except IntegrityError:
                 logger.exception("Caught integrity error")
                 # This happens rarely if the DC gets generated twice
@@ -607,7 +614,7 @@ class WordwallsGame(object):
         # XXX: Autosave doesn't really do anything for saved lists. It
         # always saves, regardless! Oh well...
         word_list.save()
-        
+
         # Track quiz start for statistics
         if not state.get("wordvaultReview"):
             try:
@@ -1266,7 +1273,7 @@ class WordwallsGame(object):
             state["wrongAnswers"] = wrong_answers
             self.add_to_solvers(state, guess_str, user.username)
             state_modified = True
-            
+
             # Track word solve for statistics
             if not state.get("wordvaultReview"):
                 try:

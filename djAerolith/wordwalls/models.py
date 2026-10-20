@@ -160,6 +160,60 @@ class DailyChallengeMissedBingos(models.Model):
         )
 
 
+class ChallengeCycle(models.Model):
+    """
+    Turns on scheduled questions for one lexicon's live "Today's Ns".
+
+    Without a row here, that challenge stays a random draw. With one, each live
+    challenge takes up to `priority_slots` bingos from the ChallengeQueueItem
+    queue, one easy partner per new-word bingo among them (so the quiz as a whole
+    doesn't skew harder), and fills the rest by walking a seeded permutation of
+    every alphagram of that length, so each is asked once per pass.
+    """
+
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
+    word_length = models.IntegerField()
+    seed = models.BigIntegerField()
+    # How far into the permutation we are. Grows forever; taken mod n.
+    cursor = models.BigIntegerField(default=0)
+    priority_slots = models.IntegerField(default=5)
+    balance = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("lexicon", "word_length")
+
+    def __str__(self):
+        return f"{self.lexicon} {self.word_length}s @ {self.cursor}"
+
+
+class ChallengeQueueItem(models.Model):
+    """
+    A bingo that needs more daily-challenge asks before its difficulty can be
+    trusted: new in this lexicon, or just short of data. Loaded with
+    load_challenge_queue.
+    """
+
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
+    alphagram = models.CharField(max_length=15)
+    word_length = models.IntegerField()
+    asks_remaining = models.IntegerField()
+    # Lower goes first.
+    priority = models.IntegerField(default=0)
+    # Contains a word added in this lexicon. These run harder than an average
+    # bingo, so each one gets an easy partner when the cycle balances.
+    new_word = models.BooleanField(default=False)
+    last_asked = models.DateField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("lexicon", "alphagram")
+        indexes = [
+            models.Index(fields=["lexicon", "word_length", "asks_remaining"]),
+        ]
+
+    def __str__(self):
+        return f"{self.lexicon} {self.alphagram} ({self.asks_remaining} left)"
+
+
 class NamedList(models.Model):
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, default="")

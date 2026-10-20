@@ -18,6 +18,8 @@
 from django.contrib import admin
 
 from wordwalls.models import (
+    ChallengeCycle,
+    ChallengeQueueItem,
     DailyChallenge,
     DailyChallengeLeaderboard,
     DailyChallengeLeaderboardEntry,
@@ -104,3 +106,26 @@ admin.site.register(DailyChallengeLeaderboardEntry, DailyChallengeLeaderboardEnt
 admin.site.register(DailyChallenge, DailyChallengeAdmin)
 admin.site.register(DailyChallengeName)
 admin.site.register(NamedList, NamedListAdmin)
+
+
+class ChallengeCycleAdmin(admin.ModelAdmin):
+    # Delete a row to send that lexicon/length back to a random draw.
+    list_display = ("lexicon", "word_length", "priority_slots", "balance", "cursor")
+    readonly_fields = ("seed", "cursor")
+
+
+class ChallengeQueueItemAdmin(admin.ModelAdmin):
+    search_fields = ["alphagram"]
+    list_filter = ["lexicon", "word_length", "new_word"]
+    list_display = (
+        "lexicon",
+        "alphagram",
+        "asks_remaining",
+        "new_word",
+        "priority",
+        "last_asked",
+    )
+
+
+admin.site.register(ChallengeCycle, ChallengeCycleAdmin)
+admin.site.register(ChallengeQueueItem, ChallengeQueueItemAdmin)
