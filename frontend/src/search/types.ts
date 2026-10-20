@@ -189,8 +189,9 @@ const propertiesObject: { [key: number]: SearchTypeProperty } = {
     much knowing them is worth in play: how many points a strong bot would
     lose per game if it didn't know any of the alphagram's words. 1 is the
     most playable. It comes from millions of computer self-play games and is
-    only available in NWL23 currently. Ranks of long words (11 letters and up)
-    are mostly based on probability, since they rarely come up in play.`,
+    available in NWL23 and CSW24 currently. Ranks of long words (11 letters
+    and up) are mostly based on probability, since they rarely come up in
+    play.`,
   },
   [cond.DELETED_WORD]: {
     code: cond.DELETED_WORD,
