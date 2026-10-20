@@ -134,9 +134,9 @@ describe('<SearchDialogContainer />', () => {
       // Click 'add' a whole bunch of times.
       fireEvent.click(screen.getAllByRole('button')[0]);
     }
-    expect(screen.getAllByText('Search Criterion').length).toBe(13);
+    expect(screen.getAllByText('Search Criterion').length).toBe(14);
     // And search specifically that fixed length wasn't rendered.
-    expect(screen.getAllByTestId(`searchrow-${SearchTypesEnum.LENGTH}`).length).toBe(14);
+    expect(screen.getAllByTestId(`searchrow-${SearchTypesEnum.LENGTH}`).length).toBe(15);
     expect(screen.queryAllByTestId(`searchrow-${SearchTypesEnum.FIXED_LENGTH}`).length).toBe(0);
   });
 });
