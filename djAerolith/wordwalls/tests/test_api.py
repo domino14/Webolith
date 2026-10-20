@@ -2,16 +2,48 @@ import json
 import logging
 from datetime import date
 
-from django.test import TestCase, Client, RequestFactory
+from django.test import SimpleTestCase, TestCase, Client, RequestFactory
 from django.db import connection
 from django.utils import timezone
 
 from base.models import WordList
-from wordwalls.api import date_from_request_dict
+from lib.wdb_interface.word_searches import temporary_list_name
+import rpc.wordsearcher.searcher_pb2 as pb
+from wordwalls.api import build_search_criteria, date_from_request_dict
 from wordwalls.models import WordwallsGameModel
 from wordwalls.game import WordwallsGame
 
 logger = logging.getLogger(__name__)
+
+
+class PlayabilitySearchTest(SimpleTestCase):
+    def test_playability_range(self):
+        class Lex:
+            lexiconName = "NWL23"
+
+        search = build_search_criteria(
+            None,
+            Lex(),
+            [
+                {
+                    "searchType": pb.SearchRequest.Condition.LENGTH,
+                    "minValue": 7,
+                    "maxValue": 7,
+                },
+                {
+                    "searchType": pb.SearchRequest.Condition.PLAYABILITY_RANGE,
+                    "minValue": "1",
+                    "maxValue": "500",
+                },
+            ],
+        )
+        self.assertEqual(
+            search[2].condition, pb.SearchRequest.Condition.PLAYABILITY_RANGE
+        )
+        self.assertEqual((search[2].minmax.min, search[2].minmax.max), (1, 500))
+        self.assertEqual(
+            temporary_list_name(search, "NWL23"), "NWL23 7s (playability 1 - 500)"
+        )
 
 
 class WordwallsChallengeAPITest(TestCase):

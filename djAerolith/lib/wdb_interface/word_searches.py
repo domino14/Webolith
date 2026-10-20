@@ -113,6 +113,13 @@ class SearchDescription(object):
         )
 
     @staticmethod
+    def playability_range(min_p: int, max_p: int) -> pb.SearchRequest.SearchParam:
+        return pb.SearchRequest.SearchParam(
+            condition=pb.SearchRequest.Condition.PLAYABILITY_RANGE,
+            minmax=pb.SearchRequest.MinMax(min=min_p, max=max_p),
+        )
+
+    @staticmethod
     def deleted_word() -> pb.SearchRequest.SearchParam:
         return pb.SearchRequest.SearchParam(
             condition=pb.SearchRequest.Condition.DELETED_WORD
@@ -155,6 +162,7 @@ MIN_MAX_DESCRIPTIONS = [
     pb.SearchRequest.Condition.POINT_VALUE,
     pb.SearchRequest.Condition.PROBABILITY_LIMIT,
     pb.SearchRequest.Condition.DIFFICULTY_RANGE,
+    pb.SearchRequest.Condition.PLAYABILITY_RANGE,
 ]
 
 TAGS_DESCRIPTION = pb.SearchRequest.Condition.HAS_TAGS
@@ -256,6 +264,8 @@ def temporary_list_name(
             tokens.append(f"matching {sd.stringvalue.value}")
         elif sd.condition == pb.SearchRequest.Condition.DIFFICULTY_RANGE:
             tokens.append(f"(difficulty {sd.minmax.min} - {sd.minmax.max})")
+        elif sd.condition == pb.SearchRequest.Condition.PLAYABILITY_RANGE:
+            tokens.append(f"(playability {sd.minmax.min} - {sd.minmax.max})")
         elif sd.condition == pb.SearchRequest.Condition.DELETED_WORD:
             tokens.append("deleted words")
         elif sd.condition == pb.SearchRequest.Condition.CONTAINS_HOOKS:
