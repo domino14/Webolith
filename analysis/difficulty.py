@@ -68,6 +68,10 @@ difficulties rank the bingos within each later challenge (Spearman, averaged
 over challenges), next to the difficulties currently in --compare. --until DATE
 ignores challenges played on or after DATE, to see what an earlier run would
 have produced.
+
+--check-newness refits the lexicon's family with a newness curve per edition
+plus a placebo, to see whether the shared newness curve still holds; see
+check_newness() for how to read it. Run it when a new edition is added.
 """
 
 import argparse
@@ -281,6 +285,121 @@ def fit_family(asks, fam, lexica, as_of):
     return items, theta, by_family
 
 
+# ----------------------------------------------------------------- checks
+
+
+def check_newness(asks, lexica, fam, as_of, seed=7):
+    """
+    Is one newness curve per family good enough? Refits fam's own results
+    with a separate curve for each edition's new words, plus a placebo, and
+    prints each curve.
+
+    How the shared curve is measured: a bingo asked when its newest word was
+    2 months old and again 5 years later is compared with itself, and theta
+    takes out the difference in crowds. That only works for words that have
+    reached the pinned 4y+ bucket, so the shared curve's level comes from the
+    older editions and newer editions are assumed to follow it.
+
+    Reading the output:
+
+    - placebo: a random half of the words that predate the data, pretending
+      to be born on a mid-data go-live date. Nothing about them changed then,
+      so every placebo value should be near 0 (|gamma| under about 0.05; in
+      2026 they were -0.02 to +0.01). If they aren't, something that drifts
+      over time (players getting better or worse at bingos generally) isn't
+      being absorbed by theta, and the real newness values carry the same
+      drift.
+    - editions whose words have reached 4 years: their curves are measured
+      the same way as the shared one and should look like it. In 2026,
+      America, NWL18, CSW15 and CSW19 all started at +0.25 to +0.55 and faded
+      to about +0.1 by 2-4 years. An edition with few young-age players
+      (NWL18 at 0-3mo) is noisy; look at the player counts.
+    - editions marked "level unmeasured" (none of their words are 4 years old
+      yet): no bingo can be compared with its own settled self, so the
+      fitted level also absorbs how obscure that edition's new words are
+      (through b's prior), and reads high. In 2026 NWL23 read +0.58 to +0.32
+      and CSW24 +0.74 to +0.52. Only the fade between their own columns is
+      measured. "fade" runs from 0-3mo to the oldest age with data, so
+      compare it with the older editions over the same columns. A fade much
+      smaller than theirs would mean the edition's words are
+      staying hard longer than the shared curve assumes, so its new-word
+      bingos are rated too easy. In 2026 NWL23 faded 0.26 by 2-4y (America
+      0.46, NWL18 0.29) and CSW24 0.22 by 1-2y (CSW15 0.12, CSW19 0.06): no
+      sign of that.
+
+    Once an edition's words pass 4 years its level becomes measurable; if it
+    then sits well above or below the shared curve, newness needs a curve
+    per edition rather than per family.
+    """
+    use = asks[asks.family == fam].copy()
+    editions = EDITIONS[fam]
+    born, edition = {}, {}
+    for i, (name, live) in enumerate(editions):
+        when = min(pd.Timestamp(live), as_of) if live else pd.NaT
+        for w in read_words(lexica, name):
+            if w not in born:
+                born[w], edition[w] = when, i
+    rng = np.random.default_rng(seed)
+    old_words = sorted(w for w, t in born.items() if pd.isna(t))
+    fake = set(rng.choice(old_words, len(old_words) // 2, replace=False))
+    dated = [pd.Timestamp(live) for _, live in editions if live]
+    fake_born = dated[len(dated) // 2]
+
+    # Per answer set: (newest word's go-live, its edition), with the placebo
+    # as edition len(editions).
+    placebo = len(editions)
+    newest = {}
+    for ans in use.answers.unique():
+        ws = ans.split()
+        real = [(born[w], edition[w]) for w in ws if pd.notna(born.get(w, pd.NaT))]
+        if real:
+            newest[ans] = max(real)
+        elif all(w in fake for w in ws):
+            newest[ans] = (fake_born, placebo)
+        else:
+            newest[ans] = (pd.NaT, -1)
+    when = use.answers.map(lambda a: newest[a][0])
+    ed = use.answers.map(lambda a: newest[a][1]).to_numpy()
+    bucket = pd.cut(
+        (use.played_on - when).dt.days, AGE_EDGES_DAYS, right=False, labels=False
+    )
+    young = len(AGE_LABELS) - 1
+    bk = bucket.fillna(young).astype(int).to_numpy()
+    # A group per (edition, young bucket); settled (4y+), negative ages and
+    # words older than the data all get no newness, as in the real fit.
+    use["g"] = np.where((ed >= 1) & (bk < young), (ed - 1) * young + bk, -1)
+    groups = len(editions) * young
+    _, _, gamma = fit(use, groups, pinned=[])
+
+    players = pd.Series(use.eff.to_numpy()).groupby(use.g.to_numpy()).sum()
+    last = use.played_on.max()
+    print(f"\nnewness by edition ({fam} results only, logits):")
+    print(f"  {'':24s}" + "".join(f"{a:>8s}" for a in AGE_LABELS[:young]) + "    fade")
+    for e in range(1, len(editions) + 1):
+        if e == placebo:
+            label = f"placebo ({fake_born.date()})"
+            settled = True
+        else:
+            label = editions[e][0]
+            live = editions[e][1]
+            settled = pd.Timestamp(live) + pd.Timedelta(days=AGE_EDGES_DAYS[-2]) <= last
+        idx = [(e - 1) * young + k for k in range(young)]
+        seen = [players.get(i, 0) > 0 for i in idx]
+        if not any(seen):
+            continue
+        vals = "".join(
+            f"{gamma[i]:+8.2f}" if s else f"{'-':>8s}" for i, s in zip(idx, seen)
+        )
+        measured = [gamma[i] for i, s in zip(idx, seen) if s]
+        fade = f"{measured[0] - measured[-1]:8.2f}"
+        note = "" if settled else "  level unmeasured"
+        print(f"  {label:24s}{vals}{fade}{note}")
+        print(
+            f"  {'  players':24s}"
+            + "".join(f"{int(players.get(i, 0)):8d}" for i in idx)
+        )
+
+
 # ----------------------------------------------------------------- output
 
 
@@ -422,6 +541,11 @@ def main():
     ap.add_argument("--as-of", help="date newness is measured at (default today)")
     ap.add_argument("--until", help="ignore challenges played on/after this date")
     ap.add_argument("--holdout", help="also backtest with this cutoff date")
+    ap.add_argument(
+        "--check-newness",
+        action="store_true",
+        help="also fit newness per edition, with a placebo (see check_newness)",
+    )
     args = ap.parse_args()
 
     lex = args.lexicon
@@ -456,6 +580,8 @@ def main():
         holdout(
             asks, args.lexica, lex, pd.Timestamp(args.holdout), old, args.min_players
         )
+    if args.check_newness:
+        check_newness(asks, args.lexica, fam, as_of)
 
 
 if __name__ == "__main__":
