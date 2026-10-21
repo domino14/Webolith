@@ -12,8 +12,34 @@ files the word_db_server's dbmaker reads (lexica/difficulty/<LEX>/{7,8}.csv).
 
     analysis/export_challenge_data.sh ~/difficulty-data
     uv run analysis/difficulty.py ~/difficulty-data NWL23 \\
-        --lexica ../lexica --out ../lexica/difficulty/NWL23 \\
-        --compare ../lexica/difficulty/NWL23
+        --out ../word-game-lexica/difficulty/NWL23 \\
+        --compare ../word-game-lexica/difficulty/NWL23
+
+--lexica (default ../word-game-lexica, the private lexica repo checked out
+next to webolith) must hold every word list in EDITIONS, back to TWL06 and
+CSW12: they're how the script tells old words from new ones.
+
+Refreshing difficulties
+-----------------------
+A full run takes about 15 seconds for both lexicons and 1 GB of memory; the
+export from prod is the slow part.
+
+1. Export: analysis/export_challenge_data.sh ~/difficulty-data. It needs
+   .env.proddb for bin/proddb.
+2. Dry run, for each lexicon (NWL23, CSW24): the command above without
+   --out, plus --check-newness. Check the "vs. existing files" lines: most
+   bingos should move only a few points, and big movers should be ones that
+   got new asks or new words. Check the newness table as check_newness()
+   describes.
+3. Run again with --out, commit the files to word-game-lexica, and build
+   and publish the databases as word_db_server's README describes (dbmaker,
+   then kubectl cp).
+4. Rebuild the challenge queue too. It counts asks from the same results
+   rather than reading these files, so it's independent of steps 1-3, but
+   it's a good time to refresh it:
+
+       kubectl exec deploy/webolith-worker-deployment -- \\
+           python manage.py build_challenge_queue NWL23
 
 The model
 ---------
@@ -534,7 +560,9 @@ def main():
     )
     ap.add_argument("data", help="directory from export_challenge_data.sh")
     ap.add_argument("lexicon", help="e.g. NWL23; must be in EDITIONS")
-    ap.add_argument("--lexica", default="../lexica", help="word lists (NAME.txt)")
+    ap.add_argument(
+        "--lexica", default="../word-game-lexica", help="word lists (NAME.txt)"
+    )
     ap.add_argument("--out", help="write 7.csv and 8.csv here")
     ap.add_argument("--compare", help="existing difficulty dir to diff against")
     ap.add_argument("--min-players", type=int, default=20)
