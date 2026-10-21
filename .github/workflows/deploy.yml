@@ -34,16 +34,22 @@ jobs:
           path: word-game-lexica
 
       - name: Move lexicon repo into place
+        id: lexica
         run: |
+          echo "sha=$(git -C word-game-lexica rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           mv word-game-lexica ~/word-game-lexica
           rm -rf ~/word-game-lexica/.git
           mkdir ~/word-game-lexica/db
 
+      # These databases hold the licensed word lists and our difficulty data,
+      # and this repo is public: a fork's PR can restore the default branch's
+      # caches, which is why outside contributors' runs need approval. Keyed on
+      # the lexica commit so new data rebuilds them.
       - name: Cache lexicon databases
         uses: actions/cache@v4
         with:
           path: ~/word-game-lexica/db
-          key: lexicadb-v3
+          key: lexicadb-v4-${{ steps.lexica.outputs.sha }}
 
       - name: Generate lexicon databases
         run: |
@@ -51,7 +57,7 @@ jobs:
             -v ~/word-game-lexica:/opt/data/lexica \
             -v ~/word-game-lexica/letterdistributions:/opt/data/letterdistributions \
             $DOCKER_WDB_SERVER /opt/dbmaker \
-            -outputdir /opt/data/lexica/db -dbs NWL18,NWL20,CSW19,FISE2
+            -outputdir /opt/data/lexica/db -dbs NWL18,NWL20,NWL23,CSW19,FISE2
 
       - name: Copy docker-compose config
         run: cp .github/docker-compose.yml .
