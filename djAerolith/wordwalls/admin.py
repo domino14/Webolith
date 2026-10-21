@@ -18,6 +18,8 @@
 from django.contrib import admin
 
 from wordwalls.models import (
+    ChallengeCycle,
+    ChallengeQueueItem,
     DailyChallenge,
     DailyChallengeLeaderboard,
     DailyChallengeLeaderboardEntry,
@@ -104,3 +106,44 @@ admin.site.register(DailyChallengeLeaderboardEntry, DailyChallengeLeaderboardEnt
 admin.site.register(DailyChallenge, DailyChallengeAdmin)
 admin.site.register(DailyChallengeName)
 admin.site.register(NamedList, NamedListAdmin)
+
+
+class ChallengeCycleAdmin(admin.ModelAdmin):
+    # Turn a cycle off to send that challenge back to a random draw.
+    list_display = (
+        "lexicon",
+        "challenge",
+        "word_length",
+        "enabled",
+        "priority_slots",
+        "balance",
+        "cursor",
+    )
+    list_filter = ["enabled", "lexicon", "challenge"]
+    readonly_fields = ("seed", "cursor", "pool_hash")
+    actions = ["disable", "enable"]
+
+    @admin.action(description="Turn off (random draw)")
+    def disable(self, request, queryset):
+        queryset.update(enabled=False)
+
+    @admin.action(description="Turn on")
+    def enable(self, request, queryset):
+        queryset.update(enabled=True)
+
+
+class ChallengeQueueItemAdmin(admin.ModelAdmin):
+    search_fields = ["alphagram"]
+    list_filter = ["lexicon", "word_length", "new_word"]
+    list_display = (
+        "lexicon",
+        "alphagram",
+        "asks_remaining",
+        "new_word",
+        "priority",
+        "last_asked",
+    )
+
+
+admin.site.register(ChallengeCycle, ChallengeCycleAdmin)
+admin.site.register(ChallengeQueueItem, ChallengeQueueItemAdmin)

@@ -160,6 +160,67 @@ class DailyChallengeMissedBingos(models.Model):
         )
 
 
+class ChallengeCycle(models.Model):
+    """
+    The order one live daily challenge asks its questions in (see
+    wordwalls/challenge_scheduler.py): a seeded permutation of everything it
+    can ask, walked from `cursor`, so each question comes up once per pass and
+    each pass in a new order. Made on first use.
+    """
+
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(DailyChallengeName, on_delete=models.CASCADE)
+    # 0 for a cycle over a set of bingos rather than a whole length (the
+    # all-time and high-probability toughies).
+    word_length = models.IntegerField()
+    seed = models.BigIntegerField()
+    # How far into the cycle we are. Grows forever; pass = cursor // n.
+    cursor = models.BigIntegerField(default=0)
+    # Fingerprint of the set a toughies cycle walks; a new set starts over.
+    pool_hash = models.CharField(max_length=16, blank=True, default="")
+    # Off: this challenge goes back to a random draw.
+    enabled = models.BooleanField(default=True)
+    # Today's 7s and 8s only: how many queued bingos each challenge takes, and
+    # whether new-word ones get an easy partner.
+    priority_slots = models.IntegerField(default=5)
+    balance = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("lexicon", "challenge", "word_length")
+
+    def __str__(self):
+        length = f" {self.word_length}s" if self.word_length else ""
+        return f"{self.lexicon} {self.challenge}{length} @ {self.cursor}"
+
+
+class ChallengeQueueItem(models.Model):
+    """
+    A bingo that needs more daily-challenge asks before its difficulty can be
+    trusted: new in this lexicon, or just short of data. Loaded with
+    load_challenge_queue.
+    """
+
+    lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
+    alphagram = models.CharField(max_length=15)
+    word_length = models.IntegerField()
+    asks_remaining = models.IntegerField()
+    # Lower goes first.
+    priority = models.IntegerField(default=0)
+    # Contains a word added in this lexicon. These run harder than an average
+    # bingo, so each one gets an easy partner when the cycle balances.
+    new_word = models.BooleanField(default=False)
+    last_asked = models.DateField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("lexicon", "alphagram")
+        indexes = [
+            models.Index(fields=["lexicon", "word_length", "asks_remaining"]),
+        ]
+
+    def __str__(self):
+        return f"{self.lexicon} {self.alphagram} ({self.asks_remaining} left)"
+
+
 class NamedList(models.Model):
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, default="")

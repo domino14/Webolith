@@ -298,15 +298,24 @@ def generate_toughies_challenge(lexicon, requested_date):
     return alphagrams
 
 
+def toughies_pool(lexicon, challenge_name):
+    """
+    Every bingo the all-time or high-probability toughies can draw from: the
+    hardest 20% of 7s and 8s, or of those with probability up to 10000.
+    """
+    params = [
+        SearchDescription.lexicon(lexicon),
+        SearchDescription.length(7, 8),
+        SearchDescription.difficulty_range(81, 100),
+    ]
+    if challenge_name == DailyChallengeName.HIGHPROB_TOUGHIES:
+        params.append(SearchDescription.probability_range(1, 10000))
+    return word_search(params)
+
+
 def generate_alltime_toughies_challenge(lexicon):
     try:
-        qs = word_search(
-            [
-                SearchDescription.lexicon(lexicon),
-                SearchDescription.length(7, 8),
-                SearchDescription.difficulty_range(81, 100),  # top 20% hardest bingos
-            ]
-        )
+        qs = toughies_pool(lexicon, DailyChallengeName.ALLTIME_BINGO_TOUGHIES)
     except WDBError:
         logger.exception("alltime-toughies-error")
         return []
@@ -316,14 +325,7 @@ def generate_alltime_toughies_challenge(lexicon):
 
 def generate_highprob_toughies_challenge(lexicon):
     try:
-        qs = word_search(
-            [
-                SearchDescription.lexicon(lexicon),
-                SearchDescription.length(7, 8),
-                SearchDescription.probability_range(1, 10000),
-                SearchDescription.difficulty_range(81, 100),  # top 20% hardest bingos
-            ]
-        )
+        qs = toughies_pool(lexicon, DailyChallengeName.HIGHPROB_TOUGHIES)
     except WDBError:
         logger.exception("highprob-toughies-error")
         return []
