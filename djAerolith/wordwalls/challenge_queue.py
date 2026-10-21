@@ -28,7 +28,7 @@ from django.utils import timezone
 from base.models import Lexicon
 from lib.wdb_interface.wdb_helper import word_search
 from lib.wdb_interface.word_searches import SearchDescription
-from wordwalls.models import ChallengeCycle, ChallengeQueueItem
+from wordwalls.models import ChallengeCycle, ChallengeQueueItem, DailyChallengeName
 
 DEFAULT_TARGET = 15.0
 BINGO_LENGTHS = (7, 8)
@@ -246,6 +246,7 @@ def save_queue(lex, needs, slots=None, balance=True, prune=False, replace=False)
         for length in sorted(by_length):
             cycle, created = ChallengeCycle.objects.get_or_create(
                 lexicon=lex,
+                challenge=DailyChallengeName.objects.get(name=f"Today's {length}s"),
                 word_length=length,
                 defaults={"seed": secrets.randbits(63)},
             )

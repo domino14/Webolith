@@ -162,29 +162,35 @@ class DailyChallengeMissedBingos(models.Model):
 
 class ChallengeCycle(models.Model):
     """
-    Turns on scheduled questions for one lexicon's live "Today's Ns".
-
-    Without a row here, that challenge stays a random draw. With one, each live
-    challenge takes up to `priority_slots` bingos from the ChallengeQueueItem
-    queue, one easy partner per new-word bingo among them (so the quiz as a whole
-    doesn't skew harder), and fills the rest by walking a seeded permutation of
-    every alphagram of that length, so each is asked once per pass (each pass
-    in a new order).
+    The order one live daily challenge asks its questions in (see
+    wordwalls/challenge_scheduler.py): a seeded permutation of everything it
+    can ask, walked from `cursor`, so each question comes up once per pass and
+    each pass in a new order. Made on first use.
     """
 
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(DailyChallengeName, on_delete=models.CASCADE)
+    # 0 for a cycle over a set of bingos rather than a whole length (the
+    # all-time and high-probability toughies).
     word_length = models.IntegerField()
     seed = models.BigIntegerField()
-    # How far into the permutation we are. Grows forever; taken mod n.
+    # How far into the cycle we are. Grows forever; pass = cursor // n.
     cursor = models.BigIntegerField(default=0)
+    # Fingerprint of the set a toughies cycle walks; a new set starts over.
+    pool_hash = models.CharField(max_length=16, blank=True, default="")
+    # Off: this challenge goes back to a random draw.
+    enabled = models.BooleanField(default=True)
+    # Today's 7s and 8s only: how many queued bingos each challenge takes, and
+    # whether new-word ones get an easy partner.
     priority_slots = models.IntegerField(default=5)
     balance = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ("lexicon", "word_length")
+        unique_together = ("lexicon", "challenge", "word_length")
 
     def __str__(self):
-        return f"{self.lexicon} {self.word_length}s @ {self.cursor}"
+        length = f" {self.word_length}s" if self.word_length else ""
+        return f"{self.lexicon} {self.challenge}{length} @ {self.cursor}"
 
 
 class ChallengeQueueItem(models.Model):

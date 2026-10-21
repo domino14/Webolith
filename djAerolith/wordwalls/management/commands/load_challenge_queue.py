@@ -1,6 +1,6 @@
 """
-Load the bingos a lexicon's live daily challenges should ask, and turn on the
-scheduler for it (see wordwalls/challenge_scheduler.py).
+Load bingos for a lexicon's live Today's 7s and 8s to ask first (see
+wordwalls/challenge_scheduler.py).
 
 The CSV has a header and the columns
     alphagram,asks_needed[,new_word[,priority]]

@@ -109,9 +109,27 @@ admin.site.register(NamedList, NamedListAdmin)
 
 
 class ChallengeCycleAdmin(admin.ModelAdmin):
-    # Delete a row to send that lexicon/length back to a random draw.
-    list_display = ("lexicon", "word_length", "priority_slots", "balance", "cursor")
-    readonly_fields = ("seed", "cursor")
+    # Turn a cycle off to send that challenge back to a random draw.
+    list_display = (
+        "lexicon",
+        "challenge",
+        "word_length",
+        "enabled",
+        "priority_slots",
+        "balance",
+        "cursor",
+    )
+    list_filter = ["enabled", "lexicon", "challenge"]
+    readonly_fields = ("seed", "cursor", "pool_hash")
+    actions = ["disable", "enable"]
+
+    @admin.action(description="Turn off (random draw)")
+    def disable(self, request, queryset):
+        queryset.update(enabled=False)
+
+    @admin.action(description="Turn on")
+    def enable(self, request, queryset):
+        queryset.update(enabled=True)
 
 
 class ChallengeQueueItemAdmin(admin.ModelAdmin):

@@ -12,14 +12,20 @@ from django.utils import timezone
 
 from base.models import Lexicon
 from lib.domain import Alphagram, Question, Questions
-from lib.wdb_interface.wdb_helper import questions_from_alphagrams
+from lib.wdb_interface.wdb_helper import (
+    questions_from_alphagrams,
+    questions_from_probability_range,
+)
 from wordwalls.challenge_queue import (
     collect_asks,
     compute_needs,
     lexicon_ids,
     typical_turnout,
 )
-from wordwalls.challenge_scheduler import build_plan, pass_permutation
+from wordwalls.challenge_scheduler import (
+    build_plan,
+    plan_scheduled_challenge,
+)
 from wordwalls.game import WordwallsGame
 from wordwalls.models import (
     ChallengeCycle,
@@ -55,7 +61,11 @@ class ChallengeSchedulerTest(TestCase):
         self.sevens = DailyChallengeName.objects.get(name="Today's 7s")
         self.today = timezone.localtime(timezone.now()).date()
         self.cycle = ChallengeCycle.objects.create(
-            lexicon=self.lex, word_length=7, seed=1234, balance=False
+            lexicon=self.lex,
+            challenge=self.sevens,
+            word_length=7,
+            seed=1234,
+            balance=False,
         )
         for i, alpha in enumerate(QUEUED):
             ChallengeQueueItem.objects.create(
@@ -109,8 +119,9 @@ class ChallengeSchedulerTest(TestCase):
         self.assertEqual(self.cycle.cursor, 0)
         self.assertEqual(ChallengeQueueItem.objects.filter(last_asked=None).count(), 3)
 
-    def test_no_cycle_stays_random(self):
-        self.cycle.delete()
+    def test_disabled_cycle_stays_random(self):
+        self.cycle.enabled = False
+        self.cycle.save()
         self.play(self.today)
         self.assertEqual(ChallengeQueueItem.objects.filter(last_asked=None).count(), 3)
 
@@ -155,9 +166,14 @@ class ChallengeSchedulerTest(TestCase):
         plan = build_plan(self.cycle, self.lex, 7, self.today)
         self.assertEqual(plan.asked_ids, [item.pk])
 
+    def twos(self):
+        return DailyChallengeName.objects.get(name="Today's 2s")
+
     def test_cycle_visits_every_alphagram_once_per_pass(self):
         n = json.loads(self.lex.lengthCounts)["2"]
-        cycle = ChallengeCycle.objects.create(lexicon=self.lex, word_length=2, seed=99)
+        cycle = ChallengeCycle.objects.create(
+            lexicon=self.lex, challenge=self.twos(), word_length=2, seed=99
+        )
 
         def quiz(count):
             cycle.refresh_from_db()
@@ -178,7 +194,11 @@ class ChallengeSchedulerTest(TestCase):
     def test_quiz_across_passes_has_no_repeats(self):
         n = json.loads(self.lex.lengthCounts)["2"]
         cycle = ChallengeCycle.objects.create(
-            lexicon=self.lex, word_length=2, seed=99, cursor=n - 10
+            lexicon=self.lex,
+            challenge=self.twos(),
+            word_length=2,
+            seed=99,
+            cursor=n - 10,
         )
         plan = build_plan(cycle, self.lex, 2, self.today, num_questions=50)
         quiz = [q.alphagram.alphagram for q in plan.questions.questions_array()]
@@ -206,7 +226,11 @@ class ScheduledChallengesOverTimeTest(TestCase):
         self.sevens = DailyChallengeName.objects.get(name="Today's 7s")
         self.start = timezone.localtime(timezone.now()).date()
         ChallengeCycle.objects.create(
-            lexicon=self.lex, word_length=7, seed=42, priority_slots=3
+            lexicon=self.lex,
+            challenge=self.sevens,
+            word_length=7,
+            seed=42,
+            priority_slots=3,
         )
         for alpha in self.NEW:
             ChallengeQueueItem.objects.create(
@@ -316,8 +340,99 @@ class ScheduledChallengesOverTimeTest(TestCase):
         self.assertEqual((item.asks_remaining, item.last_asked), (1, self.start))
 
 
+class EveryChallengeCyclesTest(TestCase):
+    """Challenges other than Today's 7s and 8s walk cycles of their own."""
+
+    fixtures = [
+        "test/lexica.yaml",
+        "test/users.json",
+        "test/profiles.json",
+        "challenge_names.json",
+    ]
+
+    def setUp(self):
+        self.user = User.objects.get(username="cesar")
+        self.lex = Lexicon.objects.get(lexiconName="NWL20")
+        self.start = timezone.localtime(timezone.now()).date()
+
+    def play(self, name, day_offset=0, pool=None):
+        day = self.start + timedelta(days=day_offset)
+        challenge = DailyChallengeName.objects.get(name=name)
+        now = timezone.now() + timedelta(days=day_offset)
+        with patch("wordwalls.challenge_scheduler.timezone.now", return_value=now):
+            with patch(
+                "wordwalls.challenge_scheduler.toughies_pool", return_value=pool
+            ):
+                WordwallsGame().initialize_daily_challenge(
+                    self.user, self.lex, challenge, day
+                )
+        dc = DailyChallenge.objects.get(lexicon=self.lex, name=challenge, date=day)
+        return [q["q"] for q in json.loads(dc.alphagrams)]
+
+    def cycle(self, name, length):
+        return ChallengeCycle.objects.get(
+            lexicon=self.lex, challenge__name=name, word_length=length
+        )
+
+    def test_other_lengths_get_a_cycle_on_first_use(self):
+        day1 = self.play("Today's 5s")
+        day2 = self.play("Today's 5s", 1)
+        for quiz in (day1, day2):
+            self.assertEqual(len(set(quiz)), 50)
+            self.assertTrue(all(len(a) == 5 for a in quiz))
+        self.assertFalse(set(day1) & set(day2))
+        self.assertEqual(self.cycle("Today's 5s", 5).cursor, 100)
+
+    def test_marathon_walks_its_own_cycles(self):
+        ChallengeQueueItem.objects.create(
+            lexicon=self.lex, alphagram="AEINRST", word_length=7, asks_remaining=1
+        )
+        sevens = self.play("Today's 7s")
+        day1 = self.play("Bingo Marathon")
+        day2 = self.play("Bingo Marathon", 1)
+        for quiz in (day1, day2):
+            self.assertEqual(len(set(quiz)), 100)
+            self.assertEqual(sorted(len(a) for a in quiz), [7] * 50 + [8] * 50)
+        self.assertFalse(set(day1) & set(day2))
+        self.assertEqual(self.cycle("Bingo Marathon", 7).cursor, 100)
+        self.assertEqual(self.cycle("Bingo Marathon", 8).cursor, 100)
+        # Today's 7s took the queued bingo and moved only its own cycle.
+        self.assertIn("AEINRST", sevens)
+        self.assertLessEqual(self.cycle("Today's 7s", 7).cursor, 50)
+        self.assertEqual(ChallengeQueueItem.objects.get().asks_remaining, 0)
+
+    def test_toughies_walk_their_pool(self):
+        name = "All-time Bingo Toughies"
+        pool = questions_from_probability_range(self.lex, 1, 60, 7)
+        day1 = self.play(name, pool=pool)
+        day2 = self.play(name, 1, pool=pool)
+        for quiz in (day1, day2):
+            self.assertEqual(len(set(quiz)), 50)
+        # The first pass ends 10 questions into day 2.
+        self.assertEqual(set(day1) | set(day2), set(pool.alphagram_string_list()))
+        cycle = self.cycle(name, 0)
+        # Plus a step for each day-2 repeat skipped at the start of pass 2.
+        self.assertGreaterEqual(cycle.cursor, 100)
+
+        # Rebuilt difficulties change the set, which starts a new pass.
+        bigger = questions_from_probability_range(self.lex, 1, 70, 7)
+        self.play(name, 2, pool=bigger)
+        restarted = self.cycle(name, 0)
+        self.assertEqual(restarted.cursor, 50)
+        self.assertNotEqual(restarted.seed, cycle.seed)
+        self.assertNotEqual(restarted.pool_hash, cycle.pool_hash)
+
+    def test_weeks_toughies_and_past_dates_make_no_cycle(self):
+        sixes = DailyChallengeName.objects.get(name="Today's 6s")
+        past = self.start - timedelta(days=3)
+        self.assertIsNone(plan_scheduled_challenge(sixes, self.lex, past))
+        weeks = DailyChallengeName.objects.get(name="Week's Bingo Toughies")
+        self.assertIsNone(plan_scheduled_challenge(weeks, self.lex, self.start))
+        self.assertFalse(ChallengeCycle.objects.exists())
+
+
 class LoadChallengeQueueTest(TestCase):
-    fixtures = ["test/lexica.yaml"]
+    fixtures = ["test/lexica.yaml", "challenge_names.json"]
 
     def load(self, rows, *args):
         with tempfile.NamedTemporaryFile("w", suffix=".csv", delete=False) as f:
