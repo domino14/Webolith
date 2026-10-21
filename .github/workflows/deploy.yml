@@ -41,6 +41,15 @@ jobs:
           rm -rf ~/word-game-lexica/.git
           mkdir ~/word-game-lexica/db
 
+      # Word graphs aren't committed to the lexica repo; its script builds or
+      # fetches them.
+      - name: Build word graphs
+        run: |
+          rm -rf ~/word-game-lexica/gaddag
+          ~/word-game-lexica/build_kwgs.sh ~/word-game-lexica/gaddag \
+            America CSW15 CSW19 CSW21 CSW24 DISC2 ECWL FISE2 FRA20 FRA24 \
+            NSF22 NWL18 NWL20 NWL23 OSPS49 OSPS50 RD28
+
       # These databases hold the licensed word lists and our difficulty data,
       # and this repo is public: a fork's PR can restore the default branch's
       # caches, which is why outside contributors' runs need approval. Keyed on
