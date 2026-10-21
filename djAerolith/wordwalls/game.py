@@ -25,7 +25,7 @@ import time
 from typing import List
 
 from django.conf import settings
-from django.db import IntegrityError
+from django.db import IntegrityError, connection
 from django.utils.translation import gettext as _
 from django.utils import timezone
 import waffle
@@ -73,6 +73,30 @@ def no_word_list_message():
         "This table no longer has its word list. It may have been opened "
         "at another table. Please load a word list."
     )
+
+
+MISSED_BINGOS_SQL = f"""
+INSERT INTO {DailyChallengeMissedBingos._meta.db_table}
+    (challenge_id, alphagram_string, "numTimesMissed")
+SELECT %s, alphagram, 1 FROM unnest(%s::varchar[]) AS alphagram
+ON CONFLICT (alphagram_string, challenge_id) DO UPDATE
+SET "numTimesMissed" = {DailyChallengeMissedBingos._meta.db_table}."numTimesMissed" + 1
+"""
+
+
+def record_missed_bingos(challenge, alphagrams):
+    """
+    Count one more miss of each alphagram in `challenge`, in one statement.
+
+    Two players finishing at once can both be the first to miss an alphagram;
+    the upsert makes the second one an increment instead of a failed insert
+    (which, inside the request's transaction, would lose the whole request).
+    Sorted, so concurrent upserts lock rows in the same order.
+    """
+    if not alphagrams:
+        return
+    with connection.cursor() as cursor:
+        cursor.execute(MISSED_BINGOS_SQL, [challenge.pk, sorted(alphagrams)])
 
 
 class WordwallsGame(object):
@@ -1141,33 +1165,6 @@ class WordwallsGame(object):
                 # if the user missed some 7s or 8s
                 self.add_dc_missed_bingos(state, dc, wgm)
 
-    def add_dc_missed_bingo(self, challenge, alphagram):
-        """
-        Adds a Daily Challenge Missed Bingo in a thread-safe manner.
-        """
-        try:
-            dcmb = DailyChallengeMissedBingos.objects.select_for_update().get(
-                challenge=challenge, alphagram_string=alphagram
-            )
-            dcmb.numTimesMissed += 1
-        except DailyChallengeMissedBingos.DoesNotExist:
-            dcmb = DailyChallengeMissedBingos(
-                challenge=challenge, alphagram_string=alphagram
-            )
-            dcmb.numTimesMissed = 1
-        try:
-            dcmb.save()
-        except IntegrityError:
-            logger.exception("Caught MissedBingos IntegrityError")
-            # It means another thread created it (in the except above).
-            # We should start over, but now that we know the object exists,
-            # we can use select_for_update without fear.
-            dcmb = DailyChallengeMissedBingos.objects.select_for_update().get(
-                challenge=challenge, alphagram_string=alphagram
-            )
-            dcmb.numTimesMissed += 1
-            dcmb.save()
-
     def add_dc_missed_bingos(self, state, dc, wgm):
         orig_qs_obj = json.loads(wgm.word_list.origQuestions)
         missed_alphas = set()
@@ -1175,8 +1172,7 @@ class WordwallsGame(object):
             question, idx = state["answerHash"][missed]
             question = orig_qs_obj[idx]
             missed_alphas.add(question["q"])
-        for alpha in missed_alphas:
-            self.add_dc_missed_bingo(dc, alpha)
+        record_missed_bingos(dc, missed_alphas)
 
     def mark_missed(self, question_indices, tablenum, user):
         """Mark the given questions missed. Returns whether any of them
