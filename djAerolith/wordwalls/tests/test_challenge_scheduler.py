@@ -12,11 +12,14 @@ from django.utils import timezone
 
 from base.models import Lexicon
 from lib.domain import Alphagram, Question, Questions
+from lib.wdb_interface.exceptions import WDBError
 from lib.wdb_interface.wdb_helper import (
     questions_from_alphagrams,
     questions_from_probability_list,
     questions_from_probability_range,
+    word_search,
 )
+from lib.wdb_interface.word_searches import SearchDescription
 from wordwalls.challenge_queue import (
     collect_asks,
     compute_needs,
@@ -346,7 +349,8 @@ class ScheduledChallengesOverTimeTest(TestCase):
 class RealWordServerTest(TestCase):
     """
     The scheduler's word-server searches, unmocked. NWL23 because the test
-    NWL20 has no difficulty data to search on.
+    NWL20 has no difficulty data to search on. CI's word server builds its
+    lexica without difficulty files, so these skip there.
     """
 
     fixtures = [
@@ -359,6 +363,19 @@ class RealWordServerTest(TestCase):
     def setUp(self):
         self.lex = Lexicon.objects.get(lexiconName="NWL23")
         self.today = timezone.localtime(timezone.now()).date()
+        try:
+            rated = word_search(
+                [
+                    SearchDescription.lexicon(self.lex),
+                    SearchDescription.length(7, 7),
+                    SearchDescription.difficulty_range(1, 100),
+                    SearchDescription.probability_range(1, 100),
+                ]
+            )
+        except WDBError as e:
+            self.skipTest(f"word server has no NWL23: {e}")
+        if not rated.size():
+            self.skipTest("word server's NWL23 has no difficulty data")
 
     def test_easy_partners_are_easy(self):
         n = json.loads(self.lex.lengthCounts)["7"]
