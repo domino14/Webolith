@@ -4,11 +4,16 @@ Which bingos the live daily challenges still need to ask, and how often.
 A bingo's difficulty is only as good as the daily-challenge data behind it.
 Each ask by `eff` players who miss it with probability p tells us
 eff * p * (1 - p) about its difficulty (the Fisher information of a binomial
-on the logit scale); questions near a 50% miss rate are the most informative.
-A bingo is short of data while the information behind its *current* answer set
-is below `target`. The default target, 15, is about what one live NWL ask
-delivers (~80 players, ~30% missing), which puts ~90% of bingos within 10
-percentile points of where more data would settle them.
+on the logit scale), so its estimate's standard error is 1/sqrt(information).
+
+What players see is a percentile, though, and the logit scale is stretched at
+the ends: a bingo 99% of players solve could really be 98% or 99.5% and still
+be among the easiest few percent. So a bingo is short of data while one
+standard error either side of its estimate spans more than `target`
+percentile points of its length's bingos. In the middle of the scale the
+default, 9, takes about what one live NWL ask delivers (~80 players, ~30%
+missing), which puts ~90% of bingos within 10 points of where more data would
+settle them; at the ends it takes far less.
 
 Data is keyed by (alphagram, answer set): when an alphagram gains or loses an
 anagram, its old data describes a different question and doesn't count. CSW
@@ -18,6 +23,7 @@ also counts NWL asks of the same answer set, since CSW has far fewer players.
 import json
 import math
 import secrets
+from bisect import bisect_left, bisect_right
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import timedelta
@@ -30,7 +36,11 @@ from lib.wdb_interface.wdb_helper import word_search
 from lib.wdb_interface.word_searches import SearchDescription
 from wordwalls.models import ChallengeCycle, ChallengeQueueItem, DailyChallengeName
 
-DEFAULT_TARGET = 15.0
+# Percentile points either side of a bingo's estimate, at one standard error.
+DEFAULT_TARGET = 9.0
+# No bingo takes more than this many asks per queue build; the next build
+# recounts.
+MAX_ASKS = 3
 BINGO_LENGTHS = (7, 8)
 LIVE_CHALLENGES = ("Today's 7s", "Today's 8s")
 # A bingo nobody has seen under its current answer set is assumed to be about
@@ -170,10 +180,13 @@ def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 
-def compute_needs(bingos, asks, players_per_ask, target=DEFAULT_TARGET):
+def compute_needs(
+    bingos, asks, players_per_ask, target=DEFAULT_TARGET, max_asks=MAX_ASKS
+):
     """
-    The bingos (from current_bingos) still short of `target`, with how many
-    more live asks each needs at `players_per_ask` players apiece.
+    The bingos (from current_bingos, all one length) still short of `target`,
+    with how many more live asks each needs at `players_per_ask` players
+    apiece.
     """
     seen = [asks[(a, ans)] for a, ans, _ in bingos if (a, ans) in asks]
     eff_total = sum(eff for eff, _ in seen)
@@ -181,18 +194,34 @@ def compute_needs(bingos, asks, players_per_ask, target=DEFAULT_TARGET):
         mean_p = min(max(sum(m for _, m in seen) / eff_total, 0.02), 0.98)
     else:
         mean_p = 0.35
-    needs = []
+    estimates = []
     for alpha, ans, new_word in bingos:
         eff, m = asks.get((alpha, ans), (0, 0))
         if eff:
             p = (m + PRIOR_PLAYERS * mean_p) / (eff + PRIOR_PLAYERS)
         else:
             p = sigmoid(logit(mean_p) + (UNASKED_PENALTY if new_word else 0))
-        info = eff * p * (1 - p)
-        if info >= target:
+        estimates.append((alpha, new_word, logit(p), eff * p * (1 - p), p))
+    # Percentiles are positions among every bingo of the length.
+    scale = sorted(e[2] for e in estimates)
+
+    def spread(b, info):
+        """Percentile points either side of b at one standard error."""
+        if info <= 0:
+            return 100.0
+        se = 1 / math.sqrt(info)
+        inside = bisect_right(scale, b + se) - bisect_left(scale, b - se)
+        return 50.0 * inside / len(scale)
+
+    needs = []
+    for alpha, new_word, b, info, p in estimates:
+        if spread(b, info) <= target:
             continue
         per_ask = players_per_ask * p * (1 - p)
-        needs.append(Need(alpha, math.ceil((target - info) / per_ask), new_word, info))
+        k = 1
+        while k < max_asks and spread(b, info + k * per_ask) > target:
+            k += 1
+        needs.append(Need(alpha, k, new_word, info))
     # Least-known first among equals.
     needs.sort(key=lambda nd: (not nd.new_word, nd.info))
     return needs
