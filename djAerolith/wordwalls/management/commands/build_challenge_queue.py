@@ -29,7 +29,8 @@ class Command(BaseCommand):
             "--target",
             type=float,
             default=DEFAULT_TARGET,
-            help="Information each bingo should have (default %(default)s).",
+            help="Percentile points of uncertainty (one standard error) each "
+            "bingo may have before it needs asks (default %(default)s).",
         )
         parser.add_argument(
             "--players",

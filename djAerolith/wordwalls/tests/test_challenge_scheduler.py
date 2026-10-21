@@ -340,10 +340,13 @@ class ScheduledChallengesOverTimeTest(TestCase):
                 "build_challenge_queue", "NWL20", "--players", "50", stdout=StringIO()
             )
         item = ChallengeQueueItem.objects.get()
-        self.assertEqual(item.asks_remaining, 2)
+        queued = item.asks_remaining
+        self.assertGreaterEqual(queued, 1)
         self.assertIn("EIKLNST", self.play(self.start))
         item.refresh_from_db()
-        self.assertEqual((item.asks_remaining, item.last_asked), (1, self.start))
+        self.assertEqual(
+            (item.asks_remaining, item.last_asked), (queued - 1, self.start)
+        )
 
 
 class RealWordServerTest(TestCase):
@@ -619,26 +622,38 @@ class BuildChallengeQueueTest(TestCase):
         self.assertEqual(typical_turnout(lexicon_ids(("CSW",)), today)[7], 1)
 
     def test_compute_needs(self):
-        asks = {
-            ("AEINRST", "RETAINS"): [1000, 300],
-            ("ADEGINR", "READING"): [30, 10],
-            ("EIKLNST", "TINKLES"): [500, 100],
-        }
-        bingos = [
-            ("AEINRST", "RETAINS", False),
-            ("ADEGINR", "READING", False),
-            # Gained an anagram since: the old data doesn't count.
-            ("EIKLNST", "KELTINS TINKLES", True),
-            ("ABEILST", "BASTILE", False),
+        # 200 well-known bingos spread from 2% to 90% missed set the scale.
+        asks, bingos = {}, []
+        for i in range(200):
+            alpha = f"W{i:03d}"
+            asks[(alpha, alpha)] = [2000, int(2000 * (0.02 + 0.88 * i / 199))]
+            bingos.append((alpha, alpha, False))
+        asks.update(
+            {
+                # Nearly everyone solves it: already among the easiest few
+                # percent, however few players that rests on.
+                ("EASY", "EASY"): [130, 1],
+                # A middling bingo seen by 30 players: still a wide range.
+                ("MIDDLE", "MIDDLE"): [30, 10],
+                # Gained an anagram since: the old data doesn't count.
+                ("CHANGED", "OLD"): [500, 100],
+            }
+        )
+        bingos += [
+            ("EASY", "EASY", False),
+            ("MIDDLE", "MIDDLE", False),
+            ("CHANGED", "CHANGED NEW", True),
+            ("UNASKED", "UNASKED", False),
         ]
         needs = {nd.alphagram: nd for nd in compute_needs(bingos, asks, 40)}
-        self.assertEqual(set(needs), {"ADEGINR", "EIKLNST", "ABEILST"})
-        self.assertEqual(needs["ADEGINR"].asks_needed, 1)
-        self.assertEqual(needs["EIKLNST"].asks_needed, 2)
-        self.assertTrue(needs["EIKLNST"].new_word)
-        self.assertEqual(
-            [nd.alphagram for nd in compute_needs(bingos, asks, 40)][0], "EIKLNST"
-        )
+        self.assertEqual(set(needs), {"MIDDLE", "CHANGED", "UNASKED"})
+        self.assertTrue(needs["CHANGED"].new_word)
+        for nd in needs.values():
+            self.assertTrue(1 <= nd.asks_needed <= 3)
+        # A tiny turnout would need more; the cap holds it at three.
+        self.assertEqual(compute_needs(bingos, asks, 2, max_asks=3)[0].asks_needed, 3)
+        # New words first.
+        self.assertEqual(compute_needs(bingos, asks, 40)[0].alphagram, "CHANGED")
 
     def test_command_prunes_and_keeps_last_asked(self):
         last = timezone.localtime(timezone.now()).date() - timedelta(days=2)
