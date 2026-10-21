@@ -272,10 +272,14 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+      # A token in the clone URL is dropped when GitHub redirects, as with the
+      # lexicon repo above; actions/checkout sends it in a header instead.
       - name: Clone aerolith-k8s repo
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
-        run: git clone https://${GH_PAT}@github.com/domino14/aerolith-k8s
+        uses: actions/checkout@v4
+        with:
+          repository: domino14/aerolith-k8s
+          token: ${{ secrets.GH_PAT }}
+          path: aerolith-k8s
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
