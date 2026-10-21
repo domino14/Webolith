@@ -14,6 +14,7 @@ from base.models import Lexicon
 from lib.domain import Alphagram, Question, Questions
 from lib.wdb_interface.wdb_helper import (
     questions_from_alphagrams,
+    questions_from_probability_list,
     questions_from_probability_range,
 )
 from wordwalls.challenge_queue import (
@@ -24,6 +25,8 @@ from wordwalls.challenge_queue import (
 )
 from wordwalls.challenge_scheduler import (
     build_plan,
+    easy_partners,
+    pass_permutation,
     plan_scheduled_challenge,
 )
 from wordwalls.game import WordwallsGame
@@ -338,6 +341,78 @@ class ScheduledChallengesOverTimeTest(TestCase):
         self.assertIn("EIKLNST", self.play(self.start))
         item.refresh_from_db()
         self.assertEqual((item.asks_remaining, item.last_asked), (1, self.start))
+
+
+class RealWordServerTest(TestCase):
+    """
+    The scheduler's word-server searches, unmocked. NWL23 because the test
+    NWL20 has no difficulty data to search on.
+    """
+
+    fixtures = [
+        "test/lexica.yaml",
+        "test/users.json",
+        "test/profiles.json",
+        "challenge_names.json",
+    ]
+
+    def setUp(self):
+        self.lex = Lexicon.objects.get(lexiconName="NWL23")
+        self.today = timezone.localtime(timezone.now()).date()
+
+    def test_easy_partners_are_easy(self):
+        n = json.loads(self.lex.lengthCounts)["7"]
+        taken = {"AEINRST", "ADEINRT"}
+        partners = easy_partners(self.lex, 7, n, 5, set(taken))
+        alphas = [q.alphagram.alphagram for q in partners]
+        self.assertEqual(len(alphas), 5)
+        self.assertFalse(set(alphas) & taken)
+        self.assertTrue(all(q.answers for q in partners))
+        expanded = questions_from_alphagrams(self.lex, alphas, expand=True)
+        for q in expanded.questions_array():
+            self.assertEqual(len(q.alphagram.alphagram), 7)
+            self.assertTrue(1 <= q.alphagram.difficulty <= 50)
+
+    def test_live_challenge_with_new_words_uses_the_queue(self):
+        sevens = DailyChallengeName.objects.get(name="Today's 7s")
+        ChallengeQueueItem.objects.create(
+            lexicon=self.lex,
+            alphagram="AEINRST",
+            word_length=7,
+            asks_remaining=1,
+            new_word=True,
+        )
+        WordwallsGame().initialize_daily_challenge(
+            User.objects.get(username="cesar"), self.lex, sevens, self.today
+        )
+        dc = DailyChallenge.objects.get(lexicon=self.lex, name=sevens, date=self.today)
+        alphas = {q["q"] for q in json.loads(dc.alphagrams)}
+        self.assertEqual(len(alphas), 50)
+        self.assertIn("AEINRST", alphas)
+        self.assertEqual(ChallengeQueueItem.objects.get().asks_remaining, 0)
+
+        # Whatever the cycle didn't supply is the queued bingo and its partner.
+        cycle = ChallengeCycle.objects.get(lexicon=self.lex, challenge=sevens)
+        n = json.loads(self.lex.lengthCounts)["7"]
+        perm = pass_permutation(cycle.seed, 0, n)
+        walked = questions_from_probability_list(
+            self.lex, [perm.forward(i) + 1 for i in range(cycle.cursor)], 7
+        )
+        partners = alphas - set(walked.alphagram_string_list()) - {"AEINRST"}
+        self.assertEqual(len(partners), 1)
+        partner = questions_from_alphagrams(self.lex, list(partners), expand=True)
+        self.assertLessEqual(partner.questions_array()[0].alphagram.difficulty, 50)
+
+    def test_toughies_pool_is_walked(self):
+        name = DailyChallengeName.objects.get(name="High Probability Toughies")
+        plan = plan_scheduled_challenge(name, self.lex, self.today)
+        alphas = [q.alphagram.alphagram for q in plan.questions.questions_array()]
+        self.assertEqual(len(set(alphas)), 50)
+        expanded = questions_from_alphagrams(self.lex, alphas, expand=True)
+        for q in expanded.questions_array():
+            self.assertIn(len(q.alphagram.alphagram), (7, 8))
+            self.assertTrue(81 <= q.alphagram.difficulty <= 100)
+            self.assertLessEqual(q.alphagram.probability, 10000)
 
 
 class EveryChallengeCyclesTest(TestCase):

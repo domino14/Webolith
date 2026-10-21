@@ -249,9 +249,10 @@ def pool_plan(cycle, pool, date, num_questions=NUM_QUESTIONS):
     the one the cycle was walking starts a fresh pass in a fresh order.
     """
     # A fixed order, so a position means the same bingo from day to day.
+    # (Unexpanded search results carry no probability to sort by.)
     bingos = sorted(
         pool.questions_array(),
-        key=lambda q: (len(q.alphagram.alphagram), q.alphagram.probability),
+        key=lambda q: (len(q.alphagram.alphagram), q.alphagram.alphagram),
     )
     if not bingos:
         return None
@@ -286,8 +287,9 @@ def easy_partners(lex, word_length, n, count, taken):
         [
             SearchDescription.lexicon(lex),
             SearchDescription.length(word_length, word_length),
-            SearchDescription.probability_list(sample),
             SearchDescription.difficulty_range(1, EASY_MAX_DIFFICULTY),
+            # The word server wants a list condition last.
+            SearchDescription.probability_list(sample),
         ]
     )
     candidates = [q for q in qs.questions_array() if q.alphagram.alphagram not in taken]
