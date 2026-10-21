@@ -19,7 +19,7 @@ from wordwalls.challenge_queue import (
     lexicon_ids,
     typical_turnout,
 )
-from wordwalls.challenge_scheduler import build_plan
+from wordwalls.challenge_scheduler import build_plan, pass_permutation
 from wordwalls.game import WordwallsGame
 from wordwalls.models import (
     ChallengeCycle,
@@ -158,16 +158,33 @@ class ChallengeSchedulerTest(TestCase):
     def test_cycle_visits_every_alphagram_once_per_pass(self):
         n = json.loads(self.lex.lengthCounts)["2"]
         cycle = ChallengeCycle.objects.create(lexicon=self.lex, word_length=2, seed=99)
-        seen = []
-        for count in (50, n - 50):
+
+        def quiz(count):
             cycle.refresh_from_db()
             plan = build_plan(cycle, self.lex, 2, self.today, num_questions=count)
             plan.commit()
-            seen += [q.alphagram.alphagram for q in plan.questions.questions_array()]
-        self.assertEqual(len(seen), n)
-        self.assertEqual(len(set(seen)), n)
+            return [q.alphagram.alphagram for q in plan.questions.questions_array()]
+
+        passes = []
+        for _ in range(2):
+            first, rest = quiz(50), quiz(n - 50)
+            self.assertEqual(len(set(first + rest)), n)
+            passes.append(set(first))
         cycle.refresh_from_db()
-        self.assertEqual(cycle.cursor, n)
+        self.assertEqual(cycle.cursor, 2 * n)
+        # The second pass is shuffled anew, not the first one again.
+        self.assertNotEqual(passes[0], passes[1])
+
+    def test_quiz_across_passes_has_no_repeats(self):
+        n = json.loads(self.lex.lengthCounts)["2"]
+        cycle = ChallengeCycle.objects.create(
+            lexicon=self.lex, word_length=2, seed=99, cursor=n - 10
+        )
+        plan = build_plan(cycle, self.lex, 2, self.today, num_questions=50)
+        quiz = [q.alphagram.alphagram for q in plan.questions.questions_array()]
+        self.assertEqual(len(quiz), 50)
+        self.assertEqual(len(set(quiz)), 50)
+        self.assertGreaterEqual(plan.cycle_steps, 50)
 
 
 class ScheduledChallengesOverTimeTest(TestCase):

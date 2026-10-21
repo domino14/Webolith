@@ -168,7 +168,8 @@ class ChallengeCycle(models.Model):
     challenge takes up to `priority_slots` bingos from the ChallengeQueueItem
     queue, one easy partner per new-word bingo among them (so the quiz as a whole
     doesn't skew harder), and fills the rest by walking a seeded permutation of
-    every alphagram of that length, so each is asked once per pass.
+    every alphagram of that length, so each is asked once per pass (each pass
+    in a new order).
     """
 
     lexicon = models.ForeignKey(Lexicon, on_delete=models.CASCADE)

@@ -11,7 +11,8 @@ and length have a ChallengeCycle, the live challenge is built instead from:
      partner from the easier half cancels that out,
   3. the next stretch of a seeded permutation of every alphagram of that
      length, so the rest of the quiz still looks random but each alphagram
-     comes up exactly once per pass.
+     comes up exactly once per pass. Each pass is shuffled anew, so the same
+     questions don't come back together.
 
 Past-date replays stay random: they draw about one player each, which is no
 data to speak of.
@@ -21,10 +22,12 @@ calls plan.commit(), so if two requests race to create the same challenge only
 the one whose row saved advances the cursor and the queue.
 """
 
+import hashlib
 import json
 import logging
 import random
 import re
+import struct
 from datetime import timedelta
 
 from django.db.models import F, Q
@@ -170,17 +173,30 @@ def easy_partners(lex, word_length, n, count, taken):
     return candidates[:count]
 
 
+def pass_permutation(seed, pass_no, n):
+    """
+    The shuffle for one pass through the cycle. Each pass gets its own, so a
+    second pass doesn't hand out the same runs of questions as the first.
+    """
+    digest = hashlib.blake2b(
+        struct.pack("<QQ", seed & 0xFFFFFFFFFFFFFFFF, pass_no), digest_size=8
+    ).digest()
+    return WallPermutation(struct.unpack("<Q", digest)[0] >> 1, n)
+
+
 def walk_cycle(cycle, lex, word_length, n, count, taken):
     """
-    The next `count` alphagrams of the cycle's permutation, skipping any
-    already in the quiz. Returns (questions, permutation steps consumed).
+    The next `count` alphagrams of the cycle, skipping any already in the
+    quiz. Returns (questions, permutation steps consumed).
     """
-    perm = WallPermutation(cycle.seed, n)
     out = Questions()
     steps = 0
     while len(out) < count and steps < n:
-        want = min(count - len(out), n - steps)
-        probs = [perm.forward((cycle.cursor + steps + i) % n) + 1 for i in range(want)]
+        pass_no, pos = divmod(cycle.cursor + steps, n)
+        # Stop at the end of a pass; the next one is a different shuffle.
+        want = min(count - len(out), n - steps, n - pos)
+        perm = pass_permutation(cycle.seed, pass_no, n)
+        probs = [perm.forward(pos + i) + 1 for i in range(want)]
         steps += want
         for q in questions_from_probability_list(
             lex, probs, word_length
