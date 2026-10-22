@@ -36,7 +36,7 @@ function WordBuilderDialogContainer({
 }: WordBuilderDialogContainerProps) {
   const [maxLength, setMaxLength] = useState(7);
   const [minLength, setMinLength] = useState(4);
-  const [numQuestions, setNumQuestions] = useState(10);
+  const [numQuestions, setNumQuestions] = useState(1);
 
   const minLengthOptions = [];
   for (let l = maxLength - MAX_LENGTH_DIFF; l <= maxLength; l += 1) {
@@ -70,7 +70,7 @@ function WordBuilderDialogContainer({
     <div className="mt-3">
       <p>
         Find every word you can make from a rack of letters, like the daily
-        Word Builder challenges. Each round is one rack.
+        Word Builder challenges. Each round is one question.
       </p>
       <form>
         <Select
@@ -92,7 +92,7 @@ function WordBuilderDialogContainer({
         />
         <Select
           colSize={4}
-          label="Number of racks"
+          label="Number of questions"
           selectedValue={String(numQuestions)}
           options={PUZZLE_COUNTS.map((n) => ({
             value: String(n),

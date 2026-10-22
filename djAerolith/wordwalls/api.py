@@ -490,7 +490,7 @@ def load_word_builder(request, parsed_req_body):
         )
     if num_questions < 1 or num_questions > MAX_WORD_BUILDER_QUESTIONS:
         return bad_request(
-            f"Number of puzzles must be between 1 and {MAX_WORD_BUILDER_QUESTIONS}."
+            f"Number of questions must be between 1 and {MAX_WORD_BUILDER_QUESTIONS}."
         )
     try:
         tablenum = WordwallsGame().initialize_word_builder(
