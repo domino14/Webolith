@@ -1379,11 +1379,14 @@ export declare class GetDailyProgressByDeckResponse extends Message<GetDailyProg
 }
 
 /**
+ * Leaderboard days are America/Los_Angeles days, whatever the timezone.
+ *
  * @generated from message wordvault.GetDailyLeaderboardRequest
  */
 export declare class GetDailyLeaderboardRequest extends Message<GetDailyLeaderboardRequest> {
   /**
-   * @generated from field: string timezone = 1;
+   * @generated from field: string timezone = 1 [deprecated = true];
+   * @deprecated
    */
   timezone: string;
 
@@ -1453,6 +1456,97 @@ export declare class GetDailyLeaderboardResponse_LeaderboardItem extends Message
   static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetDailyLeaderboardResponse_LeaderboardItem;
 
   static equals(a: GetDailyLeaderboardResponse_LeaderboardItem | PlainMessage<GetDailyLeaderboardResponse_LeaderboardItem> | undefined, b: GetDailyLeaderboardResponse_LeaderboardItem | PlainMessage<GetDailyLeaderboardResponse_LeaderboardItem> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetWeeklyLeaderboardRequest
+ */
+export declare class GetWeeklyLeaderboardRequest extends Message<GetWeeklyLeaderboardRequest> {
+  constructor(data?: PartialMessage<GetWeeklyLeaderboardRequest>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetWeeklyLeaderboardRequest";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetWeeklyLeaderboardRequest;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetWeeklyLeaderboardRequest;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetWeeklyLeaderboardRequest;
+
+  static equals(a: GetWeeklyLeaderboardRequest | PlainMessage<GetWeeklyLeaderboardRequest> | undefined, b: GetWeeklyLeaderboardRequest | PlainMessage<GetWeeklyLeaderboardRequest> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetWeeklyLeaderboardResponse
+ */
+export declare class GetWeeklyLeaderboardResponse extends Message<GetWeeklyLeaderboardResponse> {
+  /**
+   * The last seven leaderboard (America/Los_Angeles) days as YYYY-MM-DD,
+   * oldest first. The last one is today.
+   *
+   * @generated from field: repeated string days = 1;
+   */
+  days: string[];
+
+  /**
+   * Most cards studied over the week first.
+   *
+   * @generated from field: repeated wordvault.GetWeeklyLeaderboardResponse.LeaderboardItem items = 2;
+   */
+  items: GetWeeklyLeaderboardResponse_LeaderboardItem[];
+
+  constructor(data?: PartialMessage<GetWeeklyLeaderboardResponse>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetWeeklyLeaderboardResponse";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetWeeklyLeaderboardResponse;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetWeeklyLeaderboardResponse;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetWeeklyLeaderboardResponse;
+
+  static equals(a: GetWeeklyLeaderboardResponse | PlainMessage<GetWeeklyLeaderboardResponse> | undefined, b: GetWeeklyLeaderboardResponse | PlainMessage<GetWeeklyLeaderboardResponse> | undefined): boolean;
+}
+
+/**
+ * @generated from message wordvault.GetWeeklyLeaderboardResponse.LeaderboardItem
+ */
+export declare class GetWeeklyLeaderboardResponse_LeaderboardItem extends Message<GetWeeklyLeaderboardResponse_LeaderboardItem> {
+  /**
+   * @generated from field: string user = 1;
+   */
+  user: string;
+
+  /**
+   * Cards studied on each of the days, in the same order.
+   *
+   * @generated from field: repeated int32 cards_studied_by_day = 2;
+   */
+  cardsStudiedByDay: number[];
+
+  /**
+   * Cards studied over the week.
+   *
+   * @generated from field: int32 cards_studied = 3;
+   */
+  cardsStudied: number;
+
+  constructor(data?: PartialMessage<GetWeeklyLeaderboardResponse_LeaderboardItem>);
+
+  static readonly runtime: typeof proto3;
+  static readonly typeName = "wordvault.GetWeeklyLeaderboardResponse.LeaderboardItem";
+  static readonly fields: FieldList;
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetWeeklyLeaderboardResponse_LeaderboardItem;
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetWeeklyLeaderboardResponse_LeaderboardItem;
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetWeeklyLeaderboardResponse_LeaderboardItem;
+
+  static equals(a: GetWeeklyLeaderboardResponse_LeaderboardItem | PlainMessage<GetWeeklyLeaderboardResponse_LeaderboardItem> | undefined, b: GetWeeklyLeaderboardResponse_LeaderboardItem | PlainMessage<GetWeeklyLeaderboardResponse_LeaderboardItem> | undefined): boolean;
 }
 
 /**

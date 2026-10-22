@@ -1,27 +1,59 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { AppContext } from "./app_context";
-import { GetDailyLeaderboardResponse_LeaderboardItem } from "./gen/rpc/wordvault/api_pb";
+import {
+  GetDailyLeaderboardResponse_LeaderboardItem,
+  GetWeeklyLeaderboardResponse,
+} from "./gen/rpc/wordvault/api_pb";
 import { notifications } from "@mantine/notifications";
-import { Stack, Table, Text } from "@mantine/core";
+import { SegmentedControl, Stack, Table, Text, Tooltip } from "@mantine/core";
+
+// Long usernames get cut off, with the full name in a tooltip.
+const MAX_USERNAME_LENGTH = 16;
+
+const Username: React.FC<{ username: string }> = ({ username }) => {
+  if (username.length <= MAX_USERNAME_LENGTH) {
+    return username;
+  }
+  return (
+    <Tooltip
+      label={username}
+      events={{ hover: true, focus: true, touch: true }}
+    >
+      <Text span inherit>
+        {username.slice(0, MAX_USERNAME_LENGTH - 1)}…
+      </Text>
+    </Tooltip>
+  );
+};
+
+// A YYYY-MM-DD leaderboard day as a short weekday, e.g. "Thu".
+const weekdayLabel = (day: string): string => {
+  const [y, m, d] = day.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    weekday: "short",
+  });
+};
 
 const getTimeUntilMidnightPacific = (): string => {
   const now = new Date();
-  const pacificTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
-  
+  const pacificTime = new Date(
+    now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }),
+  );
+
   const midnightPacific = new Date(pacificTime);
   midnightPacific.setHours(24, 0, 0, 0);
-  
+
   const timeDiff = midnightPacific.getTime() - pacificTime.getTime();
-  
+
   const hours = Math.floor(timeDiff / (1000 * 60 * 60));
   const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-  
+
   if (hours === 0) {
-    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    return `${minutes} minute${minutes !== 1 ? "s" : ""}`;
   } else if (minutes === 0) {
-    return `${hours} hour${hours !== 1 ? 's' : ''}`;
+    return `${hours} hour${hours !== 1 ? "s" : ""}`;
   } else {
-    return `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    return `${hours} hour${hours !== 1 ? "s" : ""} ${minutes} minute${minutes !== 1 ? "s" : ""}`;
   }
 };
 
@@ -30,17 +62,23 @@ const Leaderboard: React.FC = () => {
   const [leaderboard, setLeaderboard] = useState<
     GetDailyLeaderboardResponse_LeaderboardItem[]
   >([]);
-  const [timeUntilReset, setTimeUntilReset] = useState(getTimeUntilMidnightPacific());
+  const [weekly, setWeekly] = useState<GetWeeklyLeaderboardResponse>();
+  const [view, setView] = useState<"today" | "week">("today");
+  const [timeUntilReset, setTimeUntilReset] = useState(
+    getTimeUntilMidnightPacific(),
+  );
 
   const fetchLeaderboard = useCallback(async () => {
     if (!wordVaultClient) {
       return;
     }
     try {
-      const resp = await wordVaultClient.getDailyLeaderboard({
-        timezone: "America/Los_Angeles",
-      });
-      setLeaderboard(resp.items);
+      const [daily, weekly] = await Promise.all([
+        wordVaultClient.getDailyLeaderboard({}),
+        wordVaultClient.getWeeklyLeaderboard({}),
+      ]);
+      setLeaderboard(daily.items);
+      setWeekly(weekly);
     } catch (e) {
       notifications.show({
         color: "red",
@@ -78,6 +116,14 @@ const Leaderboard: React.FC = () => {
     ];
   }, [leaderboard]);
 
+  const weeklyTotalStats = useMemo(() => {
+    const items = weekly?.items ?? [];
+    return [
+      items.length,
+      items.reduce((total, user) => total + user.cardsStudied, 0),
+    ];
+  }, [weekly]);
+
   const randomSaying = useMemo(() => {
     const sayings = [
       "Knowledge is power, but spaced repetition is the fuel!",
@@ -106,27 +152,89 @@ const Leaderboard: React.FC = () => {
 
   return (
     <Stack gap="lg">
-      <Text c="dimmed">Next reset in {timeUntilReset} (midnight US/Pacific)</Text>
+      <SegmentedControl
+        maw={600}
+        value={view}
+        onChange={(v) => setView(v as "today" | "week")}
+        data={[
+          { label: "Today", value: "today" },
+          { label: "Last 7 days", value: "week" },
+        ]}
+      />
       <Text c="dimmed">
-        {totalStats[0]} users have studied {totalStats[1]} cards today.{" "}
-        {randomSaying}
+        Next reset in {timeUntilReset} (midnight US/Pacific)
       </Text>
-      <Table maw={600}>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Username</Table.Th>
-            <Table.Th>Cards studied today</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {data.map((datum) => (
-            <Table.Tr key={datum.username}>
-              <Table.Td>{datum.username}</Table.Td>
-              <Table.Td>{datum.studied}</Table.Td>
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
+      {view === "today" ? (
+        <>
+          <Text c="dimmed">
+            {totalStats[0]} users have studied {totalStats[1]} cards today.{" "}
+            {randomSaying}
+          </Text>
+          <Table maw={600}>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Username</Table.Th>
+                <Table.Th>Cards studied today</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {data.map((datum) => (
+                <Table.Tr key={datum.username}>
+                  <Table.Td>
+                    <Username username={datum.username} />
+                  </Table.Td>
+                  <Table.Td>{datum.studied}</Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </>
+      ) : (
+        <>
+          <Text c="dimmed">
+            {weeklyTotalStats[0]} users have studied {weeklyTotalStats[1]} cards
+            in the last 7 days. {randomSaying}
+          </Text>
+          <Table.ScrollContainer minWidth={600} maw={800}>
+            <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Username</Table.Th>
+                  {weekly?.days.map((day, i) => (
+                    <Table.Th key={day} ta="right">
+                      {i === weekly.days.length - 1
+                        ? "Today"
+                        : weekdayLabel(day)}
+                    </Table.Th>
+                  ))}
+                  <Table.Th ta="right">Total</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {weekly?.items.map((item) => (
+                  <Table.Tr key={item.user}>
+                    <Table.Td>
+                      <Username username={item.user} />
+                    </Table.Td>
+                    {item.cardsStudiedByDay.map((n, i) => (
+                      <Table.Td
+                        key={weekly.days[i]}
+                        ta="right"
+                        c={n ? undefined : "dimmed"}
+                      >
+                        {n}
+                      </Table.Td>
+                    ))}
+                    <Table.Td ta="right" fw={700}>
+                      {item.cardsStudied}
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </Table.ScrollContainer>
+        </>
+      )}
     </Stack>
   );
 };

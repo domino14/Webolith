@@ -164,7 +164,12 @@ const TiledText: React.FC<TiledTextProps> = ({
       <Droppable droppableId="dnd-list" direction="horizontal">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            <Group gap={rem(2)} wrap="wrap">
+            <Group
+              gap={rem(2)}
+              wrap="wrap"
+              className={classes.tiles}
+              style={{ "--num-tiles": letters.length } as React.CSSProperties}
+            >
               {items}
               {provided.placeholder}
             </Group>
@@ -455,7 +460,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
       shadow="sm"
       padding="lg"
       radius="md"
-      m="md"
+      my="md"
       withBorder
       style={{
         maxWidth: 600,
@@ -465,7 +470,17 @@ const Flashcard: React.FC<FlashcardProps> = ({
     >
       {!flipped ? (
         // Front side
-        <Stack align="center" gap="md">
+        <Stack
+          align="center"
+          gap="md"
+          className={classes.tileContainer}
+          // The shuffle and reset buttons sit beside the tiles.
+          style={
+            smallScreen
+              ? undefined
+              : ({ "--tile-reserve": "8rem" } as React.CSSProperties)
+          }
+        >
           <Group gap="xs">
             {!smallScreen && shuffleButton}
             <QuestionDisplay
@@ -508,7 +523,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         </Stack>
       ) : (
         // Back side
-        <Stack align="center" gap="sm">
+        <Stack align="center" gap="sm" className={classes.tileContainer}>
           <Flex mb="md">
             <QuestionDisplay
               onMoveLetter={onMoveLetter}
