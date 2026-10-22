@@ -23,7 +23,7 @@ export const LeechBadge: React.FC<{ lapses: number }> = ({ lapses }) => {
         multiline
         w={300}
         withArrow
-        label={`You've forgotten this card ${lapses} times. It might help to study it differently, e.g. with a mnemonic, or to reset it.`}
+        label={`You've forgotten this card ${lapses} times. It might help to study it differently, e.g. with a mnemonic.`}
       >
         <Badge color="grape" variant="light">
           Leech
@@ -52,8 +52,8 @@ export const LeechBadge: React.FC<{ lapses: number }> = ({ lapses }) => {
           </Text>
           <Text size="sm">
             Leeches take up a lot of review time without sticking. Reviewing
-            them the same way again rarely helps; try a mnemonic, learning the
-            words with their hooks or anagrams, or resetting the card.
+            them the same way again rarely helps; try a mnemonic, or learning
+            the words along with their hooks and anagrams.
           </Text>
         </Popover.Dropdown>
       </Popover>
