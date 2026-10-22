@@ -125,6 +125,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
         score,
         alphagram: currentCard.alphagram?.alphagram ?? "",
         nextScheduled: scoreResponse.nextScheduled!,
+        timesMissed: scoreResponse.timesMissed,
         cardRepr: JSON.parse(
           new TextDecoder().decode(scoreResponse.cardJsonRepr),
         ),
@@ -169,6 +170,7 @@ const FSRSCards: React.FC<FSRSCardsProps> = ({
         ...previousCard,
         score: score,
         nextScheduled: scoreResponse.nextScheduled!,
+        timesMissed: scoreResponse.timesMissed,
         cardRepr: JSON.parse(
           new TextDecoder().decode(scoreResponse.cardJsonRepr),
         ),

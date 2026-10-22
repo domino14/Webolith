@@ -383,6 +383,14 @@ export declare class ScoreCardResponse extends Message<ScoreCardResponse> {
    */
   cardJsonRepr: Uint8Array;
 
+  /**
+   * How many times the card has been rated AGAIN, including this score. The
+   * FSRS card's Lapses only counts misses of cards in the Review state.
+   *
+   * @generated from field: uint32 times_missed = 3;
+   */
+  timesMissed: number;
+
   constructor(data?: PartialMessage<ScoreCardResponse>);
 
   static readonly runtime: typeof proto3;

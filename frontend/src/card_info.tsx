@@ -72,6 +72,11 @@ export const CardInfo: React.FC<CardInfoProps> = ({
 
   const dueDate = dstr(fsrsCard.Due, true);
   const lastReview = dstr(fsrsCard.LastReview, true);
+  // Every Again rating. FSRS's Lapses only counts misses of cards in the
+  // Review state, not of new cards or during (re)learning steps.
+  const timesMissed = reviewLog.filter(
+    (rl) => !rl.ImportLog && rl.Rating === Score.AGAIN,
+  ).length;
 
   const [fsrsVersion] = useFsrsVersion();
 
@@ -142,9 +147,9 @@ export const CardInfo: React.FC<CardInfoProps> = ({
             </List.Item>
             <List.Item>
               <Text c={isDark ? theme.colors.gray[4] : theme.colors.gray[9]}>
-                Number of times forgotten:{" "}
+                Number of times missed:{" "}
                 <Text component="span" fw={500}>
-                  {fsrsCard.Lapses}
+                  {timesMissed}
                 </Text>
               </Text>
             </List.Item>
