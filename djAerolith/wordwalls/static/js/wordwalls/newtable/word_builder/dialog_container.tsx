@@ -104,8 +104,10 @@ function WordBuilderDialogContainer({
       <button
         type="button"
         className="btn btn-primary"
-        disabled={disabled}
+        style={{ marginTop: '0.75em' }}
         onClick={submit}
+        data-bs-dismiss="modal"
+        disabled={disabled}
       >
         Play
       </button>
