@@ -7,6 +7,9 @@ export interface HistoryEntry {
   score: Score;
   alphagram: string;
   nextScheduled: Timestamp;
+  // Every miss of the card, including this one; the card's Lapses only
+  // counts misses of cards in review.
+  timesMissed: number;
   cardRepr: { [key: string]: string };
   previousCardRepr: { [key: string]: string };
 }
@@ -67,7 +70,7 @@ const PreviousCard: React.FC<PreviousCardProps> = ({
           <Text size="sm" c="dimmed">
             Times Seen: {entry.cardRepr["Reps"]}
           </Text>
-          <Text>Times Forgotten: {entry.cardRepr["Lapses"]}</Text>
+          <Text>Times Missed: {entry.timesMissed}</Text>
         </Stack>
         <Popover
           trapFocus
