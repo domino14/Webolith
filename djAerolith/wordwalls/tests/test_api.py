@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import date
+from unittest import mock
 
 from django.test import SimpleTestCase, TestCase, Client, RequestFactory
 from django.db import connection
@@ -194,6 +195,73 @@ class WordwallsNewChallengeTest(TestCase):
         # Check that old word list got deleted.
         with self.assertRaises(WordwallsGameModel.DoesNotExist):
             WordwallsGameModel.objects.get(pk=old_pk)
+
+
+class WordBuilderTest(TestCase):
+    """Test loading on-demand word builder puzzles."""
+
+    fixtures = [
+        "test/lexica.yaml",
+        "test/users.json",
+        "test/profiles.json",
+    ]
+
+    USER = "cesar"
+    PASSWORD = "foobar"
+
+    def setUp(self):
+        self.client = Client()
+        result = self.client.login(username=self.USER, password=self.PASSWORD)
+        self.assertTrue(result)
+
+    def load(self, **kwargs):
+        body = {
+            "lexicon": 9,
+            "tablenum": 0,
+            "desiredTime": 4,
+            "minLength": 6,
+            "maxLength": 9,
+            "numQuestions": 3,
+        }
+        body.update(kwargs)
+        return self.client.post(
+            "/wordwalls/api/load_word_builder/",
+            data=json.dumps(body),
+            content_type="application/json",
+        )
+
+    @mock.patch("wordwalls.challenges.gen_build_challenge")
+    def test_load_word_builder(self, gen_build_challenge):
+        gen_build_challenge.return_value = [
+            {"q": "AEINRSTT", "a": ["NITRATES", "STRAINER", "TRAINS"]}
+        ]
+        result = self.load()
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(gen_build_challenge.call_count, 3)
+        args = gen_build_challenge.call_args[0]
+        self.assertEqual(args[:3], (6, 9, "NWL18"))
+
+        tablenum = json.loads(result.content)["tablenum"]
+        game = WordwallsGame()
+        wgm = game.get_wgm(tablenum, lock=False)
+        self.assertEqual(wgm.word_list.category, WordList.CATEGORY_BUILD)
+        self.assertEqual(wgm.word_list.numAlphagrams, 3)
+        state = json.loads(wgm.currentGameState)
+        self.assertEqual(state["questionsToPull"], 1)
+        self.assertEqual(state["timerSecs"], 240)
+
+        quiz = game.start_quiz(tablenum, wgm.host)
+        self.assertEqual(len(quiz["questions"]), 1)
+        self.assertEqual(quiz["gameType"], "regular_build")
+
+    @mock.patch("wordwalls.challenges.gen_build_challenge")
+    def test_bad_lengths(self, gen_build_challenge):
+        for lmin, lmax in ((5, 9), (6, 10), (3, 5), (8, 7)):
+            result = self.load(minLength=lmin, maxLength=lmax)
+            self.assertEqual(result.status_code, 400)
+        result = self.load(numQuestions=26)
+        self.assertEqual(result.status_code, 400)
+        gen_build_challenge.assert_not_called()
 
 
 class WordwallsNewSearchTest(TestCase):

@@ -84,6 +84,7 @@ interface SidebarProps {
   questionsPerRound: number;
   setQuestionsPerRound: (questions: number) => void;
   disabledInputs: boolean;
+  disabledQuestionsInput?: boolean;
   availableLexica: Lexicon[];
   showPlaySettings: boolean;
 }
@@ -101,6 +102,7 @@ function Sidebar({
   questionsPerRound,
   setQuestionsPerRound,
   disabledInputs,
+  disabledQuestionsInput = false,
   availableLexica,
   showPlaySettings,
 }: SidebarProps) {
@@ -154,7 +156,7 @@ function Sidebar({
                 label="Questions Per Round"
                 value={String(questionsPerRound)}
                 onChange={handleQuestionsChange}
-                disabled={disabledInputs}
+                disabled={disabledInputs || disabledQuestionsInput}
               />
             </form>
           </div>

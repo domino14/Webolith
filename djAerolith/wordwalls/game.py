@@ -41,7 +41,11 @@ from lib.wdb_interface.wdb_helper import (
 )
 from lib.wdb_interface.word_searches import temporary_list_name
 import rpc.wordsearcher.searcher_pb2 as pb
-from wordwalls.challenges import generate_dc_questions, toughies_challenge_date
+from wordwalls.challenges import (
+    generate_dc_questions,
+    generate_word_builder_challenge,
+    toughies_challenge_date,
+)
 from wordwalls.challenge_scheduler import plan_scheduled_challenge
 from base.models import WordList
 from tablegame.models import GenericTableGameModel
@@ -145,6 +149,9 @@ class WordwallsGame(object):
             state[param] = state_kwargs[param]
         if state["questionsToPull"] is None:
             state["questionsToPull"] = settings.WORDWALLS_QUESTIONS_PER_ROUND
+        if word_list.category == WordList.CATEGORY_BUILD:
+            # The build board only shows one rack at a time.
+            state["questionsToPull"] = 1
 
         if multiplayer:
             player_type = GenericTableGameModel.MULTIPLAYER_GAME
@@ -419,6 +426,31 @@ class WordwallsGame(object):
             ).format(dt),
             questionsToPull=questions_per_round,
             **state_kwargs,
+        )
+        return wgm.pk
+
+    def initialize_word_builder(
+        self, lex, user, lmin, lmax, num_questions, secs, use_table, multiplayer
+    ):
+        """
+        Generate num_questions word builder racks of length lmax, with
+        answers of length lmin through lmax. Each round is one rack.
+        """
+        qs = generate_word_builder_challenge(lex, lmin, lmax, num_questions)
+        if qs.size() == 0:
+            raise GameInitException(
+                "Unable to generate word builder puzzles. Please try again."
+            )
+        wl = self.initialize_word_list(qs, lex, user, WordList.CATEGORY_BUILD)
+        dt = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        wgm = self.create_or_update_game_instance(
+            user,
+            lex,
+            wl,
+            use_table,
+            multiplayer,
+            timerSecs=secs,
+            temp_list_name="Word Builder ({}-{}) on {}".format(lmin, lmax, dt),
         )
         return wgm.pk
 
