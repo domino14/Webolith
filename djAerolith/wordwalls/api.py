@@ -32,7 +32,10 @@ from wordwalls.views import (
     get_leaderboard_data,
     get_leaderboard_data_for_dc_instance,
 )
-from wordwalls.challenges import toughies_challenge_date
+from wordwalls.challenges import (
+    toughies_challenge_date,
+    word_builder_params_valid,
+)
 from wordwalls.game import WordwallsGame, GameInitException
 from wordwalls.stats_service import StatsService
 import rpc.wordsearcher.searcher_pb2 as pb
@@ -456,6 +459,49 @@ def load_raw_questions(request, parsed_req_body):
             use_table=parsed_req_body["tablenum"],
             multiplayer=parsed_req_body["multiplayer"],
             wordvault_review=parsed_req_body["wordvault_review"],
+        )
+    except GameInitException as e:
+        return bad_request(str(e))
+    return table_response(tablenum)
+
+
+MAX_WORD_BUILDER_QUESTIONS = 25
+
+
+@login_required
+@require_POST
+@load_new_words
+def load_word_builder(request, parsed_req_body):
+    """
+    Generate a list of word builder puzzles, the same kind as the daily
+    Word Builder challenges, and load them into this table.
+    """
+    body = json.loads(request.body)
+    try:
+        lmin = int(body["minLength"])
+        lmax = int(body["maxLength"])
+        num_questions = int(body["numQuestions"])
+    except (KeyError, TypeError, ValueError):
+        return bad_request("Must provide minLength, maxLength and numQuestions.")
+    if not word_builder_params_valid(lmin, lmax):
+        return bad_request(
+            "Rack length must be 6 to 9 letters, with words up to 3 letters "
+            "shorter."
+        )
+    if num_questions < 1 or num_questions > MAX_WORD_BUILDER_QUESTIONS:
+        return bad_request(
+            f"Number of questions must be between 1 and {MAX_WORD_BUILDER_QUESTIONS}."
+        )
+    try:
+        tablenum = WordwallsGame().initialize_word_builder(
+            parsed_req_body["lexicon"],
+            request.user,
+            lmin,
+            lmax,
+            num_questions,
+            parsed_req_body["quiz_time_secs"],
+            use_table=parsed_req_body["tablenum"],
+            multiplayer=parsed_req_body["multiplayer"],
         )
     except GameInitException as e:
         return bad_request(str(e))

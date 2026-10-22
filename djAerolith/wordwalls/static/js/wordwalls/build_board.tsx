@@ -13,7 +13,7 @@ interface SolutionPanelProps {
 }
 
 function SolutionPanel({ wordLength, totalCount, solvedWords }: SolutionPanelProps) {
-  let words: React.ReactNode = solvedWords.sort().map((word) => (
+  let words: React.ReactNode = [...solvedWords].sort().map((word) => (
     <span key={word}>
       {word}
       {' '}
@@ -71,8 +71,6 @@ function BuildBoard({
       return null;
     }
 
-    // XXX: This is slowish. Maybe it's still fast enough for all intents
-    // and purposes.
     // Render the user's answers.
     // An array of 15 elements, one for each possible word length.
     const solsarr: string[][] = [];
@@ -110,25 +108,12 @@ function BuildBoard({
     const answerElements: React.ReactNode[] = [];
     solscounts.forEach((ct, idx) => {
       if (ct !== 0) {
-        const solvedWordsForLength: string[] = [];
-        answerers.forEach((answered) => {
-          answered.forEach((word) => {
-            // XXX TODO XXX
-            // This is hugely inefficient - a triple nested loop in a render
-            // call! This needs to be reworked
-            // (Luckily, we are still dealing with relatively small numbers here...)
-            const wordStr = word.get('w');
-            if (wordStr && wordStr.length === idx + 1) {
-              solvedWordsForLength.push(wordStr);
-            }
-          });
-        });
         answerElements.push(
           <SolutionPanel
             key={`length${idx + 1}`}
             wordLength={idx + 1}
             totalCount={ct}
-            solvedWords={solvedWordsForLength}
+            solvedWords={solsarr[idx]}
           />,
         );
       }

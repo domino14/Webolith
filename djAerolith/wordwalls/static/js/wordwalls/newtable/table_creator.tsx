@@ -20,6 +20,7 @@ import ChallengeDialogContainer, {
   ChallengeDialogContainerRef,
 } from './challenges/dialog_container';
 import BlankSearchDialogContainer from './blanks/dialog_container';
+import WordBuilderDialogContainer from './word_builder/dialog_container';
 import WordSearchDialogContainer from './search/dialog_container';
 import SavedListDialog, { PlayOptions } from './saved_list_dialog';
 import AerolithListDialog from './aerolith_list_dialog';
@@ -36,6 +37,7 @@ const TAB_LEADERBOARDS = 'Leaderboards';
 const LIST_TYPE_CHALLENGE = 'Single-Player Challenges';
 const LIST_TYPE_WORDSEARCH = 'Word Search';
 const LIST_TYPE_BLANKS = 'Blanks';
+const LIST_TYPE_WORD_BUILDER = 'Word Builder';
 const LIST_TYPE_AEROLITH_LISTS = 'Aerolith Lists';
 const LIST_TYPE_SAVED_LIST = 'My Saved Lists';
 const LIST_TYPE_WORDVAULT = 'WordVault';
@@ -762,6 +764,21 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
             />
           );
           break;
+        case LIST_TYPE_WORD_BUILDER:
+          selectedQuizSearchDialog = (
+            <WordBuilderDialogContainer
+              tablenum={props.tablenum}
+              onLoadNewList={props.onLoadNewList}
+              showSpinner={showSpinner}
+              hideSpinner={hideSpinner}
+              lexicon={currentLexicon}
+              desiredTime={parseFloat(desiredTime)}
+              notifyError={notifyError}
+              api={api}
+              disabled={props.gameGoing}
+            />
+          );
+          break;
 
         case LIST_TYPE_SAVED_LIST:
           selectedQuizSearchDialog = (
@@ -817,13 +834,17 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
               LIST_TYPE_CHALLENGE,
               LIST_TYPE_WORDSEARCH,
               LIST_TYPE_BLANKS,
+              LIST_TYPE_WORD_BUILDER,
               LIST_TYPE_AEROLITH_LISTS,
               LIST_TYPE_SAVED_LIST,
               LIST_TYPE_WORDVAULT,
             ]}
             activePill={activeListType}
             onPillClick={handlePillClick}
-            badges={{ [LIST_TYPE_WORDVAULT]: 'New' }}
+            badges={{
+              [LIST_TYPE_WORDVAULT]: 'New',
+              [LIST_TYPE_WORD_BUILDER]: 'New',
+            }}
           />
           {selectedQuizSearchDialog}
         </div>
@@ -873,6 +894,10 @@ const TableCreator = forwardRef<TableCreatorRef, TableCreatorProps>(
                 disabledInputs={
                   activeListType === LIST_TYPE_CHALLENGE ||
                   activeListType === LIST_TYPE_WORDVAULT
+                }
+                // Word builder rounds are always one rack.
+                disabledQuestionsInput={
+                  activeListType === LIST_TYPE_WORD_BUILDER
                 }
                 showPlaySettings={activeTab === TAB_PLAY}
               />

@@ -127,6 +127,8 @@ def generate_dc_questions(challenge_name, lex, challenge_date):
     if m:
         lmin = int(m.group("lmin"))
         lmax = int(m.group("lmax"))
+        if not word_builder_params_valid(lmin, lmax):
+            return None
         questions = generate_word_builder_challenge(lex, lmin, lmax)
         return questions, challenge_name.timeSecs
 
@@ -164,49 +166,64 @@ def generate_blank_bingos_challenge(lex):
     return bingos
 
 
-def generate_word_builder_challenge(lex, lmin, lmax):
+# Parameters for word builder puzzles, keyed by (lmax, lmin): the mean and
+# standard deviation of the min and max number of solutions of length lmin
+# or greater, and the chance the full rack must anagram to a word. The
+# daily challenges are 6-3, 7-4 and 8-5; the rest are only played on
+# demand. Solution counts were picked from the distribution of subanagram
+# counts of random NWL23 racks.
+WORD_BUILDER_PARAMS = {
+    (6, 3): (10, 2, 30, 5, 0.8),
+    (6, 4): (6, 2, 20, 4, 0.8),
+    (6, 5): (2, 1, 8, 2, 0.8),
+    (6, 6): (1, 0, 3, 1, 1.0),
+    (7, 4): (15, 3, 50, 6, 0.5),
+    (7, 5): (6, 2, 20, 4, 0.5),
+    (7, 6): (2, 1, 8, 2, 0.5),
+    (7, 7): (1, 0, 3, 1, 1.0),
+    (8, 5): (20, 4, 75, 8, 0.3),
+    (8, 6): (6, 2, 25, 4, 0.3),
+    (8, 7): (2, 1, 8, 2, 0.3),
+    (8, 8): (1, 0, 3, 1, 1.0),
+    (9, 6): (15, 3, 60, 8, 0.2),
+    (9, 7): (5, 2, 25, 4, 0.2),
+    (9, 8): (2, 1, 8, 2, 0.2),
+    (9, 9): (1, 0, 3, 1, 1.0),
+}
+
+
+def word_builder_params_valid(lmin, lmax):
+    return (lmax, lmin) in WORD_BUILDER_PARAMS
+
+
+def generate_word_builder_challenge(lex, lmin, lmax, num_questions=1):
     """Contact builder server and generate builder challenges."""
-    # Require the lmax rack to have a word in it some percentage of the time.
-    min_sols_mu = 0
-    min_sols_sigma = 0
-    max_sols_mu = 0
-    max_sols_sigma = 0
-
-    if lmax == 6:
-        min_sols_mu, min_sols_sigma = 10, 2
-        max_sols_mu, max_sols_sigma = 30, 5
-        require_word = random.randint(1, 10) > 2  # 80%
-    elif lmax == 7:
-        min_sols_mu, min_sols_sigma = 15, 3
-        max_sols_mu, max_sols_sigma = 50, 6
-        require_word = random.randint(1, 10) > 5  # 50%
-    elif lmax == 8:
-        min_sols_mu, min_sols_sigma = 20, 4
-        max_sols_mu, max_sols_sigma = 75, 8
-        require_word = random.randint(1, 10) > 7  # 30%
-
-    min_sols = max(int(random.gauss(min_sols_mu, min_sols_sigma)), 1)
-    max_sols = min(int(random.gauss(max_sols_mu, max_sols_sigma)), 100)
-    min_sols, max_sols = min(min_sols, max_sols), max(min_sols, max_sols)
-    logger.info(
-        "min_sols: %s, max_sols: %s, require_word: %s",
-        min_sols,
-        max_sols,
-        require_word,
+    min_mu, min_sigma, max_mu, max_sigma, require_word_chance = (
+        WORD_BUILDER_PARAMS[(lmax, lmin)]
     )
     q_struct = Questions()
-
-    try:
-        questions = gen_build_challenge(
-            lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols
-        )
-    except WDBError:
-        logger.exception("[event=wdberror]")
-        return q_struct
-    ret_question = Question(Alphagram(questions[0]["q"]), [])
-    ret_question.set_answers_from_word_list(questions[0]["a"])
-    q_struct.append(ret_question)
     q_struct.set_build_mode()
+    for _ in range(num_questions):
+        min_sols = max(int(random.gauss(min_mu, min_sigma)), 1)
+        max_sols = min(int(random.gauss(max_mu, max_sigma)), 100)
+        min_sols, max_sols = min(min_sols, max_sols), max(min_sols, max_sols)
+        require_word = random.random() < require_word_chance
+        logger.info(
+            "min_sols: %s, max_sols: %s, require_word: %s",
+            min_sols,
+            max_sols,
+            require_word,
+        )
+        try:
+            questions = gen_build_challenge(
+                lmin, lmax, lex.lexiconName, require_word, min_sols, max_sols
+            )
+        except WDBError:
+            logger.exception("[event=wdberror]")
+            return q_struct
+        ret_question = Question(Alphagram(questions[0]["q"]), [])
+        ret_question.set_answers_from_word_list(questions[0]["a"])
+        q_struct.append(ret_question)
     return q_struct
 
 
