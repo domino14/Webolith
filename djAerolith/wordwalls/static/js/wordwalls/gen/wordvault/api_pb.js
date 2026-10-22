@@ -524,6 +524,8 @@ export const GetDailyProgressByDeckResponse = /*@__PURE__*/ proto3.makeMessageTy
 );
 
 /**
+ * Leaderboard days are America/Los_Angeles days, whatever the timezone.
+ *
  * @generated from message wordvault.GetDailyLeaderboardRequest
  */
 export const GetDailyLeaderboardRequest = /*@__PURE__*/ proto3.makeMessageType(
@@ -553,6 +555,38 @@ export const GetDailyLeaderboardResponse_LeaderboardItem = /*@__PURE__*/ proto3.
     { no: 2, name: "cards_studied", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ],
   {localName: "GetDailyLeaderboardResponse_LeaderboardItem"},
+);
+
+/**
+ * @generated from message wordvault.GetWeeklyLeaderboardRequest
+ */
+export const GetWeeklyLeaderboardRequest = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetWeeklyLeaderboardRequest",
+  [],
+);
+
+/**
+ * @generated from message wordvault.GetWeeklyLeaderboardResponse
+ */
+export const GetWeeklyLeaderboardResponse = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetWeeklyLeaderboardResponse",
+  () => [
+    { no: 1, name: "days", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "items", kind: "message", T: GetWeeklyLeaderboardResponse_LeaderboardItem, repeated: true },
+  ],
+);
+
+/**
+ * @generated from message wordvault.GetWeeklyLeaderboardResponse.LeaderboardItem
+ */
+export const GetWeeklyLeaderboardResponse_LeaderboardItem = /*@__PURE__*/ proto3.makeMessageType(
+  "wordvault.GetWeeklyLeaderboardResponse.LeaderboardItem",
+  () => [
+    { no: 1, name: "user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "cards_studied_by_day", kind: "scalar", T: 5 /* ScalarType.INT32 */, repeated: true },
+    { no: 3, name: "cards_studied", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ],
+  {localName: "GetWeeklyLeaderboardResponse_LeaderboardItem"},
 );
 
 /**

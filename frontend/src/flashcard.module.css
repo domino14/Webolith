@@ -19,3 +19,35 @@
     height: calc(2.5rem * var(--mantine-scale));
   }
 }
+
+/* Tiles shrink to fit on one row rather than wrap, e.g. 9 letters on a
+   phone. --tile-fit is the widest each tile can be, out of the card's width
+   less --tile-reserve (for anything beside the tiles) and the 2px gaps. The
+   letters keep their size (32px in a 35.2px tile) unless the tiles shrink. */
+@supports (width: 1cqi) {
+  .tileContainer {
+    container-type: inline-size;
+  }
+
+  .tiles {
+    --tile-fit: calc(
+      (100cqi - var(--tile-reserve, 0px)) / var(--num-tiles) - 2px
+    );
+  }
+
+  .responsiveTileText {
+    font-size: min(var(--mantine-font-size-xxxl), calc(var(--tile-fit) * 0.91));
+  }
+
+  .responsiveTilePaper {
+    width: min(calc(2.2rem * var(--mantine-scale)), var(--tile-fit));
+    height: min(calc(2.2rem * var(--mantine-scale)), var(--tile-fit));
+  }
+
+  @media (min-width: 48em) {
+    .responsiveTilePaper {
+      width: min(calc(2.5rem * var(--mantine-scale)), var(--tile-fit));
+      height: min(calc(2.5rem * var(--mantine-scale)), var(--tile-fit));
+    }
+  }
+}
