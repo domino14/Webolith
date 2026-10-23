@@ -626,7 +626,11 @@ const EditStudyPlan = () => {
               miw={300}
               autoFocus
             />
-            <Button variant="subtle" onClick={() => setNewDeckName(null)}>
+            <Button
+              variant="subtle"
+              size="md"
+              onClick={() => setNewDeckName(null)}
+            >
               {decksById.size > 0
                 ? "Use an existing deck"
                 : "Use my default deck"}
@@ -647,6 +651,7 @@ const EditStudyPlan = () => {
             )}
             <Button
               variant="default"
+              size="md"
               leftSection={<IconPlus size={16} />}
               onClick={() => setNewDeckName("")}
             >
