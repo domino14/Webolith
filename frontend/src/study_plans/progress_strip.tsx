@@ -43,7 +43,7 @@ const blockColor = (b: StudyPlanBlock) => {
 type Props = {
   blocks: StudyPlanBlock[];
   descending: boolean;
-  // What the blocks are ranges of, e.g. "Probability".
+  // What the blocks are ranges of, e.g. "Probability rank".
   fieldName: string;
   // The sort value of the next batch's first card, to mark its block.
   nextValue?: number;

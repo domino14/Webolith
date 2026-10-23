@@ -23,6 +23,7 @@ import {
   IconArrowUp,
   IconCopy,
   IconInfoCircle,
+  IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
 import { useContext, useEffect, useMemo, useState } from "react";
@@ -142,8 +143,12 @@ const EditStudyPlan = () => {
   const { id } = useParams();
   const isNew = id === undefined;
   const navigate = useNavigate();
-  const { wordVaultClient, lexicon: currentLexicon, decksById } =
-    useContext(AppContext);
+  const {
+    wordVaultClient,
+    lexicon: currentLexicon,
+    decksById,
+    addDeck,
+  } = useContext(AppContext);
 
   const [loaded, setLoaded] = useState<StudyPlan | null>();
   const [name, setName] = useState("");
@@ -154,6 +159,9 @@ const EditStudyPlan = () => {
   );
   const [batchSize, setBatchSize] = useState<number | string>(500);
   const [deckId, setDeckId] = useState(0n);
+  // The name of a deck to create when the plan is saved, or null to use
+  // deckId.
+  const [newDeckName, setNewDeckName] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleteOpened, deleteModal] = useDisclosure();
 
@@ -193,6 +201,13 @@ const EditStudyPlan = () => {
       }),
     [loaded, lexicon, name, deckId, stages, batchUnit, batchSize]
   );
+
+  const trimmedDeckName = newDeckName?.trim() ?? "";
+  const deckNameTaken = [...decksById.values()].some(
+    (d) => d.name.toLowerCase() === trimmedDeckName.toLowerCase()
+  );
+  const newDeckInvalid =
+    newDeckName !== null && (!trimmedDeckName || deckNameTaken);
 
   // Preview the plan against the vault as it's edited.
   const [debouncedPlan] = useDebouncedValue(plan, 600);
@@ -250,11 +265,25 @@ const EditStudyPlan = () => {
     }
     setSaving(true);
     try {
+      let toSave = plan;
+      if (newDeckName !== null) {
+        const resp = await wordVaultClient.addDeck({
+          name: trimmedDeckName,
+          lexicon,
+        });
+        if (resp.deck) {
+          addDeck(resp.deck);
+          // The deck exists now, so a retry after a failed save reuses it.
+          setDeckId(resp.deck.id);
+          setNewDeckName(null);
+          toSave = new StudyPlan({ ...plan, deckId: resp.deck.id });
+        }
+      }
       if (isNew) {
-        const resp = await wordVaultClient.addStudyPlan({ plan });
+        const resp = await wordVaultClient.addStudyPlan({ plan: toSave });
         navigate(`/study-plans/${resp.plan?.id}`);
       } else {
-        await wordVaultClient.editStudyPlan({ plan });
+        await wordVaultClient.editStudyPlan({ plan: toSave });
         navigate(`/study-plans/${plan.id}`);
       }
     } catch (e) {
@@ -571,7 +600,7 @@ const EditStudyPlan = () => {
         />
         <Text size="sm" c="dimmed" maw={640}>
           {isWindow
-            ? `Each "Add next batch" adds every missing alphagram in one block of the current stage's order (probability or playability): 1–${fmt(
+            ? `Each "Add next batch" adds every missing alphagram in one block of the current stage's probability or playability ranks: 1–${fmt(
                 size
               )}, then ${fmt(size + 1)}–${fmt(
                 2 * size
@@ -584,16 +613,56 @@ const EditStudyPlan = () => {
 
       <Stack gap="sm">
         <Title order={3}>Deck</Title>
-        {decksById.size > 0 ? (
-          <DeckSelector
-            label="New cards go to"
-            value={{ deckId }}
-            onSelect={(v) => setDeckId("deckId" in v ? v.deckId : 0n)}
-            size="md"
-            minWidth={300}
-          />
+        {newDeckName !== null ? (
+          <Group align="flex-end">
+            <TextInput
+              label="New cards go to a new deck named"
+              value={newDeckName}
+              onChange={(e) => setNewDeckName(e.currentTarget.value)}
+              error={deckNameTaken && "You already have a deck with this name"}
+              placeholder="Deck name"
+              size="md"
+              maxLength={100}
+              miw={300}
+              autoFocus
+            />
+            <Button
+              variant="subtle"
+              size="md"
+              onClick={() => setNewDeckName(null)}
+            >
+              {decksById.size > 0
+                ? "Use an existing deck"
+                : "Use my default deck"}
+            </Button>
+          </Group>
         ) : (
-          <Text>New cards go to your default deck.</Text>
+          <Group align="flex-end">
+            {decksById.size > 0 ? (
+              <DeckSelector
+                label="New cards go to"
+                value={{ deckId }}
+                onSelect={(v) => setDeckId("deckId" in v ? v.deckId : 0n)}
+                size="md"
+                minWidth={300}
+              />
+            ) : (
+              <Text>New cards go to your default deck.</Text>
+            )}
+            <Button
+              variant="default"
+              size="md"
+              leftSection={<IconPlus size={16} />}
+              onClick={() => setNewDeckName("")}
+            >
+              New deck
+            </Button>
+          </Group>
+        )}
+        {newDeckName !== null && (
+          <Text size="sm" c="dimmed">
+            The deck is created when you save the plan.
+          </Text>
         )}
       </Stack>
 
@@ -612,14 +681,16 @@ const EditStudyPlan = () => {
               Nothing is copied or moved; progress is read from your vault
               every time.
             </Text>
-            {preview.deckCounts && preview.deckCounts.cardsInDeck > 0 && (
-              <Text size="sm">
-                {deckName(deckId, decksById)} has{" "}
-                {fmt(preview.deckCounts.cardsInDeck)} cards;{" "}
-                {fmt(preview.deckCounts.cardsInDeckInPlan)} of them are in this
-                plan.
-              </Text>
-            )}
+            {newDeckName === null &&
+              preview.deckCounts &&
+              preview.deckCounts.cardsInDeck > 0 && (
+                <Text size="sm">
+                  {deckName(deckId, decksById)} has{" "}
+                  {fmt(preview.deckCounts.cardsInDeck)} cards;{" "}
+                  {fmt(preview.deckCounts.cardsInDeckInPlan)} of them are in
+                  this plan.
+                </Text>
+              )}
             <Text size="sm">
               {preview.nextBatch ? (
                 <>
@@ -654,7 +725,11 @@ const EditStudyPlan = () => {
           >
             Cancel
           </Button>
-          <Button onClick={save} loading={saving} disabled={!name.trim()}>
+          <Button
+            onClick={save}
+            loading={saving}
+            disabled={!name.trim() || newDeckInvalid}
+          >
             Save plan
           </Button>
         </Group>
