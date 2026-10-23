@@ -13,7 +13,7 @@ export default defineConfig({
         name: "Aerolith WordVault",
         icons: [
           {
-            src: "manifest-icon-192.maskable.png",
+            src: "manifest-icon-192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
@@ -25,7 +25,7 @@ export default defineConfig({
             purpose: "maskable",
           },
           {
-            src: "manifest-icon-512.maskable.png",
+            src: "manifest-icon-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
