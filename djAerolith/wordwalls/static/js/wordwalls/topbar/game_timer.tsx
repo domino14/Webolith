@@ -123,10 +123,12 @@ function GameTimer({
     ? 'badge bg-warning text-dark'
     : 'badge bg-info';
 
+  // Tabular digits keep the badge one width as it counts down, so the
+  // buttons next to it don't shift.
   return (
     <span
       className={cn}
-      style={{ fontSize: '0.875rem', lineHeight: '1.5' }}
+      style={{ fontSize: '0.875rem', lineHeight: '1.5', fontVariantNumeric: 'tabular-nums' }}
     >
       {getFormattedTime(timeRemaining)}
     </span>
