@@ -14,7 +14,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import wordvault from "./assets/wordvault-sm.png";
+import wordvault from "./assets/wordvault-icon.svg";
 import { Text } from "@mantine/core";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "./app_context";
@@ -119,7 +119,7 @@ function App() {
               hiddenFrom="sm"
               size="sm"
             />
-            <img src={wordvault} width={48} />
+            <img src={wordvault} width={40} alt="" />
             <Text size="xl">Aerolith WordVault</Text>
           </Group>
 
