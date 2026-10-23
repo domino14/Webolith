@@ -61,7 +61,7 @@ const batchFieldName = (plan: StudyPlan, batch: StudyPlanBatch) => {
   return names.size === 1 ? [...names][0] : "Rank";
 };
 
-// What a progress block is a range of: "probabilities", "playability
+// What a progress block is a range of: "probability ranks", "playability
 // ranks", or both when the stages differ.
 const blockUnits = (plan: StudyPlan) => {
   const playability = plan.stages.map(
@@ -72,7 +72,7 @@ const blockUnits = (plan: StudyPlan) => {
   }
   return playability.some(Boolean)
     ? "probability or playability ranks"
-    : "probabilities";
+    : "probability ranks";
 };
 
 const BatchPreview = ({

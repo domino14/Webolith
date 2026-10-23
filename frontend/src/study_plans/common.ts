@@ -14,17 +14,19 @@ export const fmt = (n: number) => n.toLocaleString("en-US");
 export const stageName = (stage: StudyPlanStage | undefined, idx: number) =>
   stage?.name || `Stage ${idx + 1}`;
 
-// The name of the rank a stage is ordered by, e.g. "Probability".
-export const sortFieldName = (field: StudyPlanSortField | undefined) =>
-  field === StudyPlanSortField.STUDY_PLAN_SORT_PLAYABILITY
-    ? "Playability"
-    : "Probability";
+const isPlayability = (field: StudyPlanSortField | undefined) =>
+  field === StudyPlanSortField.STUDY_PLAN_SORT_PLAYABILITY;
 
-// "Probability, low to high"
+// The name of the rank a stage is ordered by, e.g. "Probability rank".
+export const sortFieldName = (field: StudyPlanSortField | undefined) =>
+  isPlayability(field) ? "Playability rank" : "Probability rank";
+
+// "Most probable first". Rank 1 is the most probable (or playable), so an
+// ascending stage starts with the most likely alphagrams.
 export const orderLabel = (stage: StudyPlanStage) =>
-  `${sortFieldName(stage.sortField)}, ${
-    stage.descending ? "high to low" : "low to high"
-  }`;
+  `${stage.descending ? "Least" : "Most"} ${
+    isPlayability(stage.sortField) ? "playable" : "probable"
+  } first`;
 
 export const deckName = (deckId: bigint, decksById: Map<bigint, Deck>) =>
   deckId === 0n
@@ -51,7 +53,7 @@ export const countByLength = (batch: StudyPlanBatch) => {
   return parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1];
 };
 
-// A one-line title for a batch, e.g. "Medium · Probability 3,501–4,000".
+// A one-line title for a batch, e.g. "Medium · Probability rank 3,501–4,000".
 export const batchTitle = (plan: StudyPlan, batch: StudyPlanBatch) => {
   const n = batch.numMissingInWindow;
   if (batch.gaps) {

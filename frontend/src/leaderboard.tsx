@@ -124,6 +124,24 @@ const Leaderboard: React.FC = () => {
     ];
   }, [weekly]);
 
+  // Day columns run from today back, so today sits next to the username.
+  const weekDays = useMemo(
+    () =>
+      (weekly?.days ?? [])
+        .map((day, i) => ({ day, i }))
+        .reverse()
+        .map(({ day, i }, col) => ({
+          day,
+          i,
+          label: col === 0 ? "Today" : weekdayLabel(day),
+          total: (weekly?.items ?? []).reduce(
+            (total, item) => total + (item.cardsStudiedByDay[i] ?? 0),
+            0,
+          ),
+        })),
+    [weekly],
+  );
+
   const randomSaying = useMemo(() => {
     const sayings = [
       "Knowledge is power, but spaced repetition is the fuel!",
@@ -187,6 +205,12 @@ const Leaderboard: React.FC = () => {
                 </Table.Tr>
               ))}
             </Table.Tbody>
+            <Table.Tfoot>
+              <Table.Tr fw={700}>
+                <Table.Td>Everyone</Table.Td>
+                <Table.Td>{totalStats[1]}</Table.Td>
+              </Table.Tr>
+            </Table.Tfoot>
           </Table>
         </>
       ) : (
@@ -200,11 +224,9 @@ const Leaderboard: React.FC = () => {
               <Table.Thead>
                 <Table.Tr>
                   <Table.Th>Username</Table.Th>
-                  {weekly?.days.map((day, i) => (
+                  {weekDays.map(({ day, label }) => (
                     <Table.Th key={day} ta="right">
-                      {i === weekly.days.length - 1
-                        ? "Today"
-                        : weekdayLabel(day)}
+                      {label}
                     </Table.Th>
                   ))}
                   <Table.Th ta="right">Total</Table.Th>
@@ -216,21 +238,35 @@ const Leaderboard: React.FC = () => {
                     <Table.Td>
                       <Username username={item.user} />
                     </Table.Td>
-                    {item.cardsStudiedByDay.map((n, i) => (
-                      <Table.Td
-                        key={weekly.days[i]}
-                        ta="right"
-                        c={n ? undefined : "dimmed"}
-                      >
-                        {n}
-                      </Table.Td>
-                    ))}
+                    {weekDays.map(({ day, i }) => {
+                      const n = item.cardsStudiedByDay[i] ?? 0;
+                      return (
+                        <Table.Td
+                          key={day}
+                          ta="right"
+                          c={n ? undefined : "dimmed"}
+                        >
+                          {n}
+                        </Table.Td>
+                      );
+                    })}
                     <Table.Td ta="right" fw={700}>
                       {item.cardsStudied}
                     </Table.Td>
                   </Table.Tr>
                 ))}
               </Table.Tbody>
+              <Table.Tfoot>
+                <Table.Tr fw={700}>
+                  <Table.Td>Everyone</Table.Td>
+                  {weekDays.map(({ day, total }) => (
+                    <Table.Td key={day} ta="right">
+                      {total}
+                    </Table.Td>
+                  ))}
+                  <Table.Td ta="right">{weeklyTotalStats[1]}</Table.Td>
+                </Table.Tr>
+              </Table.Tfoot>
             </Table>
           </Table.ScrollContainer>
         </>
