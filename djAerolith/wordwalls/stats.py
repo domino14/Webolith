@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, Count, IntegerField
 from django.shortcuts import render
+from django.utils.dateparse import parse_date
 
 from base.models import Lexicon
-from lib.response import response
+from lib.response import bad_request, response
 from wordwalls.models import (
     DailyChallengeName,
     DailyChallenge,
@@ -20,10 +21,23 @@ def main(request):
     return render(request, "wordwalls/stats.html")
 
 
+def parse_stats_date(value):
+    """Parse an optional YYYY-MM-DD date; raise ValueError if it isn't one."""
+    if not value:
+        return None
+    parsed = parse_date(value)
+    if parsed is None:
+        raise ValueError
+    return parsed
+
+
 @login_required
 def get_stats(request, lexicon, type_of_challenge_id):
-    start_date = request.GET.get("start_date")
-    end_date = request.GET.get("end_date")
+    try:
+        start_date = parse_stats_date(request.GET.get("start_date"))
+        end_date = parse_stats_date(request.GET.get("end_date"))
+    except ValueError:
+        return bad_request("Dates must be valid and in YYYY-MM-DD format.")
     lexicon = Lexicon.objects.get(id=lexicon)
 
     american_lexica = ["OWL2", "America", "NWL18", "NWL20", "NWL23"]

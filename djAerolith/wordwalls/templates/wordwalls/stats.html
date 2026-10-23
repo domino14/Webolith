@@ -2,7 +2,6 @@
 {% load i18n %}
 {% block ss %}
     <link href="/static/css/wordwalls/wordwallsCreateTable.css" rel="stylesheet">
-    <link href="/static/css/aerolith/bootstrap-datepicker.css" rel="stylesheet">
 {% endblock %}
 {% block title %}{% trans "Wordwalls - select list" %}{% endblock %}
 
@@ -13,7 +12,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <!-- Add regression.js for trend line -->
 <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
-<script src="/static/lib/bootstrap-datepicker.js"></script>
 
 <div class="container">
 
@@ -66,20 +64,22 @@
             <p>
 
                 Start Date:<br>
-                <input data-provide="datepicker" id="start-date" class="form-control date-picker">
+                <input type="date" id="start-date" class="form-control">
 
             </p>
 
             <p>
 
                 End Date:<br>
-                <input data-provide="datepicker" id="end-date" class="form-control date-picker">
+                <input type="date" id="end-date" class="form-control">
 
             </p>
 
             </p>
 
             <button type="button" class="btn btn-primary" id="dropdown-button">Submit</button>
+
+            <div id="stats-error" class="alert alert-danger mt-3" style="display: none;"></div>
 
             </p>
 
@@ -142,10 +142,6 @@
 
 <script>
 
-$('.date-picker').datepicker({
-    format: 'yyyy-mm-dd'
-});
-
 // These hold info for the charts
 var scoresByDate = {};
 var dateArray = [];
@@ -166,6 +162,7 @@ $( "#dropdown-button" ).click(function() {
 
     $( ".ring-spinner").show();
     $( "#dropdown-button").prop('disabled', true);
+    $( "#stats-error").hide();
 
     // Properly destroy the chart to prevent memory leaks
     if (combinedChartObj) {
@@ -254,6 +251,13 @@ $( "#dropdown-button" ).click(function() {
 
             // Call the charts function to generate the chart on the page
             createCombinedChart();
+        })
+        .fail(function(xhr) {
+            $( ".ring-spinner").hide();
+            $( "#dropdown-button").prop('disabled', false);
+            $( "#stats-error")
+                .text(xhr.responseJSON || "Couldn't load your stats. Please try again.")
+                .show();
         });
 
 function getAverage(array, idToUpdate) {

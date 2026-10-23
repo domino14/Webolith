@@ -118,6 +118,31 @@ class WordwallsChallengeAPITest(TestCase):
         # This test might fail if run exactly one nanosecond before midnight.
         self.assertEqual(dt, timezone.localtime(timezone.now()).date())
 
+    def test_stats_date_range(self):
+        # User 4627 played challenge 6 on 2015-10-12, 2015-10-13 and
+        # 2015-10-15.
+        resp = self.client.get(
+            "/wordwalls/stats/api/15/6/",
+            {"start_date": "2015-10-13", "end_date": "2015-10-15"},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(
+            sorted(e["Date"] for e in json.loads(resp.content)),
+            ["2015-10-13", "2015-10-15"],
+        )
+
+    def test_stats_bad_dates(self):
+        """Dates that aren't YYYY-MM-DD are a 400, not a 500."""
+        for params in [
+            {"start_date": "01/02/2003"},
+            {"start_date": "6-07-27"},
+            {"end_date": "2003-31-01"},
+            {"start_date": "2015-10-13", "end_date": "2015-02-30"},
+        ]:
+            with self.subTest(params=params):
+                resp = self.client.get("/wordwalls/stats/api/15/6/", params)
+                self.assertEqual(resp.status_code, 400)
+
 
 class WordwallsNewChallengeTest(TestCase):
     """Test the new challenge behavior, list replacement etc"""
